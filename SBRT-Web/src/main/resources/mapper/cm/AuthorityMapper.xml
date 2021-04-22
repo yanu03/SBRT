@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.cm.domain.Authority.AuthorityMapper">
+
+	<select id="selectAuthorityList" resultType="Map" parameterType="Map">
+		SELECT AUTH_CD, SYSTEM_BIT, AUTH_NM, USE_YN, REMARK 
+		  FROM BMS_AUTHORITY_MST
+		<where>
+			<if test="TYPE  == 'AUTH_CD'" >
+				AND AUTH_CD LIKE CONCAT('%',#{CONTENT}, '%')
+			</if>
+			<if test="TYPE  == 'AUTH_NM'" >
+				AND AUTH_NM LIKE CONCAT('%',#{CONTENT},'%')
+			</if>		
+			<if test="USE_YN != null and USE_YN != ''" >
+				AND USE_YN = #{USE_YN}
+			</if>
+		</where>	
+		ORDER BY AUTH_CD
+	</select>
+	
+	<select id="selectAuthorityMemberList" resultType="java.util.HashMap" parameterType="Map">
+		SELECT C.AUTH_CD, A.USER_ID, A.USER_NM, A.ORG_ID, B.ORG_NM
+		  FROM BMS_USER_MST A, BMS_ORG_MST B, BMS_USER_AUTH_CMPSTN C 
+		 WHERE A.ORG_ID = B.ORG_ID 
+		   AND A.USER_ID = C.USER_ID 
+		   AND C.AUTH_CD = #{AUTH_CD}
+		ORDER BY USER_ID
+	</select>
+	
+	<select id="excludeSelectAuthorityMemberList" resultType="Map" parameterType="String">	
+		SELECT A.USER_ID, A.USER_NM, A.ORG_ID, B.ORG_NM
+		  FROM BMS_USER_MST A, BMS_ORG_MST B 
+		 WHERE A.ORG_ID = B.ORG_ID 
+		   AND A.USER_ID NOT IN (SELECT A.USER_ID
+								  FROM BMS_USER_MST A, BMS_ORG_MST B, BMS_USER_AUTH_CMPSTN C 
+								 WHERE A.ORG_ID = B.ORG_ID 
+								   AND A.USER_ID = C.USER_ID
+								   AND C.AUTH_CD = #{AUTH_CD})
+		<if test="TYPE == 'USER_ID'">
+			AND A.USER_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'USER_NM'">
+			AND A.USER_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		ORDER BY A.USER_ID
+	</select>
+	
+	<select id="selectAuthoritySearchItem" resultType="Map">
+		SELECT AUTH_NM, AUTH_CD
+		  FROM BMS_AUTHORITY_MST 
+		 ORDER BY AUTH_CD
+	</select>
+	
+	<delete id="deleteAuthority" parameterType="java.util.HashMap">
+		DELETE FROM BMS_AUTHORITY_MST 
+		 WHERE AUTH_CD = #{AUTH_CD}
+	</delete>
+	
+	<insert id="insertAuthority" parameterType="java.util.HashMap">
+		INSERT INTO BMS_AUTHORITY_MST(AUTH_CD, AUTH_NM, USE_YN, REMARK ) 
+		VALUES (#{AUTH_CD}, #{AUTH_NM}, #{USE_YN}, #{REMARK} )
+	</insert>
+	
+	<update id="updateAuthority" parameterType="java.util.HashMap">
+		UPDATE BMS_AUTHORITY_MST
+		   SET AUTH_NM = #{AUTH_NM}, USE_YN = #{USE_YN}
+		 WHERE AUTH_CD = #{AUTH_CD}
+	</update>
+	
+	<insert id="insertAuthorityMember" parameterType="java.util.HashMap" >
+		INSERT INTO BMS_USER_AUTH_CMPSTN(USER_ID, AUTH_CD)
+		VALUES (#{USER_ID}, #{AUTH_CD})
+	</insert>
+
+	<delete id="deleteAuthorityMember" parameterType="java.util.HashMap">
+		DELETE FROM BMS_USER_AUTH_CMPSTN 
+		<where>
+			<if test="USER_ID != null and USER_ID != ''">
+				 AND USER_ID = #{USER_ID}
+			</if>
+			<if test="AUTH_CD != null and AUTH_CD != ''">
+				 AND AUTH_CD = #{AUTH_CD}
+			</if>
+		</where>
+	</delete>
+	
+	<delete id="deleteAuthorityMemberAll" parameterType="java.util.HashMap">
+		DELETE FROM BMS_USER_AUTH_CMPSTN 
+		 WHERE AUTH_CD = #{AUTH_CD}
+	</delete>
+	
+</mapper>
+	
+	

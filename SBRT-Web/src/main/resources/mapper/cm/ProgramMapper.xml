@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.cm.domain.Program.ProgramMapper">
+
+	<select id="selectProgram" resultType="Map" parameterType="Map">
+		SELECT P.PROG_CD, P.PROG_NM, P.PROG_GRP_CD, C.DL_CD_NM AS PROGRAM_GROUP_NM, P.PROG_PH
+			 , P.USE_YN, P.REMARK
+		  FROM BMS_PROG_MST P INNER JOIN BMS_DL_CD_INFO C ON C.DL_CD = P.PROG_GRP_CD AND C.CO_CD = 'PROG_GRP_CD'
+		<where>
+			<if test="PROG_GRP_CD != null and PROG_GRP_CD != ''">
+				AND P.PROG_GRP_CD = #{PROG_GRP_CD}
+			</if>
+			<if test="PROGRAM != null and PROGRAM != ''">
+				AND (P.PROG_CD LIKE CONCAT('%', #{PROGRAM}, '%') OR P.PROG_NM LIKE CONCAT('%', #{PROGRAM}, '%'))
+			</if>
+			<if test="USE_YN != null and USE_YN != ''">
+				AND P.USE_YN = #{USE_YN}
+			</if>
+		</where>
+		ORDER BY P.PROG_CD
+	</select>
+
+	<insert id="insertProgram" parameterType="Map">
+		INSERT INTO BMS_PROG_MST(PROG_CD, PROG_NM, PROG_GRP_CD, PROG_PH, USE_YN, REMARK)
+		VALUES (#{PROG_CD}, #{PROG_NM}, #{PROG_GRP_CD}, #{PROG_PH}, #{USE_YN}, #{REMARK})
+	</insert>
+
+	<update id="updateProgram" parameterType="Map">
+		UPDATE BMS_PROG_MST
+		   SET PROG_NM = #{PROG_NM}, PROG_GRP_CD = #{PROG_GRP_CD}
+			 , PROG_PH = #{PROG_PH}, USE_YN = #{USE_YN}, REMARK = #{REMARK}
+		 WHERE PROG_CD = #{PROG_CD}
+	</update>
+
+	<delete id="deleteProgram" parameterType="Map">
+		DELETE FROM BMS_PROG_MST WHERE PROG_CD = #{PROG_CD}
+	</delete>
+
+	<select id="selectProgramAuthority" resultType="Map" parameterType="Map">
+		SELECT P.PROG_CD, P.AUTH_CD, A.AUTH_NM, P.AUTH_CHECK, P.SAV_AH, P.EXL_AH
+		  FROM BMS_PROG_AUTH_INFO P, BMS_AUTHORITY_MST A 
+		 WHERE P.AUTH_CD = A.AUTH_CD
+		   AND P.PROG_CD = #{PROG_CD}
+		   AND A.USE_YN = 'Y'
+		 ORDER BY AUTH_CD
+	</select>
+
+	<select id="excludeSelectProgramAuthority" resultType="Map" parameterType="Map">
+		SELECT AUTH_CD, AUTH_NM, REMARK
+		  FROM BMS_AUTHORITY_MST 
+		 WHERE AUTH_CD NOT IN (SELECT AUTH_CD
+									  FROM BMS_PROG_AUTH_INFO 
+									 WHERE PROG_CD = #{PROG_CD})
+		   AND USE_YN = 'Y'
+		<if test="SEARCH_WORD != null and SEARCH_WORD != ''">
+			AND (AUTH_CD LIKE CONCAT('%', #{SEARCH_WORD}, '%') OR AUTH_NM LIKE CONCAT('%', #{SEARCH_WORD}, '%'))
+		</if>
+		ORDER BY AUTH_CD
+	</select>
+
+	<insert id="insertProgramAuthority" parameterType="Map">
+		INSERT INTO BMS_PROG_AUTH_INFO(AUTH_CD, PROG_CD, AUTH_CHECK, SAV_AH, EXL_AH)
+		VALUES (#{AUTH_CD}, #{PROG_CD}, #{AUTH_CHECK}, #{SAV_AH}, #{EXL_AH})
+	</insert>
+	
+	<update id="updateProgramAuthority" parameterType="java.util.HashMap">
+		UPDATE BMS_PROG_AUTH_INFO
+		   SET AUTH_CHECK = #{AUTH_CHECK}
+			 , SAV_AH = #{SAV_AH}
+			 , EXL_AH = #{EXL_AH}
+		 WHERE PROG_CD = #{PROG_CD}
+		   AND AUTH_CD = #{AUTH_CD}
+	</update>
+
+	<delete id="deleteProgramAuthority" parameterType="Map">
+		DELETE FROM BMS_PROG_AUTH_INFO 
+		 WHERE PROG_CD = #{PROG_CD} 
+		<if test="AUTH_CD != null and AUTH_CD != ''">
+		   AND AUTH_CD = #{AUTH_CD}
+		</if>
+	</delete>
+</mapper>

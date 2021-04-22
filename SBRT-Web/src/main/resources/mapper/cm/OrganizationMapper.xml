@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="kr.tracom.cm.domain.Organization.OrganizationMapper">
+	<select id="selectOrganizaion" resultType="Map" parameterType="Map">
+		SELECT ORG_ID, ORG_DIV,  ORG_NM, ORG_ENM, REP_NM, COMP_REG_NO, ADDR, PHONE, FAX, EMAIL, REMARK
+		FROM BMS_ORG_MST where 1 = 1
+		<if test="TYPE == 'ORG_NM'">
+			and ORG_NM LIKE concat('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'ORG_ID'">
+			and ORG_ID LIKE concat('%',#{CONTENT},'%')
+		</if>		
+		ORDER BY ORG_ID
+	</select>	
+	
+	<select id="selectOrganizaionBasicList" resultType="Map">	
+		SELECT ORG_ID, ORG_DIV, ORG_NM, ORG_ENM, REP_NM, COMP_REG_NO, ADDR, PHONE, FAX, EMAIL, REMARK
+		  FROM BMS_ORG_MST
+		<where> 
+			<if test="ORG_ID != null and ORG_ID != ''">
+				 AND ORG_ID = #{ORG_ID}
+			</if>
+		</where>
+		 ORDER BY ORG_ID 
+	</select>
+	
+	<select id="selectOrganizaionSearchItem" resultType="Map">
+		select ORG_ID, ORG_NM from BMS_ORG_MST
+	</select>
+	
+	<insert id="insertOrganizaionBasic" parameterType="Map">
+	INSERT INTO BMS_ORG_MST (ORG_ID, ORG_DIV,  ORG_NM, ORG_ENM, REP_NM, COMP_REG_NO, ADDR, PHONE, FAX, EMAIL, REMARK, UPD_DTM, UPD_ID)
+	VALUES (#{ORG_ID}, #{ORG_DIV}, #{ORG_NM}, #{ORG_ENM}, #{REP_NM}, #{COMP_REG_NO}
+				   , #{ADDR}, #{PHONE}, #{FAX}, #{EMAIL}, #{REMARK}, SYSDATE(), #{USER_ID})
+	</insert>
+	
+	<update id="updateOrganizaionBasic" parameterType="Map">
+		UPDATE BMS_ORG_MST 
+		   SET ORG_DIV = #{ORG_DIV}, ORG_NM = #{ORG_NM}, ORG_ENM = #{ORG_ENM}, REP_NM = #{REP_NM}, COMP_REG_NO = #{COMP_REG_NO},
+		    ADDR = #{ADDR}, PHONE = #{PHONE}, FAX = #{FAX}, EMAIL = #{EMAIL}, REMARK = #{REMARK}, UPD_DTM = SYSDATE(), UPD_ID = #{USER_ID}
+		 WHERE ORG_ID = #{ORG_ID}
+	</update>
+	
+	<delete id="deleteOrganizaionBasic" parameterType="Map">
+		DELETE FROM BMS_ORG_MST WHERE ORG_ID = #{ORG_ID}
+	</delete>
+ 
+</mapper>
