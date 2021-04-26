@@ -8,11 +8,13 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface SI0101Mapper {
 
-	public List selectGarage();
+	public List SI0101G0R0();
 	
-	public int insertGarage(Map param);
+	public List SI0101G0R1();
 	
-	public int deleteGarage(Map param);
+	public int SI0101G0I0(Map param);
 	
-	public int updateGarage(Map param);
+	public int SI0101G0D0(Map param);
+	
+	public int SI0101G0U0(Map param);
 }

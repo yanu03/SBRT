@@ -28,7 +28,7 @@ public interface AuthorityMapper {
 	public int updateAuthority(Map param);
 
 	// 권한별 등록사원 입력
-	public int insertAuthorityMember(Map param);
+	public int insertAuthorityMember(Map param); 
 
 	// 권한별 등록사원 삭제
 	public int deleteAuthorityMember(Map param);

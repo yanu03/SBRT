@@ -3,7 +3,15 @@
     xmlns:ev="http://www.w3.org/2001/xml-events"
     xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
     
-    <head>         
+    <head>      
+	<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=31aa62fb189294413e43c24caeb82419"></script>
+	<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?autoload=false"></script>
+	<script type="text/javascript">
+	kakao.maps.load(function() {
+	    // v3가 모두 로드된 후, 이 콜백 함수가 실행됩니다.
+	    var map = new kakao.maps.Map(node, options);
+	});
+	</script>        
     	<w2:type>DEFAULT</w2:type>
         <w2:buildDate/>
         <xf:model>
@@ -11,16 +19,12 @@
         		<data xmlns="" />
         	</xf:instance>
         	<w2:dataCollection baseNode="map">
-        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_grg" saveRemovedData="true">
+        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_GRG_MST" saveRemovedData="true">
         			<w2:columnInfo>
         				<w2:column id="GRG_ID" name="차고지ID" dataType="text"></w2:column>
         				<w2:column id="GRG_NM" name="차고지명" dataType="text"></w2:column>
         				<w2:column id="OWNER_TYPE" name="소유형태" dataType="text"></w2:column>
         				<w2:column id="ADDR" name="주소" dataType="text"></w2:column>
-
-
-
-
         				<w2:column id="PHONE" name="전화번호" dataType="text"></w2:column>
         				<w2:column id="FAX" name="팩스" dataType="text"></w2:column>
         				<w2:column id="EMAIL" name="이메일" dataType="text"></w2:column>
@@ -31,8 +35,8 @@
         				<w2:column id="APPL_ST_DT" name="적용시작일" dataType="text"></w2:column>
         				<w2:column id="APPL_ED_DT" name="적용종료일" dataType="text"></w2:column>
         				<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
-        				<w2:column id="GPS_X" name="name6" dataType="text"></w2:column>
-        				<w2:column id="GPS_Y" name="name7" dataType="text"></w2:column>
+        				<w2:column id="GPS_X" name="GPS_X" dataType="text"></w2:column>
+        				<w2:column id="GPS_Y" name="GPS_Y" dataType="text"></w2:column>
         			</w2:columnInfo>
         		</w2:dataList>
         		<w2:dataMap baseNode="map" id="dma_result">
@@ -45,81 +49,87 @@
         			</w2:keyInfo>
         			<w2:data></w2:data>
         		</w2:dataMap>
+        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_GRG_RDS_INFO" saveRemovedData="true">
+        			<w2:columnInfo>
+        				<w2:column id="GRG_ID" name="차고지ID" dataType="text"></w2:column>
+        				<w2:column id="GPS_X" name="GPS_X" dataType="text"></w2:column>
+        				<w2:column id="GPS_Y" name="GPS_Y" dataType="text"></w2:column>
+        			</w2:columnInfo>
+        		</w2:dataList>
         	</w2:dataCollection>
         	<w2:workflowCollection></w2:workflowCollection>
-        	<xf:submission id="sub_searchGarage" ref="" target="data:json,dlt_grg" action='/si/getGarageList' method="post"
+        	<xf:submission id="sub_SI0101G0R0" ref="" target="data:json,dlt_BMS_GRG_MST" action='/si/SI0101G0R0' method="post"
         		mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
         		processMsg="조회 중입니다..." ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
         	</xf:submission>
-        	<xf:submission id="sub_save" ref='data:json,{"action":"modified","id":"dlt_grg"}' target="data:json,dma_result" action="/si/saveGarageList" method="post"
+        	<xf:submission id="sub_SI0101G0S0" ref='data:json,{"action":"modified","id":"dlt_BMS_GRG_MST"}' target="data:json,dma_result" action="/si/SI0101G0S0" method="post"
         		mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
         		processMsg="저장중입니다...." ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
         	</xf:submission>
         </xf:model>
 
         <script type="text/javascript"><![CDATA[
-		var container = document.getElementById('map');
-		var options = {
-			center: new kakao.maps.LatLng('36.470613', '127.273339'),
-			level: 3
-		};
-
 	scwin.onpageload = function() {
 
-		$p.executeSubmission("sub_searchGarage");	
+		com.executeSubmission(sub_SI0101G0R0);
 
 	};
-	
+
 	scwin.onpageunload = function() {
-		
+
 	};
-	
+
 	scwin.btn_search_onclick = function() {
-		com.executeSubmission(sub_searchGarage);
+		com.executeSubmission(sub_SI0101G0R0);
 	};
-	
+
 	scwin.btn_saveMenu_onclick = function() {
-		var idx = grd_garage.getModifiedIndex().length;
+		var idx = SI0101G0.getModifiedIndex().length;
 		var icnt = dma_result.get("ICNT");
 		if (idx == 0) {
 			com.alert("저장할 데이터가 없습니다");
 			return false;
 		}
-		
+
 		if (idx > 0) {
 			com.confirm(idx + "건의 데이터를 반영하시겠습니까?", function(rtn) {
 				if (rtn) {
-					$p.executeSubmission(sub_save);
+					$p.executeSubmission(SI0101G0S0);
 				}
-			
-			});		
+
+			});
 		}
-		
+
 	};
-	
+
 	scwin.btn_addMenu_onclick = function() {
-		var insertIndex = dlt_grg.insertRow();
-		dlt_grg.setCellData(insertIndex, "IS_USE", 'Y');
-		grd_garage.setCellReadOnly(insertIndex, "GRP_CD", false);
-		grd_garage.setFocusedCell(insertIndex, "GRP_CD", true);
-		
-		
+		var insertIndex = dlt_BMS_GRG_MST.insertRow();
+		dlt_BMS_GRG_MST.setCellData(insertIndex, "IS_USE", 'Y');
+		SI0101G0.setCellReadOnly(insertIndex, "GRP_CD", false);
+		SI0101G0.setFocusedCell(insertIndex, "GRP_CD", true);
+
 	};
-	
-	
-	scwin.grd_garage_oncellclick = function(row,col,colId) {
-		var gridColumn = grd_garage.getColumnID(col);
-		
+
+	scwin.SI0101G0_oncellclick = function(row, col, colId) {
+		var gridColumn = SI0101G0.getColumnID(col);
+
 		if (gridColumn == "LOCATION") {
-			$p.openPopup("/ui/BMS/SI0101/SI0101S01.xml");	
+			var data = { GPS_X : dlt_BMS_GRG_MST.getCellData(row, "GPS_X"), GPS_Y : dlt_BMS_GRG_MST.getCellData(row, "GPS_Y"),
+						GRG_ID : dlt_BMS_GRG_MST.getCellData(row, "GRG_ID"), callbackFn : ""} 
+			var options = {
+				id : "SI0101P01",
+				popupName : "위치 지도",
+				modal : true,
+				width : 800,
+				height : 600
+			};
+			com.openPopup(("/ui/BMS/SI0101/SI0101P01.xml"), options, data);
 		}
-		
 	};
-	]]></script>
+]]></script>
     </head>
     <body>
      
-     <div id="map" style="width:500px;height:400px;"></div>
     	<xf:group class="lybox" id="" style=""></xf:group>
     	<xf:group class="contentWrap" id="" style="">
     		<w2:wframe id="" src="/cm/common/wf_titleFav.xml" style=""></w2:wframe>
@@ -232,12 +242,12 @@
     			</xf:group>
     		</xf:group>
     	</xf:group>
-    	<w2:gridView adaptive="crosstab" autoFit="lastColumn" class="cm_grid" dataList="data:dlt_grg" enterKeyMove="" ev:onafteredit=""
-    		ev:oncellclick="scwin.grd_garage_oncellclick" ev:oneditkeyup="scwin.grd_menu_oneditkeyup" ev:onkeyup="" ev:onrowindexchange=""
-    		ev:ontextimageclick="scwin.grd_menu_ontextimageclick" ev:onviewchange="" fixedColumnWithHidden="true" id="grd_garage"
+    	<w2:gridView adaptive="crosstab" autoFit="lastColumn" class="cm_grid" dataList="data:dlt_BMS_GRG_MST" enterKeyMove="" ev:onafteredit=""
+    		ev:oncellclick="scwin.SI0101G0_oncellclick" ev:oneditkeyup="" ev:onkeyup="" ev:onrowindexchange=""
+    		ev:ontextimageclick="" ev:onviewchange="" fixedColumnWithHidden="true" id="SI0101G0"
     		ignoreCellClick="false" rowNumHeaderValue="순번" rowNumVisible="true" rowStatusHeaderValue="" rowStatusVisible="false"
     		rowStatusWidth="40" scrollByColumn="false" style="height:480px;" useShiftKey="true" visibleRowNum="" wheelRows=""
-    		alwaysTriggerScrollStart="" captionTitle="">
+    		alwaysTriggerScrollStart="" captionTitle="" nextTabID="">
     		<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
     		<w2:header style="" id="header1">
     			<w2:row style="" id="row1">
