@@ -26,8 +26,7 @@
 				<data xmlns="" />
 			</xf:instance>
 			<w2:dataCollection baseNode="map">
-				<w2:dataList id="dlt_organizationBasic" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange=""
-					undoRecursiveRow="true">
+				<w2:dataList id="dlt_organizationBasic" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
 					<w2:columnInfo>
 						<w2:column id="chk" name="선택" dataType="text" ignoreStatus="true"></w2:column>
 						<w2:column id="ORG_ID" name="기관아이디" dataType="text"></w2:column>
@@ -45,7 +44,7 @@
 						<w2:column id="EMAIL" name="이메일" dataType="text"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
 					</w2:columnInfo>
-					<w2:data use="false"></w2:data>
+					<w2:data></w2:data>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
 					<w2:keyInfo>
@@ -67,23 +66,8 @@
 					<w2:columnInfo>
 						<w2:column id="ORG_ID" name="name1" dataType="text"></w2:column>
 						<w2:column id="ORG_NM" name="name2" dataType="text"></w2:column>
+						<w2:column id="ORG_DIV" name="name3" dataType="text"></w2:column>
 					</w2:columnInfo>
-				</w2:dataList>
-				<w2:dataMap baseNode="map" id="dataMap1">
-					<w2:keyInfo></w2:keyInfo>
-				</w2:dataMap>
-				<w2:dataList baseNode="list" repeatNode="map" id="dataList1" saveRemovedData="true">
-					<w2:columnInfo></w2:columnInfo>
-				</w2:dataList>
-				<w2:linkedDataList bind="" id="linkedDataList1">
-					<w2:condition type="filter"><![CDATA[]]></w2:condition>
-					<w2:condition type="sort"><![CDATA[]]></w2:condition>
-				</w2:linkedDataList>
-				<w2:dataMap baseNode="map" id="dataMap2">
-					<w2:keyInfo></w2:keyInfo>
-				</w2:dataMap>
-				<w2:dataList baseNode="list" repeatNode="map" id="dataList2" saveRemovedData="true">
-					<w2:columnInfo></w2:columnInfo>
 				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
@@ -106,7 +90,7 @@
 	 * 초기 스크립트 수행 함수 정의
 	 */
 	scwin.onpageload = function() {
-		var codeOptions = [ { "code" : "ORG_DIV", "compID" : "sbx_OrgClassCd, grd_organizationBasic:ORG_DIV" } ];
+		var codeOptions = [ { "code" : "ORG_DIV", "compID" : "sbx_OrgDiv, grd_organizationBasic:ORG_DIV" } ];
 		com.setCommonCode(codeOptions);
 		com.executeSubmission(sbm_organizationSearchItem);
 		com.setEnterKeyEvent(tbl_search, scwin.btn_Search_onclick);
@@ -169,14 +153,11 @@
 	 */
 	scwin.insertRowOrg = function() {
 		var focusedRowIndex = grd_organizationBasic.getFocusedRealRowIndex();
-		var parentOrgId = dlt_organizationBasic.getCellData(focusedRowIndex, "ORG_ENM");
-		var rowIndexArr = dlt_organizationBasic.getMatchedIndex("ORG_ENM", parentOrgId, true, 0, dlt_organizationBasic.getRowCount());
-		var orgLevel = WebSquare.util.getNumber(dlt_organizationBasic.getCellData(rowIndexArr[rowIndexArr.length - 1], "REP_NM"));
+		var curOrgId = dlt_organizationBasic.getCellData(focusedRowIndex, "ORG_ID");
+		var rowIndexArr = dlt_organizationBasic.getMatchedIndex("ORG_ID", curOrgId, true, 0, dlt_organizationBasic.getRowCount());
 		var sortOrder = WebSquare.util.getNumber(dlt_organizationBasic.getCellData(rowIndexArr[rowIndexArr.length - 1], "SORT")) + 1;
-		var insertRowIndex = scwin.getInsertRowIndex(parentOrgId);
-		var orgId = scwin.getInsertRowOrgId(parentOrgId, orgLevel, false);
-	
-		var insertJson = [ { "ORG_ID" : orgId, "PARENT_ORG_ID" : parentOrgId, "REP_NM" : orgLevel, "SORT" : sortOrder } ];
+		var insertRowIndex = scwin.getInsertRowIndex(curOrgId);
+		var insertJson = [ {"SORT" : sortOrder } ];
 	
 		dlt_organizationBasic.insertJSON(insertRowIndex, insertJson);
 		grd_organizationBasic.setFocusedCell(insertRowIndex, "ORG_ID");
@@ -184,43 +165,12 @@
 	};
 	
 	/**
-	 * 새로 추가되는 조직의 조직 코드를 반환한다.
-	 */
-	scwin.getInsertRowOrgId = function(parentOrgId, isBottom) {
-		var OrgIdArr = dlt_organizationBasic.getMatchedColumnData("PARENT_ORG_ID", parentOrgId, "ORG_ID", true, 0, dlt_organizationBasic.getRowCount());
-	
-		if (OrgIdArr.length > 0) {
-			var lastOrgId = OrgIdArr[OrgIdArr.length - 1];
-			var nodeIndex = 0;
-			var preNodeCd = lastOrgId.substr(nodeIndex, 2);
-			var newNodeCd = com.fillZero(WebSquare.util.getNumber(preNodeCd) + 1, 2);
-			return lastOrgId.substr(0, nodeIndex) + lastOrgId.substr(nodeIndex).replace(preNodeCd, newNodeCd);
-		} else {
-			if (isBottom) {
-				var nodeIndex = parentOrgId.indexOf("00");
-				return parentOrgId.substr(0, nodeIndex) + parentOrgId.substr(nodeIndex).replace("00", "01");
-			} else {
-				var nodeIndex = parentOrgId.indexOf("00");
-				var preNodeCd = parentOrgId.substr(nodeIndex, 2);
-				var newNodeCd = com.fillZero(WebSquare.util.getNumber(preNodeCd) + 1, 2);
-				return parentOrgId.substr(0, nodeIndex) + parentOrgId.substr(nodeIndex).replace(preNodeCd, newNodeCd);
-			}
-		}
-	};
-	
-	/**
 	 * 새로 추가되는 조직으로 RowIndex를 반환한다.
 	 */
-	scwin.getInsertRowIndex = function(parentOrgId) {
-		var rowIndexArr = dlt_organizationBasic.getMatchedIndex("ORG_ENM", parentOrgId, true, 0, dlt_organizationBasic.getRowCount());
+	scwin.getInsertRowIndex = function(curOrgId) {
+		var rowIndexArr = dlt_organizationBasic.getMatchedIndex("ORG_ID", curOrgId, true, 0, dlt_organizationBasic.getRowCount());
 		if (rowIndexArr.length > 0) {
-			var lastOrgId = dlt_organizationBasic.getCellData(rowIndexArr[rowIndexArr.length - 1], "ORG_ID");
-			var rowIndex = scwin.getInsertRowIndex(lastOrgId);
-			if (rowIndex !== -1) {
-				return rowIndex;
-			} else {
-				return rowIndexArr[rowIndexArr.length - 1] + 1;
-			}
+			return rowIndexArr[rowIndexArr.length - 1] + 1;
 		} else {
 			return -1;
 		}
@@ -356,7 +306,7 @@
 				<w2:gridView ignoreCellClick="false" ev:onrowindexchange="" autoFit="allColumn" visibleRowNum="10" sortable="true"
 					sortEvent="onclick" class="cm_grid" showSortableImage="" fixedColumnWithHidden="true" dataList="dlt_organizationBasic"
 					id="grd_organizationBasic" readOnly="true" style="height: 280px;" overflowX="hidden" scrollByColumn="false" useShiftKey="true"
-					overflowY="scroll" rowStatusVisible="true" rowStatusHeaderValue="상태" ev:oncellclick="" adaptive="crosstab">
+					overflowY="scroll" rowStatusVisible="false" rowStatusHeaderValue="상태" ev:oncellclick="" adaptive="crosstab" rowNumVisible="true" rowNumHeaderValue="순서">
 					<w2:header id="header1" style="">
 						<w2:row id="row2" style="">
 							<w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" displayMode="label"
@@ -368,11 +318,11 @@
 							<w2:column id="column17" blockSelect="false" style="height:25px;" width="206" inputType="text" value="기관명"
 								displayMode="label">
 							</w2:column>
-							<w2:column id="column30" blockSelect="false" style="height:25px;" width="126" inputType="text"
-								value="사업자등록번호">
-							</w2:column>
 							<w2:column id="column11" blockSelect="false" style="height:25px;" width="80" inputType="text" value="기관구분"
 								displayMode="label">
+							</w2:column>
+							<w2:column id="column30" blockSelect="false" style="height:25px;" width="126" inputType="text"
+								value="사업자등록번호">
 							</w2:column>
 							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px" id="column31" value="전화번호"
 								blockSelect="false" displayMode="label">
@@ -392,14 +342,6 @@
 							<w2:column id="ORG_NM" blockSelect="false" style="height:25px;" width="136" inputType="text"
 								displayMode="label">
 							</w2:column>
-							<w2:column id="COMP_REG_NO" blockSelect="false" style="height:25px;" width="126" inputType="text">
-								<w2:choices>
-									<w2:itemset nodeset="data:dlt_organizationBasic">
-										<w2:label ref="PARENT_ORG_NM"></w2:label>
-										<w2:value ref="PARENT_ORG_NM"></w2:value>
-									</w2:itemset>
-								</w2:choices>
-							</w2:column>
 							<w2:column id="ORG_DIV" blockSelect="false" style="height:25px;" width="80" inputType="select"
 								displayMode="label" textAlign="center">
 								<w2:choices>
@@ -409,7 +351,14 @@
 									</w2:itemset>
 								</w2:choices>
 							</w2:column>
-
+							<w2:column id="COMP_REG_NO" blockSelect="false" style="height:25px;" width="126" inputType="text">
+								<w2:choices>
+									<w2:itemset nodeset="data:dlt_organizationBasic">
+										<w2:label ref="PARENT_ORG_NM"></w2:label>
+										<w2:value ref="PARENT_ORG_NM"></w2:value>
+									</w2:itemset>
+								</w2:choices>
+							</w2:column>
 							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px" id="PHONE" value=""
 								blockSelect="false" displayMode="label">
 							</w2:column>

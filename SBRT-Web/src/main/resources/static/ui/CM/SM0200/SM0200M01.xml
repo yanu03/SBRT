@@ -231,21 +231,23 @@
 	 * 새로 추가되는 메뉴의 메뉴 코드를 반환한다. ( LEVEL 3일 경우 하위메뉴 생성 )
 	 */
 	scwin.getInsertRowMenuCd = function(parentMenuCd, menuLevel, isBottom) {
+	debugger;
+		var prefix = 'MN00';
 		var menuCdArr = dlt_menu.getMatchedColumnData("PARENT_MENU_CD", parentMenuCd, "MENU_CD", true, 0, dlt_menu.getTotalRow());
 		if (menuCdArr.length > 0) {
 			var lastMenuCd = menuCdArr[menuCdArr.length - 1];
-			var nodeIndex = (menuLevel - 1) * 3;
-			var preNodeCd = lastMenuCd.substr(nodeIndex, 3);
-			var newNodeCd = com.fillZero(WebSquare.util.getNumber(preNodeCd) + 1, 3);
+			var nodeIndex = prefix.length+(menuLevel - 1) * 2;
+			var preNodeCd = lastMenuCd.substr(nodeIndex, 2);
+			var newNodeCd = com.fillZero(WebSquare.util.getNumber(preNodeCd) + 1, 2);
 			return lastMenuCd.substr(0, nodeIndex) + lastMenuCd.substr(nodeIndex).replace(preNodeCd, newNodeCd);
 		} else {
 			if (isBottom) {
-				var nodeIndex = parentMenuCd.indexOf("000");
-				return parentMenuCd.substr(0, nodeIndex) + parentMenuCd.substr(nodeIndex).replace("000", "001");
+				var nodeIndex = prefix.length + parentMenuCd.indexOf("00");
+				return parentMenuCd.substr(0, nodeIndex) + parentMenuCd.substr(nodeIndex).replace("00", "01");
 			} else {
-				var nodeIndex = parentMenuCd.indexOf("000");
-				var preNodeCd = parentMenuCd.substr(nodeIndex, 3);
-				var newNodeCd = com.fillZero(WebSquare.util.getNumber(preNodeCd) + 1, 3);
+				var nodeIndex = prefix.length + parentMenuCd.indexOf("00");
+				var preNodeCd = parentMenuCd.substr(nodeIndex, 2);
+				var newNodeCd = com.fillZero(WebSquare.util.getNumber(preNodeCd) + 1, 2);
 				return parentMenuCd.substr(0, nodeIndex) + parentMenuCd.substr(nodeIndex).replace(preNodeCd, newNodeCd);
 			}
 		}
@@ -492,7 +494,7 @@
 						</xf:group>
 					</xf:group>
 				</xf:group>
-				<w2:gridView ignoreCellClick="false" ev:onrowindexchange="" autoFit="allColumn" rowStatusWidth="40" visibleRowNum="" class="cm_grid" wheelRows="" ev:onviewchange="" fixedColumnWithHidden="true" dataList="dlt_menu" id="grd_menu" style="height:480px;" scrollByColumn="false" useShiftKey="true" rowStatusVisible="true" ev:onafteredit="" rowStatusHeaderValue="상태" ev:oncellclick="scwin.grd_menu_oncellclick" rowNumVisible="10" ev:ontextimageclick="scwin.grd_menu_ontextimageclick" ev:onkeyup="" ev:oneditkeyup="scwin.grd_menu_oneditkeyup" enterKeyMove="" adaptive="crosstab">
+				<w2:gridView ignoreCellClick="false" ev:onrowindexchange="" autoFit="allColumn" rowStatusWidth="40" visibleRowNum="" class="cm_grid" wheelRows="" ev:onviewchange="" fixedColumnWithHidden="true" dataList="dlt_menu" id="grd_menu" style="height:480px;" scrollByColumn="false" useShiftKey="true" rowStatusVisible="false" ev:onafteredit="" rowStatusHeaderValue="상태" ev:oncellclick="scwin.grd_menu_oncellclick" rowNumVisible="true" ev:ontextimageclick="scwin.grd_menu_ontextimageclick" ev:onkeyup="" ev:oneditkeyup="scwin.grd_menu_oneditkeyup" enterKeyMove="" adaptive="crosstab" rowNumHeaderValue="순서">
 					<w2:header id="header1" style="">
 						<w2:row id="row2" style="">
 							<w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" value="" displayMode="label" fixColumnWidth="true">
@@ -511,7 +513,7 @@
 					<w2:gBody id="gBody4" style="">
 						<w2:row id="row5" style="">
 							<w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" displayMode="label"></w2:column>
-							<w2:column id="MENU_CD" blockSelect="false" readOnly="true" style="height:25px" hidden="false" width="79" inputType="text" customFormatter="scwin.setFontFormat" displayMode="label">
+							<w2:column id="MENU_CD" blockSelect="false" readOnly="false" style="height:25px" hidden="false" width="79" inputType="text" customFormatter="scwin.setFontFormat" displayMode="label">
 							</w2:column>
 							<w2:column depthColumn="LEVEL" id="MENU_NM" blockSelect="false" showDepth="3" style="height:25px;"
 								depthType="div" width="159" inputType="drilldown" displayMode="label" textAlign="left" class="req">
@@ -524,7 +526,7 @@
 									</w2:itemset>
 								</w2:choices>
 							</w2:column>
-							<w2:column id="PROG_NM" blockSelect="false" width="144" inputType="textImage" textAlign="left" imageSrc="/cm/images/inc/btn_search.png" readOnly="" viewType="" imageHeight="22" imageWidth="22"></w2:column>
+							<w2:column id="PROG_NM" blockSelect="false" width="144" inputType="textImage" textAlign="left" imageSrc="/cm/images/inc/btn_search.png" readOnly="" viewType="" imageHeight="22" imageWidth="22" chooseOptionLabel=""></w2:column>
 							<w2:column id="USE_YN" blockSelect="false" trueValue="Y" falseValue="N" width="60" inputType="checkbox" valueType="other">
 							</w2:column>
 							<w2:column id="REMARK" blockSelect="false" width="171" inputType="text"></w2:column>
