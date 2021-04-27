@@ -198,8 +198,8 @@ public class CommonService {
 	 * @author InswaveSystems
 	 */
 
-	public List selectFavListByEmpCd(String empCd) {
-		return commonMapper.selectFavListByEmpCd(empCd);
+	public List selectFavListByEmpCd(String userId) {
+		return commonMapper.selectFavListByEmpCd(userId);
 	}
 
 	/**

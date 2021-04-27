@@ -64,7 +64,7 @@
 				</w2:dataList>
 				<w2:dataList id="dlt_memberOrganization" baseNode="list" saveRemovedData="true" repeatNode="map">
 					<w2:columnInfo>
-						<w2:column id="ORG_CD" name="name1" dataType="text"></w2:column>
+						<w2:column id="ORG_ID" name="name1" dataType="text"></w2:column>
 						<w2:column id="ORG_NM" name="name2" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
@@ -94,11 +94,8 @@
 	 * 초기화 함수(셀렉트 박스의 항목을 가져온다)
 	 */
 	scwin.onpageload = function() {
-		var codeOptions = [ { code : "00001", compID : "sbx_Duty" }, 
-							{ code : "00002", compID : "sbx_Postion, grd_memberBasic:POSITION_CD" }, 
-							{ code : "00021", compID : "sbx_JoinClass" },
-							{ code : "00023", compID : "sbx_JobFamily" }, 
-							{ code : "00024", compID : "sbx_Job" }];
+	
+		var codeOptions = [{ code : "SYSTEM_BIT", compID : "sbx_system"}];
 		com.setCommonCode(codeOptions);
 	
 		com.executeSubmission(sbm_memberSearchItem);
@@ -128,8 +125,8 @@
 			sbx_PositionCd.setNodeSet("data:dlt_CommonCode02", "CODE_NM", "COM_CD");
 			acb_autoChoiceBox.hide();
 			sbx_PositionCd.show("");
-		} else if (info.newValue == "ORG_CD") {
-			sbx_PositionCd.setNodeSet("data:dlt_memberOrganization", "ORG_NM", "ORG_CD");
+		} else if (info.newValue == "ORG_ID") {
+			sbx_PositionCd.setNodeSet("data:dlt_memberOrganization", "ORG_NM", "ORG_ID");
 			acb_autoChoiceBox.hide();
 			sbx_PositionCd.show("");
 		}
@@ -141,7 +138,7 @@
 	scwin.btn_search_onclick = function() {
 		if (sbx_ChoiceBox.getValue() == "POSITION_CD") {
 			dma_search.set("CONTENT", sbx_PositionCd.getValue());
-		} else if (sbx_ChoiceBox.getValue() == "ORG_CD") {
+		} else if (sbx_ChoiceBox.getValue() == "ORG_ID") {
 			dma_search.set("CONTENT", sbx_PositionCd.getValue());
 		} else {
 			dma_search.set("CONTENT", acb_autoChoiceBox.getValue());
@@ -166,7 +163,7 @@
 	scwin.btn_addMember_onclick = function() {
 		var insertIndex = dlt_memberBasic.insertRow();
 		grd_memberBasic.setFocusedCell(insertIndex, "EMP_CD", true);
-		ibx_empCd.focus();
+		ibx_userId.focus();
 	};
 	
 	/**
@@ -222,9 +219,9 @@
 		var rowStatus = dlt_memberBasic.getRowStatus(grd_memberBasic.getFocusedRowIndex());
 	
 		if (rowStatus != "C") {
-			ibx_empCd.setDisabled(true);
+			ibx_userId.setDisabled(true);
 		} else if (rowStatus == "C") {
-			ibx_empCd.setDisabled(false);
+			ibx_userId.setDisabled(false);
 		}
 	};
 	
@@ -247,30 +244,7 @@
 			}
 		}
 	};
-	
-	/**
-	 * 더블클릭하면 wFrame Scope 적용된 인사기본 화면을 팝업창으로 띄운다.
-	 */
-	scwin.grd_memberBasic_oncelldblclick = function(row, col) {
-		var rowJSON = dlt_memberBasic.getRowJSON(row);
-		var data = { data : rowJSON, callbackFn : "scwin.btn_search_onclick" };
-		var opt = { id : "H3M01",
-					popupName : "사원정보", 
-					width : 1000, height : 502};
-		var popupUrl = "/ui/HM/HM003M01.xml";
-		
-		try {
-			var dataInfo = $p.top().wfm_side.getWindow();
-			var empNo = dataInfo.dma_defInfo.getJSON()["EMP_CD"];
-			if (empNo == "100003") {
-				popupUrl = "/ui/HM/HM003M01_test.xml";
-			}
-		} catch(e) {
-			console.log("inputCalendar width Error 체크 오류발생");
-		}
-		
-		com.openPopup(popupUrl, opt, data);
-	};
+
 
 ]]></script>
 		<style type="text/css"><![CDATA[ ]]></style>
@@ -308,7 +282,7 @@
 										</xf:item>
 										<xf:item>
 											<xf:label><![CDATA[소속]]></xf:label>
-											<xf:value><![CDATA[ORG_CD]]></xf:value>
+											<xf:value><![CDATA[ORG_ID]]></xf:value>
 										</xf:item>
 									</xf:choices>
 								</xf:select1>
@@ -361,7 +335,7 @@
 					visibleRowNum="10" sortable="true" sortEvent="onclick" class="cm_grid" showSortableImage="" fixedColumnWithHidden="true"
 					dataList="dlt_memberBasic" id="grd_memberBasic" readOnly="" style="height:280px;" overflowX="hidden" useShiftKey="true"
 					scrollByColumn="false" overflowY="scroll" rowStatusVisible="false" ev:onafteredit="" rowStatusHeaderValue="상태"
-					ev:oncellclick="scwin.grd_memberBasic_oncellclick" ev:oncelldblclick="scwin.grd_memberBasic_oncelldblclick" adaptive="crosstab"
+					ev:oncellclick="scwin.grd_memberBasic_oncellclick" ev:oncelldblclick="" adaptive="crosstab"
 					rowNumHeaderValue="순서" rowNumVisible="true">
 					<w2:header id="header1" style="">
 						<w2:row id="row2" style="">
@@ -381,7 +355,7 @@
 								displayMode="label">
 							</w2:column>
 							<w2:column id="column16" blockSelect="false" style="height:25px;" colSpan="3" width="90" inputType="text"
-								value="휴대폰" displayMode="label">
+								value="전화번호" displayMode="label">
 							</w2:column>
 						</w2:row>
 					</w2:header>
@@ -397,11 +371,12 @@
 								displayMode="label">
 							</w2:column>
 							<w2:column id="ORG_ID" blockSelect="false" readOnly="true" style="height:25px;" width="130" inputType="select"
-								displayMode="label" textAlign="left">
+								displayMode="label" textAlign="left" chooseOption="false" chooseOptionLabel="" checkboxLabelFormatter="" allOption=""
+								ref="">
 								<w2:choices>
 									<w2:itemset nodeset="data:dlt_memberOrganization">
 										<w2:label ref="ORG_NM"></w2:label>
-										<w2:value ref="ORG_CD"></w2:value>
+										<w2:value ref="ORG_ID"></w2:value>
 									</w2:itemset>
 								</w2:choices>
 							</w2:column>
@@ -432,29 +407,29 @@
 					<xf:group style="" tagname="tr">
 						<xf:group style="" class="w2tb_th req" tagname="th">사용자아이디</xf:group>
 						<xf:group style="" class="w2tb_td" tagname="td">
-							<xf:input id="ibx_empCd" ref="data:dlt_memberBasic.USER_ID" enterBlur="" style="height:24px;" mandatory="true" class="req" maxlength="6" minlength="6"></xf:input>
+							<xf:input id="ibx_userId" ref="data:dlt_memberBasic.USER_ID" enterBlur="" style="height:24px;" mandatory="true" class="req" maxlength="6" minlength="6"></xf:input>
 						</xf:group>
 						<xf:group style="" class="w2tb_th req" tagname="th">사용자명</xf:group>
 						<xf:group style="" class="w2tb_td" tagname="td">
-							<xf:input id="ibx_empNm" ref="data:dlt_memberBasic.ORG_ID" style="height:24px;" mandatory="true" allowChar="가-힣" class="req"></xf:input>
+							<xf:input id="ibx_userNm" ref="data:dlt_memberBasic.ORG_ID" style="height:24px;" mandatory="true" allowChar="가-힣" class="req"></xf:input>
 						</xf:group>
 						<xf:group style="" class="w2tb_th req" tagname="th">시스템</xf:group>
 						<xf:group style="" class="w2tb_td" tagname="td">
 							<xf:select1 allOption="" appearance="minimal" chooseOption="" chooseOptionLabel="&amp;nbsp;" direction="auto"
-								disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="SYSTEM_BIT" optionOrder="false"
+								disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="sbx_system" optionOrder="false"
 								ref="data:dlt_memberBasic.SYSTEM_BIT" renderType="component" style="height:24px;" submenuSize="auto">
 								<xf:choices></xf:choices>
 							</xf:select1>
-						</xf:group>
+						</xf:group>  
 					</xf:group>
 					<xf:group style="" tagname="tr">
 						<xf:group style="" class="w2tb_th req" tagname="th">비밀번호</xf:group>
 						<xf:group style="" class="w2tb_td" tagname="td">
-							<xf:input id="SYSTEM_BIT20" mandatory="" ref="data:dlt_memberBasic.SYSTEM_BIT" style="height:24px;"></xf:input>
+							<xf:secret id="ibx_userPs" mandatory="" ref="data:dlt_memberBasic.USER_PS" style="height:24px;"></xf:secret>
 						</xf:group>
-						<xf:group style="" class="w2tb_th" tagname="th">사원한자명</xf:group>
+						<xf:group style="" class="w2tb_th" tagname="th">비밀번호&amp;nbsp;확인</xf:group>
 						<xf:group style="" class="w2tb_td" tagname="td">
-							<xf:input id="ibx_empCnNm" ref="data:dlt_memberBasic.SYSTEM_BIT" style="height:24px;" mandatory=""></xf:input>
+							<xf:secret id="ibx_userPsConfirm" ref="" style="height:24px;" mandatory=""></xf:secret>
 						</xf:group>
 						<xf:group style="" class="w2tb_th" tagname="th">입사구분</xf:group>
 						<xf:group style="" class="w2tb_td" tagname="td">
@@ -491,11 +466,12 @@
 						</xf:group>
 						<xf:group style="" class="w2tb_th" tagname="th">소속</xf:group>
 						<xf:group style="" class="w2tb_td" tagname="td">
-							<xf:select1 disabledClass="w2selectbox_disabled" appearance="minimal" chooseOptionLabel="&amp;nbsp;" direction="auto" chooseOption="" displayMode="label" optionOrder="false" id="sbx_Org" ref="data:dlt_memberBasic.ORG_CD" style="height:24px;" allOption="" disabled="false" submenuSize="auto" renderType="component">
+							<xf:select1 disabledClass="w2selectbox_disabled" appearance="minimal" chooseOptionLabel="&amp;nbsp;" direction="auto" chooseOption=""
+							displayMode="label" optionOrder="false" id="sbx_Org" ref="data:dlt_memberBasic.ORG_ID" style="height:24px;" allOption="" disabled="false" submenuSize="auto" renderType="component">
 								<xf:choices>
 									<xf:itemset nodeset="data:dlt_memberOrganization">
 										<xf:label ref="ORG_NM"></xf:label>
-										<xf:value ref="ORG_CD"></xf:value>
+										<xf:value ref="ORG_ID"></xf:value>
 									</xf:itemset>
 								</xf:choices>
 							</xf:select1>

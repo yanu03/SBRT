@@ -42,7 +42,7 @@ public interface CommonMapper {
 	public List<Map> selectCodeList(Map param);
 
 	// 사용자별 즐겨찾기 리스트
-	public List<Map> selectFavListByEmpCd(String empCd);
+	public List<Map> selectFavListByEmpCd(String userId);
 
 	/**
 	 * insert bmFavorite

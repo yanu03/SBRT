@@ -13,14 +13,19 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 
 import kr.tracom.cm.domain.Member.MemberService;
+import kr.tracom.util.Constants;
 import kr.tracom.util.PageURIUtil;
+import kr.tracom.util.Result;
 import kr.tracom.util.UserInfo;
+
+import kr.tracom.util.Constants;
 
 @Controller
 public class InitController {

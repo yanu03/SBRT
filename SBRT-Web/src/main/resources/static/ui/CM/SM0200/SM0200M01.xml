@@ -350,12 +350,22 @@
 	 */
 	scwin.callbackProgramSearch = function(data) {
 		var rowIndex = dlt_menu.getRowPosition();
-		dlt_menu.setBroadcast(false);
-		dlt_menu.setCellData(rowIndex, "PROG_CD", data.PROG_CD);
-		dlt_menu.setCellData(rowIndex, "PROG_NM", data.PROG_NM);
-		dlt_menu.setCellData(rowIndex, "PROG_GRP_CD", data.PROG_GRP_CD);
-		dlt_menu.setCellData(rowIndex, "PROGRAM_GROUP_NM", data.PROGRAM_GROUP_NM);
-		dlt_menu.setBroadcast(true, true);
+		if(data==null){
+			dlt_menu.setBroadcast(false);
+			dlt_menu.setCellData(rowIndex, "PROG_CD", "");
+			dlt_menu.setCellData(rowIndex, "PROG_NM", "");
+			dlt_menu.setCellData(rowIndex, "PROG_GRP_CD", "");
+			dlt_menu.setCellData(rowIndex, "PROGRAM_GROUP_NM", "");
+			dlt_menu.setBroadcast(true, true);
+		}
+		else{
+			dlt_menu.setBroadcast(false);
+			dlt_menu.setCellData(rowIndex, "PROG_CD", data.PROG_CD);
+			dlt_menu.setCellData(rowIndex, "PROG_NM", data.PROG_NM);
+			dlt_menu.setCellData(rowIndex, "PROG_GRP_CD", data.PROG_GRP_CD);
+			dlt_menu.setCellData(rowIndex, "PROGRAM_GROUP_NM", data.PROGRAM_GROUP_NM);
+			dlt_menu.setBroadcast(true, true);
+		}
 	}
 
 	scwin.grd_menu_oneditkeyup = function(info) {
