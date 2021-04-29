@@ -31,6 +31,7 @@
 						<w2:column id="chk" name="선택" dataType="text" ignoreStatus="true"></w2:column>
 						<w2:column id="AUTH_CD" name="권한코드" dataType="text"></w2:column>
 						<w2:column id="AUTH_NM" name="권한명" dataType="text"></w2:column>
+						<w2:column id="SYSTEM_BIT" name="시스템비트" dataType="text"></w2:column>
 						<w2:column id="USE_YN" name="사용여부" dataType="text" defaultValue=""></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
 						<w2:column id="AUTH_CD_ORG" name="name6" dataType="text" importFormatter="scwin.setAUTH_CD_ORG"></w2:column>
@@ -41,8 +42,8 @@
 					<w2:columnInfo>
 						<w2:column id="chk" name="선택" dataType="text" ignoreStatus="true"></w2:column>
 						<w2:column id="AUTH_CD" name="권한코드" dataType="text"></w2:column>
-						<w2:column id="USER_ID" name="사원코드" dataType="text"></w2:column>
-						<w2:column id="USER_NM" name="사원명" dataType="text"></w2:column>
+						<w2:column id="USER_ID" name="사용자코드" dataType="text"></w2:column>
+						<w2:column id="USER_NM" name="사용자명" dataType="text"></w2:column>
 						<w2:column id="ORG_NM" name="조직" dataType="text"></w2:column>
 						<w2:column id="ASSIGNED_TASK" name="담당업무" dataType="text"></w2:column>
 					</w2:columnInfo>
@@ -72,11 +73,11 @@
 					<w2:keyInfo>
 						<w2:key id="STATUS" name="STATUS" dataType="text"></w2:key>
 						<w2:key id="ICNT_AUTH" name="권한_입력건수" dataType="text"></w2:key>
-						<w2:key id="ICNT_MEM" name="권한별사원_입력건수" dataType="text"></w2:key>
+						<w2:key id="ICNT_MEM" name="권한별사용자_입력건수" dataType="text"></w2:key>
 						<w2:key id="UCNT_AUTH" name="권한_수정건수" dataType="text"></w2:key>
-						<w2:key id="UCNT_MEM" name="권한별사원_수정건수" dataType="text"></w2:key>
+						<w2:key id="UCNT_MEM" name="권한별사용자_수정건수" dataType="text"></w2:key>
 						<w2:key id="DCNT_AUTH" name="권한_삭제건수" dataType="text"></w2:key>
-						<w2:key id="DCNT_MEM" name="권한별사원_삭제건수" dataType="text"></w2:key>
+						<w2:key id="DCNT_MEM" name="권한별사용자_삭제건수" dataType="text"></w2:key>
 						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
@@ -120,6 +121,9 @@
 	 * 초기 스크립트 수행 함수 정의
 	 */
 	scwin.onpageload = function() {
+		var systemOptions = [{ code : "SYSTEM_BIT", compID : "grd_authority:SYSTEM_BIT"}];
+		com.setSystemCode(systemOptions);
+		
 		com.executeSubmission(sbm_authoritySearchItem);
 		com.setEnterKeyEvent(tbl_search, scwin.btn_search_onclick);
 		com.setGridViewDelCheckBox([grd_authority, grd_authorityMember]);
@@ -193,7 +197,7 @@
 		var detailCodeModifyCnt = dlt_authorityMember.getModifiedIndex().length;
 		
 		if (detailCodeModifyCnt > 0) {
-			com.confirm("권한별 등록사원 정보를 저장하시겠습니까?", "scwin.indexChgSaveCode");
+			com.confirm("권한별 등록사용자 정보를 저장하시겠습니까?", "scwin.indexChgSaveCode");
 		} else {
 			var status_row = dlt_authority.getRowStatus(row);
 	
@@ -229,7 +233,7 @@
 	};
 	
 	/**
-	 * 권한별 등록사원 조회의 콜백메소드
+	 * 권한별 등록사용자 조회의 콜백메소드
 	 * 건수 조회, ReadOnly 그리드뷰 컬럼색 변경. ReadOnly속성을 설정한다.  
 	 */
 	scwin.sbm_authorityMember_submitdone = function(e) {
@@ -256,7 +260,7 @@
 		if (grd_authorityMember.getAllVisibleData() == "") {
 			dlt_authority.deleteRows(grd_authority.getCheckedIndex("chk"));
 		} else {
-			com.alert("권한별 등록사원부터 삭제하셔야 합니다.");
+			com.alert("권한별 등록사용자부터 삭제하셔야 합니다.");
 		}
 	};
 	
@@ -269,12 +273,12 @@
 	};
 	
 	/**
-	 * 권한등록사원 리스트에서 등록 버튼클릭시 수행되며, 사원등록 페이지를 layer popup으로 표현해준다.
+	 * 권한등록사용자 리스트에서 등록 버튼클릭시 수행되며, 사용자등록 페이지를 layer popup으로 표현해준다.
 	 */
 	scwin.btn_addAuthMemebr_onclick = function() {
 		var focusRowIdx = scwin.idxRowAuthority;
 		if (focusRowIdx == -1) {
-			com.alert("권한 선택후 권한별 등록사원을 등록하실 수 있습니다.");
+			com.alert("권한 선택후 권한별 등록사용자을 등록하실 수 있습니다.");
 		} else {
 			var rowStatus = dlt_authority.getRowStatus(focusRowIdx);
 			if (rowStatus == "C") {
@@ -294,7 +298,7 @@
 	};
 	
 	/**
-	 * 권한 등록 사원 리스트에서 취소 버튼클릭시 데이타를 이전 상태로 바꾸고 추가된 것들은 삭제한다.
+	 * 권한 등록 사용자 리스트에서 취소 버튼클릭시 데이타를 이전 상태로 바꾸고 추가된 것들은 삭제한다.
 	 */
 	scwin.btn_cancelAuthMember_onclick = function() {
 		dlt_authorityMember.undoAll();
@@ -316,11 +320,11 @@
 	
 		if (modifiedAuthIdx.length > 0) {	
 			if (com.validateGridView(grd_authority, valAuthInfo) && com.validateGridView(grd_authorityMember, valMemInfo)) {
-				com.confirm("해당 권한에 대한 권한별 등록사원 정보도 함께 저장됩니다. \n 진행하시겠습니까? ", "scwin.saveAuth");
+				com.confirm("해당 권한에 대한 권한별 등록사용자 정보도 함께 저장됩니다. \n 진행하시겠습니까? ", "scwin.saveAuth");
 			}
 		} else if (modifiedMemIdex.length > 0) {
 			if (com.validateGridView(grd_authorityMember, valMemInfo)) {
-				com.confirm("해당 권한에 대한 권한별 등록사원 정보도 함께 저장됩니다. \n 진행하시겠습니까? ", "scwin.saveAuthMember");
+				com.confirm("해당 권한에 대한 권한별 등록사용자 정보도 함께 저장됩니다. \n 진행하시겠습니까? ", "scwin.saveAuthMember");
 			}
 		} else {
 			com.alert("저장할 데이터가 없습니다.");
@@ -328,7 +332,7 @@
 	};
 	
 	/**
-	 * 권한 리스트 및 권한별 등록사원리스트에서 rowStatus C,U,D,E 상태(Modify)인것만 저장한다.
+	 * 권한 리스트 및 권한별 등록사용자리스트에서 rowStatus C,U,D,E 상태(Modify)인것만 저장한다.
 	 */
 	scwin.saveAuth = function(rtn) { 
 		if (rtn) {
@@ -337,7 +341,7 @@
 	};
 	
 	/**
-	 * 권한별 등록사원리스트에서 rowStatus C,U,D,E 상태(Modify)인것만 저장한다.
+	 * 권한별 등록사용자리스트에서 rowStatus C,U,D,E 상태(Modify)인것만 저장한다.
 	 */
 	scwin.saveAuthMember = function(rtn) {
 		if (rtn) {
@@ -346,7 +350,7 @@
 	};
 	
 	/**
-	 * 권한 부여 사원 입력, 삭제 submitdone 이벤트 
+	 * 권한 부여 사용자 입력, 삭제 submitdone 이벤트 
 	 */
 	scwin.sbm_saveAuthorityMember_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
@@ -356,7 +360,7 @@
 	};
 	
 	/**
-	 * 권한리스트 및 권한별 사원 리스트 저장 후 callback
+	 * 권한리스트 및 권한별 사용자 리스트 저장 후 callback
 	 */
 	scwin.sbm_saveAuthAll_submitdone = function(e) {
 		var rsCode = com.getResultCode(e)
@@ -484,6 +488,9 @@
 							<w2:column id="column7" blockSelect="false" style="height:25px;" width="180" inputType="text" value="권한명"
 								displayMode="label">
 							</w2:column>
+							<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:25px" id="column13" value="시스템"
+								blockSelect="false" displayMode="label">
+							</w2:column>
 							<w2:column id="column3" blockSelect="false" style="height:25px;" width="80" inputType="text" value="사용여부"
 								displayMode="label">
 							</w2:column>
@@ -495,11 +502,14 @@
 							<w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" displayMode="label"
 								fixColumnWidth="true">
 							</w2:column>
-							<w2:column id="AUTH_CD" blockSelect="false" readOnly="true" style="height:25px;" width="80"
-								inputType="text" displayMode="label" class="req">
+							<w2:column id="AUTH_CD" blockSelect="false" readOnly="true" style="height:25px;" width="80" inputType="text"
+								displayMode="label" class="req">
 							</w2:column>
 							<w2:column id="AUTH_NM" blockSelect="false" style="height:25px;" width="180" inputType="text"
 								displayMode="label" textAlign="left" readOnly="" class="req">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="100" inputType="select" style="height:25px" id="SYSTEM_BIT" value=""
+								blockSelect="false" displayMode="label">
 							</w2:column>
 							<w2:column id="USE_YN" blockSelect="false" trueValue="Y" falseValue="N" style="height:25px;" width="80"
 								inputType="checkbox" valueType="other">
@@ -509,7 +519,7 @@
 					</w2:gBody>
 				</w2:gridView></xf:group>
 		<xf:group id="" style="" class="section"><xf:group id="" style="" class="defaultbox">
-				<w2:textbox id="" style="" class="df_tt fl" label="권한별 등록사원"></w2:textbox>
+				<w2:textbox id="" style="" class="df_tt fl" label="권한별 등록사용자"></w2:textbox>
 				<xf:group id="" style="height:22px;" class="fr">
 					<w2:span id="spn_authorityMemberCnt" style="" class="df_total" label="" displayFormat="건"></w2:span>
 					<xf:group id="" style="" class="ml5 fr">
@@ -532,8 +542,8 @@
 						<w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" value=""
 							displayMode="label" fixColumnWidth="true">
 						</w2:column>
-						<w2:column id="column9" blockSelect="false" style="height:25px;" width="70" inputType="text" value="사원코드" displayMode="label"></w2:column>
-						<w2:column id="column7" blockSelect="false" style="height:25px;" width="70" inputType="text" value="사원명" displayMode="label"></w2:column>
+						<w2:column id="column9" blockSelect="false" style="height:25px;" width="70" inputType="text" value="사용자코드" displayMode="label"></w2:column>
+						<w2:column id="column7" blockSelect="false" style="height:25px;" width="70" inputType="text" value="사용자명" displayMode="label"></w2:column>
 						<w2:column id="column3" blockSelect="false" style="height:25px;" width="100" inputType="text" value="조직" displayMode="label"></w2:column>
 						<w2:column id="column14" blockSelect="false" style="height:25px;" width="120" inputType="text" value="담당업무" displayMode="label">
 						</w2:column>

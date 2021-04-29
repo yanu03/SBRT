@@ -66,7 +66,7 @@ public class CommonController {
 		}
 		return result.getResult();
 	}
-
+	
 	/**
 	 * selectMenuList - 조회조건에 따른 메뉴 리스트를 조회한다.
 	 * 
@@ -110,7 +110,7 @@ public class CommonController {
 		}
 		return result.getResult();
 	}
-
+	
 	@RequestMapping("/common/selectCommonGroup")
 	public @ResponseBody Map<String, Object> selectCommonGroup(@RequestBody Map<String, Object> param) {
 		Result result = new Result();
@@ -246,6 +246,65 @@ public class CommonController {
 
 				if (i == size - 1) {
 					result.setData(dataIdPrefix + preCode, codeGrpList);
+				}
+			}
+
+			result.setMsg(result.STATUS_SUCESS, "공통코드 조회가 완료되었습니다.");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			result.setMsg(result.STATUS_ERROR, "공통코드 조회중 오류가 발생하였습니다.", ex);
+		}
+		return result.getResult();
+	}
+	
+	/**
+	 * GetCodeList - 시스템코드 조회 dma_commonCode : {CO_CD:"02,01", DATA_PREFIX:"dlt_code"} <String> CO_CD : 코드값,코드값 <String> DATA_PREFIX :
+	 * "Data객체의 ID prefix 없을 경우 dlt_systemCode_"
+	 * 
+	 * @date 2021.04.28
+	 * @param param {dma_commonCode : {CO_CD:"02,01", DATA_PREFIX:"dlt_code"}}
+	 * @author InswaveSystems
+	 * @example
+	 */
+	@RequestMapping("/common/selectSystemList")
+	public @ResponseBody Map<String, Object> selectSystemList(@RequestBody Map<String, Object> param) {
+		Result result = new Result();
+		Map systemMap;
+		String systemCd;
+		String dataIdPrefix;
+		String[] systemArr;
+		try {
+			systemMap = (Map) param.get("dma_systemCode");
+			systemCd = (String) systemMap.get("SYSTEM_CD");
+			dataIdPrefix = (String) systemMap.get("DATA_PREFIX");
+
+			if (dataIdPrefix == null) {
+				dataIdPrefix = "dlt_systemCode_";
+			}
+			systemArr = systemCd.split(",");
+			systemMap.put("SYSTEM", systemArr);
+
+			List systemList = commonService.selectSystemList(systemMap);
+
+			int size = systemList.size();
+			String preCode = "";
+			List systemGrpList = null;
+			for (int i = 0; i < size; i++) {
+				Map codeMap = (Map) systemList.remove(0);
+				String grp_cd = (String) codeMap.get("SYSTEM_CD");
+				if (!preCode.equals(grp_cd)) {
+					if (systemGrpList != null) {
+						result.setData(dataIdPrefix + preCode, systemGrpList);
+					}
+					preCode = grp_cd;
+					systemGrpList = new ArrayList();
+					systemGrpList.add(codeMap);
+				} else {
+					systemGrpList.add(codeMap);
+				}
+
+				if (i == size - 1) {
+					result.setData(dataIdPrefix + preCode, systemGrpList);
 				}
 			}
 

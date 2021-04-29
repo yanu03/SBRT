@@ -6,6 +6,7 @@
  */
 scwin.initMainLoad = function() {
 	$p.top().scwin.commonCodeList = [];
+	$p.top().scwin.systemCodeList = [];
 	wfm_side.getWindow().scwin.fn_getInitData();
 };
 

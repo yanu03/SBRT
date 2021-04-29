@@ -98,45 +98,6 @@ public class MainController {
 		return result.getResult();
 	}
 
-	
-	/**
-	 * ReleaseUpdate - 메인화면의 단축키 리스트를 조회 한다.
-	 * 
-	 * @date 2018.03.21
-	 * @param {} 
-	 * @returns 
-	 */
-	@RequestMapping("/main/selectShortcutList")
-	public @ResponseBody Map<String, Object> selectShortcutList(@RequestBody Map<String, Object> param) {
-		Result result = new Result();
-		Map dbParam = null;
-		String programCode = null;
-		try {
-			dbParam = (Map) param.get("dma_shortcut");
-			programCode = (String) dbParam.get("PROG_CD");
-			if (programCode == null) {
-				throw new NullPointerException("프로그램 코드가 누락되었습니다.");
-			}
-			result.setData("dlt_shortcutList", commonService.selectShortcutList(programCode));
-		} catch(Exception ex) {
-			result.setMsg(result.STATUS_ERROR, "단축키 조회 도중 오류가 발생하였습니다.", ex);
-		}
-		return result.getResult();
-	}
-
-	@RequestMapping("/main/updateShortcutList")
-	public @ResponseBody Map<String, Object> updateShortcutList(@RequestBody Map<String, Object> param) {
-		Result result = new Result();
-		try {
-			Map hash = commonService.updateShortcutList((List) param.get("dlt_updataShortcutList"));
-			result.setData("dma_shortcutMap", hash);
-			result.setMsg(result.STATUS_SUCESS, "단축키 정보가 업데이트 되었습니다. 입력 : " + (String) hash.get("ICNT") + "건, 수정 : " + (String) hash.get("UCNT") + "건, 삭제 : "
-					+ (String) hash.get("DCNT") + "건");
-		} catch(Exception ex) {
-			result.setMsg(result.STATUS_ERROR, "단축키 업데이트 도중 오류가 발생하였습니다.", ex);
-		}
-		return result.getResult();
-	}
 
 	/**
 	 * systemChange - 시스템 변환
@@ -155,8 +116,8 @@ public class MainController {
 		try {
 
 			map = (Map) param.get("dma_systemChange");
-
-			int changeSystem = (int)map.get("SYSTEM_BIT");
+	
+			int changeSystem = Integer.parseInt((String)map.get("SYSTEM_BIT"));
 			int SystemBit = (int)session.getAttribute("SYSTEM_BIT");
 	
 			if(SystemBit==Constants.SYSTEM_ALL) {

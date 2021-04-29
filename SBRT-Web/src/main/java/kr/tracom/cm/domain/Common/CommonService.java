@@ -75,6 +75,17 @@ public class CommonService {
 	}
 
 	/**
+	 * 시스템코드 조회
+	 * 
+	 * @param param Client 전달한 데이터 맵 객체
+	 */
+
+	public List<Map> selectSystemList(Map param) {
+		return commonMapper.selectSystemList(param);
+	}
+	
+	
+	/**
 	 * 공통관리 조회(검색어)
 	 * 
 	 * @param param Client 전달한 데이터 맵 객체
@@ -191,63 +202,6 @@ public class CommonService {
 	}
 
 	/**
-	 * select 사용자별 즐겨찾기 리스트
-	 * 
-	 * @date 2016. 8. 24.
-	 * @param String #{USER_ID}
-	 * @author InswaveSystems
-	 */
-
-	public List selectFavListByEmpCd(String userId) {
-		return commonMapper.selectFavListByEmpCd(userId);
-	}
-
-	/**
-	 * insert bmFavorite
-	 * 
-	 * @date 2016. 8. 24.
-	 * @param <MAP> #{USER_ID}, #{MENU_CD}
-	 * @author InswaveSystems
-	 */
-	public int insertBmFavorite(Map param) {
-		return commonMapper.insertBmFavorite(param);
-	}
-
-	/**
-	 * delete bmFavorite
-	 * 
-	 * @date 2016. 8. 24.
-	 * @param <MAP> #{USER_ID}, #{MENU_CD}
-	 * @author InswaveSystems
-	 */
-	public int deleteBmFavorite(Map param) {
-		return commonMapper.insertBmFavorite(param);
-	}
-
-	/**
-	 * STATUS의 값에 따라 insert,delete,update 실행.
-	 * 
-	 * @date 2016. 8. 24.
-	 * @param <MAP> #{USER_ID}, #{MENU_CD}, STATUS:[I|D|U]
-	 * @author InswaveSystems
-	 */
-	public int updateBmFavorite(Map param) {
-		int rs = 0;
-		String status = (String) param.get("STATUS");
-		if (status != null) {
-			if (status.equals("I")) {
-				commonMapper.deleteBmFavorite(param);
-				rs = commonMapper.insertBmFavorite(param);
-			} else if (status.equals("D")) {
-				rs = commonMapper.deleteBmFavorite(param);
-			} else if (status.equals("U")) {
-				rs = commonMapper.updateBmFavorite(param);
-			}
-		}
-		return rs;
-	}
-
-	/**
 	 * 메뉴관리정보 삭제시 하위의 메뉴 접근 데이터를 변경(등록, 수정, 삭제)한다.
 	 * 
 	 * @param param Client 전달한 데이터 리스트 객체
@@ -305,34 +259,4 @@ public class CommonService {
 		return result;
 	}
 
-
-	public List selectShortcutList(String programCd) {
-		return commonMapper.selectShortcutList(programCd);
-	}
-
-
-	public Map updateShortcutList(List updateList) {
-		int iCnt = 0;
-		int uCnt = 0;
-		int dCnt = 0;		
-		for (int i = 0; i < updateList.size(); i++) {
-			Map data = (Map) updateList.get(i);
-			String rowStatus = (String) data.get("rowStatus");
-			System.out.println("업데이트 단축키 :: " + data);
-			if (rowStatus.equals("C")) {
-				iCnt += commonMapper.insertShortcut(data);
-			} else if (rowStatus.equals("U")) {
-				uCnt += commonMapper.updateShortcut(data);
-			} else if (rowStatus.equals("D") || rowStatus.equals("E")) {
-				dCnt += commonMapper.deleteShortcut(data);
-			}
-		}
-		Map result = new HashMap();
-		result.put("STATUS", "S");
-		result.put("ICNT", String.valueOf(iCnt));
-		result.put("UCNT", String.valueOf(uCnt));
-		result.put("DCNT", String.valueOf(dCnt));
-
-		return result;
-	}
 }

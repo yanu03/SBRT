@@ -93,7 +93,7 @@ public class LoginController {
 				session.setAttribute("USER_NM", (String) memberMap.get("USER_NM"));
 				session.setAttribute("SYSTEM_BIT", memberMap.get("SYSTEM_BIT"));
 				
-				int systemBit = (int)memberMap.get("SYSTEM_BIT");
+				int systemBit = Integer.parseInt((String)memberMap.get("SYSTEM_BIT"));
 				if(systemBit==Constants.SYSTEM_ALL) {
 					session.setAttribute("CUR_SYSTEM", Constants.SYSTEM_BIS);
 				}
