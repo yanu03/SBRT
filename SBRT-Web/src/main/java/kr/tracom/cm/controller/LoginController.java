@@ -18,6 +18,7 @@ import kr.tracom.cm.domain.Common.CommonService;
 import kr.tracom.cm.domain.Login.LoginService;
 import kr.tracom.util.Result;
 import kr.tracom.util.UserInfo;
+import kr.tracom.util.Constants;
 
 @Controller
 public class LoginController {
@@ -91,6 +92,14 @@ public class LoginController {
 				session.setAttribute("USER_ID", (String) memberMap.get("USER_ID"));
 				session.setAttribute("USER_NM", (String) memberMap.get("USER_NM"));
 				session.setAttribute("SYSTEM_BIT", memberMap.get("SYSTEM_BIT"));
+				
+				int systemBit = Integer.parseInt((String)memberMap.get("SYSTEM_BIT"));
+				if(systemBit==Constants.SYSTEM_ALL) {
+					session.setAttribute("CUR_SYSTEM", Constants.SYSTEM_BIS);
+				}
+				else {
+					session.setAttribute("CUR_SYSTEM", systemBit);
+				}
 				
 				// 로그인한 아이디가 시스템 관리자인지 여부를 체크한다.
 				// 시스템 관리자 아이디는 websquareConfig.properties 파일의 system.admin.id 속성에 정의하면 된다.

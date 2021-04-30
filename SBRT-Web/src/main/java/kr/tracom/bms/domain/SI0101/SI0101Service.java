@@ -12,11 +12,15 @@ public class SI0101Service {
 	@Autowired
 	private SI0101Mapper si0101Mapper;
 	
-	public List selectGarage() {
-		return si0101Mapper.selectGarage();
+	public List SI0101G0R0() {
+		return si0101Mapper.SI0101G0R0();
 	}
 	
-	public Map saveGarage(List param) {
+	public List SI0101G0R1() {
+		return si0101Mapper.SI0101G0R1();
+	}
+	
+	public Map SI0101G0S0(List param) {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;		
@@ -26,11 +30,11 @@ public class SI0101Service {
 			Map data = (Map) param.get(i);
 			String rowStatus = (String) data.get("rowStatus");
 			if (rowStatus.equals("C")) {
-				iCnt += si0101Mapper.insertGarage(data);
+				iCnt += si0101Mapper.SI0101G0I0(data);
 			} else if (rowStatus.equals("U")) {
-				uCnt += si0101Mapper.updateGarage(data);
+				uCnt += si0101Mapper.SI0101G0U0(data);
 			} else if (rowStatus.equals("D")) {
-				dCnt += si0101Mapper.deleteGarage(data);
+				dCnt += si0101Mapper.SI0101G0D0(data);
 			}
 		}
 		

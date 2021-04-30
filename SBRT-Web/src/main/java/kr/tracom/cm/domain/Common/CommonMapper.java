@@ -40,36 +40,9 @@ public interface CommonMapper {
 
 	// 공통코드
 	public List<Map> selectCodeList(Map param);
-
-	// 사용자별 즐겨찾기 리스트
-	public List<Map> selectFavListByEmpCd(String empCd);
-
-	/**
-	 * insert bmFavorite
-	 * 
-	 * @date 2016. 8. 24.
-	 * @param <MAP> #{USER_ID}, #{MENU_CD}
-	 * @author InswaveSystems
-	 */
-	public int insertBmFavorite(Map param);
-
-	/**
-	 * delete bmFavorite
-	 * 
-	 * @date 2016. 8. 24.
-	 * @param <MAP> #{USER_ID}, #{MENU_CD}
-	 * @author InswaveSystems
-	 */
-	public int deleteBmFavorite(Map param);
-
-	/**
-	 * update bmFavorite
-	 * 
-	 * @date 2016. 8. 24.
-	 * @param <MAP> #{USER_ID}, #{MENU_CD}
-	 * @author InswaveSystems
-	 */
-	public int updateBmFavorite(Map param);
+	
+	//시스템코드
+	public List<Map> selectSystemList(Map param);
 
 	// MAIN SETTING 관리
 	public int insertBmMainSetting(Map param);
@@ -96,43 +69,4 @@ public interface CommonMapper {
 	 */
 	public int deleteCommonCodeAll(Map param);
 
-	/**
-	 * 프로그램 코드로 단축키 조회하기
-	 * 
-	 * @date 2019. 03. 21.
-	 * @param
-	 * @returns
-	 * @author InswaveSystems
-	 */
-	public List selectShortcutList(String programCd);
-
-	/**
-	 * 프로그램 코드로 단축키 조회하기
-	 * 
-	 * @date 2019. 03. 21.
-	 * @param
-	 * @returns
-	 * @author InswaveSystems
-	 */
-	public int insertShortcut(Map param);
-
-	/**
-	 * 프로그램 코드로 단축키 조회하기
-	 * 
-	 * @date 2019. 03. 21.
-	 * @param
-	 * @returns
-	 * @author InswaveSystems
-	 */
-	public int updateShortcut(Map param);
-
-	/**
-	 * 프로그램 코드로 단축키 조회하기
-	 * 
-	 * @date 2019. 03. 21.
-	 * @param
-	 * @returns
-	 * @author InswaveSystems
-	 */
-	public int deleteShortcut(Map param);
 }

@@ -34,6 +34,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<insert id="insertOrganizaionBasic" parameterType="Map">
+	<selectKey keyProperty="ORG_ID" resultType="String" order="BEFORE">
+	          SELECT CONCAT('OG', LPAD(NEXTVAL(SEQ_BMS_ORG_MST_0), 8, '0'))
+	</selectKey>
 	INSERT INTO BMS_ORG_MST (ORG_ID, ORG_DIV,  ORG_NM, ORG_ENM, REP_NM, COMP_REG_NO, ADDR, PHONE, FAX, EMAIL, REMARK, UPD_DTM, UPD_ID)
 	VALUES (#{ORG_ID}, #{ORG_DIV}, #{ORG_NM}, #{ORG_ENM}, #{REP_NM}, #{COMP_REG_NO}
 				   , #{ADDR}, #{PHONE}, #{FAX}, #{EMAIL}, #{REMARK}, SYSDATE(), #{USER_ID})

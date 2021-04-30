@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.bms.domain.SI0101.SI0101Mapper">
+
+<select id="SI0101G0R0" resultType="Map">
+	select GRG_ID, GRG_NM, OWNER_TYPE, ADDR, PHONE, FAX, EMAIL, CNG_YN, ELEC_YN, LEGAL_AREA,
+			SECURE_AREA, APPL_ST_DT, APPL_ED_DT, REMARK, GPS_X, GPS_Y
+	from BMS_GRG_MST
+
+</select>
+
+<select id="SI0101G0R1" resultType="Map">
+	select BGR.GRG_ID,BGR.GPS_X, BGR.GPS_Y
+	from BMS_GRG_MST BGM, BMS_GRG_RDS_INFO BGR
+	where BGM.GRG_ID = BGR.GRG_ID
+</select>
+
+<insert id="SI0101G0I0" parameterType="Map">
+<!-- 	insert into BMS_GRG_MST(GRG_ID, GRG_NM, OWNER_TYPE, ADDR, PHONE, FAX, EMAIL, CNG_YN, ELEC_YN, LEGAL_AREA,
+			SECURE_AREA, APPL_ST_DT, APPL_ED_DT, REMARK, GPS_X, GPS_Y)
+	values (#{GRG_ID}, #{GRG_NM}, #{OWNER_TYPE}, #{ADDR}, #{PHONE}, #{FAX}, #{EMAIL}, #{CNG_YN}, #{ELEC_YN}, #{LEGAL_AREA},
+			#{SECURE_AREA}, #{APPL_ST_DT}, #{APPL_ED_DT}, #{REMARK}, #{GPS_X}, #{GPS_Y})
+ -->
+		<selectKey keyProperty="corpId" resultType="String" order="BEFORE">
+          SELECT CONCAT('GR', LPAD(NEXTVAL(SEQ_BMS_GRG_MST_0), 8, '0'))
+       </selectKey>
+	insert into BMS_GRG_MST(GRG_ID, GRG_NM, OWNER_TYPE, ADDR, PHONE, FAX, EMAIL, CNG_YN, ELEC_YN, LEGAL_AREA,
+			SECURE_AREA, APPL_ST_DT, APPL_ED_DT, REMARK)
+	values (#{GRG_ID}, #{GRG_NM}, #{OWNER_TYPE}, #{ADDR}, #{PHONE}, #{FAX}, #{EMAIL}, #{CNG_YN}, #{ELEC_YN}, #{LEGAL_AREA},
+			#{SECURE_AREA}, #{APPL_ST_DT}, #{APPL_ED_DT}, #{REMARK})
+</insert>
+
+<update id="SI0101G0U0" parameterType="Map">
+<!-- 	update BMS_GRG_MST
+	set GRG_NM = #{GRG_NM}, OWNER_TYPE = #{OWNER_TYPE}, ADDR = #{ADDR}, PHONE = #{PHONE}, FAX = #{FAX},
+		EMAIL = #{EMAIL}, CNG_YN = #{CNG_YN}, ELEC_YN =  #{ELEC_YN}, LEGAL_AREA = #{LEGAL_AREA}, SECURE_AREA = #{SECURE_AREA},
+		APPL_ST_DT = #{APPL_ST_DT}, APPL_ED_DT = #{APPL_ED_DT}, REMARK = #{REMARK}, #{GPS_X}, #{GPS_Y}
+	where GRG_ID = #{GRG_ID}
+ -->
+ 
+ update BMS_GRG_MST
+	set GRG_NM = #{GRG_NM}, OWNER_TYPE = #{OWNER_TYPE}, ADDR = #{ADDR}, PHONE = #{PHONE}, FAX = #{FAX},
+		EMAIL = #{EMAIL}, CNG_YN = #{CNG_YN}, ELEC_YN =  #{ELEC_YN}, LEGAL_AREA = #{LEGAL_AREA}, SECURE_AREA = #{SECURE_AREA},
+		APPL_ST_DT = #{APPL_ST_DT}, APPL_ED_DT = #{APPL_ED_DT}, REMARK = #{REMARK}
+	where GRG_ID = #{GRG_ID}
+</update>
+
+<delete id="SI0101G0D0" parameterType="Map">
+	delete
+	from BMS_GRG_MST
+	where GRG_ID = #{GRG_ID}
+
+</delete>
+
+</mapper>
