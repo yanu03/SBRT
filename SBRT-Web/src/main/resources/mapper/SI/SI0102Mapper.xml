@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.bms.domain.SI0102.SI0102Mapper">
+
+<select id="SI0102G0R0" resultType="Map">
+	<!--  select COMP_ID, AREA, COMP_NM, COMP_ENM, REP_NM, COMP_REG_NO, ADDR, GPS_X, GPS_Y,TM_X, TM_Y,
+		   PHONE, FAX, EMAIL, DRV_CNT, SVC_ROUT_CNT, LIC_VHC_CNT, SPR_VHC_CNT, REMARK
+	from BMS_TRANSCOMP_MST -->
+	
+	select COMP_ID, AREA, COMP_NM, REP_NM, COMP_REG_NO, ADDR,
+		   PHONE, FAX, EMAIL, DRV_CNT, SVC_ROUT_CNT, LIC_VHC_CNT, SPR_VHC_CNT, REMARK
+	from BMS_TRANSCOMP_MST
+</select>
+
+<select id="SI0102G0R1" resultType="Map">
+	SELECT CONCAT('CP', LPAD(NEXTVAL(SEQ_BMS_TRANSCOMP_MST_0), 8, '0')) AS 'SEQ'
+</select>
+
+<insert id="SI0102G0I0" parameterType="Map">
+<!-- 	<selectKey keyProperty="corpId" resultType="String" order="BEFORE">
+          SELECT CONCAT('CP', LPAD(NEXTVAL(SEQ_BMS_TRANSCOMP_MST_0), 8, '0'))
+       </selectKey>
+ -->
+	<!-- insert into BMS_TRANSCOMP_MST(COMP_ID, AREA, COMP_NM, COMP_ENM, REP_NM, COMP_REG_NO, ADDR, GPS_X, GPS_Y,TM_X, TM_Y,
+		   PHONE, FAX, EMAIL, DRV_CNT, SVC_ROUT_CNT, LIC_VHC_CNT, SPR_VHC_CNT, REMARK)
+	values (#{COMP_ID}, #{AREA}, #{COMP_NM}, #{COMP_ENM}, #{REP_NM}, #{COMP_REG_NO}, #{ADDR}, #{GPS_X}, #{GPS_Y},#{TM_X}, #{TM_Y},
+		   #{PHONE}, #{FAX}, #{EMAIL}, #{DRV_CNT}, #{SVC_ROUT_CNT}, #{LIC_VHC_CNT}, #{SPR_VHC_CNT}, #{REMARK}) -->
+	insert into BMS_TRANSCOMP_MST(COMP_ID, AREA, COMP_NM, COMP_ENM, REP_NM, COMP_REG_NO, ADDR,
+		   PHONE, FAX, EMAIL, DRV_CNT, SVC_ROUT_CNT, LIC_VHC_CNT, SPR_VHC_CNT, REMARK, UPD_DTM, 
+		   GPS_X, GPS_Y, TM_X, TM_Y )
+	values (#{COMP_ID}, #{AREA}, #{COMP_NM}, #{COMP_ENM}, #{REP_NM}, #{COMP_REG_NO}, #{ADDR},
+		   #{PHONE}, #{FAX}, #{EMAIL}, #{DRV_CNT}, #{SVC_ROUT_CNT}, #{LIC_VHC_CNT}, #{SPR_VHC_CNT}, #{REMARK}, sysdate(),
+		   1, 1, 1, 1)
+</insert>
+
+<update id="SI0102G0U0" parameterType="Map">
+	update BMS_TRANSCOMP_MST
+	set AREA = #{AREA}
+	,	COMP_NM = #{COMP_NM}
+	,	COMP_ENM = #{COMP_ENM}
+	,	REP_NM = #{REP_NM}
+	,	COMP_REG_NO = #{COMP_REG_NO}
+	,	ADDR = #{ADDR}
+	,	PHONE = #{PHONE} 
+	,	FAX = #{FAX}
+	,	EMAIL = #{EMAIL}
+	,	DRV_CNT = #{DRV_CNT}
+	,	SVC_ROUT_CNT = #{SVC_ROUT_CNT}
+	,	LIC_VHC_CNT = #{LIC_VHC_CNT}
+	,	SPR_VHC_CNT = #{SPR_VHC_CNT}
+	,	REMARK = #{REMARK}
+	,	UPD_DTM = sysdate()
+	,	UPD_ID = #{UPD_ID}
+	where COMP_ID = #{COMP_ID}
+</update>
+
+<delete id="SI0102G0D0" parameterType="Map">
+	delete
+	from BMS_TRANSCOMP_MST
+	where COMP_ID = #{COMP_ID}
+</delete>
+
+
+</mapper>

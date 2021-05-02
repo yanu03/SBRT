@@ -2042,7 +2042,7 @@ com.validateGroup = function(grpObj, valInfoArr, tacObj, tabId) {
 		error : []
 	// { columnId: "", comObjId: "", columnNam : "", message: "" }
 	};
-
+	
 	try {
 		for ( var objIdx in objArr) {
 			var obj = objArr[objIdx];
@@ -2066,7 +2066,14 @@ com.validateGroup = function(grpObj, valInfoArr, tacObj, tabId) {
 			} else {
 				var tempIdArr = obj.getID().split("_");
 				if (obj.getPluginName() !== "editor") {
-					if ((typeof obj.getValue === "function") && (typeof obj.getValue().trim === "function")) {
+					if (obj.formatter.type === "number" ) {
+						if ((obj.realValue === null) || obj.realValue === "" || obj.realValue === " " ) {
+							obj.realValue = 0;
+							obj.setValue(obj.realValue);
+						}
+					}
+					
+					if ((obj.getValue != null) &&(typeof obj.getValue === "function") && (typeof obj.getValue().trim === "function")) {
 						value = obj.getValue().trim();
 					} else {
 						continue;
