@@ -33,6 +33,7 @@
 						<w2:column id="MENU_NM" name="메뉴명" dataType="text"></w2:column>
 						<w2:column id="LEVEL" name="메뉴레벨" dataType="number"></w2:column>
 						<w2:column id="PARENT_MENU_CD" name="부모메뉴코드" dataType="text"></w2:column>
+						<w2:column id="SYSTEM_BIT" name="시스템비트" dataType="number"></w2:column>
 						<w2:column id="PROG_GRP_CD" name="프로그램그룹코드" dataType="text"></w2:column>
 						<w2:column id="PROGRAM_GROUP_NM" name="프로그램그룹명" dataType="text"></w2:column>
 						<w2:column id="PROG_CD" name="프로그램코드" dataType="text"></w2:column>
@@ -83,6 +84,9 @@
 		com.executeSubmission(sbm_menuSearchItem, {});
 		com.setEnterKeyEvent(tbl_search, scwin.btn_search_onclick);
 		com.setGridViewDelCheckBox([grd_menu]);
+		
+		var systemOptions = [{ code : "SYSTEM_BIT", compID : "grd_menu:SYSTEM_BIT"}];
+		com.setSystemCode(systemOptions);
 	};
 
 	scwin.onpageunload = function() {
@@ -231,7 +235,7 @@
 	 * 새로 추가되는 메뉴의 메뉴 코드를 반환한다. ( LEVEL 3일 경우 하위메뉴 생성 )
 	 */
 	scwin.getInsertRowMenuCd = function(parentMenuCd, menuLevel, isBottom) {
-	debugger;
+	
 		var prefix = 'MN00';
 		var menuCdArr = dlt_menu.getMatchedColumnData("PARENT_MENU_CD", parentMenuCd, "MENU_CD", true, 0, dlt_menu.getTotalRow());
 		if (menuCdArr.length > 0) {
@@ -350,12 +354,22 @@
 	 */
 	scwin.callbackProgramSearch = function(data) {
 		var rowIndex = dlt_menu.getRowPosition();
-		dlt_menu.setBroadcast(false);
-		dlt_menu.setCellData(rowIndex, "PROG_CD", data.PROG_CD);
-		dlt_menu.setCellData(rowIndex, "PROG_NM", data.PROG_NM);
-		dlt_menu.setCellData(rowIndex, "PROG_GRP_CD", data.PROG_GRP_CD);
-		dlt_menu.setCellData(rowIndex, "PROGRAM_GROUP_NM", data.PROGRAM_GROUP_NM);
-		dlt_menu.setBroadcast(true, true);
+		if(data==null){
+			dlt_menu.setBroadcast(false);
+			dlt_menu.setCellData(rowIndex, "PROG_CD", "");
+			dlt_menu.setCellData(rowIndex, "PROG_NM", "");
+			dlt_menu.setCellData(rowIndex, "PROG_GRP_CD", "");
+			dlt_menu.setCellData(rowIndex, "PROGRAM_GROUP_NM", "");
+			dlt_menu.setBroadcast(true, true);
+		}
+		else{
+			dlt_menu.setBroadcast(false);
+			dlt_menu.setCellData(rowIndex, "PROG_CD", data.PROG_CD);
+			dlt_menu.setCellData(rowIndex, "PROG_NM", data.PROG_NM);
+			dlt_menu.setCellData(rowIndex, "PROG_GRP_CD", data.PROG_GRP_CD);
+			dlt_menu.setCellData(rowIndex, "PROGRAM_GROUP_NM", data.PROGRAM_GROUP_NM);
+			dlt_menu.setBroadcast(true, true);
+		}
 	}
 
 	scwin.grd_menu_oneditkeyup = function(info) {
@@ -494,40 +508,64 @@
 						</xf:group>
 					</xf:group>
 				</xf:group>
-				<w2:gridView ignoreCellClick="false" ev:onrowindexchange="" autoFit="allColumn" rowStatusWidth="40" visibleRowNum="" class="cm_grid" wheelRows="" ev:onviewchange="" fixedColumnWithHidden="true" dataList="dlt_menu" id="grd_menu" style="height:480px;" scrollByColumn="false" useShiftKey="true" rowStatusVisible="false" ev:onafteredit="" rowStatusHeaderValue="상태" ev:oncellclick="scwin.grd_menu_oncellclick" rowNumVisible="true" ev:ontextimageclick="scwin.grd_menu_ontextimageclick" ev:onkeyup="" ev:oneditkeyup="scwin.grd_menu_oneditkeyup" enterKeyMove="" adaptive="crosstab" rowNumHeaderValue="순서">
+				<w2:gridView ignoreCellClick="false" ev:onrowindexchange="" autoFit="allColumn" rowStatusWidth="40" visibleRowNum=""
+					class="cm_grid" wheelRows="" ev:onviewchange="" fixedColumnWithHidden="true" dataList="dlt_menu" id="grd_menu" style="height:480px;"
+					scrollByColumn="false" useShiftKey="true" rowStatusVisible="false" ev:onafteredit="" rowStatusHeaderValue="상태"
+					ev:oncellclick="scwin.grd_menu_oncellclick" rowNumVisible="true" ev:ontextimageclick="scwin.grd_menu_ontextimageclick" ev:onkeyup=""
+					ev:oneditkeyup="scwin.grd_menu_oneditkeyup" enterKeyMove="" adaptive="crosstab" rowNumHeaderValue="순서" readOnly="false">
 					<w2:header id="header1" style="">
 						<w2:row id="row2" style="">
-							<w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" value="" displayMode="label" fixColumnWidth="true">
+							<w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" value=""
+								displayMode="label" fixColumnWidth="true">
 							</w2:column>
-							<w2:column id="column16" blockSelect="false" style="height:25px;" width="79" inputType="text" value="메뉴코드" displayMode="label">
+							<w2:column id="column16" blockSelect="false" style="height:25px;" width="79" inputType="text" value="메뉴코드"
+								displayMode="label">
 							</w2:column>
-							<w2:column id="column11" blockSelect="false" style="height:25px;" width="159" inputType="text" value="메뉴명" displayMode="label">
+							<w2:column id="column11" blockSelect="false" style="height:25px;" width="159" inputType="text" value="메뉴명"
+								displayMode="label">
 							</w2:column>
-							<w2:column id="column19" blockSelect="false" style="height:25px;" width="104" inputType="text" value="프로그램분류" displayMode="label" textAlign="center">
+							<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:25px" id="column27" value="시스템"
+								blockSelect="false" displayMode="label">
 							</w2:column>
-							<w2:column id="column26" blockSelect="false" width="144" inputType="text" value="프로그램" textAlign="left" style="height:25px;"></w2:column>
+							<w2:column id="column19" blockSelect="false" style="height:25px;" width="104" inputType="text" value="프로그램분류"
+								displayMode="label" textAlign="center">
+							</w2:column>
+							<w2:column id="column26" blockSelect="false" width="144" inputType="text" value="프로그램" textAlign="left"
+								style="height:25px;">
+							</w2:column>
 							<w2:column id="column24" blockSelect="false" width="60" inputType="text" value="사용여부" style="height:25px;"></w2:column>
 							<w2:column id="column22" blockSelect="false" width="171" inputType="text" value="비고" style="height:25px;"></w2:column>
 						</w2:row>
 					</w2:header>
 					<w2:gBody id="gBody4" style="">
 						<w2:row id="row5" style="">
-							<w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" displayMode="label"></w2:column>
-							<w2:column id="MENU_CD" blockSelect="false" readOnly="false" style="height:25px" hidden="false" width="79" inputType="text" customFormatter="scwin.setFontFormat" displayMode="label">
+							<w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox"
+								displayMode="label">
+							</w2:column>
+							<w2:column id="MENU_CD" blockSelect="false" readOnly="false" style="height:25px" hidden="false" width="79"
+								inputType="text" customFormatter="scwin.setFontFormat" displayMode="label">
 							</w2:column>
 							<w2:column depthColumn="LEVEL" id="MENU_NM" blockSelect="false" showDepth="3" style="height:25px;"
 								depthType="div" width="159" inputType="drilldown" displayMode="label" textAlign="left" class="req">
 							</w2:column>
-							<w2:column id="PROGRAM_GROUP_NM" blockSelect="false" readOnly="true" style="height:25px" width="104" inputType="t" textAlign="center" viewType="icon">
+							<w2:column removeBorderStyle="false" width="100" inputType="select" style="height:25px" id="SYSTEM_BIT" value=""
+								blockSelect="false" displayMode="label">
+								<w2:choices></w2:choices>
+							</w2:column>
+							<w2:column id="PROGRAM_GROUP_NM" blockSelect="false" readOnly="true" style="height:25px" width="104"
+								inputType="t" textAlign="center" viewType="icon">
 								<w2:choices>
 									<w2:itemset nodeset="data:dlt_linkMenu">
 										<w2:label ref="LEVEL"></w2:label>
 										<w2:value ref="LEVEL"></w2:value>
-									</w2:itemset>
+									</w2:itemset>0
 								</w2:choices>
 							</w2:column>
-							<w2:column id="PROG_NM" blockSelect="false" width="144" inputType="textImage" textAlign="left" imageSrc="/cm/images/inc/btn_search.png" readOnly="" viewType="" imageHeight="22" imageWidth="22" chooseOptionLabel=""></w2:column>
-							<w2:column id="USE_YN" blockSelect="false" trueValue="Y" falseValue="N" width="60" inputType="checkbox" valueType="other">
+							<w2:column id="PROG_NM" blockSelect="false" width="144" inputType="textImage" textAlign="left"
+								imageSrc="/cm/images/inc/btn_search.png" readOnly="" viewType="" imageHeight="22" imageWidth="22" chooseOptionLabel="">
+							</w2:column>
+							<w2:column id="USE_YN" blockSelect="false" trueValue="Y" falseValue="N" width="60" inputType="checkbox"
+								valueType="other">
 							</w2:column>
 							<w2:column id="REMARK" blockSelect="false" width="171" inputType="text"></w2:column>
 						</w2:row>

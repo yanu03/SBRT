@@ -41,6 +41,15 @@ var gcm = {
 		VALUE : "DL_CD",
 		FILED_ARR : [ "CO_CD", "DL_CD", "DL_CD_NM" ]
 	},
+	
+	// 시스템 코드 저장을 위한 DataList 속성 정보
+	SYSTEM_PREFIX : "dlt_systemCode",
+
+	SYSTEM_CODE_INFO : {
+		LABEL : "SYSTEM_NM",
+		VALUE : "SYSTEM_VALUE",
+		FILED_ARR : [ "SYSTEM_CD", "SYSTEM_VALUE", "SYSTEM_NM" ]
+	},
 
 	// 유효성 검사 상태 정보 저장
 	valStatus : {
@@ -801,8 +810,7 @@ com.setCommonCode = function(codeOptions, callbackFunc) {
 	if (codeOptions) {
 		codeOptionsLen = codeOptions.length;
 	} else {
-		$p
-				.log("=== com.setCommonCode Parameter Type Error ===\nex) com.setCommonCode([{\"code:\":\"04\",\"compID\":\"sbx_Gender\"}],\"scwin.callbackFunction\")\n===================================");
+		$p.log("=== com.setCommonCode Parameter Type Error ===\nex) com.setCommonCode([{\"code:\":\"04\",\"compID\":\"sbx_Gender\"}],\"scwin.callbackFunction\")\n===================================");
 		return;
 	}
 
@@ -829,7 +837,7 @@ com.setCommonCode = function(codeOptions, callbackFunc) {
 				var dataListObj = $p.getComponentById(dataListOption.id);
 				dataListObj.setJSON(com.getJSON($p.top().scwin.commonCodeList[dltId]));
 			}
-
+			
 			if (codeObj.compID) {
 				compArr = (codeObj.compID).replaceAll(" ", "").split(",");
 				compArrLen = compArr.length;
@@ -889,6 +897,135 @@ com.setCommonCode = function(codeOptions, callbackFunc) {
 
 	// dataList를 동적으로 생성하기 위한 옵션 정보를 반환한다.
 	function _getCodeDataListOptions(infoArr) {
+		var option = {
+			"type" : "dataList",
+			"option" : {
+				"baseNode" : "list",
+				"repeatNode" : "map"
+			},
+			"columnInfo" : []
+		};
+
+		for ( var idx in infoArr) {
+			option.columnInfo.push({
+				"id" : infoArr[idx]
+			});
+		}
+		return option;
+	}
+	;
+};
+
+/**
+ * 시스템 코드 데이터와 컴포넌트의 nodeSet(아이템 리스트)연동 기능을 제공한다.
+ * code별로 JSON객체를 생성하여 array에 담아 첫번째 파라메터로 넘겨준다.
+ *
+ * @date 2018.04.13
+ * @param {Object} systemOptions {"code" : "코드넘버", "compID" : "적용할 컴포넌트명"}
+ * @param {requestCallback} callbackFunc 콜백 함수
+ * @memberOf com
+ * @author InswaveSystems
+ * @example
+ * var systemOptions = [ { code : "00001", compID : "sbx_Duty" },
+ *					 { code : "00002", compID : "sbx_Postion" },
+ *					 { code : "00021", compID : "sbx_JoinClass" },
+ *					 { code : "00005", compID : "sbx_CommCodePart1, sbx_CommCodePart2"},
+ *					 { code : "00024", compID :"grd_CommCodeSample:JOB_CD"} ];
+ *	 com.setCommonCode(codeOptions);
+ */
+com.setSystemCode = function(systemOptions, callbackFunc) {
+	var systemOptionsLen = 0;
+	
+	if (systemOptions) {
+		systemOptionsLen = systemOptions.length;
+	} else {
+		$p.log("=== com.setSystemCode Parameter Type Error ===\nex) com.setSystemCode([{\"code:\":\"04\",\"compID\":\"sbx_Gender\"}],\"scwin.callbackFunction\")\n===================================");
+		return;
+	}
+
+	var i, j, systemObj, dltId, dltIdArr = [], paramCode = "", compArr, compArrLen, tmpIdArr;
+	var dataListOption = _getSystemDataListOptions(gcm.SYSTEM_CODE_INFO.FILED_ARR);
+
+	for (i = 0; i < systemOptionsLen; i++) {
+		systemObj = systemOptions[i];
+
+		try {
+			dltId = gcm.SYSTEM_PREFIX + systemObj.code;
+			if (typeof $p.top().scwin.systemCodeList[dltId] === "undefined") {
+				dltIdArr.push(dltId);
+
+				if (i > 0) {
+					paramCode += ",";
+				}
+				paramCode += systemObj.code;
+				dataListOption.id = dltId;
+				$p.data.create(dataListOption); // 동일한 id의 DataCollection이 존재할 경우, 삭제 후 재생성함
+			} else {
+				dataListOption.id = dltId;
+				$p.data.create(dataListOption);
+				var dataListObj = $p.getComponentById(dataListOption.id);
+				dataListObj.setJSON(com.getJSON($p.top().scwin.systemCodeList[dltId]));
+			}
+			
+			if (systemObj.compID) {
+				compArr = (systemObj.compID).replaceAll(" ", "").split(",");
+				compArrLen = compArr.length;
+				for (j = 0; j < compArrLen; j++) {
+					tmpIdArr = compArr[j].split(":");
+					// 기본 컴포넌트에 대한 Node Setting 설정
+					if (tmpIdArr.length === 1) {
+						var comp = $p.getComponentById(tmpIdArr[0]);
+						comp.setNodeSet("data:" + dltId, gcm.SYSTEM_CODE_INFO.LABEL, gcm.SYSTEM_CODE_INFO.VALUE);
+						// gridView 컴포넌트에 대한 Node Setting 설정
+					} else {
+						var gridObj = $p.getComponentById(tmpIdArr[0]);
+						gridObj.setColumnNodeSet(tmpIdArr[1], "data:" + dltId, gcm.SYSTEM_CODE_INFO.LABEL, gcm.SYSTEM_CODE_INFO.VALUE);
+					}
+				}
+			}
+		} catch (ex) {
+			$p.log("com.setCommonCode Error");
+			$p.log(JSON.stringify(systemObj));
+			$p.log(ex);
+			continue;
+		}
+	}
+
+	var searchSystemGrpOption = {
+		id : "sbm_searchSystem",
+		action : "/common/selectSystemList",
+		target : "data:json," + com.strSerialize(dltIdArr),
+		isShowMeg : false
+	};
+
+	searchSystemGrpOption.submitDoneHandler = function(e) {
+		
+		for (codeGrpDataListId in e.responseJSON) {
+			if (codeGrpDataListId.indexOf(gcm.DATA_PREFIX) > -1) {
+				$p.top().scwin.systemCodeList[codeGrpDataListId] = com.strSerialize(e.responseJSON[codeGrpDataListId]);
+			}
+		}
+
+		if (typeof callbackFunc === "function") {
+			callbackFunc();
+		}
+	}
+
+	if (paramCode !== "") {
+		com.executeSubmission_dynamic(searchSystemGrpOption, {
+			"dma_systemCode" : {
+				"SYSTEM_CD" : paramCode,
+				"DATA_PREFIX" : gcm.SYSTEM_PREFIX
+			}
+		});
+	} else {
+		if (typeof callbackFunc === "function") {
+			callbackFunc();
+		}
+	}
+
+	// dataList를 동적으로 생성하기 위한 옵션 정보를 반환한다.
+	function _getSystemDataListOptions(infoArr) {
 		var option = {
 			"type" : "dataList",
 			"option" : {
@@ -3199,192 +3336,6 @@ com.checkEmail = function(str) {
 		}
 	}
 	return true;
-};
-
-/**
-* 사용자 지정 단축키 설정 함수.
-*
-* @date 2019.03.13
-* @memberOf com
-* @author InswaveSystems
-* @param {String} shortCutKey 단축키 지정 키 값. [필수. 단, 브라우저 자체 단축키는 사용금지]
-* @param {Object} shortCutOpt 단축키 설정 옵션
-* @param {String} [shortCutOpt.targetPgCd] targetPgCd   : 단축키 실행 프레임 범위 [true : 현재 활성화 프레임, false : 활성화프레임 + 메인프레임]
-* @param {String} [shortCutOpt.onlySelf] onlySelf   	: 단축키 실행 프레임 범위 [true : 현재 활성화 프레임, false : 활성화프레임 + 메인프레임]
-* @param {String} [shortCutOpt.eventTarget] eventTarget	: 단축키 실행 컴포넌트ID 혹은 함수명
-* @param {String} [shortCutOpt.eventType] eventType		: 단축키 실행 타입 [default:B(BUTTON : 버튼클릭), F(FUNCTION : 함수실행)]
-* @param {String} [shortCutOpt.eventName] eventName		: 단축키 설정 함수명 혹은 컴포넌트 ID [default: 미지정시 내부에서 표현]
-* @param {String} [shortCutOpt.eventDetail] eventDetail	: 단축키 정보 및 상세사항.
-* @param {String} [shortCutOpt.eventYn] eventYn			: 단축키 실행 여부.
-* @param {String} oldshortCutKey 이전 단축키 지정 키 값 (단축키를 업데이트하는 경우라
-* @return {Boolean} 단축키 설정 결과 값.
-*/
-com.setShortcut = function(shortCutKey, shortCutOpt, oldshortCutKey) {
-	var successFlag = false;
-	if (typeof oldshortCutKey !== "undefined") {
-		gcm.shortcutEvent.delEvent(oldshortCutKey, shortCutOpt);
-	}
-
-	if (typeof shortCutKey == "string") {
-		// 단건 단축키 등록.
-		successFlag = _setShortcut(shortCutKey, shortCutOpt);
-	} else if (typeof shortCutKey == "object") {
-		// 다건 단축키 등록.
-		if (shortCutKey.length == shortCutOpt.length) {
-			for (var i = 0; i < shortCutKey.length; i++) {
-				successFlag = _setShortcut(shortCutKey[i], shortCutOpt[i]);
-			}
-		}
-	}
-
-	if (successFlag) {
-		var setData = [];
-		var shortCutSeq = 0;
-		var rowSataus = "R";
-
-		if (typeof oldshortCutKey !== "undefined") {
-			rowSataus = "U";
-			shortCutSeq = shortCutOpt["SHORTCUT_SEQ"];
-		} else {
-			rowSataus = "C";
-		}
-
-		setData.push({
-			"SHORTCUT_SEQ" : shortCutSeq,
-			"PROG_CD" : shortCutOpt["PROG_CD"],
-			"COMPLEX_KEY" : shortCutOpt["COMPLEX_KEY"],
-			"LAST_KEY" : shortCutOpt["LAST_KEY"],
-			"EVENT_TYPE" : shortCutOpt["EVENT_TYPE"],
-			"EVENT_TARGET" : shortCutOpt["EVENT_TARGET"],
-			"EVENT_DETAIL" : shortCutOpt["EVENT_DETAIL"],
-			"EVENT_YN" : shortCutOpt["EVENT_YN"],
-			"EVENT_NAME" : shortCutOpt["EVENT_NAME"],
-			"rowStatus" : rowSataus
-		});
-
-		if (setData.length > 0) {
-			var searchCodeGrpOption = {
-				id : "sbm_shortcutGrp",
-				action : "/main/updateShortcutList",
-				target : "",
-				submitDoneHandler : function(e) {
-					scwin.searchShortCutByProgram();
-				},
-				isShowMeg : false
-			};
-			com.executeSubmission_dynamic(searchCodeGrpOption, {
-				"dlt_updataShortcutList" : setData
-			});
-		}
-	}
-
-	gcm.shortcutComp.reform();
-
-	function _setShortcut(shortCutKey, shortCutOpt) {
-		var obj = {
-			"shortCutKey" : shortCutKey, // 단축키 설정 값.
-			"PROG_CD" : shortCutOpt["PROG_CD"] || "", // 단축키 실행 프로그램 ID.
-			"onlySelf" : shortCutOpt.onlySelf || "N", // 단축키 실행 프레임 범위 [true : 현재 활성화 프레임, false : 활성화프레임 + 메인프레임]
-			"EVENT_TARGET" : shortCutOpt["EVENT_TARGET"] || "", // 단축키 실행 타겟 (버튼 ID 혹은 함수명).
-			"EVENT_TYPE" : shortCutOpt["EVENT_TYPE"] || "B", // 단축키 이벤트 타입 [default: B (버튼클릭), F (함수실행)]
-			"EVENT_NAME" : shortCutOpt["EVENT_NAME"] || "", // 단축키 이벤트 명
-			"EVENT_DETAIL" : shortCutOpt["EVENT_DETAIL"] || "", // 단축키 이벤트 상세 설명
-			"EVENT_YN" : shortCutOpt["EVENT_YN"] || "Y" // 단축키 이벤트 사용 여부.
-		};
-
-		try {
-			var layout = $p.top().scwin.getLayoutId();
-			if (obj["PROG_CD"] == "") {
-				// 프로그램 코드가 없는경우 현재 활성화된 프로그램 코드를 기준으로 설정.
-				var viewFrameId = $p.getFrameId();
-				var loadingUrl = $p.getComponentById(viewFrameId).getSrc();
-				var findMenuList = gcm.menuComp.getMatchedJSON("PROG_PH", loadingUrl, true);
-				if (findMenuList.length > 0) {
-					obj["PROG_CD"] = findMenuList[0]["PROG_CD"]; // 단축키 설정 프로그램 코드.
-				}
-			}
-
-			if (obj["PROG_CD"] != "" && obj["EVENT_TARGET"] != "") {
-				// 단축키 저정 프로그램 코드와 이벤트 설정 존재할 경우만 추가.
-				successFlag = gcm.shortcutEvent.addEvent(obj);
-			}
-		} catch (e) {
-
-		}
-		return successFlag;
-	}
-};
-
-/**
- * 사용자 지정 단축키 삭제 함수.
- * 
- * @date 2019.03.13
- * @memberOf com
- * @author InswaveSystems
- * @param {String} shortCutKey 단축키 삭제 키 값. [필수. 단, 브라우저 자체 단축키는 사용금지]
- * @param {Object} shortCutOpt 단축키 설정 옵션
- * @param {String} [shortCutOpt.targetPgCd] targetPgCd : 단축키 실행 프레임 범위 [true : 현재 활성화 프레임, false : 활성화프레임 + 메인프레임]
- */
-com.removeShortcut = function(shortCutKey, options) {
-	if (options.targetPgCd == "") {
-		var viewFrameId = $p.getFrameId();
-		var loadingUrl = $p.getComponentById(viewFrameId).getSrc();
-		var findMenuList = gcm.menuComp.getMatchedJSON("PROG_PH", loadingUrl, true);
-		if (findMenuList.length > 0) {
-			options.targetPg = findMenuList[0]["PROG_CD"]; // 단축키 설정 프로그램 코드.
-		}
-	}
-	successFlag = gcm.shortcutEvent.delEvent(shortCutKey, options);
-
-	if (successFlag) {
-		var setData = [];
-		var token = gcm.shortcutEvent._keyToken(shortCutKey.toUpperCase());
-		setData.push({
-			"SHORTCUT_SEQ" : options["SHORTCUT_SEQ"],
-			"PROG_CD" : options["PROG_CD"],
-			"COMPLEX_KEY" : token["COMPLEX_KEY"],
-			"LAST_KEY" : token["LAST_KEY"],
-			"EVENT_TYPE" : options["EVENT_TYPE"],
-			"EVENT_TARGET" : options["EVENT_TARGET"],
-			"EVENT_DETAIL" : options["EVENT_DETAIL"],
-			"EVENT_YN" : options["EVENT_YN"],
-			"EVENT_NAME" : options["EVENT_NAME"],
-			"rowStatus" : "D"
-		});
-
-		if (setData.length > 0) {
-			var searchCodeGrpOption = {
-				id : "sbm_shortcutGrp",
-				action : "/main/updateShortcutList",
-				target : "",
-				submitDoneHandler : function(e) {
-					scwin.searchShortCutByProgram();
-				},
-				isShowMeg : false
-			};
-			com.executeSubmission_dynamic(searchCodeGrpOption, {
-				"dlt_updataShortcutList" : setData
-			});
-		}
-	}
-};
-
-/**
- * 단축키 사용 여부
- * 
- * @date 2019.03.26
- * @memberOf com
- * @author InswaveSystems
- * @param {String} shortcutFlag 단축키 사용 여부 (Y: 사용, N: 미사용)
- */
-com.isUseShortCut = function(shortcutFlag) {
-	if (shortcutFlag == "Y") {
-		gcm.shortcutEvent.loadingEvent = "Y";
-		document.onkeydown = gcm.shortcutEvent["checkEvent"];
-	} else {
-		gcm.shortcutEvent.loadingEvent = "N";
-		document.onkeydown = null;
-	}
 };
 
 /**

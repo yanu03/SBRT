@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
 	<head>
-	<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=31aa62fb189294413e43c24caeb82419"></script>
-	<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?autoload=false"></script>
-	<script type="text/javascript">
-	kakao.maps.load(function() {
-	    // v3가 모두 로드된 후, 이 콜백 함수가 실행됩니다.
-	    var map = new kakao.maps.Map(node, options);
-	});
-	</script>
 		<w2:type>DEFAULT</w2:type>
 		<w2:buildDate />
 		<xf:model>
@@ -16,8 +8,17 @@
 				<data xmlns="" />
 			</xf:instance>
 			<w2:dataCollection baseNode="map">
+				<w2:dataMap baseNode="map" id="dma_systemChange">
+					<w2:keyInfo>
+						<w2:key id="SYSTEM_BIT" name="시스템비트" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sbm_systemChange" ref="data:json,dma_systemChange" target="" action="/main/systemChange" method="post" mediatype="application/json"
+				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="scwin.sbm_systemChange_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
 		</xf:model>
 		<script	src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
 		<script type="text/javascript" lazy="false"><![CDATA[
@@ -37,7 +38,7 @@
 		var tmpDataArr = $p.parent().wfm_side.getWindow().dlt_menu.getAllJSON();
 		var tmpParentIdx = 0;
 		var thirdIndex = 0;
-	debugger;
+	
 		//첫번째 메뉴 세팅
 		for (var i = 0; i < tmpDataArr.length; i++) {
 			var headerData_obj = tmpDataArr[i];
@@ -326,32 +327,62 @@
 	};
 
 	/**
-	 * 로그인된 사용자의 비밀번호를 변경한다.
+	 * bis로 이동
 	 */
-	scwin.btn_changePassword_onclick = function(e) {
-		var popupHeight = "202";
-		if (com.isAdmin()) {
-			popupHeight -= 30;
-		}
+	scwin.btn_bis_onclick = function(e) {
+		
+		dma_systemChange.set("SYSTEM_BIT",1); 
+		com.executeSubmission(sbm_systemChange);
+	};
 	
-		var data = { "empCd" : $p.parent().wfm_side.getWindow().dma_defInfo.get("USER_ID") };
-		var options = { id : "settingPassword", popupName : "비밀번호 변경", width : "402", height : popupHeight};
-		com.openPopup("/cm/common/settingPassword.xml", options, data);
+	/**
+	 * bms로 이동
+	 */
+	scwin.btn_bms_onclick = function(e) {
+		dma_systemChange.set("SYSTEM_BIT",2); 	
+		com.executeSubmission(sbm_systemChange);
 	};
 
+	scwin.sbm_systemChange_submitdone = function(e) {
+		var resultData = e.responseJSON;
+
+		var result = resultData.rsMsg;
+		try {
+			if (result.statusCode == "S") {
+				com.goHome();
+			} else {
+				com.alert(result.message);
+			}
+		} catch (ex) {
+			com.alert("서버 통신 도중 오류가 발생하였습니다. 잠시후 다시 시도해주시기 바랍니다.");
+		}
+	};
 ]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
-		<xf:group id="" style="" class="head_box">
+		<xf:group id="" style="" class="head_top">
 			<xf:group id="" style="" class="logo" tagname="a">
 				<w2:attributes>
 					<w2:href>javascript:com.goHome()</w2:href>
 				</w2:attributes>
-				<xf:image id="" style="" alt="inswave" src="/cm/images/inc/w5_logo.png" ev:onclick=""></xf:image>
+				<xf:image id="" style="" alt="tracom" src="/cm/images/inc/tracom_trans_log.png" ev:onclick=""></xf:image>
 			</xf:group>
+			<xf:group class="sysbtnbox" id="" style="">
+				<xf:trigger class="bis" ev:onclick="scwin.btn_bis_onclick" id="btn_bis" style="" type="button">
+					<xf:label><![CDATA[통합운영관리]]></xf:label>
+				</xf:trigger>
+				<xf:trigger class="bms" id="btn_bms" style="" type="button" ev:onclick="scwin.btn_bms_onclick">
+					<xf:label><![CDATA[차량운행관리]]></xf:label>
+				</xf:trigger>
+			</xf:group>
+		</xf:group>
+		<xf:group id="" style="" class="head_box">
 			<!-- <w2:anchor id="btn_toggle" outerDiv="false" class="btn_aside" ev:onclick="scwin.btn_toggle_onclick">
 				<xf:label><![CDATA[사이드메뉴 열기/닫기]]></xf:label>
 			</w2:anchor> -->
+			<xf:group class="sysbox" id="" style="">
+				<w2:textbox class="info_tit system_tit" id="txt_systemNm" label="" style=""></w2:textbox>
+			</xf:group>
 			<w2:generator style="" id="gen_firstGenerator" tagname="ul" class="nav">
 				<xf:group style="" id="" class="" tagname="li">
 					<w2:anchor outerDiv="false" style="" id="btn_menu1_Label" ev:onclick="scwin.btn_menu1_Label_onclick">
@@ -377,7 +408,7 @@
 				<w2:textbox id="" style="" class="search_tit" label="통합검색" tagname="span"></w2:textbox>
 			</xf:group>
 			<xf:group class="infobox" id="" style="">
-				<w2:textbox class="info_tit name_tit" id="txt_empNm" label="" style=""></w2:textbox>
+				<w2:textbox class="info_tit name_tit" id="txt_userNm" label="" style=""></w2:textbox>
 				<xf:trigger class="changePassword" ev:onclick="scwin.btn_changePassword_onclick" id="btn_changePassword" style="" type="button">
 					<xf:label><![CDATA[비밀번호변경]]></xf:label>
 				</xf:trigger>

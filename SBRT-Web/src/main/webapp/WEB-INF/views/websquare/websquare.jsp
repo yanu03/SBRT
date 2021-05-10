@@ -9,7 +9,9 @@
 		<script type="text/javascript">
 			function i18nUrl (url){
 			    var locale = WebSquare.cookie.getCookie( "locale" );
+			    if(url.indexOf('w2xPath')>=0)return url;
 			    if( locale == null || locale == '' ) {
+			    	
 			    	return "/I18N?w2xPath="+url;
 			    } else {
 			        return "/I18N?locale="+unescape(locale)+"&w2xPath="+url;
