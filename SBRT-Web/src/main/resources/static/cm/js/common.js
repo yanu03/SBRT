@@ -2073,6 +2073,7 @@ com.validateGroup = function(grpObj, valInfoArr, tacObj, tabId) {
 						}
 					}
 					
+					
 					if ((obj.getValue != null) &&(typeof obj.getValue === "function") && (typeof obj.getValue().trim === "function")) {
 						value = obj.getValue().trim();
 					} else {
@@ -3725,3 +3726,9 @@ if (shortcutTargetElement.attachEvent) {
 } else {
 	shortcutTargetElement.onkeydown = gcm.shortcutEvent.keydownEvent;
 }
+
+//com.rowChange = function () {
+	
+	
+	
+//}
