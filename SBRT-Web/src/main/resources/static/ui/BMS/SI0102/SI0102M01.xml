@@ -42,9 +42,22 @@
         				<w2:key id="SEQ" name="SEQ" dataType="text"></w2:key>
         			</w2:keyInfo>
         		</w2:dataMap>
+        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_transcompSearchItem" saveRemovedData="true">
+        			<w2:columnInfo>
+        				<w2:column id="COMP_NM" name="운수사명" dataType="text"></w2:column>
+        				<w2:column id="REP_NM" name="대표자명" dataType="text"></w2:column>
+        			</w2:columnInfo>
+        		</w2:dataList>
+        		<w2:dataMap baseNode="map" id="dma_search">
+        			<w2:keyInfo>
+        				<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+        				<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+        				<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+        			</w2:keyInfo>
+        		</w2:dataMap>
         	</w2:dataCollection>
         	<w2:workflowCollection></w2:workflowCollection>
-        	<xf:submission id="sub_SI0102G0R0" ref="" target="data:json,dlt_BMS_TRANSCOMP_MST" action="/si/SI0102G0R0" method="post"
+        	<xf:submission id="sub_SI0102G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_TRANSCOMP_MST" action="/si/SI0102G0R0" method="post"
         		mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
         		processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0102G0R0_submitdone" ev:submiterror="" abortTrigger="">
         	</xf:submission>
@@ -57,10 +70,16 @@
         		mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
         		processMsg="" ev:submit="" ev:submitdone="scwin.sub_SI0102G0R1_submitdone" ev:submiterror="" abortTrigger="">
         	</xf:submission>
+        	<xf:submission id="sub_SI0102G0R2" ref="" target="data:json,dlt_transcompSearchItem" action="/si/SI0102G0R2" method="post"
+        		mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+        		processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+        	</xf:submission>
         </xf:model>
         <script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
 		$p.executeSubmission(sub_SI0102G0R0);
+		$p.executeSubmission(sub_SI0102G0R2);
+		com.setEnterKeyEvent(tbl_search, scwin.btn_search_onclick);
 	};
 
 	scwin.onpageunload = function() {
@@ -125,7 +144,6 @@
 	scwin.btn_del_onclick = function() {
 		var focusIdxs = SI0102G0.getAllFocusedRowIndex();
 		var count = focusIdxs.length;
-		debugger;
 		com.confirm(count + "건의 데이터를 삭제 하시겠습니까?", function(rtn) {
 			if (rtn) {
 				dlt_BMS_TRANSCOMP_MST.deleteRows(focusIdxs);
@@ -134,8 +152,8 @@
 	};
 	
 	var test = true;
-//	
-//	scwin.SI0102G0_onrowindexchange = function(row,oldRow) {
+	//변경되는거 처리해야됨
+	scwin.SI0102G0_onrowindexchange = function(row,oldRow) {
 //		alert("1" + test);
 //		if (!test) {
 //			return;
@@ -145,18 +163,28 @@
 //		alert("2" + test);
 //		SI0102G0.setFocusedCell(oldRow, "COMP_ID", false);
 //		test = true;
-//
-///*		alert("row : "+ row + "oldRow : " + oldRow);
-//		alert(SI0102G0.getFocusedRowIndex( ));*/
-//		/*var valid = com.validateGroup(SI0102F0)
-//		if (valid == tr	ue) {
-//		}*/
-//	};
-	
 
+/*		alert("row : "+ row + "oldRow : " + oldRow);
+		alert(SI0102G0.getFocusedRowIndex( ));*/
+//		var valid = com.validateGroup(SI0102F0)
+//		alert("valid :" + valid);
+//		if (valid == true) {
+//		}
+		
+		
+		
+	};
 	
-	scwin.SI0102G0_onafteredit = function(row,col,value) {
-		alert(row+", "+col+", "+value);
+	
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {
+		if (info.newValue == "COMP_NM") {
+			acb_autoChoiceBox.hide();
+			sbx_GrpCd.show("");
+		} else if (info.newValue == "REP_NM") {
+			acb_autoChoiceBox.setNodeSet("data:dlt_transcompSearchItem", "REP_NM", "REP_NM");
+			sbx_GrpCd.hide();
+			acb_autoChoiceBox.show("");
+		}
 	};
 	]]></script>
     </head>
@@ -164,61 +192,55 @@
     	<xf:group class="contentWrap" id="" style="">
     		<w2:wframe id="" src="/cm/common/wf_titleFav.xml" style=""></w2:wframe>
     		<xf:group class="section" id="" style="">
-    			<xf:group class="tbl_search" id="group1" style="">
-    				<xf:group adaptive="layout" adaptiveThreshold="768" class="w2tb tbl_sc" id="" style="width:100.00%;" tagname="table">
+    			<xf:group class="tbl_search" id="tbl_search" style="">
+    				<xf:group adaptive="layout" adaptiveThreshold="768" class="w2tb tbl_sc" id="" style="" tagname="table">
     					<w2:attributes>
     						<w2:summary></w2:summary>
     					</w2:attributes>
     					<xf:group tagname="colgroup">
     						<xf:group style="width:80px;" tagname="col"></xf:group>
     						<xf:group style="" tagname="col"></xf:group>
+    						<xf:group style="width:80px;" tagname="col"></xf:group>
+    						<xf:group style="" tagname="col"></xf:group>
     						<xf:group style="width:180px;" tagname="col"></xf:group>
     					</xf:group>
-    					<xf:group tagname="tr">
+    					<xf:group style="" tagname="tr">
     						<xf:group class="w2tb_th" style="" tagname="th">검색항목</xf:group>
     						<xf:group class="w2tb_td" style="" tagname="td">
-    							<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
-    								disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
+    							<w2:attributes><w2:colspan>3</w2:colspan><w2:rowspan>1</w2:rowspan></w2:attributes><xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+    								disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE"
     								optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
     								textAlign="left">
     								<xf:choices>
     									<xf:item>
-    										<xf:label><![CDATA[메뉴명]]></xf:label>
-    										<xf:value><![CDATA[MENU_NM]]></xf:value>
+    										<xf:label><![CDATA[운수사명]]></xf:label>
+    										<xf:value><![CDATA[COMP_NM]]></xf:value>
     									</xf:item>
     									<xf:item>
-    										<xf:label><![CDATA[메뉴코드]]></xf:label>
-    										<xf:value><![CDATA[MENU_CD]]></xf:value>
-    									</xf:item>
-    									<xf:item>
-    										<xf:label><![CDATA[부모메뉴명]]></xf:label>
-    										<xf:value><![CDATA[PARENT_MENU_CD]]></xf:value>
-    									</xf:item>
-    									<xf:item>
-    										<xf:label><![CDATA[메뉴레벨]]></xf:label>
-    										<xf:value><![CDATA[LEVEL]]></xf:value>
+    										<xf:label><![CDATA[대표자명]]></xf:label>
+    										<xf:value><![CDATA[REP_NM]]></xf:value>
     									</xf:item>
     								</xf:choices>
     							</xf:select1>
     							<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="-전체-" direction="auto"
-    								disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" ev:onblur="scwin.sbx_positionCd_onblur"
-    								id="sbx_MenuLevel" optionOrder="false" ref="" style="width: 20%;height: 21px;float:left;display: none;" submenuSize="auto"
-    								textAlign="center">
+    								disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" ev:onblur="scwin.sbx_PositionCd_onblur" id="sbx_GrpCd"
+    								optionOrder="false" ref="" style="width: 43.5%;height: 21px;float:left;display:none;" submenuSize="auto" textAlign="center">
     								<xf:choices>
-    									<xf:itemset nodeset="data:dlt_menuSearchItem">
-    										<xf:label ref="LEVEL"></xf:label>
-    										<xf:value ref="LEVEL"></xf:value>
+    									<xf:itemset nodeset="data:dlt_commonSearchItem">
+    										<xf:label ref="CO_CD"></xf:label>
+    										<xf:value ref="CO_CD"></xf:value>
     									</xf:itemset>
     								</xf:choices>
     							</xf:select1>
     							<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
-    								chooseOptionValue="" class="calc120" displayMode="label" editType="select" ev:onchange="" ev:onviewchange=""
-    								id="acb_autoChoiceBox" interactionMode="" ref="" search="start" selectedData="" style="height:21px;float: left;"
-    								submenuSize="auto" useKeywordHighlight="false" visibleRowNum="">
+    								chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
+    								id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
+    								style="width: 350px;height: 21px;float: left;" submenuSize="auto" textAlign="left" useKeywordHighlight="false"
+    								visibleRowNum="">
     								<w2:choices>
-    									<w2:itemset nodeset="data:dlt_menuSearchItem">
-    										<w2:label ref="MENU_NM"></w2:label>
-    										<w2:value ref="MENU_NM"></w2:value>
+    									<w2:itemset nodeset="data:dlt_transcompSearchItem">
+    										<w2:label ref="COMP_NM"></w2:label>
+    										<w2:value ref="COMP_NM"></w2:value>
     									</w2:itemset>
     								</w2:choices>
     							</w2:autoComplete>
@@ -228,13 +250,25 @@
     								style="left:0px;top:0px;margin-right: 5px;">
     								<xf:label><![CDATA[조회]]></xf:label>
     							</w2:anchor>
-    							<w2:anchor class="btn_save" ev:onclick="scwin.btn_saveMenu_onclick" id="btn_saveList" outerDiv="true"
+    							<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_addMenu_onclick" id="anchor5"
+    								outerDiv="true" style="">
+    								<xf:label><![CDATA[추가]]></xf:label>
+    							</w2:anchor>
+    							<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_del_onclick" id="anchor6"
+    								outerDiv="true" style="">
+    								<xf:label><![CDATA[삭제]]></xf:label>
+    							</w2:anchor>
+    							<w2:anchor class="btn_save" ev:onclick="scwin.btn_saveMenu_onclick" id="anchor7" outerDiv="true"
     								style="left:0px;top:0px;margin-right: 5px;r">
     								<xf:label><![CDATA[저장]]></xf:label>
     							</w2:anchor>
-    							<w2:anchor class="btn_delete" clickEventElement="outerDiv" ev:onclick="scwin.btn_del_onclick" id="anchor2"
-    								outerDiv="true" style="">
-    								<xf:label><![CDATA[삭제]]></xf:label>
+    							<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelMenu_onclick"
+    								id="anchor8" outerDiv="true" style="">
+    								<xf:label><![CDATA[엑셀]]></xf:label>
+    							</w2:anchor>
+    							<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_cancelMenu_onclick"
+    								id="anchor9" outerDiv="true" style="">
+    								<xf:label><![CDATA[닫기]]></xf:label>
     							</w2:anchor>
     						</xf:group>
     					</xf:group>
@@ -246,21 +280,9 @@
     				<w2:textbox class="df_tt fl" id="" label="차고지 목록" style=""></w2:textbox>
     				<xf:group class="fr" id="" style="height:22px;">
     					<xf:group class="ml5 fr" id="" style="">
-    						<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_addMenu_onclick" id="btn_add"
-    							outerDiv="true" style="">
-    							<xf:label><![CDATA[등록]]></xf:label>
-    						</w2:anchor>
     						<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_delMenu_onclick" id="btn_delMenu"
     							outerDiv="true" style="display:none;">
     							<xf:label><![CDATA[삭제]]></xf:label>
-    						</w2:anchor>
-    						<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_cancelMenu_onclick"
-    							id="btn_cancel" outerDiv="true" style="">
-    							<xf:label><![CDATA[취소]]></xf:label>
-    						</w2:anchor>
-    						<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelMenu_onclick"
-    							id="btn_excel" outerDiv="true" style="">
-    							<xf:label><![CDATA[엑셀]]></xf:label>
     						</w2:anchor>
     					</xf:group>
     				</xf:group>
@@ -268,10 +290,10 @@
     		</xf:group>
     	</xf:group>
     	<w2:gridView adaptive="crosstab" alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid"
-    		dataList="data:dlt_BMS_TRANSCOMP_MST" enterKeyMove="" ev:onafteredit="scwin.SI0102G0_onafteredit" ev:oncellclick="scwin.SI0102G0_oncellclick" ev:oneditkeyup=""
+    		dataList="data:dlt_BMS_TRANSCOMP_MST" enterKeyMove="" ev:onafteredit="" ev:oncellclick="scwin.SI0102G0_oncellclick" ev:oneditkeyup=""
     		ev:onkeyup="" ev:onrowindexchange="scwin.SI0102G0_onrowindexchange" ev:ontextimageclick="" ev:onviewchange="" fixedColumnWithHidden="true" id="SI0102G0"
     		ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true" rowStatusHeaderValue="" rowStatusVisible="false"
-    		rowStatusWidth="40" scrollByColumn="false" style="height:480px;" useShiftKey="true" visibleRowNum="" wheelRows="" autoFitMinWidth="0"
+    		rowStatusWidth="40" scrollByColumn="false" style="height:300px;" useShiftKey="true" visibleRowNum="" wheelRows="" autoFitMinWidth="0"
     		disabledScrollHidden="" editModeEvent="" editModeEventIcon="" checkEditableInputClass="" keyMoveEditMode="" moveKeyEditMode="" moveKeyEditModeAll="" ignoreNonEditableCellTabEnter="" readOnly="true" keepDefaultColumnWidth="" oddEvenColorDisplay="" rowNumWidth="" adaptiveThreshold="" summaryAuto="" excludeDeletedRows="" useCtrlOnMultisort="" useFilterList="" useFilterListSync="" sortedIconPosition="" sortable="" sortOrderReverse="" showSortableUseFilter="" focusMode="row" rowNumStatusUniqueId="" rowNumStatusResize="">
     		<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
     		<w2:header style="" id="header1">

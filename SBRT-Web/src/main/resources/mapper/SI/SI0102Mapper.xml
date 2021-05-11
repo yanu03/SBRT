@@ -11,11 +11,26 @@
 	select COMP_ID, AREA, COMP_NM, REP_NM, COMP_REG_NO, ADDR,
 		   PHONE, FAX, EMAIL, DRV_CNT, SVC_ROUT_CNT, LIC_VHC_CNT, SPR_VHC_CNT, REMARK
 	from BMS_TRANSCOMP_MST
+	<where>
+		<if test="TYPE == 'COMP_NM'">
+			AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'REP_NM'">
+			AND REP_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
 </select>
 
 <select id="SI0102G0R1" resultType="Map">
 	SELECT CONCAT('CP', LPAD(NEXTVAL(SEQ_BMS_TRANSCOMP_MST_0), 8, '0')) AS 'SEQ'
 </select>
+
+<select id="SI0102G0R2" resultType="Map">
+	select COMP_NM, REP_NM
+	from BMS_TRANSCOMP_MST
+	order by COMP_NM
+</select>
+
 
 <insert id="SI0102G0I0" parameterType="Map">
 <!-- 	<selectKey keyProperty="corpId" resultType="String" order="BEFORE">

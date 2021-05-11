@@ -19,12 +19,12 @@ public class SI0102Controller {
 	private SI0102Service si0102Service;
 	
 	@RequestMapping("/si/SI0102G0R0")
-	public @ResponseBody Map<String, Object> SI0102G0R0() {
+	public @ResponseBody Map<String, Object> SI0102G0R0(@RequestBody Map<String, Object> param) {
 		Result result = new Result();
 		
 		
 		try {
-			result.setData("dlt_BMS_TRANSCOMP_MST", si0102Service.SI0102G0R0());
+			result.setData("dlt_BMS_TRANSCOMP_MST", si0102Service.SI0102G0R0((Map) param.get("dma_search")));
 			result.setMsg(result.STATUS_SUCESS);
 			
 		} catch (Exception e) {
@@ -51,7 +51,23 @@ public class SI0102Controller {
 		return result.getResult();
 	}
 
-
+	@RequestMapping("/si/SI0102G0R2")
+	public @ResponseBody Map<String, Object> SI0102G0R2() {
+		Result result = new Result();
+		
+		try {
+			result.setData("dlt_transcompSearchItem", si0102Service.SI0102G0R2());
+			result.setMsg(result.STATUS_SUCESS);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.setMsg(result.STATUS_ERROR);
+		}
+		
+		return result.getResult();
+	}
+	
+	
 @RequestMapping(value = "/si/SI0102G0S0")
 public @ResponseBody Map<String, Object> SI0102G0S0(@RequestBody Map<String, Object> param) {
 	Result result = new Result();
