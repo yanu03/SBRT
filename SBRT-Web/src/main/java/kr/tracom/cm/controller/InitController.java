@@ -108,7 +108,7 @@ public class InitController {
 		} else {
 			if (movePage == null) {
 				// DB 설정조회 초기 page 구성
-				movePage = PageURIUtil.getIndexPageURI(userInfo.getMainLayoutCode());
+				//movePage = PageURIUtil.getIndexPageURI(userInfo.getMainLayoutCode());
 
 				// DB에 값이 저장되어 있지 않은 경우 기본 index화면으로 이동
 				if (movePage == null) {

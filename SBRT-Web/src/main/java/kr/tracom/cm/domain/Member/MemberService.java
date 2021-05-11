@@ -64,8 +64,6 @@ public class MemberService {
 			} else if (rowStatus.equals("U")) {
 				uCnt += memberMapper.updateMemberBasic(data);
 			} else if (rowStatus.equals("D")) {
-				memberMapper.deleteMemberFamily(data);
-				memberMapper.deleteMemberProject(data);
 				dCnt += memberMapper.deleteMemberBasic(data);
 			}
 		}

@@ -160,48 +160,6 @@ public class CommonService {
 	}
 
 	/**
-	 * update Main Setting update된 것이 없을 경우 (입력된 정보가 없을 경우) insert.
-	 * 
-	 * @date 2016.08.08
-	 * @param <Map> MAIN_LAYOUT_PAGE_CODE, USE_YN_SHORTCUT, UPDATED_ID, USER_ID
-	 * @returns <int> 0일 경우 실패
-	 * @author InswaveSystems
-	 */
-	public int updateBmMainSetting(Map param) {
-		int rs = 0;
-		rs = commonMapper.updateBmMainSetting(param);
-		if (rs == 0) {
-			rs = commonMapper.insertBmMainSetting(param);
-		}
-		return rs;
-	}
-
-	/**
-	 * update Main Setting update된 것이 없을 경우 (입력된 정보가 없을 경우) insert.
-	 * 
-	 * @date 2016.08.08
-	 * @param <Map> MAIN_LAYOUT_PAGE_CODE, USE_YN_SHORTCUT, UPDATED_ID, USER_ID
-	 * @returns <int> 0일 경우 실패
-	 * @author InswaveSystems
-	 */
-	public int insertBmMainSetting(Map param) {
-		return commonMapper.insertBmMainSetting(param);
-	}
-
-	/**
-	 * USER_ID로 단건 BmMainSetting 조회
-	 * 
-	 * @date 2016. 8. 10.
-	 * @param <Map> USER_ID가 담긴 Map
-	 * @returns <Map> BmMainSetting - MAIN_LAYOUT_PAGE_CODE, USE_YN_SHORTCUT
-	 * @author InswaveSystems
-	 * @todo 추가해야 할 작업
-	 */
-	public Map selectBmMainSetting(Map param) {
-		return commonMapper.selectBmMainSetting(param);
-	}
-
-	/**
 	 * 메뉴관리정보 삭제시 하위의 메뉴 접근 데이터를 변경(등록, 수정, 삭제)한다.
 	 * 
 	 * @param param Client 전달한 데이터 리스트 객체

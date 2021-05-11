@@ -59,8 +59,8 @@ public class LoginController {
 	 * login - 요청받은 아이디, 비밀번호를 회원DB와 비교한다.
 	 * 
 	 * @date 2017.12.22
-	 * @param dma_loginCheck { USER_ID:"사원코드", PASSWORD:"비밀번호" }
-	 * @returns mv dma_resLoginCheck { USER_ID:"사원코드", USER_NM:"사원명", LOGIN:"상태" }
+	 * @param dma_loginCheck { USER_ID:"사용자아이디", PASSWORD:"비밀번호" }
+	 * @returns mv dma_resLoginCheck { USER_ID:"사용자아이디", USER_NM:"사용자명", LOGIN:"상태" }
 	 * @author Inswave
 	 * @example
 	 */
@@ -85,27 +85,27 @@ public class LoginController {
 				String isUseShortCut = (String) memberMap.get("USE_YN_SHORTCUT");
 
 				// main setting에 값이 저장되어 있지 않는 경우 insert.
-				if (mainLayout == null) {
+				/*if (mainLayout == null) {
 					mainLayout = user.getDefaultMainLayoutCode();
-				}
+				}*/
 				
-				session.setAttribute("USER_ID", (String) memberMap.get("USER_ID"));
-				session.setAttribute("USER_NM", (String) memberMap.get("USER_NM"));
-				session.setAttribute("SYSTEM_BIT", memberMap.get("SYSTEM_BIT"));
+				session.setAttribute(Constants.SSN_USER_ID, (String) memberMap.get("USER_ID"));
+				session.setAttribute(Constants.SSN_USER_NM, (String) memberMap.get("USER_NM"));
+				session.setAttribute(Constants.SSN_SYSTEM_BIT, memberMap.get("SYSTEM_BIT"));
 				
 				int systemBit = Integer.parseInt((String)memberMap.get("SYSTEM_BIT"));
 				if(systemBit==Constants.SYSTEM_ALL) {
-					session.setAttribute("CUR_SYSTEM", Constants.SYSTEM_BIS);
+					session.setAttribute(Constants.SSN_CUR_SYSTEM, Constants.SYSTEM_BIS);
 				}
 				else {
-					session.setAttribute("CUR_SYSTEM", systemBit);
-				}
+					session.setAttribute(Constants.SSN_CUR_SYSTEM, systemBit);
+				}	
 				
 				// 로그인한 아이디가 시스템 관리자인지 여부를 체크한다.
 				// 시스템 관리자 아이디는 websquareConfig.properties 파일의 system.admin.id 속성에 정의하면 된다.
 				// 시스템 관자자 아이디가 여러 개일 경우 콤마(",") 구분해서 작성할 수 있다.
 				boolean isAdmin = loginService.isAdmin((String) memberMap.get("USER_ID"));
-				session.setAttribute("IS_ADMIN", isAdmin);
+				session.setAttribute(Constants.SSN_IS_ADMIN, isAdmin);
 				
 				
 				
@@ -114,8 +114,10 @@ public class LoginController {
 				// 서버 서비스에서 관리하는 UserInfo.getIsAdmin()에서 관리자 여부를 받아와서 판단해야 한다.
 
 				// 메뉴 정보 가져오기
-				List sessionMList = commonService.selectMenuList(memberMap);
-				session.setAttribute("MENU_LIST", (List) sessionMList);
+				//memberMap.put("SYSTEM_BIT",session.getAttribute(Constants.SSN_CUR_SYSTEM));
+				//memberMap.put("SSN_USER_ID",session.getAttribute(Constants.SSN_USER_ID));
+				//List sessionMList = commonService.selectMenuList(memberMap);
+				//session.setAttribute("MENU_LIST", (List) sessionMList);
 
 				user.setUserInfo(session);
 

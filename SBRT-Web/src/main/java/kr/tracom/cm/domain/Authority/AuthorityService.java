@@ -5,10 +5,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import kr.tracom.cm.support.ServiceSupport;
+import kr.tracom.cm.support.exception.MessageException;
+import kr.tracom.util.Result;
+
 @Service
-public class AuthorityService {
+public class AuthorityService extends ServiceSupport {
 
 	@Autowired
 	private AuthorityMapper authorityMapper;
@@ -17,9 +22,13 @@ public class AuthorityService {
 	 * 권한관리 조회
 	 * 
 	 * @param param Client 전달한 데이터 맵 객체
+	 * @throws Exception 
 	 */
-	public List selectAuthorityList(Map param) {
-		return authorityMapper.selectAuthorityList(param);
+	public List selectAuthorityList() throws Exception {
+		
+		//throw new MessageException(Result.STATUS_ERROR, "CustomException!!!");
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return authorityMapper.selectAuthorityList(map);
 	}
 
 	/**
@@ -27,8 +36,9 @@ public class AuthorityService {
 	 * 
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
-	public List selectAuthorityMemberList(Map param) {
-		return authorityMapper.selectAuthorityMemberList(param);
+	public List selectAuthorityMemberList() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_authority");
+		return authorityMapper.selectAuthorityMemberList(map);
 	}
 
 	/**
@@ -36,8 +46,9 @@ public class AuthorityService {
 	 * 
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
-	public List<Map> excludeSelectAuthorityMemberList(Map param) {
-		return authorityMapper.excludeSelectAuthorityMemberList(param);
+	public List<Map> excludeSelectAuthorityMemberList() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return authorityMapper.excludeSelectAuthorityMemberList(map);
 	}
 
 	/**
@@ -45,7 +56,7 @@ public class AuthorityService {
 	 * 
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
-	public List<Map> selectAuthoritySearchItem() {
+	public List<Map> selectAuthoritySearchItem() throws Exception {
 		return authorityMapper.selectAuthoritySearchItem();
 	}
 
@@ -54,27 +65,38 @@ public class AuthorityService {
 	 * 
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
-	public Map saveAuthority(List param) {
+	public Map saveAuthority() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;
 
-		for (int i = 0; i < param.size(); i++) {
-			Map data = (Map) param.get(i);
-			String rowStatus = (String) data.get("rowStatus");
-			if (rowStatus.equals("C")) {
-				iCnt += authorityMapper.insertAuthority(data);
-			} else if (rowStatus.equals("U")) {
-				uCnt += authorityMapper.updateAuthority(data);
-			} else if (rowStatus.equals("D")) {
-				dCnt += authorityMapper.deleteAuthority(data);
+		List<Map<String, Object>> param;
+		try {
+			param = getSimpleList("dlt_authority");
+			for (int i = 0; i < param.size(); i++) {
+				Map data = (Map) param.get(i);
+				String rowStatus = (String) data.get("rowStatus");
+				if (rowStatus.equals("C")) {
+					iCnt += authorityMapper.insertAuthority(data);
+				} else if (rowStatus.equals("U")) {
+					uCnt += authorityMapper.updateAuthority(data);
+				} else if (rowStatus.equals("D")) {
+					dCnt += authorityMapper.deleteAuthority(data);
+				}
+			}
+		} catch(Exception e) {
+			if (e instanceof DuplicateKeyException)
+			{
+				throw new MessageException(Result.ERR_KEY, "중복된 키값의 데이터가 존재합니다.");
+			}
+			else
+			{
+				throw e;
 			}
 		}
-		Map result = new HashMap();
-		result.put("STATUS", "S");
-		result.put("ICNT", String.valueOf(iCnt));
-		result.put("UCNT", String.valueOf(uCnt));
-		result.put("DCNT", String.valueOf(dCnt));
+		
+		Map result = saveResult(iCnt,uCnt,dCnt);
+
 		return result;
 	}
 
@@ -83,11 +105,13 @@ public class AuthorityService {
 	 * 
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
-	public Map saveAuthorityMember(List param) {
+	public Map saveAuthorityMember() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;
 
+		List<Map<String, Object>> param = getSimpleList("dlt_authorityMember");
+		
 		for (int i = 0; i < param.size(); i++) {
 			Map data = (Map) param.get(i);
 			String rowStatus = (String) data.get("rowStatus");
@@ -97,11 +121,7 @@ public class AuthorityService {
 				dCnt += authorityMapper.deleteAuthorityMember(data);
 			}
 		}
-		Map result = new HashMap();
-		result.put("STATUS", "S");
-		result.put("ICNT", String.valueOf(iCnt));
-		result.put("UCNT", String.valueOf(uCnt));
-		result.put("DCNT", String.valueOf(dCnt));
+		Map result = saveResult(iCnt,uCnt,dCnt);
 		return result;
 	}
 
@@ -110,7 +130,7 @@ public class AuthorityService {
 	 * 
 	 * @param param Client 전달한 데이터 리스트 객체
 	 */
-	public Map saveAuthorityAll(List paramAuth, List paramAuthMember) {
+	public Map saveAuthorityAll() throws Exception {
 
 		int iCnt_grp = 0; // 등록한 그룹코드 건수
 		int iCnt_code = 0; // 등록한 세부코드 건수
@@ -118,7 +138,8 @@ public class AuthorityService {
 		int uCnt_code = 0; // 수정한 세부코드 건수
 		int dCnt_grp = 0; // 삭제한 그룹코드 건수
 		int dCnt_code = 0; // 삭제한 세부코드 건수
-
+		List<Map<String, Object>> paramAuth = getSimpleList("dlt_authority");
+		List<Map<String, Object>> paramAuthMember = getSimpleList("dlt_authorityMember");
 		for (int i = 0; i < paramAuth.size(); i++) {
 			Map dataAuth = (Map) paramAuth.get(i);
 			String rowStatusAuth = (String) dataAuth.get("rowStatus");

@@ -71,7 +71,7 @@ public class CommonController {
 	 * selectMenuList - 조회조건에 따른 메뉴 리스트를 조회한다.
 	 * 
 	 * @date 2017.12.22
-	 * @param {} dma_userInfo { USER_ID :"사용자 ID" }
+	 * @param {} dma_userInfo { SSN_USER_ID :"사용자 ID" }
 	 * @returns mv List ( 사용자의 메뉴 리스트 )
 	 * @author InswaveSystems
 	 * @example

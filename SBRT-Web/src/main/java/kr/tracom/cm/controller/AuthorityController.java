@@ -1,20 +1,19 @@
 package kr.tracom.cm.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.tracom.cm.domain.Authority.AuthorityService;
-import kr.tracom.util.Result;
-
+import kr.tracom.cm.support.ControllerSupport;
 
 @Controller
-public class AuthorityController {
+@Scope("request")
+public class AuthorityController extends ControllerSupport {
 
 	@Autowired
 	private AuthorityService authorityService;
@@ -29,15 +28,8 @@ public class AuthorityController {
 	 * @example
 	 */
 	@RequestMapping("/authority/selectAuthoritySearchItem")
-	public @ResponseBody Map<String, Object> selectAuthoritySearchItem() {
-		Result result = new Result();
-		try {
-			result.setData("dlt_authoritySearchItem", authorityService.selectAuthoritySearchItem());
-			result.setMsg(result.STATUS_SUCESS, "권한 아이템 리스트가 조회 되었습니다.");
-		} catch (Exception ex) {
-			result.setMsg(result.STATUS_ERROR, "권한 아이템 리스트를 가져오는 도중 오류가 발생하였습니다,", ex);
-			result.setMsg(result.STATUS_ERROR, "권한 아이템 리스트를 가져오는 도중 오류가 발생하였습니다,", ex);
-		}
+	public @ResponseBody Map<String, Object> selectAuthoritySearchItem() throws Exception {
+		result.setData("dlt_authoritySearchItem", authorityService.selectAuthoritySearchItem());
 		return result.getResult();
 	}
 
@@ -51,14 +43,8 @@ public class AuthorityController {
 	 * @example
 	 */
 	@RequestMapping("/authority/selectAuthorityList")
-	public @ResponseBody Map<String, Object> selectAuthorityList(@RequestBody Map<String, Object> param) {
-		Result result = new Result();
-		try {
-			result.setData("dlt_authority", authorityService.selectAuthorityList((Map) param.get("dma_search")));
-			result.setMsg(result.STATUS_SUCESS, "권한 리스트가 조회 되었습니다.");
-		} catch (Exception ex) {
-			result.setMsg(result.STATUS_ERROR, "권한 리스트를 가져오는 도중 오류가 발생하였습니다,", ex);
-		}
+	public @ResponseBody Map<String, Object> selectAuthorityList() throws Exception {
+		result.setData("dlt_authority", authorityService.selectAuthorityList());
 		return result.getResult();
 	}
 
@@ -72,15 +58,8 @@ public class AuthorityController {
 	 * @example
 	 */
 	@RequestMapping("/authority/selectAuthorityMemberList")
-	public @ResponseBody Map<String, Object> selectAuthorityMemberList(@RequestBody Map<String, Object> param) {
-		Result result = new Result();
-		try {
-			result.setData("dlt_authorityMember", authorityService.selectAuthorityMemberList((Map) param.get("dma_authority")));
-			result.setMsg(result.STATUS_SUCESS, "권한(" + (String) ((Map) param.get("dma_authority")).get("AUTH_CD") + ")이 부여된 사용자 리스트가 조회되었습니다.");
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			result.setMsg(result.STATUS_ERROR, "권한이 부여된 사용자 정보를 가져오는 도중 오류가 발생하였습니다,", ex);
-		}
+	public @ResponseBody Map<String, Object> selectAuthorityMemberList() throws Exception  {
+		result.setData("dlt_authorityMember", authorityService.selectAuthorityMemberList());
 		return result.getResult();
 	}
 
@@ -94,15 +73,8 @@ public class AuthorityController {
 	 * @example
 	 */
 	@RequestMapping("/authority/excludeSelectAuthorityMemberList")
-	public @ResponseBody Map<String, Object> excludeSelectAuthorityMemberList(@RequestBody Map<String, Object> param) {
-		Result result = new Result();
-		try {
-			result.setData("dlt_member", authorityService.excludeSelectAuthorityMemberList((Map) param.get("dma_search")));
-			result.setMsg(result.STATUS_SUCESS, "권한이 부여되지 않은 직원 리스트가 조회되었습니다.");
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			result.setMsg(result.STATUS_ERROR, "권한이 부여되지 않은 직원 리스트 조회중 오류가 발생하였습니다.,", ex);
-		}
+	public @ResponseBody Map<String, Object> excludeSelectAuthorityMemberList() throws Exception {
+		result.setData("dlt_member", authorityService.excludeSelectAuthorityMemberList());
 		return result.getResult();
 	}
 
@@ -116,17 +88,11 @@ public class AuthorityController {
 	 * @example
 	 */
 	@RequestMapping("/authority/saveAuthority")
-	public @ResponseBody Map<String, Object> saveAuthority(@RequestBody Map<String, Object> param) {
-		Result result = new Result();
-		try {
-			Map hash = authorityService.saveAuthority((List) param.get("dlt_authority"));
-			result.setData("dma_result", hash);
-			result.setData("dlt_authority", authorityService.selectAuthorityList((Map) param.get("dma_search")));
-			result.setMsg(result.STATUS_SUCESS,
-					"권한이 저장 되었습니다. 입력 : " + (String) hash.get("ICNT") + "건, 수정 : " + (String) hash.get("UCNT") + "건, 삭제 : " + (String) hash.get("DCNT") + "건");
-		} catch (Exception ex) {
-			result.setMsg(result.STATUS_ERROR, "권한 저장도중 오류가 발생하였습니다.", ex);
-		}
+	public @ResponseBody Map<String, Object> saveAuthority() throws Exception {
+		Map hash = authorityService.saveAuthority();
+		result.setData("dma_result", hash);
+		result.setData("dlt_authority", authorityService.selectAuthorityList());
+
 		return result.getResult();
 	}
 
@@ -140,17 +106,11 @@ public class AuthorityController {
 	 * @example
 	 */
 	@RequestMapping("/authority/saveAuthorityMember")
-	public @ResponseBody Map<String, Object> saveAuthorityMember(@RequestBody Map<String, Object> param) {
-		Result result = new Result();
-		try {
-			Map hash = authorityService.saveAuthorityMember((List) param.get("dlt_authorityMember"));
-			result.setData("dma_result", hash);
-			result.setData("dlt_authorityMember", authorityService.selectAuthorityMemberList((Map) param.get("dma_authority")));
-			result.setMsg(result.STATUS_SUCESS, "권한 사용자가 저장 되었습니다. 입력 : " + (String) hash.get("ICNT") + "건, 수정 : " + (String) hash.get("UCNT") + "건, 삭제 : "
-					+ (String) hash.get("DCNT") + "건");
-		} catch (Exception ex) {
-			result.setMsg(result.STATUS_ERROR, "권한 사용자 저장도중 오류가 발생하였습니다.", ex);
-		}
+	public @ResponseBody Map<String, Object> saveAuthorityMember() throws Exception {
+
+		Map hash = authorityService.saveAuthorityMember();
+		result.setData("dma_result", hash);
+		result.setData("dlt_authorityMember", authorityService.selectAuthorityMemberList());
 		return result.getResult();
 	}
 
@@ -164,19 +124,10 @@ public class AuthorityController {
 	 * @example
 	 */
 	@RequestMapping("/authority/saveAuthorityAll")
-	public @ResponseBody Map<String, Object> saveAuthorityAll(@RequestBody Map<String, Object> param) {
-		Result result = new Result();
-		try {
-			Map hash = authorityService.saveAuthorityAll((List) param.get("dlt_authority"), (List) param.get("dlt_authorityMember"));
+	public @ResponseBody Map<String, Object> saveAuthorityAll() throws Exception {
 
-			result.setData("dma_result_All", hash);
-			result.setMsg(result.STATUS_SUCESS,
-					"권한 및 권한별 사원정보 정보가 저장 되었습니다. 입력 권한 건수: " + (String) hash.get("ICNT_AUTH") + "건  ::  입력 권한별사원 건수: " + (String) hash.get("ICNT_MEM")
-							+ "건 :: 수정 권한 건수: " + (String) hash.get("UCNT_AUTH") + "건  ::  수정 권한별사원 건수: " + (String) hash.get("UCNT_MEM") + "건  ::  삭제 권한 건수: "
-							+ (String) hash.get("DCNT_AUTH") + "건  ::  삭제 권한별사원 건수: " + (String) hash.get("DCNT_MEM") + "건");
-		} catch (Exception ex) {
-			result.setMsg(result.STATUS_ERROR, "권한 및 권한별 사원정보 삭제도중 오류가 발생하였습니다.", ex);
-		}
+		Map hash = authorityService.saveAuthorityAll();
+		result.setData("dma_result_All", hash);
 		return result.getResult();
 	}
 }
