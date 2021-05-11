@@ -48,19 +48,19 @@ public class MainController {
 		try {
 			memberParam = user.getUserInfoByBase();
 			defInfo = new HashMap();
-			defInfo.put("USER_ID", user.getUserId());
-			defInfo.put("USER_NM", user.getUserName());
+			defInfo.put(Constants.SSN_USER_ID, user.getUserId());
+			defInfo.put(Constants.SSN_USER_NM, user.getUserName());
 
 			if (user.getIsAdmin()) {
-				defInfo.put("IS_ADMIN", "Y"); 
+				defInfo.put(Constants.SSN_IS_ADMIN, "Y"); 
 			} else {  
-				defInfo.put("IS_ADMIN", "N");
+				defInfo.put(Constants.SSN_IS_ADMIN, "N");
 			}
 			
-			int curSystem = (int)session.getAttribute("CUR_SYSTEM");
-			defInfo.put("CUR_SYSTEM", curSystem);
+			int curSystem = (int)user.getCurSystem();
+			defInfo.put(Constants.SSN_CUR_SYSTEM, curSystem);
 			
-			memberParam.put("SYSTEM_BIT", curSystem);
+			memberParam.put(Constants.SSN_SYSTEM_BIT, curSystem);
 			
 			
 			result.setData("dlt_menu", commonService.selectMenuList(memberParam));
@@ -74,30 +74,6 @@ public class MainController {
 
 		return result.getResult();
 	}
-
-	/**
-	 * 로그인된 사용자의 메인 설정 정보를 가져온다.
-	 * 
-	 * @date 2017.12.22
-	 * @author InswaveSystems
-	 * @example 샘플 코드
-	 * @todo 추가해야 할 작업
-	 */
-	@RequestMapping("/main/selectBmMainSetting")
-	public @ResponseBody Map<String, Object> selectBmMainSetting() {
-		Result result = new Result();
-
-		try {
-			result.setData("dma_setting", commonService.selectBmMainSetting(user.getUserInfo()));
-			result.setMsg(result.STATUS_SUCESS, "정상적으로 조회가 완료되었습니다.");
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			result.setMsg(result.STATUS_ERROR, null, ex);
-		}
-
-		return result.getResult();
-	}
-
 
 	/**
 	 * systemChange - 시스템 변환

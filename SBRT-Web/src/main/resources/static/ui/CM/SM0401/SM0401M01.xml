@@ -58,8 +58,8 @@
 				</w2:dataMap>
 				<w2:dataList id="dlt_memberSearchItem" baseNode="list" saveRemovedData="true" repeatNode="map">
 					<w2:columnInfo>
-						<w2:column id="EMP_CD" name="name1" dataType="text"></w2:column>
-						<w2:column id="EMP_NM" name="name2" dataType="text"></w2:column>
+						<w2:column id="USER_ID" name="name1" dataType="text"></w2:column>
+						<w2:column id="USER_NM" name="name2" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList id="dlt_memberOrganization" baseNode="list" saveRemovedData="true" repeatNode="map">
@@ -113,12 +113,12 @@
 	 * 직위면 inputBox를 hidden, selectBox를 띄운다. 
 	 */
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
-		if (info.newValue == "EMP_CD") {
-			acb_autoChoiceBox.setNodeSet("data:dlt_memberSearchItem", "EMP_CD", "EMP_CD");
+		if (info.newValue == "USER_ID") {
+			acb_autoChoiceBox.setNodeSet("data:dlt_memberSearchItem", "USER_ID", "USER_ID");
 			sbx_PositionCd.hide();
 			acb_autoChoiceBox.show("");
 		} else if (info.newValue == "EMP_NM") {
-			acb_autoChoiceBox.setNodeSet("data:dlt_memberSearchItem", "EMP_NM", "EMP_NM");
+			acb_autoChoiceBox.setNodeSet("data:dlt_memberSearchItem", "USER_NM", "USER_NM");
 			sbx_PositionCd.hide();
 			acb_autoChoiceBox.show();
 		} else if (info.newValue == "POSITION_CD") {
@@ -162,7 +162,7 @@
 	 */
 	scwin.btn_addMember_onclick = function() {
 		var insertIndex = dlt_memberBasic.insertRow();
-		grd_memberBasic.setFocusedCell(insertIndex, "EMP_CD", true);
+		grd_memberBasic.setFocusedCell(insertIndex, "USER_ID", true);
 		ibx_userId.focus();
 	};
 	
@@ -190,15 +190,17 @@
 	 */
 	scwin.btn_saveMember_onclick = function() {
 		var modifiedRowCount = dlt_memberBasic.getModifiedIndex().length;
+		var userPs = "";
+		var userPsConfirm = "";
 		
-				inpPassValue = inpesisPass.getValue();
-		secPassConfirmValue = secesisPass.getValue();
+		userPs = ibx_userPs.getValue();
+		userPsConfirm = ibx_userPsConfirm.getValue();
 		
-		if(inpPassValue != "" && secPassConfirmValue != "" ){
+		if(userPs != "" && userPsConfirm != "" ){
 			// 추가 비밀번호 확인체크
-			if (inpPassValue != secPassConfirmValue)
+			if (userPs != userPsConfirm)
 			{
-			    comb.alert("새 비밀번호가 일치하지 않습니다. 확인 후 다시 입력하십시오.");
+			    com.alert("새 비밀번호가 일치하지 않습니다. 확인 후 다시 입력하십시오.");
 			    return;
 			}
 		}
@@ -231,7 +233,7 @@
 	 * 탭의 ID가 변경될 때 마다 각 사원코드에 맞는 정보가 호출된다.
 	 */
 	scwin.grd_memberBasic_onrowindexchange = function(row, oldRow) {
-		dma_search.set("CONTENT", dlt_memberBasic.getCellData(grd_memberBasic.getFocusedRowIndex(), "EMP_CD"));
+		dma_search.set("CONTENT", dlt_memberBasic.getCellData(grd_memberBasic.getFocusedRowIndex(), "USER_ID"));
 		var rowStatus = dlt_memberBasic.getRowStatus(grd_memberBasic.getFocusedRowIndex());
 	
 		if (rowStatus != "C") {
@@ -285,12 +287,12 @@
 								<xf:select1 disabledClass="w2selectbox_disabled" appearance="minimal" chooseOptionLabel="" direction="auto" chooseOption="" displayMode="label" optionOrder="false" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox" ref="data:dma_search.TYPE" style="height:20px;width:80px;float:left;margin-right:10px;" allOption="" disabled="false" submenuSize="auto" textAlign="left">
 									<xf:choices>
 										<xf:item>
-											<xf:label><![CDATA[사원명]]></xf:label>
-											<xf:value><![CDATA[EMP_NM]]></xf:value>
+											<xf:label><![CDATA[사용자명]]></xf:label>
+											<xf:value><![CDATA[USER_NM]]></xf:value>
 										</xf:item>
 										<xf:item>
-											<xf:label><![CDATA[사원코드]]></xf:label>
-											<xf:value><![CDATA[EMP_CD]]></xf:value>
+											<xf:label><![CDATA[사용자아이디]]></xf:label>
+											<xf:value><![CDATA[USER_ID]]></xf:value>
 										</xf:item>
 										<xf:item>
 											<xf:label><![CDATA[직위]]></xf:label>
@@ -347,6 +349,7 @@
 						</xf:group>
 					</xf:group>
 				</xf:group>
+				
 				<w2:gridView ignoreCellClick="false" ev:onrowindexchange="scwin.grd_memberBasic_onrowindexchange" autoFit="allColumn"
 					visibleRowNum="10" sortable="true" sortEvent="onclick" class="cm_grid" showSortableImage="" fixedColumnWithHidden="true"
 					dataList="dlt_memberBasic" id="grd_memberBasic" readOnly="" style="height:280px;" overflowX="hidden" useShiftKey="true"
@@ -405,9 +408,7 @@
 						</w2:row>
 					</w2:gBody>
 				</w2:gridView>
-			</xf:group>
-			
-			<xf:group id="" style="" class="section">
+<xf:group id="" style="" class="section">
 				<xf:group id="grp_memberBasicDetailTop" style="width:100%;" class="w2tb tb" tagname="table" adaptive="layout">
 					<w2:attributes>
 						<w2:summary></w2:summary>
@@ -467,23 +468,20 @@
 						</xf:group>
 						<xf:group style="" class="w2tb_th" tagname="th">새&amp;nbsp;비밀번호</xf:group>
 						<xf:group style="" class="w2tb_td" tagname="td">
-							<xf:secret id="ibx_userPs" mandatory="" ref="data:dlt_memberBasic.USER_PS" style="height:24px;"></xf:secret>
+							<xf:secret id="ibx_userPs" mandatory="" style="height:24px;" ref="data:dlt_memberBasic.USER_NEW_PS"></xf:secret>
 						</xf:group>
 						<xf:group style="" class="w2tb_th" tagname="th">비밀번호&amp;nbsp;확인</xf:group>
 						<xf:group style="" class="w2tb_td" tagname="td">
-							<xf:secret id="ibx_userPsConfirm" mandatory="" ref="data:dlt_memberBasic.USER_PS_CONFIRM" style="height:24px;"
+							<xf:secret id="ibx_userPsConfirm" mandatory="" style="height:24px;"
 								validator="">
 							</xf:secret>
 						</xf:group>
 					</xf:group>
-					<xf:group style="" tagname="tr">
-						<xf:group style="" class="w2tb_th" tagname="th">비고</xf:group>
-						<xf:group style="" class="w2tb_td" tagname="td">
-							<xf:input class="fl" id="ibx_remark" ref="data:dlt_memberBasic.REMARK" style="height:24px;"></xf:input>
-						</xf:group>
-					</xf:group>
 				</xf:group>
 			</xf:group>
+			</xf:group>
+			
+			
 		</xf:group>
 	</body>
 </html>

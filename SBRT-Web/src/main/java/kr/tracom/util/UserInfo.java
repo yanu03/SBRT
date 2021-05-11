@@ -24,17 +24,11 @@ public class UserInfo implements Serializable {
 	// 시스템 관리자 여부
 	private boolean isAdmin;
 	
-	// MAIN_LAYOUT_PAGE_CODE - 메인화면 layout
-	private String mainLayoutCode;
-
-	// FAVORITE_STORAGE - 즐겨찾기 저장 위치
-	private String isUseShortCut;
-
-	@Value("${main.setting.default.layout}")
-	private String defaultMainLayoutCode;
-
-	@Value("${main.setting.default.isUseShortCut}")
-	private String defaultIsUseShortCut;
+	// 사용자 시스템 권한
+	private int systemBit;
+	
+	// 선택된 현재 시스템
+	private int curSystem;
 
 	public String getUserId() {
 		return userId;
@@ -60,52 +54,38 @@ public class UserInfo implements Serializable {
 		this.isAdmin = isAdmin;
 	}
 
-	public String getMainLayoutCode() {
-		return mainLayoutCode;
+	public int getSystemBit() {
+		return systemBit;
 	}
 
-	public void setMainLayoutCode(String mainLayoutCode) {
-		if (mainLayoutCode == null || mainLayoutCode.equals("")) {
-			this.mainLayoutCode = this.defaultMainLayoutCode;
-		} else {
-			this.mainLayoutCode = mainLayoutCode;
-		}
+	public void setSystemBit(int systemBit) {
+		this.systemBit = systemBit;
 	}
 
-	public String getIsUseShortCut() {
-		return isUseShortCut;
+	public int getCurSystem() {
+		return curSystem;
 	}
 
-	public void setIsUseShortCut(String isUseShortCut) {
-		if (isUseShortCut == null || isUseShortCut.equals("")) {
-			this.isUseShortCut = this.defaultIsUseShortCut;
-		} else {
-			this.isUseShortCut = isUseShortCut;
-		}
+	public void setCurSystem(int curSystem) {
+		this.curSystem = curSystem;
 	}
 
-	public String getDefaultMainLayoutCode() {
-		return this.defaultMainLayoutCode;
-	}
-
-	public String getDefaultIsUseShortCut() {
-		return this.defaultIsUseShortCut;
+	public void setAdmin(boolean isAdmin) {
+		this.isAdmin = isAdmin;
 	}
 
 	public Map<String, Object> getUserInfo() {
 		Map<String, Object> userInfo = new HashMap<String, Object>();
-		userInfo.put("USER_ID", this.getUserId());
-		userInfo.put("USER_NM", this.getUserName());
-		userInfo.put("MAIN_LAYOUT", this.getMainLayoutCode());
-		userInfo.put("FV_STORAGE", this.getIsUseShortCut());
+		userInfo.put(Constants.SSN_USER_ID, this.getUserId());
+		userInfo.put(Constants.SSN_USER_NM, this.getUserName());
+		userInfo.put(Constants.SSN_SYSTEM_BIT, this.getUserId());
+		userInfo.put(Constants.SSN_CUR_SYSTEM, this.getUserName());
 		return userInfo;
 	}
 
 	public Map<String, Object> getUserInfoWithoutUserID() {
 		Map<String, Object> userInfo = new HashMap<String, Object>();
-		userInfo.put("USER_NM", this.getUserName());
-		userInfo.put("MAIN_LAYOUT", this.getMainLayoutCode());
-		userInfo.put("FV_STORAGE", this.getIsUseShortCut());
+		userInfo.put(Constants.SSN_USER_NM, this.getUserName());
 		return userInfo;
 	}
 
@@ -120,7 +100,7 @@ public class UserInfo implements Serializable {
 	 */
 	public Map getUserInfoByBase() {
 		Map<String, Object> userInfo = new HashMap<String, Object>();
-		userInfo.put("USER_ID", this.getUserId());
+		userInfo.put(Constants.SSN_USER_ID, this.getUserId());
 		return userInfo;
 	}
 
@@ -134,40 +114,14 @@ public class UserInfo implements Serializable {
 	 * @todo 추가해야 할 작업
 	 */
 	public void setUserInfo(HttpSession session) {
-		this.setUserId((String) session.getAttribute("USER_ID"));
-		this.setUserName((String) session.getAttribute("USER_NM"));
-		this.setIsAdmin((boolean) session.getAttribute("IS_ADMIN"));
-		this.setMainLayoutCode((String) session.getAttribute("MAIN_LAYOUT_PAGE_CODE"));
-		this.setIsUseShortCut((String) session.getAttribute("USE_YN_SHORTCUT"));
+		this.setUserId((String) session.getAttribute(Constants.SSN_USER_ID));
+		this.setUserName((String) session.getAttribute(Constants.SSN_USER_NM));
+		this.setIsAdmin((boolean) session.getAttribute(Constants.SSN_IS_ADMIN));
+		this.setSystemBit(Integer.parseInt((String)session.getAttribute(Constants.SSN_SYSTEM_BIT)));
+		this.setCurSystem((int)session.getAttribute(Constants.SSN_CUR_SYSTEM));
 	}
 
-	/**
-	 * session 값을 참조하여 Main Layout 업데이트
-	 * 
-	 * @date 2016. 8. 19.
-	 * @param session 사용자 정보가 담긴 session객체
-	 * @author InswaveSystems
-	 * @example 샘플 코드
-	 * @todo 추가해야 할 작업
-	 */
-	public void updateMainLayoutCode(HttpSession session, String mainLayoutPageCode) {
-		this.setMainLayoutCode(mainLayoutPageCode);
-		session.setAttribute("MAIN_LAYOUT_PAGE_CODE", this.getMainLayoutCode());
-	}
-	
-	/**
-	 * session 값을 참조하여 dataSetting
-	 * 
-	 * @date 2016. 8. 19.
-	 * @param session 사용자 정보가 담긴 session객체
-	 * @author InswaveSystems
-	 * @example 샘플 코드
-	 * @todo 추가해야 할 작업
-	 */
-	public void updateIsUseShortCut(HttpSession session, String isUseShortCut) {
-		this.setIsUseShortCut(isUseShortCut);
-		session.setAttribute("USE_YN_SHORTCUT", this.getIsUseShortCut());
-	}
+
 
 	/**
 	 * Map값을 참조하여 dataSetting
@@ -179,10 +133,9 @@ public class UserInfo implements Serializable {
 	 * @todo 추가해야 할 작업
 	 */
 	public void setUserInfo(Map memberInfo) {
-		this.setUserId((String) memberInfo.get("USER_ID"));
-		this.setUserName((String) memberInfo.get("USER_NM"));
-		this.setMainLayoutCode((String) memberInfo.get("MAIN_LAYOUT_PAGE_CODE"));
-		this.setIsUseShortCut((String) memberInfo.get("USE_YN_SHORTCUT"));
+		this.setUserId((String) memberInfo.get(Constants.SSN_USER_ID));
+		this.setUserName((String) memberInfo.get(Constants.SSN_USER_NM));
+
 	}
 
 	/**
@@ -197,8 +150,6 @@ public class UserInfo implements Serializable {
 	public void init() {
 		this.setUserId(null);
 		this.setUserName(null);
-		this.setMainLayoutCode(null);
-		this.setIsUseShortCut(null);
 	}
 
 	/**

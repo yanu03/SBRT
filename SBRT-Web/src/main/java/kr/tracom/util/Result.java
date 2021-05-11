@@ -37,7 +37,11 @@ public class Result {
 
 	// viewType이 VIEW_STRING 일 경우 참조하는 key
 	public final static String RESULT_KEY_DEFAULT = "result";
-
+	
+	public final static String CALL_KEY = "[CALL_KEY]";
+	public final static String ERR_KEY = "[ERR_KEY]";
+	public final static String DELIM = "[SPLT]";
+	
 	public void setData(String id, String data) {
 		resultMap.put(id, data);
 	}

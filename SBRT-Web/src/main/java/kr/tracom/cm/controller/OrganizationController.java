@@ -7,16 +7,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.tracom.cm.domain.Organization.OrganizationService;
+import kr.tracom.cm.support.ControllerSupport;
 import kr.tracom.util.Result;
 
 @Controller
-public class OrganizationController {
+@Scope("request")
+public class OrganizationController extends ControllerSupport {
 
 	@Autowired
 	private OrganizationService service;
@@ -77,11 +80,10 @@ public class OrganizationController {
 		Result result = new Result();
 		try {
 			HttpSession session = request.getSession();
-			String	userId = (String) session.getAttribute("USER_ID");
 
-			Map hash = service.saveOrganizaionBasicList((List) param.get("dlt_organizationBasic"), userId);
+			Map hash = service.saveOrganizaionBasicList((List) getSimpleDataMap("dlt_organizationBasic"));
 			result.setData("dma_result", hash);
-			result.setData("dlt_organizationBasic", service.selectOrganization((Map) param.get("dma_search")));
+			result.setData("dlt_organizationBasic", service.selectOrganization((Map) getSimpleDataMap("dma_search")));
 			result.setMsg(result.STATUS_SUCESS, "인사기본관리 정보가 저장 되었습니다. 입력 : " + (String) hash.get("ICNT") + "건, 수정 : " + (String) hash.get("UCNT") + "건, 삭제 : "
 					+ (String) hash.get("DCNT") + "건");
 		} catch (Exception ex) {
@@ -100,7 +102,7 @@ public class OrganizationController {
 	public @ResponseBody Map<String, Object> getOrganBasicList(@RequestBody Map<String, Object> param) {
 		Result result = new Result();
 		try {
-			result.setData("data", service.selectOrganizaionBasicList((Map) param.get("dlt_organizationBasic")));
+			result.setData("data", service.selectOrganizaionBasicList((Map) getSimpleDataMap("dlt_organizationBasic")));
 			result.setMsg(result.STATUS_SUCESS, "조직 정보를 조회하였습니다.");
 		} catch (Exception ex) {
 			result.setMsg(result.STATUS_ERROR, "조직 정보를 조회하였습니다.", ex);

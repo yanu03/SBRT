@@ -44,20 +44,6 @@ public interface CommonMapper {
 	//시스템코드
 	public List<Map> selectSystemList(Map param);
 
-	// MAIN SETTING 관리
-	public int insertBmMainSetting(Map param);
-
-	public int updateBmMainSetting(Map param);
-
-	/**
-	 * select BM_MAIN_SETTING by USER_ID
-	 * 
-	 * @date 2016. 8. 10.
-	 * @param param USER_ID가 담긴 MAP
-	 * @returns <Map> 단건 BM_MAIN_SETTING - FAVORITE_STORAGE, MAIN_LAYOUT_PAGE_CODE
-	 * @author InswaveSystems
-	 */
-	public Map selectBmMainSetting(Map param);
 
 	/**
 	 * 그룹코드로 세부코드 정보 한번에 삭제하기

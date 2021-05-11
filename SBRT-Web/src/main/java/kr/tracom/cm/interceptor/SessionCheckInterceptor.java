@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import kr.tracom.util.Constants;
 import kr.tracom.util.UserInfo;
 
 public class SessionCheckInterceptor extends HandlerInterceptorAdapter {
@@ -22,7 +23,7 @@ public class SessionCheckInterceptor extends HandlerInterceptorAdapter {
 		boolean result = true;
 
 		try {
-			loginInfo = (String) session.getAttribute("USER_ID");
+			loginInfo = (String) session.getAttribute(Constants.SSN_USER_ID);
 			
 			if (loginInfo != null) {
 				userInfo.setUserInfo(session);

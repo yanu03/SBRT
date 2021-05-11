@@ -15,7 +15,7 @@
 	</select>
 
 	<select id="selectMemberBasic" resultType="Map" parameterType="Map">
-		SELECT USER_ID,ORG_ID,SYSTEM_BIT,USER_NM,SCD_PS,EMAIL,HP_NO,SCD_PS_USE_YN,USE_YN,REMARK
+		SELECT USER_ID,ORG_ID,SYSTEM_BIT,USER_NM,SCD_PS,EMAIL,HP_NO,USE_YN,REMARK
 		FROM BMS_USER_MST
 		<where>
 			<if test="TYPE == 'USER_NM'">
@@ -42,7 +42,7 @@
 
 	<select id="selectMemberOragn" resultType="Map" parameterType="Map">
 		SELECT HPB.USER_ID, HOB.ORG_NM, HPB.SYSTEM_BIT, HPB.USER_NM, HPB.EMAIL, HPB.HP_NO
-			,HPB.SCD_PS_USE_YN,HPB.USE_YN,HPB.REMARK
+			,HPB.USE_YN,HPB.REMARK
 		 FROM BMS_USER_MST HPB
 			  LEFT OUTER JOIN BMS_ORG_MST HOB ON HPB.ORG_ID = HOB.ORG_ID
 
@@ -74,88 +74,4 @@
 	<delete id="deleteMemberBasic" parameterType="Map">
 		DELETE FROM BMS_USER_MST WHERE USER_ID = #{USER_ID}
 	</delete>
-
-	<select id="selectMemberFamilyList" resultType="Map" parameterType="Map">
-		SELECT USER_ID, SEQ, RELATIONSHIP, FAMILY_NM, RESIDENT_NO, JOB, IS_CORESIDENCE, IS_SUPPORT
-		  FROM HM_MEMBER_FAMILY
-		<where>
-			<if test="USER_ID != null and USER_ID != ''">
-				AND USER_ID = #{USER_ID}
-			</if>
-		</where>
-	</select>
-
-	<select id="selectMemberFamilyMaxSeq" resultType="int" parameterType="Map">
-		SELECT CASE WHEN (COUNT(*) > 0) THEN MAX(SEQ) ELSE 0 END AS MAX_SEQ
-		  FROM HM_MEMBER_FAMILY
-		<where>
-			<if test="USER_ID != null and USER_ID != ''">
-				AND USER_ID = #{USER_ID}
-			</if>
-		</where>
-	</select>
-
-	<insert id="insertMemberFamily" parameterType="Map">
-		INSERT INTO HM_MEMBER_FAMILY(USER_ID, SEQ, RELATIONSHIP, FAMILY_NM, RESIDENT_NO, JOB, IS_CORESIDENCE, IS_SUPPORT)
-		VALUES (#{USER_ID}, #{SEQ}, #{RELATIONSHIP}, #{FAMILY_NM}, #{RESIDENT_NO}, #{JOB}, #{IS_CORESIDENCE}, #{IS_SUPPORT})
-	</insert>
-
-	<update id="updateMemberFamily" parameterType="Map">
-		UPDATE HM_MEMBER_FAMILY
-		   SET RELATIONSHIP = #{RELATIONSHIP}, FAMILY_NM = #{FAMILY_NM}, RESIDENT_NO = #{RESIDENT_NO}, JOB = #{JOB}, IS_CORESIDENCE = #{IS_CORESIDENCE},
-			   IS_SUPPORT = #{IS_SUPPORT}
-		 WHERE USER_ID = #{USER_ID} AND SEQ = #{SEQ}
-	</update>
-
-	<delete id="deleteMemberFamily" parameterType="Map">
-		DELETE FROM HM_MEMBER_FAMILY WHERE USER_ID = #{USER_ID} AND SEQ = #{SEQ}
-	</delete>
-
-	<select id="selectMemberProjectList" resultType="Map" parameterType="Map">
-		SELECT USER_ID, SEQ, PROJECT_NM, PROJECT_DESC, START_DATE, END_DATE, ORDERING_ORG, COMPANY, REMARK
-		  FROM HM_MEMBER_PROJECT
-		<where>
-			<if test="USER_ID != null and USER_ID != ''">
-				AND USER_ID = #{USER_ID}
-			</if>
-		</where>
-	</select>
-
-	<select id="selectMemberProjectMaxSeq" resultType="int">
-		SELECT CASE WHEN (COUNT(*) > 0) THEN MAX(SEQ) ELSE 0 END AS MAX_SEQ
-		  FROM HM_MEMBER_PROJECT
-		<where>
-			<if test="USER_ID != null and USER_ID != ''">
-				AND USER_ID = #{USER_ID}
-			</if>
-		</where>
-	</select>
-
-	<insert id="insertMemberProject" parameterType="Map">
-		INSERT INTO HM_MEMBER_PROJECT(USER_ID, SEQ, PROJECT_NM, PROJECT_DESC, START_DATE,
-									  END_DATE, ORDERING_ORG, COMPANY, REMARK)
-			 VALUES (#{USER_ID}, #{SEQ}, #{PROJECT_NM}, #{PROJECT_DESC}, #{START_DATE}, #{END_DATE}
-				   , #{ASSIGNED_TASK}, #{ORDERING_ORG}, #{COMPANY}, #{REMARK})
-	</insert>
-
-	<update id="updateMemberProject" parameterType="Map">
-		UPDATE HM_MEMBER_PROJECT
-		   SET PROJECT_NM = #{PROJECT_NM}, PROJECT_DESC = #{PROJECT_DESC}
-			 , START_DATE = #{START_DATE}, END_DATE = #{END_DATE}
-			 , ORDERING_ORG = #{ORDERING_ORG}, COMPANY = #{COMPANY}, REMARK = #{REMARK}
-		 WHERE USER_ID = #{USER_ID} AND SEQ = #{SEQ}
-	</update>
-
-	<delete id="deleteMemberProject" parameterType="Map">
-		DELETE FROM HM_MEMBER_PROJECT WHERE USER_ID = #{USER_ID} AND SEQ = #{SEQ}
-	</delete>
-
-	<select id="selectZipCodeList" resultType="Map">
-		SELECT ZIP_CD, CONCAT(CITY, ' ', COUNTRY, ' ', TOWN, ' ', BUILDING, ' ', FROM_NO) as ADDRESS FROM BM_ZIP_CODE
-		<where>
-			<if test="SEARCH_KEYWORD != null and SEARCH_KEYWORD != ''">
-				AND (TOWN LIKE CONCAT('%', #{SEARCH_KEYWORD}, '%')) OR (BUILDING LIKE CONCAT('%', #{SEARCH_KEYWORD}, '%'))
-			</if>
-		</where>
-	</select>
 </mapper>

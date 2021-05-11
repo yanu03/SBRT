@@ -52,7 +52,7 @@ public class OrganizationService {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public Map saveOrganizaionBasicList(List param, String userId) {
+	public Map saveOrganizaionBasicList(List param) {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;
@@ -60,7 +60,6 @@ public class OrganizationService {
 		for (int i = 0; i < param.size(); i++) {
 
 			Map data = (Map) param.get(i);
-			data.put("USER_ID", userId);
 			String rowStatus = (String) data.get("rowStatus");
 			if (rowStatus.equals("C")) {
 				iCnt += organizationMapper.insertOrganizaionBasic(data);
