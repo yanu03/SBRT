@@ -528,6 +528,13 @@ public class ServiceSupport {
 		return getSimpleList(key, false);
 	}
 
+	protected Map saveResult(int iCnt) {
+		Map result = new HashMap();
+		result.put("STATUS", "S");
+		result.put("ICNT", String.valueOf(iCnt));
+		return result;
+	}
+	
 	protected Map saveResult(int iCnt, int uCnt) {
 		Map result = new HashMap();
 		result.put("STATUS", "S");

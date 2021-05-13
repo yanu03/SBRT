@@ -514,6 +514,7 @@ com.getFrameMode = function() {
  * @author InswaveSystems
  */
 com._setProgramAuthority = function() {
+
 	var param = com.getParameter();
 	if ((typeof param !== "undefined") && (typeof param.menuCode !== "undefined") && (param.menuCode.trim() !== "")) {
 		var menuCd = param.menuCode;
@@ -525,6 +526,22 @@ com._setProgramAuthority = function() {
 
 			if (programAuthorityList.length > 0) {
 				var programAuthority = programAuthorityList[0];
+				
+				/*if (programAuthority.AUTH_CHECK == "Y") {
+					var tmpParentIdx = btn_main_generator.insertChild();
+					var mainBtn = btn_main_generator.getChild(tmpParentIdx, "btn_main");
+					mainBtn.setValue("조회");
+					mainBtn.addClass("search");
+					input1.bind("onclick", function(e){ scwin.btn_search_onclick() })); 
+				}
+				if (programAuthority.SAV_AH == "Y") {
+					var tmpParentIdx = btn_main_generator.insertChild();
+					var mainBtn = btn_main_generator.getChild(tmpParentIdx, "btn_main");
+					mainBtn.setValue("저장");
+					mainBtn.addClass("save");
+					input1.bind("onclick", function(e){ scwin.btn_search_onclick() })); 
+				}*/
+				
 				var objArr = WebSquare.util.getChildren($p.getFrame(), {
 					excludePlugin : "group trigger textbox output calendar image span",
 					recursive : true

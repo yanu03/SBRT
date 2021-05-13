@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,12 +17,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.tracom.cm.domain.Common.CommonService;
 import kr.tracom.cm.domain.Login.LoginService;
+import kr.tracom.cm.support.ControllerSupport;
 import kr.tracom.util.Result;
 import kr.tracom.util.UserInfo;
 import kr.tracom.util.Constants;
 
 @Controller
-public class LoginController {
+@Scope("request")
+public class LoginController extends ControllerSupport {
 
 	@Autowired
 	private LoginService loginService;
@@ -41,8 +44,7 @@ public class LoginController {
 	 * @example
 	 */
 	@RequestMapping(value = "/main/logout")
-	public @ResponseBody Map<String, Object> logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		Result result = new Result();
+	public @ResponseBody Map<String, Object> logout() throws Exception {
 		try {
 			result.setMsg(Result.STATUS_SUCESS, "정상적으로 로그아웃 되었습니다.");
 		} catch (Exception ex) {
@@ -62,74 +64,69 @@ public class LoginController {
 	 * @param dma_loginCheck { USER_ID:"사용자아이디", PASSWORD:"비밀번호" }
 	 * @returns mv dma_resLoginCheck { USER_ID:"사용자아이디", USER_NM:"사용자명", LOGIN:"상태" }
 	 * @author Inswave
+	 * @throws Exception 
 	 * @example
 	 */
 	@RequestMapping(value = "/main/login")
-	public @ResponseBody Map<String, Object> login(@RequestBody Map<String, Object> param, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody Map<String, Object> login() throws Exception {
 		HttpSession session = request.getSession();
 		Map memberMap = null;
 		String status = null;
 		Map loginParam = null;
 
-		Result result = new Result();
-		try {
-			// loginParam은 param(USER_ID/PW)의 값을 꺼내는 용도
-			loginParam = (Map) param.get("dma_loginCheck");
+		// loginParam은 param(USER_ID/PW)의 값을 꺼내는 용도
+		loginParam = getSimpleDataMap("dma_loginCheck");
 
-			memberMap = loginService.selectMemberInfoForLogin(loginParam);
-			status = (String) memberMap.get("LOGIN");
+		memberMap = loginService.selectMemberInfoForLogin(loginParam);
+		status = (String) memberMap.get("LOGIN");
 
-			// 로그인 성공
-			if (status.equals("success")) {
-				String mainLayout = (String) memberMap.get("MAIN_LAYOUT_PAGE_CODE");
-				String isUseShortCut = (String) memberMap.get("USE_YN_SHORTCUT");
+		// 로그인 성공
+		if (status.equals("success")) {
+			String mainLayout = (String) memberMap.get("MAIN_LAYOUT_PAGE_CODE");
+			String isUseShortCut = (String) memberMap.get("USE_YN_SHORTCUT");
 
-				// main setting에 값이 저장되어 있지 않는 경우 insert.
-				/*if (mainLayout == null) {
-					mainLayout = user.getDefaultMainLayoutCode();
-				}*/
-				
-				session.setAttribute(Constants.SSN_USER_ID, (String) memberMap.get("USER_ID"));
-				session.setAttribute(Constants.SSN_USER_NM, (String) memberMap.get("USER_NM"));
-				session.setAttribute(Constants.SSN_SYSTEM_BIT, memberMap.get("SYSTEM_BIT"));
-				
-				int systemBit = Integer.parseInt((String)memberMap.get("SYSTEM_BIT"));
-				if(systemBit==Constants.SYSTEM_ALL) {
-					session.setAttribute(Constants.SSN_CUR_SYSTEM, Constants.SYSTEM_BIS);
-				}
-				else {
-					session.setAttribute(Constants.SSN_CUR_SYSTEM, systemBit);
-				}	
-				
-				// 로그인한 아이디가 시스템 관리자인지 여부를 체크한다.
-				// 시스템 관리자 아이디는 websquareConfig.properties 파일의 system.admin.id 속성에 정의하면 된다.
-				// 시스템 관자자 아이디가 여러 개일 경우 콤마(",") 구분해서 작성할 수 있다.
-				boolean isAdmin = loginService.isAdmin((String) memberMap.get("USER_ID"));
-				session.setAttribute(Constants.SSN_IS_ADMIN, isAdmin);
-				
-				
-				
-				// 클라이언트(UI)에 전달하는 IS_ADMIN 정보는 관리자인지의 여부에 따라 화면 제어가 필요한 로직 처리를 위해서만 사용한다.
-				// 서버 서비스에서의 로직 처리는 보안을 위해서 클라이언트에서 전달하는 IS_ADMIN 정보가 아닌
-				// 서버 서비스에서 관리하는 UserInfo.getIsAdmin()에서 관리자 여부를 받아와서 판단해야 한다.
-
-				// 메뉴 정보 가져오기
-				//memberMap.put("SYSTEM_BIT",session.getAttribute(Constants.SSN_CUR_SYSTEM));
-				//memberMap.put("SSN_USER_ID",session.getAttribute(Constants.SSN_USER_ID));
-				//List sessionMList = commonService.selectMenuList(memberMap);
-				//session.setAttribute("MENU_LIST", (List) sessionMList);
-
-				user.setUserInfo(session);
-
-				result.setMsg(Result.STATUS_SUCESS, "로그인 성공");
-			} else if (status.equals("error")) {
-				result.setMsg(Result.STATUS_ERROR, "로그인 실패(패스워드 불일치)");
-			} else {
-				result.setMsg(Result.STATUS_ERROR, "사용자 정보가 존재하지 않습니다.");
+			// main setting에 값이 저장되어 있지 않는 경우 insert.
+			/*if (mainLayout == null) {
+				mainLayout = user.getDefaultMainLayoutCode();
+			}*/
+			
+			session.setAttribute(Constants.SSN_USER_ID, (String) memberMap.get("USER_ID"));
+			session.setAttribute(Constants.SSN_USER_NM, (String) memberMap.get("USER_NM"));
+			session.setAttribute(Constants.SSN_SYSTEM_BIT, memberMap.get("SYSTEM_BIT"));
+			
+			int systemBit = Integer.parseInt((String)memberMap.get("SYSTEM_BIT"));
+			if(systemBit==Constants.SYSTEM_ALL) {
+				session.setAttribute(Constants.SSN_CUR_SYSTEM, Constants.SYSTEM_BIS);
 			}
-		} catch (Exception ex) {// DB커넥션 없음
-			ex.printStackTrace();
-			result.setMsg(Result.STATUS_ERROR, "처리도중 시스템 오류가 발생하였습니다.", ex);
+			else {
+				session.setAttribute(Constants.SSN_CUR_SYSTEM, systemBit);
+			}	
+			
+			// 로그인한 아이디가 시스템 관리자인지 여부를 체크한다.
+			// 시스템 관리자 아이디는 websquareConfig.properties 파일의 system.admin.id 속성에 정의하면 된다.
+			// 시스템 관자자 아이디가 여러 개일 경우 콤마(",") 구분해서 작성할 수 있다.
+			boolean isAdmin = loginService.isAdmin((String) memberMap.get("USER_ID"));
+			session.setAttribute(Constants.SSN_IS_ADMIN, isAdmin);
+			
+			
+			
+			// 클라이언트(UI)에 전달하는 IS_ADMIN 정보는 관리자인지의 여부에 따라 화면 제어가 필요한 로직 처리를 위해서만 사용한다.
+			// 서버 서비스에서의 로직 처리는 보안을 위해서 클라이언트에서 전달하는 IS_ADMIN 정보가 아닌
+			// 서버 서비스에서 관리하는 UserInfo.getIsAdmin()에서 관리자 여부를 받아와서 판단해야 한다.
+
+			// 메뉴 정보 가져오기
+			//memberMap.put("SYSTEM_BIT",session.getAttribute(Constants.SSN_CUR_SYSTEM));
+			//memberMap.put("SSN_USER_ID",session.getAttribute(Constants.SSN_USER_ID));
+			//List sessionMList = commonService.selectMenuList(memberMap);
+			//session.setAttribute("MENU_LIST", (List) sessionMList);
+
+			user.setUserInfo(session);
+
+			result.setMsg(Result.STATUS_SUCESS, "로그인 성공");
+		} else if (status.equals("error")) {
+			result.setMsg(Result.STATUS_ERROR, "로그인 실패(패스워드 불일치)");
+		} else {
+			result.setMsg(Result.STATUS_ERROR, "사용자 정보가 존재하지 않습니다.");
 		}
 		return result.getResult();
 	}
@@ -144,50 +141,45 @@ public class LoginController {
 	 * @example
 	 */
 	@RequestMapping("/main/updatePassword")
-	public @ResponseBody Map<String, Object> updatePassword(@RequestBody Map<String, Object> param) {
+	public @ResponseBody Map<String, Object> updatePassword() throws Exception {
 		Result result = new Result();
 		
-		try {
-			Map passwordMap = (Map) param.get("dma_password");
-			boolean checkCurrPassword = false;
+		Map passwordMap = getSimpleDataMap("dma_password");
+		boolean checkCurrPassword = false;
+		
+		// 시스템 관리자인 경우에는 현재 비밀번호 체크를 하지 않고 비밀번호를 변경한다.
+		if (user.getIsAdmin()) {
+			checkCurrPassword = true;
 			
-			// 시스템 관리자인 경우에는 현재 비밀번호 체크를 하지 않고 비밀번호를 변경한다.
-			if (user.getIsAdmin()) {
+		// 일반 사용자인 경우에는 현재 비밀번호를 체크하고 비밀번호를 변경한다.
+		} else {
+			Map memberMap = loginService.selectMemberInfoForLogin(passwordMap);
+			String status = (String) memberMap.get("LOGIN");
+		   
+			// 현재 비밀번호 정상 입력 여부 확인
+			if (status.equals("success")) {
 				checkCurrPassword = true;
-				
-			// 일반 사용자인 경우에는 현재 비밀번호를 체크하고 비밀번호를 변경한다.
-			} else {
-				Map memberMap = loginService.selectMemberInfoForLogin(passwordMap);
-				String status = (String) memberMap.get("LOGIN");
-			   
-				// 현재 비밀번호 정상 입력 여부 확인
-				if (status.equals("success")) {
-					checkCurrPassword = true;
-				} else {
-					Map resultMap = new HashMap<String, Object>();
-					// TODO : FOCUS 정보가 정상적으로 Response에 담기지 않음
-					resultMap.put("FOCUS", "PASSWORD");
-					result.setData("dma_result", resultMap);
-					result.setMsg(result.STATUS_ERROR, "현재 비밀번호를 잘못 입력하셨습니다.");
-					return result.getResult();
-				}
-			}
-			
-			String newPassword = (String) passwordMap.get("NEW_PASSWORD");
-			String retryPassword = (String) passwordMap.get("RETRY_PASSWORD");
-			
-			if (newPassword.equals(retryPassword)) {
-				loginService.updatePassword(passwordMap);
-				result.setMsg(result.STATUS_SUCESS, "비밀번호 변경에 성공했습니다.");
 			} else {
 				Map resultMap = new HashMap<String, Object>();
-				resultMap.put("FOCUS", "NEW_PASSWORD");
+				// TODO : FOCUS 정보가 정상적으로 Response에 담기지 않음
+				resultMap.put("FOCUS", "PASSWORD");
 				result.setData("dma_result", resultMap);
-				result.setMsg(result.STATUS_ERROR, "신규 비밀번호와 신규 비밀번호(재입력) 항목의 비밀번호가 다르게 입력 되었습니다.");
+				result.setMsg(result.STATUS_ERROR, "현재 비밀번호를 잘못 입력하셨습니다.");
+				return result.getResult();
 			}
-
-		} catch (Exception ex) {
-			result.setMsg(result.STATUS_ERROR, "비밀번호 변경 중 오류가 발생했습니다.", ex);
+		}
+		
+		String newPassword = (String) passwordMap.get("NEW_PASSWORD");
+		String retryPassword = (String) passwordMap.get("RETRY_PASSWORD");
+		
+		if (newPassword.equals(retryPassword)) {
+			loginService.updatePassword(passwordMap);
+			result.setMsg(result.STATUS_SUCESS, "비밀번호 변경에 성공했습니다.");
+		} else {
+			Map resultMap = new HashMap<String, Object>();
+			resultMap.put("FOCUS", "NEW_PASSWORD");
+			result.setData("dma_result", resultMap);
+			result.setMsg(result.STATUS_ERROR, "신규 비밀번호와 신규 비밀번호(재입력) 항목의 비밀번호가 다르게 입력 되었습니다.");
 		}
 		
 		return result.getResult();

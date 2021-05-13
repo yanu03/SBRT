@@ -4,16 +4,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.tracom.cm.domain.Menu.MenuService;
+import kr.tracom.cm.support.ControllerSupport;
 import kr.tracom.util.Result;
 
 @Controller
-public class MenuController {
+@Scope("request")
+public class MenuController extends ControllerSupport{
 
 	@Autowired
 	private MenuService menuService;
@@ -27,15 +30,9 @@ public class MenuController {
 	 * @example
 	 */
 	@RequestMapping("/menu/searchMenu")
-	public @ResponseBody Map<String, Object> searchMenu(@RequestBody Map<String, Object> param) {
-		Result result = new Result();
-		try {
-			result.setData("dlt_menu", menuService.selectMenu((Map) param.get("dma_search")));
-			result.setMsg(result.STATUS_SUCESS, "메뉴 리스트가 조회되었습니다.");
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			result.setMsg(result.STATUS_ERROR, "메뉴 리스트를 가져오는 도중 오류가 발생하였습니다.", ex);
-		}
+	public @ResponseBody Map<String, Object> searchMenu() throws Exception {
+		result.setData("dlt_menu", menuService.selectMenu());
+		result.setMsg(result.STATUS_SUCESS, "메뉴 리스트가 조회되었습니다.");
 		return result.getResult();
 	}
 
@@ -44,21 +41,15 @@ public class MenuController {
 	 * 
 	 * @date 2017.12.22
 	 * @param {} dlt_menu ( 메뉴관리 상태인( C,U,D ) 리스트 ), dma_search { TYPE:"메뉴명 또는 메뉴코드 또는 부모메뉴명 또는 메뉴레벨", CONTENTS:"검색어" }
+	 * @throws Exception 
 	 * @returns mv dlt_result ( 입력,수정,삭제된 건수 및 상태 ), dlt_menu ( 메뉴관리 리스트 ) author InswaveSystems
 	 * @example
 	 */
 	@RequestMapping("/menu/updateMenu")
-	public @ResponseBody Map<String, Object> updateMenu(@RequestBody Map<String, Object> param) {
-		Result result = new Result();
-		try {
-			Map hash = menuService.saveMenu((List) param.get("dlt_menu"));
-			result.setData("dma_result", hash);
-			result.setData("dlt_menu", menuService.selectMenu((Map) param.get("dma_search")));
-			result.setMsg(result.STATUS_SUCESS, "메뉴관리 정보가 저장 되었습니다. 입력 : " + (String) hash.get("ICNT") + "건, 수정 : " + (String) hash.get("UCNT") + "건, 삭제 : "
-					+ (String) hash.get("DCNT") + "건");
-		} catch (Exception ex) {
-			result.setMsg(result.STATUS_ERROR, "메뉴관리 정보 저장도중 오류가 발생하였습니다.", ex);
-		}
+	public @ResponseBody Map<String, Object> updateMenu() throws Exception {
+		Map hash = menuService.saveMenu();
+		result.setData("dma_result", hash);
+		result.setData("dlt_menu", menuService.selectMenu());
 		return result.getResult();
 	}
 }

@@ -5,28 +5,31 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import kr.tracom.util.Constants;
 import kr.tracom.util.UserInfo;
 
+//@Component
 public class SessionCheckInterceptor extends HandlerInterceptorAdapter {
 
 	@Autowired
 	private UserInfo userInfo;
 
+	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 		String loginInfo = null;
 		HttpSession session = request.getSession();
 		String reqUrl = request.getRequestURI();
 		String w2xPath = request.getParameter("w2xPath");
 		boolean result = true;
-
+		
 		try {
 			loginInfo = (String) session.getAttribute(Constants.SSN_USER_ID);
 			
 			if (loginInfo != null) {
-				userInfo.setUserInfo(session);
+				//userInfo.setUserInfo(session);
 			} else {
 				if (!isSkipURI(request)) {
 					if ((w2xPath != null) || (reqUrl.indexOf(".xml") > -1)) {

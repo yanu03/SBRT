@@ -59,15 +59,18 @@
 	<insert id="insertMemberBasic" parameterType="Map">
 		insert into BMS_USER_MST( USER_ID,USER_NM,ORG_ID,SYSTEM_BIT,USER_PS,EMAIL,HP_NO, USE_YN,REMARK,UPD_DTM,UPD_ID )
 		values( #{USER_ID},#{USER_NM},#{ORG_ID},#{SYSTEM_BIT},#{USER_PS}, #{EMAIL},#{HP_NO},
-		'Y',#{REMARK},SYS_DATE(),#{SESSION_USER_ID} )
+		'Y',#{REMARK},#{UPD_DTM},#{SESSION_USER_ID} )
 	</insert>
 
 
 	<update id="updateMemberBasic" parameterType="Map">
 		UPDATE BMS_USER_MST
-		   SET USER_NM = #{USER_NM}, ORG_ID = #{ORG_ID}, SYSTEM_BIT = #{SYSTEM_BIT}, USER_PS = #{USER_PS}
+		   SET USER_NM = #{USER_NM}, ORG_ID = #{ORG_ID}, SYSTEM_BIT = #{SYSTEM_BIT}, 
+		   <if test="USER_PS != ''">
+		   USER_PS = #{USER_PS}
+		   </if>
 			 , EMAIL = #{EMAIL}, HP_NO = #{HP_NO}, USE_YN = #{USE_YN}, REMARK = #{REMARK}
-			 , UPD_DTM = SYS_DATE()}, UPD_ID = #{SESSION_USER_ID}
+			 , UPD_DTM = #{UPD_DTM}, UPD_ID = #{SESSION_USER_ID}
 		 WHERE USER_ID = #{USER_ID}
 	</update>
 

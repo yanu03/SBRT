@@ -7,8 +7,10 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import kr.tracom.cm.support.ServiceSupport;
+
 @Service
-public class MemberService {
+public class MemberService extends ServiceSupport{
 
 	@Autowired
 	private MemberMapper memberMapper;
@@ -19,7 +21,7 @@ public class MemberService {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public List<Map> selectMemberBasicOrganization() {
+	public List<Map> selectMemberBasicOrganization() throws Exception{
 		return memberMapper.selectMemberBasicOrganization();
 	}
 
@@ -29,7 +31,8 @@ public class MemberService {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public List<Map> selectMemberBasic(Map param) {
+	public List<Map> selectMemberBasic() throws Exception {
+		Map param = getSimpleDataMap("dma_search");
 		return memberMapper.selectMemberBasic(param);
 	}
 
@@ -39,7 +42,7 @@ public class MemberService {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public List<Map> selectMemberSearchItem() {
+	public List<Map> selectMemberSearchItem() throws Exception {
 		return memberMapper.selectMemberSearchItem();
 	}
 
@@ -49,12 +52,13 @@ public class MemberService {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public Map saveMemberBasicList(List param) {
+	public Map saveMemberBasicList() throws Exception {
 
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;
-
+		List param = getSimpleList("dlt_memberBasic");
+		
 		for (int i = 0; i < param.size(); i++) {
 
 			Map data = (Map) param.get(i);
@@ -67,11 +71,8 @@ public class MemberService {
 				dCnt += memberMapper.deleteMemberBasic(data);
 			}
 		}
-		Map result = new HashMap();
-		result.put("STATUS", "S");
-		result.put("ICNT", String.valueOf(iCnt));
-		result.put("UCNT", String.valueOf(uCnt));
-		result.put("DCNT", String.valueOf(dCnt));
+		Map result = saveResult(iCnt,uCnt,dCnt);
+
 		return result;
 
 	}
@@ -81,11 +82,13 @@ public class MemberService {
 	 * 
 	 * @param param
 	 * @return
+	 * @throws Exception 
 	 */
 
-	public Map saveMemberBasic(Map param) {
+	public Map saveMemberBasic() throws Exception {
 		
 		int uCnt = 0;
+		Map param = getSimpleDataMap("basic");
 		Map result = new HashMap();
 		
 		String rowStatus = (String) param.get("rowStatus");
@@ -130,50 +133,18 @@ public class MemberService {
 		return result;
 	}
 
-	/**
-	 * 프로젝트 정보를 저장한다.
-	 * 
-	 * @param param
-	 * @return
-	 */
-
-	public Map saveMemberProject(List param) {
-		
-		int iCnt = 0;
-		int uCnt = 0;
-		int dCnt = 0;
-		Map result = new HashMap();
-		
-		for (int i = 0; i < param.size(); i++) {
-			Map data = (Map) param.get(i);
-			String rowStatus = (String) data.get("rowStatus");
-			System.out.println("프로젝트 :: " + rowStatus);
-			System.out.println(data);
-			if (rowStatus.equals("C")) {
-				int SEQ = memberMapper.selectMemberProjectMaxSeq(data);
-				data.put("SEQ", SEQ + 1);
-				iCnt += memberMapper.insertMemberProject(data);
-			} else if (rowStatus.equals("U")) {
-				uCnt += memberMapper.updateMemberProject(data);
-			} else if (rowStatus.equals("D") || rowStatus.equals("E")) {
-				dCnt += memberMapper.deleteMemberProject(data);
-			}
-		}
-		result.put("ICNT", String.valueOf(iCnt));
-		result.put("UCNT", String.valueOf(uCnt));
-		result.put("DCNT", String.valueOf(dCnt));
-		return result;
-	}
 
 	/**
 	 * 개인 기본 정보 데이터 정보를 조회한다.
 	 * 
 	 * @param param
 	 * @return
+	 * @throws Exception 
 	 */
 
-	public List<Map> selectMemberOragn(Map param) {
-		// TODO Auto-generated method stub
+	public List<Map> selectMemberOragn() throws Exception {
+		Map param = getSimpleDataMap("dma_memberBasic");
+
 		return memberMapper.selectMemberOragn(param);
 	}
 
@@ -233,9 +204,8 @@ public class MemberService {
 	 * @param param
 	 */
 
-	public List<Map> selectZipCodeList(Map param) {
-		System.out.println("IMPL");
-		System.out.println(param);
+	public List<Map> selectZipCodeList() throws Exception {
+		Map param = getSimpleDataMap("param");
 		return memberMapper.selectZipCodeList(param);
 	}
 

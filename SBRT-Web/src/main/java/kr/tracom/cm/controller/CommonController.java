@@ -5,17 +5,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.tracom.cm.domain.Common.CommonService;
+import kr.tracom.cm.support.ControllerSupport;
 import kr.tracom.util.Result;
 import kr.tracom.util.UserInfo;
 
 @Controller
-public class CommonController {
+@Scope("request")
+public class CommonController extends ControllerSupport {
 
 	@Autowired
 	private CommonService commonService;
@@ -33,15 +36,8 @@ public class CommonController {
 	 * @example
 	 */
 	@RequestMapping("/common/selectCommonSearchItem")
-	public @ResponseBody Map<String, Object> selectCommonSearchItem() {
-		Result result = new Result();
-
-		try {
-			result.setData("dlt_commonSearchItem", commonService.selectCommonSearchItem());
-			result.setMsg(result.STATUS_SUCESS, "공통코드 아이템 리스트가 조회 되었습니다.");
-		} catch (Exception ex) {
-			result.setMsg(result.STATUS_ERROR, "공통코드 아이템 리스트를 가져오는 도중 오류가 발생하였습니다,", ex);
-		}
+	public @ResponseBody Map<String, Object> selectCommonSearchItem() throws Exception {
+		result.setData("dlt_commonSearchItem", commonService.selectCommonSearchItem());
 		return result.getResult();
 	}
 
@@ -55,15 +51,8 @@ public class CommonController {
 	 * @example
 	 */
 	@RequestMapping("/common/selectCommonCode")
-	public @ResponseBody Map<String, Object> selectCommonCode() {
-		Result result = new Result();
-		try {
-			result.setData("dlt_commonCode", commonService.selectCommonCodeAll());
-			result.setMsg(result.STATUS_SUCESS, "공통코드 전체가 조회되었습니다.");
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			result.setMsg(result.STATUS_ERROR, "공통코드 정보를 가져오는 도중 오류가 발생하였습니다,", ex);
-		}
+	public @ResponseBody Map<String, Object> selectCommonCode() throws Exception {
+		result.setData("dlt_commonCode", commonService.selectCommonCodeAll());
 		return result.getResult();
 	}
 	
@@ -77,15 +66,8 @@ public class CommonController {
 	 * @example
 	 */
 	@RequestMapping("/common/selectMenuList")
-	public @ResponseBody Map<String, Object> selectMenuList() {
-		Result result = new Result();
-		try {
-			result.setData("dlt_menu", commonService.selectMenuList(user.getUserInfo()));
-			result.setMsg(result.STATUS_SUCESS, "메뉴정보가 정상 조회되었습니다.");
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			result.setMsg(result.STATUS_ERROR, "메뉴정보 조회도중 오류가 발생하였습니다.", ex);
-		}
+	public @ResponseBody Map<String, Object> selectMenuList() throws Exception {
+		result.setData("dlt_menu", commonService.selectMenuList(user.getUserInfo()));
 		return result.getResult();
 	}
 
@@ -99,28 +81,15 @@ public class CommonController {
 	 * @example
 	 */
 	@RequestMapping("/common/selectCommonCodeList")
-	public @ResponseBody Map<String, Object> selectCommonCodeList(@RequestBody Map<String, Object> param) {
+	public @ResponseBody Map<String, Object> selectCommonCodeList() throws Exception {
 		Result result = new Result();
-		try {
-			result.setData("dlt_commonCode", commonService.selectCommonCodeList((Map) param.get("dma_commonGrp")));
-			result.setMsg(result.STATUS_SUCESS, "공통코드(" + ((Map) param.get("dma_commonGrp")).get("CO_CD") + ") 리스트가 조회되었습니다.");
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			result.setMsg(result.STATUS_ERROR, "공통코드 정보(" + ((Map) param.get("dma_commonGrp")).get("CO_CD") + ")를 가져오는 도중 오류가 발생하였습니다,", ex);
-		}
+		result.setData("dlt_commonCode", commonService.selectCommonCodeList());
 		return result.getResult();
 	}
 	
 	@RequestMapping("/common/selectCommonGroup")
-	public @ResponseBody Map<String, Object> selectCommonGroup(@RequestBody Map<String, Object> param) {
-		Result result = new Result();
-		try {
-			result.setData("dlt_commonGrp", commonService.selectCommonGroup((Map) param.get("dma_search")));
-			result.setMsg(result.STATUS_SUCESS, "공통코드 그룹 리스트가 조회되었습니다.");
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			result.setMsg(result.STATUS_ERROR, "공통코드 그룹 리스트를 가져오는 도중 오류가 발생하였습니다.", ex);
-		}
+	public @ResponseBody Map<String, Object> selectCommonGroup() throws Exception {
+		result.setData("dlt_commonGrp", commonService.selectCommonGroup());
 		return result.getResult();
 	}
 
@@ -134,19 +103,10 @@ public class CommonController {
 	 * @example
 	 */
 	@RequestMapping("/common/updateCommonGrpAll")
-	public @ResponseBody Map<String, Object> updateCommonGrpAll(@RequestBody Map<String, Object> param) {
-		Result result = new Result();
-		try {
-			Map hash = commonService.saveCodeGrpListAll((List) param.get("dlt_commonGrp"), (List) param.get("dlt_commonCode"));
+	public @ResponseBody Map<String, Object> updateCommonGrpAll() throws Exception {
+		Map hash = commonService.saveCodeGrpListAll();
 
-			result.setData("dma_result_All", hash);
-			result.setMsg(result.STATUS_SUCESS,
-					"공통그룹 리스트 및 하위 코드 정보가 저장 되었습니다. 입력 그룹코드 건수: " + (String) hash.get("ICNT_GRP") + "건  ::  입력 세부코드 건수: " + (String) hash.get("ICNT_CODE")
-							+ "건 :: 수정 그룹코드 건수: " + (String) hash.get("UCNT_GRP") + "건  ::  수정 세부코드 건수: " + (String) hash.get("UCNT_CODE")
-							+ "건  ::  삭제 그룹코드 건수: " + (String) hash.get("DCNT_GRP") + "건  ::  삭제 세부코드 건수: " + (String) hash.get("DCNT_CODE") + "건");
-		} catch (Exception ex) {
-			result.setMsg(result.STATUS_ERROR, "공통그룹 리스트 및 하위 코드 정보 저장 도중 오류가 발생하였습니다.", ex);
-		}
+		result.setData("dma_result_All", hash);
 		return result.getResult();
 	}
 
@@ -160,17 +120,10 @@ public class CommonController {
 	 * @example
 	 */
 	@RequestMapping("/common/updateCommonGrp")
-	public @ResponseBody Map<String, Object> updateCommonGrp(@RequestBody Map<String, Object> param) {
-		Result result = new Result();
-		try {
-			Map hash = commonService.saveCodeGrpList((List) param.get("dlt_commonGrp"));
-			result.setData("dma_result", hash);
-			result.setData("dlt_commonGrp", commonService.selectCommonGroup((Map) param.get("dma_search")));
-			result.setMsg(result.STATUS_SUCESS, "공통 코드 그룹이 저장 되었습니다. 입력 : " + (String) hash.get("ICNT") + "건, 수정 : " + (String) hash.get("UCNT") + "건, 삭제 : "
-					+ (String) hash.get("DCNT") + "건");
-		} catch (Exception ex) {
-			result.setMsg(result.STATUS_ERROR, "공통 코드 그룹 저장도중 오류가 발생하였습니다.", ex);
-		}
+	public @ResponseBody Map<String, Object> updateCommonGrp() throws Exception {
+		Map hash = commonService.saveCodeGrpList();
+		result.setData("dma_result", hash);
+		result.setData("dlt_commonGrp", commonService.selectCommonGroup());
 		return result.getResult();
 	}
 
@@ -184,17 +137,10 @@ public class CommonController {
 	 * @example
 	 */
 	@RequestMapping("/common/selectCommonCodeUpdate")
-	public @ResponseBody Map<String, Object> selectCommonCodeUpdate(@RequestBody Map<String, Object> param) {
-		Result result = new Result();
-		try {
-			Map hash = commonService.saveCodeList((List) param.get("dlt_commonCode"));
-			result.setData("dma_result", hash);
-			result.setData("dlt_commonCode", commonService.selectCommonCodeList((Map) param.get("dma_commonGrp")));
-			result.setMsg(result.STATUS_SUCESS, "공통 코드가 저장 되었습니다. 입력 : " + (String) hash.get("ICNT") + "건, 수정 : " + (String) hash.get("UCNT") + "건, 삭제 : "
-					+ (String) hash.get("DCNT") + "건");
-		} catch (Exception ex) {
-			result.setMsg(result.STATUS_ERROR, "공통 코드 저장도중 오류가 발생하였습니다.", ex);
-		}
+	public @ResponseBody Map<String, Object> selectCommonCodeUpdate(@RequestBody Map<String, Object> param) throws Exception {
+		Map hash = commonService.saveCodeList();
+		result.setData("dma_result", hash);
+		result.setData("dlt_commonCode", commonService.selectCommonCodeList());
 		return result.getResult();
 	}
 
@@ -208,52 +154,38 @@ public class CommonController {
 	 * @example
 	 */
 	@RequestMapping("/common/selectCodeList")
-	public @ResponseBody Map<String, Object> selectCodeList(@RequestBody Map<String, Object> param) {
-		Result result = new Result();
-		Map commonCode;
-		String CO_CD;
-		String dataIdPrefix;
-		String[] selectCodeList;
-		try {
-			commonCode = (Map) param.get("dma_commonCode");
-			CO_CD = (String) commonCode.get("CO_CD");
-			dataIdPrefix = (String) commonCode.get("DATA_PREFIX");
+	public @ResponseBody Map<String, Object> selectCodeList() throws Exception {
 
-			if (dataIdPrefix == null) {
-				dataIdPrefix = "dlt_commonCode_";
-			}
-			selectCodeList = CO_CD.split(",");
-			commonCode.put("CODE", selectCodeList);
-
-			List codeList = commonService.selectCodeList(commonCode);
-
-			int size = codeList.size();
-			String preCode = "";
-			List codeGrpList = null;
-			for (int i = 0; i < size; i++) {
-				Map codeMap = (Map) codeList.remove(0);
-				String grp_cd = (String) codeMap.get("CO_CD");
-				if (!preCode.equals(grp_cd)) {
-					if (codeGrpList != null) {
-						result.setData(dataIdPrefix + preCode, codeGrpList);
-					}
-					preCode = grp_cd;
-					codeGrpList = new ArrayList();
-					codeGrpList.add(codeMap);
-				} else {
-					codeGrpList.add(codeMap);
-				}
-
-				if (i == size - 1) {
+		Map commonCode = getSimpleDataMap("dma_commonCode");
+		String dataIdPrefix = dataIdPrefix = (String) commonCode.get("DATA_PREFIX");
+		if (dataIdPrefix == null) {
+			dataIdPrefix = "dlt_commonCode_";
+		}
+		
+		List codeList = commonService.selectCodeList();
+		
+		int size = codeList.size();
+		String preCode = "";
+		List codeGrpList = null;
+		for (int i = 0; i < size; i++) {
+			Map codeMap = (Map) codeList.remove(0);
+			String grp_cd = (String) codeMap.get("CO_CD");
+			if (!preCode.equals(grp_cd)) {
+				if (codeGrpList != null) {
 					result.setData(dataIdPrefix + preCode, codeGrpList);
 				}
+				preCode = grp_cd;
+				codeGrpList = new ArrayList();
+				codeGrpList.add(codeMap);
+			} else {
+				codeGrpList.add(codeMap);
 			}
 
-			result.setMsg(result.STATUS_SUCESS, "공통코드 조회가 완료되었습니다.");
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			result.setMsg(result.STATUS_ERROR, "공통코드 조회중 오류가 발생하였습니다.", ex);
+			if (i == size - 1) {
+				result.setData(dataIdPrefix + preCode, codeGrpList);
+			}
 		}
+
 		return result.getResult();
 	}
 	
@@ -267,52 +199,38 @@ public class CommonController {
 	 * @example
 	 */
 	@RequestMapping("/common/selectSystemList")
-	public @ResponseBody Map<String, Object> selectSystemList(@RequestBody Map<String, Object> param) {
-		Result result = new Result();
-		Map systemMap;
-		String systemCd;
-		String dataIdPrefix;
-		String[] systemArr;
-		try {
-			systemMap = (Map) param.get("dma_systemCode");
-			systemCd = (String) systemMap.get("SYSTEM_CD");
-			dataIdPrefix = (String) systemMap.get("DATA_PREFIX");
+	public @ResponseBody Map<String, Object> selectSystemList() throws Exception {
+		
+		Map commonCode = getSimpleDataMap("dma_systemCode");
+		String dataIdPrefix = dataIdPrefix = (String) commonCode.get("DATA_PREFIX");
+		if (dataIdPrefix == null) {
+			dataIdPrefix = "dlt_systemCode_";
+		}
+		
+		List systemList = commonService.selectSystemList();
 
-			if (dataIdPrefix == null) {
-				dataIdPrefix = "dlt_systemCode_";
-			}
-			systemArr = systemCd.split(",");
-			systemMap.put("SYSTEM", systemArr);
-
-			List systemList = commonService.selectSystemList(systemMap);
-
-			int size = systemList.size();
-			String preCode = "";
-			List systemGrpList = null;
-			for (int i = 0; i < size; i++) {
-				Map codeMap = (Map) systemList.remove(0);
-				String grp_cd = (String) codeMap.get("SYSTEM_CD");
-				if (!preCode.equals(grp_cd)) {
-					if (systemGrpList != null) {
-						result.setData(dataIdPrefix + preCode, systemGrpList);
-					}
-					preCode = grp_cd;
-					systemGrpList = new ArrayList();
-					systemGrpList.add(codeMap);
-				} else {
-					systemGrpList.add(codeMap);
-				}
-
-				if (i == size - 1) {
+		int size = systemList.size();
+		String preCode = "";
+		List systemGrpList = null;
+		for (int i = 0; i < size; i++) {
+			Map codeMap = (Map) systemList.remove(0);
+			String grp_cd = (String) codeMap.get("SYSTEM_CD");
+			if (!preCode.equals(grp_cd)) {
+				if (systemGrpList != null) {
 					result.setData(dataIdPrefix + preCode, systemGrpList);
 				}
+				preCode = grp_cd;
+				systemGrpList = new ArrayList();
+				systemGrpList.add(codeMap);
+			} else {
+				systemGrpList.add(codeMap);
 			}
 
-			result.setMsg(result.STATUS_SUCESS, "공통코드 조회가 완료되었습니다.");
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			result.setMsg(result.STATUS_ERROR, "공통코드 조회중 오류가 발생하였습니다.", ex);
+			if (i == size - 1) {
+				result.setData(dataIdPrefix + preCode, systemGrpList);
+			}
 		}
+
 		return result.getResult();
 	}
 }

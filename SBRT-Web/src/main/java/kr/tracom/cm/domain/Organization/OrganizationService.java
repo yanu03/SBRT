@@ -9,8 +9,10 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import kr.tracom.cm.support.ServiceSupport;
+
 @Service
-public class OrganizationService {
+public class OrganizationService extends ServiceSupport {
 
 	@Autowired
 	private OrganizationMapper organizationMapper;
@@ -19,9 +21,11 @@ public class OrganizationService {
 	 * 조직기본관리(기본정보)
 	 * 
 	 * @param param Client 전달한 데이터 맵 객체
+	 * @throws Exception 
 	 */
 
-	public List<Map> selectOrganization(Map param) {
+	public List<Map> selectOrganization() throws Exception {
+		Map param = getSimpleDataMap("dma_search");
 		return organizationMapper.selectOrganizaion(param);
 	}
 
@@ -31,7 +35,7 @@ public class OrganizationService {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public List<Map> selectOrganizaionSearchItem() {
+	public List<Map> selectOrganizaionSearchItem() throws Exception {
 		return organizationMapper.selectOrganizaionSearchItem();
 	}
 
@@ -39,10 +43,11 @@ public class OrganizationService {
 	 * 조직선택 조회(검색어)
 	 * 
 	 * @param param Client 전달한 데이터 맵 객체
+	 * @throws Exception 
 	 */
 
-	public List<Map> selectOrganizaionBasicList(Map param) {
-		// TODO Auto-generated method stub
+	public List<Map> selectOrganizaionBasicList() throws Exception {
+		Map param = (Map) getSimpleDataMap("dlt_organizationBasic");
 		return organizationMapper.selectOrganizaionBasicList(param);
 	}
 
@@ -50,13 +55,14 @@ public class OrganizationService {
 	 * 여러 건의 조직기본관리(개인기본정보) 데이터를 변경(등록, 수정, 삭제)한다.
 	 * 
 	 * @param param Client 전달한 데이터 맵 객체
+	 * @throws Exception 
 	 */
 
-	public Map saveOrganizaionBasicList(List param) {
+	public Map saveOrganizaionBasicList() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;
-
+		List param = getSimpleList("dlt_organizationBasic");
 		for (int i = 0; i < param.size(); i++) {
 
 			Map data = (Map) param.get(i);
@@ -69,11 +75,7 @@ public class OrganizationService {
 				dCnt += organizationMapper.deleteOrganizaionBasic(data);
 			}
 		}
-		Map result = new HashMap();
-		result.put("STATUS", "S");
-		result.put("ICNT", String.valueOf(iCnt));
-		result.put("UCNT", String.valueOf(uCnt));
-		result.put("DCNT", String.valueOf(dCnt));
+		Map result = saveResult(iCnt, uCnt, dCnt);
 		return result;
 	}
 

@@ -9,8 +9,10 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import kr.tracom.cm.support.ServiceSupport;
+
 @Service
-public class ProgramService {
+public class ProgramService extends ServiceSupport{
 
 	@Autowired
 	private ProgramMapper programMapper;
@@ -19,9 +21,11 @@ public class ProgramService {
 	 * 메뉴관리 조회
 	 * 
 	 * @param param Client 전달한 데이터 맵 객체
+	 * @throws Exception 
 	 */
 
-	public List<Map> selectProgram(Map param) {
+	public List<Map> selectProgram() throws Exception {
+		Map param = getSimpleDataMap("dma_search");
 		return programMapper.selectProgram(param);
 	}
 
@@ -29,9 +33,11 @@ public class ProgramService {
 	 * 메뉴별 접근 메뉴 조회
 	 * 
 	 * @param param Client 전달한 데이터 맵 객체
+	 * @throws Exception 
 	 */
 
-	public List<Map> selectProgramAuthority(Map param) {
+	public List<Map> selectProgramAuthority() throws Exception {
+		Map param = getSimpleDataMap("dma_program");
 		return programMapper.selectProgramAuthority(param);
 	}
 
@@ -39,9 +45,11 @@ public class ProgramService {
 	 * 메뉴별 접근 메뉴 등록
 	 * 
 	 * @param param Client 전달한 데이터 맵 객체
+	 * @throws Exception 
 	 */
 
-	public List<Map> excludeSelectProgramAuthority(Map param) {
+	public List<Map> excludeSelectProgramAuthority() throws Exception {
+		Map param = getSimpleDataMap("dma_search");
 		return programMapper.excludeSelectProgramAuthority(param);
 	}
 
@@ -49,13 +57,15 @@ public class ProgramService {
 	 * 여러 건의 메뉴관리(개인기본정보) 데이터를 변경(등록, 수정, 삭제)한다.
 	 * 
 	 * @param param Client 전달한 데이터 리스트 객체
+	 * @throws Exception 
 	 */
 
-	public Map saveProgram(List param) {
+	public Map saveProgram() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;
 
+		List param = getSimpleList("dlt_program");
 		for (int i = 0; i < param.size(); i++) {
 
 			Map data = (Map) param.get(i);
@@ -68,11 +78,7 @@ public class ProgramService {
 				dCnt += programMapper.deleteProgram(data);
 			}
 		}
-		Map result = new HashMap();
-		result.put("STATUS", "S");
-		result.put("ICNT", String.valueOf(iCnt));
-		result.put("UCNT", String.valueOf(uCnt));
-		result.put("DCNT", String.valueOf(dCnt));
+		Map result = saveResult(iCnt, uCnt, dCnt);
 		return result;
 	}
 
@@ -80,12 +86,15 @@ public class ProgramService {
 	 * 여러 건의 메뉴별 접근 메뉴 데이터를 변경(등록, 수정, 삭제)한다.
 	 * 
 	 * @param param Client 전달한 데이터 리스트 객체
+	 * @throws Exception 
 	 */
 
-	public Map saveProgramAuthority(List param) {
+	public Map saveProgramAuthority() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;
+		
+		List param = getSimpleList("dlt_programAuthority");
 		for (int i = 0; i < param.size(); i++) {
 
 			Map data = (Map) param.get(i);
@@ -98,11 +107,7 @@ public class ProgramService {
 				dCnt += programMapper.deleteProgramAuthority(data);
 			}
 		}
-		Map result = new HashMap();
-		result.put("STATUS", "S");
-		result.put("ICNT", String.valueOf(iCnt));
-		result.put("UCNT", String.valueOf(uCnt));
-		result.put("DCNT", String.valueOf(dCnt));
+		Map result = saveResult(iCnt, uCnt, dCnt);
 		return result;
 	}
 
@@ -110,10 +115,10 @@ public class ProgramService {
 	 * 메뉴정보 삭제시 하위의 메뉴별 접근권한 데이터를 변경(등록, 수정, 삭제)한다.
 	 * 
 	 * @param param Client 전달한 데이터 리스트 객체
+	 * @throws Exception 
 	 */
 
-	public Map saveProgramAll(List paramProgram, List paramProgramAcess) {
-
+	public Map saveProgramAll() throws Exception {
 		int iCnt_menu = 0; // 등록한 메뉴 건수
 		int iCnt_access = 0; // 등록한 메뉴별 접근권한 건수
 		int uCnt_menu = 0; // 수정한 메뉴 건수
@@ -121,6 +126,9 @@ public class ProgramService {
 		int dCnt_menu = 0; // 삭제한 메뉴 건수
 		int dCnt_access = 0; // 삭제한 메뉴별 접근권한 건수
 
+		List paramProgram = getSimpleList("dlt_program");
+		List paramProgramAcess = getSimpleList("dlt_programAuthority");
+		
 		for (int i = 0; i < paramProgram.size(); i++) {
 			Map dataProgram = (Map) paramProgram.get(i);
 			String rowStatusProgram = (String) dataProgram.get("rowStatus");
