@@ -361,6 +361,10 @@ gcm._groupValidationCallback = function() {
 		var obj = $p.getComponentById(gcm.valStatus.objectName);
 		if (gcm.valStatus.objectType === "gridView") {
 			obj.setFocusedCell(gcm.valStatus.rowIndex, gcm.valStatus.columnId);
+/*			//포커스 추가 필요
+			if ($p.getComponentById("SI0102F0") !== null) {
+				$p.getComponentById("SI0102F0").getComponentById(gcm.valStatus.objectName);
+			}*/
 		} else if (gcm.valStatus.objectType === "group") {
 			obj.focus();
 		}
@@ -3678,8 +3682,12 @@ if (shortcutTargetElement.attachEvent) {
 	shortcutTargetElement.onkeydown = gcm.shortcutEvent.keydownEvent;
 }
 
-//com.rowChange = function () {
-	
-	
-	
-//}
+
+com.validateEmail = function(tmpVal) {
+	if(com.checkEmail(tmpVal) == true ) {
+		return tmpVal;
+	} else if (com.checkEmail(tmpVal) == false) {
+		com.alert("유효하지 않은 형식의 이메일입니다.");
+		return "";
+	}
+}
