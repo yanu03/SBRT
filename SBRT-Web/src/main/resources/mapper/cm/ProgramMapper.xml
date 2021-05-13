@@ -21,14 +21,14 @@
 	</select>
 
 	<insert id="insertProgram" parameterType="Map">
-		INSERT INTO BMS_PROG_MST(PROG_CD, PROG_NM, PROG_GRP_CD, PROG_PH, USE_YN, REMARK)
-		VALUES (#{PROG_CD}, #{PROG_NM}, #{PROG_GRP_CD}, #{PROG_PH}, #{USE_YN}, #{REMARK})
+		INSERT INTO BMS_PROG_MST(PROG_CD, PROG_NM, PROG_GRP_CD, PROG_PH, USE_YN, REMARK, UPD_DTM, UPD_ID)
+		VALUES (#{PROG_CD}, #{PROG_NM}, #{PROG_GRP_CD}, #{PROG_PH}, #{USE_YN}, #{REMARK}, #{UPD_DTM}, #{SSN_USER_ID})
 	</insert>
 
 	<update id="updateProgram" parameterType="Map">
 		UPDATE BMS_PROG_MST
 		   SET PROG_NM = #{PROG_NM}, PROG_GRP_CD = #{PROG_GRP_CD}
-			 , PROG_PH = #{PROG_PH}, USE_YN = #{USE_YN}, REMARK = #{REMARK}
+			 , PROG_PH = #{PROG_PH}, USE_YN = #{USE_YN}, REMARK = #{REMARK}, UPD_DTM = #{UPD_DTM}, UPD_ID = #{SSN_USER_ID}
 		 WHERE PROG_CD = #{PROG_CD}
 	</update>
 
@@ -59,15 +59,13 @@
 	</select>
 
 	<insert id="insertProgramAuthority" parameterType="Map">
-		INSERT INTO BMS_PROG_AUTH_INFO(AUTH_CD, PROG_CD, AUTH_CHECK, SAV_AH, EXL_AH)
-		VALUES (#{AUTH_CD}, #{PROG_CD}, #{AUTH_CHECK}, #{SAV_AH}, #{EXL_AH})
+		INSERT INTO BMS_PROG_AUTH_INFO(AUTH_CD, PROG_CD, AUTH_CHECK, SAV_AH, EXL_AH, UPD_DTM, UPD_ID)
+		VALUES (#{AUTH_CD}, #{PROG_CD}, #{AUTH_CHECK}, #{SAV_AH}, #{EXL_AH}, #{UPD_DTM}, #{SSN_USER_ID})
 	</insert>
 	
 	<update id="updateProgramAuthority" parameterType="java.util.HashMap">
 		UPDATE BMS_PROG_AUTH_INFO
-		   SET AUTH_CHECK = #{AUTH_CHECK}
-			 , SAV_AH = #{SAV_AH}
-			 , EXL_AH = #{EXL_AH}
+		   SET AUTH_CHECK = #{AUTH_CHECK}, SAV_AH = #{SAV_AH}, EXL_AH = #{EXL_AH}, UPD_DTM = #{UPD_DTM}, UPD_ID = #{SSN_USER_ID}
 		 WHERE PROG_CD = #{PROG_CD}
 		   AND AUTH_CD = #{AUTH_CD}
 	</update>

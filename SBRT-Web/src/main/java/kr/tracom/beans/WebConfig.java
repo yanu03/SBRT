@@ -1,13 +1,16 @@
-package kr.tracom.cm.beans;
+package kr.tracom.beans;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
 import org.springframework.web.servlet.view.InternalResourceView;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+
+import kr.tracom.cm.interceptor.SessionCheckInterceptor;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurationSupport {
@@ -20,13 +23,12 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/websquare/**").addResourceLocations("/websquare/");
-		registry.addResourceHandler("/fileUpload/**").addResourceLocations("/fileUpload/");
-		registry.addResourceHandler("/cm/**").addResourceLocations("/cm/");
-		registry.addResourceHandler("/ui/**").addResourceLocations("/ui/");
+		registry.addResourceHandler("/fileUpload/**").addResourceLocations("classpath:/static/fileUpload/");
+		registry.addResourceHandler("/cm/**").addResourceLocations("classpath:/static/cm/");
+		registry.addResourceHandler("/ui/**").addResourceLocations("classpath:/static/ui/");
 		super.addResourceHandlers(registry);
 	}
 
-	// view Resolver
 	@Bean
 	public BeanNameViewResolver beanNameViewResolver() {
 		BeanNameViewResolver beanNameViewResolver = new BeanNameViewResolver();
@@ -44,4 +46,15 @@ public class WebConfig extends WebMvcConfigurationSupport {
 		return internalResourceViewResolver;
 	}
 	
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(new SessionCheckInterceptor())
+		.excludePathPatterns("/cm/**")
+		.excludePathPatterns("/fileupload/**")
+		.excludePathPatterns("/lang/**")
+		.excludePathPatterns("/ui/**")
+		.excludePathPatterns("/I18N")
+		.excludePathPatterns("/main/login")
+		.excludePathPatterns("/websquare/**");
+	}
 }
