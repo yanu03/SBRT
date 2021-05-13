@@ -7,9 +7,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import kr.tracom.cm.support.ServiceSupport;
+
 
 @Service
-public class CommonService {
+public class CommonService extends ServiceSupport {
 
 	@Autowired
 	private CommonMapper commonMapper;
@@ -20,7 +22,7 @@ public class CommonService {
 	 * @param param 사용자 로그인 아이디가 저장된 맵 객체
 	 */
 
-	public List selectMenuList(Map param) {
+	public List selectMenuList(Map param) throws Exception {
 		return commonMapper.selectMenuList(param);
 	}
 	
@@ -29,7 +31,7 @@ public class CommonService {
 	 * 
 	 * @param param 사용자 로그인 아이디가 저장된  맵 객체
 	 */
-	public List selectProgramAuthorityList(Map param) {
+	public List selectProgramAuthorityList(Map param) throws Exception {
 		return commonMapper.selectProgramAuthorityList(param);
 	}	
 	
@@ -40,8 +42,8 @@ public class CommonService {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public List selectCommonGroup(Map param) {
-		return commonMapper.selectCommonGroup(param);
+	public List selectCommonGroup() throws Exception {
+		return commonMapper.selectCommonGroup(getSimpleDataMap("dma_search"));
 	}
 
 	/**
@@ -50,7 +52,7 @@ public class CommonService {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public List selectCommonCodeAll() {
+	public List selectCommonCodeAll() throws Exception {
 		return commonMapper.selectCommonCode();
 	}
 
@@ -60,8 +62,8 @@ public class CommonService {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public List selectCommonCodeList(Map param) {
-		return commonMapper.selectCommonCodeList(param);
+	public List selectCommonCodeList() throws Exception {
+		return commonMapper.selectCommonCodeList(getSimpleDataMap("dma_commonGrp"));
 	}
 
 	/**
@@ -70,7 +72,15 @@ public class CommonService {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public List<Map> selectCodeList(Map param) {
+	public List<Map> selectCodeList() throws Exception {
+
+		String[] selectCodeList;
+		Map param = getSimpleDataMap("dma_commonCode");
+		String CO_CD = (String) param.get("CO_CD");
+
+
+		selectCodeList = CO_CD.split(",");
+		param.put("CODE", selectCodeList);
 		return commonMapper.selectCodeList(param);
 	}
 
@@ -80,7 +90,13 @@ public class CommonService {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public List<Map> selectSystemList(Map param) {
+	public List<Map> selectSystemList() throws Exception {
+		
+		Map param = getSimpleDataMap("dma_systemCode");
+		String systemCd = (String) param.get("SYSTEM_CD");
+
+		String[] systemArr = systemCd.split(",");
+		param.put("SYSTEM", systemArr);
 		return commonMapper.selectSystemList(param);
 	}
 	
@@ -91,7 +107,7 @@ public class CommonService {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public List selectCommonSearchItem() {
+	public List selectCommonSearchItem() throws Exception {
 		return commonMapper.selectCommonSearchItem();
 	}
 
@@ -101,12 +117,12 @@ public class CommonService {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public Map saveCodeGrpList(List param) {
+	public Map saveCodeGrpList() throws Exception {
 
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;
-
+		List param = getSimpleList("dma_commonGrp");
 		for (int i = 0; i < param.size(); i++) {
 			Map data = (Map) param.get(i);
 			String rowStatus = (String) data.get("rowStatus");
@@ -133,12 +149,12 @@ public class CommonService {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public Map saveCodeList(List param) {
+	public Map saveCodeList() throws Exception {
 
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;
-
+		List param = getSimpleList("dlt_commonCode");
 		for (int i = 0; i < param.size(); i++) {
 			Map data = (Map) param.get(i);
 			String rowStatus = (String) data.get("rowStatus");
@@ -165,7 +181,7 @@ public class CommonService {
 	 * @param param Client 전달한 데이터 리스트 객체
 	 */
 
-	public Map saveCodeGrpListAll(List paramCodeGrp, List paramCode) {
+	public Map saveCodeGrpListAll() throws Exception {
 
 		int iCnt_grp = 0; // 등록한 그룹코드 건수
 		int iCnt_code = 0; // 등록한 세부코드 건수
@@ -173,7 +189,8 @@ public class CommonService {
 		int uCnt_code = 0; // 수정한 세부코드 건수
 		int dCnt_grp = 0; // 삭제한 그룹코드 건수
 		int dCnt_code = 0; // 삭제한 세부코드 건수
-
+		List paramCodeGrp = getSimpleList("dlt_commonGrp");
+		List paramCode = getSimpleList("dlt_commonCode");
 		for (int i = 0; i < paramCodeGrp.size(); i++) {
 			Map dataGrp = (Map) paramCodeGrp.get(i);
 			String rowStatusGrp = (String) dataGrp.get("rowStatus");

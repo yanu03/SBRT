@@ -7,7 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <mapper namespace="kr.tracom.cm.domain.Organization.OrganizationMapper">
 	<select id="selectOrganizaion" resultType="Map" parameterType="Map">
-		SELECT ORG_ID, ORG_DIV,  ORG_NM, ORG_ENM, REP_NM, COMP_REG_NO, ADDR, PHONE, FAX, EMAIL, REMARK
+		SELECT ORG_ID, ORG_NM, ORG_DIV, SORT, ORG_ENM, REP_NM, COMP_REG_NO, ADDR, PHONE, FAX, EMAIL, REMARK
 		FROM BMS_ORG_MST where 1 = 1
 		<if test="TYPE == 'ORG_NM'">
 			and ORG_NM LIKE concat('%',#{CONTENT},'%')
@@ -19,7 +19,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>	
 	
 	<select id="selectOrganizaionBasicList" resultType="Map">	
-		SELECT ORG_ID, ORG_DIV, ORG_NM, ORG_ENM, REP_NM, COMP_REG_NO, ADDR, PHONE, FAX, EMAIL, REMARK
+		SELECT ORG_ID, ORG_NM, ORG_DIV, ORG_ENM, REP_NM, COMP_REG_NO, ADDR, PHONE, FAX, EMAIL, REMARK
 		  FROM BMS_ORG_MST
 		<where> 
 			<if test="ORG_ID != null and ORG_ID != ''">
@@ -39,13 +39,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</selectKey>
 	INSERT INTO BMS_ORG_MST (ORG_ID, ORG_DIV,  ORG_NM, ORG_ENM, REP_NM, COMP_REG_NO, ADDR, PHONE, FAX, EMAIL, REMARK, UPD_DTM, UPD_ID)
 	VALUES (#{ORG_ID}, #{ORG_DIV}, #{ORG_NM}, #{ORG_ENM}, #{REP_NM}, #{COMP_REG_NO}
-				   , #{ADDR}, #{PHONE}, #{FAX}, #{EMAIL}, #{REMARK}, SYSDATE(), #{USER_ID})
+				   , #{ADDR}, #{PHONE}, #{FAX}, #{EMAIL}, #{REMARK}, #{UPD_DTM}, #{SSN_USER_ID})
 	</insert>
 	
 	<update id="updateOrganizaionBasic" parameterType="Map">
 		UPDATE BMS_ORG_MST 
 		   SET ORG_DIV = #{ORG_DIV}, ORG_NM = #{ORG_NM}, ORG_ENM = #{ORG_ENM}, REP_NM = #{REP_NM}, COMP_REG_NO = #{COMP_REG_NO},
-		    ADDR = #{ADDR}, PHONE = #{PHONE}, FAX = #{FAX}, EMAIL = #{EMAIL}, REMARK = #{REMARK}, UPD_DTM = SYSDATE(), UPD_ID = #{USER_ID}
+		    ADDR = #{ADDR}, PHONE = #{PHONE}, FAX = #{FAX}, EMAIL = #{EMAIL}, REMARK = #{REMARK}, UPD_DTM = #{UPD_DTM}, UPD_ID = #{SSN_USER_ID}
 		 WHERE ORG_ID = #{ORG_ID}
 	</update>
 	
