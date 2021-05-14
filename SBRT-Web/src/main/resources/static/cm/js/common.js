@@ -20,6 +20,8 @@ var gcm = {
 	// 서버 통신 서비스 호출을 위한 Service Url (Context Path 이하 경로)
 	SERVICE_URL : "",
 
+	CUR_PROGRAM_AUTH : "" ,
+	
 	// 서버 통신 기본 모드 ( "asynchronous" / "synchronous")
 	DEFAULT_OPTIONS_MODE : "asynchronous",
 
@@ -69,6 +71,25 @@ var gcm = {
 		cbFuncIdx : 0, // 정보 저장 Index Key
 		cbFuncSave : {}
 	// 정보 저장 객체
+	},
+	
+	// 버튼 권한
+	AUTH : {
+		SEARCH : { value : "SCH_AH", class : "search", str : "조회"}, //검색
+		SAVE : { value : "SAV_AH", class : "save", str : "저장"}, //저장
+		DEL : { value : "SAV_AH", class : "del", str : "삭제"}, //삭제
+		EXL_I : { value : "IEX_AH", class : "exli", str : "엑셀업로드"}, //엑셀업로드
+		EXL : { value : "EXL_AH", class : "exl", str : "엑셀"}, //엑셀다운로드
+		EXL_F : { value : "GEX_AH", class : "exlf", str : "엑셀양식"}, //엑셀양식
+		ADD : { value : "SAV_AH", class : "add", str : "추가"}, //추가
+		CLOSE : { value : "FN2_AH", class : "close", str : "닫기"}, //닫기
+		RESERV : { value : "FN3_AH", class : "reserv", str : "예약"}, //예약
+		PLAY : { value : "FN4_AH", class : "play", str : "실행"}, //실행
+		CONFIRM_YN : { value : "FN5_AH", class : "confirmyn", str : "확정"}, //확정
+		SETTING : { value : "FN6_AH", class : "setting", str : "설정"}, //설정
+		INIT : { value : "FN7_AH", class : "init", str : "초기화"}, //초기화
+		HELP : { value : "HELP_AH", class : "help", str : "도움말"}, //도움말
+		CLR : { value : "SAV_AH", class : "clr", str : "취소"} //취소
 	},
 
 	// [단축키] 이벤트 설정 객체
@@ -527,22 +548,7 @@ com._setProgramAuthority = function() {
 					menuInfoList[0].PROG_CD);
 
 			if (programAuthorityList.length > 0) {
-				var programAuthority = programAuthorityList[0];
-				
-				/*if (programAuthority.AUTH_CHECK == "Y") {
-					var tmpParentIdx = btn_main_generator.insertChild();
-					var mainBtn = btn_main_generator.getChild(tmpParentIdx, "btn_main");
-					mainBtn.setValue("조회");
-					mainBtn.addClass("search");
-					input1.bind("onclick", function(e){ scwin.btn_search_onclick() })); 
-				}
-				if (programAuthority.SAV_AH == "Y") {
-					var tmpParentIdx = btn_main_generator.insertChild();
-					var mainBtn = btn_main_generator.getChild(tmpParentIdx, "btn_main");
-					mainBtn.setValue("저장");
-					mainBtn.addClass("save");
-					input1.bind("onclick", function(e){ scwin.btn_search_onclick() })); 
-				}*/
+				gcm.CUR_PROGRAM_AUTH = programAuthorityList[0];
 				
 				var objArr = WebSquare.util.getChildren($p.getFrame(), {
 					excludePlugin : "group trigger textbox output calendar image span",
@@ -552,23 +558,23 @@ com._setProgramAuthority = function() {
 				for (var i = 0; i < objArr.length; i++) {
 					if ((objArr[i].getPluginName() === "anchor") || (objArr[i].getPluginName() === "trigger")) {
 						if (objArr[i].getOriginalID().indexOf("btn_search") > -1) {
-							if (programAuthority.AUTH_CHECK !== "Y") {
+							if (gcm.CUR_PROGRAM_AUTH.AUTH_CHECK !== "Y") {
 								objArr[i].hide();
 							}
 						} else if (objArr[i].getOriginalID().indexOf("btn_add") > -1) {
-							if (programAuthority.SAV_AH !== "Y") {
+							if (gcm.CUR_PROGRAM_AUTH.SAV_AH !== "Y") {
 								objArr[i].hide();
 							}
 						} else if (objArr[i].getOriginalID().indexOf("btn_cancel") > -1) {
-							if (programAuthority.SAV_AH !== "Y") {
+							if (gcm.CUR_PROGRAM_AUTH.SAV_AH !== "Y") {
 								objArr[i].hide();
 							}
 						} else if (objArr[i].getOriginalID().indexOf("btn_save") > -1) {
-							if (programAuthority.SAV_AH !== "Y") {
+							if (gcm.CUR_PROGRAM_AUTH.SAV_AH !== "Y") {
 								objArr[i].hide();
 							}
 						} else if (objArr[i].getOriginalID().indexOf("btn_excel") > -1) {
-							if (programAuthority.EXL_AH !== "Y") {
+							if (gcm.CUR_PROGRAM_AUTH.EXL_AH !== "Y") {
 								objArr[i].hide();
 							}
 						}
@@ -1933,7 +1939,7 @@ com.messagBox = function(messageType, messageStr, closeCallbackFncName, isReturn
 	var messageType = messageType || "alert";
 	var defaultTitle = null;
 	var popId = messageType || "Tmp";
-
+	
 	popId = popId + com.MESSAGE_BOX_SEQ++;
 
 	if (messageType === "alert") {
@@ -3804,6 +3810,68 @@ com.getActiveWindowInfo = function() {
 	return activeInfo;
 }
 
+com.setMainBtn = function(btnOptions, generator) {
+
+	var programAuthority = gcm.CUR_PROGRAM_AUTH;
+	
+	if(programAuthority.AUTH_CHECK != 'Y')return;
+	
+	for(var i=0; i<btnOptions.length; i++){
+		try {
+			var item = btnOptions[i];
+			if(eval("programAuthority."+item.auth.value) == "Y"){
+				var tmpParentIdx = generator.insertChild();
+				var mainBtn = generator.getChild(tmpParentIdx, "btn_main");
+				var str = "";
+				if(item.userStr !== "undefined" && item.userStr!="" && item.userStr != null){
+					str = item.userStr;
+				}
+				else{
+					str = item.auth.str;
+				}
+					mainBtn.setValue(str);
+				mainBtn.addClass(item.auth.class);
+				if (typeof item.cbFnc === "function") {
+					mainBtn.bind("onclick", item.cbFnc); 
+				}
+			}
+		} catch (e) {
+			
+		}
+	}
+}
+
+com.setSubBtn = function(btnOptions, generator) {
+	var programAuthority = gcm.CUR_PROGRAM_AUTH;
+	
+	if(programAuthority.AUTH_CHECK != 'Y')return;
+
+	debugger;
+	for(var i=0; i<btnOptions.length; i++){
+		try {
+			var subItem = btnOptions[i];
+			if(eval("programAuthority."+subItem.auth.value) == "Y"){
+				var tmpParentIdx = generator.insertChild();
+				var subBtn = generator.getChild(tmpParentIdx, "btn_sub");
+				var str = "";
+				if(subItem.userStr !== "undefined" && subItem.userStr!="" && subItem.userStr != null){
+					str = subItem.userStr;
+				}
+				else{
+					str = subItem.auth.str;
+				}
+				subBtn.setValue(str);
+				subBtn.addClass(subItem.auth.class);
+				if (typeof subItem.cbFnc === "function") {
+					subBtn.bind("onclick", subItem.cbFnc); 
+				}
+			}
+		} catch (e) {
+		
+		}
+	}
+}
+	
 var shortcutTargetElement = document;
 if (shortcutTargetElement.attachEvent) {
 	shortcutTargetElement.detachEvent("keydown", gcm.shortcutEvent.keydownEvent);

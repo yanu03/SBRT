@@ -33,19 +33,32 @@
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_defInfo">
 					<w2:keyInfo>
-						<w2:key id="USER_ID" name="사용자아이디" dataType="text"></w2:key>
-						<w2:key id="USER_NM" name="사용자명" dataType="text"></w2:key>
-						<w2:key id="CUR_SYSTEM" name="현재시스템" dataType="text"></w2:key>
-						<w2:key id="IS_ADMIN" name="관리자여부" dataType="text"></w2:key>
-						<w2:key id="USE_YN_SHORTCUT" name="단축키사용여부" dataType="text"></w2:key>
+						<w2:key id="SSN_USER_ID" name="사용자아이디" dataType="text"></w2:key>
+						<w2:key id="SSN_USER_NM" name="사용자명" dataType="text"></w2:key>
+						<w2:key id="SSN_CUR_SYSTEM" name="현재시스템" dataType="text"></w2:key>
+						<w2:key id="SSN_IS_ADMIN" name="관리자여부" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_programAuthority" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="PROG_CD" name="프로그램코드" dataType="text"></w2:column>
-						<w2:column id="AUTH_CHECK" name="조회권한여부" dataType="text"></w2:column>
+						<w2:column id="AUTH_CHECK" name="권한체크여부" dataType="text"></w2:column>
+						<w2:column id="SCH_AH" name="조회권한여부" dataType="text"></w2:column>
 						<w2:column id="SAV_AH" name="저장권한여부" dataType="text"></w2:column>
 						<w2:column id="EXL_AH" name="엑셀권한여부" dataType="text"></w2:column>
+						<w2:column id="GEX_AH" name="엑셀폼다운권한여부" dataType="text"></w2:column>
+						<w2:column id="IEX_AH" name="엑셀입력권한여부" dataType="text"></w2:column>
+						<w2:column id="EXL_AH" name="엑셀권한권한여부" dataType="text"></w2:column>
+						<w2:column id="DEL_AH" name="삭제권한여부" dataType="text"></w2:column>
+						<w2:column id="FN1_AH" name="추가권한여부" dataType="text"></w2:column>
+						<w2:column id="FN2_AH" name="닫기권한여부" dataType="text"></w2:column>
+						<w2:column id="FN3_AH" name="예약권한여부" dataType="text"></w2:column>
+						<w2:column id="FN4_AH" name="실행권한여부" dataType="text"></w2:column>
+						<w2:column id="FN5_AH" name="확정권한여부" dataType="text"></w2:column>
+						<w2:column id="FN6_AH" name="설정권한여부" dataType="text"></w2:column>
+						<w2:column id="FN7_AH" name="초기화권한여부" dataType="text"></w2:column>
+						<w2:column id="FN8_AH" name="기능키8권한여부" dataType="text"></w2:column>
+						<w2:column id="HELP_AH" name="도움말권한여부" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 			</w2:dataCollection>
@@ -73,10 +86,9 @@
 	};
 
 	scwin.initDataCallback = function() {
+		var curSystem = dma_defInfo.get("SSN_CUR_SYSTEM");
 
-		var curSystem = dma_defInfo.get("CUR_SYSTEM");
-
-		$p.parent().wfm_header.getWindow().txt_userNm.setValue(dma_defInfo.get("USER_NM"));
+		$p.parent().wfm_header.getWindow().txt_userNm.setValue(dma_defInfo.get("SSN_USER_NM"));
 
 		//scwin.openMenu("메인","/cm/common/main.xml","MAIN");
 		if(curSystem==1){

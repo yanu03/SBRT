@@ -93,11 +93,12 @@ public class MainController {
 
 			map = (Map) param.get("dma_systemChange");
 	
-			int changeSystem = Integer.parseInt((String)map.get("SYSTEM_BIT"));
-			int SystemBit = (int)session.getAttribute("SYSTEM_BIT");
+			int changeSystem = (int)map.get("SYSTEM_BIT");
+			int SystemBit = Integer.parseInt((String)session.getAttribute(Constants.SSN_SYSTEM_BIT));
 	
 			if(SystemBit==Constants.SYSTEM_ALL) {
-				session.setAttribute("CUR_SYSTEM",changeSystem);
+				user.setCurSystem(changeSystem);
+				session.setAttribute(Constants.SSN_CUR_SYSTEM,changeSystem);
 			}
 		} catch (Exception ex) {// DB커넥션 없음
 			ex.printStackTrace();
