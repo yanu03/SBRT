@@ -361,12 +361,14 @@ gcm._groupValidationCallback = function() {
 		var obj = $p.getComponentById(gcm.valStatus.objectName);
 		if (gcm.valStatus.objectType === "gridView") {
 			obj.setFocusedCell(gcm.valStatus.rowIndex, gcm.valStatus.columnId);
-/*			//포커스 추가 필요
-			if ($p.getComponentById("SI0102F0") !== null) {
-				$p.getComponentById("SI0102F0").getComponentById(gcm.valStatus.objectName);
-			}*/
 		} else if (gcm.valStatus.objectType === "group") {
 			obj.focus();
+		} else if (gcm.valStatus.objectType === "gridForm") {
+			obj.setFocusedCell(gcm.valStatus.rowIndex, gcm.valStatus.columnId);
+			//var focusID = gcm.valStatus.focusTable.getID(gcm.valStatus.columnId);
+			if(gcm.valStatus.focusTableID !== null){
+				$p.getComponentById(gcm.valStatus.focusTableID).focus();				
+			}
 		}
 	}
 };
@@ -2436,6 +2438,117 @@ com.validateGridView = function(gridViewObj, valInfoArr, tacObj, tabId) {
 		modifiedIdx = null;
 		dataList = null;
 		gridViewObj = null;
+	}
+};
+
+/**
+* Grid를 Validation Check하여 해당 Table에 Focus를 주는 함수
+* tableObj : Table ID
+* 작성자 : 양현우
+*/
+com.validateGridTableView = function(gridViewObj, tableObj, valInfoArr, tacObj, tabId) {
+
+	if (gridViewObj === null) {
+		return false;
+	}
+	
+	var dataList = com.getGridViewDataList(gridViewObj);
+	if (dataList === null) {
+		$p.log("Can not find the datalist of '" + gridViewObjId + "' object.");
+		return false;
+	}
+
+	var valStatus = {
+		isValid : true,
+		message : "",
+		error : []
+	// { columnId: "", columnName: "", rowIndex: 0, message: "" }
+	};
+
+	try {
+		var modifiedIdx = dataList.getModifiedIndex();
+
+		for (var dataIdx = 0; dataIdx < modifiedIdx.length; dataIdx++) {
+			var modifiedData = dataList.getRowJSON(modifiedIdx[dataIdx]);
+			if (modifiedData.rowStatus === "D") {
+				continue;
+			}
+			for ( var valIdx in valInfoArr) {
+				var valInfo = valInfoArr[valIdx];
+				if ((typeof valInfo.id !== "undefined") && (typeof modifiedData[valInfo.id] !== "undefined")) {
+					var value = modifiedData[valInfo.id].trim();
+					if ((typeof valInfo.mandatory !== "undefined") && (valInfo.mandatory === true) && (value.length === 0)) {
+						_setResult(modifiedIdx[dataIdx], dataList, gridViewObj.getID(), valInfo.id, "필수 입력 항목 입니다.");
+					} else if ((typeof valInfo.minLength !== "undefined") && (valInfo.minLength > 0) && (value.length < valInfo.minLength)) {
+						_setResult(modifiedIdx[dataIdx], dataList, gridViewObj.getID(), valInfo.id, "최소 길이 " + valInfo.minLength
+								+ "자리 이상으로 입력해야 합니다.");
+					} else if (typeof valInfo.valFunc === "function") {
+						var resultMsg = valInfo.valFunc(value, modifiedData);
+						if ((typeof resultMsg !== "undefined") && (resultMsg !== "")) {
+							_setResult(modifiedIdx[dataIdx], dataList, gridViewObj.getID(), valInfo.id, resultMsg);
+						}
+					}
+				}
+
+				if (valStatus.error.length > 0) {
+					break;
+				}
+			}
+		}
+
+		if (valStatus.error.length > 0) {
+			valStatus.isValid = false;
+			valStatus.message = "유효하지 않은 값이 입력 되었습니다";
+
+			if ((typeof tacObj !== "undefined") && (typeof tabId !== "undefined") && (tabId !== "")) {
+				var tabIndex = tacObj.getTabIndex(tabId);
+				tacObj.setSelectedTabIndex(tabIndex);
+			}
+
+
+			
+			gcm.valStatus.isValid = false;
+			gcm.valStatus.objectType = "gridForm";
+			gcm.valStatus.objectName = valStatus.error[0].comObjId;
+			gcm.valStatus.columnId = valStatus.error[0].columnId;
+			gcm.valStatus.rowIndex = valStatus.error[0].rowIndex;
+			gcm.valStatus.focusTable = null;
+			var objArr = WebSquare.util.getChildren(tableObj, {
+				excludePlugin : "group trigger textbox output calendar image span anchor pageInherit wframe itemTable",
+				recursive : true
+			});
+			
+			for (var objIdx in objArr) {
+				if (objArr[objIdx].getOriginalID() == gcm.valStatus.columnId) {
+					gcm.valStatus.focusTableID = objArr[objIdx].getID();
+					break;
+				}
+				
+			}
+			
+			com.alert(valStatus.error[0].message, "gcm._groupValidationCallback");
+
+		}
+
+		return valStatus.isValid;
+
+		function _setResult(rowIndex, dataList, gridViewObjId, columnId, message) {
+			var errIdx = valStatus.error.length;
+			valStatus.error[errIdx] = {};
+			valStatus.error[errIdx].columnId = columnId;
+			valStatus.error[errIdx].comObjId = gridViewObjId;
+			valStatus.error[errIdx].columnName = dataList.getColumnName(columnId);
+			valStatus.error[errIdx].rowIndex = rowIndex;
+			valStatus.error[errIdx].message = com.attachPostposition(valStatus.error[errIdx].columnName) + " " + message;
+		}
+	} catch (e) {
+		$p.log("[com.validateGridView] Exception :: " + e.message);
+	} finally {
+		modifiedData = null;
+		modifiedIdx = null;
+		dataList = null;
+		gridViewObj = null;
+		objArr = null;
 	}
 };
 
