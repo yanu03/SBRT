@@ -541,10 +541,10 @@ com._setProgramAuthority = function() {
 	var param = com.getParameter();
 	if ((typeof param !== "undefined") && (typeof param.menuCode !== "undefined") && (param.menuCode.trim() !== "")) {
 		var menuCd = param.menuCode;
-		var menuInfoList = $p.top().wfm_side.getWindow().dlt_menu.getMatchedJSON("MENU_CD", menuCd);
+		var menuInfoList = $p.top().wfm_header.getWindow().dlt_menu.getMatchedJSON("MENU_CD", menuCd);
 
 		if (menuInfoList.length > 0) {
-			var programAuthorityList = $p.top().wfm_side.getWindow().dlt_programAuthority.getMatchedJSON("PROG_CD",
+			var programAuthorityList = $p.top().wfm_header.getWindow().dlt_programAuthority.getMatchedJSON("PROG_CD",
 					menuInfoList[0].PROG_CD);
 
 			if (programAuthorityList.length > 0) {
@@ -593,7 +593,7 @@ com._setProgramAuthority = function() {
  * @author InswaveSystems
  */
 com.isAdmin = function() {
-	scwin.isAdmin = $p.top().wfm_side.getWindow().dma_defInfo.get("IS_ADMIN");
+	scwin.isAdmin = $p.top().wfm_header.getWindow().dma_defInfo.get("IS_ADMIN");
 	if (scwin.isAdmin === "Y") {
 		return true;
 	} else {
@@ -609,7 +609,7 @@ com.isAdmin = function() {
  * @author InswaveSystems
  */
 com.getLoginUserId = function() {
-	return $p.top().wfm_side.getWindow().dma_defInfo.get("USER_ID");
+	return $p.top().wfm_header.getWindow().dma_defInfo.get("USER_ID");
 }
 
 /**
