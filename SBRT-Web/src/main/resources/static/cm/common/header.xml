@@ -13,7 +13,61 @@
 						<w2:key id="SYSTEM_BIT" name="시스템비트" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
+
+				<w2:dataList id="dlt_menu" baseNode="list" saveRemovedData="true" repeatNode="map"
+					ev:ondataload="scwin.dlt_menu_ondataload">
+					<w2:columnInfo>
+						<w2:column id="MENU_CD" name="메뉴코드" dataType="text"></w2:column>
+						<w2:column id="MENU_NM" name="메뉴명" dataType="text"></w2:column>
+						<w2:column id="USE_YN" name="사용유무" dataType="text"></w2:column>
+						<w2:column id="PROG_PH" name="메뉴경로" dataType="text"></w2:column>
+						<w2:column id="PARENT_MENU_CD" name="부모메뉴코드" dataType="text"></w2:column>
+						<w2:column id="LEVEL" name="메뉴레벨" dataType="text"></w2:column>
+						<w2:column id="SORT" name="정렬순서" dataType="text"></w2:column>
+						<w2:column id="PROG_CD" name="프로그램코드" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_result">
+					<w2:keyInfo>
+						<w2:key id="STATUS" name="name1" dataType="text"></w2:key>
+						<w2:key id="ICNT" name="name2" dataType="text"></w2:key>
+						<w2:key id="UCNT" name="name3" dataType="text"></w2:key>
+						<w2:key id="DCNT" name="name4" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="name5" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataMap baseNode="map" id="dma_defInfo">
+					<w2:keyInfo>
+						<w2:key id="SSN_USER_ID" name="사용자아이디" dataType="text"></w2:key>
+						<w2:key id="SSN_USER_NM" name="사용자명" dataType="text"></w2:key>
+						<w2:key id="SSN_CUR_SYSTEM" name="현재시스템" dataType="text"></w2:key>
+						<w2:key id="SSN_IS_ADMIN" name="관리자여부" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_programAuthority" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="PROG_CD" name="프로그램코드" dataType="text"></w2:column>
+						<w2:column id="AUTH_CHECK" name="권한체크여부" dataType="text"></w2:column>
+						<w2:column id="SCH_AH" name="조회권한여부" dataType="text"></w2:column>
+						<w2:column id="SAV_AH" name="저장권한여부" dataType="text"></w2:column>
+						<w2:column id="EXL_AH" name="엑셀권한여부" dataType="text"></w2:column>
+						<w2:column id="GEX_AH" name="엑셀폼다운권한여부" dataType="text"></w2:column>
+						<w2:column id="IEX_AH" name="엑셀입력권한여부" dataType="text"></w2:column>
+						<w2:column id="EXL_AH" name="엑셀권한권한여부" dataType="text"></w2:column>
+						<!-- <w2:column id="DEL_AH" name="삭제권한여부" dataType="text"></w2:column>
+						<w2:column id="FN1_AH" name="추가권한여부" dataType="text"></w2:column>
+						<w2:column id="FN2_AH" name="닫기권한여부" dataType="text"></w2:column> -->
+						<w2:column id="FN3_AH" name="예약권한여부" dataType="text"></w2:column>
+						<w2:column id="FN4_AH" name="실행권한여부" dataType="text"></w2:column>
+						<w2:column id="FN5_AH" name="확정권한여부" dataType="text"></w2:column>
+						<w2:column id="FN6_AH" name="설정권한여부" dataType="text"></w2:column>
+						<w2:column id="FN7_AH" name="초기화권한여부" dataType="text"></w2:column>
+						<w2:column id="FN8_AH" name="기능키8권한여부" dataType="text"></w2:column>
+						<w2:column id="HELP_AH" name="도움말권한여부" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
+			
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sbm_systemChange" ref="data:json,dma_systemChange" target="" action="/main/systemChange" method="post" mediatype="application/json"
 				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
@@ -35,7 +89,7 @@
 	 */
 	scwin.setGenerator = function() {
 		gen_firstGenerator.removeAll();
-		var tmpDataArr = $p.parent().wfm_side.getWindow().dlt_menu.getAllJSON();
+		var tmpDataArr = dlt_menu.getAllJSON();
 		var tmpParentIdx = 0;
 		var thirdIndex = 0;
 	
@@ -266,9 +320,9 @@
 		var label = this.getUserData("ins_label");
 		var pageCode = this.getUserData("ins_code");
 	
-		$p.top().wfm_side.getWindow().scwin.openMenu(label, urlPath, pageCode);
+		scwin.openMenu(label, urlPath, pageCode);
 		
-		//$p.top().wfm_side.getWindow().scwin.setMenuRelation(label, urlPath, pageCode);
+		//setMenuRelation(label, urlPath, pageCode);
 	
 		$(".submenu").removeClass('on');
 		$(".search_box").removeClass('hid');
@@ -284,8 +338,8 @@
 		if(urlPath != ""){
 			var label = this.getUserData("ins_label");
 			var pageCode = this.getUserData("ins_code");
-			$p.top().wfm_side.getWindow().scwin.openMenu(label, urlPath, pageCode);;
-			//$p.top().wfm_side.getWindow().scwin.setMenuRelation(label, urlPath, pageCode);
+			scwin.openMenu(label, urlPath, pageCode);;
+			//setMenuRelation(label, urlPath, pageCode);
 			
 			$(".submenu").removeClass('on');
 			$(".search_box").removeClass('hid');
@@ -337,6 +391,152 @@
 			}
 		} catch (ex) {
 			com.alert("서버 통신 도중 오류가 발생하였습니다. 잠시후 다시 시도해주시기 바랍니다.");
+		}
+	};
+	
+scwin.fn_getInitData = function() {
+		var searchCodeGrpOption = { id : "sbm_InitCont", action : "/main/init", 
+									target : 'data:json, ["dlt_menu", "dma_defInfo", "dlt_programAuthority"]', method : "post",
+									mediatype : "application/json", mode : "asynchronous", isShowMeg : false,
+									submitDoneHandler : scwin.initDataCallback };
+		com.executeSubmission_dynamic(searchCodeGrpOption);
+	};
+
+	scwin.initDataCallback = function() {
+		var curSystem = dma_defInfo.get("SSN_CUR_SYSTEM");
+
+		$p.parent().wfm_header.getWindow().txt_userNm.setValue(dma_defInfo.get("SSN_USER_NM"));
+
+		//scwin.openMenu("메인","/cm/common/main.xml","MAIN");
+		if(curSystem==1){
+			$p.parent().wfm_header.getWindow().txt_systemNm.setValue("통합운영관리");
+		}
+		else if(curSystem==2){
+			$p.parent().wfm_header.getWindow().txt_systemNm.setValue("차량운행관리");
+		}
+	
+		var index = 0;
+		var tmpMenus = dlt_menu.getAllJSON();
+		
+		for (index in tmpMenus) {
+			if( tmpMenus[index].PROG_PH != '' && tmpMenus[index].PROG_PH != null ){
+				break;
+			}
+		}
+		scwin.openMenu(tmpMenus[index].MENU_NM,tmpMenus[index].PROG_PH,tmpMenus[index].MENU_CD);
+		
+	};
+	
+	scwin.dlt_menu_ondataload = function() {
+		$p.top().scwin.setHeaderMenu();
+	};
+
+
+	/**
+	 * 파라메터를 참조하여 화면을 연다. 
+	 * 메뉴를 최근 작업 항목에 추가하거나 메뉴 트리를 선택하게 하려면 scwin.setMenuRelation를 사용한다.
+	 * @lastUpdate 2018.04.10
+	 * @param <String> menuNm 메뉴명 - 단위화면에서 해당 값으로 title을 설정한다.
+	 * @param <String> url 화면 파일 경로
+	 * @param <String> menuCode 메뉴코드 - DB에 저장되어있는 메뉴 코드
+	 * @author InswaveSystems
+	 * @since 2016.08.28
+	 * @example
+	 * scwin.openMenu("인사조회","/tmp/tmp01.xml","010001");
+	 */
+	scwin.openMenu = function(menuNm, url, menuCode, paramObj, menuType) {
+
+		// client에서 url 숨기기 메뉴일 경우에는 새 창으로 띄우기 적용 
+		if (url == "/") {
+			var url = document.location.href + "/";
+			window.open(url, "", "width=1200, height=700, left=450, top=100");
+		} else {
+			menuCode = menuCode || "";
+			var layout = $p.top().scwin.getLayoutId();
+			var tmpUrl;
+			var menuCodeParm = menuCode;
+			var frameMode;	// "wframe", "iframe"
+			var favStatus;
+			var data;
+
+			if (url.indexOf("/") !== 0) {
+				url = "/" + url;
+			}
+			url = gcm.CONTEXT_PATH + url;
+			
+			if ((typeof paramObj !== "undefined") && (paramObj !== null)) {
+				data = paramObj;
+			} else {
+				data = {};
+			}
+			
+			data.menuNm = menuNm;
+			data.menuCode = menuCode;
+			data.favStatus = favStatus;
+			data.menuType = menuType;
+			
+			var _closable = true;
+			if(url == "/cm/common/main.xml"){
+				_closable = false;
+			}
+			
+			var frameMode = "";
+			if (layout == "T") {
+				var tabObj = { closable : _closable, //main 페이지를 제외하고 탭 닫기 기능 제공
+							   openAction : "select", // exist 는 기존 탭을 갱신, new 는 항상 새로, select는 동일 id 가 존재하면 선택, last: 기존 tab을 마지막 tab으로 이동후 선택
+							   label : menuNm };
+				
+				if (com.getFrameMode()  === "wframe") {
+					frameMode = "wframePreload";
+				} else {
+					frameMode = "iframe";
+				}
+				
+				var contObj = {
+					frameMode : frameMode,
+					scope : true,
+					src : url,
+					alwaysDraw : false,
+					title : menuNm,
+					dataObject : {
+						type : "json", 
+						name : "param", 
+						data : data
+					}
+				};
+				var tabComp = $w.getComponentById("mf_tac_layout");
+				tabComp.addTab(menuCode, tabObj, contObj);
+
+				// tabObj의 openAction의 last값의 동작 특이 사항으로 선택이 되지 않은 경우 선택하는 로직 추가
+				if (tabComp.getSelectedTabID() !== menuCode) {
+					var tabIndex = tabComp.getTabIndex(menuCode);
+					if (tabIndex) {
+						tabComp.setSelectedTabIndex(tabIndex);
+					}
+				}
+			} else if (layout == "M") {
+				if (com.getFrameMode() === "wframe") {
+					frameMode = "wframe";
+				} else {
+					frameMode = "iframe";
+				}
+				
+				var options = {
+					title : menuNm,
+					src : url,
+					windowTitle : menuNm,
+					windowId : menuCode,
+					openAction : "existWindow",
+					frameMode : frameMode,
+					dataObject : { 
+						type : "json", 
+						name : "param", 
+						data : data
+					}
+				}
+				var wdcComp = $w.getComponentById("mf_wdc_main");
+				wdcComp.createWindow(options);
+			}
 		}
 	};
 ]]></script>
