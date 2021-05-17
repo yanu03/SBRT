@@ -365,7 +365,6 @@ gcm._groupValidationCallback = function() {
 			obj.focus();
 		} else if (gcm.valStatus.objectType === "gridForm") {
 			obj.setFocusedCell(gcm.valStatus.rowIndex, gcm.valStatus.columnId);
-			//var focusID = gcm.valStatus.focusTable.getID(gcm.valStatus.columnId);
 			if(gcm.valStatus.focusTableID !== null){
 				$p.getComponentById(gcm.valStatus.focusTableID).focus();				
 			}
@@ -2443,7 +2442,15 @@ com.validateGridView = function(gridViewObj, valInfoArr, tacObj, tabId) {
 
 /**
 * Grid를 Validation Check하여 해당 Table에 Focus를 주는 함수
-* tableObj : Table ID
+ * @param {Object} gridViewObj GridView 객체
+ * @param :{Object} tableObj Table ID
+ * @param {Object[]} options 데이터 유효성 검증 옵션
+ * @param {String} options[].id 유효성 검사 대상 DataCollection 컬럼 아이디
+ * @param {Boolean} options[].mandatory 필수 입력 값 여부
+ * @param {Number} options[].minLength 최소 입력 자리수
+ * @param {requestCallback} options[].valFunc 사용자 유효성 검사 함수
+ * @param {Object} tacObj GridView가 포함된 TabControl 컴포넌트 객체
+ * @param {String} tabId GridView가 포함된 TabControl 컴포넌트의 Tab 아이디
 * 작성자 : 양현우
 */
 com.validateGridTableView = function(gridViewObj, tableObj, valInfoArr, tacObj, tabId) {
