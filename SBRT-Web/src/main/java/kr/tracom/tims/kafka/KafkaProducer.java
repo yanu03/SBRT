@@ -1,4 +1,4 @@
-package kr.tracom.kafka;
+package kr.tracom.tims.kafka;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +19,7 @@ public class KafkaProducer {
     @Async
     public void produceTimsMessage(String topic, KafkaMessage message) {
     	
-    	//logger.info("produceTimsMessage()");
-    	
         kafkaTemplate.send(topic, message);
+        
     }
 }
