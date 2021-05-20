@@ -3888,11 +3888,79 @@ if (shortcutTargetElement.attachEvent) {
 }
 
 
-com.validateEmail = function(tmpVal) {
-	if(com.checkEmail(tmpVal) == true ) {
-		return tmpVal;
-	} else if (com.checkEmail(tmpVal) == false) {
-		com.alert("유효하지 않은 형식의 이메일입니다.");
-		return "";
-	}
+
+/**
+ * 실행 프레임 정보 조회
+ * 
+ * @date 2021.05.17
+ * @memberOf com
+ * @author 양현우
+ * @param {Array} options Popup창 옵션
+ * @param {String} [options.id] Popup창 아이디
+ * @param {String} [options.type] 화면 오픈 타입 ("iframePopup", "wframePopup", "browserPopup")
+ * @param {String} [options.width] Popup창 넓이
+ * @param {String} [options.height] Popup창 높이
+ * @param {String} [options.popupName] useIframe : true시 popup 객체의 이름으로 popup 프레임의 표시줄에 나타납니다.
+ * @param {String} [options.useIFrame] [default : false] true : IFrame 을 사용하는 WebSquare popup / false: window.open 을 사용하는 popup
+ * @param {String} [options.style] Popup의 스타일을 지정합니다. 값이 있으면 left top width height는 적용되지 않습니다.
+ * @param {String} [options.resizable] [default : false]
+ * @param {String} [options.modal] [default : false]
+ * @param {String} [options.scrollbars] [default : false]
+ * @param {String} [options.title] [default : false]
+ * @param {String} [options.notMinSize] [default : false]
+ */
+
+com.searchPopup = function(url, opt, column, data) {
+	
+	var _dataObj = {
+			type : "json",
+			data : data,
+			name : "param"
+		};
+
+		var width = opt.width || 1000;
+		var height = opt.height || 500;
+		try {
+			var deviceWidth = parseFloat($("body").css("width"));
+			var deviceHeight = parseFloat($("body").css("height"));
+			if (!opt.notMinSize) {
+				if (deviceWidth > 0 && width > deviceWidth) {
+					width = deviceWidth - 4; // 팝업 border 고려
+				}
+
+				if (deviceHeight > 0 && height > deviceHeight) {
+					height = deviceHeight - 4; // 팝업 border 고려
+				}
+			}
+		} catch (e) {
+
+		}
+
+		var top = ((document.body.offsetHeight / 2) - (parseInt(height) / 2) + $(document).scrollTop()) + "px";
+		var left = ((document.body.offsetWidth / 2) - (parseInt(width) / 2) + $(document).scrollLeft()) + "px";
+
+		if (typeof _dataObj.data.callbackFn === "undefined") {
+			_dataObj.data.callbackFn = "";
+		} else if (_dataObj.data.callbackFn.indexOf("gcm") !== 0) {
+			_dataObj.data.callbackFn = $p.id + _dataObj.data.callbackFn;
+		}
+
+		var options = {
+			id : opt.id,
+			popupName : opt.popupName || "",
+			type : opt.type || "wframePopup",
+			width : width + "px",
+			height : height + "px",
+			top : opt.top || top || "140px",
+			left : opt.left || left || "500px",
+			modal : (opt.modal == false) ? false : true,
+			dataObject : _dataObj,
+			alwaysOnTop : opt.alwaysOnTop || false,
+			useModalStack : (opt.useModalStack == false) ? false : true,
+			resizable : (opt.resizable == false) ? false : true,
+			useMaximize : opt.useMaximize || false
+		};
+
+		$p.openPopup(url, options);	
+	
 }

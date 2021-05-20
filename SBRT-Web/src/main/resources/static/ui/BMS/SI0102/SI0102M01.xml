@@ -196,15 +196,6 @@
 		}
 	};
 	
-//	function fn_validateMail(tmpVal) {
-//		if(com.checkEmail(tmpVal) == true ) {
-//			return tmpVal;
-//		} else if (com.checkEmail(tmpVal) == false) {
-//			com.alert("유효하지 않은 형식의 이메일입니다.");
-//			return "";
-//		}
-//	};
-		
 	scwin.dlt_BMS_TRANSCOMP_MST_onbeforecelldatachange = function(info) {
 		//int형 DataList가 공백일 경우 return false 처리
 		switch(info.colID) {
@@ -229,26 +220,8 @@
 		}		
 	};
 	
-
-	scwin.btn_find_onclick = function() {
-	
-//			var data = { GPS_X : dlt_BMS_GRG_MST.getCellData(row, "GPS_X"), GPS_Y : dlt_BMS_GRG_MST.getCellData(row, "GPS_Y"),
-//						GRG_ID : dlt_BMS_GRG_MST.getCellData(row, "GRG_ID"), callbackFn : ""}
-
-// 
-//			var data = {callbackFn : "" };
-//
-//			var options = {
-//				id : "SI0101P01",
-//				popupName : "주소창",
-//				modal : true,
-//				width : 800,
-//				height : 600
-//			};
-//			com.openPopup(("/ui/BMS/SI0102/SI0102P01.xml"), options, data);
-
-
-
+	scwin.btn_address_onclick = function() {
+		
 		//load함수를 이용하여 core스크립트의 로딩이 완료된 후, 우편번호 서비스를 실행합니다.
 	    daum.postcode.load(function(){
 	        new daum.Postcode({
@@ -259,8 +232,9 @@
 	            }
 	        }).open();
 	    });        
-			
 	};
+	
+
 	]]></script>
     </head>
     <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -409,7 +383,7 @@
     		<w2:footer style="" id="footer1">
     			<w2:row style="" id="row3">
     				<w2:column removeBorderStyle="false" width="1478" inputType="expression" style="height:20px;" id="column42" value=""
-    					blockSelect="false" displayMode="label" colSpan="14" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')">
+    					blockSelect="false" displayMode="label" colSpan="14" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" textAlign="right">
     				</w2:column>
     			</w2:row>
     		</w2:footer>
@@ -474,7 +448,7 @@
     					<xf:input adjustMaxLength="" class="" disabled="" id="ADDR" mandatory="" ref="data:dlt_BMS_TRANSCOMP_MST.ADDR"
     						style="width:20%;height:21px;">
     					</xf:input>
-    					<w2:anchor class="btn_gcm" ev:onclick="scwin.btn_find_onclick" id="btn_find" outerDiv="true"
+    					<w2:anchor class="btn_gcm" ev:onclick="scwin.btn_address_onclick" id="btn_address" outerDiv="true"
     						style="left:0px;top:0px;margin-right: 5px;">
     						<xf:label><![CDATA[찾기]]></xf:label>
     					</w2:anchor>
