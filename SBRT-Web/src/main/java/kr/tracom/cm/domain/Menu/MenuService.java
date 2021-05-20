@@ -28,6 +28,11 @@ public class MenuService extends ServiceSupport {
 		Map param = getSimpleDataMap("dma_search");
 		return menuMapper.selectMenu(param);
 	}
+	
+	public List<Map> searchMenuItem() throws Exception{
+		return menuMapper.searchMenuItem();
+	}	
+	
 
 	/**
 	 * 여러 건의 메뉴관리(개인기본정보) 데이터를 변경(등록, 수정, 삭제)한다.

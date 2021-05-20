@@ -60,7 +60,7 @@ public class SI0102Service extends ServiceSupport {
 			else
 			{
 				throw e;
-			}			
+			}		
 		}
 
 		

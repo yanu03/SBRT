@@ -9,10 +9,10 @@
 	from BMS_GRG_MST
 	<where>
 		<if test="TYPE == 'GRG_ID'">
-			AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%')
+			AND GRG_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
-		<if test="TYPE == 'GRG_NM'">
-			AND REP_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		<if test="GRG_NM == 'GRG_NM'">
+			AND GRG_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
 	</where>
 
@@ -22,6 +22,15 @@
 	select BGR.GRG_ID,BGR.GPS_X, BGR.GPS_Y
 	from BMS_GRG_MST BGM, BMS_GRG_RDS_INFO BGR
 	where BGM.GRG_ID = BGR.GRG_ID
+</select>
+
+<select id="SI0101G0K0" resultType="Map">
+	SELECT CONCAT('GR', LPAD(NEXTVAL(SEQ_BMS_GRG_MST_0), 8, '0')) AS 'SEQ'
+</select>
+
+<select id="SI0101SHI0" resultType="Map">
+	select GRG_ID, GRG_NM
+	from BMS_GRG_MST
 </select>
 
 <insert id="SI0101G0I0" parameterType="Map">
@@ -34,9 +43,9 @@
           SELECT CONCAT('GR', LPAD(NEXTVAL(SEQ_BMS_GRG_MST_0), 8, '0'))
        </selectKey>
 	insert into BMS_GRG_MST(GRG_ID, GRG_NM, OWNER_TYPE, ADDR, PHONE, FAX, EMAIL, CNG_YN, ELEC_YN, LEGAL_AREA,
-			SECURE_AREA, APPL_ST_DT, APPL_ED_DT, REMARK)
+			SECURE_AREA, <!-- APPL_ST_DT, APPL_ED_DT, --> REMARK)
 	values (#{GRG_ID}, #{GRG_NM}, #{OWNER_TYPE}, #{ADDR}, #{PHONE}, #{FAX}, #{EMAIL}, #{CNG_YN}, #{ELEC_YN}, #{LEGAL_AREA},
-			#{SECURE_AREA}, #{APPL_ST_DT}, #{APPL_ED_DT}, #{REMARK})
+			#{SECURE_AREA}, <!-- #{APPL_ST_DT}, #{APPL_ED_DT}, --> #{REMARK})
 </insert>
 
 <update id="SI0101G0U0" parameterType="Map">

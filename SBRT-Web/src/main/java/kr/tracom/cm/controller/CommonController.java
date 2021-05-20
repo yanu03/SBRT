@@ -65,11 +65,11 @@ public class CommonController extends ControllerSupport {
 	 * @author InswaveSystems
 	 * @example
 	 */
-	@RequestMapping("/common/selectMenuList")
+	/*@RequestMapping("/common/selectMenuList")
 	public @ResponseBody Map<String, Object> selectMenuList() throws Exception {
 		result.setData("dlt_menu", commonService.selectMenuList(user.getUserInfo()));
 		return result.getResult();
-	}
+	}*/
 
 	/**
 	 * CommonCodeList - 조회조건에 따른 공통코드 리스트를 조회한다.

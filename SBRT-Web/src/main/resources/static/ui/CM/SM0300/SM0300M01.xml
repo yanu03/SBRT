@@ -28,7 +28,7 @@
 			<w2:dataCollection baseNode="map">
 				<w2:dataList id="dlt_program" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
 					<w2:columnInfo>
-						<w2:column id="chk" name="선택" dataType="text" ignoreStatus="true"></w2:column>
+						<!-- <w2:column id="chk" name="선택" dataType="text" ignoreStatus="true"></w2:column> -->
 						<w2:column id="PROG_CD" name="프로그램코드" dataType="text"></w2:column>
 						<w2:column id="PROG_NM" name="프로그램명" dataType="text"></w2:column>
 						<w2:column id="PROG_GRP_CD" name="프로그램그룹명" dataType="text"></w2:column>
@@ -38,7 +38,7 @@
 				</w2:dataList>
 				<w2:dataList id="dlt_programAuthority" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
 					<w2:columnInfo>
-						<w2:column id="chk" name="선택" dataType="text" ignoreStatus="true"></w2:column>
+						<!-- <w2:column id="chk" name="선택" dataType="text" ignoreStatus="true"></w2:column> -->
 						<w2:column id="PROG_CD" name="프로그램코드" dataType="text"></w2:column>
 						<w2:column id="AUTH_CD" name="권한코드" dataType="text"></w2:column>
 						<w2:column id="AUTH_NM" name="권한명" dataType="text"></w2:column>
@@ -103,33 +103,34 @@
 	scwin.onpageload = function() {
 		var codeOptions = [{ code : "PROG_GRP_CD", compID : "sbx_ProgramGroup, grd_program:PROG_GRP_CD"}];
 		com.setCommonCode(codeOptions);
-		com.setEnterKeyEvent(tbl_search, scwin.btn_search_onclick);
+		//com.setEnterKeyEvent(tbl_search, scwin.btn_search_onclick);
 		com.setGridViewDelCheckBox([grd_program, grd_programAuthority]);
 		
 		var btnOptions = 
 		[
-			{userStr:"조회", auth: gcm.AUTH.SEARCH, cbFnc: scwin.btn_search_onclick},
-			{userStr:"저장", auth: gcm.AUTH.SAVE, cbFnc: scwin.btn_saveProgram_onclick}
+			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick},
+			{userStr:"저장", auth: gcm.BTN.SAVE, cbFnc: scwin.btn_saveProgram_onclick},
+			{userStr:"닫기", auth: gcm.BTN.CLOSE, cbFnc: scwin.btn_closeProgram_onclick}
 		];
 		com.setMainBtn(btnOptions, btn_main_generator);
 
 		var btnSubOptions1 = 
 		[
-			{userStr:"추가", auth: gcm.AUTH.ADD , cbFnc: scwin.btn_addProgram_onclick},
-			{userStr:"삭제", auth: gcm.AUTH.DEL, cbFnc: scwin.btn_delProgram_onclick},
-			{userStr:"취소", auth: gcm.AUTH.CLR, cbFnc: scwin.btn_cancelProgram_onclick},
-			{userStr:"엑셀", auth: gcm.AUTH.EXL, cbFnc: scwin.btn_excelProgram_onclick}
+			{userStr:"추가", auth: gcm.BTN.ADD , cbFnc: scwin.btn_addProgram_onclick},
+			{userStr:"삭제", auth: gcm.BTN.DEL, cbFnc: scwin.btn_delProgram_onclick},
+			{userStr:"취소", auth: gcm.BTN.CNL, cbFnc: scwin.btn_cancelProgram_onclick},
+			{userStr:"엑셀", auth: gcm.BTN.EXL, cbFnc: scwin.btn_excelProgram_onclick}
 		];		
-		debugger;
+
 		com.setSubBtn(btnSubOptions1, btn_sub_generator1);
 		
 		var btnSubOptions2 = 
 		[
-			{userStr:"추가", auth: gcm.AUTH.ADD , cbFnc: scwin.btn_addProgramAuthority_onclick},
-			{userStr:"삭제", auth: gcm.AUTH.DEL, cbFnc: scwin.btn_delProgramAuthority_onclick},
-			{userStr:"취소", auth: gcm.AUTH.CLR, cbFnc: scwin.btn_cancelProgramAuthority_onclick},
-			{userStr:"저장", auth: gcm.AUTH.SAVE, cbFnc: scwin.btn_saveProgramAuthority_onclick},
-			{userStr:"엑셀", auth: gcm.AUTH.EXL, cbFnc: scwin.btn_excelProgram_onclick}
+			{userStr:"추가", auth: gcm.BTN.ADD , cbFnc: scwin.btn_addProgramAuthority_onclick},
+			{userStr:"삭제", auth: gcm.BTN.DEL, cbFnc: scwin.btn_delProgramAuthority_onclick},
+			{userStr:"취소", auth: gcm.BTN.CNL, cbFnc: scwin.btn_cancelProgramAuthority_onclick},
+			{userStr:"저장", auth: gcm.BTN.SAVE, cbFnc: scwin.btn_saveProgramAuthority_onclick},
+			{userStr:"엑셀", auth: gcm.BTN.EXL, cbFnc: scwin.btn_excelProgram_onclick}
 		];
 		com.setSubBtn(btnSubOptions2, btn_sub_generator2);
 	};
@@ -235,6 +236,10 @@
 		dlt_program.removeRows(dlt_program.getInsertedIndex());
 	};
 
+	scwin.btn_closeProgram_onclick = function() {
+
+	};
+	
 	/**
 	 * 프로그램관리의 프로그램 입력, 수정, 삭제  
 	 */
@@ -253,6 +258,7 @@
 			com.alert("저장할 데이터가 없습니다.");
 		}
 	};
+
 
 	/**
 	 * 프로그램별 리스트 및 프로그램별 접근권한리스트에서 rowStatus C,U,D,E 상태(Modify)인것만 저장한다.
@@ -339,13 +345,22 @@
 	 * 프로그램별 접근 프로그램 리스트에서 선택된 항목을 삭제 상태로 변경한다. ( rowStauts : D )
 	 */
 	scwin.btn_delProgramAuthority_onclick = function() {
-		dlt_programAuthority.deleteRows(grd_programAuthority.getCheckedIndex("chk"));
+	grd_programAuthority.setRowVisible(grd_programAuthority.getFocusedRowIndex(), false);
+	dlt_programAuthority.deleteRow(grd_programAuthority.getFocusedRowIndex());
+	//grd_programAuthority.removeRow();
 	};
 	
 	/**
 	 * 프로그램별 접근 프로그램 리스트에서 취소 버튼클릭시 데이타를 이전 상태로 바꾸고 추가된 것들은 삭제한다.
 	 */
 	scwin.btn_cancelProgramAuthority_onclick = function() {
+		for (var i = 0; i < dlt_programAuthority.getTotalRow(); i++) {
+			var rowStatus = dlt_programAuthority.getRowStatus(i)
+			
+			if (rowStatus == "D") {
+				grd_programAuthority.setRowVisible(i, true);
+			}
+		}
 		dlt_programAuthority.undoAll();
 		dlt_programAuthority.removeRows(dlt_programAuthority.getInsertedIndex());
 	};
@@ -392,60 +407,55 @@
 		<xf:group class="contentWrap" id="" style="">
 			<w2:wframe id="" style="" src="/cm/common/wf_titleFav.xml" scope="true"></w2:wframe>
 			<xf:group id="" style="" class="section">
-				<xf:group id="tbl_search" style="" class="tbl_search" adaptive="layout">
-					<xf:group id="" style="width:100.00%;" adaptive="layout" class="w2tb tbl_sc" adaptiveThreshold="768" tagname="table">
-						<w2:attributes>
-							<w2:summary></w2:summary>
-						</w2:attributes>
-						<xf:group tagname="colgroup">
-							<xf:group style="width:81.00px;" tagname="col"></xf:group>
-							<xf:group style="width:142.00px;" tagname="col"></xf:group>
-							<xf:group style="width:60.00px;" tagname="col"></xf:group>
-							<xf:group style="width:169.00px;" tagname="col"></xf:group>
-							<xf:group style="width:60px;" tagname="col"></xf:group>
-							<xf:group style="width:230px;" tagname="col"></xf:group>
-							<xf:group style="" tagname="col"></xf:group>
+				<xf:group id="" style="" class="gr_search">
+					<xf:group id="" style="" class="label">
+						<xf:group id="" style="" class="">
+							<w2:span id="" class="" label="프로그램그룹"></w2:span>
 						</xf:group>
-						<xf:group tagname="tr" style="">
-							<xf:group style="" class="w2tb_th" tagname="th">프로그램그룹</xf:group>
-							<xf:group style="" class="w2tb_td" tagname="td">
-								<xf:select1 disabledClass="w2selectbox_disabled" appearance="minimal" direction="auto" chooseOption="true"
-									displayMode="label" optionOrder="false" id="sbx_ProgramGroup" ref="data:dma_search.PROG_GRP_CD"
-									style="height:20px;width:120px;margin-right: 10px;float:left;" allOption="" disabled="false" submenuSize="auto" chooseOptionLabel="전체" textAlign="left">
-									<xf:choices></xf:choices>
-								</xf:select1>
-							</xf:group>
-							<xf:group style="" class="w2tb_th" tagname="th">프로그램</xf:group>
-							<xf:group style="" class="w2tb_td" tagname="td">
-								<xf:input adjustMaxLength="false" id="ibx_program" style="width:149px;height:21px;" ref="data:dma_search.PROGRAM" toolTip=""></xf:input>
-							</xf:group>
-							<xf:group class="w2tb_th" tagname="th">사용여부</xf:group>
-							<xf:group class="w2tb_td" tagname="td">
-								<xf:select1 id="" ref="data:dma_search.USE_YN" selectedIndex="0" cols="" appearance="full"
-									style="margin-right: 10px;min-width: 200px;" rows="1">
-									<xf:choices>
-										<xf:item>
-											<xf:label><![CDATA[전체]]></xf:label>
-											<xf:value><![CDATA[]]></xf:value>
-										</xf:item>
-										<xf:item>
-											<xf:label><![CDATA[사용]]></xf:label>
-											<xf:value><![CDATA[Y]]></xf:value>
-										</xf:item>
-										<xf:item>
-											<xf:label><![CDATA[미사용]]></xf:label>
-											<xf:value><![CDATA[N]]></xf:value>
-										</xf:item>
-									</xf:choices>
-								</xf:select1>
-							</xf:group>
-							<xf:group style="" class="w2tb_td" tagname="td">
-								<xf:group id="" class="fr"></xf:group>
-								<w2:generator id="btn_main_generator" style="">
-									<w2:anchor id="btn_main" style="left:0px;top:0px;margin-right: 5px;" class="btn_sh" outerDiv="true"></w2:anchor>
-								</w2:generator>
-							</xf:group>
+					</xf:group>
+					<xf:group id="" style="" class="select">
+						<xf:select1 disabledClass="w2selectbox_disabled" appearance="minimal" direction="auto" chooseOption="true"
+							displayMode="label" optionOrder="false" id="sbx_ProgramGroup" ref="data:dma_search.PROG_GRP_CD"
+							style="height:20px;width:120px;margin-right: 10px;float:left;" allOption="" disabled="false" submenuSize="auto" chooseOptionLabel="전체" textAlign="left">
+							<xf:choices></xf:choices>
+						</xf:select1>
+					</xf:group>
+					<xf:group id="" style="" class="label">
+						<xf:group id="" style="" class="">
+							<w2:span id="" class="search_title" label="프로그램"></w2:span>
 						</xf:group>
+					</xf:group>
+					<xf:group id="" style="" class="input">
+						<xf:input adjustMaxLength="false" id="ibx_program" style="width:149px;height:21px;" ref="data:dma_search.PROGRAM" toolTip=""></xf:input>
+					</xf:group>
+					<xf:group id="" style="" class="radioLabel">
+						<xf:group id="" style="" class="">
+							<w2:span id="" class="search_title" label="사용여부"></w2:span>
+						</xf:group>
+					</xf:group>
+					<xf:group id="" style="" class="radio">
+						<xf:select1 id="" ref="data:dma_search.USE_YN" selectedIndex="0" cols="" appearance="full"
+							style="margin-right: 10px;min-width: 200px;" rows="1">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[사용]]></xf:label>
+									<xf:value><![CDATA[Y]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[미사용]]></xf:label>
+									<xf:value><![CDATA[N]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+					</xf:group>
+					<xf:group id="">
+						<w2:generator id="btn_main_generator" class="btn_main_generator">
+							<w2:anchor id="btn_main" style="left:0px;top:0px;margin-right: 5px;" class="btn_sh" outerDiv="true"></w2:anchor>
+						</w2:generator>
 					</xf:group>
 				</xf:group>
 			</xf:group>
@@ -458,19 +468,19 @@
 							<!-- <w2:anchor id="btn_addProgram" style="" clickEventElement="outerDiv" ev:onclick="scwin.btn_addProgram_onclick"
 								class="btn_gcm" outerDiv="true">
 								<xf:label><![CDATA[등록]]></xf:label>
-							</w2:anchor>
-							<w2:anchor id="btn_delProgram" style="display:none;" clickEventElement="outerDiv"
+								</w2:anchor>
+								<w2:anchor id="btn_delProgram" style="display:none;" clickEventElement="outerDiv"
 								ev:onclick="scwin.btn_delProgram_onclick" class="btn_gcm" outerDiv="true">
 								<xf:label><![CDATA[삭제]]></xf:label>
-							</w2:anchor>
-							<w2:anchor id="btn_cancelProgram" style="" clickEventElement="outerDiv"
+								</w2:anchor>
+								<w2:anchor id="btn_cancelProgram" style="" clickEventElement="outerDiv"
 								ev:onclick="scwin.btn_cancelProgram_onclick" class="btn_gcm" outerDiv="true">
 								<xf:label><![CDATA[취소]]></xf:label>
-							</w2:anchor>
-							<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelProgram_onclick"
+								</w2:anchor>
+								<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelProgram_onclick"
 								id="btn_excelProgram" outerDiv="true" style="">
 								<xf:label><![CDATA[엑셀]]></xf:label>
-							</w2:anchor> -->
+								</w2:anchor> -->
 							<w2:generator id="btn_sub_generator1" style="">
 								<w2:anchor id="btn_sub" style="left:0px;top:0px;margin-right: 5px;" class="btn_gcm" outerDiv="true">
 								</w2:anchor>
@@ -481,14 +491,15 @@
 				<w2:gridView ignoreCellClick="false" ev:onrowindexchange="scwin.grd_program_onrowindexchange" autoFit="allColumn"
 					rowStatusWidth="40" visibleRowNum="10" class="cm_grid" wheelRows="" ev:onviewchange="" fixedColumnWithHidden="true"
 					dataList="dlt_program" id="grd_program" style="height:280px;" scrollByColumn="false" useShiftKey="true" rowStatusVisible="false"
-					ev:onafteredit="" rowStatusHeaderValue="상태" ev:oncellclick="" rowNumVisible="true" adaptive="crosstab" rowNumHeaderValue="순서" initFixedHeightByRowNum="0" rowNumStatusUniqueId="">
+					ev:onafteredit="" rowStatusHeaderValue="상태" ev:oncellclick="" rowNumVisible="true" adaptive="crosstab" rowNumHeaderValue="순서"
+					initFixedHeightByRowNum="0" rowNumStatusUniqueId="">
 					<w2:header id="header1" style="">
 						<w2:row id="row2" style="">
-							<w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" value="" displayMode="label"
-								fixColumnWidth="true">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="131" inputType="text" style="height:25px;" id="column27" value="프로그램그룹"
-								blockSelect="false" displayMode="label">
+							<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" value=""
+								displayMode="label" fixColumnWidth="true">
+							</w2:column> -->
+							<w2:column removeBorderStyle="false" width="131" inputType="text" style="height:25px;" id="column27"
+								value="프로그램그룹" blockSelect="false" displayMode="label">
 							</w2:column>
 							<w2:column id="column16" blockSelect="false" style="height:25px;" width="50" inputType="text" value="프로그램코드"
 								displayMode="label">
@@ -505,9 +516,9 @@
 					</w2:header>
 					<w2:gBody id="gBody4" style="">
 						<w2:row id="row5" style="">
-							<w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox"
+							<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox"
 								displayMode="label">
-							</w2:column>
+							</w2:column> -->
 							<w2:column removeBorderStyle="false" width="131" inputType="select" style="" id="PROG_GRP_CD" value=""
 								blockSelect="false" displayMode="label">
 								<w2:choices></w2:choices>
@@ -536,23 +547,23 @@
 							<!-- <w2:anchor id="btn_addProgramAuthority" style="" clickEventElement="outerDiv"
 								ev:onclick="scwin.btn_addProgramAuthority_onclick" class="btn_gcm" outerDiv="true">
 								<xf:label><![CDATA[등록]]></xf:label>
-							</w2:anchor>
-							<w2:anchor id="btn_delProgramAuthority" style="display:none;" clickEventElement="outerDiv"
+								</w2:anchor>
+								<w2:anchor id="btn_delProgramAuthority" style="display:none;" clickEventElement="outerDiv"
 								ev:onclick="scwin.btn_delProgramAuthority_onclick" class="btn_gcm" outerDiv="true">
 								<xf:label><![CDATA[삭제]]></xf:label>
-							</w2:anchor>
-							<w2:anchor id="btn_cancelProgramAuthority" style="" clickEventElement="outerDiv"
+								</w2:anchor>
+								<w2:anchor id="btn_cancelProgramAuthority" style="" clickEventElement="outerDiv"
 								ev:onclick="scwin.btn_cancelProgramAuthority_onclick" class="btn_gcm" outerDiv="true">
 								<xf:label><![CDATA[취소]]></xf:label>
-							</w2:anchor>
-							<w2:anchor id="btn_saveProgramAuthority" style="display:none;" clickEventElement="outerDiv"
+								</w2:anchor>
+								<w2:anchor id="btn_saveProgramAuthority" style="display:none;" clickEventElement="outerDiv"
 								ev:onclick="scwin.btn_saveProgramAuthority_onclick" class="btn_gcm ml5" outerDiv="true">
 								<xf:label><![CDATA[저장]]></xf:label>
-							</w2:anchor>
-							<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelProgramAuthority_onclick" id="btn_excelProgramAuthority" outerDiv="true"
+								</w2:anchor>
+								<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelProgramAuthority_onclick" id="btn_excelProgramAuthority" outerDiv="true"
 								style="">
 								<xf:label><![CDATA[엑셀]]></xf:label>
-							</w2:anchor> -->
+								</w2:anchor> -->
 							<w2:generator id="btn_sub_generator2" style="">
 								<w2:anchor id="btn_sub" style="left:0px;top:0px;margin-right: 5px;" class="btn_gcm" outerDiv="true">
 								</w2:anchor>
@@ -562,12 +573,13 @@
 				</xf:group>
 				<w2:gridView ignoreCellClick="false" autoFit="allColumn" rowStatusWidth="40" visibleRowNum="" class="cm_grid"
 					fixedColumnWithHidden="true" dataList="dlt_programAuthority" id="grd_programAuthority" readOnly="" style="height:160px;width:100%;"
-					scrollByColumn="false" useShiftKey="true" rowStatusVisible="false" rowStatusHeaderValue="상태" ev:oncellclick="" adaptive="crosstab" rowNumHeaderValue="순서" rowNumVisible="true" rowNumStatusUniqueId="" rowNumStatusResize="">
+					scrollByColumn="false" useShiftKey="true" rowStatusVisible="false" rowStatusHeaderValue="상태" ev:oncellclick="" adaptive="crosstab"
+					rowNumHeaderValue="순서" rowNumVisible="true" rowNumStatusUniqueId="" rowNumStatusResize="">
 					<w2:header id="header1" style="">
 						<w2:row id="row2" style="">
-							<w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" value="선택" displayMode="label"
-								fixColumnWidth="true">
-							</w2:column>
+							<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" value="선택"
+								displayMode="label" fixColumnWidth="true">
+							</w2:column> -->
 							<w2:column id="column1" blockSelect="false" style="height:25px;" width="80" inputType="text" value="권한코드"
 								displayMode="label">
 							</w2:column>
@@ -594,13 +606,13 @@
 							</w2:column>
 							<!-- <w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column10" value="삭제"
 								blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column11" value="추가"
+								</w2:column>
+								<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column11" value="추가"
 								blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column12" value="닫기"
+								</w2:column>
+								<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column12" value="닫기"
 								blockSelect="false" displayMode="label">
-							</w2:column> -->
+								</w2:column> -->
 							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column13" value="예약"
 								blockSelect="false" displayMode="label">
 							</w2:column>
@@ -626,14 +638,14 @@
 					</w2:header>
 					<w2:gBody id="gBody4" style="">
 						<w2:row id="row5" style="">
-							<w2:column id="chk" blockSelect="false" style="height:25px;" width="20" inputType="checkbox"
+							<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="20" inputType="checkbox"
+								displayMode="label">
+							</w2:column> -->
+							<w2:column id="AUTH_CD" blockSelect="false" readOnly="true" style="height:25px;" width="80" inputType="text"
 								displayMode="label">
 							</w2:column>
-							<w2:column id="AUTH_CD" blockSelect="false" readOnly="true" style="height:25px;" width="80"
-								inputType="text" displayMode="label">
-							</w2:column>
-							<w2:column id="AUTH_NM" blockSelect="false" readOnly="true" style="height:25px;" width="227"
-								inputType="text" displayMode="label" textAlign="left">
+							<w2:column id="AUTH_NM" blockSelect="false" readOnly="true" style="height:25px;" width="227" inputType="text"
+								displayMode="label" textAlign="left">
 							</w2:column>
 							<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="AUTH_CHECK" value=""
 								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
@@ -655,13 +667,13 @@
 							</w2:column>
 							<!-- <w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="DEL_AH" value=""
 								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN1_AH" value=""
+								</w2:column>
+								<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN1_AH" value=""
 								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-							</w2:column> 
-							<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN2_AH" value=""
+								</w2:column> 
+								<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN2_AH" value=""
 								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-							</w2:column>-->
+								</w2:column>-->
 							<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN3_AH" value=""
 								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
 							</w2:column>

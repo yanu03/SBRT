@@ -7,23 +7,32 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import kr.tracom.cm.support.ServiceSupport;
+
 @Service
-public class SI0101Service {
+public class SI0101Service extends ServiceSupport{
 	@Autowired
 	private SI0101Mapper si0101Mapper;
 	
-	public List SI0101G0R0() {
-		return si0101Mapper.SI0101G0R0();
+	public List SI0101G0R0() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return si0101Mapper.SI0101G0R0(map);
 	}
 	
-	public List SI0101G0R1() {
-		return si0101Mapper.SI0101G0R1();
+	public Map SI0101G0K0() throws Exception {
+		return si0101Mapper.SI0101G0K0();
 	}
 	
-	public Map SI0101G0S0(List param) {
+	public List SI0101SHI0() throws Exception {
+		return si0101Mapper.SI0101SHI0();
+	}	
+	
+	public Map SI0101G0S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;		
+		
+		List<Map<String, Object>> param = getSimpleList("dlt_BMS_GRG_MST");
 		
 		for (int i = 0; i < param.size(); i++) {
 
@@ -37,15 +46,9 @@ public class SI0101Service {
 				dCnt += si0101Mapper.SI0101G0D0(data);
 			}
 		}
-		
-		Map result = new HashMap();
-		result.put("STATUS", "S");
-		result.put("ICNT", String.valueOf(iCnt));
-		result.put("UCNT", String.valueOf(uCnt));
-		result.put("DCNT", String.valueOf(dCnt));
+		Map result = saveResult(iCnt, uCnt, dCnt);
 		
 		return result;		
-		
 		
 	}
 }

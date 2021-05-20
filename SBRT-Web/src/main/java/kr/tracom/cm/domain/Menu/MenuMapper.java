@@ -17,4 +17,6 @@ public interface MenuMapper {
 	public int deleteMenu(Map param);
 
 	public int updateMenu(Map param);
+
+	public List<Map> searchMenuItem();
 }
