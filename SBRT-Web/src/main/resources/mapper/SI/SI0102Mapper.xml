@@ -11,11 +11,26 @@
 	select COMP_ID, AREA, COMP_NM, REP_NM, COMP_REG_NO, ADDR,
 		   PHONE, FAX, EMAIL, DRV_CNT, SVC_ROUT_CNT, LIC_VHC_CNT, SPR_VHC_CNT, REMARK
 	from BMS_TRANSCOMP_MST
+	<where>
+		<if test="TYPE == 'COMP_NM'">
+			AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'REP_NM'">
+			AND REP_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
 </select>
 
 <select id="SI0102G0R1" resultType="Map">
 	SELECT CONCAT('CP', LPAD(NEXTVAL(SEQ_BMS_TRANSCOMP_MST_0), 8, '0')) AS 'SEQ'
 </select>
+
+<select id="SI0102G0R2" resultType="Map">
+	select COMP_NM, REP_NM
+	from BMS_TRANSCOMP_MST
+	order by COMP_NM
+</select>
+
 
 <insert id="SI0102G0I0" parameterType="Map">
 <!-- 	<selectKey keyProperty="corpId" resultType="String" order="BEFORE">
@@ -27,10 +42,10 @@
 	values (#{COMP_ID}, #{AREA}, #{COMP_NM}, #{COMP_ENM}, #{REP_NM}, #{COMP_REG_NO}, #{ADDR}, #{GPS_X}, #{GPS_Y},#{TM_X}, #{TM_Y},
 		   #{PHONE}, #{FAX}, #{EMAIL}, #{DRV_CNT}, #{SVC_ROUT_CNT}, #{LIC_VHC_CNT}, #{SPR_VHC_CNT}, #{REMARK}) -->
 	insert into BMS_TRANSCOMP_MST(COMP_ID, AREA, COMP_NM, COMP_ENM, REP_NM, COMP_REG_NO, ADDR,
-		   PHONE, FAX, EMAIL, DRV_CNT, SVC_ROUT_CNT, LIC_VHC_CNT, SPR_VHC_CNT, REMARK, UPD_DTM, 
+		   PHONE, FAX, EMAIL, DRV_CNT, SVC_ROUT_CNT, LIC_VHC_CNT, SPR_VHC_CNT, REMARK, UPD_DTM, UPD_ID, 
 		   GPS_X, GPS_Y, TM_X, TM_Y )
 	values (#{COMP_ID}, #{AREA}, #{COMP_NM}, #{COMP_ENM}, #{REP_NM}, #{COMP_REG_NO}, #{ADDR},
-		   #{PHONE}, #{FAX}, #{EMAIL}, #{DRV_CNT}, #{SVC_ROUT_CNT}, #{LIC_VHC_CNT}, #{SPR_VHC_CNT}, #{REMARK}, sysdate(),
+		   #{PHONE}, #{FAX}, #{EMAIL}, #{DRV_CNT}, #{SVC_ROUT_CNT}, #{LIC_VHC_CNT}, #{SPR_VHC_CNT}, #{REMARK}, #{UPD_DTM}, #{SSN_USER_ID},
 		   1, 1, 1, 1)
 </insert>
 
@@ -50,8 +65,8 @@
 	,	LIC_VHC_CNT = #{LIC_VHC_CNT}
 	,	SPR_VHC_CNT = #{SPR_VHC_CNT}
 	,	REMARK = #{REMARK}
-	,	UPD_DTM = sysdate()
-	,	UPD_ID = #{UPD_ID}
+	,	UPD_DTM = #{UPD_DTM}
+	,	UPD_ID = #{SSN_USER_ID}
 	where COMP_ID = #{COMP_ID}
 </update>
 

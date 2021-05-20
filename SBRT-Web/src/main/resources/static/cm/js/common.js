@@ -20,6 +20,8 @@ var gcm = {
 	// 서버 통신 서비스 호출을 위한 Service Url (Context Path 이하 경로)
 	SERVICE_URL : "",
 
+	CUR_PROGRAM_AUTH : "" ,
+	
 	// 서버 통신 기본 모드 ( "asynchronous" / "synchronous")
 	DEFAULT_OPTIONS_MODE : "asynchronous",
 
@@ -69,6 +71,25 @@ var gcm = {
 		cbFuncIdx : 0, // 정보 저장 Index Key
 		cbFuncSave : {}
 	// 정보 저장 객체
+	},
+	
+	// 버튼 권한
+	AUTH : {
+		SEARCH : { value : "SCH_AH", class : "search", str : "조회"}, //검색
+		SAVE : { value : "SAV_AH", class : "save", str : "저장"}, //저장
+		DEL : { value : "SAV_AH", class : "del", str : "삭제"}, //삭제
+		EXL_I : { value : "IEX_AH", class : "exli", str : "엑셀업로드"}, //엑셀업로드
+		EXL : { value : "EXL_AH", class : "exl", str : "엑셀"}, //엑셀다운로드
+		EXL_F : { value : "GEX_AH", class : "exlf", str : "엑셀양식"}, //엑셀양식
+		ADD : { value : "SAV_AH", class : "add", str : "추가"}, //추가
+		CLOSE : { value : "FN2_AH", class : "close", str : "닫기"}, //닫기
+		RESERV : { value : "FN3_AH", class : "reserv", str : "예약"}, //예약
+		PLAY : { value : "FN4_AH", class : "play", str : "실행"}, //실행
+		CONFIRM_YN : { value : "FN5_AH", class : "confirmyn", str : "확정"}, //확정
+		SETTING : { value : "FN6_AH", class : "setting", str : "설정"}, //설정
+		INIT : { value : "FN7_AH", class : "init", str : "초기화"}, //초기화
+		HELP : { value : "HELP_AH", class : "help", str : "도움말"}, //도움말
+		CLR : { value : "SAV_AH", class : "clr", str : "취소"} //취소
 	},
 
 	// [단축키] 이벤트 설정 객체
@@ -363,6 +384,11 @@ gcm._groupValidationCallback = function() {
 			obj.setFocusedCell(gcm.valStatus.rowIndex, gcm.valStatus.columnId);
 		} else if (gcm.valStatus.objectType === "group") {
 			obj.focus();
+		} else if (gcm.valStatus.objectType === "gridForm") {
+			obj.setFocusedCell(gcm.valStatus.rowIndex, gcm.valStatus.columnId);
+			if(gcm.valStatus.focusTableID !== null){
+				$p.getComponentById(gcm.valStatus.focusTableID).focus();				
+			}
 		}
 	}
 };
@@ -514,29 +540,14 @@ com._setProgramAuthority = function() {
 	var param = com.getParameter();
 	if ((typeof param !== "undefined") && (typeof param.menuCode !== "undefined") && (param.menuCode.trim() !== "")) {
 		var menuCd = param.menuCode;
-		var menuInfoList = $p.top().wfm_side.getWindow().dlt_menu.getMatchedJSON("MENU_CD", menuCd);
+		var menuInfoList = $p.top().wfm_header.getWindow().dlt_menu.getMatchedJSON("MENU_CD", menuCd);
 
 		if (menuInfoList.length > 0) {
-			var programAuthorityList = $p.top().wfm_side.getWindow().dlt_programAuthority.getMatchedJSON("PROG_CD",
+			var programAuthorityList = $p.top().wfm_header.getWindow().dlt_programAuthority.getMatchedJSON("PROG_CD",
 					menuInfoList[0].PROG_CD);
 
 			if (programAuthorityList.length > 0) {
-				var programAuthority = programAuthorityList[0];
-				
-				/*if (programAuthority.AUTH_CHECK == "Y") {
-					var tmpParentIdx = btn_main_generator.insertChild();
-					var mainBtn = btn_main_generator.getChild(tmpParentIdx, "btn_main");
-					mainBtn.setValue("조회");
-					mainBtn.addClass("search");
-					input1.bind("onclick", function(e){ scwin.btn_search_onclick() })); 
-				}
-				if (programAuthority.SAV_AH == "Y") {
-					var tmpParentIdx = btn_main_generator.insertChild();
-					var mainBtn = btn_main_generator.getChild(tmpParentIdx, "btn_main");
-					mainBtn.setValue("저장");
-					mainBtn.addClass("save");
-					input1.bind("onclick", function(e){ scwin.btn_search_onclick() })); 
-				}*/
+				gcm.CUR_PROGRAM_AUTH = programAuthorityList[0];
 				
 				var objArr = WebSquare.util.getChildren($p.getFrame(), {
 					excludePlugin : "group trigger textbox output calendar image span",
@@ -546,23 +557,23 @@ com._setProgramAuthority = function() {
 				for (var i = 0; i < objArr.length; i++) {
 					if ((objArr[i].getPluginName() === "anchor") || (objArr[i].getPluginName() === "trigger")) {
 						if (objArr[i].getOriginalID().indexOf("btn_search") > -1) {
-							if (programAuthority.AUTH_CHECK !== "Y") {
+							if (gcm.CUR_PROGRAM_AUTH.AUTH_CHECK !== "Y") {
 								objArr[i].hide();
 							}
 						} else if (objArr[i].getOriginalID().indexOf("btn_add") > -1) {
-							if (programAuthority.SAV_AH !== "Y") {
+							if (gcm.CUR_PROGRAM_AUTH.SAV_AH !== "Y") {
 								objArr[i].hide();
 							}
 						} else if (objArr[i].getOriginalID().indexOf("btn_cancel") > -1) {
-							if (programAuthority.SAV_AH !== "Y") {
+							if (gcm.CUR_PROGRAM_AUTH.SAV_AH !== "Y") {
 								objArr[i].hide();
 							}
 						} else if (objArr[i].getOriginalID().indexOf("btn_save") > -1) {
-							if (programAuthority.SAV_AH !== "Y") {
+							if (gcm.CUR_PROGRAM_AUTH.SAV_AH !== "Y") {
 								objArr[i].hide();
 							}
 						} else if (objArr[i].getOriginalID().indexOf("btn_excel") > -1) {
-							if (programAuthority.EXL_AH !== "Y") {
+							if (gcm.CUR_PROGRAM_AUTH.EXL_AH !== "Y") {
 								objArr[i].hide();
 							}
 						}
@@ -581,7 +592,7 @@ com._setProgramAuthority = function() {
  * @author InswaveSystems
  */
 com.isAdmin = function() {
-	scwin.isAdmin = $p.top().wfm_side.getWindow().dma_defInfo.get("IS_ADMIN");
+	scwin.isAdmin = $p.top().wfm_header.getWindow().dma_defInfo.get("IS_ADMIN");
 	if (scwin.isAdmin === "Y") {
 		return true;
 	} else {
@@ -597,7 +608,7 @@ com.isAdmin = function() {
  * @author InswaveSystems
  */
 com.getLoginUserId = function() {
-	return $p.top().wfm_side.getWindow().dma_defInfo.get("USER_ID");
+	return $p.top().wfm_header.getWindow().dma_defInfo.get("USER_ID");
 }
 
 /**
@@ -1927,7 +1938,7 @@ com.messagBox = function(messageType, messageStr, closeCallbackFncName, isReturn
 	var messageType = messageType || "alert";
 	var defaultTitle = null;
 	var popId = messageType || "Tmp";
-
+	
 	popId = popId + com.MESSAGE_BOX_SEQ++;
 
 	if (messageType === "alert") {
@@ -2432,6 +2443,125 @@ com.validateGridView = function(gridViewObj, valInfoArr, tacObj, tabId) {
 		modifiedIdx = null;
 		dataList = null;
 		gridViewObj = null;
+	}
+};
+
+/**
+* Grid를 Validation Check하여 해당 Table에 Focus를 주는 함수
+ * @param {Object} gridViewObj GridView 객체
+ * @param :{Object} tableObj Table ID
+ * @param {Object[]} options 데이터 유효성 검증 옵션
+ * @param {String} options[].id 유효성 검사 대상 DataCollection 컬럼 아이디
+ * @param {Boolean} options[].mandatory 필수 입력 값 여부
+ * @param {Number} options[].minLength 최소 입력 자리수
+ * @param {requestCallback} options[].valFunc 사용자 유효성 검사 함수
+ * @param {Object} tacObj GridView가 포함된 TabControl 컴포넌트 객체
+ * @param {String} tabId GridView가 포함된 TabControl 컴포넌트의 Tab 아이디
+* 작성자 : 양현우
+*/
+com.validateGridTableView = function(gridViewObj, tableObj, valInfoArr, tacObj, tabId) {
+
+	if (gridViewObj === null) {
+		return false;
+	}
+	
+	var dataList = com.getGridViewDataList(gridViewObj);
+	if (dataList === null) {
+		$p.log("Can not find the datalist of '" + gridViewObjId + "' object.");
+		return false;
+	}
+
+	var valStatus = {
+		isValid : true,
+		message : "",
+		error : []
+	// { columnId: "", columnName: "", rowIndex: 0, message: "" }
+	};
+
+	try {
+		var modifiedIdx = dataList.getModifiedIndex();
+
+		for (var dataIdx = 0; dataIdx < modifiedIdx.length; dataIdx++) {
+			var modifiedData = dataList.getRowJSON(modifiedIdx[dataIdx]);
+			if (modifiedData.rowStatus === "D") {
+				continue;
+			}
+			for ( var valIdx in valInfoArr) {
+				var valInfo = valInfoArr[valIdx];
+				if ((typeof valInfo.id !== "undefined") && (typeof modifiedData[valInfo.id] !== "undefined")) {
+					var value = modifiedData[valInfo.id].trim();
+					if ((typeof valInfo.mandatory !== "undefined") && (valInfo.mandatory === true) && (value.length === 0)) {
+						_setResult(modifiedIdx[dataIdx], dataList, gridViewObj.getID(), valInfo.id, "필수 입력 항목 입니다.");
+					} else if ((typeof valInfo.minLength !== "undefined") && (valInfo.minLength > 0) && (value.length < valInfo.minLength)) {
+						_setResult(modifiedIdx[dataIdx], dataList, gridViewObj.getID(), valInfo.id, "최소 길이 " + valInfo.minLength
+								+ "자리 이상으로 입력해야 합니다.");
+					} else if (typeof valInfo.valFunc === "function") {
+						var resultMsg = valInfo.valFunc(value, modifiedData);
+						if ((typeof resultMsg !== "undefined") && (resultMsg !== "")) {
+							_setResult(modifiedIdx[dataIdx], dataList, gridViewObj.getID(), valInfo.id, resultMsg);
+						}
+					}
+				}
+
+				if (valStatus.error.length > 0) {
+					break;
+				}
+			}
+		}
+
+		if (valStatus.error.length > 0) {
+			valStatus.isValid = false;
+			valStatus.message = "유효하지 않은 값이 입력 되었습니다";
+
+			if ((typeof tacObj !== "undefined") && (typeof tabId !== "undefined") && (tabId !== "")) {
+				var tabIndex = tacObj.getTabIndex(tabId);
+				tacObj.setSelectedTabIndex(tabIndex);
+			}
+
+
+			
+			gcm.valStatus.isValid = false;
+			gcm.valStatus.objectType = "gridForm";
+			gcm.valStatus.objectName = valStatus.error[0].comObjId;
+			gcm.valStatus.columnId = valStatus.error[0].columnId;
+			gcm.valStatus.rowIndex = valStatus.error[0].rowIndex;
+			gcm.valStatus.focusTable = null;
+			var objArr = WebSquare.util.getChildren(tableObj, {
+				excludePlugin : "group trigger textbox output calendar image span anchor pageInherit wframe itemTable",
+				recursive : true
+			});
+			
+			for (var objIdx in objArr) {
+				if (objArr[objIdx].getOriginalID() == gcm.valStatus.columnId) {
+					gcm.valStatus.focusTableID = objArr[objIdx].getID();
+					break;
+				}
+				
+			}
+			
+			com.alert(valStatus.error[0].message, "gcm._groupValidationCallback");
+
+		}
+
+		return valStatus.isValid;
+
+		function _setResult(rowIndex, dataList, gridViewObjId, columnId, message) {
+			var errIdx = valStatus.error.length;
+			valStatus.error[errIdx] = {};
+			valStatus.error[errIdx].columnId = columnId;
+			valStatus.error[errIdx].comObjId = gridViewObjId;
+			valStatus.error[errIdx].columnName = dataList.getColumnName(columnId);
+			valStatus.error[errIdx].rowIndex = rowIndex;
+			valStatus.error[errIdx].message = com.attachPostposition(valStatus.error[errIdx].columnName) + " " + message;
+		}
+	} catch (e) {
+		$p.log("[com.validateGridView] Exception :: " + e.message);
+	} finally {
+		modifiedData = null;
+		modifiedIdx = null;
+		dataList = null;
+		gridViewObj = null;
+		objArr = null;
 	}
 };
 
@@ -3687,6 +3817,68 @@ com.getActiveWindowInfo = function() {
 	return activeInfo;
 }
 
+com.setMainBtn = function(btnOptions, generator) {
+
+	var programAuthority = gcm.CUR_PROGRAM_AUTH;
+	
+	if(programAuthority.AUTH_CHECK != 'Y')return;
+	
+	for(var i=0; i<btnOptions.length; i++){
+		try {
+			var item = btnOptions[i];
+			if(eval("programAuthority."+item.auth.value) == "Y"){
+				var tmpParentIdx = generator.insertChild();
+				var mainBtn = generator.getChild(tmpParentIdx, "btn_main");
+				var str = "";
+				if(item.userStr !== "undefined" && item.userStr!="" && item.userStr != null){
+					str = item.userStr;
+				}
+				else{
+					str = item.auth.str;
+				}
+					mainBtn.setValue(str);
+				mainBtn.addClass(item.auth.class);
+				if (typeof item.cbFnc === "function") {
+					mainBtn.bind("onclick", item.cbFnc); 
+				}
+			}
+		} catch (e) {
+			
+		}
+	}
+}
+
+com.setSubBtn = function(btnOptions, generator) {
+	var programAuthority = gcm.CUR_PROGRAM_AUTH;
+	
+	if(programAuthority.AUTH_CHECK != 'Y')return;
+
+	debugger;
+	for(var i=0; i<btnOptions.length; i++){
+		try {
+			var subItem = btnOptions[i];
+			if(eval("programAuthority."+subItem.auth.value) == "Y"){
+				var tmpParentIdx = generator.insertChild();
+				var subBtn = generator.getChild(tmpParentIdx, "btn_sub");
+				var str = "";
+				if(subItem.userStr !== "undefined" && subItem.userStr!="" && subItem.userStr != null){
+					str = subItem.userStr;
+				}
+				else{
+					str = subItem.auth.str;
+				}
+				subBtn.setValue(str);
+				subBtn.addClass(subItem.auth.class);
+				if (typeof subItem.cbFnc === "function") {
+					subBtn.bind("onclick", subItem.cbFnc); 
+				}
+			}
+		} catch (e) {
+		
+		}
+	}
+}
+	
 var shortcutTargetElement = document;
 if (shortcutTargetElement.attachEvent) {
 	shortcutTargetElement.detachEvent("keydown", gcm.shortcutEvent.keydownEvent);
@@ -3695,8 +3887,80 @@ if (shortcutTargetElement.attachEvent) {
 	shortcutTargetElement.onkeydown = gcm.shortcutEvent.keydownEvent;
 }
 
-//com.rowChange = function () {
+
+
+/**
+ * 실행 프레임 정보 조회
+ * 
+ * @date 2021.05.17
+ * @memberOf com
+ * @author 양현우
+ * @param {Array} options Popup창 옵션
+ * @param {String} [options.id] Popup창 아이디
+ * @param {String} [options.type] 화면 오픈 타입 ("iframePopup", "wframePopup", "browserPopup")
+ * @param {String} [options.width] Popup창 넓이
+ * @param {String} [options.height] Popup창 높이
+ * @param {String} [options.popupName] useIframe : true시 popup 객체의 이름으로 popup 프레임의 표시줄에 나타납니다.
+ * @param {String} [options.useIFrame] [default : false] true : IFrame 을 사용하는 WebSquare popup / false: window.open 을 사용하는 popup
+ * @param {String} [options.style] Popup의 스타일을 지정합니다. 값이 있으면 left top width height는 적용되지 않습니다.
+ * @param {String} [options.resizable] [default : false]
+ * @param {String} [options.modal] [default : false]
+ * @param {String} [options.scrollbars] [default : false]
+ * @param {String} [options.title] [default : false]
+ * @param {String} [options.notMinSize] [default : false]
+ */
+
+com.searchPopup = function(url, opt, column, data) {
 	
+	var _dataObj = {
+			type : "json",
+			data : data,
+			name : "param"
+		};
+
+		var width = opt.width || 1000;
+		var height = opt.height || 500;
+		try {
+			var deviceWidth = parseFloat($("body").css("width"));
+			var deviceHeight = parseFloat($("body").css("height"));
+			if (!opt.notMinSize) {
+				if (deviceWidth > 0 && width > deviceWidth) {
+					width = deviceWidth - 4; // 팝업 border 고려
+				}
+
+				if (deviceHeight > 0 && height > deviceHeight) {
+					height = deviceHeight - 4; // 팝업 border 고려
+				}
+			}
+		} catch (e) {
+
+		}
+
+		var top = ((document.body.offsetHeight / 2) - (parseInt(height) / 2) + $(document).scrollTop()) + "px";
+		var left = ((document.body.offsetWidth / 2) - (parseInt(width) / 2) + $(document).scrollLeft()) + "px";
+
+		if (typeof _dataObj.data.callbackFn === "undefined") {
+			_dataObj.data.callbackFn = "";
+		} else if (_dataObj.data.callbackFn.indexOf("gcm") !== 0) {
+			_dataObj.data.callbackFn = $p.id + _dataObj.data.callbackFn;
+		}
+
+		var options = {
+			id : opt.id,
+			popupName : opt.popupName || "",
+			type : opt.type || "wframePopup",
+			width : width + "px",
+			height : height + "px",
+			top : opt.top || top || "140px",
+			left : opt.left || left || "500px",
+			modal : (opt.modal == false) ? false : true,
+			dataObject : _dataObj,
+			alwaysOnTop : opt.alwaysOnTop || false,
+			useModalStack : (opt.useModalStack == false) ? false : true,
+			resizable : (opt.resizable == false) ? false : true,
+			useMaximize : opt.useMaximize || false
+		};
+
+		$p.openPopup(url, options);	
 	
-	
-//}
+}

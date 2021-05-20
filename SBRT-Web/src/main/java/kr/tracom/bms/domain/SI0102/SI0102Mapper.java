@@ -8,9 +8,11 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface SI0102Mapper {
 
-	public List SI0102G0R0();
+	public List SI0102G0R0(Map param);
 	
 	public Map SI0102G0R1();
+	
+	public List SI0102G0R2();
 	
 	public int SI0102G0I0(Map param);
 	

@@ -7,6 +7,14 @@
 	select GRG_ID, GRG_NM, OWNER_TYPE, ADDR, PHONE, FAX, EMAIL, CNG_YN, ELEC_YN, LEGAL_AREA,
 			SECURE_AREA, APPL_ST_DT, APPL_ED_DT, REMARK, GPS_X, GPS_Y
 	from BMS_GRG_MST
+	<where>
+		<if test="TYPE == 'GRG_ID'">
+			AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'GRG_NM'">
+			AND REP_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
 
 </select>
 
