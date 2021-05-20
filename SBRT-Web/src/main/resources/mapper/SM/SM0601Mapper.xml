@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.bms.domain.SM0601.SM0601Mapper">
+
+	<select id="SM0601G0R0" resultType="Map" parameterType="Map">
+		SELECT * FROM BMS_EMAIL_MST
+	</select>
+	
+	<select id="SM0601G1R0" resultType="Map" parameterType="Map">
+		SELECT USER_ID, U.ORG_ID, USER_NM, U.EMAIL, HP_NO, ORG_NM 
+		FROM BMS_USER_MST U, BMS_ORG_MST O WHERE USER_ID = #{RCPT_IDS} AND U.ORG_ID = O.ORG_ID
+	</select>
+	
+	<select id="SM0601P0R0" resultType="Map" parameterType="Map">
+		SELECT U.USER_ID, U.USER_NM, U.ORG_ID, O.ORG_NM	FROM BMS_USER_MST U, BMS_ORG_MST O 
+		WHERE U.ORG_ID = O.ORG_ID AND U.USER_ID NOT IN (SELECT U.USER_ID 
+		FROM BMS_USER_MST U, BMS_ORG_MST O WHERE U.ORG_ID = O.ORG_ID AND U.USER_ID = #{RCPT_IDS})
+		<if test="TYPE == 'USER_ID'">
+			AND U.USER_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'USER_NM'">
+			AND U.USER_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		ORDER BY U.USER_ID		
+	</select>
+	
+	<insert id="SM0601G0I0" parameterType="Map">
+		INSERT INTO BMS_EMAIL_MST(EMAIL_ID, SENDER_NM, SENDER_ADDR, RCPT_IDS, EMAIL_TITLE, EMAIL_CONTENTS,
+		SEND_DIV, SEND_STS, REG_DTM, RSV_DTM, SEND_DTM, UPD_DTM, UPD_ID) 
+		VALUES (#{EMAIL_ID}, #{SENDER_NM}, #{SENDER_ADDR}, #{RCPT_IDS}, #{EMAIL_TITLE}, #{EMAIL_CONTENTS},
+		#{SEND_DIV}, #{SEND_STS}, #{REG_DTM}, #{RSV_DTM}, #{SEND_DTM}, #{UPD_DTM}, #{UPD_ID})
+	</insert>
+
+	<delete id="SM0601G0D0" parameterType="Map">
+		DELETE FROM BMS_EMAIL_MST WHERE EMAIL_ID = #{EMAIL_ID}
+	</delete>
+	
+	<update id="SM0601G0U0" parameterType="Map">
+		UPDATE BMS_EMAIL_MST SET EMAIL_ID = #{EMAIL_ID}, SENDER_NM =  #{SENDER_NM}, SENDER_ADDR =  #{SENDER_ADDR}, 
+		RCPT_IDS =  #{RCPT_IDS}, EMAIL_TITLE =  #{EMAIL_TITLE}, EMAIL_CONTENTS = #{EMAIL_CONTENTS},	
+		SEND_DIV =  #{SEND_DIV}, SEND_STS =  #{SEND_STS}, REG_DTM =  #{REG_DTM}, RSV_DTM =  #{RSV_DTM}, 
+		SEND_DTM =  #{SEND_DTM}, UPD_DTM =  #{UPD_DTM}, UPD_ID = #{UPD_ID}
+	</update>
+</mapper>
