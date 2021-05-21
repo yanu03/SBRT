@@ -19,60 +19,35 @@ import kr.tracom.cm.support.ControllerSupport;
 public class SM0601Controller extends ControllerSupport {
 
 	@Autowired
-	private SM0601Service emailService;
+	private SM0601Service sm0601Service;
 
-	// Email Search
+	// 메일 목록 조회
 	@RequestMapping("/sm/SM0601G0R0")
 	public @ResponseBody Map<String, Object> SM0601G0R0() throws Exception {
-		try {
-			result.setData("dlt_EMAIL_MST", emailService.SM0601G0R0());
-			result.setMsg(result.STATUS_SUCESS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.setMsg(result.STATUS_ERROR);
-		}
+		result.setData("dlt_EMAIL_MST", sm0601Service.SM0601G0R0());
 		return result.getResult();
 	}
 	
-	// User(수신자) Search
+	// 수신자 조회
 	@RequestMapping("/sm/SM0601G1R0")
 	public @ResponseBody Map<String, Object> SM0601G1R0(Map<String, Object> param) throws Exception {
-		try {
-			result.setData("dlt_USER_MST", emailService.SM0601G1R0());
-			result.setMsg(result.STATUS_SUCESS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.setMsg(result.STATUS_ERROR);
-		}
+		result.setData("dlt_USER_MST", sm0601Service.SM0601G1R0());
 		return result.getResult();
 	}
 	
-	// 
+	// 명부 선택 조회
 	@RequestMapping("/sm/SM0601P0R0")
 	public @ResponseBody Map<String, Object> SM0601P0R0(Map<String, Object> param) throws Exception {
-		try {
-			result.setData("dlt_USER_MST", emailService.SM0601P0R0());
-			result.setMsg(result.STATUS_SUCESS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.setMsg(result.STATUS_ERROR);
-		}
+		result.setData("dlt_USER_MST", sm0601Service.SM0601P0R0());
 		return result.getResult();
 	}	
 	
-	// Email Save
+	// 메일 목록 저장
 	// TODO public @ResponseBody Map<String, Object> SM0601G0S0(@RequestBody Map<String, Object> param){
 	// RequestBody 추가하면 에러 발생함 원인 파악 필요.....
 	@RequestMapping("/sm/SM0601G0S0")
-	public @ResponseBody Map<String, Object> SM0601G0S0(Map<String, Object> param){
-		try {
-			Map map = emailService.SM0601G0S0();
-			result.setData("result", map);
-			result.setMsg(result.STATUS_SUCESS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.setMsg(result.STATUS_ERROR);
-		}
+	public @ResponseBody Map<String, Object> SM0601G0S0(Map<String, Object> param) throws Exception{
+		result.setData("result", sm0601Service.SM0601G0S0());
 		return result.getResult();
 	}	
 }

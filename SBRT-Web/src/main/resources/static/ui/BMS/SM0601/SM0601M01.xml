@@ -36,7 +36,6 @@
 						<w2:column id="EMAIL_CONTENTS" name="이메일내용" dataType="text"></w2:column>
 						<w2:column id="SEND_DIV" name="전송구분" dataType="text"></w2:column>
 						<w2:column id="SEND_STS" name="전송상태" dataType="text"></w2:column>
-						<w2:column id="REG_DTM" name="등록일시" dataType="date"></w2:column>
 						<w2:column id="RSV_DTM" name="예약일시" dataType="date"></w2:column>
 						<w2:column id="SEND_DTM" name="전송일시" dataType="date"></w2:column>
 						<w2:column id="UPD_DTM" name="갱신일시" dataType="date"></w2:column>
@@ -78,6 +77,27 @@
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
+	scwin.onpageload = function() {
+		var btnOptions = 
+		[
+			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick},
+			{userStr:"추가", auth: gcm.BTN.ADD , cbFnc: scwin.btn_add_onclick},
+			{userStr:"삭제", auth: gcm.BTN.DEL, cbFnc: scwin.btn_del_onclick},
+			{userStr:"저장", auth: gcm.BTN.SAVE, cbFnc: scwin.btn_save_onclick},
+			{userStr:"전송", auth: gcm.BTN.EXL, cbFnc: scwin.btn_send_onclick},
+			{userStr:"예약취소", auth: gcm.BTN.CNL, cbFnc: scwin.btn_cancel_onclick},
+			{userStr:"닫기", auth: gcm.BTN.CLOSE, cbFnc: scwin.btn_close_onclick}
+		];
+		com.setMainBtn(btnOptions, btn_main_generator);
+		var btnOptions2 = 
+		[
+			{userStr:"명부 선택", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn2_search_onclick},
+			{userStr:"추가", auth: gcm.BTN.ADD , cbFnc: scwin.btn_add2_onclick},
+			{userStr:"삭제", auth: gcm.BTN.DEL, cbFnc: scwin.btn_del2_onclick},
+		];
+		com.setMainBtn(btnOptions2, btn_sub_generator);		
+	}
+
 
 	// 메일관리 조회 버튼 이벤트
 	scwin.btn_search_onclick = function() {
@@ -98,7 +118,7 @@
 		var insertIndex = dlt_EMAIL_MST.insertRow();
 		//dlt_EMAIL_MST.setCellData(insertIndex, "USE_YN", 'Y');
 		//grd_email.setReadOnly("cell", insertIndex, "EMAIL_TITLE", false);
-		grd_email.setFocusedCell(insertIndex, "EMAIL_TITLE", true);		
+		grd_email.setFocusedCell(insertIndex, "EMAIL_TITLE", true);
 	};
 	
 	/**
@@ -113,7 +133,8 @@
 	 */
 	scwin.saveData = function() {
 		var emailModifiedIdx = dlt_EMAIL_MST.getModifiedIndex().length;
-		if (emailModifiedIdx == 0) {
+		var userModifiedIdx = dlt_USER_MST.getModifiedIndex().length;
+		if (emailModifiedIdx == 0 && userModifiedIdx == 0) {
 			com.alert("저장할 데이터가 없습니다");
 			return false;
 		}
@@ -127,8 +148,10 @@
 	 */
 	scwin.validateEmail = function() {
 		var valInfo = [ { id : "SENDER_NM", mandatory : true }, 
-						{ id : "SENDER_ADDR", mandatory : true }, 
-						{ id : "RCPT_IDS", mandatory : true } ];
+						{ id : "SENDER_ADDR", mandatory : true },
+						{ id : "EMAIL_TITLE", mandatory : true },
+						{ id : "EMAIL_CONTENTS", mandatory : true }, 
+						{ id : "RCPT_IDS", mandatory : true },];
 		return com.validateGridView(grd_email, valInfo);
 	};
 	
@@ -136,7 +159,6 @@
 	 * email rowStatus C,U,D,E 상태(Modify)인것만 저장한다.
 	 */
 	scwin.saveEmail = function(rtn) {
-		console.log(rtn);
 		if (rtn) {
 			com.executeSubmission(sub_SM0601G0S0);
 		}
@@ -156,6 +178,7 @@
 				dlt_USER_MST.removeAll();
 			} else {
 				if (val_authCdOrg) {
+					console.log("HERE : " + val_authCdOrg);
 					dma_USER_MST.set("RCPT_IDS", val_authCdOrg);
 					com.executeSubmission(sub_SM0601G1R0);
 				}
@@ -167,15 +190,21 @@
 		if (isReturnVal) {
 			var mainCodeModifyCnt = dlt_EMAIL_MST.getModifiedIndex().length;
 			if (mainCodeModifyCnt > 0) {
-				//com.executeSubmission(sbm_saveAuthAll);
+				if (scwin.validateEmail()) {
+					com.confirm("해당 email 데이터가 저장됩니다. \n 진행하시겠습니까? ", "scwin.saveEmail");
+				}
 			} else {
-				//com.executeSubmission(sbm_saveAuthorityMember);
+				if (scwin.validateEmail()) {
+					com.confirm("해당 email 데이터가 저장됩니다. \n 진행하시겠습니까? ", "scwin.saveEmail");
+				}
 			}
 		} else {
 			// 취소 부분 추가
+			dlt_EMAIL_MST.undoAll();
+			dlt_EMAIL_MST.removeRows(dlt_EMAIL_MST.getInsertedIndex());
 			dlt_USER_MST.undoAll();
-			dlt_USER_MST.removeRows(dlt_USER_MST.getInsertedIndex());			
-			com.executeSubmission(sub_SM0601G0R0);
+			dlt_USER_MST.removeRows(dlt_USER_MST.getInsertedIndex());
+			//com.executeSubmission(sub_SM0601G0R0);
 		}
 	};	
 	
@@ -193,26 +222,16 @@
 			/*
 			if (rowStatus == "C") {
 				com.alert("권한 등록 후에 사용 가능합니다.");
-			} else {
-				var auth_rcpt = dma_USER_MST.get("RCPT_IDS");
-				if (auth_rcpt != "") {
-					var data = { data : dma_USER_MST.getJSON(), callbackFn : "scwin.insertUser" };
-					var options = { id : "emailMemberPop",
-									popupName : "명부 선택", 
-									modal : true, 
-									width : 560, height: 400 };
-					com.openPopup("/ui/CM/SM0601/SM0601P01.xml", options, data);
-				}
 			}
 			*/
-			var auth_rcpt = dma_USER_MST.get("RCPT_IDS");
-			if (auth_rcpt != "") {
+			var rcpt = dma_USER_MST.get("RCPT_IDS");
+			if (rcpt != "") {
 				var data = { data : dma_USER_MST.getJSON(), callbackFn : "scwin.insertUser" };
 				var options = { id : "emailMemberPop",
 								popupName : "명부 선택", 
 								modal : true, 
 								width : 560, height: 400 };
-				com.openPopup("/ui/CM/SM0601/SM0601P01.xml", options, data);
+				com.openPopup("/ui/BMS/SM0601/SM0601P01.xml", options, data);
 			}			
 		}			
 	};
@@ -231,12 +250,32 @@
 				dlt_USER_MST.setRowJSON(idx, obj[i], true);
 			}
 		}
-	};	
+		scwin.rcptUpdate(dlt_EMAIL_MST, dlt_USER_MST, "RCPT_IDS", "USER_ID");
+	};
+	
+	// dlt0 : 특정컬럼이 수정될 dlt, dlt1 : 수정할 데이터를 가진 dlt, colId0 : 수정될 컬럼 ID, colId1 : 수정할 컬럼 ID
+	scwin.rcptUpdate = function(dlt0, dlt1, colId0, colId1){
+		var IDS = "";
+		for (j = 0; j < dlt1.getRowCount(); j++){
+			if (IDS == ""){
+				IDS += dlt1.getCellData(j, dlt1.getColumnIndex(colId1));	
+			}else{
+				IDS += "," + dlt1.getCellData(j, dlt1.getColumnIndex(colId1));
+			}
+		}
+		dlt0.setCellData(scwin.idxRowAuthority, dlt0.getColumnIndex(colId0), IDS);			
+	}
 	
 	// 메일 목록 삭제 버튼
-	scwin.btn_delete_onclick = function() {
+	scwin.btn_del_onclick = function() {
 		dlt_EMAIL_MST.deleteRows(grd_email.getCheckedIndex("chk"));
 	};
+	
+	// 예약일시 DisplayFormatter
+	scwin.rsvDisFormat = function(data){
+		if (data == "") return "";
+		return data.substring(0,4) + "-" + data.substring(4,6) + "-" + data.substring(6,8) + " " + data.substring(8,10) + ":" + data.substring(10,12)
+	}
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -253,55 +292,18 @@
 							<xf:group style="" tagname="col"></xf:group>
 							<xf:group style="width:200px;" tagname="col"></xf:group>
 						</xf:group>
-						<xf:group tagname="tr">
-							<xf:group style="" class="w2tb_th" tagname="th">검색항목</xf:group>
+						<xf:group tagname="tr" style="">
+							<xf:group style="" class="w2tb_th" tagname="th">검색</xf:group>
 							<xf:group style="" class="w2tb_td" tagname="td">
-								<xf:select1 disabledClass="w2selectbox_disabled" appearance="minimal" direction="auto" chooseOption=""
-									displayMode="label" optionOrder="false" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
-									ref="data:dma_search.TYPE" style="height:20px;width:80px;margin-right: 10px;float:left;" allOption="" submenuSize="auto"
-									disabled="false" textAlign="left">
-									<xf:choices>
-										<xf:item>
-											<xf:label><![CDATA[기관명]]></xf:label>
-											<xf:value><![CDATA[ORG_NM]]></xf:value>
-										</xf:item>
-										<xf:item>
-											<xf:label><![CDATA[기관아이디]]></xf:label>
-											<xf:value><![CDATA[ORG_ID]]></xf:value>
-										</xf:item>
-									</xf:choices>
-								</xf:select1>
-								<w2:autoComplete interactionMode="" chooseOptionValue="" chooseOptionLabel="-전체-" visibleRowNum=""
-									chooseOption="true" caseSensitive="false" displayMode="label" ev:onviewchange="" id="acb_autoChoiceBox" useKeywordHighlight="false"
-									ref="" style="height: 21px;float: left;" search="start" ev:onchange="" allOption="" submenuSize="auto" editType="select"
-									textAlign="left" noResult="useData" class="calc120">
-									<w2:choices>
-										<w2:itemset nodeset="data:dlt_organizationSearchItem">
-											<w2:label ref="ORG_NM"></w2:label>
-											<w2:value ref="ORG_NM"></w2:value>
-										</w2:itemset>
-									</w2:choices>
-								</w2:autoComplete>
+								<w2:inputCalendar footerDiv="false" id="" style="float:left; width:150px; height:23px; margin-right: 20px;" renderDiv="true"
+									focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component">
+								</w2:inputCalendar>
+								<xf:input adjustMaxLength="false" id="" style="float:left; width:144px; height:21px;"></xf:input>
 							</xf:group>
 							<xf:group style="" class="w2tb_td" tagname="td">
-								<w2:anchor id="btn_search" style="" ev:onclick="scwin.btn_search_onclick" class="btn_sh" outerDiv="true">
-									<xf:label><![CDATA[조회]]></xf:label>
-								</w2:anchor>
-								<w2:anchor class="btn_sh" ev:onclick="scwin.btn_add_onclick" id="btn_add" outerDiv="true" style="">
-									<xf:label><![CDATA[추가]]></xf:label>
-								</w2:anchor>
-								<w2:anchor class="btn_sh" ev:onclick="scwin.btn_delete_onclick" id="btn_delete" outerDiv="true" style="">
-									<xf:label><![CDATA[삭제]]></xf:label>
-								</w2:anchor>
-								<w2:anchor class="btn_sh" ev:onclick="scwin.btn_save_onclick" id="btn_save" outerDiv="true" style="">
-									<xf:label><![CDATA[저장]]></xf:label>
-								</w2:anchor>
-								<w2:anchor class="btn_sh" ev:onclick="" id="anchor9" outerDiv="true" style="">
-									<xf:label><![CDATA[전송]]></xf:label>
-								</w2:anchor>
-								<w2:anchor class="btn_sh" ev:onclick="" id="anchor10" outerDiv="true" style="">
-									<xf:label><![CDATA[예약취소]]></xf:label>
-								</w2:anchor>
+								<w2:generator style="" id="btn_main_generator" class="btn_main_generator">
+									<w2:anchor id="btn_main" style="left:0px;top:0px;margin-right: 5px;" class="btn_sh" outerDiv="true"></w2:anchor>
+								</w2:generator>
 							</xf:group>
 						</xf:group>
 					</xf:group>
@@ -316,10 +318,10 @@
 				</xf:group>
 				<xf:group id="">
 					<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.grd_email_onrowindexchange" ev:oncellclick=""
-						showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서"
-						sortable="true" rowStatusHeaderValue="상태" adaptive="crosstab" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
+						showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서" sortable="true"
+						rowStatusHeaderValue="상태" adaptive="crosstab" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 						fixedColumnWithHidden="true" dataList="data:dlt_EMAIL_MST" ignoreCellClick="false" style="height:280px;" autoFit="lastColumn"
-						visibleRowNum="10" id="grd_email" class="cm_grid">
+						visibleRowNum="10" id="grd_email" class="cm_grid" tooltipPositionY="">
 						<w2:header style="" id="header1">
 							<w2:row style="" id="row2">
 								<w2:column removeBorderStyle="false" width="70" inputType="checkbox" style="height:25px" id="column38"
@@ -351,13 +353,13 @@
 									blockSelect="false" displayMode="label" readOnly="false">
 								</w2:column>
 								<w2:column width="215" style="height:25px;" inputType="text" id="EMAIL_TITLE" blockSelect="false"
-									displayMode="label">
+									displayMode="label" readOnly="true">
 								</w2:column>
 								<w2:column width="206" style="height:25px;" inputType="text" id="RCPT_IDS" blockSelect="false"
-									displayMode="label">
+									displayMode="label" readOnly="true">
 								</w2:column>
 								<w2:column textAlign="center" width="80" style="height:25px;" inputType="text" id="SEND_DIV"
-									blockSelect="false" displayMode="label">
+									blockSelect="false" displayMode="label" readOnly="true">
 									<w2:choices>
 										<w2:itemset nodeset="">
 											<w2:label ref=""></w2:label>
@@ -365,7 +367,9 @@
 										</w2:itemset>
 									</w2:choices>
 								</w2:column>
-								<w2:column width="126" style="height:25px;" inputType="text" id="RSV_DTM" blockSelect="false">
+								<w2:column width="126" style="height:25px;" inputType="text" id="RSV_DTM" blockSelect="false"
+									displayFormat="" calendarValueType="yearMonthDateTime" applyFormat="" displayMode="" readOnly="true"
+									displayFormatter="scwin.rsvDisFormat">
 									<w2:choices>
 										<w2:itemset nodeset="data:dlt_organizationBasic">
 											<w2:label ref="PARENT_ORG_NM"></w2:label>
@@ -374,10 +378,10 @@
 									</w2:choices>
 								</w2:column>
 								<w2:column removeBorderStyle="false" width="121" inputType="text" style="height:25px" id="SEND_DTM" value=""
-									blockSelect="false" displayMode="label">
+									blockSelect="false" displayMode="label" readOnly="true">
 								</w2:column>
 								<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px" id="SEND_STS" value=""
-									blockSelect="false" displayMode="label">
+									blockSelect="false" displayMode="label" readOnly="true">
 								</w2:column>
 							</w2:row>
 						</w2:gBody>
@@ -463,9 +467,9 @@
 					</w2:attributes>
 				</xf:group>
 				<xf:group tagname="td" style="" class="w2tb_td">
-					<w2:inputCalendar footerDiv="false" id="" style="position:static; top:440px; left:902px; width:150px; height:23px; "
+					<w2:inputCalendar footerDiv="false" id="" style="float:left; width:150px; height:23px;"
 						renderDiv="true" focusOnDateSelect="false" calendarValueType="yearMonthDateTime" rightAlign="false" renderType="component"
-						ref="data:dlt_EMAIL_MST.RSV_DTM">
+						ref="data:dlt_EMAIL_MST.RSV_DTM" editType="" displayFormat="" ioFormat="" calendarDisplayFormatFunc="">
 					</w2:inputCalendar>
 				</xf:group>
 			</xf:group>
@@ -482,18 +486,10 @@
 						<w2:rowspan>1</w2:rowspan>
 					</w2:attributes>
 					<xf:group class="ml5 fr" id="" style="">
-						<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn2_search_onclick" id="btn2_search"
-							outerDiv="true" style="">
-							<xf:label><![CDATA[명부 선택]]></xf:label>
-						</w2:anchor>
-						<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_saveOrganization_onclick" id="anchor4"
-							outerDiv="true" style="">
-							<xf:label><![CDATA[추가]]></xf:label>
-						</w2:anchor>
-						<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelOrganization_onclick"
-							id="anchor5" outerDiv="true" style="">
-							<xf:label><![CDATA[삭제]]></xf:label>
-						</w2:anchor>
+
+						<w2:generator style="" id="btn_sub_generator" class="btn_main_generator">
+							<w2:anchor id="btn_main" style="left:0px;top:0px;margin-right: 5px;" class="btn_sh" outerDiv="true"></w2:anchor>
+						</w2:generator>
 					</xf:group>
 					<w2:gridView id="grd_user" style="height: 150px;" scrollByColumn="false" defaultCellHeight="20"
 						scrollByColumnAdaptive="false" dataList="data:dlt_USER_MST" autoFit="lastColumn" readOnly="">
@@ -551,9 +547,6 @@
 			</xf:group>
 		</xf:group>
 
-
-
-		
 		
 	</body>
 </html>
