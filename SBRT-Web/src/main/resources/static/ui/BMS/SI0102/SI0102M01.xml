@@ -101,22 +101,12 @@
 
 	};
 
-
-	//validation 처리를 위한 옵션
-	//mandatory : 필수 체크, valFunc : 콜백 함수
-	var valInfo = [ { id : "COMP_NM", mandatory : true},
-					{ id : "REP_NM", mandatory : true},
-					{ id : "EMAIL",
-						valFunc : function() {
-							if(com.checkEmail(EMAIL.getValue()) == false) {
-								return "유효하지 않은 형식입니다.";
-							}	
-						}}
-					];
 						 
 	//조회버튼
 	scwin.btn_search_onclick = function() {
-		com.searchGridForm(SI0102G0, SI0102F0,sub_SI0102G0R0, sub_SI0102G0S0, valInfo)
+	
+	var temp = SI0102G0.getCellOption(0,0,"userData1");
+		com.searchGridForm(SI0102G0, SI0102F0,sub_SI0102G0R0, sub_SI0102G0S0)
 	};
 
 	//조회 콜백 메소드
@@ -126,7 +116,7 @@
 
 	//저장버튼
 	scwin.btn_save_onclick = function() {
-		com.saveGridForm(SI0102G0,SI0102F0,sub_SI0102G0S0,valInfo);
+		com.saveGridForm(SI0102G0,SI0102F0,sub_SI0102G0S0);
 	};
 	
 	//등록버튼
@@ -135,18 +125,19 @@
 	};
 	
 	scwin.sub_SI0102G0R1_submitdone = function(e) {
-		com.addGridForm(SI0102G0, SI0102F0, dlt_BMS_TRANSCOMP_MST, dma_SEQ_BMS_TRANSCOMP_MST_0, "COMP_ID", "AREA");
+
+		com.addGridForm(SI0102G0, SI0102F0, dma_SEQ_BMS_TRANSCOMP_MST_0, "COMP_ID", "COMP_NM");
 
 	};
 	
 	//삭제
 	scwin.btn_del_onclick = function() {
-		com.delGrid(SI0102G0, dlt_BMS_TRANSCOMP_MST);
+		com.delGrid(SI0102G0);
 	};
 	
 	//취소
 	scwin.btn_cancel_onclick = function() {
-		com.cancelGrid(SI0102G0, dlt_BMS_TRANSCOMP_MST);
+		com.cancelGrid(SI0102G0);
 	};
 	
 	//닫기
@@ -310,14 +301,14 @@
     		<w2:gBody style="" id="gBody1">
     			<w2:row style="" id="row2">
     			<w2:column removeBorderStyle="false" width="128" inputType="text" style="height:20px" id="COMP_ID" value="" blockSelect="false" displayMode="label">
-    				</w2:column><w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="AREA" value="" blockSelect="false" displayMode="label">
-    				</w2:column><w2:column removeBorderStyle="false" width="103" inputType="text" style="height:20px" id="COMP_NM" eventPriority="oneditend" value="" blockSelect="false" displayMode="label">
+    				</w2:column><w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="AREA" value="" blockSelect="false" displayMode="label" userData1="M">
+    				</w2:column><w2:column removeBorderStyle="false" width="103" inputType="text" style="height:20px" id="COMP_NM" eventPriority="oneditend" value="" blockSelect="false" displayMode="label" userData1="M">
     				</w2:column><w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="REP_NM" eventPriority="oneditend" value="" blockSelect="false" displayMode="label">
     				</w2:column><w2:column removeBorderStyle="false" width="117" inputType="text" style="height:20px" id="COMP_REG_NO" value="" blockSelect="false" displayMode="label">
     				</w2:column><w2:column removeBorderStyle="false" width="261" inputType="text" style="height:20px" id="ADDR" value="" blockSelect="false" displayMode="label">
     				</w2:column><w2:column removeBorderStyle="false" width="114" inputType="text" style="height:20px" id="PHONE" value="" blockSelect="false" displayMode="label">
     				</w2:column><w2:column removeBorderStyle="false" width="98" inputType="text" style="height:20px" id="FAX" value="" blockSelect="false" displayMode="label">
-    				</w2:column><w2:column removeBorderStyle="false" width="167" inputType="text" style="height:20px" id="EMAIL" value="" blockSelect="false" displayMode="label">
+    				</w2:column><w2:column removeBorderStyle="false" width="167" inputType="text" style="height:20px" id="EMAIL" value="" blockSelect="false" displayMode="label" userData2="com.checkEmail">
     				</w2:column><w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="DRV_CNT" value="" blockSelect="false" displayMode="label">
     				</w2:column><w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="SVC_ROUT_CNT" value="" blockSelect="false" displayMode="label">
     				</w2:column><w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="LIC_VHC_CNT" value="" blockSelect="false" displayMode="label">
