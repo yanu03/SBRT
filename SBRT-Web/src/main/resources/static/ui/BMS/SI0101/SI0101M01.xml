@@ -109,6 +109,8 @@
 			{userStr:"취소", auth: gcm.BTN.CNL, cbFnc: scwin.btn_cancel_onclick},
 			{userStr:"저장", auth: gcm.BTN.SAVE, cbFnc: scwin.btn_save_onclick},
 			{userStr:"엑셀", auth: gcm.BTN.EXL, cbFnc: scwin.btn_excel_onclick},
+			{userStr:"엑셀업로드", auth: gcm.BTN.EXL_I, cbFnc: scwin.btn_uploadExcel_onclick},
+			{userStr:"엑셀양식", auth: gcm.BTN.EXL_F, cbFnc: scwin.btn_excelForm_onclick},
 			{userStr:"닫기", auth: gcm.BTN.CLOSE, cbFnc: scwin.btn_close_onclick}
 		];
 		com.setMainBtn(btnOptions, btn_main_generator);
@@ -120,16 +122,16 @@
 
 	//validation 처리를 위한 옵션
 	//mandatory : 필수 체크, valFunc : 콜백 함수
-	var valInfo = [ { id : "GRG_NM", mandatory : true},
-					{ id : "OWNER_TYPE", mandatory : true}
-				  ];
+	//var valInfo = [ { id : "GRG_NM", mandatory : true},
+	//				{ id : "OWNER_TYPE", mandatory : true}
+	//			  ];
 					
 	scwin.btn_search_onclick = function() {
-		com.searchGrid(SI0101G0,sub_SI0101G0R0,sub_SI0101G0S0,valInfo);
+		com.searchGrid(SI0101G0,sub_SI0101G0R0,sub_SI0101G0S0);
 	};
 
 	scwin.btn_save_onclick = function() {
-		return com.saveGrid(SI0101G0,sub_SI0101G0S0,valInfo);
+		return com.saveGrid(SI0101G0,sub_SI0101G0S0);
 	};
 
 	scwin.btn_add_onclick = function() {
@@ -149,7 +151,23 @@
 	};
 	
 	scwin.btn_excel_onclick = function() {
-		com.excelGrid(SI0101G0);
+		com.exlGrid(SI0101G0);
+	};
+
+	/**	 
+	 * 엑셀의 데이터를 그리드뷰로 업로드 한다.
+	 * 필요한 옵션이 있다면 options배열에 옵션을 넣는다.
+	 */
+	scwin.btn_uploadExcel_onclick = function() {
+		com.exlUploadGrid(SI0101G0);
+	};
+	
+	
+	/**
+	 * 그리드 Excel 포맷을 다운로드 하는 기능 ( 업로드용  Excel 포맷 )
+	 */
+	scwin.btn_excelForm_onclick = function() {
+		com.exlFrmGrid(SI0101G0);	
 	};
 	
 	scwin.btn_close_onclick = function() {

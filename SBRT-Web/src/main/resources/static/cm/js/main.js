@@ -55,7 +55,7 @@ scwin.setResultMessage = function(resultData) {
 		if (resultData.statusCode) {
 			messageObj.addClass(resultData.statusCode);
 		}
-		
+		if(resultData.statusCode=='SAVE')com.alert(resultData.message);
 		messageObj.setUserData("tmpStatusCode", resultData.statusCode);
 		messageObj.setValue(resultData.message);
 		wfm_footer.getWindow().grp_message.setUserData("message", resultData);
