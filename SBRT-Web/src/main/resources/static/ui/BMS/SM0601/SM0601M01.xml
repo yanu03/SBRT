@@ -28,7 +28,8 @@
 			<w2:dataCollection baseNode="map">
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_EMAIL_MST" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="chk" name="선택" dataType="text"></w2:column><w2:column id="EMAIL_ID" name="이메일아이디" dataType="text"></w2:column>
+						<w2:column id="chk" name="선택" dataType="text"></w2:column>
+						<w2:column id="EMAIL_ID" name="이메일아이디" dataType="text"></w2:column>
 						<w2:column id="SENDER_NM" name="발신자명" dataType="text"></w2:column>
 						<w2:column id="SENDER_ADDR" name="발신자주소" dataType="text"></w2:column>
 						<w2:column id="RCPT_IDS" name="수신자" dataType="text"></w2:column>
@@ -40,19 +41,20 @@
 						<w2:column id="SEND_DTM" name="전송일시" dataType="date"></w2:column>
 						<w2:column id="UPD_DTM" name="갱신일시" dataType="date"></w2:column>
 						<w2:column id="UPD_ID" name="갱신아이디" dataType="text"></w2:column>
-						
+
 					</w2:columnInfo>
 					<w2:data use="false"></w2:data>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_USER_MST" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="chk" name="선택" dataType="text"></w2:column><w2:column id="USER_ID" name="사용자아이디" dataType="text"></w2:column>
+						<w2:column id="chk" name="선택" dataType="text"></w2:column>
+						<w2:column id="USER_ID" name="사용자아이디" dataType="text"></w2:column>
 						<w2:column id="ORG_ID" name="기관아이디" dataType="text"></w2:column>
 						<w2:column id="USER_NM" name="사용자명" dataType="text"></w2:column>
 						<w2:column id="EMAIL" name="이메일" dataType="text"></w2:column>
 						<w2:column id="HP_NO" name="휴대폰" dataType="text"></w2:column>
 						<w2:column id="ORG_NM" name="기관명" dataType="text"></w2:column>
-						
+
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_USER_MST">
@@ -60,9 +62,15 @@
 						<w2:key id="RCPT_IDS" name="수신자" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
+				<w2:dataMap baseNode="map" id="dma_EMAIL_MST">
+					<w2:keyInfo>
+						<w2:key id="SDate" name="검색날짜" dataType="text"></w2:key>
+						<w2:key id="STitle" name="검색제목" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_SM0601G0R0" ref="" target="data:json,dlt_EMAIL_MST" action="/sm/SM0601G0R0" method="post"
+			<xf:submission id="sub_SM0601G0R0" ref="data:json,dma_EMAIL_MST" target="data:json,dlt_EMAIL_MST" action="/sm/SM0601G0R0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_SM0601G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -91,7 +99,7 @@
 		com.setMainBtn(btnOptions, btn_main_generator);
 		var btnOptions2 = 
 		[
-			{userStr:"명부 선택", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn2_search_onclick},
+			{userStr:"수신자 선택", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn2_search_onclick},
 			{userStr:"추가", auth: gcm.BTN.ADD , cbFnc: scwin.btn_add2_onclick},
 			{userStr:"삭제", auth: gcm.BTN.DEL, cbFnc: scwin.btn_del2_onclick},
 		];
@@ -116,8 +124,6 @@
 	 */
 	scwin.btn_add_onclick = function() {
 		var insertIndex = dlt_EMAIL_MST.insertRow();
-		//dlt_EMAIL_MST.setCellData(insertIndex, "USE_YN", 'Y');
-		//grd_email.setReadOnly("cell", insertIndex, "EMAIL_TITLE", false);
 		grd_email.setFocusedCell(insertIndex, "EMAIL_TITLE", true);
 	};
 	
@@ -134,7 +140,8 @@
 	scwin.saveData = function() {
 		var emailModifiedIdx = dlt_EMAIL_MST.getModifiedIndex().length;
 		var userModifiedIdx = dlt_USER_MST.getModifiedIndex().length;
-		if (emailModifiedIdx == 0 && userModifiedIdx == 0) {
+		var emailDelIdx = dlt_EMAIL_MST.getDeletedData()
+		if (emailModifiedIdx == 0 && userModifiedIdx == 0 && emailDelIdx.length == 0) {
 			com.alert("저장할 데이터가 없습니다");
 			return false;
 		}
@@ -168,7 +175,6 @@
 		scwin.idxRowAuthority = row;
 		var val_authCdOrg = dlt_EMAIL_MST.getCellData(row, "RCPT_IDS");
 		var detailCodeModifyCnt = dlt_USER_MST.getModifiedIndex().length;
-		
 		if (detailCodeModifyCnt > 0) {
 			com.confirm("권한별 등록사용자 정보를 저장하시겠습니까?", "scwin.indexChgSaveCode");
 		} else {
@@ -178,7 +184,6 @@
 				dlt_USER_MST.removeAll();
 			} else {
 				if (val_authCdOrg) {
-					console.log("HERE : " + val_authCdOrg);
 					dma_USER_MST.set("RCPT_IDS", val_authCdOrg);
 					com.executeSubmission(sub_SM0601G1R0);
 				}
@@ -253,7 +258,8 @@
 		scwin.rcptUpdate(dlt_EMAIL_MST, dlt_USER_MST, "RCPT_IDS", "USER_ID");
 	};
 	
-	// dlt0 : 특정컬럼이 수정될 dlt, dlt1 : 수정할 데이터를 가진 dlt, colId0 : 수정될 컬럼 ID, colId1 : 수정할 컬럼 ID
+	// dlt0 : 특정컬럼이 수정될 dlt, dlt1 : 수정할 데이터를 가진 dlt 
+	// colId0 : 수정될 컬럼 ID, colId1 : 수정할 컬럼 ID
 	scwin.rcptUpdate = function(dlt0, dlt1, colId0, colId1){
 		var IDS = "";
 		for (j = 0; j < dlt1.getRowCount(); j++){
@@ -269,6 +275,7 @@
 	// 메일 목록 삭제 버튼
 	scwin.btn_del_onclick = function() {
 		dlt_EMAIL_MST.deleteRows(grd_email.getCheckedIndex("chk"));
+		dlt_EMAIL_MST.removeRows(grd_email.getCheckedIndex("chk"));
 	};
 	
 	// 예약일시 DisplayFormatter
@@ -295,10 +302,10 @@
 						<xf:group tagname="tr" style="">
 							<xf:group style="" class="w2tb_th" tagname="th">검색</xf:group>
 							<xf:group style="" class="w2tb_td" tagname="td">
-								<w2:inputCalendar footerDiv="false" id="" style="float:left; width:150px; height:23px; margin-right: 20px;" renderDiv="true"
-									focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component">
+								<w2:inputCalendar footerDiv="false" id="btn_search_date" style="float:left; width:150px; height:23px; margin-right: 20px;" renderDiv="true"
+									focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component" ref="data:dma_EMAIL_MST.SDate" caption="" placeholder="전송일시">
 								</w2:inputCalendar>
-								<xf:input adjustMaxLength="false" id="" style="float:left; width:144px; height:21px;"></xf:input>
+								<xf:input adjustMaxLength="false" id="btn_search_title" style="float:left; width:144px; height:21px;" ref="data:dma_EMAIL_MST.STitle" placeholder="제목"></xf:input>
 							</xf:group>
 							<xf:group style="" class="w2tb_td" tagname="td">
 								<w2:generator style="" id="btn_main_generator" class="btn_main_generator">
@@ -414,8 +421,8 @@
 						<w2:colspan>3</w2:colspan>
 						<w2:rowspan>1</w2:rowspan>
 					</w2:attributes>
-					<xf:input adjustMaxLength="false" id="" style="height: 21px;margin-right: 5px;" ref="data:dlt_EMAIL_MST.SENDER_NM"></xf:input>
-					<xf:input adjustMaxLength="false" id="" style="height: 21px;" ref="data:dlt_EMAIL_MST.SENDER_ADDR"></xf:input>
+					<xf:input adjustMaxLength="false" id="" style="height: 21px;margin-right: 5px;" ref="data:dlt_EMAIL_MST.SENDER_NM" placeholder="홍길동"></xf:input>
+					<xf:input adjustMaxLength="false" id="" style="height: 21px;" ref="data:dlt_EMAIL_MST.SENDER_ADDR" placeholder="abb@korea.kr"></xf:input>
 				</xf:group>
 			</xf:group>
 			<xf:group tagname="tr" style="">
@@ -426,7 +433,7 @@
 					</w2:attributes>
 				</xf:group>
 				<xf:group tagname="td" style="" class="w2tb_td">
-					<xf:input adjustMaxLength="false" id="" style="height: 21px;" ref="data:dlt_EMAIL_MST.EMAIL_TITLE"></xf:input>
+					<xf:input adjustMaxLength="false" id="" style="height: 21px;" ref="data:dlt_EMAIL_MST.EMAIL_TITLE" placeholder="업무 협의 요청"></xf:input>
 				</xf:group>
 				<xf:group tagname="th" style="" class="w2tb_th">
 					전송상태
@@ -435,7 +442,7 @@
 					</w2:attributes>
 				</xf:group>
 				<xf:group tagname="td" style="" class="w2tb_td">
-					<xf:input adjustMaxLength="false" id="" style="width: 144px;height: 21px;" ref="data:dlt_EMAIL_MST.SEND_STS"></xf:input>
+					<xf:input adjustMaxLength="false" id="" style="width: 144px;height: 21px;" ref="data:dlt_EMAIL_MST.SEND_STS" placeholder="예약전송대기중"></xf:input>
 				</xf:group>
 			</xf:group>
 			<xf:group tagname="tr" style="">

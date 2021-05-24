@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface SM0601Mapper {
 	// 이메일 조회
 	//public List<Map> selectEmail(Map param);
-	public List<Map> SM0601G0R0();
+	public List<Map> SM0601G0R0(Map param);
 	// 수신자 조회
 	public List<Map> SM0601G1R0(String[] param);
 	// 팝업 명부 선택
