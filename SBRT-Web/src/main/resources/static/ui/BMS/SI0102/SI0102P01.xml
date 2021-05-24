@@ -10,138 +10,121 @@
         		<data xmlns="" />
         	</xf:instance>
         	<w2:dataCollection baseNode="map">
-        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_USER_MST" saveRemovedData="true">
-        			<w2:columnInfo>
-        				<w2:column id="USER_ID" name="사용자아이디" dataType="text"></w2:column>
-        				<w2:column id="USER_NM" name="사용자명" dataType="text"></w2:column>
-        			</w2:columnInfo>
-        		</w2:dataList>
         		<w2:dataMap baseNode="map" id="dma_search">
         			<w2:keyInfo>
-        				<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
-        				<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
-        				<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+        				<w2:key id="COMP_ID" name="name1" dataType="text"></w2:key>
+        				<w2:key id="TYPE" name="name2" dataType="text"></w2:key>
+        				<w2:key id="CONTENT" name="name3" dataType="text"></w2:key>
         			</w2:keyInfo>
         		</w2:dataMap>
-        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_userSearchItem" saveRemovedData="true">
+        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_GRG_MST" saveRemovedData="true">
         			<w2:columnInfo>
-        				<w2:column id="USER_ID" name="사용자아이디" dataType="text"></w2:column>
-        				<w2:column id="USER_NM" name="사용자명" dataType="text"></w2:column>
+        				<w2:column id="chk" name="선택" dataType="text"></w2:column><w2:column id="GRG_ID" name="차고지아이디" dataType="text"></w2:column>
+        				<w2:column id="GRG_NM" name="차고지명" dataType="text"></w2:column>
+        				
         			</w2:columnInfo>
         		</w2:dataList>
         	</w2:dataCollection>
         	<w2:workflowCollection></w2:workflowCollection>
-        	<xf:submission id="sub_findUser" ref="data:json,dma_search" target="data:json,dlt_BMS_USER_MST" action="/find/findUser" method="post" mediatype="application/json"
-        		encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit=""
-        		ev:submitdone="" ev:submiterror="" abortTrigger="">
+        	<xf:submission id="sub_SI0102G2R0" ref="data:json,dma_search" target="data:json,dlt_BMS_GRG_MST" action="/si/SI0102G2R0"
+        		method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
+        		mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
         	</xf:submission>
         </xf:model>
         <script type="text/javascript" lazy="false"><![CDATA[
         
 	scwin.onpageload = function() {
-		var param = com.getParameter();
-		scwin.param = com
-		
+		scwin.param = com.getParameter();
+		dma_search.set("COMP_ID" , scwin.param.data.COMP_ID);
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(tbl_search, scwin.btn_search_onclick);
+		$p.executeSubmission(sub_SI0102G2R0);				
 	};
 	
 	scwin.onpageunload = function() {
 		
 	};
 	
-//		var focusRowIdx = scwin.idxRowAuthority;
-//		if (focusRowIdx == -1) {
-//			com.alert("권한 선택후 권한별 등록사원을 등록하실 수 있습니다.");
-//		} else {
-//			var rowStatus = dlt_authority.getRowStatus(focusRowIdx);
-//			if (rowStatus == "C") {
-//				com.alert("권한 등록 후에 사용 가능합니다.");
-//			} else {
-//				var auth_cd = dma_authority.get("AUTHORITY_CD");
-//				if (auth_cd != "") {
-//					var data = { data : dma_authority.getJSON(), callbackFn : "scwin.insertMember" };
-//					var options = { id : "AuthorityMemberPop",
-//									popupName : "직원 조회", 
-//									modal : true, 
-//									width : 560, height: 400 };
-//					com.openPopup("/ui/BM/BM002P01.xml", options, data);
-//				}
-//			}
-//		}
-		
+	
 	scwin.btn_search_onclick = function() {
-		$p.executeSubmission(sub_findUser);
+		$p.executeSubmission(sub_SI0102G2R0);
+	};
+	
+	scwin.btn_confirm_onclick = function() {
+		var data = SI0102G2.getCheckedJSON("chk");
+		com.closePopup(scwin.closeCallbackFncName, data);		
+	};
+	
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();		
 	};
 	]]></script>
     </head>
     <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
-    	<xf:group class="pop_L" id="" style="">
-    		<xf:group class="pop_con" id="" style="">
-    			<xf:group class="tbl_search mb10" id="group11" style="">
-    				<xf:group adaptive="layout" adaptiveThreshold="768" class="w2tb tbl_sc" id="" style="" tagname="table">
-    					<w2:attributes>
-    						<w2:summary></w2:summary>
-    					</w2:attributes>
-    					<xf:group tagname="colgroup">
-    						<xf:group style="width:80.00px;" tagname="col"></xf:group>
-    						<xf:group style="" tagname="col"></xf:group>
-    						<xf:group style="width:80.00px;" tagname="col"></xf:group>
-    					</xf:group>
-    					<xf:group style="" tagname="tr">
-    						<xf:group class="w2tb_th" style="" tagname="th">검색항목</xf:group>
-    						<xf:group class="w2tb_td" style="" tagname="td">
-    							<xf:select1 allOption="true" appearance="minimal" chooseOption="" direction="auto" disabled="false"
-    								disabledClass="w2selectbox_disabled" displayMode="label" id="" optionOrder="false" ref="data:dma_search.TYPE"
-    								style="height:20px;width:120px;margin-right: 10px;" submenuSize="auto" textAlign="center">
-    								<xf:choices>
-    									<xf:item>
-    										<xf:label><![CDATA[사용자아이디]]></xf:label>
-    										<xf:value><![CDATA[USER_ID]]></xf:value>
-    									</xf:item>
-    									<xf:item>
-    										<xf:label><![CDATA[사용자명]]></xf:label>
-    										<xf:value><![CDATA[USER_NM]]></xf:value>
-    									</xf:item>
-    								</xf:choices>
-    							</xf:select1>
-    							<xf:input class="calc100" id="" ref="data:dlt_BMS_USER_MST.CONTENT" style=""></xf:input>
-    						</xf:group>
-    						<xf:group class="w2tb_td" style="" tagname="td">
-    							<w2:anchor class="btn_sh" clickEventElement="outerDiv" ev:onclick="scwin.btn_search_onclick" id="btn_search"
-    								outerDiv="true" style="">
-    								<xf:label><![CDATA[조회]]></xf:label>
-    							</w2:anchor>
-    						</xf:group>
-    					</xf:group>
+    	<xf:group class="tbl_search mb10" id="tbl_search" style="">
+    		<xf:group adaptive="layout" adaptiveThreshold="768" class="w2tb tbl_sc" id="" style="" tagname="table">
+    			<w2:attributes>
+    				<w2:summary></w2:summary>
+    			</w2:attributes>
+    			<xf:group tagname="colgroup">
+    				<xf:group style="width:80.00px;" tagname="col"></xf:group>
+    				<xf:group style="" tagname="col"></xf:group>
+    				<xf:group style="width:80.00px;" tagname="col"></xf:group>
+    			</xf:group>
+    			<xf:group style="" tagname="tr">
+    				<xf:group class="w2tb_th" style="" tagname="th">검색항목</xf:group>
+    				<xf:group class="w2tb_td" style="" tagname="td">
+    					<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+    						disabledClass="w2selectbox_disabled" displayMode="label" id="" optionOrder="false" ref="data:dma_search.TYPE"
+    						style="height:20px;width:80px;margin-right: 10px;" submenuSize="auto" textAlign="left">
+    						<xf:choices>
+    							<xf:item>
+    								<xf:label><![CDATA[사용자명]]></xf:label>
+    								<xf:value><![CDATA[USER_NM]]></xf:value>
+    							</xf:item>
+    							<xf:item>
+    								<xf:label><![CDATA[사용자아이디]]></xf:label>
+    								<xf:value><![CDATA[USER_ID]]></xf:value>
+    							</xf:item>
+    						</xf:choices>
+    					</xf:select1>
+    					<xf:input class="calc100" id="" ref="data:dma_search.CONTENT" style=""></xf:input>
+    				</xf:group>
+    				<xf:group class="w2tb_td" style="" tagname="td">
+    					<w2:anchor class="btn_sh" clickEventElement="outerDiv" ev:onclick="scwin.btn_search_onclick" id="btn_search"
+    						outerDiv="true" style="">
+    						<xf:label><![CDATA[조회]]></xf:label>
+    					</w2:anchor>
     				</xf:group>
     			</xf:group>
-    			<xf:group class="section" id="" style="">
-    				<w2:gridView adaptive="crosstab" autoFit="allColumn" class="cm_grid" dataList="data:dlt_BMS_USER_MST"
-    					fixedColumnWithHidden="true" id="findUserGrid" readOnly="true" scrollByColumn="false" style="height:240px;" useShiftKey="false">
-    					<w2:header id="header1" style="">
-    						<w2:row id="row1" style="">
-    							<w2:column blockSelect="false" id="column7" inputType="text" style="height:20px" value="사용자아이디"
-    								width="101">
-    							</w2:column>
-    							<w2:column blockSelect="false" id="column5" inputType="text" style="height:20px" value="사용자명" width="90"></w2:column>
-    						</w2:row>
-    					</w2:header>
-    					<w2:gBody id="gBody1" style="">
-    						<w2:row id="row2" style="">
-    							<w2:column blockSelect="false" id="USER_ID" inputType="text" style="height:20px" width="101"></w2:column>
-    							<w2:column blockSelect="false" id="USER_NM" inputType="text" style="height:20px" width="90"></w2:column>
-    						</w2:row>
-    					</w2:gBody>
-    				</w2:gridView>
-    			</xf:group>
-    			<xf:group class="section" id="group12" style="text-align:center;">
-    				<w2:anchor class="btn_cm" ev:onclick="scwin.btn_confirm_onclick" id="anchor1" style="">
-    					<xf:label><![CDATA[확인]]></xf:label>
-    				</w2:anchor>
-    				<w2:anchor class="btn_cm" ev:onclick="scwin.btn_cancel_onclick" id="anchor2" outerDiv="" style="">
-    					<xf:label><![CDATA[취소]]></xf:label>
-    				</w2:anchor>
-    			</xf:group>
     		</xf:group>
+    	</xf:group>
+    	<w2:gridView adaptive="crosstab" fixedColumnWithHidden="true" dataList="data:dlt_BMS_GRG_MST" useShiftKey="false" readOnly="true"
+    		style="height:240px;" scrollByColumn="false" id="SI0102G2" autoFit="allColumn" class="cm_grid">
+    		<w2:header id="header1" style="">
+    			<w2:row id="row1" style="">
+    				<w2:column width="39" inputType="checkbox" style="height:20px" id="chkHeader" value="선택" blockSelect="false"></w2:column>
+    				<w2:column width="101" inputType="text" style="height:20px" id="column7" value="차고지아이디" blockSelect="false"></w2:column>
+    				<w2:column width="90" inputType="text" style="height:20px" id="column5" value="차고지명" blockSelect="false"></w2:column>
+    			</w2:row>
+    		</w2:header>
+    		<w2:gBody id="gBody1" style="">
+    			<w2:row id="row2" style="">
+    				<w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px"
+    					inputType="checkbox" id="chk" blockSelect="false">
+    				</w2:column>
+    				<w2:column width="101" inputType="text" style="height:20px" id="GRG_ID" blockSelect="false"></w2:column>
+    				<w2:column width="90" inputType="text" style="height:20px" id="GRG_NM" blockSelect="false"></w2:column>
+    			</w2:row>
+    		</w2:gBody>
+    	</w2:gridView>
+    	<xf:group class="section" id="group10" style="text-align:center;">
+    		<w2:anchor class="btn_cm" ev:onclick="scwin.btn_confirm_onclick" id="anchor2" style="">
+    			<xf:label><![CDATA[확인]]></xf:label>
+    		</w2:anchor>
+    		<w2:anchor class="btn_cm" ev:onclick="scwin.btn_cancel_onclick" id="btn_cancel" outerDiv="" style="">
+    			<xf:label><![CDATA[취소]]></xf:label>
+    		</w2:anchor>
     	</xf:group>
     </body>
 </html>

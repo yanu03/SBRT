@@ -71,5 +71,15 @@ public class SI0102Service extends ServiceSupport {
 		
 	}
 
+/*	public String SI0102G1R0() {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return si0102Mapper.SI0102G0R0(map)
+	}*/
+
+	public List SI0102G2R0() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return si0102Mapper.SI0102G2R0(map);
+	}
+
 
 }

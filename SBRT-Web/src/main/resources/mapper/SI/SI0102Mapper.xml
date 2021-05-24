@@ -31,6 +31,18 @@
 	order by COMP_NM
 </select>
 
+<select id="SI0102G2R0" resultType="Map">
+	select GRG_ID, GRG_NM
+	from BMS_GRG_MST
+	<where>
+		<if test="TYPE == 'GRG_ID'">
+			AND GRG_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'GRG_NM'">
+			AND GRG_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+</select>
 
 <insert id="SI0102G0I0" parameterType="Map">
 <!-- 	<selectKey keyProperty="corpId" resultType="String" order="BEFORE">

@@ -10,7 +10,8 @@
         		<data xmlns="" />
         	</xf:instance>
         	<w2:dataCollection baseNode="map">
-        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_TRANSCOMP_MST" saveRemovedData="true" ev:onbeforerowpositionchange="" ev:onbeforecelldatachange="scwin.dlt_BMS_TRANSCOMP_MST_onbeforecelldatachange">
+        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_TRANSCOMP_MST" saveRemovedData="true"
+        			ev:onbeforerowpositionchange="" ev:onbeforecelldatachange="scwin.dlt_BMS_TRANSCOMP_MST_onbeforecelldatachange">
         			<w2:columnInfo>
         				<w2:column id="COMP_ID" name="운수사아이디" dataType="text"></w2:column>
         				<w2:column id="AREA" name="권역" dataType="text"></w2:column>
@@ -53,6 +54,20 @@
         				<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
         				<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
         				<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+        			</w2:keyInfo>
+        		</w2:dataMap>
+        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_GRG_MST" saveRemovedData="true">
+        			<w2:columnInfo>
+        				<w2:column id="GRG_ID" name="차고지아이디" dataType="text"></w2:column>
+        				<w2:column id="GRG_NM" name="차고지명" dataType="text"></w2:column>
+        				<w2:column id="OWNER_TYPE" name="소유형태" dataType="text"></w2:column>
+        				<w2:column id="ADDR" name="주소" dataType="text"></w2:column>
+        				<w2:column id="PHONE" name="전화번호" dataType="text"></w2:column>
+        			</w2:columnInfo>
+        		</w2:dataList>
+        		<w2:dataMap baseNode="map" id="dma_param_COMPID">
+        			<w2:keyInfo>
+        				<w2:key id="COMP_ID" name="운수사아이디" dataType="text"></w2:key>
         			</w2:keyInfo>
         		</w2:dataMap>
         	</w2:dataCollection>
@@ -159,7 +174,7 @@
 	};
 	
 	//등록버튼
-	scwin.btn_addMenu_onclick = function() {
+	scwin.btn_add_onclick = function() {
 		$p.executeSubmission(sub_SI0102G0R1);
 		
 	};
@@ -234,7 +249,95 @@
 	    });        
 	};
 	
+	
+	/**
+	 * 공통그룹코드의 row 선택시 발생하며 하위 코드리스트에 변경사항 있는 경우에는 저장여부를 묻고, 아닌 경우에는 하위 리스트를 조회한다.
+	 */
+	scwin.grd_groupView_onrowindexchange = function(row, oldRow) {
+		scwin.idxRow = row;
+		var val_grpCdOrg = dlt_commonGrp.getCellData(row, "CO_CD_ORG");
+		var detailCodeModifyCnt = dlt_commonCode.getModifiedIndex().length;
+	
+		if (detailCodeModifyCnt > 0) {
+			com.confirm("세부코드 정보를 저장하시겠습니까?", "scwin.indexChgSaveCode");
+		} else {
+			var status_row = dlt_commonGrp.getRowStatus(row);
+	
+			if (status_row == "C") {
+				dlt_commonCode.removeAll();
+			} else {
+				if (val_grpCdOrg) {
+					var param = { dma_commonGrp : { CO_CD : val_grpCdOrg } };
+					com.executeSubmission(sbm_commonCode, param);
+				}
+			}
+		}
+	};
+	
+	
 
+	//운수사 목록 그리드 row 변경시 차고지 그리드 변경사항 있는 경우 저장 여부를 묻고, 아닌 경우 차고지 그리드 조회 
+	scwin.SI0102G0_onrowindexchange = function(row,oldRow) {
+		scwin.idxRow = row;
+		var val_compID = dlt_BMS_TRANSCOMP_MST.getCellData(row, "COMP_ID");
+		var detailCodeModifyCnt = dlt_BMS_GRG_MST.getModifiedIndex().length;
+		if (detailCodeModifyCnt > 0) {
+			//com.confirm("관련 차고지 정보를 저장하시겠습니까?", "콜백함수 채우기");	
+		} else {
+			var status_row = dlt_BMS_TRANSCOMP_MST.getRowStatus(row);
+			if (status_row == "C") {
+				BMS_GRG_MST.removeAll();	
+			} else {
+				if (val_compID !== null) {
+					dma_param_COMPID.set("COMP_ID", val_compID);
+//					var param = {dma_compID : {COMP_ID : val_compID}};
+//					com.executeSubmission(서브미션명, param);	
+				}	
+			}	
+		} 
+	};
+	
+	//서브 그리드 추가 클릭 이벤트
+	scwin.btn_add2_onclick = function() {
+		var focusRowIdx = scwin.idxRow;
+		if (focusRowIdx == -1) {
+			com.alert("운수사 목록 선택후 관련 차고지를 등록하실 수 있습니다.");
+		} else {
+			var rowStatus = SI0102G0.getRowStatus(focusRowIdx);
+			if (rowStatus == "C") {
+				com.alert("운수사 등록 후에 사용 가능합니다.");
+			} else {
+				var comp_id = dma_param_COMPID.get("COMP_ID");
+				if (comp_id != "") {
+					var data = { data : dma_param_COMPID.getJSON(), callbackFn : "scwin.insertGRG" };
+					var options = { id : "SI0102P01",
+									popupName : "차고지 목록", 
+									modal : true, 
+									width : 560, height: 400 };
+					com.openPopup("/ui/BMS/SI0102/SI0102P01.xml", options, data);
+				}
+			}
+		}		
+	};
+	
+	//서브 그리드 추가 콜백함수
+	scwin.insertGRG = function(obj) {
+		debugger;
+		
+		var dLength = obj.length;
+		for (i = 0; i < dLength; i++) {
+			var data = dlt_BMS_GRG_MST.getMatchedIndex("GRG_ID", obj[i].GRG_ID, true);
+			if (data.length == 0) {
+				obj[i].COMP_ID = dma_param_COMPID.get("COMP_ID");
+				obj[i].chk = "0";
+		// sub_SI0102G1I0 추가하기
+				var param = {dlt_compNM : { COMP_NM : obj[i].COMP_ID} };
+				com.executeSubmission(sub_SI0102G1I0, param);
+				var idx = dlt_BMS_GRG_MST.insertRow();
+				dlt_BMS_GRG_MST.setRowJSON(idx, obj[i], true);
+			}
+		}
+	};
 	]]></script>
     </head>
     <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -299,7 +402,7 @@
     								style="left:0px;top:0px;margin-right: 5px;">
     								<xf:label><![CDATA[조회]]></xf:label>
     							</w2:anchor>
-    							<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_addMenu_onclick" id="anchor5"
+    							<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_add_onclick" id="anchor5"
     								outerDiv="true" style="">
     								<xf:label><![CDATA[추가]]></xf:label>
     							</w2:anchor>
@@ -340,10 +443,10 @@
     	</xf:group>
     	<w2:gridView adaptive="crosstab" alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid"
     		dataList="data:dlt_BMS_TRANSCOMP_MST" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup=""
-    		ev:onkeyup="" ev:onrowindexchange="" ev:ontextimageclick="" ev:onviewchange="" fixedColumnWithHidden="true" id="SI0102G0"
+    		ev:onkeyup="" ev:onrowindexchange="scwin.SI0102G0_onrowindexchange" ev:ontextimageclick="" ev:onviewchange="" fixedColumnWithHidden="true" id="SI0102G0"
     		ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true" rowStatusHeaderValue="" rowStatusVisible="false"
     		rowStatusWidth="40" scrollByColumn="false" style="height:300px;" useShiftKey="true" visibleRowNum="" wheelRows="" autoFitMinWidth="0"
-    		disabledScrollHidden="" editModeEvent="" editModeEventIcon="" checkEditableInputClass="" keyMoveEditMode="" moveKeyEditMode="" moveKeyEditModeAll="" ignoreNonEditableCellTabEnter="" readOnly="true" keepDefaultColumnWidth="" oddEvenColorDisplay="" rowNumWidth="" adaptiveThreshold="" summaryAuto="" excludeDeletedRows="" useCtrlOnMultisort="" useFilterList="" useFilterListSync="" sortedIconPosition="" sortable="" sortOrderReverse="" showSortableUseFilter="" focusMode="row" rowNumStatusUniqueId="" rowNumStatusResize="" ev:onbeforecolumnmove="">
+    		disabledScrollHidden="" editModeEvent="" editModeEventIcon="" checkEditableInputClass="" keyMoveEditMode="" moveKeyEditMode="" moveKeyEditModeAll="" ignoreNonEditableCellTabEnter="" readOnly="true" keepDefaultColumnWidth="" oddEvenColorDisplay="" rowNumWidth="" adaptiveThreshold="" summaryAuto="" excludeDeletedRows="" useCtrlOnMultisort="" useFilterList="" useFilterListSync="" sortedIconPosition="" sortable="" sortOrderReverse="" showSortableUseFilter="" focusMode="row" rowNumStatusUniqueId="" rowNumStatusResize="" ev:onbeforecolumnmove="" userData1="">
     		<w2:header style="" id="header1">
     			<w2:row style="" id="row1">
     			<w2:column removeBorderStyle="false" width="128" inputType="text" style="height:20px" id="column14" value="운수사아이디" blockSelect="false" displayMode="label">
@@ -364,7 +467,7 @@
     		</w2:header>
     		<w2:gBody style="" id="gBody1">
     			<w2:row style="" id="row2">
-    			<w2:column removeBorderStyle="false" width="128" inputType="text" style="height:20px" id="COMP_ID" value="" blockSelect="false" displayMode="label">
+    			<w2:column removeBorderStyle="false" width="128" inputType="text" style="height:20px" id="COMP_ID" value="" blockSelect="false" displayMode="label" userData1="">
     				</w2:column><w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="AREA" value="" blockSelect="false" displayMode="label">
     				</w2:column><w2:column removeBorderStyle="false" width="103" inputType="text" style="height:20px" id="COMP_NM" eventPriority="oneditend" value="" blockSelect="false" displayMode="label">
     				</w2:column><w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="REP_NM" eventPriority="oneditend" value="" blockSelect="false" displayMode="label">
@@ -554,7 +657,7 @@
     				</xf:group>
     			</xf:group>
     			<xf:group tagname="tr" style="">
-    				<xf:group tagname="th" class="w2tb_th">
+    				<xf:group tagname="th" class="w2tb_th" style="height: 100px;">
     					비고
     					<w2:attributes>
     						<w2:scope>row</w2:scope>
@@ -565,10 +668,83 @@
     						<w2:colspan>3</w2:colspan>
     						<w2:rowspan>1</w2:rowspan>
     					</w2:attributes>
-    					<xf:input adjustMaxLength="" class="" disabled="" id="" mandatory="" ref="data:dlt_BMS_TRANSCOMP_MST.REMARK" style="width:100%;height:21px;"></xf:input>
+    					<xf:input adjustMaxLength="" class="" disabled="" id="" mandatory="" ref="data:dlt_BMS_TRANSCOMP_MST.REMARK" style="width:100%;height:100px;"></xf:input>
     				</xf:group>
     			</xf:group>
-    		</xf:group>
+    		<xf:group tagname="tr" style=""><xf:group tagname="th" class="w2tb_th">관련&amp;nbsp;차고지<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
+    			<xf:group tagname="td" class="w2tb_td">
+    				<w2:attributes>
+    					<w2:colspan>3</w2:colspan>
+    					<w2:rowspan>1</w2:rowspan>
+    				</w2:attributes>
+    				<xf:group class="ml5 fr" id="" style="">
+    					<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_add2_onclick"
+    						id="btn_add2" outerDiv="true" style="">
+    						<xf:label><![CDATA[추가]]></xf:label>
+    					</w2:anchor>
+    					<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelOrganization_onclick"
+    						id="btn_delete2" outerDiv="true" style="">
+    						<xf:label><![CDATA[삭제]]></xf:label>
+    					</w2:anchor>
+    				</xf:group>
+    				<w2:gridView adaptive="crosstab" adaptiveThreshold="" alwaysTriggerScrollStart="" autoFit="lastColumn"
+    					autoFitMinWidth="0" captionTitle="" checkEditableInputClass="" class="cm_grid" dataList="data:dlt_BMS_GRG_MST" disabledScrollHidden=""
+    					editModeEvent="" editModeEventIcon="" enterKeyMove="" ev:onafteredit="" ev:onbeforecolumnmove="" ev:oncellclick=""
+    					ev:oneditkeyup="" ev:onkeyup="" ev:onrowindexchange="" ev:ontextimageclick="" ev:onviewchange="" excludeDeletedRows=""
+    					fixedColumnWithHidden="true" focusMode="row" id="gridView2" ignoreCellClick="false" ignoreNonEditableCellTabEnter=""
+    					keepDefaultColumnWidth="" keyMoveEditMode="" moveKeyEditMode="" moveKeyEditModeAll="" nextTabID="" oddEvenColorDisplay=""
+    					readOnly="true" rowNumHeaderValue="순번" rowNumStatusResize="" rowNumStatusUniqueId="" rowNumVisible="true" rowNumWidth=""
+    					rowStatusHeaderValue="" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" showSortableUseFilter=""
+    					sortOrderReverse="" sortable="" sortedIconPosition="" style="height:300px;margin: 20px;" summaryAuto="" useCtrlOnMultisort=""
+    					useFilterList="" useFilterListSync="" useShiftKey="true" visibleRowNum="" wheelRows="">
+    					<w2:header id="header1" style="">
+    						<w2:row id="row1" style="">
+    							<w2:column blockSelect="false" displayMode="label" id="column14" inputType="text" removeBorderStyle="false"
+    								style="height:20px" value="차고지아이디" width="128">
+    							</w2:column>
+    							<w2:column blockSelect="false" displayMode="label" id="column13" inputType="text" removeBorderStyle="false"
+    								style="height:20px" value="차고지명" width="70">
+    							</w2:column>
+    							<w2:column blockSelect="false" displayMode="label" id="column12" inputType="text" removeBorderStyle="false"
+    								style="height:20px" value="소유형태" width="103">
+    							</w2:column>
+    							<w2:column blockSelect="false" displayMode="label" id="column11" inputType="text" removeBorderStyle="false"
+    								style="height:20px" value="주소" width="70">
+    							</w2:column>
+    							<w2:column blockSelect="false" displayMode="label" id="column10" inputType="text" removeBorderStyle="false"
+    								style="height:20px" value="전화번호" width="117">
+    							</w2:column>
+    						</w2:row>
+    					</w2:header>
+    					<w2:gBody id="gBody1" style="">
+    						<w2:row id="row2" style="">
+    							<w2:column blockSelect="false" displayMode="label" id="GRG_ID" inputType="text" removeBorderStyle="false"
+    								style="height:20px" width="128">
+    							</w2:column>
+    							<w2:column blockSelect="false" displayMode="label" id="GRG_NM" inputType="text" removeBorderStyle="false"
+    								style="height:20px" width="70">
+    							</w2:column>
+    							<w2:column blockSelect="false" displayMode="label" eventPriority="oneditend" id="OWNER_TYPE"
+    								inputType="text" removeBorderStyle="false" style="height:20px" width="103">
+    							</w2:column>
+    							<w2:column blockSelect="false" displayMode="label" eventPriority="oneditend" id="ADDR" inputType="text"
+    								removeBorderStyle="false" style="height:20px" width="70">
+    							</w2:column>
+    							<w2:column blockSelect="false" displayMode="label" id="PHONE" inputType="text" removeBorderStyle="false"
+    								style="height:20px" width="117">
+    							</w2:column>
+    						</w2:row>
+    					</w2:gBody>
+    					<w2:footer id="footer1" style="">
+    						<w2:row id="row3" style="">
+    							<w2:column blockSelect="false" colSpan="14" displayMode="label"
+    								expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" id="column42" inputType="expression" removeBorderStyle="false"
+    								style="height:20px;" textAlign="right" width="1478">
+    							</w2:column>
+    						</w2:row>
+    					</w2:footer>
+    				</w2:gridView>
+    			</xf:group></xf:group></xf:group>
     	</xf:group>
     </body>
 </html>

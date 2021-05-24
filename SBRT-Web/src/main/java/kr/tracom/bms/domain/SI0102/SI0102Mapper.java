@@ -14,10 +14,13 @@ public interface SI0102Mapper {
 	
 	public List SI0102G0R2();
 	
+	public List SI0102G2R0(Map param);
+	
 	public int SI0102G0I0(Map param);
 	
 	public int SI0102G0D0(Map param);
 	
 	public int SI0102G0U0(Map param);
+
 	
 }
