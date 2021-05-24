@@ -11,7 +11,7 @@ public interface SM0601Mapper {
 	//public List<Map> selectEmail(Map param);
 	public List<Map> SM0601G0R0();
 	// 수신자 조회
-	public List<Map> SM0601G1R0(Map param);
+	public List<Map> SM0601G1R0(String[] param);
 	// 팝업 명부 선택
 	public List<Map> SM0601P0R0(Map param);
 		

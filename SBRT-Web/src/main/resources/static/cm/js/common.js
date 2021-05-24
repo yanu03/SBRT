@@ -32,6 +32,7 @@ var gcm = {
 	MESSAGE_CODE : {
 		STATUS_ERROR : "E",
 		STATUS_SUCCESS : "S",
+		STATUS_SAVE : "SAVE",
 		STATUS_WARNING : "W"
 	},
 
@@ -73,8 +74,8 @@ var gcm = {
 	// 정보 저장 객체
 	},
 	
-	// 버튼 권한
-	AUTH : {
+	// 버튼
+	BTN : {
 		SEARCH : { value : "SCH_AH", class : "search", str : "조회"}, //검색
 		SAVE : { value : "SAV_AH", class : "save", str : "저장"}, //저장
 		DEL : { value : "SAV_AH", class : "del", str : "삭제"}, //삭제
@@ -82,14 +83,14 @@ var gcm = {
 		EXL : { value : "EXL_AH", class : "exl", str : "엑셀"}, //엑셀다운로드
 		EXL_F : { value : "GEX_AH", class : "exlf", str : "엑셀양식"}, //엑셀양식
 		ADD : { value : "SAV_AH", class : "add", str : "추가"}, //추가
-		CLOSE : { value : "FN2_AH", class : "close", str : "닫기"}, //닫기
+		CLOSE : { value : "AUTH_CHECK", class : "close", str : "닫기"}, //닫기
 		RESERV : { value : "FN3_AH", class : "reserv", str : "예약"}, //예약
 		PLAY : { value : "FN4_AH", class : "play", str : "실행"}, //실행
 		CONFIRM_YN : { value : "FN5_AH", class : "confirmyn", str : "확정"}, //확정
 		SETTING : { value : "FN6_AH", class : "setting", str : "설정"}, //설정
 		INIT : { value : "FN7_AH", class : "init", str : "초기화"}, //초기화
 		HELP : { value : "HELP_AH", class : "help", str : "도움말"}, //도움말
-		CLR : { value : "SAV_AH", class : "clr", str : "취소"} //취소
+		CNL : { value : "SAV_AH", class : "clr", str : "취소"} //취소
 	},
 
 	// [단축키] 이벤트 설정 객체
@@ -2356,7 +2357,7 @@ com.validateGroup = function(grpObj, valInfoArr, tacObj, tabId) {
  * - maxLength : 최대 입력 문자수 <br/>
  * - maxByteLength : 최대 입력 바이트수 <br/>
  */
-com.validateGridView = function(gridViewObj, valInfoArr, tacObj, tabId) {
+com.validateGridView = function(gridViewObj, tacObj, tabId) {
 
 	if (gridViewObj === null) {
 		return false;
@@ -2379,11 +2380,12 @@ com.validateGridView = function(gridViewObj, valInfoArr, tacObj, tabId) {
 		var modifiedIdx = dataList.getModifiedIndex();
 
 		for (var dataIdx = 0; dataIdx < modifiedIdx.length; dataIdx++) {
-			var modifiedData = dataList.getRowJSON(modifiedIdx[dataIdx]);
+			var index = modifiedIdx[dataIdx];
+			var modifiedData = dataList.getRowJSON(index);
 			if (modifiedData.rowStatus === "D") {
 				continue;
 			}
-			for ( var valIdx in valInfoArr) {
+			/*for ( var valIdx in valInfoArr) {
 				var valInfo = valInfoArr[valIdx];
 				if ((typeof valInfo.id !== "undefined") && (typeof modifiedData[valInfo.id] !== "undefined")) {
 					var value = modifiedData[valInfo.id].trim();
@@ -2402,6 +2404,39 @@ com.validateGridView = function(gridViewObj, valInfoArr, tacObj, tabId) {
 
 				if (valStatus.error.length > 0) {
 					break;
+				}
+			}*/
+			for ( var columnIdx =0; columnIdx < gridViewObj.getColumnCount(); columnIdx++) {
+				var columnId = gridViewObj.getColumnID(columnIdx);
+				
+				if((isNaN(modifiedData[columnId])==false) || (typeof modifiedData[columnId] == "undefined")
+						||(modifiedData[columnId]==null))continue;
+				
+				var value = modifiedData[columnId].trim();
+				if((value.length === 0) && (typeof userData1 !== "undefined") && (userData1.length !== 0)){
+					var userData1 = gridViewObj.getCellOption(index,columnIdx,"userData1");				
+					if (userData1 === 'M') {
+						_setResult(index, dataList, gridViewObj.getID(), columnId, "필수 입력 항목 입니다.");
+					}
+					if (valStatus.error.length > 0) {
+						break;
+					}
+				}
+				
+				var userData2 = gridViewObj.getCellOption(index,columnIdx,"userData2");	
+				if((typeof userData2 !== "undefined") && (userData2.length !== 0)){
+					var func = eval(userData2);
+					if(func(value)==false){
+
+						var resultMsg = "유효하지 않은 형식입니다.";
+					
+						if ((typeof resultMsg !== "undefined") && (resultMsg !== "")) {
+							_setResult(index, dataList, gridViewObj.getID(), columnId, resultMsg);
+						}
+						if (valStatus.error.length > 0) {
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -2459,7 +2494,7 @@ com.validateGridView = function(gridViewObj, valInfoArr, tacObj, tabId) {
  * @param {String} tabId GridView가 포함된 TabControl 컴포넌트의 Tab 아이디
 * 작성자 : 양현우
 */
-com.validateGridTableView = function(gridViewObj, tableObj, valInfoArr, tacObj, tabId) {
+com.validateGridTableView = function(gridViewObj, tableObj, tacObj, tabId) {
 
 	if (gridViewObj === null) {
 		return false;
@@ -2479,14 +2514,15 @@ com.validateGridTableView = function(gridViewObj, tableObj, valInfoArr, tacObj, 
 	};
 
 	try {
-		var modifiedIdx = dataList.getModifiedIndex();
+		var modifiedIdx = gridViewObj.getModifiedIndex();
 
 		for (var dataIdx = 0; dataIdx < modifiedIdx.length; dataIdx++) {
-			var modifiedData = dataList.getRowJSON(modifiedIdx[dataIdx]);
+			var index = modifiedIdx[dataIdx];
+			var modifiedData = dataList.getRowJSON(index);
 			if (modifiedData.rowStatus === "D") {
 				continue;
 			}
-			for ( var valIdx in valInfoArr) {
+			/*for ( var valIdx in valInfoArr) {
 				var valInfo = valInfoArr[valIdx];
 				if ((typeof valInfo.id !== "undefined") && (typeof modifiedData[valInfo.id] !== "undefined")) {
 					var value = modifiedData[valInfo.id].trim();
@@ -2505,6 +2541,39 @@ com.validateGridTableView = function(gridViewObj, tableObj, valInfoArr, tacObj, 
 
 				if (valStatus.error.length > 0) {
 					break;
+				}
+			}*/
+			for ( var columnIdx =0; columnIdx < gridViewObj.getColumnCount(); columnIdx++) {
+				var columnId = gridViewObj.getColumnID(columnIdx);
+				
+				if((isNaN(modifiedData[columnId])==false) || (typeof modifiedData[columnId] == "undefined")
+						||(modifiedData[columnId]==null))continue;
+				
+				var value = modifiedData[columnId].trim();
+				if((value.length === 0) && (typeof userData1 !== "undefined") && (userData1.length !== 0)){
+					var userData1 = gridViewObj.getCellOption(index,columnIdx,"userData1");				
+					if (userData1 === 'M') {
+						_setResult(index, dataList, gridViewObj.getID(), columnId, "필수 입력 항목 입니다.");
+					}
+					if (valStatus.error.length > 0) {
+						break;
+					}
+				}
+				
+				var userData2 = gridViewObj.getCellOption(index,columnIdx,"userData2");	
+				if((typeof userData2 !== "undefined") && (userData2.length !== 0)){
+					var func = eval(userData2);
+					if(func(value)==false){
+
+						var resultMsg = "유효하지 않은 형식입니다.";
+					
+						if ((typeof resultMsg !== "undefined") && (resultMsg !== "")) {
+							_setResult(index, dataList, gridViewObj.getID(), columnId, resultMsg);
+						}
+						if (valStatus.error.length > 0) {
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -3819,6 +3888,7 @@ com.getActiveWindowInfo = function() {
 
 com.setMainBtn = function(btnOptions, generator) {
 
+	
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
 	
 	if(programAuthority.AUTH_CHECK != 'Y')return;
@@ -3853,7 +3923,6 @@ com.setSubBtn = function(btnOptions, generator) {
 	
 	if(programAuthority.AUTH_CHECK != 'Y')return;
 
-	debugger;
 	for(var i=0; i<btnOptions.length; i++){
 		try {
 			var subItem = btnOptions[i];
@@ -3878,6 +3947,239 @@ com.setSubBtn = function(btnOptions, generator) {
 		}
 	}
 }
+
+com.saveData = function(grid,form,saveSbmObj,searchSbmObj){
+
+	var isOk = false
+	if(	(typeof form == "undefined")||form==null){
+		if (com.validateGridView(grid)) {
+			isOk = true;
+		}	
+	}
+	else{
+		if (com.validateGridTableView(grid, form)) {
+			isOk = true;
+		}	
+	}
+	if(isOk==true){
+		com.executeSubmission(saveSbmObj);
+		if(	(typeof searchSbmObj !== "undefined")&&(searchSbmObj !== null)){
+			com.executeSubmission(searchSbmObj);
+		}
+	}
+}
+
+com.searchGrid = function(grid,searchSbmObj,saveSbmObj,str){
+	if(	(typeof saveSbmObj !== "undefined")&&(saveSbmObj !== null)){
+		var idx = grid.getModifiedIndex().length;
+		
+		//저장하지 않고 조회할 경우
+		if(idx > 0) {
+			if(	(typeof str == "undefined") || (str.trim() == ""))
+				str = "건의 저장되지 않은 데이터가 있습니다. 저장 후 조회 하시겠습니까?";
+			com.confirm(idx + str, function(rtn){
+				if (rtn) {
+					com.saveData(grid,null,saveSbmObj,null)
+				}
+				else {
+					com.executeSubmission(searchSbmObj);
+				}
+				return;
+			});
+		} 
+	}
+	com.executeSubmission(searchSbmObj);
+}
+
+com.addGrid = function(grid,keyMap,keyColumn,focusColumn){
+	var data = com.getGridViewDataList(grid);
+	var insertIndex = data.insertRow();
+	data.setCellData(insertIndex, keyColumn, keyMap.get("SEQ"));
+	grid.setFocusedCell(insertIndex, focusColumn, true);
+	return insertIndex;
+}
+
+com.cancelGrid = function(grid,str){
+	var data = com.getGridViewDataList(grid);
+	var focusIdxs = grid.getAllFocusedRowIndex();
+	var count = focusIdxs.length;
+	if(	(typeof str == "undefined") || (str.trim() == ""))
+		str = "건의 저장되지 않은 데이터가 있습니다. 취소 하시겠습니까?";
+	com.confirm(count + str, function(rtn) {
+		if (rtn) {
+			for (var i = 0; i < data.getTotalRow(); i++) {
+				var rowStatus = data.getRowStatus(i)
+				
+				if (rowStatus == "D") {
+					grid.setRowVisible(i, true);
+				}
+			}
+			data.undoAll();
+			data.removeRows(data.getInsertedIndex());
+		}
+	});
+}
+
+
+com.delGrid = function(grid,str){
+	var data = com.getGridViewDataList(grid);
+	var focusIdxs = grid.getAllFocusedRowIndex();
+	var count = focusIdxs.length;
+	if(	(typeof str == "undefined") || (str.trim() == ""))
+		str = "건의 데이터를 삭제 하시겠습니까?";
+	com.confirm(count + str, function(rtn) {
+		if (rtn) {
+			for(var i=0; i<count; i++){
+				grid.setRowVisible(focusIdxs[i], false);
+			}
+			data.deleteRows(focusIdxs);
+		}		
+	});
+}
+
+com.saveGrid = function(grid,sbmObj,yesno_str,str){
+	var idx = grid.getModifiedIndex().length;
+	if (idx == 0) {
+		if(	(typeof str == "undefined") || (str.trim() == ""))
+			str = "저장할 데이터가 없습니다";
+		com.alert(str);
+		return false;
+	}
+
+	if (idx > 0) {
+		if(	(typeof yesno_str == "undefined") || (yesno_str.trim() == ""))
+			yesno_str = "건의 데이터를 반영하시겠습니까?";
+		com.confirm(idx + yesno_str, function(rtn) {
+			if (rtn) {
+				com.saveData(grid,null,sbmObj,null);
+			}
+		});
+	}
+}
+
+//엑셀 다운로드
+com.exlGrid = function(grid,str){
+
+	if(	(typeof str == "undefined") || (str.trim() == ""))
+		str = com.getParameter().menuNm;
+
+	
+	var options = {
+		fileName : str //[defalut: excel.xlsx] 다운로드하려는 파일의 이름으로 필수 입력 값 (지원하는 타입 => xls, xlsx, csv)
+	};
+
+	com.gridDataDownLoad(SI0102G0);
+}
+
+/**	 
+ * 엑셀의 데이터를 그리드뷰로 업로드 한다.
+ * 필요한 옵션이 있다면 options배열에 옵션을 넣는다.
+ */
+com.exlUploadGrid = function(grid){
+	var options = {};
+	com.gridDataUpload(SI0102G0, "xls", options);
+}
+
+
+/**
+ * 그리드 Excel 포맷을 다운로드 하는 기능 ( 업로드용  Excel 포맷 )
+ */
+com.exlFrmGrid = function(grid){
+	var options = {};
+	options.fileName = "header.xls";
+	options.dataProvider = "com.inswave.template.provider.ExcelDownHeader";
+	var infoArr = {};
+	
+	com.gridDataDownLoad(SI0102G0, options , infoArr);	
+}
+
+com.searchGridForm = function(grid,form,searchSbmObj,saveSbmObj,str){
+	
+	if(	(typeof saveSbmObj !== "undefined")&&(saveSbmObj !== null)){
+		var idx = grid.getModifiedIndex().length;
+		
+		//저장하지 않고 조회할 경우
+		if(idx > 0) {
+			if(	(typeof str == "undefined") || (str.trim() == ""))
+				str = "건의 저장되지 않은 데이터가 있습니다. 저장 후 조회 하시겠습니까?";
+			com.confirm(idx + str, function(rtn){
+				if (rtn) {
+					com.saveData(grid,form,saveSbmObj,searchSbmObj)
+				}
+				else {
+					com.executeSubmission(searchSbmObj);
+				}
+				return;
+			});
+		} 
+	}
+	else com.executeSubmission(searchSbmObj);
+}
+
+com.addGridForm = function(grid,form,keyMap,keyColumn,focusID){
+	var data = com.getGridViewDataList(grid);
+	var insertIndex = data.insertRow();
+	data.setCellData(insertIndex, keyColumn, keyMap.get("SEQ"));
+	if(	(typeof form !== "undefined")&&(form !== null)){
+		grid.setFocusedCell(insertIndex, focusID, true);
+		$p.getComponentById(focusID).focus()
+	}
+	else{
+		grid.setFocusedCell(insertIndex, focusID, true);
+	}
+	return insertIndex;
+}
+
+com.saveGridForm = function(grid,form,sbmObj,searchSbmObj,yesno_str,str){
+	var idx = grid.getModifiedIndex().length;
+	if (idx == 0) {
+		if(	(typeof str == "undefined") || (str.trim() == ""))
+			str = "저장할 데이터가 없습니다";
+		com.alert(str);
+		return false;
+	}
+
+	if (idx > 0) {
+		if(	(typeof yesno_str == "undefined") || (yesno_str.trim() == ""))
+			yesno_str = "건의 데이터를 반영하시겠습니까?";
+		com.confirm(idx + yesno_str, function(rtn) {
+			if (rtn) {
+				com.saveData(grid,form,sbmObj,searchSbmObj);
+			}
+		});
+	}
+}
+
+com.tabClose = function(){
+	var tabComp = $w.getComponentById("mf_tac_layout");
+	var param = com.getParameter();
+	if ((typeof param !== "undefined") && (typeof param.menuCode !== "undefined") && (param.menuCode.trim() !== "")) {
+		var menuCode = param.menuCode;
+		if (tabComp.getSelectedTabID() == menuCode) {
+			var tabIndex = tabComp.getTabIndex(menuCode);
+			tabComp.deleteTab(tabIndex);
+		}
+	}
+}
+
+com.closeTab = function(grid,yesno_str){
+	var idx = grid.getModifiedIndex().length;
+
+	if (idx > 0) {
+		if(	(typeof yesno_str == "undefined") || (yesno_str.trim() == ""))
+			yesno_str = "건의 저장되지 않은 데이터가 있습니다. 닫으시겠습니까?";
+		com.confirm(idx + yesno_str, function(rtn) {
+			if (rtn) {
+				setTimeout(function() {
+					com.tabClose();	
+				},100);
+			}
+			return;
+		});
+	}
+	else com.tabClose();
+}
+
 	
 var shortcutTargetElement = document;
 if (shortcutTargetElement.attachEvent) {

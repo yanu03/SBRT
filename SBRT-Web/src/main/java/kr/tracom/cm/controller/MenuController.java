@@ -35,6 +35,14 @@ public class MenuController extends ControllerSupport{
 		result.setMsg(result.STATUS_SUCESS, "메뉴 리스트가 조회되었습니다.");
 		return result.getResult();
 	}
+	
+	@RequestMapping("/menu/searchMenuItem")
+	public @ResponseBody Map<String, Object> searchMenuItem() throws Exception {
+		result.setData("dlt_menuSearchItem", menuService.searchMenuItem());
+		result.setMsg(result.STATUS_SUCESS, "메뉴 리스트가 조회되었습니다.");
+		return result.getResult();
+	}
+
 
 	/**
 	 * updateMenu - 메뉴관리 리스트를 등록 수정 삭제 한다.

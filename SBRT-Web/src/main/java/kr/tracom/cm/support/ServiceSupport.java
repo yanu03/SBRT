@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kr.tracom.util.Constants;
+import kr.tracom.util.Result;
 import kr.tracom.util.UserInfo;
 
 /**
@@ -530,14 +531,14 @@ public class ServiceSupport {
 
 	protected Map saveResult(int iCnt) {
 		Map result = new HashMap();
-		result.put("STATUS", "S");
+		result.put("STATUS", Result.STATUS_SAVE);
 		result.put("ICNT", String.valueOf(iCnt));
 		return result;
 	}
 	
 	protected Map saveResult(int iCnt, int uCnt) {
 		Map result = new HashMap();
-		result.put("STATUS", "S");
+		result.put("STATUS",Result.STATUS_SAVE);
 		result.put("ICNT", String.valueOf(iCnt));
 		result.put("UCNT", String.valueOf(uCnt));
 		return result;
@@ -545,7 +546,7 @@ public class ServiceSupport {
 	
 	protected Map saveResult(int iCnt, int uCnt, int dCnt) {
 		Map result = new HashMap();
-		result.put("STATUS", "S");
+		result.put("STATUS", Result.STATUS_SAVE);
 		result.put("ICNT", String.valueOf(iCnt));
 		result.put("UCNT", String.valueOf(uCnt));
 		result.put("DCNT", String.valueOf(dCnt));

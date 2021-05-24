@@ -11,9 +11,15 @@ public class Result {
 	// 성공메세지
 	public final static String STATUS_SUCESS = "S";
 
+	//저장메시지
+	public final static String STATUS_SAVE = "SAVE";
+	
 	// 성공 메세지
 	public final static String STATUS_SUCESS_MESSAGE = "정상 처리되었습니다.";
 
+	// 저장 메세지
+	public final static String STATUS_SAVE_MESSAGE = "저장하였습니다..";
+	
 	// 오류메세지
 	public final static String STATUS_ERROR = "E";
 
@@ -77,8 +83,10 @@ public class Result {
 		if (status == STATUS_ERROR) {
 			msg = STATUS_ERROR_MESSAGE;
 		} else if (status == STATUS_SUCESS) {
-			msg = STATUS_SUCESS_MESSAGE;
-		} else if (status == STATUS_WARNING) {
+			msg = STATUS_SUCESS_MESSAGE; 
+		} else if (status == STATUS_SAVE) {
+			msg = STATUS_SAVE_MESSAGE;
+		}else if (status == STATUS_WARNING) {
 			msg = STATUS_WARNING_MESSAGE;
 		}
 		setMsg(status, msg);
@@ -115,6 +123,9 @@ public class Result {
 		if (status.equals(STATUS_SUCESS)) {
 			result.put("statusCode", STATUS_SUCESS);
 			result.put("message", getDefaultStatusMessage(message, STATUS_SUCESS_MESSAGE));
+		} else if (status.equals(STATUS_SAVE)) {
+			result.put("statusCode", STATUS_SAVE);
+			result.put("message", getDefaultStatusMessage(message, STATUS_SAVE_MESSAGE));
 		} else if (status.equals(STATUS_WARNING)) {
 			result.put("statusCode", STATUS_WARNING);
 			result.put("message", getDefaultStatusMessage(message, STATUS_WARNING_MESSAGE));

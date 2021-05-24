@@ -17,20 +17,19 @@ public class SM0601Service extends ServiceSupport{
 	private SM0601Mapper emailMapper;
 		
 	public List<Map> SM0601G0R0() throws Exception{
-		/*
-		Map param = getSimpleDataMap("dlt_EMAIL_MST");
-		return emailMapper.selectEmail(param);
-		*/
 		return emailMapper.SM0601G0R0();
 	}
 	
 	public List<Map> SM0601G1R0() throws Exception{
 		Map param = getSimpleDataMap("dma_USER_MST");
-		return emailMapper.SM0601G1R0(param);
+		String temp[] = param.get("RCPT_IDS").toString().split(",");
+		return emailMapper.SM0601G1R0(temp);
 	}
 	
 	public List<Map> SM0601P0R0() throws Exception{
 		Map param = getSimpleDataMap("dma_USER_MST");
+		String temp[] = param.get("RCPT_IDS").toString().split(",");
+		param.put("RCPT_IDS", temp);
 		return emailMapper.SM0601P0R0(param);
 	}
 	
@@ -66,6 +65,5 @@ public class SM0601Service extends ServiceSupport{
 		result.put("DCNT", String.valueOf(dCnt));
 		
 		return result;
-
 	}
 }
