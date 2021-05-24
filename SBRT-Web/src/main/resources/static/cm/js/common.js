@@ -4068,7 +4068,7 @@ com.exlGrid = function(grid,str){
 		fileName : str //[defalut: excel.xlsx] 다운로드하려는 파일의 이름으로 필수 입력 값 (지원하는 타입 => xls, xlsx, csv)
 	};
 
-	com.gridDataDownLoad(SI0102G0);
+	com.gridDataDownLoad(grid, "xls", options);
 }
 
 /**	 
@@ -4077,7 +4077,7 @@ com.exlGrid = function(grid,str){
  */
 com.exlUploadGrid = function(grid){
 	var options = {};
-	com.gridDataUpload(SI0102G0, "xls", options);
+	com.gridDataUpload(grid, "xls", options);
 }
 
 
@@ -4090,7 +4090,7 @@ com.exlFrmGrid = function(grid){
 	options.dataProvider = "com.inswave.template.provider.ExcelDownHeader";
 	var infoArr = {};
 	
-	com.gridDataDownLoad(SI0102G0, options , infoArr);	
+	com.gridDataDownLoad(grid, options , infoArr);	
 }
 
 com.searchGridForm = function(grid,form,searchSbmObj,saveSbmObj,str){
