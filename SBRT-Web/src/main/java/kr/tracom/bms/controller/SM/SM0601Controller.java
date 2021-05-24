@@ -23,7 +23,7 @@ public class SM0601Controller extends ControllerSupport {
 
 	// 메일 목록 조회
 	@RequestMapping("/sm/SM0601G0R0")
-	public @ResponseBody Map<String, Object> SM0601G0R0() throws Exception {
+	public @ResponseBody Map<String, Object> SM0601G0R0(Map<String, Object> param) throws Exception {
 		result.setData("dlt_EMAIL_MST", sm0601Service.SM0601G0R0());
 		return result.getResult();
 	}

@@ -17,7 +17,8 @@ public class SM0601Service extends ServiceSupport{
 	private SM0601Mapper emailMapper;
 		
 	public List<Map> SM0601G0R0() throws Exception{
-		return emailMapper.SM0601G0R0();
+		Map param = getSimpleDataMap("dma_EMAIL_MST");
+		return emailMapper.SM0601G0R0(param);
 	}
 	
 	public List<Map> SM0601G1R0() throws Exception{
@@ -49,12 +50,11 @@ public class SM0601Service extends ServiceSupport{
 					data.put(key, null);
 				}
 			}
-			
 			if (rowStatus.equals("C")) {
 				iCnt += emailMapper.SM0601G0I0(data);
 			} else if (rowStatus.equals("U")) {
 				uCnt += emailMapper.SM0601G0U0(data);
-			} else if (rowStatus.equals("D")) {
+			} else if (rowStatus.equals("E")) {
 				dCnt += emailMapper.SM0601G0D0(data);
 			}
 		}
