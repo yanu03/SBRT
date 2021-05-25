@@ -42,7 +42,7 @@ public class CommonController extends ControllerSupport {
 	}
 
 	/**
-	 * CommonCode - 모든 공통코드를 조회한다.
+	 * CommonDtl - 모든 공통코드를 조회한다.
 	 * 
 	 * @date 2017.12.22
 	 * @param {} 없음
@@ -50,9 +50,9 @@ public class CommonController extends ControllerSupport {
 	 * @author InswaveSystems
 	 * @example
 	 */
-	@RequestMapping("/common/selectCommonCode")
-	public @ResponseBody Map<String, Object> selectCommonCode() throws Exception {
-		result.setData("dlt_commonCode", commonService.selectCommonCodeAll());
+	@RequestMapping("/common/selectCommonDtl")
+	public @ResponseBody Map<String, Object> selectCommonDtl() throws Exception {
+		result.setData("dlt_commonDtl", commonService.selectCommonDtlAll());
 		return result.getResult();
 	}
 	
@@ -72,38 +72,38 @@ public class CommonController extends ControllerSupport {
 	}*/
 
 	/**
-	 * CommonCodeList - 조회조건에 따른 공통코드 리스트를 조회한다.
+	 * CommonDtlList - 조회조건에 따른 공통코드 리스트를 조회한다.
 	 * 
 	 * @date 2017.12.22
-	 * @param {} dma_commonGrp { CO_CD : "공통그룹 코드" }
-	 * @returns mv dlt_commonCode ( 공통코드 리스트 );
+	 * @param {} dma_commonCO { CO_CD : "공통그룹 코드" }
+	 * @returns mv dlt_commonDtl ( 공통코드 리스트 );
 	 * @author InswaveSystems
 	 * @example
 	 */
-	@RequestMapping("/common/selectCommonCodeList")
-	public @ResponseBody Map<String, Object> selectCommonCodeList() throws Exception {
+	@RequestMapping("/common/selectCommonDtlList")
+	public @ResponseBody Map<String, Object> selectCommonDtlList() throws Exception {
 		Result result = new Result();
-		result.setData("dlt_commonCode", commonService.selectCommonCodeList());
+		result.setData("dlt_commonDtl", commonService.selectCommonDtlList());
 		return result.getResult();
 	}
 	
-	@RequestMapping("/common/selectCommonGroup")
-	public @ResponseBody Map<String, Object> selectCommonGroup() throws Exception {
-		result.setData("dlt_commonGrp", commonService.selectCommonGroup());
+	@RequestMapping("/common/selectCommonCo")
+	public @ResponseBody Map<String, Object> selectCommonCo() throws Exception {
+		result.setData("dlt_commonCo", commonService.selectCommonCo());
 		return result.getResult();
 	}
 
 	/**
-	 * updateCommonGrpAll - 공통그룹 리스트 및 하위 코드정보를 등록 수정 삭제 한다.
+	 * updateCommonCoAll - 공통그룹 리스트 및 하위 코드정보를 등록 수정 삭제 한다.
 	 * 
 	 * @date 2017.12.22
-	 * @param {} dlt_commonGrp ( 공통코드그룹 상태인( C,U,D ) 리스트 ), dlt_commonCode ( 공통코드 상태인( C,U,D ) 리스트 )
+	 * @param {} dlt_commonCo ( 공통코드그룹 상태인( C,U,D ) 리스트 ), dlt_commonDtl ( 공통코드 상태인( C,U,D ) 리스트 )
 	 * @returns mv dlt_result (입력,수정,삭제된 건수 및 상태)
 	 * @author InswaveSystems
 	 * @example
 	 */
-	@RequestMapping("/common/updateCommonGrpAll")
-	public @ResponseBody Map<String, Object> updateCommonGrpAll() throws Exception {
+	@RequestMapping("/common/updateCommonCoAll")
+	public @ResponseBody Map<String, Object> updateCommonCoAll() throws Exception {
 		Map hash = commonService.saveCodeGrpListAll();
 
 		result.setData("dma_result_All", hash);
@@ -111,55 +111,55 @@ public class CommonController extends ControllerSupport {
 	}
 
 	/**
-	 * updateCommonGrp - 공통그룹 리스트를 등록 수정 삭제 한다.
+	 * updateCommonCo - 공통그룹 리스트를 등록 수정 삭제 한다.
 	 * 
 	 * @date 2017.12.22
-	 * @param {} dlt_commonGrp ( 공통코드그룹 상태인( C,U,D ) 리스트 ), dma_search ( 조회조건 )
-	 * @returns mv dlt_result (입력,수정,삭제된 건수 및 상태), dlt_commonGrp ( 공통코드 그룹 리스트 )
+	 * @param {} dlt_commonCo ( 공통코드그룹 상태인( C,U,D ) 리스트 ), dma_search ( 조회조건 )
+	 * @returns mv dlt_result (입력,수정,삭제된 건수 및 상태), dlt_commonCo ( 공통코드 그룹 리스트 )
 	 * @author InswaveSystems
 	 * @example
 	 */
-	@RequestMapping("/common/updateCommonGrp")
-	public @ResponseBody Map<String, Object> updateCommonGrp() throws Exception {
+	@RequestMapping("/common/updateCommonCo")
+	public @ResponseBody Map<String, Object> updateCommonCo() throws Exception {
 		Map hash = commonService.saveCodeGrpList();
 		result.setData("dma_result", hash);
-		result.setData("dlt_commonGrp", commonService.selectCommonGroup());
+		result.setData("dlt_commonCo", commonService.selectCommonCo());
 		return result.getResult();
 	}
 
 	/**
-	 * CommonCodeUpdate - 공통그룹코드 리스트를 등록 수정 삭제 한다.
+	 * CommonDtlUpdate - 공통그룹코드 리스트를 등록 수정 삭제 한다.
 	 * 
 	 * @date 2017.12.22
-	 * @param {} dlt_commonCode ( 공통코드 상태인( C,U,D ) 리스트 ), dma_commonGrp ( 조회조건 )
-	 * @returns mv dma_result ( 입력,수정,삭제된 건수 및 상태 ), dlt_commonCode ( 공통코드 리스트 )
+	 * @param {} dlt_commonDtl ( 공통코드 상태인( C,U,D ) 리스트 ), dma_commonCO ( 조회조건 )
+	 * @returns mv dma_result ( 입력,수정,삭제된 건수 및 상태 ), dlt_commonDtl ( 공통코드 리스트 )
 	 * @author InswaveSystems
 	 * @example
 	 */
-	@RequestMapping("/common/selectCommonCodeUpdate")
-	public @ResponseBody Map<String, Object> selectCommonCodeUpdate(@RequestBody Map<String, Object> param) throws Exception {
+	@RequestMapping("/common/selectCommonDtlUpdate")
+	public @ResponseBody Map<String, Object> selectCommonDtlUpdate() throws Exception {
 		Map hash = commonService.saveCodeList();
 		result.setData("dma_result", hash);
-		result.setData("dlt_commonCode", commonService.selectCommonCodeList());
+		result.setData("dlt_commonDtl", commonService.selectCommonDtlList());
 		return result.getResult();
 	}
 
 	/**
-	 * GetCodeList - 공통코드 조회 dma_commonCode : {CO_CD:"02,01", DATA_PREFIX:"dlt_code"} <String> CO_CD : 코드값,코드값 <String> DATA_PREFIX :
-	 * "Data객체의 ID prefix 없을 경우 dlt_commonCode_"
+	 * GetCodeList - 공통코드 조회 dma_commonDtl : {CO_CD:"02,01", DATA_PREFIX:"dlt_code"} <String> CO_CD : 코드값,코드값 <String> DATA_PREFIX :
+	 * "Data객체의 ID prefix 없을 경우 dlt_commonDtl_"
 	 * 
 	 * @date 2017.12.22
-	 * @param param {dma_commonCode : {CO_CD:"02,01", DATA_PREFIX:"dlt_code"}}
+	 * @param param {dma_commonDtl : {CO_CD:"02,01", DATA_PREFIX:"dlt_code"}}
 	 * @author InswaveSystems
 	 * @example
 	 */
 	@RequestMapping("/common/selectCodeList")
 	public @ResponseBody Map<String, Object> selectCodeList() throws Exception {
 
-		Map commonCode = getSimpleDataMap("dma_commonCode");
-		String dataIdPrefix = dataIdPrefix = (String) commonCode.get("DATA_PREFIX");
+		Map commonDtl = getSimpleDataMap("dma_commonDtl");
+		String dataIdPrefix = dataIdPrefix = (String) commonDtl.get("DATA_PREFIX");
 		if (dataIdPrefix == null) {
-			dataIdPrefix = "dlt_commonCode_";
+			dataIdPrefix = "dlt_commonDtl_";
 		}
 		
 		List codeList = commonService.selectCodeList();
@@ -190,19 +190,19 @@ public class CommonController extends ControllerSupport {
 	}
 	
 	/**
-	 * GetCodeList - 시스템코드 조회 dma_commonCode : {CO_CD:"02,01", DATA_PREFIX:"dlt_code"} <String> CO_CD : 코드값,코드값 <String> DATA_PREFIX :
+	 * GetCodeList - 시스템코드 조회 dma_commonDtl : {CO_CD:"02,01", DATA_PREFIX:"dlt_code"} <String> CO_CD : 코드값,코드값 <String> DATA_PREFIX :
 	 * "Data객체의 ID prefix 없을 경우 dlt_systemCode_"
 	 * 
 	 * @date 2021.04.28
-	 * @param param {dma_commonCode : {CO_CD:"02,01", DATA_PREFIX:"dlt_code"}}
+	 * @param param {dma_commonDtl : {CO_CD:"02,01", DATA_PREFIX:"dlt_code"}}
 	 * @author InswaveSystems
 	 * @example
 	 */
 	@RequestMapping("/common/selectSystemList")
 	public @ResponseBody Map<String, Object> selectSystemList() throws Exception {
 		
-		Map commonCode = getSimpleDataMap("dma_systemCode");
-		String dataIdPrefix = dataIdPrefix = (String) commonCode.get("DATA_PREFIX");
+		Map commonDtl = getSimpleDataMap("dma_systemCode");
+		String dataIdPrefix = dataIdPrefix = (String) commonDtl.get("DATA_PREFIX");
 		if (dataIdPrefix == null) {
 			dataIdPrefix = "dlt_systemCode_";
 		}

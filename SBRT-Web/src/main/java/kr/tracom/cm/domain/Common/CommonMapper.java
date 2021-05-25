@@ -18,25 +18,25 @@ public interface CommonMapper {
 	public List selectCommonSearchItem();
 
 	// 공통코드 및 코드 그룹 조회
-	public List selectCommonGroup(Map param);
+	public List selectCommonCo(Map param);
 
-	public List selectCommonCode();
+	public List selectCommonDtl();
 
-	public List selectCommonCodeList(Map param);
+	public List selectCommonDtlList(Map param);
 
 	// 공통코드 그룹 C, U, D
-	public int deleteCommonGrp(Map param);
+	public int deleteCommonCo(Map param);
 
-	public int insertCommonGrp(Map param);
+	public int insertCommonCo(Map param);
 
-	public int updateCommonGrp(Map param);
+	public int updateCommonCo(Map param);
 
 	// 공통코드 C, U, D
-	public int deleteCommonCode(Map param);
+	public int deleteCommonDtl(Map param);
 
-	public int insertCommonCode(Map param);
+	public int insertCommonDtl(Map param);
 
-	public int updateCommonCode(Map param);
+	public int updateCommonDtl(Map param);
 
 	// 공통코드
 	public List<Map> selectCodeList(Map param);
@@ -53,6 +53,6 @@ public interface CommonMapper {
 	 * @returns
 	 * @author InswaveSystems
 	 */
-	public int deleteCommonCodeAll(Map param);
+	public int deleteCommonDtlAll(Map param);
 
 }

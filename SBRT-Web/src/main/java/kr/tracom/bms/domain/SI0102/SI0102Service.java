@@ -24,12 +24,12 @@ public class SI0102Service extends ServiceSupport {
 		return si0102Mapper.SI0102G0R0(map);
 	}
 
-	public Map SI0102G0R1() throws Exception {
-		return si0102Mapper.SI0102G0R1();
+	public Map SI0102G0K0() throws Exception {
+		return si0102Mapper.SI0102G0K0(); 
 	}
 	
-	public List SI0102G0R2() throws Exception {
-		return si0102Mapper.SI0102G0R2();
+	public List SI0102SHI0() throws Exception {
+		return si0102Mapper.SI0102SHI0();
 	}	
 	
 	public Map SI0102G0S0() throws Exception {

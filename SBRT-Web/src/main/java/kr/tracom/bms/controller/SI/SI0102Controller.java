@@ -25,15 +25,15 @@ public class SI0102Controller extends ControllerSupport{
 		return result.getResult();
 	}
 	
-	@RequestMapping("/si/SI0102G0R1")
+	@RequestMapping("/si/SI0102G0K0")
 	public @ResponseBody Map<String, Object> SI0102G0R1() throws Exception {
-		result.setData("dma_SEQ_BMS_TRANSCOMP_MST_0", si0102Service.SI0102G0R1());
+		result.setData("dma_SEQ_BMS_TRANSCOMP_MST_0", si0102Service.SI0102G0K0());
 		return result.getResult();
 	}
 
-	@RequestMapping("/si/SI0102G0R2")
+	@RequestMapping("/si/SI0102SHI0")
 	public @ResponseBody Map<String, Object> SI0102G0R2() throws Exception {
-		result.setData("dlt_transcompSearchItem", si0102Service.SI0102G0R2());
+		result.setData("dlt_transcompSearchItem", si0102Service.SI0102SHI0());
 		return result.getResult();
 	}
 	
@@ -59,7 +59,7 @@ public class SI0102Controller extends ControllerSupport{
 	public @ResponseBody Map<String, Object> SI0102G0S0() throws Exception {
 		Map map = si0102Service.SI0102G0S0();
 		result.setData("dma_result", map);
-		return result.getResult();
+		return result.getResultSave();
 	}	
 	
 /*	@RequestMapping("/si/SI0102G1R0")

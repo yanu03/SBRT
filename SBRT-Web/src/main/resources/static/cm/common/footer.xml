@@ -24,8 +24,14 @@
 	};
 	
 	scwin.spn_message_onclick = function(e) {
+
 		var messageData = grp_message.getUserData("message");
 		var statusCode = messageData.statusCode;
+		if((gcm.isSavePoup==true)&&(statusCode == "S")){
+			gcm.isSavePoup = false;
+			return;
+		}
+
 		var message = messageData.message;
 		var messageDetail = messageData.messageDetail;
 
@@ -50,7 +56,16 @@
 			$p.top().wfm_header.getWindow().tbx_status.setValue("[" + messageData.errorCode + "] ");
 			$p.top().wfm_header.getWindow().tbx_message.setValue(messageData.messageDetail || messageData.message);
 		}
-		if (statusCode != "S" && statusCode != "SAVE") {
+		else if (statusCode == "SAVE") {
+			gcm.isSavePoup = true;
+			$p.top().wfm_header.getWindow().tbx_status.setValue("");
+			$p.top().wfm_header.getWindow().tbx_message.setValue(messageData.messageDetail || messageData.message);
+			setTimeout(function() {
+				$p.top().wfm_header.getWindow().scwin.btn_NotiClose_onclick();
+			},2000);
+		}
+
+		if (statusCode != "S") {
 			$(".notice").show();
 			$(".notice").css({ "opacity" : "0" }).animate({ bottom : "46px", "opacity" : "1" }, 1000);
 		} else {
