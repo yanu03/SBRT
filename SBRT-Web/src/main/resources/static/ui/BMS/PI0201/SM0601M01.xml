@@ -47,26 +47,14 @@
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_USER_MST" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="chk" name="선택" dataType="text"></w2:column><w2:column id="USER_ID" name="사용자아이디" dataType="text"></w2:column>
+						<w2:column id="chk" name="선택" dataType="text"></w2:column>
+						<w2:column id="USER_ID" name="사용자아이디" dataType="text"></w2:column>
 						<w2:column id="ORG_ID" name="기관아이디" dataType="text"></w2:column>
-						<w2:column id="SYSTEM_BIT" name="시스템비트" dataType="text"></w2:column>
 						<w2:column id="USER_NM" name="사용자명" dataType="text"></w2:column>
-						<w2:column id="USER_PS" name="비밀번호" dataType="text"></w2:column>
-						<w2:column id="SCD_PS" name="2차비밀번호" dataType="text"></w2:column>
 						<w2:column id="EMAIL" name="이메일" dataType="text"></w2:column>
-
 						<w2:column id="HP_NO" name="휴대폰" dataType="text"></w2:column>
-						<w2:column id="LAST_LOGIN_DTM" name="마지막로그인일시" dataType="text"></w2:column>
-						<w2:column id="PASSWORD_UPDATE_DTM" name="비밀번호변경일시" dataType="text"></w2:column>
-						<w2:column id="SCD_PS_UPDATE_DTM" name="2차비밀번호변경일시" dataType="text"></w2:column>
-						<w2:column id="USER_STATUS" name="사용자상태" dataType="text"></w2:column>
-						<w2:column id="IP" name="IP" dataType="text"></w2:column>
-						<w2:column id="SCD_PS_USE_YN" name="2차비밀번호 사용여부" dataType="text"></w2:column>
-						<w2:column id="SPARE_YN" name="사용여부" dataType="text"></w2:column>
-						<w2:column id="SCRAP_YN" name="비고" dataType="text"></w2:column>
-						<w2:column id="APPL_ST_DT" name="갱신일시" dataType="text"></w2:column>
-						<w2:column id="APPL_ED_DT" name="갱신아이디" dataType="text"></w2:column>
-						
+						<w2:column id="ORG_NM" name="기관명" dataType="text"></w2:column>
+
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_USER_MST">
@@ -112,31 +100,43 @@
 		var btnOptions2 = 
 		[
 			{userStr:"수신자 선택", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn2_search_onclick},
-			{userStr:"추가", auth: gcm.BTN.ADD , cbFnc: scwin.btn2_add_onclick},
-			{userStr:"삭제", auth: gcm.BTN.DEL, cbFnc: scwin.btn2_del_onclick},
+			{userStr:"추가", auth: gcm.BTN.ADD , cbFnc: scwin.btn_add2_onclick},
+			{userStr:"삭제", auth: gcm.BTN.DEL, cbFnc: scwin.btn_del2_onclick},
 		];
-		com.setSubBtn(btnOptions2, btn_sub_generator);		
+		com.setMainBtn(btnOptions2, btn_sub_generator);		
 	}
 
+
+	// 메일관리 조회 버튼 이벤트
 	scwin.btn_search_onclick = function() {
 		com.executeSubmission(sub_SM0601G0R0);
 	};
 	
 	scwin.sub_SM0601G0R0_submitdone = function(e) {
-		spn_organizationCnt.setValue(SM0601G0.getTotalRow())
+		spn_organizationCnt.setValue(grd_email.getTotalRow())
 		dlt_USER_MST.removeAll();
-		//scwin.SM0601G0_onrowindexchange(0, 0);
+		//scwin.grd_email_onrowindexchange(0, 0);
 	};
 	
+	
+	/**
+	 * 메일 목록 추가 버튼 클릭시 하나의 row를 추가한다.
+	 */
 	scwin.btn_add_onclick = function() {
 		var insertIndex = dlt_EMAIL_MST.insertRow();
-		SM0601G0.setFocusedCell(insertIndex, "EMAIL_TITLE", true);
+		grd_email.setFocusedCell(insertIndex, "EMAIL_TITLE", true);
 	};
 	
+	/**
+	 * 메일 목록 저장 버튼 이벤트를 수행한다.
+	 */
 	scwin.btn_save_onclick = function() {
 		scwin.saveData();
 	};
 	
+	/**
+	 * 데이터에 대한 유효성 검사 후 데이터를 저장한다.
+	 */
 	scwin.saveData = function() {
 		var emailModifiedIdx = dlt_EMAIL_MST.getModifiedIndex().length;
 		var userModifiedIdx = dlt_USER_MST.getModifiedIndex().length;
@@ -150,22 +150,28 @@
 		}	
 	}
 	
+	/**
+	 * email 필수 입력 정보를 체크한다.
+	 */
 	scwin.validateEmail = function() {
 		var valInfo = [ { id : "SENDER_NM", mandatory : true }, 
 						{ id : "SENDER_ADDR", mandatory : true },
 						{ id : "EMAIL_TITLE", mandatory : true },
 						{ id : "EMAIL_CONTENTS", mandatory : true }, 
 						{ id : "RCPT_IDS", mandatory : true },];
-		return com.validateGridView(SM0601G0, valInfo);
+		return com.validateGridView(grd_email, valInfo);
 	};
 	
+	/**
+	 * email rowStatus C,U,D,E 상태(Modify)인것만 저장한다.
+	 */
 	scwin.saveEmail = function(rtn) {
 		if (rtn) {
 			com.executeSubmission(sub_SM0601G0S0);
 		}
 	};	
 	
-	scwin.SM0601G0_onrowindexchange = function(row, oldRow) {
+	scwin.grd_email_onrowindexchange = function(row, oldRow) {
 		scwin.idxRowAuthority = row;
 		var val_authCdOrg = dlt_EMAIL_MST.getCellData(row, "RCPT_IDS");
 		var detailCodeModifyCnt = dlt_USER_MST.getModifiedIndex().length;
@@ -210,13 +216,19 @@
 	scwin.sub_SM0601G0S0_submitdone = function(e) {
 		com.executeSubmission(sub_SM0601G0R0);
 	};
-		
+	
+	// 명부 선택 클릭 이벤트	
 	scwin.btn2_search_onclick = function(){
 		var focusRowIdx = scwin.idxRowAuthority;
 		if (focusRowIdx == -1) {
 			com.alert("메일 선택후 권한별 등록사용자을 등록하실 수 있습니다.");
 		} else {
 			var rowStatus = dlt_EMAIL_MST.getRowStatus(focusRowIdx);
+			/*
+			if (rowStatus == "C") {
+				com.alert("권한 등록 후에 사용 가능합니다.");
+			}
+			*/
 			var rcpt = dma_USER_MST.get("RCPT_IDS");
 			if (rcpt != "") {
 				var data = { data : dma_USER_MST.getJSON(), callbackFn : "scwin.insertUser" };
@@ -229,6 +241,9 @@
 		}			
 	};
 	
+	/**
+	 * 팝업창에 선택된 사용자 정보를 DataList( dlt_USER_MST )에 추가시킨다.
+	 */
 	scwin.insertUser = function(obj) {
 		var dLength = obj.length;
 		for (i = 0; i < dLength; i++) {
@@ -243,8 +258,8 @@
 		scwin.rcptUpdate(dlt_EMAIL_MST, dlt_USER_MST, "RCPT_IDS", "USER_ID");
 	};
 	
-	// dlt0 : 수정될 dlt, dlt1 : 수정할 데이터를 가진 dlt 
-	// colId0 : 수정될 컬럼 ID, colId1 : 수정할 데이터를 가진 컬럼 ID
+	// dlt0 : 특정컬럼이 수정될 dlt, dlt1 : 수정할 데이터를 가진 dlt 
+	// colId0 : 수정될 컬럼 ID, colId1 : 수정할 컬럼 ID
 	scwin.rcptUpdate = function(dlt0, dlt1, colId0, colId1){
 		var IDS = "";
 		for (j = 0; j < dlt1.getRowCount(); j++){
@@ -257,16 +272,11 @@
 		dlt0.setCellData(scwin.idxRowAuthority, dlt0.getColumnIndex(colId0), IDS);			
 	}
 	
+	// 메일 목록 삭제 버튼
 	scwin.btn_del_onclick = function() {
-		//dlt_EMAIL_MST.deleteRows(SM0601G0.getCheckedIndex("chk"));
-		dlt_EMAIL_MST.removeRows(SM0601G0.getCheckedIndex("chk"));
-		
+		dlt_EMAIL_MST.deleteRows(grd_email.getCheckedIndex("chk"));
+		dlt_EMAIL_MST.removeRows(grd_email.getCheckedIndex("chk"));
 	};
-	
-	scwin.btn2_del_onclick = function() {
-		dlt_USER_MST.removeRows(SM0601G1.getCheckedIndex("chk"));
-		scwin.rcptUpdate(dlt_EMAIL_MST, dlt_USER_MST, "RCPT_IDS", "USER_ID");
-	}
 	
 	// 예약일시 DisplayFormatter
 	scwin.rsvDisFormat = function(data){
@@ -314,11 +324,11 @@
 					</xf:group>
 				</xf:group>
 				<xf:group id="">
-					<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.SM0601G0_onrowindexchange" ev:oncellclick=""
+					<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.grd_email_onrowindexchange" ev:oncellclick=""
 						showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서" sortable="true"
 						rowStatusHeaderValue="상태" adaptive="crosstab" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 						fixedColumnWithHidden="true" dataList="data:dlt_EMAIL_MST" ignoreCellClick="false" style="height:280px;" autoFit="lastColumn"
-						visibleRowNum="10" id="SM0601G0" class="cm_grid" tooltipPositionY="">
+						visibleRowNum="10" id="grd_email" class="cm_grid" tooltipPositionY="">
 						<w2:header style="" id="header1">
 							<w2:row style="" id="row2">
 								<w2:column removeBorderStyle="false" width="70" inputType="checkbox" style="height:25px" id="column38"
@@ -488,7 +498,7 @@
 							<w2:anchor id="btn_main" style="left:0px;top:0px;margin-right: 5px;" class="btn_sh" outerDiv="true"></w2:anchor>
 						</w2:generator>
 					</xf:group>
-					<w2:gridView id="SM0601G01" style="height: 150px;" scrollByColumn="false" defaultCellHeight="20"
+					<w2:gridView id="grd_user" style="height: 150px;" scrollByColumn="false" defaultCellHeight="20"
 						scrollByColumnAdaptive="false" dataList="data:dlt_USER_MST" autoFit="lastColumn" readOnly="">
 						<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 						<w2:header style="" id="header1">
