@@ -81,6 +81,7 @@
 	 * sbm_menuSearchItem은 검색박스에 검색어들을 나열한다.
 	 */
 	scwin.onpageload = function() {
+		$p.executeSubmission(sbm_searchMenu);
 		com.executeSubmission(sbm_menuSearchItem, {});
 		com.setEnterKeyEvent(gr_searchsection, scwin.btn_search_onclick);
 		//com.setGridViewDelCheckBox([grd_menu]);
@@ -91,10 +92,12 @@
 		var btnOptions = 
 		[
 			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick},
-			{userStr:"등록", auth: gcm.BTN.SAVE, cbFnc: scwin.btn_addMenu_onclick},
+			{userStr:"추가", auth: gcm.BTN.SAVE, cbFnc: scwin.btn_addMenu_onclick},
 			{userStr:"삭제", auth: gcm.BTN.SAVE, cbFnc: scwin.btn_delMenu_onclick},
+			{userStr:"취소", auth: gcm.BTN.SAVE, cbFnc: scwin.btn_clearMenu_onclick},
 			{userStr:"엑셀", auth: gcm.BTN.EXL, cbFnc: scwin.btn_excelMenu_onclick},
-			{userStr:"저장", auth: gcm.BTN.SAVE, cbFnc: scwin.btn_saveProgram_onclick}
+			{userStr:"저장", auth: gcm.BTN.SAVE, cbFnc: scwin.btn_saveMenu_onclick},
+			{userStr:"닫기", auth: gcm.BTN.CLOSE, cbFnc: scwin.btn_closeMenu_onclick}
 		];
 		
 		com.setMainBtn(btnOptions, btn_main_generator);
@@ -157,7 +160,7 @@
 		} else {
 			dma_search.set("CONTENT", acb_autoChoiceBox.getValue());
 		}
-		com.executeSubmission(sbm_searchMenu);
+		com.searchGrid(grd_menu,sbm_searchMenu);
 	};
 
 	/**
@@ -165,7 +168,7 @@
 	 */
 	scwin.sbm_searchMenu_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
-		if (sCode == "S") {
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
 			spn_menuCnt.setValue(grd_menu.getTotalRow());
 		}
 	};
@@ -204,7 +207,7 @@
 	 * Yes, No에 따라서 하위에 만들 것인지, 동일한 레벨로 만들 것인지 결정한다.
 	 */
 	scwin.selectLevel = function(returnValue) {
-		com.confirm(returnValue + " 메뉴 하위에 새로운 메뉴를 추가하시겠습니까?\n 취소를 누르면 동일한 레벨에 메뉴가 생성됩니다.", "scwin.selectLevelCallbak");
+		com.confirm(returnValue + " 메뉴 하위에 새로운 메뉴를 추가하시겠습니까?\n 아니오를 누르면 동일한 레벨에 메뉴가 생성됩니다.", "scwin.selectLevelCallbak");
 	};
 	
 	scwin.selectLevelCallbak = function(value) {
@@ -317,34 +320,38 @@
 		dlt_menu.setCellData(insertRowIndex, "USE_YN", 'Y');
 		grd_menu.setFocusedCell(insertRowIndex, "MENU_NM", true);
 	};
-
+	
+	scwin.btn_delMenu_onclick = function() {
+		com.delGrid(grd_menu);
+	};
+	
+	scwin.btn_clearMenu_onclick = function() {
+		com.cancelGrid(grd_menu);
+	};
+			
 	/**
 	 * 메뉴관리 리스트에서 취소 버튼클릭시 데이타를 이전 상태로 바꾸고 추가된 것들은 삭제한다.
 	 */
 	scwin.btn_cancelMenu_onclick = function() {
-		dlt_menu.undoAll();
-		dlt_menu.removeRows(dlt_menu.getInsertedIndex());
+		com.cancelGrid(grd_menu);
 	};
 
 	/**
 	 * 업데이트(입력, 수정 삭제)된 메뉴 데이터를 저장한다.
 	 */
 	scwin.btn_saveMenu_onclick = function() {
-		var valMenuInfo = [ { id : "MENU_NM", mandatory : true } ];
-		var modifiedCount = dlt_menu.getModifiedIndex().length;
-		
-		if (modifiedCount > 0) {
-			if (com.validateGroup(grd_menu, valMenuInfo)) {
-				com.confirm(modifiedCount + "건의 데이타를 반영하시겠습니까", function(rtn) {
-					if (rtn) {
-						//데이터 반영 동의. 
-						com.executeSubmission(sbm_saveMenu);
-					}
-				});
-			}
-		} else {
-			com.alert("저장할 데이터가 없습니다.");
+		return com.saveGrid(grd_menu,sbm_saveMenu);
+	};
+	
+	scwin.sub_SI0101G0S0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+			com.searchGrid(grd_menu,sbm_searchMenu);
 		}
+	};
+	
+	scwin.btn_closeMenu_onclick = function() {
+		com.closeTab(grd_menu);
 	};
 	
 	/**
@@ -530,7 +537,7 @@
 								inputType="text" customFormatter="scwin.setFontFormat" displayMode="label">
 							</w2:column>
 							<w2:column depthColumn="LEVEL" id="MENU_NM" blockSelect="false" showDepth="3" style="height:25px;"
-								depthType="div" width="159" inputType="drilldown" displayMode="label" textAlign="left" class="req">
+								depthType="div" width="159" inputType="drilldown" displayMode="label" textAlign="left" class="req" userData1="M">
 							</w2:column>
 							<w2:column removeBorderStyle="false" width="100" inputType="select" style="height:25px" id="SYSTEM_BIT" value=""
 								blockSelect="false" displayMode="label">

@@ -18,7 +18,7 @@ public class Result {
 	public final static String STATUS_SUCESS_MESSAGE = "정상 처리되었습니다.";
 
 	// 저장 메세지
-	public final static String STATUS_SAVE_MESSAGE = "저장하였습니다..";
+	public final static String STATUS_SAVE_MESSAGE = "저장하였습니다.";
 	
 	// 오류메세지
 	public final static String STATUS_ERROR = "E";
@@ -63,6 +63,14 @@ public class Result {
 	public Map<String, Object> getResult() {
 		if (resultMap.get(MESSAGE_KEY) == null) {
 			setMsg(STATUS_SUCESS);
+		}
+
+		return resultMap;
+	}
+	
+	public Map<String, Object> getResultSave() {
+		if (resultMap.get(MESSAGE_KEY) == null) {
+			setMsg(STATUS_SAVE);
 		}
 
 		return resultMap;
