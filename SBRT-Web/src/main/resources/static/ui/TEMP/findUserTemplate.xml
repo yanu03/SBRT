@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ev="http://www.w3.org/2001/xml-events"
+    xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+    <head>
+    	<w2:type>DEFAULT</w2:type>
+        <w2:buildDate/>
+        <xf:model>
+            <xf:instance>
+                <data xmlns=""/>
+            </xf:instance>
+            <w2:dataCollection baseNode="map">
+            </w2:dataCollection>
+            <w2:workflowCollection>
+            </w2:workflowCollection>
+        </xf:model>
+         <script type="text/javascript" lazy="false"><![CDATA[
+        
+	scwin.onpageload = function() {
+		
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	scwin.btn_find_onclick = function() {
+				var data = {callbackFn : "scwin.insertUser" };
+				var options = { id : "userPopup",
+								popupName : "사용자 검색", 
+								modal : true, 
+								width : 580, height: 430 };
+				com.openPopup("/cm/main/findUser.xml", options, data);		
+	};
+	
+	scwin.insertUser = function(obj) {
+		form_user.setValue(obj[0].USER_NM);
+	};	
+	
+	]]></script>
+    </head>
+    <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+    	<w2:wframe id="" src="/cm/common/wf_titleFav.xml" style=""></w2:wframe><xf:group adaptive="layout" class="w2tb tb" id="group2" style="width:100%;" tagname="table">
+    		<w2:attributes>
+    			<w2:summary></w2:summary>
+    		</w2:attributes>
+    		<xf:group tagname="colgroup">
+    			<xf:group style="width:181px;" tagname="col"></xf:group>
+    			<xf:group style="" tagname="col"></xf:group>
+    			<xf:group style="width:205px;" tagname="col"></xf:group>
+    			<xf:group style="" tagname="col"></xf:group>
+    		</xf:group>
+    		<xf:group style="margin-top: 30px;" tagname="tr">
+    			<xf:group class="w2tb_th" style="" tagname="th">사용자</xf:group>
+    			<xf:group class="w2tb_td" style="" tagname="td">
+    				<w2:attributes>
+    					<w2:colspan>3</w2:colspan>
+    					<w2:rowspan>1</w2:rowspan>
+    				</w2:attributes>
+    				<xf:input adjustMaxLength="" class="" disabled="true" id="form_user" mandatory="" ref="data:dlt_BMS_TRANSCOMP_MST.ADDR"
+    					style="width:20%;height:21px;">
+    				</xf:input>
+    				<w2:anchor class="btn_gcm" ev:onclick="scwin.btn_find_onclick" id="btn_find" outerDiv="true"
+    					style="left:0px;top:0px;margin-right: 5px;">
+    					<xf:label><![CDATA[찾기]]></xf:label>
+    				</w2:anchor>
+    			</xf:group>
+    		</xf:group>
+    	</xf:group>
+    	
+    </body>
+</html>

@@ -24,12 +24,12 @@ public class SI0102Service extends ServiceSupport {
 		return si0102Mapper.SI0102G0R0(map);
 	}
 
-	public Map SI0102G0R1() throws Exception {
-		return si0102Mapper.SI0102G0R1();
+	public Map SI0102G0K0() throws Exception {
+		return si0102Mapper.SI0102G0K0(); 
 	}
 	
-	public List SI0102G0R2() throws Exception {
-		return si0102Mapper.SI0102G0R2();
+	public List SI0102SHI0() throws Exception {
+		return si0102Mapper.SI0102SHI0();
 	}	
 	
 	public Map SI0102G0S0() throws Exception {
@@ -69,6 +69,16 @@ public class SI0102Service extends ServiceSupport {
 		return result;		
 		
 		
+	}
+
+/*	public String SI0102G1R0() {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return si0102Mapper.SI0102G0R0(map)
+	}*/
+
+	public List SI0102G2R0() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return si0102Mapper.SI0102G2R0(map);
 	}
 
 

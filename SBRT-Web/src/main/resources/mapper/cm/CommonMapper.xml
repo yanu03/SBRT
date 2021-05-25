@@ -3,7 +3,7 @@
 <mapper namespace="kr.tracom.cm.domain.Common.CommonMapper">
 	
 	<!-- 코드 테이블의 전체 데이타 읽어오기  USE_YN = 'Y' -->
-	<select id="selectCommonCode" resultType="Map" parameterType="Map">
+	<select id="selectCommonDtl" resultType="Map" parameterType="Map">
 		SELECT A.CO_CD, A.DL_CD, A.DL_CD_NM, A.SORT 
 		  FROM BMS_DL_CD_INFO A, BMS_CO_CD_INFO B
 		 WHERE B.CO_CD = A.CO_CD 
@@ -27,7 +27,7 @@
 	</select>
 	
 	<!-- 코드 테이블의 데이타 읽어오기 CO_CD = ? -->
-	<select id="selectCommonCodeList" resultType="Map">
+	<select id="selectCommonDtlList" resultType="Map">
 		SELECT CO_CD, DL_CD, DL_CD_NM, SORT, USE_YN, TXT_VAL1, TXT_VAL2, TXT_VAL2, REMARK
 		  FROM BMS_DL_CD_INFO A
 		 WHERE A.CO_CD = #{CO_CD} 
@@ -67,7 +67,7 @@
 	</select>
 		
 	<!-- 공통 코드그룹 리스트 -->
-	<select id="selectCommonGroup" resultType="Map" parameterType="Map">
+	<select id="selectCommonCo" resultType="Map" parameterType="Map">
 		SELECT *
 		  FROM BMS_CO_CD_INFO
 		<where>
@@ -86,38 +86,38 @@
 		</where>
 		ORDER BY SORT
 	</select>	
-	<delete id="deleteCommonGrp" parameterType="java.util.Map">
+	<delete id="deleteCommonCo" parameterType="java.util.Map">
 		DELETE FROM BMS_CO_CD_INFO WHERE CO_CD = #{CO_CD_ORG}
 	</delete>
 	
-	<insert id="insertCommonGrp" parameterType="java.util.Map" >
+	<insert id="insertCommonCo" parameterType="java.util.Map" >
 		INSERT INTO BMS_CO_CD_INFO(CO_CD, CO_CD_NM, SORT, USE_YN, REMARK, UPD_DTM, UPD_ID)
 		VALUES (#{CO_CD}, #{CO_CD_NM}, #{SORT}, #{USE_YN}, #{REMARK}, #{UPD_DTM}, #{SSN_USER_ID})
 	</insert>
 
-	<update id="updateCommonGrp" parameterType="java.util.Map">
+	<update id="updateCommonCo" parameterType="java.util.Map">
 		UPDATE BMS_CO_CD_INFO 
 			SET CO_CD = #{CO_CD},CO_CD_NM = #{CO_CD_NM}, SORT = #{SORT}, USE_YN = #{USE_YN}, REMARK = #{REMARK}
 			, UPD_DTM = #{UPD_DTM}, UPD_ID = #{SSN_USER_ID}
 		 WHERE CO_CD = #{CO_CD_ORG}	
 	</update>
 	
-	<delete id="deleteCommonCodeAll" parameterType="java.util.Map">
+	<delete id="deleteCommonDtlAll" parameterType="java.util.Map">
 		DELETE FROM BMS_DL_CD_INFO 
 		 WHERE CO_CD = #{CO_CD_ORG}
 	</delete>
 	
-	<delete id="deleteCommonCode" parameterType="java.util.Map">
+	<delete id="deleteCommonDtl" parameterType="java.util.Map">
 		DELETE FROM BMS_DL_CD_INFO 
 		 WHERE CO_CD = #{CO_CD} AND DL_CD = #{DL_CD_ORG}
 	</delete>
 	
-	<insert id="insertCommonCode" parameterType="java.util.Map" >
+	<insert id="insertCommonDtl" parameterType="java.util.Map" >
 		INSERT INTO BMS_DL_CD_INFO(CO_CD, DL_CD, DL_CD_NM, SORT, USE_YN, TXT_VAL1, TXT_VAL2, TXT_VAL3, REMARK, UPD_DTM, UPD_ID )
 		VALUES (#{CO_CD}, #{DL_CD}, #{DL_CD_NM}, #{SORT}, #{USE_YN}, #{TXT_VAL1}, #{TXT_VAL2}, #{TXT_VAL3}, #{REMARK}, #{UPD_DTM}, #{SSN_USER_ID} )
 	</insert>
 
-	<update id="updateCommonCode" parameterType="java.util.Map">
+	<update id="updateCommonDtl" parameterType="java.util.Map">
 		UPDATE BMS_DL_CD_INFO 
 		   SET DL_CD = #{DL_CD}, DL_CD_NM = #{DL_CD_NM}, SORT = #{SORT}, USE_YN = #{USE_YN}, TXT_VAL1 = #{TXT_VAL1}
 			 , TXT_VAL2 = #{TXT_VAL2}, TXT_VAL3 = #{TXT_VAL3}, REMARK = #{REMARK}, UPD_DTM = #{UPD_DTM}, UPD_ID = #{SSN_USER_ID}

@@ -27,7 +27,7 @@ public class SI0101Controller extends ControllerSupport {
 	public @ResponseBody Map<String, Object> SI0101G0S0() throws Exception {
 		result.setData("dma_result", si0101Service.SI0101G0S0());
 
-		return result.getResult();
+		return result.getResultSave();
 	}	
 	
 	@RequestMapping("/si/SI0101G0K0")

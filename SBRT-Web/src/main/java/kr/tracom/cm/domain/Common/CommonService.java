@@ -42,8 +42,8 @@ public class CommonService extends ServiceSupport {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public List selectCommonGroup() throws Exception {
-		return commonMapper.selectCommonGroup(getSimpleDataMap("dma_search"));
+	public List selectCommonCo() throws Exception {
+		return commonMapper.selectCommonCo(getSimpleDataMap("dma_search"));
 	}
 
 	/**
@@ -52,8 +52,8 @@ public class CommonService extends ServiceSupport {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public List selectCommonCodeAll() throws Exception {
-		return commonMapper.selectCommonCode();
+	public List selectCommonDtlAll() throws Exception {
+		return commonMapper.selectCommonDtl();
 	}
 
 	/**
@@ -62,8 +62,8 @@ public class CommonService extends ServiceSupport {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public List selectCommonCodeList() throws Exception {
-		return commonMapper.selectCommonCodeList(getSimpleDataMap("dma_commonGrp"));
+	public List selectCommonDtlList() throws Exception {
+		return commonMapper.selectCommonDtlList(getSimpleDataMap("dma_commonCO"));
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class CommonService extends ServiceSupport {
 	public List<Map> selectCodeList() throws Exception {
 
 		String[] selectCodeList;
-		Map param = getSimpleDataMap("dma_commonCode");
+		Map param = getSimpleDataMap("dma_commonDtl");
 		String CO_CD = (String) param.get("CO_CD");
 
 
@@ -122,16 +122,16 @@ public class CommonService extends ServiceSupport {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;
-		List param = getSimpleList("dma_commonGrp");
+		List param = getSimpleList("dma_commonCO");
 		for (int i = 0; i < param.size(); i++) {
 			Map data = (Map) param.get(i);
 			String rowStatus = (String) data.get("rowStatus");
 			if (rowStatus.equals("C")) {
-				iCnt += commonMapper.insertCommonGrp(data);
+				iCnt += commonMapper.insertCommonCo(data);
 			} else if (rowStatus.equals("U")) {
-				uCnt += commonMapper.updateCommonGrp(data);
+				uCnt += commonMapper.updateCommonCo(data);
 			} else if (rowStatus.equals("D")) {
-				dCnt += commonMapper.deleteCommonGrp(data);
+				dCnt += commonMapper.deleteCommonCo(data);
 			}
 		}
 		Map result = new HashMap();
@@ -154,16 +154,16 @@ public class CommonService extends ServiceSupport {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;
-		List param = getSimpleList("dlt_commonCode");
+		List param = getSimpleList("dlt_commonDtl");
 		for (int i = 0; i < param.size(); i++) {
 			Map data = (Map) param.get(i);
 			String rowStatus = (String) data.get("rowStatus");
 			if (rowStatus.equals("C")) {
-				iCnt += commonMapper.insertCommonCode(data);
+				iCnt += commonMapper.insertCommonDtl(data);
 			} else if (rowStatus.equals("U")) {
-				uCnt += commonMapper.updateCommonCode(data);
+				uCnt += commonMapper.updateCommonDtl(data);
 			} else if (rowStatus.equals("D")) {
-				dCnt += commonMapper.deleteCommonCode(data);
+				dCnt += commonMapper.deleteCommonDtl(data);
 			}
 		}
 		Map result = new HashMap();
@@ -189,19 +189,19 @@ public class CommonService extends ServiceSupport {
 		int uCnt_code = 0; // 수정한 세부코드 건수
 		int dCnt_grp = 0; // 삭제한 그룹코드 건수
 		int dCnt_code = 0; // 삭제한 세부코드 건수
-		List paramCodeGrp = getSimpleList("dlt_commonGrp");
-		List paramCode = getSimpleList("dlt_commonCode");
+		List paramCodeGrp = getSimpleList("dlt_commonCo");
+		List paramCode = getSimpleList("dlt_commonDtl");
 		for (int i = 0; i < paramCodeGrp.size(); i++) {
 			Map dataGrp = (Map) paramCodeGrp.get(i);
 			String rowStatusGrp = (String) dataGrp.get("rowStatus");
 			if (rowStatusGrp.equals("C")) {
-				iCnt_grp += commonMapper.insertCommonGrp(dataGrp);
+				iCnt_grp += commonMapper.insertCommonCo(dataGrp);
 
 				for (int j = 0; j < paramCode.size(); j++) {
 					Map dataGrpCode = (Map) paramCode.get(j);
 					String rowStatusMenuAuth = (String) dataGrpCode.get("rowStatus");
 					if (rowStatusMenuAuth.equals("C")) {
-						iCnt_code += commonMapper.insertCommonCode(dataGrpCode);
+						iCnt_code += commonMapper.insertCommonDtl(dataGrpCode);
 					}
 				}
 			} else if (rowStatusGrp.equals("U")) {
@@ -209,17 +209,17 @@ public class CommonService extends ServiceSupport {
 					Map dataGrpCode = (Map) paramCode.get(j);
 					String rowStatusMenuAuth = (String) dataGrpCode.get("rowStatus");
 					if (rowStatusMenuAuth.equals("C")) {
-						iCnt_code += commonMapper.insertCommonCode(dataGrpCode);
+						iCnt_code += commonMapper.insertCommonDtl(dataGrpCode);
 					} else if (rowStatusMenuAuth.equals("U")) {
-						uCnt_code += commonMapper.updateCommonCode(dataGrpCode);
+						uCnt_code += commonMapper.updateCommonDtl(dataGrpCode);
 					} else if (rowStatusMenuAuth.equals("D")) {
-						dCnt_code += commonMapper.deleteCommonCode(dataGrpCode);
+						dCnt_code += commonMapper.deleteCommonDtl(dataGrpCode);
 					}
 				}
-				uCnt_grp += commonMapper.updateCommonGrp(dataGrp);
+				uCnt_grp += commonMapper.updateCommonCo(dataGrp);
 			} else if (rowStatusGrp.equals("D")) {
-				commonMapper.deleteCommonCodeAll(dataGrp); // 하위 코드 정보는 전체 삭제
-				dCnt_grp += commonMapper.deleteCommonGrp(dataGrp);
+				commonMapper.deleteCommonDtlAll(dataGrp); // 하위 코드 정보는 전체 삭제
+				dCnt_grp += commonMapper.deleteCommonCo(dataGrp);
 			}
 
 		}

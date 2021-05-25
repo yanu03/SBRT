@@ -82,7 +82,7 @@
         	</xf:submission>
         	<xf:submission id="sub_SI0101G0S0" ref='data:json,{"action":"modified","id":"dlt_BMS_GRG_MST"}' target="data:json,dma_result" action="/si/SI0101G0S0" method="post"
         		mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-        		processMsg="저장 중입니다.." ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+        		processMsg="저장 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0101G0S0_submitdone" ev:submiterror="" abortTrigger="">
         	</xf:submission>
         	<xf:submission id="sub_SI0101G0K0" ref="" target="data:json,dma_SEQ_BMS_GRG_MST_0" action="/si/SI0101G0K0" method="post"
         		mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
@@ -96,7 +96,9 @@
 
         <script type="text/javascript"><![CDATA[
 	scwin.onpageload = function() {
-
+		var codeOptions = [ {code : "OWNER_TYPE", compID : "SI0101G0:OWNER_TYPE" } ];
+		com.setCommonDtl(codeOptions);
+		
 		$p.executeSubmission(sub_SI0101G0R0);
 		$p.executeSubmission(sub_SI0101SHI0);
 		com.setEnterKeyEvent(gr_searchsection, scwin.btn_search_onclick);
@@ -132,6 +134,16 @@
 
 	scwin.btn_save_onclick = function() {
 		return com.saveGrid(SI0101G0,sub_SI0101G0S0);
+	};
+	
+	/**
+	 * 프로그램관리 저장 버튼의 콜백메소드
+	 */
+	scwin.sub_SI0101G0S0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+			com.searchGrid(SI0101G0,sub_SI0101G0R0);
+		}
 	};
 
 	scwin.btn_add_onclick = function() {
@@ -234,7 +246,7 @@
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
 							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
 							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
-							style="width: 350px;height: 21px;float: left;" submenuSize="auto" textAlign="left" useKeywordHighlight="false"
+							style="width: 200px;height: 21px;float: left;" submenuSize="auto" textAlign="left" useKeywordHighlight="false"
 							visibleRowNum="">
 							<w2:choices>
 								<w2:itemset nodeset="data:dlt_grgSearchItem">
@@ -321,10 +333,10 @@
     					blockSelect="false" displayMode="label">
     				</w2:column>
     				<w2:column removeBorderStyle="false" width="186" inputType="text" style="height:20px" id="GRG_NM" value=""
-    					blockSelect="false" displayMode="label">
+    					blockSelect="false" displayMode="label" userData1="M">
     				</w2:column>
-    				<w2:column removeBorderStyle="false" width="64" inputType="text" style="height:20px" id="OWNER_TYPE" value=""
-    					blockSelect="false" displayMode="label">
+    				<w2:column removeBorderStyle="false" width="64" inputType="select" style="height:20px" id="OWNER_TYPE" value=""
+    					blockSelect="false" displayMode="label" userData1="M">
     				</w2:column>
     				<w2:column removeBorderStyle="false" width="230" inputType="text" style="height:20px" id="ADDR" value=""
     					blockSelect="false" displayMode="label">
@@ -339,10 +351,10 @@
     					blockSelect="false" displayMode="label">
     				</w2:column>
     				<w2:column removeBorderStyle="false" width="144" inputType="text" style="height:20px" id="EMAIL" value=""
-    					blockSelect="false" displayMode="label">
+    					blockSelect="false" displayMode="label" userData2="com.checkEmail">
     				</w2:column>
-    				<w2:column removeBorderStyle="false" width="103" inputType="text" style="height:20px" id="CNG_YN" value=""
-    					blockSelect="false" displayMode="label">
+    				<w2:column removeBorderStyle="false" width="103" inputType="checkbox" style="height:20px" id="CNG_YN" value=""
+    					blockSelect="false" displayMode="label" valueType="other" falseValue="N" trueValue="Y">
     				</w2:column>
     				<w2:column removeBorderStyle="false" width="114" inputType="text" style="height:20px" id="ELEC_YN" value=""
     					blockSelect="false" displayMode="label">

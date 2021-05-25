@@ -10,8 +10,8 @@
 		설 명 : 공통코드를 관리하는 화면
 		작성자 : Inswave Systems
 		작성일 : 2016.10.25
-		
-		수정일자	  수정자			 수정내용
+		  
+		수정일자	  수정자			 수정내용 
 		=====================================================================
 		2016.10.25	Inswave Systems	최초작성
 		2018.01.26	Inswave Systems	WebSquare5 SP2 기능을 적용하도록 소스 업그레이드
@@ -25,7 +25,7 @@
 				<data xmlns="" />
 			</xf:instance>
 			<w2:dataCollection baseNode="map">
-				<w2:dataList id="dlt_commonGrp" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
+				<w2:dataList id="dlt_commonCo" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
 					<w2:columnInfo>
 						<w2:column id="chk" name="선택" dataType="text" ignoreStatus="true"></w2:column>
 						<w2:column id="CO_CD" name="공통코드" dataType="text"></w2:column>
@@ -36,7 +36,7 @@
 						<w2:column id="CO_CD_ORG" name="name7" dataType="text" importFormatter="scwin.setCO_CD_ORG"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList id="dlt_commonCode" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
+				<w2:dataList id="dlt_commonDtl" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
 					<w2:columnInfo>
 						<w2:column id="chk" name="선택" dataType="text" ignoreStatus="true"></w2:column>
 						<w2:column id="CO_CD" name="공통코드" dataType="text"></w2:column>
@@ -102,25 +102,25 @@
 				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sbm_commonCode" ref='' target='data:json,dlt_commonCode' action="/common/selectCommonCodeList" method="post"
+			<xf:submission id="sbm_commonDtl" ref='' target='data:json,dlt_commonDtl' action="/common/selectCommonDtlList" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit=""
-				ev:submitdone="scwin.sbm_commonCode_submitdone" ev:submiterror="" abortTrigger="">
+				ev:submitdone="scwin.sbm_commonDtl_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sbm_commonGroup" ref='data:json,dma_search' target='data:json,dlt_commonGrp' action="/common/selectCommonGroup" method="post"
+			<xf:submission id="sbm_commonCo" ref='data:json,dma_search' target='data:json,dlt_commonCo' action="/common/selectCommonCo" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit=""
-				ev:submitdone="scwin.sbm_commonGroup_submitdone" ev:submiterror="" abortTrigger="">
+				ev:submitdone="scwin.sbm_commonCo_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sbm_saveGrp" ref='data:json,[{"id":"dlt_commonGrp","action":"modified"},"dma_search"]'
-				target='data:json,["dma_result","dlt_commonGrp"]' action="/common/updateCommonGrp" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중입니다..." ev:submit="" ev:submitdone="scwin.sbm_saveGrp_submitdone" ev:submiterror="">
+			<xf:submission id="sbm_saveCo" ref='data:json,[{"id":"dlt_commonCo","action":"modified"},"dma_search"]'
+				target='data:json,["dma_result","dlt_commonCo"]' action="/common/updateCommonCo" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중입니다..." ev:submit="" ev:submitdone="scwin.sbm_saveCo_submitdone" ev:submiterror="">
 			</xf:submission>
-			<xf:submission id="sbm_saveGrpAll" ref='data:json,[{"id":"dlt_commonGrp","action":"modified"},{"id":"dlt_commonCode","action":"modified"}]' target="data:json,dma_result_All"  action="/common/updateCommonGrpAll"
+			<xf:submission id="sbm_saveCoAll" ref='data:json,[{"id":"dlt_commonCo","action":"modified"},{"id":"dlt_commonDtl","action":"modified"}]' target="data:json,dma_result_All"  action="/common/updateCommonCoAll"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="저장중 입니다..." ev:submit="" ev:submitdone="scwin.sbm_saveGrpAll_submitdone" ev:submiterror="">
+				processMsg="저장중 입니다..." ev:submit="" ev:submitdone="scwin.sbm_saveCoAll_submitdone" ev:submiterror="">
 			</xf:submission>
-			<xf:submission id="sbm_saveCode" ref='data:json,[{"id":"dlt_commonCode","action":"modified"}]'
-				target='data:json,["dma_result","dlt_commonCode"]' action="/common/selectCommonCodeUpdate" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중입니다..." ev:submit="" ev:submitdone="scwin.sbm_saveCode_submitdone" ev:submiterror="">
+			<xf:submission id="sbm_saveDtl" ref='data:json,[{"id":"dlt_commonDtl","action":"modified"}]'
+				target='data:json,["dma_result","dlt_commonDtl"]' action="/common/selectCommonDtlUpdate" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중입니다..." ev:submit="" ev:submitdone="scwin.sbm_saveDtl_submitdone" ev:submiterror="">
 			</xf:submission>
 			<xf:submission id="sbm_commonSearchItem" ref="" target="data:json,dlt_commonSearchItem" action="/common/selectCommonSearchItem" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit=""
@@ -139,7 +139,7 @@
 		com.executeSubmission(sbm_commonSearchItem);
 		com.setEnterKeyEvent(tbl_search, scwin.btn_search_onclick);
 		//com.setGridViewDelCheckBox([grd_groupView, grd_codeView]);
-		com.executeSubmission(sbm_commonGroup);
+		com.executeSubmission(sbm_commonCo);
 	};
 	
 	scwin.onpageunload = function() {
@@ -152,14 +152,14 @@
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
 		if (info.newValue == "CO_CD") {
 			acb_autoChoiceBox.hide();
-			sbx_GrpCd.show("");
+			sbx_CoCd.show("");
 		} else if (info.newValue == "CO_CD_NM") {
 			acb_autoChoiceBox.setNodeSet("data:dlt_commonSearchItem", "CO_CD_NM", "CO_CD_NM");
-			sbx_GrpCd.hide();
+			sbx_CoCd.hide();
 			acb_autoChoiceBox.show("");
 		} else if (info.newValue == "REMARK") {
 			acb_autoChoiceBox.setNodeSet("data:dlt_commonSearchItem", "REMARK", "REMARK");
-			sbx_GrpCd.hide();
+			sbx_CoCd.hide();
 			acb_autoChoiceBox.show("");
 		}
 	};
@@ -169,20 +169,20 @@
 	 */
 	scwin.grd_groupView_onrowindexchange = function(row, oldRow) {
 		scwin.idxRow = row;
-		var val_grpCdOrg = dlt_commonGrp.getCellData(row, "CO_CD_ORG");
-		var detailCodeModifyCnt = dlt_commonCode.getModifiedIndex().length;
+		var val_coCdOrg = dlt_commonCo.getCellData(row, "CO_CD_ORG");
+		var detailCodeModifyCnt = dlt_commonDtl.getModifiedIndex().length;
 	
 		if (detailCodeModifyCnt > 0) {
 			com.confirm("세부코드 정보를 저장하시겠습니까?", "scwin.indexChgSaveCode");
 		} else {
-			var status_row = dlt_commonGrp.getRowStatus(row);
+			var status_row = dlt_commonCo.getRowStatus(row);
 	
 			if (status_row == "C") {
-				dlt_commonCode.removeAll();
+				dlt_commonDtl.removeAll();
 			} else {
-				if (val_grpCdOrg) {
-					var param = { dma_commonGrp : { CO_CD : val_grpCdOrg } };
-					com.executeSubmission(sbm_commonCode, param);
+				if (val_coCdOrg) {
+					var param = { dma_commonCO : { CO_CD : val_coCdOrg } };
+					com.executeSubmission(sbm_commonDtl, param);
 				}
 			}
 		}
@@ -195,10 +195,10 @@
 		if (isReturnVal) {
 			scwin.saveData();
 		} else {
-			var val_grpCdOrg = dlt_commonGrp.getCellData(scwin.idxRow, "CO_CD_ORG");
-			if (val_grpCdOrg) {
-				var param = { dma_commonGrp : { CO_CD : val_grpCdOrg } };
-				com.executeSubmission(sbm_commonCode, param);
+			var val_coCdOrg = dlt_commonCo.getCellData(scwin.idxRow, "CO_CD_ORG");
+			if (val_coCdOrg) {
+				var param = { dma_commonCO : { CO_CD : val_coCdOrg } };
+				com.executeSubmission(sbm_commonDtl, param);
 			}
 		}
 	};
@@ -206,15 +206,15 @@
 	/**
 	 * 공통코드 리스트 조회 submitdone이벤트 리스트 조회후 건수를 셋팅한다.
 	 */
-	scwin.sbm_commonCode_submitdone = function(e) {
+	scwin.sbm_commonDtl_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
 		if (sCode == "S") {
-			spn_CodeCnt.setValue(dlt_commonCode.getRowCount());
+			spn_CodeCnt.setValue(dlt_commonDtl.getRowCount());
 	
-//			var d_grpCd = dlt_commonCode.getCellData(0, "CO_CD");
-//			var m_grpCd = dlt_commonGrp.getCellData(grd_groupView.getFocusedRowIndex(), "CO_CD");
+//			var d_grpCd = dlt_commonDtl.getCellData(0, "CO_CD");
+//			var m_grpCd = dlt_commonCo.getCellData(grd_groupView.getFocusedRowIndex(), "CO_CD");
 //			if (d_grpCd != m_grpCd) {
-//				var m_idx = dlt_commonGrp.getMatchedIndex("CO_CD", d_grpCd, true);
+//				var m_idx = dlt_commonCo.getMatchedIndex("CO_CD", d_grpCd, true);
 //				if (m_idx.length == 0) {
 //					m_idx = grd_groupView.getFocusedRowIndex();
 //				}
@@ -228,20 +228,20 @@
 	 */
 	scwin.btn_search_onclick = function() {
 		if (sbx_ChoiceBox.getValue() == "CO_CD") {
-			dma_search.set("CONTENT", sbx_GrpCd.getValue());
+			dma_search.set("CONTENT", sbx_CoCd.getValue());
 		} else {
 			dma_search.set("CONTENT", acb_autoChoiceBox.getValue());
 		}
-		com.executeSubmission(sbm_commonGroup);
+		com.executeSubmission(sbm_commonCo);
 	};
 	
 	/**
 	 * 공통 코드 그룹 리스트 조회 submitdone이벤트 리스트 조회후 건수를 셋팅한다.
 	 */
-	scwin.sbm_commonGroup_submitdone = function(e) {
+	scwin.sbm_commonCo_submitdone = function(e) {
 		var rsCode = com.getResultCode(e)
 		if (rsCode == "S") {
-			spn_GrpCnt.setValue(dlt_commonGrp.getRowCount());
+			spn_CoCnt.setValue(dlt_commonCo.getRowCount());
 			grd_codeView.initGrid();
 			grd_groupView.setFocusedCell(0, "CO_CD_NM");
 			//scwin.grd_groupView_onrowindexchange(0, 0);
@@ -251,9 +251,9 @@
 	/**
 	 * 공통코드 그룹의 등록버튼 클릭시 하나의 row를 추가한다.
 	 */
-	scwin.btn_addGrpCell_onclick = function() {
-		var insertIndex = dlt_commonGrp.insertRow();
-		dlt_commonGrp.setCellData(insertIndex, "USE_YN", 'Y');
+	scwin.btn_addCoCell_onclick = function() {
+		var insertIndex = dlt_commonCo.insertRow();
+		dlt_commonCo.setCellData(insertIndex, "USE_YN", 'Y');
 		grd_groupView.setCellReadOnly(insertIndex, "CO_CD", false);
 		grd_groupView.setFocusedCell(insertIndex, "CO_CD", true);
 	};
@@ -261,7 +261,7 @@
 	/**
 	 * 공통코드 그룹 및 코드 데이터 저장 버튼 이벤트를 수행한다.
 	 */
-	scwin.btn_saveGrpCell_onclick = function() {
+	scwin.btn_saveCoCell_onclick = function() {
 		scwin.saveData();
 	};
 	
@@ -269,18 +269,18 @@
 	 * 데이터에 대한 유효성 검사 후 데이터를 저장한다.
 	 */
 	scwin.saveData = function() {
-		var grpModifiedIdx = dlt_commonGrp.getModifiedIndex().length;
-		var codeModifiedIdx = dlt_commonCode.getModifiedIndex().length;
+		var grpModifiedIdx = dlt_commonCo.getModifiedIndex().length;
+		var codeModifiedIdx = dlt_commonDtl.getModifiedIndex().length;
 		if ((grpModifiedIdx == 0) && (codeModifiedIdx == 0)) {
 			com.alert("저장할 데이터가 없습니다");
 			return false;
 		}
 
-		if (scwin.validateCodeGroup() && scwin.validateCode()) {
+		if (scwin.validateCodeCo() && scwin.validateCode()) {
 			if (codeModifiedIdx > 0) {
-				com.confirm("해당 코드 그룹 및 코드 데이터가 저장됩니다. \n 진행하시겠습니까? ", "scwin.saveCode");
+				com.confirm("해당 코드 그룹 및 코드 데이터가 저장됩니다. \n 진행하시겠습니까? ", "scwin.saveDtl");
 			} else {
-				com.confirm("해당 코드 그룹 데이터가 저장됩니다. \n 진행하시겠습니까? ", "scwin.saveGrpCode");
+				com.confirm("해당 코드 그룹 데이터가 저장됩니다. \n 진행하시겠습니까? ", "scwin.saveCoCode");
 			}
 		}	
 	}
@@ -288,7 +288,7 @@
 	/**
 	 * 코드 그룹의 필수 입력 정보를 체크한다.
 	 */
-	scwin.validateCodeGroup = function() {
+	scwin.validateCodeCo = function() {
 		var valInfo = [ { id : "CO_CD", mandatory : true }, 
 						{ id : "CO_CD_NM", mandatory : true }, 
 						{ id : "SORT", mandatory : true } ];
@@ -308,28 +308,35 @@
 	/**
 	 * 공통코드 그룹리스트 및 세부코드리스트에서 rowStatus C,U,D,E 상태(Modify)인것만 저장한다.
 	 */
-	scwin.saveGrpCode = function(rtn) { 
+	scwin.saveCoCode = function(rtn) { 
 		if (rtn) {
-			com.executeSubmission(sbm_saveGrpAll);
+			com.executeSubmission(sbm_saveCoAll);
 		}
 	};
 	
 	/**
 	 * 세부코드리스트에서 rowStatus C,U,D,E 상태(Modify)인것만 저장한다.
 	 */
-	scwin.saveCode = function(rtn) {
+	scwin.saveDtl = function(rtn) {
+		var val_coCdOrg = dlt_commonCo.getCellData(scwin.idxRow, "CO_CD_ORG");
 		if (rtn) {
-			com.executeSubmission(sbm_saveCode);
+			if (val_coCdOrg) {
+				var param = { dma_commonCO : { CO_CD : val_coCdOrg }, dlt_commonDtl : dlt_commonDtl.getAllJSON() };
+				com.executeSubmission(sbm_saveDtl,param);
+			}
+			else {
+				com.executeSubmission(sbm_saveDtl);
+			}
 		}
 	};
 	
 	/**
 	 * Function 공통코드 그룹리스트 및 세부코드리스트 저장 후 callback
 	 */
-	scwin.sbm_saveGrpAll_submitdone = function(e) {
+	scwin.sbm_saveCoAll_submitdone = function(e) {
 		var rsCode = com.getResultCode(e)
 		if (rsCode == "S") {
-			com.executeSubmission(sbm_commonGroup);
+			com.executeSubmission(sbm_commonCo);
 		}
 	};
 	
@@ -350,27 +357,27 @@
 	/**
 	 * 공통코드 그룹리스트에서 취소 버튼클릭시 데이타를 이전 상태로 바꾸고 추가된 것들은 삭제한다.
 	 */
-	scwin.btn_cancelGrp_onclick = function() {
-		dlt_commonGrp.undoAll();
-		dlt_commonGrp.removeRows(dlt_commonGrp.getInsertedIndex());
+	scwin.btn_cancelCo_onclick = function() {
+		dlt_commonCo.undoAll();
+		dlt_commonCo.removeRows(dlt_commonCo.getInsertedIndex());
 	};
 	
 	/**
 	 * 공통코드 리스트에서 등록버튼 클릭시 실행되며 한줄의 row를 생성한다.
 	 */
-	scwin.btn_addCodeCell_onclick = function() {
+	scwin.btn_addDtlCell_onclick = function() {
 		var focusRowIdx = grd_groupView.getFocusedRowIndex();
 		if (focusRowIdx == -1) {
 			com.alert("코드 그룹 선택후 코드를 등록하실 수 있습니다.");
 		} else {
-			var rowStatus = dlt_commonGrp.getRowStatus(focusRowIdx);
+			var rowStatus = dlt_commonCo.getRowStatus(focusRowIdx);
 			if (rowStatus == "C") {
 				com.alert("코드 그룹 등록 후에 사용 가능합니다.");
 			} else {
-				var insertIndex = dlt_commonCode.insertRow();
-				var CO_CD = dlt_commonGrp.getCellData(focusRowIdx, "CO_CD");
-				dlt_commonCode.setCellData(insertIndex, "CO_CD", CO_CD);
-				dlt_commonCode.setCellData(insertIndex, "USE_YN", 'Y');
+				var insertIndex = dlt_commonDtl.insertRow();
+				var CO_CD = dlt_commonCo.getCellData(focusRowIdx, "CO_CD");
+				dlt_commonDtl.setCellData(insertIndex, "CO_CD", CO_CD);
+				dlt_commonDtl.setCellData(insertIndex, "USE_YN", 'Y');
 				grd_codeView.setCellReadOnly(insertIndex, "DL_CD", false);
 				grd_codeView.setFocusedCell(insertIndex, "DL_CD", true);
 			}
@@ -380,36 +387,38 @@
 	/**
 	 * 코드그룹 : 저장 후 재조회 한다.
 	 */
-	scwin.sbm_saveGrp_submitdone = function(e) {
+	scwin.sbm_saveCo_submitdone = function(e) {
 		var rsCode = com.getResultCode(e)
 		if (rsCode == "S") {
-			com.executeSubmission(sbm_commonGroup);
+			com.executeSubmission(sbm_commonCo);
 		}
 	};
 	
 	/**
 	 * 코드 : 저장 후 재조회 한다.
 	 */
-	scwin.sbm_saveCode_submitdone = function(e) {
+	scwin.sbm_saveDtl_submitdone = function(e) {
 		var rsCode = com.getResultCode(e)
 		if (rsCode == "S") {
-			com.executeSubmission(sbm_commonCode);
+			com.executeSubmission(sbm_commonDtl);
 		}
 	};
 	
 	/**
 	 * 공통코드의 수정된 데이타의 상태를 원본으로 돌리고 추가된 데이타는 지운다.
 	 */
-	scwin.btn_cancelCode_onclick = function() {
-		dlt_commonCode.undoAll();
-		dlt_commonCode.removeRows(dlt_commonCode.getInsertedIndex());
+	scwin.btn_cancelDtl_onclick = function() {
+		dlt_commonDtl.undoAll();
+		dlt_commonDtl.removeRows(dlt_commonDtl.getInsertedIndex());
 	};
 	
-	scwin.btn_excelGrp_onclick = function() {
+	scwin.btn_excelCo_onclick = function() {
 		com.downLoadExcel(grd_groupView);
 	};
 	
-	scwin.btn_excelCode_onclick = function() {
+	scwin.btn_excelDtl_onclick = function() {
+	
+	
 		com.downLoadExcel(grd_codeView);
 	};
 	]]></script>
@@ -417,7 +426,7 @@
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group class="contentWrap" id="" style="">
 			<w2:wframe id="" style="" src="/cm/common/wf_titleFav.xml" scope="true"></w2:wframe>
-			<xf:group id="" style="" class="section">
+			<xf:group id="" style="" class="section" >
 				<xf:group id="tbl_search" style="" class="tbl_search">
 					<xf:group id="" style="" adaptive="layout" class="w2tb tbl_sc" adaptiveThreshold="768" tagname="table">
 						<w2:attributes>
@@ -453,7 +462,7 @@
 									</xf:choices>
 								</xf:select1>
 								<xf:select1 disabledClass="w2selectbox_disabled" appearance="minimal" chooseOptionLabel="-전체-"
-									direction="auto" chooseOption="true" displayMode="label" ev:onblur="scwin.sbx_PositionCd_onblur" optionOrder="false" id="sbx_GrpCd"
+									direction="auto" chooseOption="true" displayMode="label" ev:onblur="scwin.sbx_PositionCd_onblur" optionOrder="false" id="sbx_CoCd"
 									ref="" style="width: 43.5%;height: 21px;float:left;display:none;" allOption="" textAlign="center" submenuSize="auto"
 									disabled="false">
 									<xf:choices>
@@ -500,8 +509,8 @@
 									ev:onclick="scwin.btn_search_onclick" class="btn_sh" outerDiv="true">
 									<xf:label><![CDATA[조회]]></xf:label>
 								</w2:anchor>
-								<w2:anchor class="btn_save" clickEventElement="outerDiv" ev:onclick="scwin.btn_saveGrpCell_onclick"
-									id="btn_saveGrpCell" outerDiv="true" style="">
+								<w2:anchor class="btn_save" clickEventElement="outerDiv" ev:onclick="scwin.btn_saveCoCell_onclick"
+									id="btn_saveCoCell" outerDiv="true" style="">
 									<xf:label><![CDATA[저장]]></xf:label>
 								</w2:anchor>
 							</xf:group>
@@ -513,24 +522,24 @@
 				<xf:group id="" style="" class="defaultbox">
 					<w2:textbox id="" style="margin-right: 10px;" class="df_tt fl" label="공통코드"></w2:textbox>
 					<xf:group id="" style="" class="fr">
-						<w2:span id="spn_GrpCnt" style="" class="df_total" label="" displayFormat="건"></w2:span>
+						<w2:span id="spn_CoCnt" style="" class="df_total" label="" displayFormat="건"></w2:span>
 						<xf:group id="" style="" class="ml5 fr">
-							<w2:anchor id="btn_addGrpCell" style="" clickEventElement="outerDiv" ev:onclick="scwin.btn_addGrpCell_onclick"
+							<w2:anchor id="btn_addCoCell" style="" clickEventElement="outerDiv" ev:onclick="scwin.btn_addCoCell_onclick"
 								class="btn_gcm" outerDiv="true">
 								<xf:label><![CDATA[등록]]></xf:label>
 							</w2:anchor>
-							<w2:anchor id="btn_cancelGrp" style="" clickEventElement="outerDiv" ev:onclick="scwin.btn_cancelGrp_onclick"
+							<w2:anchor id="btn_cancelCo" style="" clickEventElement="outerDiv" ev:onclick="scwin.btn_cancelCo_onclick"
 								class="btn_gcm" outerDiv="true">
 								<xf:label><![CDATA[취소]]></xf:label>
 							</w2:anchor>
-							<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelGrp_onclick"
-								id="btn_excelGrp" outerDiv="true" style="">
+							<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelCo_onclick"
+								id="btn_excelCo" outerDiv="true" style="">
 								<xf:label><![CDATA[엑셀]]></xf:label>
 							</w2:anchor>
 						</xf:group>
 					</xf:group>
 				</xf:group>
-			<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.grd_groupView_onrowindexchange" editModeEvent="onclick" groupbyZoneHeight="" showSortableImage="" useShiftKey="true" scrollByColumn="false" sortable="true" rowStatusHeaderValue="상태" adaptive="crosstab" rowStatusVisible="false" fixedColumnWithHidden="true" dataList="dlt_commonGrp" keyMoveEditMode="true" ignoreCellClick="false" style="height: 280px;" autoFit="allColumn" visibleRowNum="10" id="grd_groupView" ev:onafteredit="" class="cm_grid" autoFitMinWidth="" rowNumHeaderValue="순서" rowNumVisible="true">
+			<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.grd_groupView_onrowindexchange" editModeEvent="onclick" groupbyZoneHeight="" showSortableImage="" useShiftKey="true" scrollByColumn="false" sortable="true" rowStatusHeaderValue="상태" adaptive="crosstab" rowStatusVisible="false" fixedColumnWithHidden="true" dataList="dlt_commonCo" keyMoveEditMode="true" ignoreCellClick="false" style="height: 280px;" autoFit="allColumn" visibleRowNum="10" id="grd_groupView" ev:onafteredit="" class="cm_grid" autoFitMinWidth="" rowNumHeaderValue="순서" rowNumVisible="true">
 					<w2:header style="" id="">
 						<w2:row style="" id="">
 							<w2:column width="40" style="height:25px;" inputType="checkbox" id="chk" value="" blockSelect="false" displayMode="label" fixColumnWidth="true">
@@ -570,15 +579,15 @@
 					<xf:group id="" style="height:22px;" class="fr">
 						<w2:span id="spn_CodeCnt" style="" class="df_total" label="" displayFormat="건"></w2:span>
 						<xf:group id="" style="" class="ml5 fr">
-							<w2:anchor id="btn_addCodeCell" style="" clickEventElement="outerDiv" ev:onclick="scwin.btn_addCodeCell_onclick"
+							<w2:anchor id="btn_addDtlCell" style="" clickEventElement="outerDiv" ev:onclick="scwin.btn_addDtlCell_onclick"
 								class="btn_gcm" outerDiv="true">
 								<xf:label><![CDATA[등록]]></xf:label>
 							</w2:anchor>
-							<w2:anchor id="btn_cancelCode" style="" clickEventElement="outerDiv" ev:onclick="scwin.btn_cancelCode_onclick"
+							<w2:anchor id="btn_cancelDtl" style="" clickEventElement="outerDiv" ev:onclick="scwin.btn_cancelDtl_onclick"
 								class="btn_gcm" outerDiv="true">
 								<xf:label><![CDATA[취소]]></xf:label>
 							</w2:anchor>
-							<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelCode_onclick" id="btn_excelCode"
+							<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelDtl_onclick" id="btn_excelDtl"
 								outerDiv="true" style="">
 								<xf:label><![CDATA[엑셀]]></xf:label>
 							</w2:anchor>
@@ -586,7 +595,7 @@
 					</xf:group>
 				</xf:group>
 				<w2:gridView ignoreCellClick="false" autoFit="allColumn" visibleRowNum="8" sortable="true" sortEvent="onclick"
-					class="cm_grid" showSortableImage="" fixedColumnWithHidden="true" dataList="dlt_commonCode" id="grd_codeView" style="height:160px !important;"
+					class="cm_grid" showSortableImage="" fixedColumnWithHidden="true" dataList="dlt_commonDtl" id="grd_codeView" style="height:160px !important;"
 					scrollByColumn="false" useShiftKey="true" overflowY="auto" rowStatusVisible="true" ev:onafteredit="" rowStatusHeaderValue="상태"
 					keyMoveEditMode="true" editModeEvent="onclick" adaptive="crosstab" autoFitMinWidth="">
 					<w2:header id="header1" style="">
