@@ -78,14 +78,14 @@
         	</xf:submission>
         	<xf:submission id="sub_SI0102G0S0" ref='data:json,{"action":"modified","id":"dlt_BMS_TRANSCOMP_MST"}'
         		target="data:json,dma_result" action="/si/SI0102G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance=""
-        		replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장 중입니다.." ev:submit="" ev:submitdone=""
+        		replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0102G0S0_submitdone"
         		ev:submiterror="" abortTrigger="">
         	</xf:submission>
-        	<xf:submission id="sub_SI0102G0R1" ref="" target="data:json,dma_SEQ_BMS_TRANSCOMP_MST_0" action="/si/SI0102G0R1" method="post"
+        	<xf:submission id="sub_SI0102G0K0" ref="" target="data:json,dma_SEQ_BMS_TRANSCOMP_MST_0" action="/si/SI0102G0K0" method="post"
         		mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-        		processMsg="" ev:submit="" ev:submitdone="scwin.sub_SI0102G0R1_submitdone" ev:submiterror="" abortTrigger="">
+        		processMsg="" ev:submit="" ev:submitdone="scwin.sub_SI0102G0K0_submitdone" ev:submiterror="" abortTrigger="">
         	</xf:submission>
-        	<xf:submission id="sub_SI0102G0R2" ref="" target="data:json,dlt_transcompSearchItem" action="/si/SI0102G0R2" method="post"
+        	<xf:submission id="sub_SI0102SHI0" ref="" target="data:json,dlt_transcompSearchItem" action="/si/SI0102SHI0" method="post"
         		mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
         		processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
         	</xf:submission>
@@ -94,9 +94,9 @@
         <script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
 		var codeOptions = [ {code : "AREA", compID : "AREA, SI0102G0:AREA" } ];
-		com.setCommonCode(codeOptions);
+		com.setCommonDtl(codeOptions);
 		$p.executeSubmission(sub_SI0102G0R0);
-		$p.executeSubmission(sub_SI0102G0R2);
+		$p.executeSubmission(sub_SI0102SHI0);
 		com.setEnterKeyEvent(gr_searchsection, scwin.btn_search_onclick);
 
 		var btnOptions = 
@@ -117,13 +117,10 @@
 	scwin.onpageunload = function() {
 
 	};
-
 						 
 	//조회버튼
 	scwin.btn_search_onclick = function() {
-	
-	var temp = SI0102G0.getCellOption(0,0,"userData1");
-		com.searchGridForm(SI0102G0, SI0102F0,sub_SI0102G0R0, sub_SI0102G0S0)
+		com.searchGridForm(SI0102G0, SI0102F0,sub_SI0102G0R0, sub_SI0102G0S0);
 	};
 
 	//조회 콜백 메소드
@@ -136,12 +133,22 @@
 		com.saveGridForm(SI0102G0,SI0102F0,sub_SI0102G0S0);
 	};
 	
+		/**
+	 * 프로그램관리 저장 버튼의 콜백메소드
+	 */
+	scwin.sub_SI0102G0S0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+			com.searchGridForm(SI0102G0, SI0102F0,sub_SI0102G0R0);
+		}
+	};
+		
 	//등록버튼
 	scwin.btn_add_onclick = function() {
-		$p.executeSubmission(sub_SI0102G0R1);
+		$p.executeSubmission(sub_SI0102G0K0);
 	};
 	
-	scwin.sub_SI0102G0R1_submitdone = function(e) {
+	scwin.sub_SI0102G0K0_submitdone = function(e) {
 
 		com.addGridForm(SI0102G0, SI0102F0, dma_SEQ_BMS_TRANSCOMP_MST_0, "COMP_ID", "COMP_NM");
 

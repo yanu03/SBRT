@@ -18,18 +18,18 @@
 					<w2:data use="true">
 						<desc><![CDATA[
 <pre class="textNor" style="">
-<div class="etcbox">본 화면은 코드성 데이터(성별,직업 등)를 컴포넌트에 연동의 편의성을 위해 만든 com.setCommonCode Function의 활용 샘플이다.
+<div class="etcbox">본 화면은 코드성 데이터(성별,직업 등)를 컴포넌트에 연동의 편의성을 위해 만든 com.setCommonDtl Function의 활용 샘플이다.
 </div>
 <div class="etc_tit">동작 방식</div>
-1. 개발자가 DataList와 Submission의 생성과 컴포넌트의 itemSet을 설정하지않고 com.setCommonCode에 맵핑 정보를 넘겨준다.
-2. com.setCommonCode에서는 DataList와 Submission을 동적으로 생성하고 컴포넌트에 itemSet을 설정한다.
+1. 개발자가 DataList와 Submission의 생성과 컴포넌트의 itemSet을 설정하지않고 com.setCommonDtl에 맵핑 정보를 넘겨준다.
+2. com.setCommonDtl에서는 DataList와 Submission을 동적으로 생성하고 컴포넌트에 itemSet을 설정한다.
 <div class="expTit">호출 형식</div>
-com.setCommonCode(Array, CallbackFunctionNm);
+com.setCommonDtl(Array, CallbackFunctionNm);
 예시 : 
-	com.setCommonCode([
+	com.setCommonDtl([
 		{"code":"04","compID":"sbx_commCodeReligion"},
 		{"code":"24","compID":"grd_commCodeSample:JOB_CD"}
-	], scwin.setCommonCodeCallback);
+	], scwin.setCommonDtlCallback);
 <div class="expTit">첫번째 Paramter</div>
 객체 타입 : Array
 필수 여부 : Y
@@ -43,22 +43,22 @@ GridView컴포넌트의 경우 컴포넌트의 ID와 Body의 컬럼 ID가 정의
 객체 타입 : String
 필수 여부 : N
 설명 : 통신 후 실행할 Function명.
-예시 ) scwin.setCommonCodeCallback
+예시 ) scwin.setCommonDtlCallback
 </pre>
 						]]></desc>
 						<test><![CDATA[
 <pre class="textNor">
 <div class="etc_tit">과정</div>
-scwin.init Function에서 com.setCommonCode 호출.
+scwin.init Function에서 com.setCommonDtl 호출.
 예시 )
 scwin.init = function(){
 	// 직위 - 02, 직무 - 24, 종교 - 04, 학력 - 05, 등급 - 12
-	com.setCommonCode(
+	com.setCommonDtl(
 		[
 			{"code":"04","compID":"sbx_commCodeReligion"},{"code":"05","compID":"sbx_CommCodeEdu"},
 			{"code":"12","compID":"sbx_commCodeRank"},
 			{"code":"02","compID":"grd_commCodeSample:POSITION_CD"},{"code":"24","compID":"grd_commCodeSample:JOB_CD"}
-		], scwin.setCommonCodeCallback);
+		], scwin.setCommonDtlCallback);
 };
 </div>
 <div class="etc_tit">결과</div>
@@ -68,7 +68,7 @@ scwin.init = function(){
 						]]></test>
 					</w2:data>
 				</w2:dataMap>
-				<!-- <w2:dataMap baseNode="map" id="dma_commonCode">
+				<!-- <w2:dataMap baseNode="map" id="dma_commonDtl">
 					<w2:keyInfo>
 						<w2:key id="GRP_CD" name="그룹코드" dataType="text"></w2:key>
 					</w2:keyInfo>
@@ -100,7 +100,7 @@ scwin.init = function(){
 							{"code":"00012","compID":"sbx_commCodeRank"},
 							{"code":"00002","compID":"grd_commCodeSample:POSITION_CD"},
 							{"code":"00024","compID":"grd_commCodeSample:JOB_CD"} ];
-		com.setCommonCode(codeOptions, scwin.setCommonCodeCallback);
+		com.setCommonDtl(codeOptions, scwin.setCommonDtlCallback);
 	};
 
 	scwin.onpageunload = function() {
@@ -110,7 +110,7 @@ scwin.init = function(){
 	/**
 	 * selectbox에 공통코드 맵핑 후 호출할 콜백 함수
 	 */
-	scwin.setCommonCodeCallback = function(e) {
+	scwin.setCommonDtlCallback = function(e) {
 		if (com.getResultCode(e) == "S") {
 			com.executeSubmission(sbm_selectCodeList);
 		}

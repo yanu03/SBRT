@@ -5,7 +5,7 @@
  * @since 2016.08.28
  */
 scwin.initMainLoad = function() {
-	$p.top().scwin.commonCodeList = [];
+	$p.top().scwin.commonDtlList = [];
 	$p.top().scwin.systemCodeList = [];
 	wfm_header.getWindow().scwin.fn_getInitData();
 };
@@ -44,6 +44,7 @@ scwin.getLayoutId = function() {
 };
 
 scwin.setResultMessage = function(resultData) {
+
 	if (typeof wfm_footer !== "undefined") {
 		var messageObj = wfm_footer.getWindow().spn_message;
 		var curCode = messageObj.getUserData("tmpStatusCode");
@@ -55,7 +56,8 @@ scwin.setResultMessage = function(resultData) {
 		if (resultData.statusCode) {
 			messageObj.addClass(resultData.statusCode);
 		}
-		if(resultData.statusCode=='SAVE')com.alert(resultData.message);
+		
+		//if(resultData.statusCode=='SAVE')com.alert(resultData.message);
 		messageObj.setUserData("tmpStatusCode", resultData.statusCode);
 		messageObj.setValue(resultData.message);
 		wfm_footer.getWindow().grp_message.setUserData("message", resultData);
