@@ -27,6 +27,7 @@
         				<w2:column id="LIC_VHC_CNT" name="면허차대수" dataType="number" defaultValue="0"></w2:column>
         				<w2:column id="SPR_VHC_CNT" name="예비차대수" dataType="number" defaultValue="0"></w2:column>
         				<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+        				<w2:column id="GRG_ID" name="차고지아이디" dataType="text"></w2:column>
         			</w2:columnInfo>
         		</w2:dataList>
         		<w2:dataMap baseNode="map" id="dma_result">
@@ -70,13 +71,20 @@
         				<w2:key id="COMP_ID" name="운수사아이디" dataType="text"></w2:key>
         			</w2:keyInfo>
         		</w2:dataMap>
+        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_GRG_COMP_CMPSTN" saveRemovedData="true">
+        			<w2:columnInfo>
+        				<w2:column id="COMP_ID" name="운수사아이디" dataType="text"></w2:column>
+        				<w2:column id="GRG_ID" name="차고지아이디" dataType="text"></w2:column>
+        			</w2:columnInfo>
+        		</w2:dataList>
         	</w2:dataCollection>
         	<w2:workflowCollection></w2:workflowCollection>
-        	<xf:submission id="sub_SI0102G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_TRANSCOMP_MST" action="/si/SI0102G0R0" method="post"
-        		mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-        		processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0102G0R0_submitdone" ev:submiterror="" abortTrigger="">
+        	<xf:submission id="sub_SI0102G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_TRANSCOMP_MST" action="/si/SI0102G0R0"
+        		method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
+        		mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0102G0R0_submitdone" ev:submiterror=""
+        		abortTrigger="">
         	</xf:submission>
-        	<xf:submission id="sub_SI0102G0S0" ref='data:json,{"action":"modified","id":"dlt_BMS_TRANSCOMP_MST"}'
+        	<xf:submission id="sub_SI0102G0S0" ref='data:json,[{"action":"modified","id":"dlt_BMS_TRANSCOMP_MST"},{"action":"modified","id":"dlt_BMS_GRG_COMP_CMPSTN"}]'
         		target="data:json,dma_result" action="/si/SI0102G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance=""
         		replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장 중입니다.." ev:submit="" ev:submitdone=""
         		ev:submiterror="" abortTrigger="">
@@ -88,6 +96,14 @@
         	<xf:submission id="sub_SI0102G0R2" ref="" target="data:json,dlt_transcompSearchItem" action="/si/SI0102G0R2" method="post"
         		mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
         		processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+        	</xf:submission>
+        	<xf:submission id="sub_SI0102G1I0" ref="" target="" action="/si/SI0102G1I0" method="post" mediatype="application/json"
+        		encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit=""
+        		ev:submitdone="" ev:submiterror="" abortTrigger="">
+        	</xf:submission>
+        	<xf:submission id="sub_SI0102G1R0" ref="data:json,dma_param_COMPID" target="data:json,dlt_BMS_GRG_MST" action="/si/SI0102G1R0"
+        		method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
+        		mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
         	</xf:submission>
         </xf:model>
         <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js?autoload=false"></script>
@@ -112,6 +128,13 @@
 			{userStr:"닫기", auth: gcm.BTN.CLOSE, cbFnc: scwin.btn_close_onclick}
 		];
 		com.setMainBtn(btnOptions, btn_main_generator);
+		
+		var btnOptions2 = 
+		[
+			{userStr:"삭제", auth: gcm.BTN.DEL, cbFnc: scwin.btn_del2_onclick},
+			{userStr:"추가", auth: gcm.BTN.ADD , cbFnc: scwin.btn_add2_onclick},
+		];
+		com.setMainBtn(btnOptions2, btn_sub_generator);	
 	};
 
 	scwin.onpageunload = function() {
@@ -235,39 +258,63 @@
 	};
 	
 	
-	/**
-	 * 공통그룹코드의 row 선택시 발생하며 하위 코드리스트에 변경사항 있는 경우에는 저장여부를 묻고, 아닌 경우에는 하위 리스트를 조회한다.
-	 */
-	scwin.grd_groupView_onrowindexchange = function(row, oldRow) {
-		scwin.idxRow = row;
-		var val_grpCdOrg = dlt_commonGrp.getCellData(row, "CO_CD_ORG");
-		var detailCodeModifyCnt = dlt_commonCode.getModifiedIndex().length;
+//	/**
+//	 * 공통그룹코드의 row 선택시 발생하며 하위 코드리스트에 변경사항 있는 경우에는 저장여부를 묻고, 아닌 경우에는 하위 리스트를 조회한다.
+//	 */
+//	scwin.grd_groupView_onrowindexchange = function(row, oldRow) {
+//		scwin.idxRow = row;
+//		var val_grpCdOrg = dlt_commonGrp.getCellData(row, "CO_CD_ORG");
+//		var detailCodeModifyCnt = dlt_commonCode.getModifiedIndex().length;
+//	
+//		if (detailCodeModifyCnt > 0) {
+//			com.confirm("세부코드 정보를 저장하시겠습니까?", "scwin.indexChgSaveCode");
+//		} else {
+//			var status_row = dlt_commonGrp.getRowStatus(row);
+//	
+//			if (status_row == "C") {
+//				dlt_commonCode.removeAll();
+//			} else {
+//				if (val_grpCdOrg) {
+//					var param = { dma_commonGrp : { CO_CD : val_grpCdOrg } };
+//					com.executeSubmission(sbm_commonCode, param);
+//				}
+//			}
+//		}
+//	};
 	
-		if (detailCodeModifyCnt > 0) {
-			com.confirm("세부코드 정보를 저장하시겠습니까?", "scwin.indexChgSaveCode");
-		} else {
-			var status_row = dlt_commonGrp.getRowStatus(row);
 	
-			if (status_row == "C") {
-				dlt_commonCode.removeAll();
-			} else {
-				if (val_grpCdOrg) {
-					var param = { dma_commonGrp : { CO_CD : val_grpCdOrg } };
-					com.executeSubmission(sbm_commonCode, param);
-				}
-			}
-		}
-	};
+/*
+	운수사 목록 그리드 row 변경시 차고지 그리드 변경사항 있는 경우 저장 여부를 묻고, 아닌 경우 차고지 그리드 조회 
+//	scwin.SI0102G0_onrowindexchange = function(row,oldRow) {
+//		scwin.idxRow = row;
+//		var val_compID = dlt_BMS_TRANSCOMP_MST.getCellData(row, "COMP_ID");
+//		var detailCodeModifyCnt = dlt_BMS_GRG_MST.getModifiedIndex().length;
+//		if (detailCodeModifyCnt > 0) {
+			com.confirm("관련 차고지 정보를 저장하시겠습니까?", "콜백함수 채우기");	
+//		} else {
+//			var status_row = dlt_BMS_TRANSCOMP_MST.getRowStatus(row);
+//			if (status_row == "C") {
+//				BMS_GRG_MST.removeAll();	
+//			} else {
+//				if (val_compID !== null) {
+//					dma_param_COMPID.set("COMP_ID", val_compID);
+					var param = {dma_compID : {COMP_ID : val_compID}};
+					com.executeSubmission(서브미션명, param);	
+//				}	
+//			}	
+//		} 
+//	};
+*/
 	
-	
-
 	//운수사 목록 그리드 row 변경시 차고지 그리드 변경사항 있는 경우 저장 여부를 묻고, 아닌 경우 차고지 그리드 조회 
 	scwin.SI0102G0_onrowindexchange = function(row,oldRow) {
 		scwin.idxRow = row;
 		var val_compID = dlt_BMS_TRANSCOMP_MST.getCellData(row, "COMP_ID");
+		
+		//alert(val_compID);
 		var detailCodeModifyCnt = dlt_BMS_GRG_MST.getModifiedIndex().length;
 		if (detailCodeModifyCnt > 0) {
-			//com.confirm("관련 차고지 정보를 저장하시겠습니까?", "콜백함수 채우기");	
+			com.confirm("관련 차고지 정보를 저장하시겠습니까?", "scwin.indexChgSubGrid");	
 		} else {
 			var status_row = dlt_BMS_TRANSCOMP_MST.getRowStatus(row);
 			if (status_row == "C") {
@@ -275,12 +322,26 @@
 			} else {
 				if (val_compID !== null) {
 					dma_param_COMPID.set("COMP_ID", val_compID);
-//					var param = {dma_compID : {COMP_ID : val_compID}};
-//					com.executeSubmission(서브미션명, param);	
+					com.executeSubmission(sub_SI0102G1R0);
 				}	
 			}	
 		} 
 	};
+	
+	scwin.indexChgSubGrid = function(isReturnVal) {
+		if (isReturnVal) {
+			var mainGridModifyCnt = dlt_BMS_TRANSCOMP_MST.getModifiedIndex().length;
+			if (mainGridModifyCnt > 0) {
+				com.executeSubmission(sub_SI0102G0S0)	
+			}	else {
+				com.executeSubmission(sub_SI0102G1S0);
+			}
+		} else {
+			
+		}
+	};
+	
+	
 	
 	//서브 그리드 추가 클릭 이벤트
 	scwin.btn_add2_onclick = function() {
@@ -305,19 +366,19 @@
 		}		
 	};
 	
+	
 	//서브 그리드 추가 콜백함수
 	scwin.insertGRG = function(obj) {
 		debugger;
-		
 		var dLength = obj.length;
 		for (i = 0; i < dLength; i++) {
 			var data = dlt_BMS_GRG_MST.getMatchedIndex("GRG_ID", obj[i].GRG_ID, true);
 			if (data.length == 0) {
 				obj[i].COMP_ID = dma_param_COMPID.get("COMP_ID");
 				obj[i].chk = "0";
-		// sub_SI0102G1I0 추가하기
-				var param = {dlt_compNM : { COMP_NM : obj[i].COMP_ID} };
-				com.executeSubmission(sub_SI0102G1I0, param);
+//				var param = {dlt_compNM : { COMP_ID : obj[i].COMP_ID, GRG_ID : obj[i].GRG_ID} };
+//				com.executeSubmission(sub_SI0102G1I0, param);
+//				com.executeSubmission(sub_SI0102G1I0);
 				var idx = dlt_BMS_GRG_MST.insertRow();
 				dlt_BMS_GRG_MST.setRowJSON(idx, obj[i], true);
 			}
@@ -405,8 +466,8 @@
     		<w2:header style="" id="header1">
     			<w2:row style="" id="row1">
     			<w2:column removeBorderStyle="false" width="128" inputType="text" style="height:20px" id="column14" value="운수사아이디" blockSelect="false" displayMode="label">
-    				</w2:column><w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column13" value="권역" blockSelect="false" displayMode="label">
-    				</w2:column><w2:column removeBorderStyle="false" width="103" inputType="text" style="height:20px" id="column12" value="운수사명" blockSelect="false" displayMode="label">
+    				</w2:column><w2:column removeBorderStyle="false" width="143" inputType="text" style="height:20px" id="column13" value="권역" blockSelect="false" displayMode="label">
+    				</w2:column><w2:column removeBorderStyle="false" width="156" inputType="text" style="height:20px" id="column12" value="운수사명" blockSelect="false" displayMode="label">
     				</w2:column><w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column11" value="대표자명" blockSelect="false" displayMode="label">
     				</w2:column><w2:column removeBorderStyle="false" width="117" inputType="text" style="height:20px" id="column10" value="사업자등록번호" blockSelect="false" displayMode="label">
     				</w2:column><w2:column removeBorderStyle="false" width="261" inputType="text" style="height:20px" id="column9" value="주소" blockSelect="false" displayMode="label">
@@ -423,8 +484,8 @@
     		<w2:gBody style="" id="gBody1">
     			<w2:row style="" id="row2">
     			<w2:column removeBorderStyle="false" width="128" inputType="text" style="height:20px" id="COMP_ID" value="" blockSelect="false" displayMode="label">
-    				</w2:column><w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="AREA" value="" blockSelect="false" displayMode="label" userData1="M">
-    				</w2:column><w2:column removeBorderStyle="false" width="103" inputType="text" style="height:20px" id="COMP_NM" eventPriority="oneditend" value="" blockSelect="false" displayMode="label" userData1="M">
+    				</w2:column><w2:column removeBorderStyle="false" width="143" inputType="select" style="height:20px" id="AREA" value="" blockSelect="false" displayMode="label" userData1="M">
+    				</w2:column><w2:column removeBorderStyle="false" width="156" inputType="text" style="height:20px" id="COMP_NM" eventPriority="oneditend" value="" blockSelect="false" displayMode="label" userData1="M">
     				</w2:column><w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="REP_NM" eventPriority="oneditend" value="" blockSelect="false" displayMode="label">
     				</w2:column><w2:column removeBorderStyle="false" width="117" inputType="text" style="height:20px" id="COMP_REG_NO" value="" blockSelect="false" displayMode="label">
     				</w2:column><w2:column removeBorderStyle="false" width="261" inputType="text" style="height:20px" id="ADDR" value="" blockSelect="false" displayMode="label">
@@ -440,7 +501,7 @@
     		</w2:gBody>
     		<w2:footer style="" id="footer1">
     			<w2:row style="" id="row3">
-    				<w2:column removeBorderStyle="false" width="1478" inputType="expression" style="height:20px;" id="column42" value=""
+    				<w2:column removeBorderStyle="false" width="1604" inputType="expression" style="height:20px;" id="column42" value=""
     					blockSelect="false" displayMode="label" colSpan="14" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" textAlign="right">
     				</w2:column>
     			</w2:row>
@@ -632,21 +693,14 @@
     					<w2:colspan>3</w2:colspan>
     					<w2:rowspan>1</w2:rowspan>
     				</w2:attributes>
-    				<xf:group class="ml5 fr" id="" style="">
-    					<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_add2_onclick"
-    						id="btn_add2" outerDiv="true" style="">
-    						<xf:label><![CDATA[추가]]></xf:label>
-    					</w2:anchor>
-    					<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelOrganization_onclick"
-    						id="btn_delete2" outerDiv="true" style="">
-    						<xf:label><![CDATA[삭제]]></xf:label>
-    					</w2:anchor>
-    				</xf:group>
+					<w2:generator style="" id="btn_sub_generator" class="btn_main_generator">
+						<w2:anchor id="btn_main" style="left:0px;top:0px;margin-right: 5px;float:right;" class="btn_sh" outerDiv="true"></w2:anchor>
+					</w2:generator>
     				<w2:gridView adaptive="crosstab" adaptiveThreshold="" alwaysTriggerScrollStart="" autoFit="lastColumn"
     					autoFitMinWidth="0" captionTitle="" checkEditableInputClass="" class="cm_grid" dataList="data:dlt_BMS_GRG_MST" disabledScrollHidden=""
     					editModeEvent="" editModeEventIcon="" enterKeyMove="" ev:onafteredit="" ev:onbeforecolumnmove="" ev:oncellclick=""
     					ev:oneditkeyup="" ev:onkeyup="" ev:onrowindexchange="" ev:ontextimageclick="" ev:onviewchange="" excludeDeletedRows=""
-    					fixedColumnWithHidden="true" focusMode="row" id="gridView2" ignoreCellClick="false" ignoreNonEditableCellTabEnter=""
+    					fixedColumnWithHidden="true" focusMode="row" id="SI0102G1" ignoreCellClick="false" ignoreNonEditableCellTabEnter=""
     					keepDefaultColumnWidth="" keyMoveEditMode="" moveKeyEditMode="" moveKeyEditModeAll="" nextTabID="" oddEvenColorDisplay=""
     					readOnly="true" rowNumHeaderValue="순번" rowNumStatusResize="" rowNumStatusUniqueId="" rowNumVisible="true" rowNumWidth=""
     					rowStatusHeaderValue="" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" showSortableUseFilter=""
@@ -655,16 +709,16 @@
     					<w2:header id="header1" style="">
     						<w2:row id="row1" style="">
     							<w2:column blockSelect="false" displayMode="label" id="column14" inputType="text" removeBorderStyle="false"
-    								style="height:20px" value="차고지아이디" width="128">
+    								style="height:20px" value="차고지아이디" width="164">
     							</w2:column>
     							<w2:column blockSelect="false" displayMode="label" id="column13" inputType="text" removeBorderStyle="false"
-    								style="height:20px" value="차고지명" width="70">
+    								style="height:20px" value="차고지명" width="182">
     							</w2:column>
     							<w2:column blockSelect="false" displayMode="label" id="column12" inputType="text" removeBorderStyle="false"
     								style="height:20px" value="소유형태" width="103">
     							</w2:column>
     							<w2:column blockSelect="false" displayMode="label" id="column11" inputType="text" removeBorderStyle="false"
-    								style="height:20px" value="주소" width="70">
+    								style="height:20px" value="주소" width="274">
     							</w2:column>
     							<w2:column blockSelect="false" displayMode="label" id="column10" inputType="text" removeBorderStyle="false"
     								style="height:20px" value="전화번호" width="117">
@@ -674,16 +728,16 @@
     					<w2:gBody id="gBody1" style="">
     						<w2:row id="row2" style="">
     							<w2:column blockSelect="false" displayMode="label" id="GRG_ID" inputType="text" removeBorderStyle="false"
-    								style="height:20px" width="128">
+    								style="height:20px" width="164">
     							</w2:column>
-    							<w2:column blockSelect="false" displayMode="label" id="GRG_NM" inputType="text" removeBorderStyle="false"
-    								style="height:20px" width="70">
+    							<w2:column blockSelect="false" displayMode="label" id="GRG_NM" inputType="select" removeBorderStyle="false"
+    								style="height:20px" width="182">
     							</w2:column>
     							<w2:column blockSelect="false" displayMode="label" eventPriority="oneditend" id="OWNER_TYPE"
     								inputType="text" removeBorderStyle="false" style="height:20px" width="103">
     							</w2:column>
     							<w2:column blockSelect="false" displayMode="label" eventPriority="oneditend" id="ADDR" inputType="text"
-    								removeBorderStyle="false" style="height:20px" width="70">
+    								removeBorderStyle="false" style="height:20px" width="274">
     							</w2:column>
     							<w2:column blockSelect="false" displayMode="label" id="PHONE" inputType="text" removeBorderStyle="false"
     								style="height:20px" width="117">
@@ -694,7 +748,7 @@
     						<w2:row id="row3" style="">
     							<w2:column blockSelect="false" colSpan="14" displayMode="label"
     								expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" id="column42" inputType="expression" removeBorderStyle="false"
-    								style="height:20px;" textAlign="right" width="1478">
+    								style="height:20px;" textAlign="right" width="1830">
     							</w2:column>
     						</w2:row>
     					</w2:footer>

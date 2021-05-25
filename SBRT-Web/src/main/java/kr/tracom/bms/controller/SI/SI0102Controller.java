@@ -37,6 +37,18 @@ public class SI0102Controller extends ControllerSupport{
 		return result.getResult();
 	}
 	
+	@RequestMapping("/si/SI0102G1R0")
+	public @ResponseBody Map<String, Object> SI0102G1R0() throws Exception {
+		result.setData("dlt_BMS_GRG_MST", si0102Service.SI0102G1R0());
+		return result.getResult();
+	}
+	
+/*	@RequestMapping("/si/SI0102G1I0")
+	public @ResponseBody Map<String, Object> SI0102G1I0() throws Exception {
+		result.setData("dlt_BMS_GRG_COMP_CMPSTN", si0102Service.SI0102G1I0());
+		return result.getResult();
+	}*/
+	
 	@RequestMapping("/si/SI0102G2R0")
 	public @ResponseBody Map<String, Object> SI0102G2R0() throws Exception {
 		result.setData("dlt_BMS_GRG_MST", si0102Service.SI0102G2R0());

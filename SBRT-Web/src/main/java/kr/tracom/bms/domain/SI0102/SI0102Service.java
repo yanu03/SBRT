@@ -33,6 +33,67 @@ public class SI0102Service extends ServiceSupport {
 	}	
 	
 	public Map SI0102G0S0() throws Exception {
+		int iCnt_grd0 = 0;
+		int iCnt_grd1 = 0;
+		int uCnt_grd0 = 0;
+		int uCnt_grd1 = 0;
+		int dCnt_grd0 = 0;		
+		int dCnt_grd1 = 0;		
+		
+		List<Map<String, Object>> param_grd0 = getSimpleList("dlt_BMS_TRANSCOMP_MST");
+		List<Map<String, Object>> param_grd1 = getSimpleList("dlt_BMS_GRG_COMP_CMPSTN");
+		
+		try {
+			for (int i = 0; i < param_grd0.size(); i++) {
+				Map data_grd0 = (Map) param_grd0.get(i);
+				String rowStatus_grd0 = (String) data_grd0.get("rowStatus");
+				if (rowStatus_grd0.equals("C")) {
+					iCnt_grd0 += si0102Mapper.SI0102G0I0(data_grd0);
+					
+					for (int j = 0; j < param_grd1.size(); j++) {
+						Map data_grd1 = (Map) param_grd1.get(j);
+						String rowStatus_grd1 = (String) data_grd1.get("rowStatus");
+						if (rowStatus_grd1.equals("C")) {
+							iCnt_grd1 += si0102Mapper.SI0102G1I0(data_grd1);
+						}	
+					}
+				} else if (rowStatus_grd0.equals("U")) {
+					for (int j = 0; j < param_grd0.size(); j++) {
+						Map data_grd1 = (Map) param_grd1.get(j);
+						String rowStatus_grd1 = (String) data_grd1.get("rowStatus");
+						if (rowStatus_grd1.equals("C")) {
+							iCnt_grd1 += si0102Mapper.SI0102G1I0(data_grd1);
+						} else if (rowStatus_grd1.equals("D")) {
+							dCnt_grd1 += si0102Mapper.SI0102G1D0(data_grd1);
+						}
+					}
+					uCnt_grd0 += si0102Mapper.SI0102G0U0(data_grd0);
+				} else if (rowStatus_grd0.equals("D")) {
+					si0102Mapper.SI0102G1D1(data_grd0);
+					dCnt_grd0 += si0102Mapper.SI0102G0D0(data_grd0);
+				}
+			}			
+		} catch(Exception e) {
+			if (e instanceof DuplicateKeyException)
+			{
+				throw new MessageException(Result.ERR_KEY, "중복된 키값의 데이터가 존재합니다.");
+			}
+			else
+			{
+				throw e;
+			}		
+		}
+
+		
+		Map result = saveResult(iCnt_grd0, iCnt_grd1, uCnt_grd0, uCnt_grd1, dCnt_grd0, dCnt_grd1);
+		
+		return result;		
+		
+		
+	}
+	
+	//백업용
+/*	public Map SI0102G0S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;		
@@ -69,15 +130,26 @@ public class SI0102Service extends ServiceSupport {
 		return result;		
 		
 		
-	}
+	}*/
 
 /*	public String SI0102G1R0() {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
 		return si0102Mapper.SI0102G0R0(map)
 	}*/
+	
+	public List SI0102G1R0() throws Exception {
+		// TODO Auto-generated method stub
+		Map param = getSimpleDataMap("dma_param_COMPID");
+		return si0102Mapper.SI0102G1R0(param);
+	}
 
+/*	public List SI0102G1I0() throws Exception {
+		Map param = getSimpleDataMap("dlt_BMS_GRG_MST");
+		return si0102Mapper.SI0102G1I0(param);
+	}*/
+	
 	public List SI0102G2R0() throws Exception {
-		Map<String, Object> map = getSimpleDataMap("dma_search");
+		Map<String, Object> map = getSimpleDataMap("dma_GRG_MST");
 		return si0102Mapper.SI0102G2R0(map);
 	}
 

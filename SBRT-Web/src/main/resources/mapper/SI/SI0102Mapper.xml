@@ -31,19 +31,6 @@
 	order by COMP_NM
 </select>
 
-<select id="SI0102G2R0" resultType="Map">
-	select GRG_ID, GRG_NM
-	from BMS_GRG_MST
-	<where>
-		<if test="TYPE == 'GRG_ID'">
-			AND GRG_ID LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
-		<if test="TYPE == 'GRG_NM'">
-			AND GRG_NM LIKE CONCAT('%',#{CONTENT},'%') 
-		</if>
-	</where>
-</select>
-
 <insert id="SI0102G0I0" parameterType="Map">
 <!-- 	<selectKey keyProperty="corpId" resultType="String" order="BEFORE">
           SELECT CONCAT('CP', LPAD(NEXTVAL(SEQ_BMS_TRANSCOMP_MST_0), 8, '0'))
@@ -88,5 +75,63 @@
 	where COMP_ID = #{COMP_ID}
 </delete>
 
+<select id="SI0102G1R0" resultType="Map">
+	select a.GRG_ID, a.GRG_NM, a.OWNER_TYPE, a.ADDR, a.PHONE 
+	from BMS_GRG_MST a INNER JOIN BMS_GRG_COMP_CMPSTN b ON a.GRG_ID=b.GRG_ID 
+	WHERE b.COMP_ID = #{COMP_ID}
+</select>
+
+<!-- <select id="SI0102G1R0" resultType="Map">
+		SELECT C.GRG_ID, A.GRG_ID, A.GRG_NM, A.OWNER_TYPE, B.COMP_ID
+		  FROM BMS_ORG_MST A, BMS_TRANSCOMP_MST B, BMS_USER_AUTH_CMPSTN C 
+		 WHERE A.ORG_ID = B.ORG_ID 
+		   AND A.USER_ID = C.USER_ID 
+		   AND C.AUTH_CD = #{AUTH_CD}
+		ORDER BY USER_ID
+</select> -->
+
+<!-- <select id="SI0102G1R0" resultType="Map">
+		SELECT C.AUTH_CD, A.USER_ID, A.USER_NM, A.ORG_ID, B.ORG_NM
+		  FROM BMS_USER_MST A, BMS_ORG_MST B, BMS_USER_AUTH_CMPSTN C 
+		 WHERE A.ORG_ID = B.ORG_ID 
+		   AND A.USER_ID = C.USER_ID 
+		   AND C.AUTH_CD = #{AUTH_CD}
+		ORDER BY USER_ID
+</select> -->
+
+<insert id="SI0102G1I0" parameterType="Map">
+	insert into BMS_GRG_COMP_CMPSTN (COMP_ID, GRG_ID)
+	values (#{COMP_ID}, #{GRG_ID})
+</insert>
+
+<delete id="SI0102G1D0" parameterType="Map">
+	DELETE FROM BMS_GRG_COMP_CMPSTN 
+		<where>
+			<if test="COMP_ID != null and COMP_ID != ''">
+				 AND COMP_ID = #{COMP_ID}
+			</if>
+			<if test="AUTH_CD != null and AUTH_CD != ''">
+				 AND GRG_ID = #{GRG_ID}
+			</if>
+		</where>
+</delete>
+
+<delete id="SI0102G1D1" parameterType="Map">
+	DELETE FROM BMS_BMS_GRG_COMP_CMPSTN 
+	WHERE COMP_ID = #{COMP_ID}
+</delete>
+
+<select id="SI0102G2R0" resultType="Map">
+	select GRG_ID, GRG_NM
+	from BMS_GRG_MST
+	<where>
+		<if test="TYPE == 'GRG_ID'">
+			AND GRG_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'GRG_NM'">
+			AND GRG_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+</select>
 
 </mapper>

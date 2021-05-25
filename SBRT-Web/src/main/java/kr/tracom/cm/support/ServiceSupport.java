@@ -552,4 +552,16 @@ public class ServiceSupport {
 		result.put("DCNT", String.valueOf(dCnt));
 		return result;
 	}
+	
+	protected Map saveResult(int iCnt_grd0, int iCnt_grd1, int uCnt_grd0, int uCnt_grd1, int dCnt_grd0, int dCnt_grd1) {
+		Map result = new HashMap();
+		result.put("STATUS", Result.STATUS_SAVE);
+		result.put("ICNT", String.valueOf(iCnt_grd0));
+		result.put("ICNT", String.valueOf(iCnt_grd1));
+		result.put("UCNT", String.valueOf(uCnt_grd0));
+		result.put("UCNT", String.valueOf(uCnt_grd1));
+		result.put("DCNT", String.valueOf(dCnt_grd0));
+		result.put("DCNT", String.valueOf(dCnt_grd1));
+		return result;
+	}
 }
