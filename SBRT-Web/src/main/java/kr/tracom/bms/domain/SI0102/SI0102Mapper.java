@@ -16,7 +16,7 @@ public interface SI0102Mapper {
 	
 	public List SI0102G1R0(Map param);
 	
-	public List SI0102G2R0(Map param);
+	public List SI0102P0R0(Map param);
 	
 	public int SI0102G0I0(Map param);
 	

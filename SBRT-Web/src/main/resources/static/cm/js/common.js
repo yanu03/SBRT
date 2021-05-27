@@ -4182,6 +4182,35 @@ com.saveGridForm = function(grid,form,sbmObj,searchSbmObj,yesno_str,str){
 	}
 }
 
+/*com.changeDualGridFrm(mainGrid, row, dataList, subSbmObj, key, str){
+
+
+	
+	scwin.idxRow = row;
+	var val_key = dataList.getCellData(row, key);
+	
+	//alert(val_compID);
+	var detailCodeModifyCnt = dlt_BMS_GRG_MST.getModifiedIndex().length;
+	if (detailCodeModifyCnt > 0) {
+		if((typeof str !== "undifined") && (str.trim() !== "")){
+			com.confirm(str, "scwin.indexChgSubGrid");			
+		} 
+		else {
+			com.confirm("관련 정보를 저장하시겠습니까?", "scwin.indexChgSubGrid")
+		}
+	} else {
+		var status_row = dataList.getRowStatus(row);
+		if (status_row == "C") {
+			BMS_GRG_MST.removeAll();	
+		} else {
+			if (val_key !== null) {
+				dma_param_COMPID.set(key, val_key);
+				//com.executeSubmission(subSbmObj);
+			}	
+		}	
+	} 
+};*/
+
 com.tabClose = function(){
 	var tabComp = $w.getComponentById("mf_tac_layout");
 	var param = com.getParameter();

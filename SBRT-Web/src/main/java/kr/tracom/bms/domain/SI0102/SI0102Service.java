@@ -32,7 +32,7 @@ public class SI0102Service extends ServiceSupport {
 		return si0102Mapper.SI0102SHI0();
 	}	
 	
-	public Map SI0102G0S0() throws Exception {
+/*	public Map SI0102G0S0() throws Exception {
 		int iCnt_grd0 = 0;
 		int iCnt_grd1 = 0;
 		int uCnt_grd0 = 0;
@@ -90,10 +90,10 @@ public class SI0102Service extends ServiceSupport {
 		return result;		
 		
 		
-	}
+	}*/
 	
 	//백업용
-/*	public Map SI0102G0S0() throws Exception {
+	public Map SI0102G0S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;		
@@ -109,9 +109,7 @@ public class SI0102Service extends ServiceSupport {
 					uCnt += si0102Mapper.SI0102G0U0(data);
 				} else if (rowStatus.equals("D")) {
 					dCnt += si0102Mapper.SI0102G0D0(data);
-				}  else if (rowStatus.equals("V")) {
-					dCnt += si0102Mapper.SI0102G0D0(data);
-				}
+				} 
 			}			
 		} catch(Exception e) {
 			if (e instanceof DuplicateKeyException)
@@ -130,7 +128,7 @@ public class SI0102Service extends ServiceSupport {
 		return result;		
 		
 		
-	}*/
+	}
 
 /*	public String SI0102G1R0() {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
@@ -148,9 +146,42 @@ public class SI0102Service extends ServiceSupport {
 		return si0102Mapper.SI0102G1I0(param);
 	}*/
 	
-	public List SI0102G2R0() throws Exception {
+	public List SI0102P0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_GRG_MST");
-		return si0102Mapper.SI0102G2R0(map);
+		return si0102Mapper.SI0102P0R0(map);
+	}
+
+	public Map SI0102G1S0() throws Exception {
+		int iCnt = 0;
+		int uCnt = 0;
+		int dCnt = 0;		
+		
+		List<Map<String, Object>> param = getSimpleList("dlt_BMS_GRG_MST");
+		try {
+			for (int i = 0; i < param.size(); i++) {
+				Map data = (Map) param.get(i);
+				String rowStatus = (String) data.get("rowStatus");
+				if (rowStatus.equals("C")) {
+					iCnt += si0102Mapper.SI0102G1I0(data);
+				} else if (rowStatus.equals("D")) {
+					dCnt += si0102Mapper.SI0102G1D0(data);
+				} 
+			}			
+		} catch(Exception e) {
+			if (e instanceof DuplicateKeyException)
+			{
+				throw new MessageException(Result.ERR_KEY, "중복된 키값의 데이터가 존재합니다.");
+			}
+			else
+			{
+				throw e;
+			}		
+		}
+
+		
+		Map result = saveResult(iCnt, uCnt, dCnt);
+		
+		return result;	
 	}
 
 

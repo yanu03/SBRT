@@ -76,7 +76,7 @@
 </delete>
 
 <select id="SI0102G1R0" resultType="Map">
-	select a.GRG_ID, a.GRG_NM, a.OWNER_TYPE, a.ADDR, a.PHONE 
+	select a.GRG_ID, a.GRG_NM, a.OWNER_TYPE, a.ADDR, a.PHONE, b.COMP_ID
 	from BMS_GRG_MST a INNER JOIN BMS_GRG_COMP_CMPSTN b ON a.GRG_ID=b.GRG_ID 
 	WHERE b.COMP_ID = #{COMP_ID}
 </select>
@@ -104,7 +104,7 @@
 	values (#{COMP_ID}, #{GRG_ID})
 </insert>
 
-<delete id="SI0102G1D0" parameterType="Map">
+<!-- <delete id="SI0102G1D0" parameterType="Map">
 	DELETE FROM BMS_GRG_COMP_CMPSTN 
 		<where>
 			<if test="COMP_ID != null and COMP_ID != ''">
@@ -114,14 +114,15 @@
 				 AND GRG_ID = #{GRG_ID}
 			</if>
 		</where>
-</delete>
+</delete> -->
 
-<delete id="SI0102G1D1" parameterType="Map">
+<delete id="SI0102G1D0" parameterType="Map">
 	DELETE FROM BMS_BMS_GRG_COMP_CMPSTN 
 	WHERE COMP_ID = #{COMP_ID}
+	AND GRG_ID = #{GRG_ID}
 </delete>
 
-<select id="SI0102G2R0" resultType="Map">
+<select id="SI0102P0R0" resultType="Map">
 	select GRG_ID, GRG_NM
 	from BMS_GRG_MST
 	<where>
