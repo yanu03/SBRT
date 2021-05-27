@@ -14,24 +14,24 @@ import kr.tracom.util.DateUtil;
 public class SM0601Service extends ServiceSupport{
 
 	@Autowired
-	private SM0601Mapper emailMapper;
+	private SM0601Mapper sM0601Mapper;
 		
 	public List<Map> SM0601G0R0() throws Exception{
 		Map param = getSimpleDataMap("dma_EMAIL_MST");
-		return emailMapper.SM0601G0R0(param);
+		return sM0601Mapper.SM0601G0R0(param);
 	}
 	
 	public List<Map> SM0601G1R0() throws Exception{
 		Map param = getSimpleDataMap("dma_USER_MST");
 		String temp[] = param.get("RCPT_IDS").toString().split(",");
-		return emailMapper.SM0601G1R0(temp);
+		return sM0601Mapper.SM0601G1R0(temp);
 	}
 	
 	public List<Map> SM0601P0R0() throws Exception{
 		Map param = getSimpleDataMap("dma_USER_MST");
 		String temp[] = param.get("RCPT_IDS").toString().split(",");
 		param.put("RCPT_IDS", temp);
-		return emailMapper.SM0601P0R0(param);
+		return sM0601Mapper.SM0601P0R0(param);
 	}
 	
 	// save 수정
@@ -51,11 +51,11 @@ public class SM0601Service extends ServiceSupport{
 				}
 			}
 			if (rowStatus.equals("C")) {
-				iCnt += emailMapper.SM0601G0I0(data);
+				iCnt += sM0601Mapper.SM0601G0I0(data);
 			} else if (rowStatus.equals("U")) {
-				uCnt += emailMapper.SM0601G0U0(data);
+				uCnt += sM0601Mapper.SM0601G0U0(data);
 			} else if (rowStatus.equals("E")) {
-				dCnt += emailMapper.SM0601G0D0(data);
+				dCnt += sM0601Mapper.SM0601G0D0(data);
 			}
 		}
 		Map result = new HashMap();
