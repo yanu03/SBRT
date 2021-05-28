@@ -21,24 +21,22 @@ public class PI0100Service extends ServiceSupport{
 		return pI0100Mapper.PI0100G0R0(param);
 	}
 	
+	public Map PI0100G0K0() throws Exception {
+		return pI0100Mapper.PI0100G0K0();
+	}	
+	
 	public List<Map> PI0100G1R0() throws Exception{
 		Map param = getSimpleDataMap("dma_sub_search");
-		String temp[] = param.get("VHC_RCPT_IDS").toString().split(",");
-		param.put("VHC_RCPT_IDS", temp);
 		return pI0100Mapper.PI0100G1R0(param);
 	}
 	
 	public List<Map> PI0100G2R0() throws Exception{
 		Map param = getSimpleDataMap("dma_sub_search");
-		String temp[] = param.get("STTN_RCPT_IDS").toString().split(",");
-		param.put("STTN_RCPT_IDS", temp);
 		return pI0100Mapper.PI0100G2R0(param);
 	}
 	
 	public List<Map> PI0100P0R0() throws Exception{
 		Map param = getSimpleDataMap("dma_search");
-		String temp[] = param.get("VHC_RCPT_IDS").toString().split(",");
-		param.put("VHC_RCPT_IDS", temp);
 		return pI0100Mapper.PI0100P0R0(param);
 	}
 	
@@ -76,7 +74,48 @@ public class PI0100Service extends ServiceSupport{
 		result.put("ICNT", String.valueOf(iCnt));
 		result.put("UCNT", String.valueOf(uCnt));
 		result.put("DCNT", String.valueOf(dCnt));
-		
+		return result;
+	}
+	
+	public Map PI0100G1S0() throws Exception {
+		int iCnt = 0;
+		int uCnt = 0;
+		int dCnt = 0;
+		List param = getSimpleList("dlt_BMS_VHC_MST");
+		for (int i = 0; i < param.size(); i++) {
+			Map<String, Object> data = (Map) param.get(i);
+			String rowStatus = (String) data.get("rowStatus");		
+			if (rowStatus.equals("C")) {
+				iCnt += pI0100Mapper.PI0100G1I0(data);
+			}else if (rowStatus.equals("D")) {
+				dCnt += pI0100Mapper.PI0100G1D0(data);
+			}
+		}
+		Map result = new HashMap();
+		result.put("STATUS", "S");
+		result.put("ICNT", String.valueOf(iCnt));
+		result.put("DCNT", String.valueOf(dCnt));		
+		return result;
+	}
+
+	public Map PI0100G2S0() throws Exception {
+		int iCnt = 0;
+		int uCnt = 0;
+		int dCnt = 0;
+		List param = getSimpleList("dlt_BMS_STTN_MST");
+		for (int i = 0; i < param.size(); i++) {
+			Map<String, Object> data = (Map) param.get(i);
+			String rowStatus = (String) data.get("rowStatus");		
+			if (rowStatus.equals("C")) {
+				iCnt += pI0100Mapper.PI0100G2I0(data);
+			}else if (rowStatus.equals("D")) {
+				dCnt += pI0100Mapper.PI0100G2D0(data);
+			}
+		}
+		Map result = new HashMap();
+		result.put("STATUS", "S");
+		result.put("ICNT", String.valueOf(iCnt));
+		result.put("DCNT", String.valueOf(dCnt));	
 		return result;
 	}
 }
