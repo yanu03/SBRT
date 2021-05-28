@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+	
+	
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+			</w2:dataCollection>
+			<w2:workflowCollection>
+			</w2:workflowCollection>
+		</xf:model>
+		<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=31aa62fb189294413e43c24caeb82419"></script>
+		<script type="text/javascript" lazy="false"><![CDATA[
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		
+		var container = document.getElementById('map');
+		var options = {
+			center : new kakao.maps.LatLng(scwin.param.GPS_Y, scwin.param.GPS_X),
+			level : 3
+		};
+		var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+
+		// 마커가 표시될 위치입니다 
+		var markerPosition  = new kakao.maps.LatLng(scwin.param.GPS_Y, scwin.param.GPS_X); 
+
+		// 마커를 생성합니다
+		var marker = new kakao.maps.Marker({
+    		position: markerPosition
+			});
+
+		// 마커가 지도 위에 표시되도록 설정합니다
+		marker.setMap(map);
+
+		var grgID = scwin.param.GRG_ID;
+
+		var polygonPath = [
+				new kakao.maps.LatLng(36.4706517606239, 127.273369597028),
+				new kakao.maps.LatLng(36.4705846499681, 127.272175501742),
+				new kakao.maps.LatLng(36.4705240511392, 127.27207487186),
+				new kakao.maps.LatLng(36.4687989348011, 127.271809435706),
+				new kakao.maps.LatLng(36.469019760181, 127.273762741563),
+				new kakao.maps.LatLng(36.4692898243842, 127.27388642238), ];
+
+		// 지도에 표시할 다각형을 생성합니다
+		var polygon = new kakao.maps.Polygon({
+			path : polygonPath, // 그려질 다각형의 좌표 배열입니다
+			strokeWeight : 3, // 선의 두께입니다
+			strokeColor : '#39DE2A', // 선의 색깔입니다
+			strokeOpacity : 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+			strokeStyle : 'longdash', // 선의 스타일입니다
+			fillColor : '#A2FF99', // 채우기 색깔입니다
+			fillOpacity : 0.7 // 채우기 불투명도 입니다
+		});
+
+		// 지도에 다각형을 표시합니다
+		polygon.setMap(map);
+	};
+
+	scwin.onpageunload = function() {
+
+	};
+]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<div id="map" style="width:780px;height:555px;"></div>
+
+	</body>
+</html>

@@ -11,7 +11,7 @@
         	</xf:instance>
         	<w2:dataCollection baseNode="map">
         		<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_TRANSCOMP_MST" saveRemovedData="true"
-        			ev:onbeforerowpositionchange="scwin.dlt_BMS_TRANSCOMP_MST_onbeforerowpositionchange"
+        			ev:onbeforerowpositionchange=""
         			ev:onbeforecelldatachange="scwin.dlt_BMS_TRANSCOMP_MST_onbeforecelldatachange" ev:onbeforecolumnfilterchange=""
         			ev:onrowpositionchange="">
         			<w2:columnInfo>
@@ -30,6 +30,10 @@
         				<w2:column id="SPR_VHC_CNT" name="예비차대수" dataType="number" defaultValue="0"></w2:column>
         				<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
         				<w2:column id="GRG_ID" name="차고지아이디" dataType="text"></w2:column>
+        				<w2:column id="GPS_X" name="GPS_X좌표" dataType="text"></w2:column>
+        				<w2:column id="GPS_Y" name="GPS_Y좌표" dataType="text"></w2:column>
+        				<w2:column id="TM_X" name="TM_X좌표" dataType="text"></w2:column>
+        				<w2:column id="TM_Y" name="TM_Y좌표" dataType="text"></w2:column>
         			</w2:columnInfo>
         		</w2:dataList>
         		<w2:dataMap baseNode="map" id="dma_result" ev:onmodelchange="">
@@ -126,10 +130,20 @@
         	</xf:submission>
         </xf:model>
         <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js?autoload=false"></script>
+<!-- 	<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?autoload=false"></script>
+	<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=31aa62fb189294413e43c24caeb82419"></script>
+	<script type="text/javascript">
+	kakao.maps.load(function() {
+	    // v3가 모두 로드된 후, 이 콜백 함수가 실행됩니다.
+	    var map = new kakao.maps.Map(node, options);
+	});
+	</script>    -->
         <script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
 		var codeOptions = [ {code : "AREA", compID : "AREA, SI0102G0:AREA" } ];
+		var codeOptions2 = [ {code : "OWNER_TYPE", compID : "SI0102G1:OWNER_TYPE" } ];
 		com.setCommonDtl(codeOptions);
+		com.setCommonDtl(codeOptions2);		
 		$p.executeSubmission(sub_SI0102G0R0);
 		$p.executeSubmission(sub_SI0102SHI0);
 		com.setEnterKeyEvent(gr_searchsection, scwin.btn_search_onclick);
@@ -300,7 +314,6 @@
 
 //	운수사 목록 그리드 row 변경시 차고지 그리드 변경사항 있는 경우 저장 여부를 묻고, 아닌 경우 차고지 그리드 조회 
 	scwin.SI0102G0_onrowindexchange = function(row,oldRow) {
-				
 	//scwin.idxRow = row;
 	var val_compID = dlt_BMS_TRANSCOMP_MST.getCellData(row, "COMP_ID");
 	
@@ -310,7 +323,7 @@
 	} else {
 		var status_row = dlt_BMS_TRANSCOMP_MST.getRowStatus(row);
 		if (status_row == "C") {
-			BMS_GRG_MST.removeAll();	
+			dlt_BMS_GRG_MST.removeAll();	
 		} else {
 			if (val_compID !== null) {
 				dma_param_COMPID.set("COMP_ID", val_compID);
@@ -318,21 +331,20 @@
 				}	
 			}	
 		}
-		 		
+		
+		//서브 그리드 변경점이 있을 경우 콜백 메소드 		
 		scwin.indexChgSubGrid = function(isReturnVal) {
-			debugger;
 		if (isReturnVal) {
+			//서브 그리드 저장
 			var val_ModifyJSON = dlt_BMS_GRG_MST.getModifiedJSON();
 			if (val_ModifyJSON !== null) {
-					console.log(val_ModifyJSON);
-					dlt_BMS_GRG_COMP_CMPSTN.setJSON(val_ModifyJSON)
-				for (i=0; i< val_ModifyJSON.length; i++) {
-					dlt_BMS_GRG_COMP_CMPSTN.setCellData(i, "COMP_ID", dma_param_COMPID.get("COMP_ID"));
+				for (i=0; i< dlt_BMS_GRG_MST.getAllJSON().length; i++) {
+					dlt_BMS_GRG_MST.setCellData(i, "COMP_ID", dma_param_COMPID.get("COMP_ID"));
 				}
 				$p.executeSubmission(sub_SI0102G1S0);
 				dma_param_COMPID.set("COMP_ID", val_compID);
-				com.executeSubmission(sub_SI0102G1R0);				
-			}					
+				com.executeSubmission(sub_SI0102G1R0);	
+			}		
 
 		} else {
 			dma_param_COMPID.set("COMP_ID", val_compID);
@@ -369,7 +381,6 @@
 	//서브 그리드 추가 콜백함수
 	//팝업창의 data를 서브 그리드에 추가
 	scwin.insertGRG = function(obj) {
-		debugger;
 		var dLength = obj.length;
 		for (i = 0; i < dLength; i++) {
 			var data = dlt_BMS_GRG_MST.getMatchedIndex("GRG_ID", obj[i].GRG_ID, true);
@@ -387,8 +398,22 @@
 		com.delGrid(SI0102G1);
 	}
 	
-	
+	scwin.SI0102G0_oncellclick = function(row,col,colId) {
+		var gridColumn = SI0102G0.getColumnID(col);
 
+		if (gridColumn == "LOCATION") {
+			var data = { GPS_X : dlt_BMS_GRG_MST.getCellData(row, "GPS_X"), GPS_Y : dlt_BMS_GRG_MST.getCellData(row, "GPS_Y"),
+						GRG_ID : dlt_BMS_GRG_MST.getCellData(row, "GRG_ID"), callbackFn : ""} 
+			var options = {
+				id : "SI0102P02",
+				popupName : "위치 지도",
+				modal : true,
+				width : 800,
+				height : 600
+			};
+			com.openPopup(("/ui/BMS/SI0102/SI0102P02.xml"), options, data);
+		}		
+	};
 	]]></script>
     </head>
     <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -462,7 +487,7 @@
     		</xf:group>
     	</xf:group>
     	<w2:gridView adaptive="crosstab" alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid"
-    		dataList="data:dlt_BMS_TRANSCOMP_MST" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup="" ev:onkeyup=""
+    		dataList="data:dlt_BMS_TRANSCOMP_MST" enterKeyMove="" ev:onafteredit="" ev:oncellclick="scwin.SI0102G0_oncellclick" ev:oneditkeyup="" ev:onkeyup=""
     		ev:onrowindexchange="scwin.SI0102G0_onrowindexchange" ev:ontextimageclick="" ev:onviewchange="" fixedColumnWithHidden="true"
     		id="SI0102G0" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true" rowStatusHeaderValue=""
     		rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" style="height:300px;" useShiftKey="true" visibleRowNum=""
@@ -512,6 +537,9 @@
     				<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column2" value="예비차대수"
     					blockSelect="false" displayMode="label">
     				</w2:column>
+    				<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column43" value="위치보기"
+    					blockSelect="false" displayMode="label">
+    				</w2:column>
     				<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column1" value="비고"
     					blockSelect="false" displayMode="label">
     				</w2:column>
@@ -558,6 +586,9 @@
     				<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="SPR_VHC_CNT" value=""
     					blockSelect="false" displayMode="label">
     				</w2:column>
+    				<w2:column removeBorderStyle="false" width="70" inputType="button" style="height:20px" id="LOCATION" value="보기"
+    					blockSelect="false" displayMode="label">
+    				</w2:column>
     				<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="REMARK" value=""
     					blockSelect="false" displayMode="label">
     				</w2:column>
@@ -568,6 +599,9 @@
     				<w2:column removeBorderStyle="false" width="1604" inputType="expression" style="height:20px;" id="column42" value=""
     					blockSelect="false" displayMode="label" colSpan="14" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')"
     					textAlign="right">
+    				</w2:column>
+    				<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column45" value=""
+    					blockSelect="false" displayMode="label">
     				</w2:column>
     			</w2:row>
     		</w2:footer>
@@ -710,7 +744,7 @@
     				<xf:group class="w2tb_td" tagname="td">
     					<w2:attributes></w2:attributes>
     					<w2:spinner skin="type1" buttonSize="30" inputReadOnly="" id=""
-    						style="position: relative;width: 300px;height: 21px;" ref="data:dlt_BMS_TRANSCOMP_MST.DRV_CNT" min="0" dataType="number">
+    						style="position: relative;width: 300px;height: 21px;" ref="data:dlt_BMS_TRANSCOMP_MST.DRV_CNT" min="0" dataType="number" max="9999999">
     					</w2:spinner>
     				</xf:group>
     				<xf:group class="w2tb_th" tagname="th">
@@ -722,7 +756,7 @@
     				<xf:group class="w2tb_td" tagname="td">
     					<w2:attributes></w2:attributes>
     					<w2:spinner buttonSize="30" dataType="number" id="" inputReadOnly="" min="0"
-    						ref="data:dlt_BMS_TRANSCOMP_MST.SVC_ROUT_CNT" skin="type1" style="position: relative;width: 300px;height: 21px;">
+    						ref="data:dlt_BMS_TRANSCOMP_MST.SVC_ROUT_CNT" skin="type1" style="position: relative;width: 300px;height: 21px;" max="9999999">
     					</w2:spinner>
     				</xf:group>
     			</xf:group>
@@ -736,7 +770,7 @@
     				<xf:group class="w2tb_td" tagname="td">
     					<w2:attributes></w2:attributes>
     					<w2:spinner buttonSize="30" dataType="number" id="" inputReadOnly="" min="0"
-    						ref="data:dlt_BMS_TRANSCOMP_MST.LIC_VHC_CNT" skin="type1" style="position: relative;width: 300px;height: 21px;">
+    						ref="data:dlt_BMS_TRANSCOMP_MST.LIC_VHC_CNT" skin="type1" style="position: relative;width: 300px;height: 21px;" max="9999999">
     					</w2:spinner>
     				</xf:group>
     				<xf:group class="w2tb_th" tagname="th">
@@ -748,7 +782,7 @@
     				<xf:group class="w2tb_td" tagname="td">
     					<w2:attributes></w2:attributes>
     					<w2:spinner buttonSize="30" dataType="number" id="" inputReadOnly="" min="0"
-    						ref="data:dlt_BMS_TRANSCOMP_MST.SPR_VHC_CNT" skin="type1" style="position: relative;width: 300px;height: 21px;">
+    						ref="data:dlt_BMS_TRANSCOMP_MST.SPR_VHC_CNT" skin="type1" style="position: relative;width: 300px;height: 21px;" max="9999999">
     					</w2:spinner>
     				</xf:group>
     			</xf:group>
