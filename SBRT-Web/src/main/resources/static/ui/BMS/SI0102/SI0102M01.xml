@@ -116,10 +116,6 @@
         		mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
         		processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
         	</xf:submission>
-        	<xf:submission id="sub_SI0102G1I0" ref="" target="" action="/si/SI0102G1I0" method="post" mediatype="application/json"
-        		encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit=""
-        		ev:submitdone="" ev:submiterror="" abortTrigger="">
-        	</xf:submission>
         	<xf:submission id="sub_SI0102G1R0" ref="data:json,dma_param_COMPID" target="data:json,dlt_BMS_GRG_MST" action="/si/SI0102G1R0"
         		method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
         		mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
@@ -130,16 +126,15 @@
         	</xf:submission>
         </xf:model>
         <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js?autoload=false"></script>
-<!-- 	<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?autoload=false"></script>
-	<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=31aa62fb189294413e43c24caeb82419"></script>
 	<script type="text/javascript">
 	kakao.maps.load(function() {
 	    // v3가 모두 로드된 후, 이 콜백 함수가 실행됩니다.
 	    var map = new kakao.maps.Map(node, options);
 	});
-	</script>    -->
+	</script>
         <script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
+		
 		var codeOptions = [ {code : "AREA", compID : "AREA, SI0102G0:AREA" } ];
 		var codeOptions2 = [ {code : "OWNER_TYPE", compID : "SI0102G1:OWNER_TYPE" } ];
 		com.setCommonDtl(codeOptions);
@@ -298,7 +293,24 @@
 	};
 	
 	scwin.btn_address_onclick = function() {
+		var row = SI0102G0.getFocusedRowIndex();
+
+		var data = { GPS_X : dlt_BMS_TRANSCOMP_MST.getCellData(row, "GPS_X"), 
+					 GPS_Y : dlt_BMS_TRANSCOMP_MST.getCellData(row, "GPS_Y"),
+					 ROW_INDEX : row,
+					 callbackFn : ""} 
+					 
+		var options = {
+			id : "SI0102P02",
+			popupName : "위치 설정",
+			modal : true,
+			width : 900,
+			height : 650
+		};
 		
+		com.openPopup(("/ui/BMS/SI0102/SI0102P02.xml"), options, data);
+
+		/*
 		//load함수를 이용하여 core스크립트의 로딩이 완료된 후, 우편번호 서비스를 실행합니다.
 	    daum.postcode.load(function(){
 	        new daum.Postcode({
@@ -309,8 +321,9 @@
 	            }
 	        }).open();
 	    });        
+	    */
+	    
 	};
-	
 
 //	운수사 목록 그리드 row 변경시 차고지 그리드 변경사항 있는 경우 저장 여부를 묻고, 아닌 경우 차고지 그리드 조회 
 	scwin.SI0102G0_onrowindexchange = function(row,oldRow) {
@@ -402,16 +415,19 @@
 		var gridColumn = SI0102G0.getColumnID(col);
 
 		if (gridColumn == "LOCATION") {
-			var data = { GPS_X : dlt_BMS_GRG_MST.getCellData(row, "GPS_X"), GPS_Y : dlt_BMS_GRG_MST.getCellData(row, "GPS_Y"),
-						GRG_ID : dlt_BMS_GRG_MST.getCellData(row, "GRG_ID"), callbackFn : ""} 
+			var data = { GPS_X : dlt_BMS_TRANSCOMP_MST.getCellData(row, "GPS_X"), 
+						 GPS_Y : dlt_BMS_TRANSCOMP_MST.getCellData(row, "GPS_Y"),
+						 COMP_ID : dlt_BMS_TRANSCOMP_MST.getCellData(row, "COMP_ID"), 
+						 ROW_INDEX : row,
+						 callbackFn : ""} 
 			var options = {
-				id : "SI0102P02",
-				popupName : "위치 지도",
+				id : "SI0102P03",
+				popupName : "위치 보기",
 				modal : true,
-				width : 800,
-				height : 600
+				width : 900,
+				height : 650
 			};
-			com.openPopup(("/ui/BMS/SI0102/SI0102P02.xml"), options, data);
+			com.openPopup(("/ui/BMS/SI0102/SI0102P03.xml"), options, data);
 		}		
 	};
 	]]></script>

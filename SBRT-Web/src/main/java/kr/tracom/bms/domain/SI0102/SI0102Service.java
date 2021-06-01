@@ -92,7 +92,6 @@ public class SI0102Service extends ServiceSupport {
 		
 	}*/
 	
-	//백업용
 	public Map SI0102G0S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
@@ -129,22 +128,12 @@ public class SI0102Service extends ServiceSupport {
 		
 		
 	}
-
-/*	public String SI0102G1R0() {
-		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return si0102Mapper.SI0102G0R0(map)
-	}*/
 	
 	public List SI0102G1R0() throws Exception {
 		// TODO Auto-generated method stub
 		Map param = getSimpleDataMap("dma_param_COMPID");
 		return si0102Mapper.SI0102G1R0(param);
 	}
-
-/*	public List SI0102G1I0() throws Exception {
-		Map param = getSimpleDataMap("dlt_BMS_GRG_MST");
-		return si0102Mapper.SI0102G1I0(param);
-	}*/
 	
 	public List SI0102P0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_GRG_MST");
