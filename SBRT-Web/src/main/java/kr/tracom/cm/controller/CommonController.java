@@ -104,7 +104,7 @@ public class CommonController extends ControllerSupport {
 	 */
 	@RequestMapping("/common/updateCommonCoAll")
 	public @ResponseBody Map<String, Object> updateCommonCoAll() throws Exception {
-		Map hash = commonService.saveCodeGrpListAll();
+		Map hash = commonService.saveCodeCoListAll();
 
 		result.setData("dma_result_All", hash);
 		return result.getResult();
@@ -121,7 +121,7 @@ public class CommonController extends ControllerSupport {
 	 */
 	@RequestMapping("/common/updateCommonCo")
 	public @ResponseBody Map<String, Object> updateCommonCo() throws Exception {
-		Map hash = commonService.saveCodeGrpList();
+		Map hash = commonService.saveCodeCoList();
 		result.setData("dma_result", hash);
 		result.setData("dlt_commonCo", commonService.selectCommonCo());
 		return result.getResult();
@@ -138,7 +138,7 @@ public class CommonController extends ControllerSupport {
 	 */
 	@RequestMapping("/common/selectCommonDtlUpdate")
 	public @ResponseBody Map<String, Object> selectCommonDtlUpdate() throws Exception {
-		Map hash = commonService.saveCodeList();
+		Map hash = commonService.saveCodeDtlList();
 		result.setData("dma_result", hash);
 		result.setData("dlt_commonDtl", commonService.selectCommonDtlList());
 		return result.getResult();
@@ -166,23 +166,23 @@ public class CommonController extends ControllerSupport {
 		
 		int size = codeList.size();
 		String preCode = "";
-		List codeGrpList = null;
+		List codeCoList = null;
 		for (int i = 0; i < size; i++) {
 			Map codeMap = (Map) codeList.remove(0);
 			String grp_cd = (String) codeMap.get("CO_CD");
 			if (!preCode.equals(grp_cd)) {
-				if (codeGrpList != null) {
-					result.setData(dataIdPrefix + preCode, codeGrpList);
+				if (codeCoList != null) {
+					result.setData(dataIdPrefix + preCode, codeCoList);
 				}
 				preCode = grp_cd;
-				codeGrpList = new ArrayList();
-				codeGrpList.add(codeMap);
+				codeCoList = new ArrayList();
+				codeCoList.add(codeMap);
 			} else {
-				codeGrpList.add(codeMap);
+				codeCoList.add(codeMap);
 			}
 
 			if (i == size - 1) {
-				result.setData(dataIdPrefix + preCode, codeGrpList);
+				result.setData(dataIdPrefix + preCode, codeCoList);
 			}
 		}
 

@@ -630,12 +630,12 @@ com.getLoginUserId = function() {
  * @memberOf com
  * @author InswaveSystems
  * @example
- * var searchCodeGrpOption = {
- *		 id : "sbm_searchCodeGrp",
+ * var searchCodeCoOption = {
+ *		 id : "sbm_searchCodeCo",
  *		 action : "serviceId=CD0001&action=R",
  *		 target : 'data:json,{"id":"dlt_codeGrp","key":"data"}',
- *		 submitDoneHandler : scwin.searchCodeGrpCallback, isShowMeg : false };
- * com.executeSubmission_dynamic(searchCodeGrpOption);
+ *		 submitDoneHandler : scwin.searchCodeCoCallback, isShowMeg : false };
+ * com.executeSubmission_dynamic(searchCodeCoOption);
  */
 com.executeSubmission_dynamic = function(options, requestData, obj) {
 	var submissionObj = $p.getSubmission(options.id);
@@ -899,14 +899,14 @@ com.setCommonDtl = function(codeOptions, callbackFunc) {
 		}
 	}
 
-	var searchCodeGrpOption = {
+	var searchCodeCoOption = {
 		id : "sbm_searchCode",
 		action : "/common/selectCodeList",
 		target : "data:json," + com.strSerialize(dltIdArr),
 		isShowMeg : false
 	};
 
-	searchCodeGrpOption.submitDoneHandler = function(e) {
+	searchCodeCoOption.submitDoneHandler = function(e) {
 		
 		for (codeGrpDataListId in e.responseJSON) {
 			if (codeGrpDataListId.indexOf(gcm.DATA_PREFIX) > -1) {
@@ -920,7 +920,7 @@ com.setCommonDtl = function(codeOptions, callbackFunc) {
 	}
 
 	if (paramCode !== "") {
-		com.executeSubmission_dynamic(searchCodeGrpOption, {
+		com.executeSubmission_dynamic(searchCodeCoOption, {
 			"dma_commonDtl" : {
 				"CO_CD" : paramCode,
 				"DATA_PREFIX" : gcm.DATA_PREFIX
@@ -1993,7 +1993,7 @@ com.messagBox = function(messageType, messageStr, closeCallbackFncName, isReturn
  * @param {String} closeCallbackFncName 콜백 함수명
  * @author Inswave Systems
  * @example
- * com.confirm("변경된 코드 그룹 정보를 저장하시겠습니까?", "scwin.saveCodeGrpConfirmCallback");
+ * com.confirm("변경된 코드 그룹 정보를 저장하시겠습니까?", "scwin.saveCodeCoConfirmCallback");
  * com.confirm("하위에 새로운 조직을 추가하시겠습니까?", "scwin.insertConfirmCallBack");
  */
 com.confirm = function(messageStr, closeCallbackFncName) {
