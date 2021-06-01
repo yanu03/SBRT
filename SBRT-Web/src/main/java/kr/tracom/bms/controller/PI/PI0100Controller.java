@@ -42,6 +42,24 @@ public class PI0100Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/pi/PI0100G0K0")
+	public @ResponseBody Map<String, Object> PI0100G0K0() throws Exception{
+		result.setData("dma_SEQ_BMS_NOTICE_MST_0", pI0100Service.PI0100G0K0());
+		return result.getResult();
+	}	
+	
+	@RequestMapping("/pi/PI0100G1S0")
+	public @ResponseBody Map<String, Object> PI0100G1S0() throws Exception{
+		result.setData("result", pI0100Service.PI0100G1S0());
+		return result.getResult();
+	}
+
+	@RequestMapping("/pi/PI0100G2S0")
+	public @ResponseBody Map<String, Object> PI0100G2S0() throws Exception{
+		result.setData("result", pI0100Service.PI0100G2S0());
+		return result.getResult();
+	}
+	
 	@RequestMapping("/pi/PI0100P0R0")
 	public @ResponseBody Map<String, Object> PI0100P0R0() throws Exception {
 		result.setData("dlt_BMS_VHC_MST", pI0100Service.PI0100P0R0());
