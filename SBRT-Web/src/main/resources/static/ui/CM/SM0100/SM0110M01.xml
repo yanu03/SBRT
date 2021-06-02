@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ev="http://www.w3.org/2001/xml-events"
+    xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+    <head>
+    	<w2:type>Default</w2:type>
+        <w2:buildDate/>
+        <xf:model>
+            <xf:instance>
+                <data xmlns=""/>
+            </xf:instance>
+            <w2:dataCollection baseNode="map">
+				<w2:dataList id="dlt_commonCo" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
+					<w2:columnInfo>
+						<w2:column id="chk" name="선택" dataType="text" ignoreStatus="true"></w2:column>
+						<w2:column id="CO_CD" name="공통코드" dataType="text"></w2:column>
+						<w2:column id="CO_CD_NM" name="공통코드명" dataType="text"></w2:column>
+						<w2:column id="SORT" name="정렬순서" dataType="text"></w2:column>
+						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
+						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+						<w2:column id="CO_CD_ORG" name="name7" dataType="text" importFormatter="scwin.setCO_CD_ORG"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+            </w2:dataCollection>
+            <w2:workflowCollection>
+            </w2:workflowCollection>
+        </xf:model>
+<style>
+.pgm_container {
+				width:100%;height:100%;
+				padding: 5px 10px 5px 10px;
+				box-sizing: border-box;
+				box-shadow: 0 0 0 0px #000 inset;
+				gap: 5px 0px;
+				}
+.pgm_navi { overflow:hidden; }
+.pgm_header { overflow:hidden; }
+.pgm_content { gap: 0px 5px; }
+.pgm_list { gap: 5px 0px; }
+.pgm_detail { gap: 5px 0px; }
+.pgm_sep {  }
+
+.cm_grid{
+		border-radius: 5px;
+		border-top: 1px solid #7e7e7e;
+		border-left: 1px solid #7e7e7e;
+		border-right: 1px solid #7e7e7e;
+		border-bottom: 1px solid #7e7e7e; 
+		margin-bottom: 0px solid rgba(0,61,124,1);
+		}
+
+.grdc_300_a {display:grid; grid-template-columns:300px auto;}
+.grdc_250_a {display:grid; grid-template-columns:250px auto;}
+.grdc_200_a {display:grid; grid-template-columns:200px auto;}
+.grdc_150_a {display:grid; grid-template-columns:100px auto;}
+.grdc_100_a {display:grid; grid-template-columns:100px auto;}
+.grdc_50_a {display:grid; grid-template-columns:50px auto;}
+.grdc_a_500 {display:grid; grid-template-columns:auto 500px;}
+.grdc_a_300 {display:grid; grid-template-columns:auto 300px;}
+.grdc_a_250 {display:grid; grid-template-columns:auto 250px;}
+.grdc_a_200 {display:grid; grid-template-columns:auto 200px;}
+.grdc_a_150 {display:grid; grid-template-columns:auto 150px;}
+.grdc_a_100 {display:grid; grid-template-columns:auto 100px;}
+.grdc_a_50 {display:grid; grid-template-columns:auto 50px;}
+
+.grdc_1f_1f {display:grid; grid-template-columns:1fr 1fr;}
+.grdc_200_1f_1f {display:grid; grid-template-columns:200px 1fr 1fr;}
+.grdc_2f_1f {display:grid; grid-template-columns:2fr 1fr;}
+.grdc_1f_2f {display:grid; grid-template-columns:1fr 2fr;}
+
+.grdr_20_a {display:grid; grid-template-rows: minmax(20px, 100px) auto;}
+.grdr_20_20_a {display:grid; grid-template-rows: minmax(20px, max-content) minmax(20px, max-content) auto;}
+.grdr_20_20_20_a {display:grid; grid-template-rows: minmax(20px, max-content) minmax(20px, max-content) minmax(20px, max-content) auto;}
+
+.grdr_20_40_a {display:grid; grid-template-rows: 20px 40px auto;}
+
+.grdr_20_2_a {display:grid; grid-template-rows: minmax(20px, max-content) 2px auto;}
+
+.grdr_30_40_a {display:grid; grid-template-rows: 30px 40px auto;}
+.grdr_40_40_a {display:grid; grid-template-rows: 40px 40px auto;}
+.grdr_50_50_a {display:grid; grid-template-rows: 50px 50px auto;}
+.grdr_200_50_a {display:grid; grid-template-rows: 200px 50px auto;}
+
+.grdr_30_100_30_a {display:grid; grid-template-rows: 30px 100px 30px auto;}
+
+.grdr_20_200_20_a {display:grid; grid-template-rows: minmax(20px, max-content) 200px minmax(20px, max-content) auto;}
+
+.grdr_30_a_30_150 {display:grid; grid-template-rows: 30px auto 30px 150px;}
+
+.required {font-color:red;}
+</style>
+	<script type="text/javascript" lazy="false">
+	<![CDATA[
+        
+	scwin.onpageload = function() {
+		var autoOptions = {
+			Main : { grid : SI0102G0, frm : SI0102F0, srchSbm : sub_SI0102G0R0, savSbm : sub_SI0102G0S0, keySbm : sub_SI0102G0K0 },
+			Sub1 : { grid : SI0102G1, srchSbm : sub_SI0102G1R0, savSbm : sub_SI0102G1S0}
+		 };
+		 
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions);
+		
+		var subOptions = {
+			ADD: scwin.btn_add2_onclick,
+			DEL:{},
+			CNL:{}
+		};
+	
+		//com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
+	};
+	
+	scwin.onpageunload = function() {
+	};
+	
+	]]>
+	</script>
+    </head>
+			<!-- navigator -->
+			<!-- <w2:wframe id="wfm_header" style="" src="/cm/common/wf_titleFav.xml"></w2:wframe> -->
+    <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+    <!-- contentWrap height의 문제가 있다.-->
+    <xf:group id="pgm_container" class="pgm_container grdr_20_20_a" style="">
+		<xf:group id="pgm_navi" class="pgm_navi" style="box-shadow: 0 0 0 0px #000 inset;">
+			<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml"></w2:wframe>
+		</xf:group>
+		<xf:group id="pgm_header" class="pgm_header" style="box-shadow: 0 0 0 1px #000 inset;">
+ 			<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+		</xf:group>
+		<xf:group id="pgm_content" class="pgm_content grdr_200_50_a" style="">
+			<xf:group id="" class="" style="box-shadow: 0 0 0 0px #000 inset;">
+				<!-- parent grid -->
+				<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.grd_groupView_onrowindexchange" editModeEvent="onclick" groupbyZoneHeight="" showSortableImage=""
+				 useShiftKey="true" scrollByColumn="false" sortable="true" rowStatusHeaderValue="상태" adaptive="crosstab" rowStatusVisible="false" fixedColumnWithHidden="true" 
+				 dataList="dlt_commonCo" keyMoveEditMode="true" ignoreCellClick="false" style="height: 100%;" autoFit="allColumn" visibleRowNum="10" id="grd_groupView" ev:onafteredit="" 
+				 class="cm_grid" autoFitMinWidth="" rowNumHeaderValue="순서" rowNumVisible="true">
+					<w2:header style="" id="">
+						<w2:row style="" id="">
+							<w2:column width="40" style="height:25px;" inputType="checkbox" id="chk" value="" blockSelect="false" displayMode="label" fixColumnWidth="true">
+							</w2:column>
+							<w2:column width="80" style="height:25px;" inputType="text" id="column13" value="공통코드" class="" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column width="200" style="height:25px;" inputType="text" id="column11" value="공통코드명" class="" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column width="80" style="height:25px;" inputType="text" id="column9" value="코드순서" class="" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column width="80" style="height:25px;" inputType="text" id="column7" value="사용여부" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column width="300" style="height:25px;" inputType="text" id="column3" value="비고" blockSelect="false" displayMode="label">
+							</w2:column>
+						</w2:row>
+					</w2:header>
+					<w2:gBody style="" id="gBody4">
+						<w2:row style="" id="row5">
+							<w2:column width="50" style="height:25px;" inputType="checkbox" id="chk" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column width="80" readOnly="true" style="height:25px;" inputType="text" id="CO_CD" class="req" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column textAlign="left" width="200" style="height:25px;" inputType="text" id="CO_CD_NM" class="req" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column width="80" style="height:25px;" inputType="text" id="SORT" allowChar="0-9" class="req" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column falseValue="N" trueValue="Y" valueType="other" width="80" style="height:25px;" inputType="checkbox" id="USE_YN" blockSelect="false" displayMode="">
+							</w2:column>
+							<w2:column textAlign="left" width="300" style="height:25px;" inputType="text" id="REMARK" blockSelect="false" displayMode="label">
+							</w2:column>
+						</w2:row>
+					</w2:gBody>
+				</w2:gridView>
+			</xf:group>
+			<xf:group id="" class="" style="box-shadow: 0 0 0 0px #000 inset;">
+				child 버튼
+			</xf:group>
+			<xf:group id="" class="" style="box-shadow: 0 0 0 0px #000 inset;">
+				<!-- child grid -->
+				<w2:gridView ignoreCellClick="false" autoFit="allColumn" visibleRowNum="8" sortable="true" sortEvent="onclick"
+					class="cm_grid" showSortableImage="" fixedColumnWithHidden="true" dataList="dlt_commonDtl" id="grd_codeView" style="height:100%;"
+					scrollByColumn="false" useShiftKey="true" overflowY="auto" rowStatusVisible="true" ev:onafteredit="" rowStatusHeaderValue="상태"
+					keyMoveEditMode="true" editModeEvent="onclick" adaptive="crosstab" autoFitMinWidth="">
+					<w2:header id="header1" style="">
+						<w2:row id="row2" style="">
+							<w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" value=""
+								displayMode="label" fixColumnWidth="true">
+							</w2:column>
+							<w2:column id="column20" blockSelect="false" style="height:25px" width="70" inputType="text" value="상세코드"
+								displayMode="label">
+							</w2:column>
+							<w2:column id="column18" blockSelect="false" style="height:25px" width="70" inputType="text" value="상세코드명"
+								displayMode="label">
+							</w2:column>
+							<w2:column id="column3" blockSelect="false" style="height:25px;" width="40" inputType="text" value="코드순서"
+								displayMode="label" textAlign="center">
+							</w2:column>
+							<w2:column id="column29" blockSelect="false" style="height:25px" width="70" inputType="text" value="사용여부"
+								displayMode="label">
+							</w2:column>
+							<w2:column id="column27" blockSelect="false" style="height:25px" width="70" inputType="text" value="속성값1"
+								displayMode="label">
+							</w2:column>
+							<w2:column id="column25" blockSelect="false" style="height:25px" width="70" inputType="text" value="속성값2"
+								displayMode="label">
+							</w2:column>
+							<w2:column id="column23" blockSelect="false" style="height:25px" width="70" inputType="text" value="속성값3"
+								displayMode="label">
+							</w2:column>
+						</w2:row>
+					</w2:header>
+					<w2:gBody id="gBody4" style="">
+						<w2:row id="row5" style="">
+							<w2:column id="chk" blockSelect="false" style="height:25px;" width="50" inputType="checkbox"
+								displayMode="label">
+							</w2:column>
+							<w2:column id="DL_CD" blockSelect="false" readOnly="true" style="height:25px" width="70" inputType="text"
+								displayMode="label" class="req">
+							</w2:column>
+							<w2:column id="DL_CD_NM" blockSelect="false" readOnly="" style="height:25px" width="70" inputType="text"
+								displayMode="label" class="req">
+							</w2:column>
+							<w2:column id="SORT" blockSelect="false" style="height:25px;" width="40" inputType="text"
+								displayMode="label" textAlign="center" class="req" allowChar="0-9">
+							</w2:column>
+							<w2:column id="USE_YN" blockSelect="false" trueValue="Y" falseValue="N" style="height:25px" width="70"
+								inputType="checkbox" displayMode="" valueType="other">
+							</w2:column>
+							<w2:column id="TXT_VAL1" blockSelect="false" style="height:25px" width="70" inputType="text"
+								displayMode="label">
+							</w2:column>
+							<w2:column id="TXT_VAL2" blockSelect="false" style="height:25px" width="70" inputType="text"
+								displayMode="label">
+							</w2:column>
+							<w2:column id="TXT_VAL3" blockSelect="false" style="height:25px" width="70" inputType="text"
+								displayMode="label">
+							</w2:column>
+						</w2:row>
+					</w2:gBody>
+				</w2:gridView>
+			</xf:group>
+		</xf:group>
+    </xf:group>
+    </body>
+</html>
