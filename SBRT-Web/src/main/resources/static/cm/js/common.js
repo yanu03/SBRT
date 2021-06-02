@@ -3934,8 +3934,8 @@ com.setMainBtn = function(btnOptions, generator) {
 		}
 	}
 }
-
 /*
+ 사용 예
 var userOptions = {
 	SEARCH: function () {
     	com.searchGrid(SI0101G0,sub_SI0101G0R0,sub_SI0101G0S0);
@@ -3966,9 +3966,10 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 				if ((typeof usrOpt !== "undefined")&&(usrOpt !== null)&&(typeof eval("usrOpt."+i) === "function")) {
 					mainBtn.bind("onclick", eval("usrOpt."+i));
 				}
-				else{
+				else if((typeof autoOpt !== "undefined")&&(autoOpt !== null)){
+					var main = autoOpt.Main;
+				
 					if( type == gcm.DISP_TYPE.SINGLE_GRID){
-						var main = autoOpt.Main;
 						if(i == gcm.BTN.SEARCH.nm){
 							item.cbFnc = function(){
 								com.searchGrid(main.grid, main.srchSbm , main.savSbm);
@@ -3978,6 +3979,9 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 							item.cbFnc = function(){
 								if ((typeof main.keySbm !== "undefined")&&(main.keySbm !== null)){
 									$p.executeSubmission(main.keySbm);
+								}
+								else{
+									com.addGrid2(main.grid,main.focusColumn);
 								}
 							}
 						}
@@ -4018,7 +4022,6 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						}
 					}
 					else if( type == gcm.DISP_TYPE.DUAL_GRID){
-						var main = autoOpt.Main;
 						if(i == gcm.BTN.SEARCH.nm){
 							item.cbFnc = function(){
 								com.searchGrid(main.grid, main.srchSbm , main.savSbm);
@@ -4029,11 +4032,16 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 								if ((typeof main.keySbm !== "undefined")&&(main.keySbm !== null)){
 									$p.executeSubmission(main.keySbm);
 								}
+								else{
+									com.addGrid2(main.grid,main.focusColumn);
+								}
 							}
 						}
 						else if(i == gcm.BTN.DEL.nm){
 							item.cbFnc = function(){
-								com.delGrid(main.grid);
+								debugger;
+								sub = autoOpt.Sub1;
+								com.delDualGrid(main.grid, sub.grid);
 							}
 						}
 						else if(i==gcm.BTN.CNL.nm){
@@ -4067,8 +4075,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 							}
 						}
 					}
-					else if( type == gcm.DISP_TYPE.DUAL_GRID_FORM){
-						var main = autoOpt.Main;
+					else if( type == gcm.DISP_TYPE.SINGLE_GRID_FORM){
 						if(i == gcm.BTN.SEARCH.nm){
 							item.cbFnc = function(){
 								com.searchGridForm(main.grid, main.srchSbm , main.savSbm);
@@ -4117,8 +4124,64 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 							}
 						}
 					}
+					else if( type == gcm.DISP_TYPE.DUAL_GRID_FORM){
+						if(i == gcm.BTN.SEARCH.nm){
+							item.cbFnc = function(){
+								com.searchGridForm(main.grid, main.srchSbm , main.savSbm);
+							}
+						}
+						else if(i == gcm.BTN.ADD.nm){
+							item.cbFnc = function(){
+								if ((typeof main.keySbm !== "undefined")&&(main.keySbm !== null)){
+									$p.executeSubmission(main.keySbm);
+								}
+							}
+						}
+						else if(i == gcm.BTN.DEL.nm){
+							item.cbFnc = function(){
+								com.delGrid(main.grid);
+							}
+						}
+						else if(i==gcm.BTN.CNL.nm){
+							item.cbFnc = function(){
+								com.clearGrid(main.grid);
+							}
+						}
+						else if(i==gcm.BTN.SAVE.nm){
+							item.cbFnc = function(){
+								com.saveGrid(main.grid, main.savSbm);
+							}
+						}
+						else if(i==gcm.BTN.EXL_I.nm){
+							item.cbFnc = function(){
+								com.exlUploadGrid(main.grid);
+							}
+						}
+						else if(i==gcm.BTN.EXL.nm){
+							item.cbFnc = function(){
+								com.exlGrid(main.grid);
+							}
+						}
+						else if(i==gcm.BTN.EXL_F.nm){
+							item.cbFnc = function(){
+								com.exlFrmGrid(main.grid);
+							}
+						}
+						else if(i==gcm.BTN.CLOSE.nm){
+							item.cbFnc = function(){
+								com.closeTab(main.grid);
+							}
+						}
+					}
+					
+					if(i == gcm.BTN.SEARCH.nm){
+
+						if ((typeof main.srchGrp !== "undefined")&&(main.srchGrp !== null)){
+							com.setEnterKeyEvent(main.srchGrp, item.cbFnc);
+						}
+					}
+					mainBtn.bind("onclick", item.cbFnc);
 				}
-				mainBtn.bind("onclick", item.cbFnc);
 			}
 		} catch (e) {
 			
@@ -4126,6 +4189,52 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 	}
 	return gcm.BTN;
 };
+
+/*
+사용 예
+var btnOptions = 
+[
+	{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick},
+	{userStr:"추가", auth: gcm.BTN.ADD , cbFnc: scwin.btn_add_onclick},
+	{userStr:"삭제", auth: gcm.BTN.DEL, cbFnc: scwin.btn_del_onclick},
+	{userStr:"취소", auth: gcm.BTN.CNL, cbFnc: scwin.btn_cancel_onclick},
+	{userStr:"저장", auth: gcm.BTN.SAVE, cbFnc: scwin.btn_save_onclick},
+	{userStr:"엑셀", auth: gcm.BTN.EXL, cbFnc: scwin.btn_excel_onclick},
+	{userStr:"엑셀업로드", auth: gcm.BTN.EXL_I, cbFnc: scwin.btn_uploadExcel_onclick},
+	{userStr:"엑셀양식", auth: gcm.BTN.EXL_F, cbFnc: scwin.btn_excelForm_onclick},
+	{userStr:"닫기", auth: gcm.BTN.CLOSE, cbFnc: scwin.btn_close_onclick}
+];
+com.setMainBtn3(btnOptions, wfm_mainBtn);
+*/
+com.setMainBtn3 = function(btnOptions, wfm_mainBtn) {
+	var programAuthority = gcm.CUR_PROGRAM_AUTH;
+	
+	if(programAuthority.AUTH_CHECK != 'Y')return;
+	
+	for(var i=0; i<btnOptions.length; i++){
+		try {
+			var item = btnOptions[i];
+			if(eval("programAuthority."+item.auth.value) == "Y"){
+				var tmpParentIdx = wfm_mainBtn.getWindow().btn_main_generator.insertChild();
+				var mainBtn = wfm_mainBtn.getWindow().btn_main_generator.getChild(tmpParentIdx, "btn_main");
+				var str = "";
+				if(item.userStr !== "undefined" && item.userStr!="" && item.userStr != null){
+					str = item.userStr;
+				}
+				else{
+					str = item.auth.str;
+				}
+					mainBtn.setValue(str);
+				mainBtn.addClass(item.auth.class);
+				if (typeof item.cbFnc === "function") {
+					mainBtn.bind("onclick", item.cbFnc); 
+				}
+			}
+		} catch (e) {
+			
+		}
+	}
+}
 
 com.setSubBtn = function(btnOptions, generator) {
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
@@ -4170,6 +4279,7 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 				var str = item.str;
 				subBtn.setValue(str);
 				subBtn.addClass(item.class);
+				
 				if ((typeof subOpt !== "undefined")&&(subOpt !== null)&&(typeof eval("subOpt."+i) === "function")) {
 					subBtn.bind("onclick", eval("subOpt."+i));
 				}
@@ -4232,6 +4342,36 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 	return gcm.BTN;
 };
 
+com.setSubBtn3 = function(btnOptions, wfm_subBtn) {
+	var programAuthority = gcm.CUR_PROGRAM_AUTH;
+	
+	if(programAuthority.AUTH_CHECK != 'Y')return;
+
+	for(var i=0; i<btnOptions.length; i++){
+		try {
+			var subItem = btnOptions[i];
+			if(eval("programAuthority."+subItem.auth.value) == "Y"){
+				var tmpParentIdx = wfm_subBtn.getWindow().btn_sub_generator.insertChild();
+				var subBtn = wfm_subBtn.getWindow().btn_sub_generator.getChild(tmpParentIdx, "btn_sub");
+				var str = "";
+				if(subItem.userStr !== "undefined" && subItem.userStr!="" && subItem.userStr != null){
+					str = subItem.userStr;
+				}
+				else{
+					str = subItem.auth.str;
+				}
+				subBtn.setValue(str);
+				subBtn.addClass(subItem.auth.class);
+				if (typeof subItem.cbFnc === "function") {
+					subBtn.bind("onclick", subItem.cbFnc); 
+				}
+			}
+		} catch (e) {
+		
+		}
+	}
+}
+
 com.saveData = function(grid,form,saveSbmObj){
 
 	var isOk = false
@@ -4285,6 +4425,13 @@ com.addGrid = function(grid,keyMap,keyColumn,focusColumn){
 	var data = com.getGridViewDataList(grid);
 	var insertIndex = data.insertRow();
 	data.setCellData(insertIndex, keyColumn, keyMap.get("SEQ"));
+	grid.setFocusedCell(insertIndex, focusColumn, true);
+	return insertIndex;
+}
+
+com.addGrid2 = function(grid,focusColumn){
+	var data = com.getGridViewDataList(grid);
+	var insertIndex = data.insertRow();
 	grid.setFocusedCell(insertIndex, focusColumn, true);
 	return insertIndex;
 }
@@ -4517,7 +4664,42 @@ com.closeTab = function(grid,yesno_str){
 	else com.tabClose();
 }
 
-	
+com.delDualGrid = function(mainGrid,subGrid,str){
+	var data = com.getGridViewDataList(mainGrid);
+	var focusIdxs = mainGrid.getAllFocusedRowIndex();
+	var count = focusIdxs.length;
+	if (count > 0) {
+		if(	(typeof str == "undefined") || (str.trim() == ""))
+			str = "건의 데이터를 삭제 하시겠습니까?";
+		com.confirm(count + str, function(rtn) {
+			if (rtn) {
+				for(var i=0; i<count; i++){
+					mainGrid.setRowVisible(focusIdxs[i], false);
+				}
+				data.deleteRows(focusIdxs);
+				var subData = com.getGridViewDataList(subGrid);
+				if(subData.getModifiedIndex().length>0){
+					subData.removeAll();
+				}
+			}		
+		});
+	}
+}
+
+com.insertMappingGrid = function(targetGrid, sourceObj, pKeyMap, pKey, key){
+	var data = com.getGridViewDataList(targetGrid);
+	var dLength = obj.length;
+	for (i = 0; i < dLength; i++) {
+		var data = data.getMatchedIndex(key, eval("sourceObj[i]."+key), true);
+		if (data.length == 0) {
+			eval("obj[i]."+pKey) = pKeyMap.get(pKey);;
+			obj[i].chk = "0";
+			var idx = data.insertRow();
+			data.setRowJSON(idx, obj[i], true);
+		}
+	}
+}
+
 var shortcutTargetElement = document;
 if (shortcutTargetElement.attachEvent) {
 	shortcutTargetElement.detachEvent("keydown", gcm.shortcutEvent.keydownEvent);

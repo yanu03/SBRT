@@ -27,7 +27,7 @@
 			<w2:dataCollection baseNode="map">
 				<w2:dataList id="dlt_commonCo" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
 					<w2:columnInfo>
-						<w2:column id="chk" name="선택" dataType="text" ignoreStatus="true"></w2:column>
+						<!-- <w2:column id="chk" name="선택" dataType="text" ignoreStatus="true"></w2:column> -->
 						<w2:column id="CO_CD" name="공통코드" dataType="text"></w2:column>
 						<w2:column id="CO_CD_NM" name="공통코드명" dataType="text"></w2:column>
 						<w2:column id="SORT" name="정렬순서" dataType="text"></w2:column>
@@ -38,7 +38,7 @@
 				</w2:dataList>
 				<w2:dataList id="dlt_commonDtl" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
 					<w2:columnInfo>
-						<w2:column id="chk" name="선택" dataType="text" ignoreStatus="true"></w2:column>
+						<!-- <w2:column id="chk" name="선택" dataType="text" ignoreStatus="true"></w2:column> -->
 						<w2:column id="CO_CD" name="공통코드" dataType="text"></w2:column>
 						<w2:column id="DL_CD" name="상세코드" dataType="text"></w2:column>
 						<w2:column id="DL_CD_NM" name="코드명" dataType="text"></w2:column>
@@ -60,7 +60,7 @@
 				</w2:dataMap>
 				<w2:dataList id="dlt_common" baseNode="list" saveRemovedData="true" repeatNode="map">
 					<w2:columnInfo>
-						<w2:column id="chk" name="name10" dataType="text"></w2:column>
+						<!-- <w2:column id="chk" name="name10" dataType="text"></w2:column> -->
 						<w2:column id="CO_CD" name="그룹코드" dataType="text"></w2:column>
 						<w2:column id="DL_CD" name="공통코드" dataType="text"></w2:column>
 						<w2:column id="DL_CD_NM" name="코드명" dataType="text"></w2:column>
@@ -137,9 +137,28 @@
 	 */
 	scwin.onpageload = function() {
 		com.executeSubmission(sbm_commonSearchItem);
-		com.setEnterKeyEvent(tbl_search, scwin.btn_search_onclick);
-		//com.setGridViewDelCheckBox([grd_groupView, grd_codeView]);
+		com.setEnterKeyEvent(pgm_header, scwin.btn_search_onclick);
+		//com.setGridViewDelCheckBox([grd_CoView, grd_dtlView]);
 		com.executeSubmission(sbm_commonCo);
+		var autoOptions = {
+			Main : { grid : grd_CoView, srchSbm : sbm_commonCo, savSbm : sbm_saveCo, keySbm : sbm_commonSearchItem },
+			Sub1 : { grid : grd_dtlView, srchSbm : sbm_commonDtl, savSbm : sbm_saveDtl}
+		 };
+		 
+		var mainOptions = {
+			ADD: scwin.btn_addCoCell_onclick
+		};
+		
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions, mainOptions);
+		
+		var subOptions = {
+			ADD: scwin.btn_addDtlCell_onclick,
+			DEL:{},
+			EXL:{},
+			SAVE:{}
+		};
+
+		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);	
 	};
 	
 	scwin.onpageunload = function() {
@@ -167,7 +186,7 @@
 	/**
 	 * 공통그룹코드의 row 선택시 발생하며 하위 코드리스트에 변경사항 있는 경우에는 저장여부를 묻고, 아닌 경우에는 하위 리스트를 조회한다.
 	 */
-	scwin.grd_groupView_onrowindexchange = function(row, oldRow) {
+	scwin.grd_CoView_onrowindexchange = function(row, oldRow) {
 		scwin.idxRow = row;
 		var val_coCdOrg = dlt_commonCo.getCellData(row, "CO_CD_ORG");
 		var detailCodeModifyCnt = dlt_commonDtl.getModifiedIndex().length;
@@ -209,16 +228,16 @@
 	scwin.sbm_commonDtl_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
 		if (sCode == "S") {
-			spn_CodeCnt.setValue(dlt_commonDtl.getRowCount());
+			//spn_CodeCnt.setValue(dlt_commonDtl.getRowCount());
 	
 //			var d_grpCd = dlt_commonDtl.getCellData(0, "CO_CD");
-//			var m_grpCd = dlt_commonCo.getCellData(grd_groupView.getFocusedRowIndex(), "CO_CD");
+//			var m_grpCd = dlt_commonCo.getCellData(grd_CoView.getFocusedRowIndex(), "CO_CD");
 //			if (d_grpCd != m_grpCd) {
 //				var m_idx = dlt_commonCo.getMatchedIndex("CO_CD", d_grpCd, true);
 //				if (m_idx.length == 0) {
-//					m_idx = grd_groupView.getFocusedRowIndex();
+//					m_idx = grd_CoView.getFocusedRowIndex();
 //				}
-//				grd_groupView.setFocusedCell(m_idx, "CO_CD");
+//				grd_CoView.setFocusedCell(m_idx, "CO_CD");
 //			}
 		}
 	};
@@ -241,10 +260,10 @@
 	scwin.sbm_commonCo_submitdone = function(e) {
 		var rsCode = com.getResultCode(e)
 		if (rsCode == "S") {
-			spn_CoCnt.setValue(dlt_commonCo.getRowCount());
-			grd_codeView.initGrid();
-			grd_groupView.setFocusedCell(0, "CO_CD_NM");
-			//scwin.grd_groupView_onrowindexchange(0, 0);
+			//spn_CoCnt.setValue(dlt_commonCo.getRowCount());
+			grd_dtlView.initGrid();
+			grd_CoView.setFocusedCell(0, "CO_CD_NM");
+			//scwin.grd_CoView_onrowindexchange(0, 0);
 		}
 	};
 	
@@ -254,8 +273,8 @@
 	scwin.btn_addCoCell_onclick = function() {
 		var insertIndex = dlt_commonCo.insertRow();
 		dlt_commonCo.setCellData(insertIndex, "USE_YN", 'Y');
-		grd_groupView.setCellReadOnly(insertIndex, "CO_CD", false);
-		grd_groupView.setFocusedCell(insertIndex, "CO_CD", true);
+		grd_CoView.setCellReadOnly(insertIndex, "CO_CD", false);
+		grd_CoView.setFocusedCell(insertIndex, "CO_CD", true);
 	};
 	
 	/**
@@ -292,7 +311,7 @@
 		var valInfo = [ { id : "CO_CD", mandatory : true }, 
 						{ id : "CO_CD_NM", mandatory : true }, 
 						{ id : "SORT", mandatory : true } ];
-		return com.validateGridView(grd_groupView, valInfo);
+		return com.validateGridView(grd_CoView, valInfo);
 	};
 	
 	/**
@@ -302,7 +321,7 @@
 		var valInfo = [ { id : "DL_CD", mandatory : true }, 
 						{ id : "DL_CD_NM", mandatory : true }, 
 						{ id : "SORT", mandatory : true } ];	
-		return com.validateGridView(grd_codeView, valInfo);
+		return com.validateGridView(grd_dtlView, valInfo);
 	}
 	
 	/**
@@ -366,7 +385,7 @@
 	 * 공통코드 리스트에서 등록버튼 클릭시 실행되며 한줄의 row를 생성한다.
 	 */
 	scwin.btn_addDtlCell_onclick = function() {
-		var focusRowIdx = grd_groupView.getFocusedRowIndex();
+		var focusRowIdx = grd_CoView.getFocusedRowIndex();
 		if (focusRowIdx == -1) {
 			com.alert("코드 그룹 선택후 코드를 등록하실 수 있습니다.");
 		} else {
@@ -378,8 +397,8 @@
 				var CO_CD = dlt_commonCo.getCellData(focusRowIdx, "CO_CD");
 				dlt_commonDtl.setCellData(insertIndex, "CO_CD", CO_CD);
 				dlt_commonDtl.setCellData(insertIndex, "USE_YN", 'Y');
-				grd_codeView.setCellReadOnly(insertIndex, "DL_CD", false);
-				grd_codeView.setFocusedCell(insertIndex, "DL_CD", true);
+				grd_dtlView.setCellReadOnly(insertIndex, "DL_CD", false);
+				grd_dtlView.setFocusedCell(insertIndex, "DL_CD", true);
 			}
 		}
 	};
@@ -413,249 +432,238 @@
 	};
 	
 	scwin.btn_excelCo_onclick = function() {
-		com.downLoadExcel(grd_groupView);
+		com.downLoadExcel(grd_CoView);
 	};
 	
 	scwin.btn_excelDtl_onclick = function() {
 	
 	
-		com.downLoadExcel(grd_codeView);
+		com.downLoadExcel(grd_dtlView);
 	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
-		<xf:group class="contentWrap" id="" style="">
-			<w2:wframe id="" style="" src="/cm/common/wf_titleFav.xml" scope="true"></w2:wframe>
-			<xf:group id="" style="" class="section" >
-				<xf:group id="tbl_search" style="" class="tbl_search">
-					<xf:group id="" style="" adaptive="layout" class="w2tb tbl_sc" adaptiveThreshold="768" tagname="table">
-						<w2:attributes>
-							<w2:summary></w2:summary>
-						</w2:attributes>
-						<xf:group tagname="colgroup">
-							<xf:group style="width:80px;" tagname="col"></xf:group>
-							<xf:group style="" tagname="col"></xf:group>
-							<xf:group style="width:80px;" tagname="col"></xf:group>
-							<xf:group style="" tagname="col"></xf:group>
-							<xf:group style="width:180px;" tagname="col"></xf:group>
-						</xf:group>
-						<xf:group style="" tagname="tr">
-							<xf:group style="" class="w2tb_th" tagname="th">검색항목</xf:group>
-							<xf:group style="" class="w2tb_td" tagname="td">
-								<xf:select1 disabledClass="w2selectbox_disabled" appearance="minimal" direction="auto" chooseOption=""
-									displayMode="label" optionOrder="false" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
-									ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" allOption="" submenuSize="auto"
-									disabled="false" textAlign="left">
-									<xf:choices>
-										<xf:item>
-											<xf:label><![CDATA[공통코드명]]></xf:label>
-											<xf:value><![CDATA[CO_CD_NM]]></xf:value>
-										</xf:item>
-										<xf:item>
-											<xf:label><![CDATA[공통코드]]></xf:label>
-											<xf:value><![CDATA[CO_CD]]></xf:value>
-										</xf:item>
-										<xf:item>
-											<xf:label><![CDATA[비고]]></xf:label>
-											<xf:value><![CDATA[REMARK]]></xf:value>
-										</xf:item>
-									</xf:choices>
-								</xf:select1>
-								<xf:select1 disabledClass="w2selectbox_disabled" appearance="minimal" chooseOptionLabel="-전체-"
-									direction="auto" chooseOption="true" displayMode="label" ev:onblur="scwin.sbx_PositionCd_onblur" optionOrder="false" id="sbx_CoCd"
-									ref="" style="width: 43.5%;height: 21px;float:left;display:none;" allOption="" textAlign="center" submenuSize="auto"
-									disabled="false">
-									<xf:choices>
-										<xf:itemset nodeset="data:dlt_commonSearchItem">
-											<xf:label ref="CO_CD"></xf:label>
-											<xf:value ref="CO_CD"></xf:value>
-										</xf:itemset>
-									</xf:choices>
-								</xf:select1>
-								<w2:autoComplete interactionMode="" chooseOptionValue="" chooseOptionLabel="-전체-" visibleRowNum=""
-									chooseOption="true" caseSensitive="false" displayMode="label" ev:onviewchange="" id="acb_autoChoiceBox" useKeywordHighlight="false"
-									ref="data:dma_search.CONTENT" style="width: 43.5%;height: 21px;float: left;" search="start" ev:onchange="" allOption=""
-									submenuSize="auto" editType="select" emptyItem="" selectedData="" emptyValue="" noResult="useData" textAlign="left">
-									<w2:choices>
-										<w2:itemset nodeset="data:dlt_commonSearchItem">
-											<w2:label ref="CO_CD_NM"></w2:label>
-											<w2:value ref="CO_CD_NM"></w2:value>
-										</w2:itemset>
-									</w2:choices>
-								</w2:autoComplete>
-							</xf:group>
-							<xf:group class="w2tb_th" tagname="th">사용여부</xf:group>
-							<xf:group class="w2tb_td" tagname="td">
-								<xf:select1 id="" ref="data:dma_search.USE_YN" selectedIndex="0" cols="" appearance="full"
-									style="margin-right: 10px;min-width: 200px;" rows="1">
-									<xf:choices>
-										<xf:item>
-											<xf:label><![CDATA[전체]]></xf:label>
-											<xf:value><![CDATA[all]]></xf:value>
-										</xf:item>
-										<xf:item>
-											<xf:label><![CDATA[사용]]></xf:label>
-											<xf:value><![CDATA[Y]]></xf:value>
-										</xf:item>
-										<xf:item>
-											<xf:label><![CDATA[미사용]]></xf:label>
-											<xf:value><![CDATA[N]]></xf:value>
-										</xf:item>
-									</xf:choices>
-								</xf:select1>
-							</xf:group>
-							<xf:group style="" class="w2tb_td" tagname="td">
-								<w2:anchor id="btn_search" style="margin-right: 5px;" clickEventElement="outerDiv"
-									ev:onclick="scwin.btn_search_onclick" class="btn_sh" outerDiv="true">
-									<xf:label><![CDATA[조회]]></xf:label>
-								</w2:anchor>
-								<w2:anchor class="btn_save" clickEventElement="outerDiv" ev:onclick="scwin.btn_saveCoCell_onclick"
-									id="btn_saveCoCell" outerDiv="true" style="">
-									<xf:label><![CDATA[저장]]></xf:label>
-								</w2:anchor>
-							</xf:group>
-						</xf:group>
-					</xf:group>
-				</xf:group>
+		<xf:group id="pgm_container" class="pgm_container grdr_20_20_a" style="">
+			<xf:group id="pgm_navi" class="pgm_navi" style="">
+				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
 			</xf:group>
-			<xf:group id="" style="" class="section">
-				<xf:group id="" style="" class="defaultbox">
-					<w2:textbox id="" style="margin-right: 10px;" class="df_tt fl" label="공통코드"></w2:textbox>
-					<xf:group id="" style="" class="fr">
-						<w2:span id="spn_CoCnt" style="" class="df_total" label="" displayFormat="건"></w2:span>
-						<xf:group id="" style="" class="ml5 fr">
-							<w2:anchor id="btn_addCoCell" style="" clickEventElement="outerDiv" ev:onclick="scwin.btn_addCoCell_onclick"
-								class="btn_gcm" outerDiv="true">
-								<xf:label><![CDATA[등록]]></xf:label>
-							</w2:anchor>
-							<w2:anchor id="btn_cancelCo" style="" clickEventElement="outerDiv" ev:onclick="scwin.btn_cancelCo_onclick"
-								class="btn_gcm" outerDiv="true">
-								<xf:label><![CDATA[취소]]></xf:label>
-							</w2:anchor>
-							<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelCo_onclick"
-								id="btn_excelCo" outerDiv="true" style="">
-								<xf:label><![CDATA[엑셀]]></xf:label>
-							</w2:anchor>
+			<xf:group id="pgm_header" class="pgm_header" style="">
+				<xf:group id="" style="" class="gr_search">
+					<xf:group id="" style="" class="label">
+						<w2:span id="" class="" label="검색 항목"></w2:span>
+					</xf:group>
+					<xf:group id="" style="" class="search">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
+							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+							textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[공통코드명]]></xf:label>
+									<xf:value><![CDATA[CO_CD_NM]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[공통코드]]></xf:label>
+									<xf:value><![CDATA[CO_CD]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[비고]]></xf:label>
+									<xf:value><![CDATA[REMARK]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:select1 disabledClass="w2selectbox_disabled" appearance="minimal" chooseOptionLabel="-전체-"
+							direction="auto" chooseOption="true" displayMode="label" ev:onblur="scwin.sbx_PositionCd_onblur" optionOrder="false" id="sbx_CoCd"
+							ref="" class="search_select" style="display:none;" allOption="" textAlign="center" submenuSize="auto"
+							disabled="false">
+							<xf:choices>
+								<xf:itemset nodeset="data:dlt_commonSearchItem">
+									<xf:label ref="CO_CD"></xf:label>
+									<xf:value ref="CO_CD"></xf:value>
+								</xf:itemset>
+							</xf:choices>
+						</xf:select1>
+						<w2:autoComplete interactionMode="" chooseOptionValue="" chooseOptionLabel="-전체-" visibleRowNum=""
+							chooseOption="true" caseSensitive="false" displayMode="label" ev:onviewchange="" id="acb_autoChoiceBox" useKeywordHighlight="false"
+							ref="data:dma_search.CONTENT" class="search_auto" search="start" ev:onchange="" allOption=""
+							submenuSize="auto" editType="select" emptyItem="" selectedData="" emptyValue="" noResult="useData" textAlign="left">
+							<w2:choices>
+								<w2:itemset nodeset="data:dlt_commonSearchItem">
+									<w2:label ref="CO_CD_NM"></w2:label>
+									<w2:value ref="CO_CD_NM"></w2:value>
+								</w2:itemset>
+							</w2:choices>
+						</w2:autoComplete>
+					</xf:group>
+					<xf:group id="" style="" class="radioLabel">
+						<xf:group id="" style="" class="">
+							<w2:span id="" class="search_title" label="사용여부"></w2:span>
 						</xf:group>
 					</xf:group>
+					<xf:group id="" style="" class="radio">
+						<xf:select1 id="" ref="data:dma_search.USE_YN" selectedIndex="0" cols="" appearance="full"
+							style="margin-right: 10px;min-width: 200px;" rows="1">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[all]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[사용]]></xf:label>
+									<xf:value><![CDATA[Y]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[미사용]]></xf:label>
+									<xf:value><![CDATA[N]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
-			<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.grd_groupView_onrowindexchange" editModeEvent="onclick" groupbyZoneHeight="" showSortableImage="" useShiftKey="true" scrollByColumn="false" sortable="true" rowStatusHeaderValue="상태" adaptive="crosstab" rowStatusVisible="false" fixedColumnWithHidden="true" dataList="dlt_commonCo" keyMoveEditMode="true" ignoreCellClick="false" style="height: 280px;" autoFit="allColumn" visibleRowNum="10" id="grd_groupView" ev:onafteredit="" class="cm_grid" autoFitMinWidth="" rowNumHeaderValue="순서" rowNumVisible="true">
-					<w2:header style="" id="">
-						<w2:row style="" id="">
-							<w2:column width="40" style="height:25px;" inputType="checkbox" id="chk" value="" blockSelect="false" displayMode="label" fixColumnWidth="true">
-							</w2:column>
-							<w2:column width="80" style="height:25px;" inputType="text" id="column13" value="공통코드" class="" blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column width="200" style="height:25px;" inputType="text" id="column11" value="공통코드명" class="" blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column width="80" style="height:25px;" inputType="text" id="column9" value="코드순서" class="" blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column width="80" style="height:25px;" inputType="text" id="column7" value="사용여부" blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column width="300" style="height:25px;" inputType="text" id="column3" value="비고" blockSelect="false" displayMode="label">
-							</w2:column>
-						</w2:row>
-					</w2:header>
-					<w2:gBody style="" id="gBody4">
-						<w2:row style="" id="row5">
-							<w2:column width="50" style="height:25px;" inputType="checkbox" id="chk" blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column width="80" readOnly="true" style="height:25px;" inputType="text" id="CO_CD" class="req" blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column textAlign="left" width="200" style="height:25px;" inputType="text" id="CO_CD_NM" class="req" blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column width="80" style="height:25px;" inputType="text" id="SORT" allowChar="0-9" class="req" blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column falseValue="N" trueValue="Y" valueType="other" width="80" style="height:25px;" inputType="checkbox" id="USE_YN" blockSelect="false" displayMode="">
-							</w2:column>
-							<w2:column textAlign="left" width="300" style="height:25px;" inputType="text" id="REMARK" blockSelect="false" displayMode="label">
-							</w2:column>
-						</w2:row>
-					</w2:gBody>
-				</w2:gridView></xf:group>
-			<xf:group id="" style="" class="section">
-				<xf:group id="" style="" class="defaultbox">
-					<w2:textbox id="" style="margin-right: 10px;" class="df_tt fl" label="코드"></w2:textbox>
-					<xf:group id="" style="height:22px;" class="fr">
-						<w2:span id="spn_CodeCnt" style="" class="df_total" label="" displayFormat="건"></w2:span>
-						<xf:group id="" style="" class="ml5 fr">
-							<w2:anchor id="btn_addDtlCell" style="" clickEventElement="outerDiv" ev:onclick="scwin.btn_addDtlCell_onclick"
-								class="btn_gcm" outerDiv="true">
-								<xf:label><![CDATA[등록]]></xf:label>
-							</w2:anchor>
-							<w2:anchor id="btn_cancelDtl" style="" clickEventElement="outerDiv" ev:onclick="scwin.btn_cancelDtl_onclick"
-								class="btn_gcm" outerDiv="true">
-								<xf:label><![CDATA[취소]]></xf:label>
-							</w2:anchor>
-							<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelDtl_onclick" id="btn_excelDtl"
-								outerDiv="true" style="">
-								<xf:label><![CDATA[엑셀]]></xf:label>
-							</w2:anchor>
+			</xf:group><!-- pgm_header -->
+			<xf:group id="pgm_content" class="pgm_content grdc_a_20_700" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
+					<xf:group id="" class="" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="공통코드" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
+					<xf:group id="" class="" style="">
+						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.grd_CoView_onrowindexchange" editModeEvent="onclick"
+							groupbyZoneHeight="" showSortableImage="" useShiftKey="true" scrollByColumn="false" sortable="true" rowStatusHeaderValue="상태"
+							adaptive="crosstab" rowStatusVisible="false" fixedColumnWithHidden="true" dataList="dlt_commonCo" keyMoveEditMode="true"
+							ignoreCellClick="false" style="" autoFit="allColumn" visibleRowNum="" id="grd_CoView" ev:onafteredit="" class="cm_grid left"
+							autoFitMinWidth="" rowNumHeaderValue="순서" rowNumVisible="true">
+							<w2:header style="" id="">
+								<w2:row style="" id="">
+									<!-- <w2:column width="40" style="height:25px;" inputType="checkbox" id="chk" value="" blockSelect="false" displayMode="label" fixColumnWidth="true">
+									</w2:column> -->
+									<w2:column width="80" style="height:25px;" inputType="text" id="column13" value="공통코드" class="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column width="200" style="height:25px;" inputType="text" id="column11" value="공통코드명" class="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column width="80" style="height:25px;" inputType="text" id="column9" value="코드순서" class="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column width="80" style="height:25px;" inputType="text" id="column7" value="사용여부" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column width="300" style="height:25px;" inputType="text" id="column3" value="비고" blockSelect="false" displayMode="label">
+									</w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody style="" id="gBody4">
+								<w2:row style="" id="row5">
+									<!-- <w2:column width="50" style="height:25px;" inputType="checkbox" id="chk" blockSelect="false" displayMode="label">
+									</w2:column> -->
+									<w2:column width="80" readOnly="true" style="height:25px;" inputType="text" id="CO_CD" class="req" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column textAlign="left" width="200" style="height:25px;" inputType="text" id="CO_CD_NM" class="req" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column width="80" style="height:25px;" inputType="text" id="SORT" allowChar="0-9" class="req" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column falseValue="N" trueValue="Y" valueType="other" width="80" style="height:25px;" inputType="checkbox" id="USE_YN" blockSelect="false" displayMode="">
+									</w2:column>
+									<w2:column textAlign="left" width="300" style="height:25px;" inputType="text" id="REMARK" blockSelect="false" displayMode="label">
+									</w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer style="" id="footer1">
+								<w2:row style="" id="row3">
+									<w2:column removeBorderStyle="false" width="" inputType="expression" style="height:20px;" id="column42" value=""
+										blockSelect="false" displayMode="label" colSpan="15" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')"
+										textAlign="left">
+									</w2:column>
+									<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column51" value=""
+										blockSelect="false" displayMode="label">
+									</w2:column> -->
+								</w2:row>
+							</w2:footer>
+						</w2:gridView>
+					</xf:group>
+				</xf:group><!-- pgm_list -->
+				<xf:group id="" class="vertical_line">
 				</xf:group>
-				<w2:gridView ignoreCellClick="false" autoFit="allColumn" visibleRowNum="8" sortable="true" sortEvent="onclick"
-					class="cm_grid" showSortableImage="" fixedColumnWithHidden="true" dataList="dlt_commonDtl" id="grd_codeView" style="height:160px !important;"
-					scrollByColumn="false" useShiftKey="true" overflowY="auto" rowStatusVisible="true" ev:onafteredit="" rowStatusHeaderValue="상태"
-					keyMoveEditMode="true" editModeEvent="onclick" adaptive="crosstab" autoFitMinWidth="">
-					<w2:header id="header1" style="">
-						<w2:row id="row2" style="">
-							<w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" value=""
-								displayMode="label" fixColumnWidth="true">
-							</w2:column>
-							<w2:column id="column20" blockSelect="false" style="height:25px" width="70" inputType="text" value="상세코드"
-								displayMode="label">
-							</w2:column>
-							<w2:column id="column18" blockSelect="false" style="height:25px" width="70" inputType="text" value="상세코드명"
-								displayMode="label">
-							</w2:column>
-							<w2:column id="column3" blockSelect="false" style="height:25px;" width="40" inputType="text" value="코드순서"
-								displayMode="label" textAlign="center">
-							</w2:column>
-							<w2:column id="column29" blockSelect="false" style="height:25px" width="70" inputType="text" value="사용여부"
-								displayMode="label">
-							</w2:column>
-							<w2:column id="column27" blockSelect="false" style="height:25px" width="70" inputType="text" value="속성값1"
-								displayMode="label">
-							</w2:column>
-							<w2:column id="column25" blockSelect="false" style="height:25px" width="70" inputType="text" value="속성값2"
-								displayMode="label">
-							</w2:column>
-							<w2:column id="column23" blockSelect="false" style="height:25px" width="70" inputType="text" value="속성값3"
-								displayMode="label">
-							</w2:column>
-						</w2:row>
-					</w2:header>
-					<w2:gBody id="gBody4" style="">
-						<w2:row id="row5" style="">
-							<w2:column id="chk" blockSelect="false" style="height:25px;" width="50" inputType="checkbox"
-								displayMode="label">
-							</w2:column>
-							<w2:column id="DL_CD" blockSelect="false" readOnly="true" style="height:25px" width="70" inputType="text"
-								displayMode="label" class="req">
-							</w2:column>
-							<w2:column id="DL_CD_NM" blockSelect="false" readOnly="" style="height:25px" width="70" inputType="text"
-								displayMode="label" class="req">
-							</w2:column>
-							<w2:column id="SORT" blockSelect="false" style="height:25px;" width="40" inputType="text"
-								displayMode="label" textAlign="center" class="req" allowChar="0-9">
-							</w2:column>
-							<w2:column id="USE_YN" blockSelect="false" trueValue="Y" falseValue="N" style="height:25px" width="70"
-								inputType="checkbox" displayMode="" valueType="other">
-							</w2:column>
-							<w2:column id="TXT_VAL1" blockSelect="false" style="height:25px" width="70" inputType="text"
-								displayMode="label">
-							</w2:column>
-							<w2:column id="TXT_VAL2" blockSelect="false" style="height:25px" width="70" inputType="text"
-								displayMode="label">
-							</w2:column>
-							<w2:column id="TXT_VAL3" blockSelect="false" style="height:25px" width="70" inputType="text"
-								displayMode="label">
-							</w2:column>
-						</w2:row>
-					</w2:gBody>
-				</w2:gridView>
-			</xf:group>
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_a" style="">
+					<xf:group id="" class="gr_sub_header" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="상세 코드" style=""></w2:textbox>
+						</xf:group>
+						<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
+					</xf:group>
+					<xf:group id="" class="" style="">
+
+						<w2:gridView ignoreCellClick="false" autoFit="allColumn" visibleRowNum="" sortable="true" sortEvent="onclick"
+							class="cm_grid right" showSortableImage="" fixedColumnWithHidden="true" dataList="dlt_commonDtl" id="grd_dtlView" style=""
+							scrollByColumn="false" useShiftKey="true" overflowY="auto" rowStatusVisible="true" ev:onafteredit="" rowStatusHeaderValue="상태"
+							keyMoveEditMode="true" editModeEvent="onclick" adaptive="crosstab" autoFitMinWidth="">
+							<w2:header id="header1" style="">
+								<w2:row id="row2" style="">
+									<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" value=""
+										displayMode="label" fixColumnWidth="true">
+									</w2:column> -->
+									<w2:column id="column20" blockSelect="false" style="height:25px" width="70" inputType="text" value="상세코드"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="column18" blockSelect="false" style="height:25px" width="70" inputType="text" value="상세코드명"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="column3" blockSelect="false" style="height:25px;" width="40" inputType="text" value="코드순서"
+										displayMode="label" textAlign="center">
+									</w2:column>
+									<w2:column id="column29" blockSelect="false" style="height:25px" width="70" inputType="text" value="사용여부"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="column27" blockSelect="false" style="height:25px" width="70" inputType="text" value="속성값1"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="column25" blockSelect="false" style="height:25px" width="70" inputType="text" value="속성값2"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="column23" blockSelect="false" style="height:25px" width="70" inputType="text" value="속성값3"
+										displayMode="label">
+									</w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody id="gBody4" style="">
+								<w2:row id="row5" style="">
+									<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="50" inputType="checkbox"
+										displayMode="label">
+									</w2:column> -->
+									<w2:column id="DL_CD" blockSelect="false" readOnly="true" style="height:25px" width="70" inputType="text"
+										displayMode="label" class="req">
+									</w2:column>
+									<w2:column id="DL_CD_NM" blockSelect="false" readOnly="" style="height:25px" width="70" inputType="text"
+										displayMode="label" class="req">
+									</w2:column>
+									<w2:column id="SORT" blockSelect="false" style="height:25px;" width="40" inputType="text"
+										displayMode="label" textAlign="center" class="req" allowChar="0-9">
+									</w2:column>
+									<w2:column id="USE_YN" blockSelect="false" trueValue="Y" falseValue="N" style="height:25px" width="70"
+										inputType="checkbox" displayMode="" valueType="other">
+									</w2:column>
+									<w2:column id="TXT_VAL1" blockSelect="false" style="height:25px" width="70" inputType="text"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="TXT_VAL2" blockSelect="false" style="height:25px" width="70" inputType="text"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="TXT_VAL3" blockSelect="false" style="height:25px" width="70" inputType="text"
+										displayMode="label">
+									</w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer id="footer1" style="">
+								<w2:row id="row3" style="">
+									<w2:column blockSelect="false" colSpan="14" displayMode="label"
+										expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" id="column42" inputType="expression" removeBorderStyle="false"
+										style="height:20px;" textAlign="left" width="1830">
+									</w2:column>
+								</w2:row>
+							</w2:footer>
+						</w2:gridView>
+				</xf:group>
+			</xf:group> <!-- pgm_detail -->
 		</xf:group>
-	</body>
+	</xf:group>
+</body>
 </html>

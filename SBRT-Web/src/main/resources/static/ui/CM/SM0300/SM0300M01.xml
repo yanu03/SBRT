@@ -103,8 +103,29 @@
 	scwin.onpageload = function() {
 		var codeOptions = [{ code : "PROG_GRP_CD", compID : "sbx_ProgramGroup, grd_program:PROG_GRP_CD"}];
 		com.setCommonDtl(codeOptions);
-		//com.setEnterKeyEvent(tbl_search, scwin.btn_search_onclick);
-		com.setGridViewDelCheckBox([grd_program, grd_programAuthority]);
+		com.executeSubmission(sbm_searchProgram);
+		
+		var autoOptions = {
+			Main : { grid : grd_program, srchSbm : sbm_searchProgram, savSbm : sbm_saveProgram, srchGrp : pgm_header, focusColumn : "PROG_GRP_CD"},
+			Sub1 : { grid : grd_programAuthority, srchSbm : sbm_searchProgramAuthority, savSbm : sbm_saveProgramAuthority}
+		 };
+		 
+		var mainOptions = {
+			SAVE: scwin.btn_saveProgram_onclick
+		};
+		
+
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions, mainOptions);
+		
+		var subOptions = {
+			//ADD: scwin.btn_addDtlCell_onclick,
+			DEL:{},
+			EXL:{},
+			SAVE:{}
+		};
+
+		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);	
+		
 		
 		/*var btnOptions = 
 		[
@@ -116,7 +137,7 @@
 		
 		
 	
-		var result = btnCom.initMainBtn(wfm_mainBtn,mainBtn);
+		//var result = btnCom.initMainBtn(wfm_mainBtn,mainBtn);
 	
 
 		/*var btnSubOptions1 = 
@@ -129,7 +150,7 @@
 
 		com.setSubBtn(btnSubOptions1, btn_sub_generator1);*/
 		
-		var subBtn = btnCom.BTN;
+		/*var subBtn = btnCom.BTN;
 		subBtn.ADD.cbFnc = function() {
 			scwin.btn_addProgram_onclick();
 		} 
@@ -143,7 +164,7 @@
 			{userStr:"저장", auth: gcm.BTN.SAVE, cbFnc: scwin.btn_saveProgramAuthority_onclick},
 			{userStr:"엑셀", auth: gcm.BTN.EXL, cbFnc: scwin.btn_excelProgram_onclick}
 		];
-		com.setSubBtn(btnSubOptions2, btn_sub_generator2);
+		com.setSubBtn(btnSubOptions2, btn_sub_generator2);*/
 	};
 
 	scwin.onpageunload = function() {
@@ -163,7 +184,7 @@
 	scwin.sbm_searchProgram_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
 		if (sCode == "S") {
-			spn_programCnt.setValue(grd_program.getTotalRow());
+			//spn_programCnt.setValue(grd_program.getTotalRow());
 			dlt_programAuthority.removeAll();
 			grd_program.setFocusedCell(0, "PROG_NM");
 		}
@@ -219,14 +240,14 @@
 		var sCode = com.getResultCode(e);
 		
 		if (sCode == "S") {
-			spn_programAuthorityCnt.setValue(grd_programAuthority.getTotalRow());
+			//spn_programAuthorityCnt.setValue(grd_programAuthority.getTotalRow());
 		}
 	};
 
 	/**
 	 * 프로그램관리 등록 버튼 클릭
 	 */
-	scwin.btn_addProgram_onclick = function() {
+	/*scwin.btn_addProgram_onclick = function() {
 		var menu_cnt = dlt_program.getTotalRow();
 
 		if (menu_cnt == 0) {
@@ -237,30 +258,29 @@
 		var insertIndex = dlt_program.insertRow(grd_program.getFocusedRealRowIndex() + 1);
 		grd_program.setReadOnly("cell", insertIndex, "PROG_CD", false);
 		grd_program.setFocusedCell(insertIndex, "PROG_GRP_CD", true);
-	};
+	};*/
 
 	/**
 	 * 프로그램관리 리스트에서 취소 버튼클릭시 데이타를 이전 상태로 바꾸고 추가된 것들은 삭제한다.
 	 */
-	scwin.btn_cancelProgram_onclick = function() {
+	/*scwin.btn_cancelProgram_onclick = function() {
 		dlt_program.undoAll();
 		dlt_program.removeRows(dlt_program.getInsertedIndex());
-	};
+	};*/
 
-	scwin.btn_closeProgram_onclick = function() {
+	/*scwin.btn_closeProgram_onclick = function() {
 
-	};
+	};*/
 	
 	/**
 	 * 프로그램관리의 프로그램 입력, 수정, 삭제  
 	 */
-	scwin.btn_saveProgram_onclick = function() {
-		var valProgramInfo = [ { id : "PROG_NM", mandatory : true } ];				   
+	scwin.btn_saveProgram_onclick = function() {		   
 		var modifiedProgramIdx = dlt_program.getModifiedIndex();
 		var modifiedAuthorityIdex = dlt_programAuthority.getModifiedIndex();
 	
 		if (modifiedProgramIdx.length > 0) {	
-			if (com.validateGridView(grd_program, valProgramInfo)) {
+			if (com.validateGridView(grd_program)) {
 				com.confirm("해당 프로그램에 대한 프로그램별 접근권한 정보도 함께 저장됩니다. \n 진행하시겠습니까? ", "scwin.saveProgramAll");
 			}
 		} else if (modifiedAuthorityIdex.length > 0) {
@@ -415,14 +435,14 @@
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
-		<xf:group class="contentWrap" id="" style="">
-			<w2:wframe id="" style="" src="/cm/common/wf_titleFav.xml" scope="true"></w2:wframe>
-			<xf:group id="" style="" class="section">
+		<xf:group id="pgm_container" class="pgm_container grdr_20_20_a" style="">
+			<xf:group id="pgm_navi" class="pgm_navi" style="">
+				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
+			</xf:group>
+			<xf:group id="pgm_header" class="pgm_header" style="">
 				<xf:group id="" style="" class="gr_search">
 					<xf:group id="" style="" class="label">
-						<xf:group id="" style="" class="">
-							<w2:span id="" class="" label="프로그램그룹"></w2:span>
-						</xf:group>
+						<w2:span id="" class="" label="프로그램그룹"></w2:span>
 					</xf:group>
 					<xf:group id="" style="" class="select">
 						<xf:select1 disabledClass="w2selectbox_disabled" appearance="minimal" direction="auto" chooseOption="true"
@@ -465,244 +485,225 @@
 					</xf:group>
 					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
-			</xf:group>
-			<xf:group id="" style="" class="section">
-				<xf:group id="" style="" class="defaultbox">
-					<w2:textbox id="" style="" class="df_tt fl" label="프로그램"></w2:textbox>
-					<xf:group id="" style="height:22px;" class="fr">
-						<w2:span id="spn_programCnt" style="" class="df_total" label="" displayFormat="건"></w2:span>
-						<xf:group id="" style="" class="ml5 fr">
-							<!-- <w2:anchor id="btn_addProgram" style="" clickEventElement="outerDiv" ev:onclick="scwin.btn_addProgram_onclick"
-								class="btn_gcm" outerDiv="true">
-								<xf:label><![CDATA[등록]]></xf:label>
-								</w2:anchor>
-								<w2:anchor id="btn_delProgram" style="display:none;" clickEventElement="outerDiv"
-								ev:onclick="scwin.btn_delProgram_onclick" class="btn_gcm" outerDiv="true">
-								<xf:label><![CDATA[삭제]]></xf:label>
-								</w2:anchor>
-								<w2:anchor id="btn_cancelProgram" style="" clickEventElement="outerDiv"
-								ev:onclick="scwin.btn_cancelProgram_onclick" class="btn_gcm" outerDiv="true">
-								<xf:label><![CDATA[취소]]></xf:label>
-								</w2:anchor>
-								<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelProgram_onclick"
-								id="btn_excelProgram" outerDiv="true" style="">
-								<xf:label><![CDATA[엑셀]]></xf:label>
-								</w2:anchor> -->
-								<w2:wframe id="wfm_subBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+			</xf:group><!-- pgm_header -->
+			<xf:group id="pgm_content" class="pgm_content grdc_a_20_1000" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
+					<xf:group id="" class="" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="프로그램" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
-				</xf:group>
-				<w2:gridView ignoreCellClick="false" ev:onrowindexchange="scwin.grd_program_onrowindexchange" autoFit="allColumn"
-					rowStatusWidth="40" visibleRowNum="10" class="cm_grid" wheelRows="" ev:onviewchange="" fixedColumnWithHidden="true"
-					dataList="dlt_program" id="grd_program" style="height:280px;" scrollByColumn="false" useShiftKey="true" rowStatusVisible="false"
-					ev:onafteredit="" rowStatusHeaderValue="상태" ev:oncellclick="" rowNumVisible="true" adaptive="crosstab" rowNumHeaderValue="순서"
-					initFixedHeightByRowNum="0" rowNumStatusUniqueId="">
-					<w2:header id="header1" style="">
-						<w2:row id="row2" style="">
-							<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" value=""
-								displayMode="label" fixColumnWidth="true">
-							</w2:column> -->
-							<w2:column removeBorderStyle="false" width="131" inputType="text" style="height:25px;" id="column27"
-								value="프로그램그룹" blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column id="column16" blockSelect="false" style="height:25px;" width="50" inputType="text" value="프로그램코드"
-								displayMode="label">
-							</w2:column>
-							<w2:column id="column11" blockSelect="false" style="height:25px;" width="194" inputType="text" value="프로그램명"
-								displayMode="label">
-							</w2:column>
-							<w2:column id="column26" blockSelect="false" width="302" inputType="text" value="프로그램소스경로" textAlign="left"
-								style="height:25px;">
-							</w2:column>
-							<w2:column id="column24" blockSelect="false" width="60" inputType="text" value="사용여부" style="height:25px;"></w2:column>
-							<w2:column id="column22" blockSelect="false" width="185" inputType="text" value="비고" style="height:25px;"></w2:column>
-						</w2:row>
-					</w2:header>
-					<w2:gBody id="gBody4" style="">
-						<w2:row id="row5" style="">
-							<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox"
-								displayMode="label">
-							</w2:column> -->
-							<w2:column removeBorderStyle="false" width="131" inputType="select" style="" id="PROG_GRP_CD" value=""
-								blockSelect="false" displayMode="label">
-								<w2:choices></w2:choices>
-							</w2:column>
-							<w2:column id="PROG_CD" blockSelect="false" readOnly="true" style="height:25px" hidden="false" width="90"
-								inputType="text" customFormatter="" displayMode="label" class="req">
-							</w2:column>
-							<w2:column depthColumn="" id="PROG_NM" blockSelect="false" showDepth="3" style="height:25px;" depthType="div"
-								width="194" inputType="text" displayMode="label" textAlign="left" class="req">
-							</w2:column>
-							<w2:column id="PROG_PH" blockSelect="false" width="302" inputType="text" textAlign="left"></w2:column>
-							<w2:column id="USE_YN" blockSelect="false" trueValue="Y" falseValue="N" width="60" inputType="checkbox"
-								valueType="other" fixColumnWidth="true">
-							</w2:column>
-							<w2:column id="REMARK" blockSelect="false" width="185" inputType="text"></w2:column>
-						</w2:row>
-					</w2:gBody>
-				</w2:gridView>
-			</xf:group>
-			<xf:group id="" style="" class="section">
-				<xf:group id="" style="width: 100%;" class="defaultbox">
-					<w2:textbox id="" style="" class="df_tt fl" label="프로그램별 접근 권한"></w2:textbox>
-					<xf:group id="" style="height:22px;" class="fr">
-						<w2:span id="spn_programAuthorityCnt" style="" class="df_total" label="" displayFormat="건"></w2:span>
-						<xf:group id="" style="" class="ml5 fr">
-							<!-- <w2:anchor id="btn_addProgramAuthority" style="" clickEventElement="outerDiv"
-								ev:onclick="scwin.btn_addProgramAuthority_onclick" class="btn_gcm" outerDiv="true">
-								<xf:label><![CDATA[등록]]></xf:label>
-								</w2:anchor>
-								<w2:anchor id="btn_delProgramAuthority" style="display:none;" clickEventElement="outerDiv"
-								ev:onclick="scwin.btn_delProgramAuthority_onclick" class="btn_gcm" outerDiv="true">
-								<xf:label><![CDATA[삭제]]></xf:label>
-								</w2:anchor>
-								<w2:anchor id="btn_cancelProgramAuthority" style="" clickEventElement="outerDiv"
-								ev:onclick="scwin.btn_cancelProgramAuthority_onclick" class="btn_gcm" outerDiv="true">
-								<xf:label><![CDATA[취소]]></xf:label>
-								</w2:anchor>
-								<w2:anchor id="btn_saveProgramAuthority" style="display:none;" clickEventElement="outerDiv"
-								ev:onclick="scwin.btn_saveProgramAuthority_onclick" class="btn_gcm ml5" outerDiv="true">
-								<xf:label><![CDATA[저장]]></xf:label>
-								</w2:anchor>
-								<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelProgramAuthority_onclick" id="btn_excelProgramAuthority" outerDiv="true"
-								style="">
-								<xf:label><![CDATA[엑셀]]></xf:label>
-								</w2:anchor> -->
-							<w2:generator id="btn_sub_generator2" style="">
-								<w2:anchor id="btn_sub" style="left:0px;top:0px;margin-right: 5px;" class="btn_gcm" outerDiv="true">
-								</w2:anchor>
-							</w2:generator>
-						</xf:group>
+					<xf:group id="" class="" style="">
+						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.grd_program_onrowindexchange" editModeEvent="onclick"
+							groupbyZoneHeight="" showSortableImage="" useShiftKey="true" scrollByColumn="false" sortable="true" rowStatusHeaderValue="상태"
+							adaptive="crosstab" rowStatusVisible="false" fixedColumnWithHidden="true" dataList="dlt_program" keyMoveEditMode="true"
+							ignoreCellClick="false" style="" autoFit="allColumn" visibleRowNum="" id="grd_program" ev:onafteredit="" class="cm_grid left"
+							autoFitMinWidth="" rowNumHeaderValue="순서" rowNumVisible="true">
+							<w2:header id="header1" style="">
+								<w2:row id="row2" style="">
+									<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" value=""
+										displayMode="label" fixColumnWidth="true">
+									</w2:column> -->
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:25px;" id="column27"
+										value="프로그램그룹" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column id="column16" blockSelect="false" style="height:25px;" width="80" inputType="text" value="프로그램코드"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="column11" blockSelect="false" style="height:25px;" width="90" inputType="text" value="프로그램명"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="column26" blockSelect="false" width="140" inputType="text" value="프로그램소스경로" textAlign="left"
+										style="height:25px;">
+									</w2:column>
+									<w2:column id="column24" blockSelect="false" width="60" inputType="text" value="사용여부" style="height:25px;"></w2:column>
+									<w2:column id="column22" blockSelect="false" width="100%" inputType="text" value="비고" style="height:25px;"></w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody id="gBody4" style="">
+								<w2:row id="row5" style="">
+									<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox"
+										displayMode="label">
+									</w2:column> -->
+									<w2:column removeBorderStyle="false" width="131" inputType="select" style="" id="PROG_GRP_CD" value=""
+										blockSelect="false" displayMode="label">
+										<w2:choices></w2:choices>
+									</w2:column>
+									<w2:column id="PROG_CD" blockSelect="false" readOnly="false" style="height:25px" hidden="false" width=""
+										inputType="text" customFormatter="" displayMode="label" class="req">
+									</w2:column>
+									<w2:column depthColumn="" id="PROG_NM" blockSelect="false" showDepth="3" style="height:25px;" depthType="div"
+										width="" inputType="text" displayMode="label" textAlign="left" class="req">
+									</w2:column>
+									<w2:column id="PROG_PH" blockSelect="false" width="" inputType="text" textAlign="left"></w2:column>
+									<w2:column id="USE_YN" blockSelect="false" trueValue="Y" falseValue="N" width="" inputType="checkbox"
+										valueType="other" fixColumnWidth="true">
+									</w2:column>
+									<w2:column id="REMARK" blockSelect="false" width="" inputType="text"></w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer style="" id="footer1">
+								<w2:row style="" id="row3">
+									<w2:column removeBorderStyle="false" width="" inputType="expression" style="height:20px;" id="column42" value=""
+										blockSelect="false" displayMode="label" colSpan="15" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')"
+										textAlign="left">
+									</w2:column>
+									<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column51" value=""
+										blockSelect="false" displayMode="label">
+									</w2:column> -->
+								</w2:row>
+							</w2:footer>
+						</w2:gridView>
 					</xf:group>
+				</xf:group><!-- pgm_list -->
+				<xf:group id="" class="vertical_line">
 				</xf:group>
-				<w2:gridView ignoreCellClick="false" autoFit="allColumn" rowStatusWidth="40" visibleRowNum="" class="cm_grid"
-					fixedColumnWithHidden="true" dataList="dlt_programAuthority" id="grd_programAuthority" readOnly="" style="height:160px;width:100%;"
-					scrollByColumn="false" useShiftKey="true" rowStatusVisible="false" rowStatusHeaderValue="상태" ev:oncellclick="" adaptive="crosstab"
-					rowNumHeaderValue="순서" rowNumVisible="true" rowNumStatusUniqueId="" rowNumStatusResize="">
-					<w2:header id="header1" style="">
-						<w2:row id="row2" style="">
-							<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" value="선택"
-								displayMode="label" fixColumnWidth="true">
-							</w2:column> -->
-							<w2:column id="column1" blockSelect="false" style="height:25px;" width="80" inputType="text" value="권한코드"
-								displayMode="label">
-							</w2:column>
-							<w2:column id="column2" blockSelect="false" style="height:25px;" width="227" inputType="text" value="권한명"
-								displayMode="label">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column3" value="권한체크"
-								blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column4" value="조회체크"
-								blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column5" value="저장권한"
-								blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column7" value="엑셀폼"
-								blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column8" value="엑셀입력"
-								blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column9" value="엑셀"
-								blockSelect="false" displayMode="label">
-							</w2:column>
-							<!-- <w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column10" value="삭제"
-								blockSelect="false" displayMode="label">
-								</w2:column>
-								<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column11" value="추가"
-								blockSelect="false" displayMode="label">
-								</w2:column>
-								<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column12" value="닫기"
-								blockSelect="false" displayMode="label">
-								</w2:column> -->
-							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column13" value="예약"
-								blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column14" value="실행"
-								blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column15" value="확정"
-								blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column16" value="설정"
-								blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column17" value="초기화"
-								blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column18" value="기능키8"
-								blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column19" value="도움말"
-								blockSelect="false" displayMode="label">
-							</w2:column>
-						</w2:row>
-					</w2:header>
-					<w2:gBody id="gBody4" style="">
-						<w2:row id="row5" style="">
-							<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="20" inputType="checkbox"
-								displayMode="label">
-							</w2:column> -->
-							<w2:column id="AUTH_CD" blockSelect="false" readOnly="true" style="height:25px;" width="80" inputType="text"
-								displayMode="label">
-							</w2:column>
-							<w2:column id="AUTH_NM" blockSelect="false" readOnly="true" style="height:25px;" width="227" inputType="text"
-								displayMode="label" textAlign="left">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="AUTH_CHECK" value=""
-								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="SCH_AH" value=""
-								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="SAV_AH" value=""
-								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="GEX_AH" value=""
-								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="IEX_AH" value=""
-								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="EXL_AH" value=""
-								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-							</w2:column>
-							<!-- <w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="DEL_AH" value=""
-								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-								</w2:column>
-								<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN1_AH" value=""
-								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-								</w2:column> 
-								<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN2_AH" value=""
-								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-								</w2:column>-->
-							<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN3_AH" value=""
-								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN4_AH" value=""
-								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN5_AH" value=""
-								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN6_AH" value=""
-								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN7_AH" value=""
-								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN8_AH" value=""
-								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="HELP_AH" value=""
-								blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
-							</w2:column>
-						</w2:row>
-					</w2:gBody>
-				</w2:gridView>
-			</xf:group>
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_a" style="">
+					<xf:group id="" class="gr_sub_header" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="프로그램별 접근 권한" style=""></w2:textbox>
+						</xf:group>
+						<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
+					</xf:group>
+					<xf:group id="" class="" style="">
+						<w2:gridView ignoreCellClick="false" autoFit="allColumn" rowStatusWidth="40" visibleRowNum="" class="cm_grid right"
+							fixedColumnWithHidden="true" dataList="dlt_programAuthority" id="grd_programAuthority" readOnly="" style=""
+							scrollByColumn="false" useShiftKey="true" rowStatusVisible="false" rowStatusHeaderValue="상태" ev:oncellclick="" adaptive="crosstab"
+							rowNumHeaderValue="순서" rowNumVisible="true" rowNumStatusUniqueId="" rowNumStatusResize="">
+							<w2:header id="header1" style="">
+								<w2:row id="row2" style="">
+									<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" value="선택"
+										displayMode="label" fixColumnWidth="true">
+									</w2:column> -->
+									<w2:column id="column1" blockSelect="false" style="height:25px;" width="80" inputType="text" value="권한코드"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="column2" blockSelect="false" style="height:25px;" width="150" inputType="text" value="권한명"
+										displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column3" value="권한체크"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column4" value="조회체크"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column5" value="저장권한"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column7" value="엑셀폼"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column8" value="엑셀입력"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column9" value="엑셀"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<!-- <w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column10" value="삭제"
+										blockSelect="false" displayMode="label">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column11" value="추가"
+										blockSelect="false" displayMode="label">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column12" value="닫기"
+										blockSelect="false" displayMode="label">
+										</w2:column> -->
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column13" value="예약"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column14" value="실행"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column15" value="확정"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column16" value="설정"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column17" value="초기화"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column18" value="기능키8"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column19" value="도움말"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody id="gBody4" style="">
+								<w2:row id="row5" style="">
+									<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="20" inputType="checkbox"
+										displayMode="label">
+									</w2:column> -->
+									<w2:column id="AUTH_CD" blockSelect="false" readOnly="true" style="height:25px;" width="80" inputType="text"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="AUTH_NM" blockSelect="false" readOnly="true" style="height:25px;" width="227" inputType="text"
+										displayMode="label" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="AUTH_CHECK" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="SCH_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="SAV_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="GEX_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="IEX_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="EXL_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<!-- <w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="DEL_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN1_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+										</w2:column> 
+										<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN2_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+										</w2:column>-->
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN3_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN4_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN5_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN6_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN7_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN8_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="HELP_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer id="footer1" style="">
+								<w2:row id="row3" style="">
+									<w2:column blockSelect="false" colSpan="15" displayMode="label"
+										expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" id="column42" inputType="expression" removeBorderStyle="false"
+										style="height:20px;" textAlign="left" width="1830">
+									</w2:column>
+								</w2:row>
+							</w2:footer>
+						</w2:gridView>
+				</xf:group>
+			</xf:group> <!-- pgm_detail -->
 		</xf:group>
+	</xf:group>
 	</body>
 </html>
