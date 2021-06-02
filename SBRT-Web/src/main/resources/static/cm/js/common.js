@@ -3976,7 +3976,6 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						}
 						else if(i == gcm.BTN.ADD.nm){
 							item.cbFnc = function(){
-								debugger;
 								if ((typeof main.keySbm !== "undefined")&&(main.keySbm !== null)){
 									$p.executeSubmission(main.keySbm);
 								}
@@ -4027,7 +4026,6 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						}
 						else if(i == gcm.BTN.ADD.nm){
 							item.cbFnc = function(){
-								debugger;
 								if ((typeof main.keySbm !== "undefined")&&(main.keySbm !== null)){
 									$p.executeSubmission(main.keySbm);
 								}
@@ -4159,7 +4157,6 @@ com.setSubBtn = function(btnOptions, generator) {
 	}
 }
 com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
-	debugger;
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
 
 	if(programAuthority.AUTH_CHECK != 'Y')return;
@@ -4173,7 +4170,6 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 				var str = item.str;
 				subBtn.setValue(str);
 				subBtn.addClass(item.class);
-				debugger;
 				if ((typeof subOpt !== "undefined")&&(subOpt !== null)&&(typeof eval("subOpt."+i) === "function")) {
 					subBtn.bind("onclick", eval("subOpt."+i));
 				}
