@@ -39,7 +39,7 @@ public class PI0100Controller extends ControllerSupport {
 	@RequestMapping("/pi/PI0100G0S0")
 	public @ResponseBody Map<String, Object> PI0100G0S0() throws Exception{
 		result.setData("result", pI0100Service.PI0100G0S0());
-		return result.getResult();
+		return result.getResultSave();
 	}
 	
 	@RequestMapping("/pi/PI0100G0K0")
@@ -51,13 +51,13 @@ public class PI0100Controller extends ControllerSupport {
 	@RequestMapping("/pi/PI0100G1S0")
 	public @ResponseBody Map<String, Object> PI0100G1S0() throws Exception{
 		result.setData("result", pI0100Service.PI0100G1S0());
-		return result.getResult();
+		return result.getResultSave();
 	}
 
 	@RequestMapping("/pi/PI0100G2S0")
 	public @ResponseBody Map<String, Object> PI0100G2S0() throws Exception{
 		result.setData("result", pI0100Service.PI0100G2S0());
-		return result.getResult();
+		return result.getResultSave();
 	}
 	
 	@RequestMapping("/pi/PI0100P0R0")
