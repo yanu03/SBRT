@@ -29,7 +29,7 @@ public class PI0201Service extends ServiceSupport{
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;
-		List param = getSimpleList("dlt_BMS_VOC_MST");
+		List param = getSimpleList("dlt_BMS_VOC_INFO");
 		for (int i = 0; i < param.size(); i++) {
 			Map<String, Object> data = (Map) param.get(i);
 			String rowStatus = (String) data.get("rowStatus");
