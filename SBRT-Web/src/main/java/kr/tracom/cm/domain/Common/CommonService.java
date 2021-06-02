@@ -117,12 +117,12 @@ public class CommonService extends ServiceSupport {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public Map saveCodeGrpList() throws Exception {
+	public Map saveCodeCoList() throws Exception {
 
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;
-		List param = getSimpleList("dma_commonCO");
+		List param = getSimpleList("dlt_commonCo");
 		for (int i = 0; i < param.size(); i++) {
 			Map data = (Map) param.get(i);
 			String rowStatus = (String) data.get("rowStatus");
@@ -149,7 +149,7 @@ public class CommonService extends ServiceSupport {
 	 * @param param Client 전달한 데이터 맵 객체
 	 */
 
-	public Map saveCodeList() throws Exception {
+	public Map saveCodeDtlList() throws Exception {
 
 		int iCnt = 0;
 		int uCnt = 0;
@@ -181,7 +181,7 @@ public class CommonService extends ServiceSupport {
 	 * @param param Client 전달한 데이터 리스트 객체
 	 */
 
-	public Map saveCodeGrpListAll() throws Exception {
+	public Map saveCodeCoListAll() throws Exception {
 
 		int iCnt_grp = 0; // 등록한 그룹코드 건수
 		int iCnt_code = 0; // 등록한 세부코드 건수
@@ -189,10 +189,10 @@ public class CommonService extends ServiceSupport {
 		int uCnt_code = 0; // 수정한 세부코드 건수
 		int dCnt_grp = 0; // 삭제한 그룹코드 건수
 		int dCnt_code = 0; // 삭제한 세부코드 건수
-		List paramCodeGrp = getSimpleList("dlt_commonCo");
+		List paramCodeCo = getSimpleList("dlt_commonCo");
 		List paramCode = getSimpleList("dlt_commonDtl");
-		for (int i = 0; i < paramCodeGrp.size(); i++) {
-			Map dataGrp = (Map) paramCodeGrp.get(i);
+		for (int i = 0; i < paramCodeCo.size(); i++) {
+			Map dataGrp = (Map) paramCodeCo.get(i);
 			String rowStatusGrp = (String) dataGrp.get("rowStatus");
 			if (rowStatusGrp.equals("C")) {
 				iCnt_grp += commonMapper.insertCommonCo(dataGrp);

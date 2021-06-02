@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="/cm/css/all.css" type="text/css"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<!-- 
+		#####################################################################
+		파일명 : SM0500M01.xml
+		프로그램명 : 조직 관리 
+		설 명 : 조직을 관리(등록,수정,삭제)하는 화면
+		작성자 : Inswave Systems
+		작성일 : 2016.10.24
+		
+		수정일자	  수정자			 수정내용
+		=====================================================================
+		2016.10.24	Inswave Systems	최초작성
+		2018.01.26	Inswave Systems	WebSquare5 SP2 기능을 적용하도록 소스 업그레이드
+		2018.11.12	Inswave Systems	WebSquare5 SP3 기능을 적용하도록 소스 업그레이드
+		#####################################################################
+		-->
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_VOC_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="VOC_ID" name="음성아이디" dataType="text"></w2:column>
+						<w2:column id="ROUTE_ID" name="노선아이디" dataType="text"></w2:column>
+						<w2:column id="VOC_NM" name="음성명" dataType="text"></w2:column>
+						<w2:column id="PLAY_ST_DT" name="재생시작일" dataType="text"></w2:column>
+						<w2:column id="PLAY_TYPE" name="재생유형" dataType="text"></w2:column>
+						<w2:column id="KR_TTS" name="한국어TTS" dataType="text"></w2:column>
+						<w2:column id="EN_TTS" name="영어TTS" dataType="text"></w2:column>
+						<w2:column id="SCR_TXT" name="화면표시문구" dataType="text"></w2:column>
+						<w2:column id="SCR_TXT_EN" name="영어화면표시문구" dataType="text"></w2:column>
+						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+						<w2:column id="PLAY_TM" name="재생시간" dataType="text"></w2:column>
+						<w2:column id="VOC_DIV" name="음성구분" dataType="text"></w2:column>
+						<w2:column id="CON_ID" name="계약아이디" dataType="text"></w2:column>
+						<w2:column id="PLAY_ED_DT" name="재생종료일" dataType="text"></w2:column>
+						<w2:column id="STTN_TEXT_A" name="이번정류장문구" dataType="text"></w2:column>
+						<w2:column id="STTN_TEXT_A_EN" name="영어이번정류장문구" dataType="text"></w2:column>
+						<w2:column id="STTN_TEXT_B" name="다음정류장문구" dataType="text"></w2:column>
+						<w2:column id="STTN_TEXT_B_EN" name="영어다음정류장문구" dataType="text"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="text"></w2:column>
+						<w2:column id="UPD_ID" name="갱신아이디" dataType="text"></w2:column>
+						<w2:column id="PLAY_DATE" name="재생기간" dataType="text"></w2:column>
+						<w2:column id="VOC_PATH" name="음성경로" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="Content" name="name1" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_VOC_INFO_0">
+					<w2:keyInfo>
+						<w2:key id="SEQ" name="SEQ" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_PI0201G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_VOC_INFO" action="/pi/PI0201G0R0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0201G0R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_PI0201G0K0" ref="" target="data:json,dma_SEQ_BMS_VOC_INFO_0" action="/pi/PI0201G0K0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_PI0201G0S0" ref='data:json,{"action":"updated","id":"dlt_BMS_VOC_INFO"}' target=""
+				action="/pi/PI0201G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+	scwin.onpageload = function() {
+		$p.executeSubmission(sub_PI0201G0R0);
+		
+		var autoOptions = {
+			Main : { grid : PI0201G0, frm : PI0201F0, srchSbm : sub_PI0201G0R0, savSbm : sub_PI0201G0S0, keySbm : sub_PI0201G0K0 }
+		 };
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);		
+	};
+	
+	scwin.dateDisFormatter = function(data){
+		if (data == "") return "";
+		return data.substring(0,4) + "-" + data.substring(4,6) + "-" + data.substring(6,8) + " " + data.substring(8,10) + ":" + data.substring(10,12);
+	}
+	scwin.playDateDisFormatter = function(data){
+		if (data == "") return "";
+		return data.substring(0,4) + "-" + data.substring(4,6) + "-" + data.substring(6,8) + "~" + data.substring(8,12) + "-" + data.substring(12,14) + "-" + data.substring(14,16);
+	}	
+	
+	scwin.upload0_onInputValueChange = function(fileName) {
+		upload0.submit();
+	};
+	
+	scwin.upload0_ondone = function(retXml) {
+		var doc_audio0 = document.getElementById("audio0");
+		var filePath = WebSquare.xml.getValue(retXml, "ret/storedFileList");
+		var realPath = "http://127.0.0.1:8081/fileUpload/up/";
+		doc_audio0.src = realPath + filePath;
+		doc_audio0.type = "audio/mpeg";
+		doc_audio0.pause();
+		// 서버에 저장되도 404 error 발생함 바로 갱신이 안되는듯함
+		// VOC_PATH 값 저장
+	};
+	
+	scwin.sub_PI0201G0R0_submitdone = function(e) {
+		
+	};
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="pgm_container grdr_20_20_a" id="pgm_container" style="">
+			<xf:group id="pgm_navi" class="pgm_navi" style="">
+				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
+			</xf:group>
+			<xf:group id="pgm_header" style="" class="pgm_header">
+				<xf:group class="gr_search" id="" style="">
+					<xf:group class="label" id="" style="">
+						<xf:group class="" id="" style="">
+							<w2:span class="" id="" label="검색 항목"></w2:span>
+						</xf:group>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
+							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_BMS_NOTICE_MST.SContent" search="start" selectedData=""
+							style="width: 200px;height: 21px;float: left;" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+							<w2:choices>
+								<w2:itemset nodeset="data:dlt_grgSearchItem">
+									<w2:label ref="GRG_ID"></w2:label>
+									<w2:value ref="GRG_ID"></w2:value>
+								</w2:itemset>
+							</w2:choices>
+						</w2:autoComplete>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group>
+			
+			<xf:group id="pgm_content" style="" class="pgm_content grdc_a_20_700">
+				<xf:group id="pgm_list" style="" class="pgm_list grdr_20_2_a">
+					<xf:group id="" style="" class="defaultbox">
+						<w2:textbox id="" style="" class="df_tt fl" label="음성 목록"></w2:textbox>
+					</xf:group>
+					<xf:group></xf:group>
+					<xf:group id="">
+						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.PI0100G0_onrowindexchange" ev:oncellclick=""
+							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서" sortable="true"
+							rowStatusHeaderValue="상태" adaptive="crosstab" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
+							fixedColumnWithHidden="true" dataList="data:dlt_BMS_VOC_INFO" ignoreCellClick="false" style="height:100%;" autoFit="lastColumn"
+							visibleRowNum="" id="PI0201G0" class="cm_grid" tooltipPositionY="">
+							<w2:header style="" id="header1">
+								<w2:row style="" id="row2">
+									<w2:column width="118" style="height:25px;" inputType="text" id="column9" value="음성ID" blockSelect="false"
+										displayMode="label" userData1="" userData2="">
+									</w2:column>
+									<w2:column width="159" style="height:25px;" inputType="text" id="column17" value="음성명" blockSelect="false"
+										displayMode="label" userData1="">
+									</w2:column>
+									<w2:column width="80" style="height:25px;" inputType="text" id="column11" value="음성유형" blockSelect="false"
+										displayMode="label" userData1="">
+									</w2:column>
+									<w2:column width="126" style="height:25px;" inputType="text" id="column30" value="재생시간(초)"
+										blockSelect="false">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="163" inputType="text" style="height:25px" id="column31"
+										value="재생기간" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column width="116" style="height:25px;" inputType="text" id="column28" value="화면 표시 문구"
+										blockSelect="false">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="108" inputType="text" style="height:25px" id="column39"
+										value="파일사이즈" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="84" inputType="text" style="height:25px" id="column41"
+										value="비고" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="97" inputType="text" style="height:25px" id="column42"
+										value="업데이트일시" blockSelect="false" displayMode="label">
+									</w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody width="40" style="" id="gBody4">
+								<w2:row style="" id="row5">
+									<w2:column width="118" style="height:25px;" inputType="text" id="VOC_ID" blockSelect="false"
+										displayMode="label" readOnly="true" userData1="M" userData2="">
+									</w2:column>
+									<w2:column width="159" style="height:25px;" inputType="text" id="VOC_NM" blockSelect="false"
+										displayMode="label" readOnly="true" userData1="M">
+									</w2:column>
+									<w2:column textAlign="center" width="80" style="height:25px;" inputType="text" id="PLAY_TYPE"
+										blockSelect="false" displayMode="label" readOnly="true" userData1="">
+										<w2:choices>
+											<w2:itemset nodeset="">
+												<w2:label ref=""></w2:label>
+												<w2:value ref=""></w2:value>
+											</w2:itemset>
+										</w2:choices>
+									</w2:column>
+									<w2:column width="126" style="height:25px;" inputType="text" id="VHC_NO" blockSelect="false"
+										displayFormat="" calendarValueType="yearMonthDateTime" applyFormat="" displayMode="" readOnly="true"
+										displayFormatter="">
+										<w2:choices>
+											<w2:itemset nodeset="data:dlt_organizationBasic">
+												<w2:label ref="PARENT_ORG_NM"></w2:label>
+												<w2:value ref="PARENT_ORG_NM"></w2:value>
+											</w2:itemset>
+										</w2:choices>
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="163" inputType="text" style="height:25px" id="PLAY_DATE" value=""
+										blockSelect="false" displayMode="label" readOnly="true" displayFormatter="scwin.playDateDisFormatter">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="116" inputType="text" style="height:25px" id="SCR_TXT" value=""
+										blockSelect="false" displayMode="label" readOnly="true" displayFormatter="scwin.dateDisFormatter">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="108" inputType="text" style="height:25px" id="" value=""
+										blockSelect="false" displayMode="label" displayFormatter="scwin.dateDisFormatter">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="84" inputType="text" style="height:25px" id="REMARK" value=""
+										blockSelect="false" displayMode="label" autoFitFilterList="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="97" inputType="text" style="height:25px" id="UPD_DTM" value=""
+										blockSelect="false" displayMode="label">
+									</w2:column>
+								</w2:row>
+							</w2:gBody>
+						</w2:gridView>
+					</xf:group>
+				</xf:group>
+				
+				<xf:group id="" style="" class="vertical_line"></xf:group>
+				
+				<xf:group class="pgm_detail grdr_20_2_a">
+					<xf:group id="" style="" class="defaultbox">
+						<w2:textbox id="" style="" class="df_tt fl" label="음성 정보"></w2:textbox>
+					</xf:group>					
+					<xf:group></xf:group>
+					<xf:group tagname="table" style="width:100%;" id="PI0201F0" class="w2tb">
+						<w2:attributes>
+							<w2:summary></w2:summary>
+						</w2:attributes>
+						<xf:group tagname="caption"></xf:group>
+						<xf:group tagname="colgroup">
+							<xf:group tagname="col" style="width:25.00%;"></xf:group>
+							<xf:group tagname="col" style="width:25.00%"></xf:group>
+							<xf:group tagname="col" style="width:25.00%;"></xf:group>
+							<xf:group tagname="col" style="width:25.00%"></xf:group>
+						</xf:group>
+						<xf:group tagname="tr" style="">
+							<xf:group tagname="th" style="" class="w2tb_th">
+								음성ID
+								<w2:attributes>
+									<w2:scope>row</w2:scope>
+								</w2:attributes>
+							</xf:group>
+							<xf:group tagname="td" style="" class="w2tb_td">
+								<w2:attributes>
+									<w2:colspan>3</w2:colspan>
+									<w2:rowspan>1</w2:rowspan>
+								</w2:attributes>
+								<xf:input adjustMaxLength="false" id="VOC_ID" style="height: 21px;margin-right: 5px;" ref="data:dlt_BMS_VOC_INFO.VOC_ID"
+									placeholder="홍길동" readOnly="true">
+								</xf:input>
+							</xf:group>
+						</xf:group>
+						<xf:group tagname="tr" style="">
+							<xf:group tagname="th" style="" class="w2tb_th">
+								음성명
+								<w2:attributes>
+									<w2:scope>row</w2:scope>
+								</w2:attributes>
+							</xf:group>
+							<xf:group tagname="td" style="" class="w2tb_td">
+								<xf:input adjustMaxLength="false" id="VOC_NM" style="height: 21px;" ref="data:dlt_BMS_VOC_INFO.VOC_NM"
+									placeholder="업무 협의 요청">
+								</xf:input>
+							</xf:group>
+							<xf:group tagname="th" style="" class="w2tb_th">
+								음성유형
+								<w2:attributes>
+									<w2:scope>row</w2:scope>
+								</w2:attributes>
+							</xf:group>
+							<xf:group tagname="td" style="" class="w2tb_td">
+								<xf:input adjustMaxLength="false" id="PLAY_TYPE" style="width: 144px;height: 21px;" ref="data:dlt_BMS_VOC_INFO.PLAY_TYPE"
+									placeholder="예약전송대기중">
+								</xf:input>
+							</xf:group>
+						</xf:group>
+						<xf:group tagname="tr" style="">
+							<xf:group tagname="th" style="" class="w2tb_th">
+								음성파일
+								<w2:attributes>
+									<w2:scope>row</w2:scope>
+								</w2:attributes>
+							</xf:group>
+							<xf:group tagname="td" style="" class="w2tb_td">
+								<w2:upload imageStyle="position:absolute;vertical-align:middle;word-wrap:break-word"
+									inputStyle="vertical-align:middle;word-wrap:break-word" style="width: 100%;height: 23px;" id="VOC_PATH" inputClass="" ev:onInputValueChange="scwin.upload0_onInputValueChange" ev:ondone="scwin.upload0_ondone">
+								</w2:upload>
+							</xf:group>
+							<xf:group tagname="th" style="" class="w2tb_th">
+								재생기간
+								<w2:attributes>
+									<w2:scope>row</w2:scope>
+								</w2:attributes>
+							</xf:group>
+							<xf:group tagname="td" style="" class="w2tb_td">
+								<w2:inputCalendar footerDiv="false" id="" style="float:left; width:150px; height:23px;" renderDiv="true"
+									focusOnDateSelect="false" calendarValueType="yearMonthDateTime" rightAlign="false" renderType="component"
+									ref="data:dlt_BMS_VOC_INFO.PLAY_ST_DT" editType="" displayFormat="" ioFormat="" calendarDisplayFormatFunc="">
+								</w2:inputCalendar>
+								<w2:inputCalendar footerDiv="false" id="" style="width: 150px;height: 23px;" renderDiv="true" focusOnDateSelect="false"
+									calendarValueType="yearMonthDate" rightAlign="false" renderType="component" ref="data:dlt_BMS_VOC_INFO.PLAY_ED_DT">
+								</w2:inputCalendar>
+							</xf:group>
+						</xf:group>
+						<xf:group tagname="tr" style="">
+							<xf:group tagname="th" style="" class="w2tb_th">
+								화면&amp;nbsp;표시&amp;nbsp;문구
+								<br></br>
+								(한글)
+								<w2:attributes>
+									<w2:scope>row</w2:scope>
+								</w2:attributes>
+							</xf:group>
+							<xf:group tagname="td" style="" class="w2tb_td">
+								<w2:attributes>
+									<w2:colspan>3</w2:colspan>
+									<w2:rowspan>1</w2:rowspan>
+								</w2:attributes>
+								<xf:group class="ml5 fr" id="" style=""></xf:group>
+			
+								<xf:textarea id="" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.SCR_TXT"></xf:textarea>
+							</xf:group>
+						</xf:group>
+						<xf:group style="" tagname="tr">
+							<xf:group class="w2tb_th" style="" tagname="th">
+								화면&amp;nbsp;표시&amp;nbsp;문구
+								<br></br>
+								(영문)
+								<w2:attributes>
+									<w2:scope>row</w2:scope>
+								</w2:attributes>
+							</xf:group>
+							<xf:group class="w2tb_td" style="" tagname="td">
+								<w2:attributes>
+									<w2:colspan>3</w2:colspan>
+									<w2:rowspan>1</w2:rowspan>
+								</w2:attributes>
+								<xf:group class="ml5 fr" id="" style=""></xf:group>
+								<xf:textarea id="" ref="data:dlt_BMS_VOC_INFO.SCR_TXT_EN" style="width: 300px;height: 100px;"></xf:textarea>
+							</xf:group>
+						</xf:group>
+						<xf:group tagname="tr" style="">
+							<xf:group tagname="th" style="" class="w2tb_th">
+								미리듣기
+								<w2:attributes>
+									<w2:scope>row</w2:scope>
+								</w2:attributes>
+							</xf:group>
+							<xf:group tagname="td" style="" class="w2tb_td">
+								<w2:attributes>
+									<w2:colspan>3</w2:colspan>
+									<w2:rowspan>1</w2:rowspan>
+								</w2:attributes>
+								<audio controls="" style="width: 250px;height: 100px;" id="audio0" preload="" muted="" loop="" autoplay=""></audio>
+							</xf:group>
+						</xf:group>
+						<xf:group tagname="tr" style="">
+							<xf:group tagname="th" class="w2tb_th">
+								비고
+								<w2:attributes>
+									<w2:scope>row</w2:scope>
+								</w2:attributes>
+							</xf:group>
+							<xf:group tagname="td" class="w2tb_td" id="REMARK">
+								<w2:attributes>
+									<w2:colspan>3</w2:colspan>
+									<w2:rowspan>1</w2:rowspan>
+								</w2:attributes>
+								<xf:input adjustMaxLength="false" id="" style="width: 144px;height: 21px;" ref="data:dlt_BMS_VOC_INFO.REMARK"></xf:input>
+							</xf:group>
+						</xf:group>
+					</xf:group>
+				</xf:group>
+			</xf:group>
+			
+		</xf:group> <!-- container end -->
+	</body>
+</html>

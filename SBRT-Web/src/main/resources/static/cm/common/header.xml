@@ -75,6 +75,7 @@
 			</xf:submission>
 		</xf:model>
 		<script	src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
+		<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=31aa62fb189294413e43c24caeb82419&amp;libraries=services&amp;autoload=false"></script>		
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
 
@@ -397,11 +398,11 @@
 	};
 	
 scwin.fn_getInitData = function() {
-		var searchCodeGrpOption = { id : "sbm_InitCont", action : "/main/init", 
+		var searchCodeCoOption = { id : "sbm_InitCont", action : "/main/init", 
 									target : 'data:json, ["dlt_menu", "dma_defInfo", "dlt_programAuthority"]', method : "post",
 									mediatype : "application/json", mode : "asynchronous", isShowMeg : false,
 									submitDoneHandler : scwin.initDataCallback };
-		com.executeSubmission_dynamic(searchCodeGrpOption);
+		com.executeSubmission_dynamic(searchCodeCoOption);
 	};
 
 	scwin.initDataCallback = function() {
@@ -540,6 +541,25 @@ scwin.fn_getInitData = function() {
 				wdcComp.createWindow(options);
 			}
 		}
+	};
+	
+	scwin.getMenuNavigation = function(menuCode, rsStr) {
+		var naviStr;
+		if (rsStr) {
+			naviStr = rsStr;
+		} else {
+			naviStr = "";
+		}
+		var menuJSON = dlt_menu.getMatchedJSON("MENU_CD", menuCode, true)[0];
+
+		naviStr += menuJSON.MENU_NM + "%|%" + menuCode + "%|%";
+
+		if (menuJSON) {
+			if (menuJSON.PARENT_MENU_CD != "MN00000000") {
+				return this.getMenuNavigation(menuJSON.PARENT_MENU_CD, naviStr);
+			}
+		}
+		return naviStr;
 	};
 ]]></script>
 	</head>
