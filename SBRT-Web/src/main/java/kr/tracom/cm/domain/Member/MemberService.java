@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.tracom.cm.support.ServiceSupport;
+import kr.tracom.cm.support.Sha256;
 
 @Service
 public class MemberService extends ServiceSupport{
@@ -60,12 +61,16 @@ public class MemberService extends ServiceSupport{
 		List param = getSimpleList("dlt_memberBasic");
 		
 		for (int i = 0; i < param.size(); i++) {
-
+			
 			Map data = (Map) param.get(i);
 			String rowStatus = (String) data.get("rowStatus");
 			if (rowStatus.equals("C")) {
+				String cryptoPs = Sha256.getHashTwo((String) data.get("NEW_USER_PS"), "".getBytes(),(String) data.get("USER_ID"));
+				data.put("USER_PS",cryptoPs);
 				iCnt += memberMapper.insertMemberBasic(data);
 			} else if (rowStatus.equals("U")) {
+				String cryptoPs = Sha256.getHashTwo((String) data.get("NEW_USER_PS"), "".getBytes(),(String) data.get("USER_ID"));
+				data.put("USER_PS",cryptoPs);
 				uCnt += memberMapper.updateMemberBasic(data);
 			} else if (rowStatus.equals("D")) {
 				dCnt += memberMapper.deleteMemberBasic(data);

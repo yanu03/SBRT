@@ -80,7 +80,7 @@ public class MemberController extends ControllerSupport{
 		Map hash = service.saveMemberBasicList();
 		result.setData("dma_result", hash);
 		result.setData("dlt_memberBasic", service.selectMemberBasic());
-		return result.getResult();
+		return result.getResultSave();
 	}
 	
 	/**
