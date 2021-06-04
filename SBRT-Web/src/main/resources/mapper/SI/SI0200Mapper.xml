@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.bms.domain.SI0200.SI0200Mapper">
+	<select id="SI0200G0R0" resultType="Map">
+		select VHC_ID,
+				VHC_NO,
+				COMP_ID,
+				AREA,
+				CHAS_NO,
+				MAKER,
+				RELS_DT,
+				MODEL_NM,
+				VHC_KIND,
+				ROUT_DIV,
+				VHC_TYPE,
+				VHC_FUEL,
+				VHC_STS,
+				PSG_CNT,
+				SPARE_YN,
+				SCRAP_YN,
+				APPL_ST_DT,
+				APPL_ED_DT,
+				USE_YN,
+				REMARK
+		from BMS_VHC_MST
+		<where>
+			<if test="TYPE == 'VHC_ID'">
+				AND VHC_ID LIKE CONCAT('%',#{VHC_ID},'%')
+			</if>
+			<if test="TYPE == 'VHC_NO'">
+				AND VHC_NO LIKE CONCAT('%',#{VHC_NO},'%') 
+			</if>
+			<if test="TYPE == 'AREA'">
+				AND AREA LIKE CONCAT('%',#{AREA},'%') 
+			</if>
+		</where>
+		
+	</select>	
+
+	<select id="SI0200G0K0" resultType="Map">
+		SELECT CONCAT('VH', LPAD(NEXTVAL(SEQ_BMS_VHC_MST_0), 8, '0')) AS 'SEQ'
+	</select>
+
+	<select id="SI0200P0R0" resultType="Map">
+		SELECT COMP_ID, COMP_NM
+		FROM BMS_TRANSCOMP_MST;
+	</select>
+	
+	<insert id="SI0200G0I0" parameterType="Map">
+		insert into BMS_VHC_MST
+			   (
+			    VHC_ID,
+				COMP_ID,
+				AREA,
+				VHC_NO,
+				CHAS_NO,
+				MAKER,
+				RELS_DT,
+				MODEL_NM,
+				VHC_KIND,
+				ROUT_DIV,
+				VHC_TYPE,
+				VHC_FUEL,
+				VHC_STS,
+				PSG_CNT,
+				SPARE_YN,
+				SCRAP_YN,
+				APPL_ST_DT,
+				APPL_ED_DT,
+				USE_YN,
+				REMARK
+			   )
+			   
+		values (
+			    #{VHC_ID},
+				#{COMP_ID},
+				#{AREA},
+				#{VHC_NO},
+				#{CHAS_NO},
+				#{MAKER},
+				#{RELS_DT},
+				#{MODEL_NM},
+				#{VHC_KIND},
+				#{ROUT_DIV},
+				#{VHC_TYPE},
+				#{VHC_FUEL},
+				#{VHC_STS},
+				#{PSG_CNT},
+				#{SPARE_YN},
+				#{SCRAP_YN},
+				#{APPL_ST_DT},
+				#{APPL_ED_DT},
+				#{USE_YN},
+				#{REMARK}
+				)
+	</insert>
+
+	<update id="SI0200G0U0" parameterType="Map">
+		update BMS_VHC_MST
+		set 	COMP_ID = #{COMP_ID},
+				AREA = #{AREA},
+				VHC_NO = #{VHC_NO},
+				CHAS_NO = #{CHAS_NO},
+				MAKER = #{MAKER},
+				RELS_DT = #{RELS_DT},
+				MODEL_NM = #{MODEL_NM},
+				VHC_KIND = #{VHC_KIND},
+				ROUT_DIV = #{ROUT_DIV},
+				VHC_TYPE = #{VHC_TYPE},
+				VHC_FUEL = #{VHC_FUEL},
+				VHC_STS = #{VHC_STS},
+				PSG_CNT = #{PSG_CNT},
+				SPARE_YN = #{SPARE_YN},
+				SCRAP_YN = #{SCRAP_YN},
+				APPL_ST_DT = #{APPL_ST_DT},
+				APPL_ED_DT = #{APPL_ED_DT},
+				USE_YN = #{USE_YN},
+				REMARK = #{REMARK}
+		where VHC_ID = #{VHC_ID}
+	</update>
+	
+	<delete id="SI0200G0D0" parameterType="Map">
+		delete
+		from BMS_TRANSCOMP_MST
+		where COMP_ID = #{COMP_ID}
+	</delete>
+
+
+</mapper>
