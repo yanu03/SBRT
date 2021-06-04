@@ -48,7 +48,7 @@ public class ProgramController extends ControllerSupport {
 		Map hash = programService.saveProgram();
 		result.setData("dma_result", hash);
 		result.setData("dlt_program", programService.selectProgram());
-		return result.getResult();
+		return result.getResultSave();
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class ProgramController extends ControllerSupport {
 
 		result.setData("dma_result_All", hash);
 
-		return result.getResult();
+		return result.getResultSave();
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class ProgramController extends ControllerSupport {
 		Map hash = programService.saveProgramAuthority();
 		result.setData("dma_result", hash);
 		result.setData("dlt_programAuthority", programService.selectProgramAuthority());
-		return result.getResult();
+		return result.getResultSave();
 	}
 
 	/**

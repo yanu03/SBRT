@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="/cm/css/all.css" type="text/css"?>
 <html xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ev="http://www.w3.org/2001/xml-events"
     xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
@@ -21,6 +22,21 @@
 						<w2:column id="CO_CD_ORG" name="name7" dataType="text" importFormatter="scwin.setCO_CD_ORG"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				<w2:dataList id="dlt_commonDtl" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
+					<w2:columnInfo>
+						<!-- <w2:column id="chk" name="선택" dataType="text" ignoreStatus="true"></w2:column> -->
+						<w2:column id="CO_CD" name="공통코드" dataType="text"></w2:column>
+						<w2:column id="DL_CD" name="상세코드" dataType="text"></w2:column>
+						<w2:column id="DL_CD_NM" name="코드명" dataType="text"></w2:column>
+						<w2:column id="SORT" name="정렬순서" dataType="text"></w2:column>
+						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
+						<w2:column id="TXT_VAL1" name="속성값1" dataType="text"></w2:column>
+						<w2:column id="TXT_VAL2" name="속성값2" dataType="text"></w2:column>
+						<w2:column id="TXT_VAL3" name="속성값3" dataType="text"></w2:column>
+						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+						<w2:column id="DL_CD_ORG" name="name11" dataType="text" importFormatter="scwin.setDL_CD_ORG"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
             </w2:dataCollection>
             <w2:workflowCollection>
             </w2:workflowCollection>
@@ -33,8 +49,8 @@
 				box-shadow: 0 0 0 0px #000 inset;
 				gap: 5px 0px;
 				}
-.pgm_navi { overflow:hidden; }
-.pgm_header { overflow:hidden; }
+.pgm_navi { width:100%; height:100%; overflow:hidden; }
+.pgm_header { width:100%; height:100%; overflow:hidden; }
 .pgm_content { gap: 0px 5px; }
 .pgm_list { gap: 5px 0px; }
 .pgm_detail { gap: 5px 0px; }
@@ -77,8 +93,10 @@
 .grdr_20_2_a {display:grid; grid-template-rows: minmax(20px, max-content) 2px auto;}
 
 .grdr_30_40_a {display:grid; grid-template-rows: 30px 40px auto;}
-.grdr_40_40_a {display:grid; grid-template-rows: 40px 40px auto;}
+.grdr_40_20_a {display:grid; grid-template-rows: minmax(40px, max-content) minmax(20px, max-content) auto;}
+.grdr_40_40_a {display:grid; grid-template-rows: minmax(40px, max-content) minmax(40px, max-content) auto;}
 .grdr_50_50_a {display:grid; grid-template-rows: 50px 50px auto;}
+.grdr_60_60_a {display:grid; grid-template-rows: minmax(60px, max-content) minmax(60px, max-content) auto;}
 .grdr_200_50_a {display:grid; grid-template-rows: 200px 50px auto;}
 
 .grdr_30_100_30_a {display:grid; grid-template-rows: 30px 100px 30px auto;}
@@ -89,44 +107,37 @@
 
 .required {font-color:red;}
 </style>
+
 	<script type="text/javascript" lazy="false">
 	<![CDATA[
-        
+	
 	scwin.onpageload = function() {
 		var autoOptions = {
-			Main : { grid : SI0102G0, frm : SI0102F0, srchSbm : sub_SI0102G0R0, savSbm : sub_SI0102G0S0, keySbm : sub_SI0102G0K0 },
-			Sub1 : { grid : SI0102G1, srchSbm : sub_SI0102G1R0, savSbm : sub_SI0102G1S0}
+			Main : { grid : grd_codeView, srchSbm : null, savSbm : null, keySbm : null }
 		 };
-		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions);
 		
-		var subOptions = {
-			ADD: scwin.btn_add2_onclick,
-			DEL:{},
-			CNL:{}
-		};
-	
-		//com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
+
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions);
+
 	};
 	
 	scwin.onpageunload = function() {
+	
 	};
 	
 	]]>
 	</script>
+	
     </head>
-			<!-- navigator -->
-			<!-- <w2:wframe id="wfm_header" style="" src="/cm/common/wf_titleFav.xml"></w2:wframe> -->
     <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
-    <!-- contentWrap height의 문제가 있다.-->
-    <xf:group id="pgm_container" class="pgm_container grdr_20_20_a" style="">
+    <xf:group id="pgm_container" class="pgm_container grdr_40_40_a" style="">
 		<xf:group id="pgm_navi" class="pgm_navi" style="box-shadow: 0 0 0 0px #000 inset;">
 			<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml"></w2:wframe>
 		</xf:group>
 		<xf:group id="pgm_header" class="pgm_header" style="box-shadow: 0 0 0 1px #000 inset;">
- 			<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+ 			<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 		</xf:group>
-		<xf:group id="pgm_content" class="pgm_content grdr_200_50_a" style="">
+		<xf:group id="pgm_content" class="pgm_content grdr_200_50_a" style="box-shadow: 0 0 0 0px #000 inset;">
 			<xf:group id="" class="" style="box-shadow: 0 0 0 0px #000 inset;">
 				<!-- parent grid -->
 				<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.grd_groupView_onrowindexchange" editModeEvent="onclick" groupbyZoneHeight="" showSortableImage=""

@@ -160,6 +160,18 @@ public class ProgramService extends ServiceSupport{
 			}
 
 		}
+		
+		if(paramProgram.size()==0) {
+			for (int j = 0; j < paramProgramAcess.size(); j++) {
+				Map dataProgramAcess = (Map) paramProgramAcess.get(j);
+				String rowStatusProgramAuthority = (String) dataProgramAcess.get("rowStatus");
+				if (rowStatusProgramAuthority.equals("C")) {
+					iCnt_access += programMapper.insertProgramAuthority(dataProgramAcess);
+				} else if (rowStatusProgramAuthority.equals("D")) {
+					dCnt_access += programMapper.deleteProgramAuthority(dataProgramAcess);
+				}
+			}
+		}
 		Map result = new HashMap();
 		result.put("STATUS", "S");
 		result.put("ICNT_MENU", String.valueOf(iCnt_menu));

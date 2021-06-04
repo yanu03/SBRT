@@ -10,6 +10,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import kr.tracom.platform.net.protocol.TimsMessage;
+import kr.tracom.platform.net.protocol.TimsPayload;
 import kr.tracom.platform.net.protocol.attribute.AtData;
 import kr.tracom.platform.net.protocol.attribute.AtMessage;
 import kr.tracom.platform.net.protocol.attribute.AtResult;
@@ -38,10 +39,22 @@ public class KafkaConsumer {
         	
         	TimsMessage timsMessage = kafkaMessage.getTimsMessage();
         	
-        	//logger.info("tims message: {}", timsMessage);        	
+        	//logger.info("tims message: {}", timsMessage);    	
             
+        	if(timsMessage == null) {
+            	//logger.info("TimsMessage is NULL!!");        
+            	return;
+            }
+        	
             String impId = kafkaMessage.getSessionId();
-            byte opCode = timsMessage.getPayload().OpCode;
+            TimsPayload timsPayload = timsMessage.getPayload();
+            
+            if(timsPayload == null) {
+            	//logger.info("TimsMessage Payload is NULL!!");        
+            	return;
+            }
+            
+            byte opCode = timsPayload.OpCode;
 
             
             switch (opCode) {

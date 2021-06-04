@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import kr.tracom.cm.support.Sha256;
+
 @Service
 public class LoginService {
 
@@ -23,6 +25,9 @@ public class LoginService {
 	 */
 
 	public Map selectMemberInfoForLogin(Map param) {
+		
+		param.put("PASSWORD",Sha256.getHashTwo((String) param.get("PASSWORD"), "".getBytes(),(String) param.get("USER_ID")));
+		
 		Map memberMap = loginMapper.selectMemberInfoForLogin(param);
 
 		// 사용자가 존재하지 않을 경우
@@ -36,7 +41,7 @@ public class LoginService {
 			String reqPASSWORD = (String) param.get("PASSWORD");
 
 			// 패스워드 일치
-			if (PASSWORD.equals(reqPASSWORD)) {
+			if (PASSWORD!=null&&PASSWORD.equals(reqPASSWORD)) {
 
 				memberMap.put("PASSWORD", "");
 				memberMap.put("LOGIN", "success");
