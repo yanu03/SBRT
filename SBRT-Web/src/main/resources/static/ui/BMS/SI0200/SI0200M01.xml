@@ -26,7 +26,7 @@
 						<w2:column id="VHC_TYPE" name="차량유형" dataType="text"></w2:column>
 						<w2:column id="VHC_FUEL" name="차량연료" dataType="text"></w2:column>
 						<w2:column id="VHC_STS" name="버스상태" dataType="text"></w2:column>
-						<w2:column id="PSG_CNT" name="승차인원" dataType="number"></w2:column>
+						<w2:column id="PSG_CNT" name="승차인원" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="SPARE_YN" name="예비차여부" dataType="text"></w2:column>
 						<w2:column id="SCRAP_YN" name="대폐차여부" dataType="text"></w2:column>
 						<w2:column id="APPL_ST_DT" name="적용시작일" dataType="date"></w2:column>
@@ -66,7 +66,7 @@
 			</xf:submission>
 			<xf:submission id="sub_SI0200G0S0" ref='data:json,{"action":"modified","id":"dlt_BMS_VHC_MST"}' target="data:json,dma_result"
 				action="/si/SI0200G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="저장 중입니다.." ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				customHandler="" mode="asynchronous" processMsg="저장 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0200G0S0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_SI0200G0K0" ref="" target="data:json,dma_SEQ_BMS_VHC_MST_0" action="/si/SI0200G0K0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
@@ -76,21 +76,18 @@
 		<script type="text/javascript" lazy="false"><![CDATA[
         
 	scwin.onpageload = function() {
-		var codeOptions = [ {code : "AREA", compID : "AREA, SI0200G0:AREA" } ];
-		var codeOptions2 = [ {code : "VHC_KIND", compID : "VHC_KIND, SI0200G0:VHC_KIND" } ];
-		var codeOptions3 = [ {code : "ROUT_DIV", compID : "ROUT_DIV, SI0200G0:ROUT_DIV" } ];
-		var codeOptions4 = [ {code : "VHC_TYPE", compID : "VHC_TYPE, SI0200G0:VHC_TYPE" } ];
-		var codeOptions5 = [ {code : "VHC_FUEL", compID : "VHC_FUEL, SI0200G0:VHC_FUEL" } ];
-		var codeOptions6 = [ {code : "VHC_STS", compID : "VHC_STS, SI0200G0:VHC_STS" } ];
+		var codeOptions = [ {code : "AREA", compID : "AREA, SI0200G0:AREA" },
+							{code : "VHC_KIND", compID : "VHC_KIND, SI0200G0:VHC_KIND" },
+							{code : "ROUT_DIV", compID : "ROUT_DIV, SI0200G0:ROUT_DIV" },
+							{code : "VHC_TYPE", compID : "VHC_TYPE, SI0200G0:VHC_TYPE" },								
+							{code : "VHC_FUEL", compID : "VHC_FUEL, SI0200G0:VHC_FUEL" },								
+							{code : "VHC_STS", compID : "VHC_STS, SI0200G0:VHC_STS" }								
+						];
 		
-		com.setCommonDtl(codeOptions);
-		com.setCommonDtl(codeOptions2);
-		com.setCommonDtl(codeOptions3);
-		com.setCommonDtl(codeOptions4);
-		com.setCommonDtl(codeOptions5);
-		com.setCommonDtl(codeOptions6);
+		com.setCommonDtl(codeOptions, function() {
+			com.searchGrid(SI0200G0, sub_SI0200G0R0);
+		});
 		
-		$p.executeSubmission(sub_SI0200G0R0);
 		com.setEnterKeyEvent(pgm_header, scwin.btn_search_onclick);
 		
 		var autoOptions = {
@@ -130,13 +127,17 @@
 	//찾기 버튼 콜백함수
 	scwin.searchCompCallback = function(returnValue) {
 		COMP_NM.setValue(returnValue[0].COMP_NM);
+		dlt_BMS_VHC_MST.setCellData(SI0200G0.getFocusedRowIndex(), "COMP_ID", returnValue[0].COMP_ID);
 	};
 
-	// 예약일시 DisplayFormatter
-	scwin.rsvDisFormat = function(data){
-		if (data == "") return "";
-		return data.substring(0,4) + "-" + data.substring(4,6) + "-" + data.substring(6,8) + " " + data.substring(8,10) + ":" + data.substring(10,12)
-	}	
+
+	scwin.sub_SI0200G0S0_submitdone = function(e) {
+		com.searchGrid(SI0200G0, sub_SI0200G0R0);
+	};
+	
+	scwin.COMP_NM_onfocus = function(e) {
+		scwin.btn_searchComp_onclick();
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -217,7 +218,7 @@
 									</w2:column><w2:column removeBorderStyle="false" width="133" inputType="select" style="height:20px" id="AREA" userData1="M" eventPriority="oneditend" value="" blockSelect="false" displayMode="label">
 									</w2:column><w2:column removeBorderStyle="false" width="146" inputType="text" style="height:20px" id="CHAS_NO" value="" blockSelect="false" displayMode="label">
 									</w2:column><w2:column removeBorderStyle="false" width="118" inputType="text" style="height:20px" id="MAKER" value="" blockSelect="false" displayMode="label">
-									</w2:column><w2:column removeBorderStyle="false" width="114" inputType="calendar" style="height:20px" id="RELS_DT" value="" blockSelect="false" displayMode="label" dataType="date" displayFormatFunc="" displayFormatter="scwin.rsvDisFormat">
+									</w2:column><w2:column removeBorderStyle="false" width="114" inputType="calendar" style="height:20px" id="RELS_DT" value="" blockSelect="false" displayMode="label" dataType="date" displayFormatFunc="" displayFormatter="">
 									</w2:column><w2:column width="70" id="REMARK">
 									</w2:column></w2:row>
 							</w2:gBody>
@@ -275,7 +276,7 @@
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<xf:input adjustMaxLength="" class="req" disabled="" fireEventOnInvalid="" id="COMP_NM"
 										invalidMessageFunc="" mandatory="" readOnly="" ref="data:dlt_BMS_VHC_MST.COMP_NM" style="width:80%;height:21px;"
-										validateOnCheckMaxByteLength="" validateOnInput="" validator="">
+										validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:oneditenter="" ev:onfocus="scwin.COMP_NM_onfocus">
 									</xf:input>
 									<xf:image class="btn" ev:onclick="scwin.btn_searchComp_onclick" id="btn_searchComp" longdesc=""
 										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
@@ -323,7 +324,7 @@
 									</w2:attributes>
 									<w2:inputCalendar calendarDisplayFormatFunc="" calendarValueType="yearMonthDate" displayFormat=""
 										editType="" focusOnDateSelect="false" footerDiv="false" id="RELS_DT" ioFormat="" ref="data:dlt_BMS_VHC_MST.RELS_DT" renderDiv="true"
-										renderType="component" rightAlign="false" style="height:23px;" autoFocus="">
+										renderType="component" rightAlign="false" style="height:23px;" autoFocus="" displayFormatFunc="">
 									</w2:inputCalendar>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_th">차량모델명<w2:attributes></w2:attributes></xf:group>
@@ -498,7 +499,7 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input adjustMaxLength="" class="" disabled="" id="REMARK" mandatory="" ref="data:dlt_BMS_TRANSCOMP_MST.REMARK"
+									<xf:input adjustMaxLength="" class="" disabled="" id="REMARK" mandatory="" ref="data:dlt_BMS_VHC_MST.REMARK"
 										style="width:100%;height:70px;">
 									</xf:input>
 								</xf:group>

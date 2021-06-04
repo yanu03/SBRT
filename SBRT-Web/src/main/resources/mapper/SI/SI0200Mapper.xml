@@ -3,13 +3,14 @@
 
 <mapper namespace="kr.tracom.bms.domain.SI0200.SI0200Mapper">
 	<select id="SI0200G0R0" resultType="Map">
-		select VHC_ID,
+		select  VHC_ID,
+				b.COMP_NM,
+				a.COMP_ID,
+				a.AREA,
 				VHC_NO,
-				COMP_ID,
-				AREA,
 				CHAS_NO,
 				MAKER,
-				RELS_DT,
+				DATE_FORMAT(RELS_DT,'%Y%m%d') RELS_DT,
 				MODEL_NM,
 				VHC_KIND,
 				ROUT_DIV,
@@ -19,11 +20,12 @@
 				PSG_CNT,
 				SPARE_YN,
 				SCRAP_YN,
-				APPL_ST_DT,
-				APPL_ED_DT,
+				DATE_FORMAT(APPL_ST_DT, '%Y%m%d') APPL_ST_DT,
+				DATE_FORMAT(APPL_ED_DT, '%Y%m%d') APPL_ED_DT,
 				USE_YN,
-				REMARK
-		from BMS_VHC_MST
+				a.REMARK
+		from BMS_VHC_MST a, BMS_TRANSCOMP_MST b
+		where a.COMP_ID = b.COMP_ID;
 		<where>
 			<if test="TYPE == 'VHC_ID'">
 				AND VHC_ID LIKE CONCAT('%',#{VHC_ID},'%')
@@ -69,7 +71,8 @@
 				APPL_ST_DT,
 				APPL_ED_DT,
 				USE_YN,
-				REMARK
+				REMARK,
+				UPD_DTM
 			   )
 			   
 		values (
@@ -79,7 +82,7 @@
 				#{VHC_NO},
 				#{CHAS_NO},
 				#{MAKER},
-				#{RELS_DT},
+				STR_TO_DATE(#{RELS_DT}, '%Y%m%d'),
 				#{MODEL_NM},
 				#{VHC_KIND},
 				#{ROUT_DIV},
@@ -89,10 +92,11 @@
 				#{PSG_CNT},
 				#{SPARE_YN},
 				#{SCRAP_YN},
-				#{APPL_ST_DT},
-				#{APPL_ED_DT},
+				STR_TO_DATE(#{APPL_ST_DT}, '%Y%m%d'),
+				STR_TO_DATE(#{APPL_ED_DT}, '%Y%m%d'), 
 				#{USE_YN},
-				#{REMARK}
+				#{REMARK},
+				#{UPD_DTM}
 				)
 	</insert>
 
@@ -103,7 +107,7 @@
 				VHC_NO = #{VHC_NO},
 				CHAS_NO = #{CHAS_NO},
 				MAKER = #{MAKER},
-				RELS_DT = #{RELS_DT},
+				RELS_DT = STR_TO_DATE(#{RELS_DT}, '%Y%m%d'),
 				MODEL_NM = #{MODEL_NM},
 				VHC_KIND = #{VHC_KIND},
 				ROUT_DIV = #{ROUT_DIV},
@@ -113,10 +117,11 @@
 				PSG_CNT = #{PSG_CNT},
 				SPARE_YN = #{SPARE_YN},
 				SCRAP_YN = #{SCRAP_YN},
-				APPL_ST_DT = #{APPL_ST_DT},
-				APPL_ED_DT = #{APPL_ED_DT},
+				APPL_ST_DT = STR_TO_DATE(#{APPL_ST_DT}, '%Y%m%d'),
+				APPL_ED_DT = STR_TO_DATE(#{APPL_ED_DT}, '%Y%m%d'),
 				USE_YN = #{USE_YN},
-				REMARK = #{REMARK}
+				REMARK = #{REMARK},
+				UPD_DTM = #{UPD_DTM}
 		where VHC_ID = #{VHC_ID}
 	</update>
 	
