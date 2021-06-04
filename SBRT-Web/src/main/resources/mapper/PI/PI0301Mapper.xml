@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.bms.domain.PI0301.PI0301Mapper">
+
+	<select id="PI0301G0R0" resultType="Map" parameterType="Map">
+		SELECT PROV_ID, PROV_URL, PROV_NM, CATEGORY, USE_YN, REMARK, DATE_FORMAT(UPD_DTM, '%Y%m%d%H%i') UPD_DTM, UPD_ID
+		FROM BMS_NEWS_CFG_INFO
+		<where>
+			<if test="CONTENT != ''">
+				PROV_ID LIKE CONCAT('%',#{CONTENT},'%') OR PROV_NM LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+		</where>
+	</select>
+	
+	<select id="PI0301G0K0" resultType="Map">
+		SELECT CONCAT('NO', LPAD(NEXTVAL(SEQ_BMS_NEWS_CFG_INFO_0), 8, '0')) AS 'SEQ'
+	</select>	
+
+	<insert id="PI0301G0I0" parameterType="Map">	
+	INSERT INTO BMS_NEWS_CFG_INFO(PROV_ID, PROV_URL, PROV_NM, CATEGORY, USE_YN, REMARK, UPD_DTM, UPD_ID) 
+	VALUES (#{PROV_ID}, #{PROV_URL}, #{PROV_NM}, #{CATEGORY}, #{USE_YN}, #{REMARK}, #{UPD_DTM}, #{UPD_ID})
+	</insert>
+
+	<delete id="PI0301G0D0" parameterType="Map">
+		DELETE FROM BMS_NEWS_CFG_INFO PROV_ID = #{PROV_ID};
+	</delete>
+	
+	<update id="PI0301G0U0" parameterType="Map">
+		UPDATE BMS_NEWS_CFG_INFO SET PROV_URL = #{PROV_URL}, PROV_NM = #{PROV_NM}, CATEGORY = #{CATEGORY}, USE_YN = #{USE_YN}, 
+		REMARK = #{REMARK}, UPD_DTM = #{UPD_DTM}, UPD_ID = #{UPD_ID}
+		WHERE PROV_ID = #{PROV_ID} 
+	</update>
+	
+</mapper>

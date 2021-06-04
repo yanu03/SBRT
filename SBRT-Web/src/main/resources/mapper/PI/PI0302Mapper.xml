@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.bms.domain.PI0302.PI0302Mapper">
+
+	<select id="PI0302G0R0" resultType="Map" parameterType="Map">
+		SELECT SN, CATEGORY, PROV_NM, NEWS_TITLE, DATE_FORMAT(PUB_DT, '%Y%m%d%H%i') PUB_DT, USE_YN, DATE_FORMAT(UPD_DTM, '%Y%m%d%H%i') UPD_DTM 
+		FROM BMS_NEWS_INFO
+		<where>
+			<if test="CONTENT != ''">
+				NEWS_TITLE LIKE CONCAT('%',#{CONTENT},'%') OR PROV_NM LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+		</where>
+	</select>
+</mapper>
