@@ -41,7 +41,7 @@
 						<!-- <w2:column id="chk" name="선택" dataType="text" ignoreStatus="true"></w2:column> -->
 						<w2:column id="CO_CD" name="공통코드" dataType="text"></w2:column>
 						<w2:column id="DL_CD" name="상세코드" dataType="text"></w2:column>
-						<w2:column id="DL_CD_NM" name="코드명" dataType="text"></w2:column>
+						<w2:column id="DL_CD_NM" name="상세코드명" dataType="text"></w2:column>
 						<w2:column id="SORT" name="정렬순서" dataType="text"></w2:column>
 						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
 						<w2:column id="TXT_VAL1" name="속성값1" dataType="text"></w2:column>
@@ -61,9 +61,9 @@
 				<w2:dataList id="dlt_common" baseNode="list" saveRemovedData="true" repeatNode="map">
 					<w2:columnInfo>
 						<!-- <w2:column id="chk" name="name10" dataType="text"></w2:column> -->
-						<w2:column id="CO_CD" name="그룹코드" dataType="text"></w2:column>
-						<w2:column id="DL_CD" name="공통코드" dataType="text"></w2:column>
-						<w2:column id="DL_CD_NM" name="코드명" dataType="text"></w2:column>
+						<w2:column id="CO_CD" name="공통코드" dataType="text"></w2:column>
+						<w2:column id="DL_CD" name="상세코드" dataType="text"></w2:column>
+						<w2:column id="DL_CD_NM" name="상세코드명" dataType="text"></w2:column>
 						<w2:column id="SORT" name="코드순서" dataType="text"></w2:column>
 						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
 						<w2:column id="TXT_VAL1" name="속성값1" dataType="text"></w2:column>
@@ -84,7 +84,7 @@
 				<w2:dataList id="dlt_commonSearchItem" baseNode="list" saveRemovedData="true" repeatNode="map">
 					<w2:columnInfo>
 						<w2:column id="CO_CD_NM" name="그룹명" dataType="text"></w2:column>
-						<w2:column id="CO_CD" name="그룹코드" dataType="text"></w2:column>
+						<w2:column id="CO_CD" name="공통코드" dataType="text"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
@@ -100,9 +100,14 @@
 						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
+				<w2:dataMap baseNode="map" id="dma_commonCO"> <!-- 상세 코드 검색을 위해 상위 공통코드 key 맵-->
+					<w2:keyInfo>
+						<w2:key id="CO_CD" name="프로그램코드" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sbm_commonDtl" ref='' target='data:json,dlt_commonDtl' action="/common/selectCommonDtlList" method="post"
+			<xf:submission id="sbm_commonDtl" ref='data:json,dma_commonCO' target='data:json,dlt_commonDtl' action="/common/selectCommonDtlList" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit=""
 				ev:submitdone="scwin.sbm_commonDtl_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -137,23 +142,21 @@
 	 */
 	scwin.onpageload = function() {
 		com.executeSubmission(sbm_commonSearchItem);
-		com.setEnterKeyEvent(pgm_header, scwin.btn_search_onclick);
-		//com.setGridViewDelCheckBox([grd_CoView, grd_dtlView]);
 		com.executeSubmission(sbm_commonCo);
 		var autoOptions = {
-			Main : { grid : grd_CoView, srchSbm : sbm_commonCo, savSbm : sbm_saveCo, keySbm : sbm_commonSearchItem },
-			Sub1 : { grid : grd_dtlView, srchSbm : sbm_commonDtl, savSbm : sbm_saveDtl}
+			Main : { grid : grd_CoView, srchSbm : sbm_commonCo, savSbm : sbm_saveCo, allSavSbm:sbm_saveCoAll
+				, srchGrp : pgm_header, focusColumn : "CO_CD", name :  "공통코드" },
+			Sub1 : { grid : grd_dtlView, srchSbm : sbm_commonDtl, savSbm : sbm_saveDtl
+				, focusColumn : "DL_CD", name :  "상세코드"}
 		 };
 		 
-		var mainOptions = {
-			ADD: scwin.btn_addCoCell_onclick
-		};
-		
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions, mainOptions);
+
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);
 		
 		var subOptions = {
-			ADD: scwin.btn_addDtlCell_onclick,
+			ADD:{},
 			DEL:{},
+			CNL:{},
 			EXL:{},
 			SAVE:{}
 		};
@@ -184,27 +187,11 @@
 	};
 	
 	/**
-	 * 공통그룹코드의 row 선택시 발생하며 하위 코드리스트에 변경사항 있는 경우에는 저장여부를 묻고, 아닌 경우에는 하위 리스트를 조회한다.
+	 * 공통공통코드의 row 선택시 발생하며 하위 코드리스트에 변경사항 있는 경우에는 저장여부를 묻고, 아닌 경우에는 하위 리스트를 조회한다.
 	 */
 	scwin.grd_CoView_onrowindexchange = function(row, oldRow) {
-		scwin.idxRow = row;
-		var val_coCdOrg = dlt_commonCo.getCellData(row, "CO_CD_ORG");
-		var detailCodeModifyCnt = dlt_commonDtl.getModifiedIndex().length;
-	
-		if (detailCodeModifyCnt > 0) {
-			com.confirm("세부코드 정보를 저장하시겠습니까?", "scwin.indexChgSaveCode");
-		} else {
-			var status_row = dlt_commonCo.getRowStatus(row);
-	
-			if (status_row == "C") {
-				dlt_commonDtl.removeAll();
-			} else {
-				if (val_coCdOrg) {
-					var param = { dma_commonCO : { CO_CD : val_coCdOrg } };
-					com.executeSubmission(sbm_commonDtl, param);
-				}
-			}
-		}
+		com.changeDualGrid(grd_CoView, grd_dtlView, sbm_saveDtl,
+					sbm_commonDtl, dma_commonCO, "CO_CD", "CO_CD_ORG", row, oldRow, "상세코드");
 	};
 	
 	/**

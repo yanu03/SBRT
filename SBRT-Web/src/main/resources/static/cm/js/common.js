@@ -391,6 +391,7 @@ var gcm = {
  * @returns
  */
 gcm._groupValidationCallback = function() {
+	
 	if ((gcm.valStatus.objectName !== "") && (gcm.valStatus.isValid === false)) {
 		var obj = $p.getComponentById(gcm.valStatus.objectName);
 		if (gcm.valStatus.objectType === "gridView") {
@@ -1401,6 +1402,32 @@ com.gridDataDownLoad = function(grdObj, options, infoArr) {
 	}
 };
 
+com.focusGridFrm = function(grid,frm, index, focusColumn, editMode){
+	grid.setFocusedCell(index, focusColumn, editMode);
+	
+	var objArr = WebSquare.util.getChildren(frm, {
+		excludePlugin : "group trigger textbox output calendar image span anchor pageInherit wframe itemTable",
+		recursive : true
+	});
+	
+	
+	for (var objIdx in objArr) {
+		var refId = objArr[objIdx].options.ref;
+
+		if ((typeof refId == "undefined")) continue;
+		// 확장자 명만 추출한 후 소문자로 변경
+		var objRefId = refId.substring(refId.lastIndexOf('.')+1, refId.length);
+
+	
+		if (objRefId == gcm.valStatus.columnId) {
+			$p.getComponentById(objArr[objIdx].getID()).focus();	
+			break;
+		}
+		
+	}
+
+};
+
 /**
  * 설정된 옵션으로 엑셀을 다운로드 한다.
  *
@@ -2238,13 +2265,13 @@ com.validateGroup = function(grpObj, valInfoArr, tacObj, tabId) {
 				dataCollection = WebSquare.util.getComponentById(dataObjInfo.runtimeDataCollectionId);
 				columnId = dataObjInfo.columnId;
 			}
-
+			
 			if ((dataCollection !== null) && (dataCollection.getObjectType() === "dataMap")) {
 				value = dataCollection.get(dataObjInfo.columnId).trim();
 			} else {
 				var tempIdArr = obj.getID().split("_");
 				if (obj.getPluginName() !== "editor") {
-					if (obj.formatter.type === "number" ) {
+					if ( (typeof obj.formatter !== "undefined")&&(obj.formatter.type === "number") ) {
 						if ((obj.realValue === null) || obj.realValue === "" || obj.realValue === " " ) {
 							obj.realValue = 0;
 							obj.setValue(obj.realValue);
@@ -2262,20 +2289,30 @@ com.validateGroup = function(grpObj, valInfoArr, tacObj, tabId) {
 				}
 			}
 
-			for ( var valIdx in valInfoArr) {
-				var valInfo = valInfoArr[valIdx];
-				if ((typeof valInfo.id !== "undefined") && (valInfo.id === columnId)) {
-					if ((typeof valInfo.mandatory !== "undefined") && (valInfo.mandatory === true) && (value.length === 0)) {
-						_setResult(dataCollection, valInfo.id, obj.getID(), "필수 입력 항목 입니다.");
-					} else if ((typeof valInfo.minLength !== "undefined") && (valInfo.minLength > 0) && (value.length < valInfo.minLength)) {
-						_setResult(dataCollection, valInfo.id, obj.getID(), "최소 길이 " + valInfo.minLength + "자리 이상으로 입력해야 합니다.");
-					} else if (typeof valInfo.valFunc === "function") {
-						var resultMsg = valInfo.valFunc(value);
+			try {
+				
+				var userData1 = obj.getUserData("userData1");	
+				if((value.length === 0) && (typeof userData1 !== "undefined") && (userData1.length !== 0)){
+					if (userData1 === 'M') {
+						setResult(dataCollection, columnId, obj.getID(), "필수 입력 항목 입니다.");
+					}
+				}
+				
+				var userData2 = obj.getUserData("userData2");	
+				if((typeof userData2 !== "undefined") && (userData2.length !== 0)){
+					var func = eval(userData2);
+					if(func(value)==false){
+
+						var resultMsg = "유효하지 않은 형식입니다.";
+					
 						if ((typeof resultMsg !== "undefined") && (resultMsg !== "")) {
-							_setResult(dataCollection, valInfo.id, obj.getID(), resultMsg);
+							_setResult(dataCollection, columnId, obj.getID(), resultMsg);
 						}
 					}
 				}
+			} catch (e) {
+				console.log("[com.validateGroup] Exception :: Object Id : " + obj.getID() + ", Plug-in Name: " + obj.getPluginName() + ", "
+						+ e.message);
 			}
 		}
 
@@ -2621,8 +2658,16 @@ com.validateGridTableView = function(gridViewObj, tableObj, tacObj, tabId) {
 				recursive : true
 			});
 			
+			
 			for (var objIdx in objArr) {
-				if (objArr[objIdx].getOriginalID() == gcm.valStatus.columnId) {
+				var refId = objArr[objIdx].options.ref;
+
+				if ((typeof refId == "undefined")) continue;
+			
+				var objRefId = refId.substring(refId.lastIndexOf('.')+1, refId.length)
+
+			
+				if (objRefId == gcm.valStatus.columnId) {
 					gcm.valStatus.focusTableID = objArr[objIdx].getID();
 					break;
 				}
@@ -3908,10 +3953,47 @@ com.getActiveWindowInfo = function() {
 	return activeInfo;
 }
 
+com.enableWriteForm = function(frm,yn) {
+	try{
+		var objArr = WebSquare.util.getChildren(frm, {
+			excludePlugin : "group trigger textbox output calendar image span anchor pageInherit wframe itemTable",
+			recursive : true
+		});
+		
+		for (var objIdx in objArr) {
+			//objArr[objIdx].options.readOnly = yn;
+			objArr[objIdx].setReadOnly(yn);
+		}
+	} catch (e) {
+		
+	}
+}
+
+com.enableDisp = function(autoOpt) {
+	var programAuthority = gcm.CUR_PROGRAM_AUTH;
+	
+	if(programAuthority.SAV_AH != 'Y'){
+		if((typeof autoOpt !== "undefined")&&(autoOpt !== null)){
+			var main = autoOpt.Main;
+			if((typeof main !== "undefined")&&(main !== null)){
+				if((typeof main.grid !== "undefined")&&(main.grid !== null))main.grid.options.readOnly = true;
+				if((typeof main.frm !== "undefined")&&(main.frm !== null))com.enableWriteForm(main.frm,true);
+				
+			}
+			
+			var sub = autoOpt.Sub1;
+			if((typeof sub !== "undefined")&&(sub !== null)&&(typeof sub.grid !== "undefined")&&(sub.grid !== null)){
+				sub.grid.options.readOnly = true;
+			}
+		}
+	}	
+}
+
 com.setMainBtn = function(btnOptions, generator) {
 
-	
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
+	
+	com.enableDisp(autoOpt);
 	
 	if(programAuthority.AUTH_CHECK != 'Y')return;
 	
@@ -3952,10 +4034,11 @@ var autoOptions = {
  };
 com.setMainBtn2(wfm_mainBtn, btnCom.TYPE.SINGLE_GRID, autoOptions, userOptions);
 */
-
+	
 com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
-
+	com.enableDisp(autoOpt);
+		
 	if(programAuthority.AUTH_CHECK != 'Y')return;
 	
 	for(var i in gcm.BTN){
@@ -4509,7 +4592,7 @@ com.saveAllData = function(mainGrid,subGrid,form,saveSbmObj){
 }
 
 
-com.searchGrid = function(grid,searchSbmObj,saveSbmObj,str){
+com.searchGrid = function(grid,searchSbmObj,saveSbmObj,param, str){
 	if(	(typeof saveSbmObj !== "undefined")&&(saveSbmObj !== null)){
 		var idx = grid.getModifiedIndex().length;
 		
@@ -4522,17 +4605,20 @@ com.searchGrid = function(grid,searchSbmObj,saveSbmObj,str){
 					com.saveData(grid,null,saveSbmObj,null)
 				}
 				else {
-					com.executeSubmission(searchSbmObj);
+					if((typeof param !== "undefined")&&(param !== null)) com.executeSubmission(searchSbmObj,param);
+					else com.executeSubmission(searchSbmObj)
 				}
 				return;
 			});
 		}
 		else {
-			com.executeSubmission(searchSbmObj);
+			if((typeof param !== "undefined")&&(param !== null)) com.executeSubmission(searchSbmObj,param);
+			else com.executeSubmission(searchSbmObj)
 		}
 	}
 	else{
-		com.executeSubmission(searchSbmObj);
+		if((typeof param !== "undefined")&&(param !== null)) com.executeSubmission(searchSbmObj,param);
+		else com.executeSubmission(searchSbmObj)
 	}
 	com.delUndoGrid(grid);
 }
@@ -4899,7 +4985,7 @@ com.closeTab = function(mainGrid, subGrid, yesno_str){
 /**
   부모 그리드의 row 인덱스 위치가 바뀔때 마다 실행되며 프로그램코드에 해당하는 자식 그리드를 가져온다.
  */
-com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, searchMap, searchId, keyId, row, oldRow, str) {	
+com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, subKeyMap, subKeyId, keyId, row, oldRow, str) {	
 	gcm.CUR_ROW_INDEX = row;
 	gcm.OLD_ROW_INDEX = oldRow;
 	
@@ -4909,9 +4995,8 @@ com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, s
 	var modifiedMainCnt = mainData.getModifiedIndex().length;
 	var modifiedSubCnt = subData.getModifiedIndex().length;
 	
-	
-	var programCd = mainData.getCellData(row, keyId);
-	searchMap.set(searchId, programCd);
+	var subKeyValue = mainData.getCellData(row, keyId);
+	subKeyMap.set(subKeyId, subKeyValue);
 	
 
 	if (modifiedSubCnt > 0) {
@@ -4923,8 +5008,8 @@ com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, s
 					com.searchGrid(subGrid,subSrchSbmObj);
 				}
 			} else {
-				var programCd = mainData.getCellData(mainGrid.getFocusedRowIndex(), keyId);
-				if (programCd) {
+				var subFocusedValue = mainData.getCellData(mainGrid.getFocusedRowIndex(), keyId);
+				if (subFocusedValue) {
 					com.searchGrid(subGrid,subSrchSbmObj);
 				}
 			}
@@ -4935,7 +5020,7 @@ com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, s
 		if (rowStatus == "C") {
 			subData.removeAll();
 		} else {
-			if (programCd) {
+			if (subKeyValue) {
 				com.searchGrid(subGrid,subSrchSbmObj);
 			}
 		}
