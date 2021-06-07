@@ -4445,7 +4445,7 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 									com.alert("부모 선택 후에 추가 하실 수 있습니다.");
 								}
 							} else {
-								var rowStatus = dlt_program.getRowStatus(focusRowIdx);
+								var rowStatus = main.grid.getRowStatus(focusRowIdx);
 								if (rowStatus == "C") {
 									if ((typeof main.name !== "undefined")&&(main.name !== null)){
 										com.alert(main.name+" 등록 후에 추가 가능합니다.");

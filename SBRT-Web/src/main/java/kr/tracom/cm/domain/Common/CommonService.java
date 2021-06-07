@@ -155,8 +155,12 @@ public class CommonService extends ServiceSupport {
 		int uCnt = 0;
 		int dCnt = 0;
 		List param = getSimpleList("dlt_commonDtl");
+		Map paramMap = getSimpleDataMap("dma_commonCO");
+		String CO_CD = (String) paramMap.get("CO_CD");
+		
 		for (int i = 0; i < param.size(); i++) {
 			Map data = (Map) param.get(i);
+			data.put("CO_CD", CO_CD);
 			String rowStatus = (String) data.get("rowStatus");
 			if (rowStatus.equals("C")) {
 				iCnt += commonMapper.insertCommonDtl(data);
