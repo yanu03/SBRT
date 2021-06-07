@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.bms.domain.PI0400.PI0400Mapper">
+
+	<select id="PI0400G0R0" resultType="Map" parameterType="Map">
+		SELECT DATE_FORMAT(NOTI_DT, '%Y%m%d%H%i') NOTI_DT, SKY_COND, TEMPC, TEMP_MINI, HUMI, 
+		RAIN_PRO, RAINFALL, DATE_FORMAT(UPD_DTM, '%Y%m%d%H%i') UPD_DTM 
+		FROM BMS_WEAT_INFO
+		<where>
+			<if test="CONTENT != ''">
+				MEAS_DT LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+		</where>
+	</select>
+</mapper>

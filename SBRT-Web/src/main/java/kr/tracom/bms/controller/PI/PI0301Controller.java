@@ -33,7 +33,7 @@ public class PI0301Controller extends ControllerSupport {
 	
 	@RequestMapping("/pi/PI0301G0K0")
 	public @ResponseBody Map<String, Object> PI0301G0K0() throws Exception{
-		result.setData("dma_SEQ_BMS_NEWS_CFG_0", PI0301Service.PI0301G0K0());
+		result.setData("dma_SEQ_BMS_NEWS_CFG_INFO_0", PI0301Service.PI0301G0K0());
 		return result.getResult();
 	}
 }
