@@ -28,7 +28,6 @@
 			<w2:dataCollection baseNode="map">
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_NOTICE_MST" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="chk" name="선택" dataType="text"></w2:column>
 						<w2:column id="NOTICE_ID" name="공지아이디" dataType="text"></w2:column>
 						<w2:column id="VHC_NO" name="차량수신자" dataType="text"></w2:column>
 						<w2:column id="STTN_RCPT_IDS" name="정류소수신자" dataType="text"></w2:column>
@@ -47,7 +46,6 @@
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_VHC_MST" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="chk" name="chk" dataType="text"></w2:column>
 						<w2:column id="VHC_ID" name="차량아이디" dataType="text"></w2:column>
 						<w2:column id="COMP_ID" name="운수사아이디" dataType="text"></w2:column>
 						<w2:column id="AREA" name="권역" dataType="text"></w2:column>
@@ -82,7 +80,6 @@
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_STTN_MST" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="chk" name="chk" dataType="text"></w2:column>
 						<w2:column id="STTN_ID" name="정류소아이디" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드아이디" dataType="text"></w2:column>
 						<w2:column id="STTN_NM" name="정류소명" dataType="text"></w2:column>
@@ -158,6 +155,7 @@
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
 		$p.executeSubmission(sub_PI0100G0R0);
+		/*
 		var btnOptions = 
 		[
 			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick},
@@ -181,6 +179,19 @@
 			{userStr:"삭제", auth: gcm.BTN.DEL, cbFnc: scwin.btn3_del_onclick},
 		];
 		com.setSubBtn(btnOptions3, btn_sub2_generator);
+		*/
+		var autoOptions = {
+			Main : { grid : PI0100G0, srchSbm : sub_PI0100G0R0, savSbm : sub_PI0100G0S0, keySbm : sub_PI0100G0K0 },
+			Sub1 : { grid : PI0100G1, srchSbm : sub_PI0100G1R0, savSbm : sub_PI0100G1S0},
+			Sub2 : { grid : PI0100G2, srchSbm : sub_PI0100G2R0, savSbm : sub_PI0100G2S0}
+		};
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);
+		var subOptions = {
+			ADD: scwin.btn2_add_onclick,
+			DEL:{},
+			CNL:{}
+		};
+		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);		
 	};	
 
 	scwin.btn_search_onclick = function() {
@@ -306,6 +317,17 @@
 		if (data == "") return "";
 		return data.substring(0,4) + "-" + data.substring(4,6) + "-" + data.substring(6,8) + " " + data.substring(8,10) + ":" + data.substring(10,12);
 	}
+	scwin.sendSTSDisFormatter = function(data){
+		if (data == "SDS01"){
+			return "예약전송대기중";	
+		}else if(data == "SDS02"){
+			return "예약취소";
+		}else if(data == "SDS03"){
+			return "전송완료";
+		}else{
+			return "";
+		}
+	}	
 	
 	scwin.sub_PI0100G0R0_submitdone = function(e) {
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
@@ -376,15 +398,12 @@
 					<xf:group></xf:group>	
 					<xf:group id="" style="">
 						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.PI0100G0_onrowindexchange" ev:oncellclick=""
-							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서" sortable="true"
+							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="순서" sortable="true"
 							rowStatusHeaderValue="상태" adaptive="crosstab" overflowX="scroll" overflowY="scroll" rowStatusVisible="false"
 							fixedColumnWithHidden="true" dataList="data:dlt_BMS_NOTICE_MST" ignoreCellClick="false" style="width:100%;height:100%;" autoFit="lastColumn"
-							visibleRowNum="10" id="PI0100G0" class="cm_grid" tooltipPositionY="">
+							visibleRowNum="10" id="PI0100G0" class="cm_grid" tooltipPositionY="" checkReadOnlyOnPasteEnable="">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row2">
-									<w2:column removeBorderStyle="false" width="70" inputType="checkbox" style="height:25px" id="column38"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
 									<w2:column width="134" style="height:25px;" inputType="text" id="column9" value="공지 ID" blockSelect="false"
 										displayMode="label" userData1="" userData2="">
 									</w2:column>
@@ -413,9 +432,6 @@
 							</w2:header>
 							<w2:gBody width="40" style="" id="gBody4">
 								<w2:row style="" id="row5">
-									<w2:column removeBorderStyle="false" width="70" inputType="checkbox" style="height:25px" id="chk" value=""
-										blockSelect="false" displayMode="label" readOnly="false">
-									</w2:column>
 									<w2:column width="134" style="height:25px;" inputType="text" id="NOTICE_ID" blockSelect="false"
 										displayMode="label" readOnly="true" userData1="M" userData2="">
 									</w2:column>
@@ -451,7 +467,7 @@
 										blockSelect="false" displayMode="label" displayFormatter="scwin.dateDisFormatter">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px" id="SEND_STS" value=""
-										blockSelect="false" displayMode="label" autoFitFilterList="">
+										blockSelect="false" displayMode="label" autoFitFilterList="" displayFormatter="scwin.sendSTSDisFormatter" displayFormat="">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
@@ -509,7 +525,7 @@
 							</xf:group>
 							<xf:group tagname="td" style="" class="w2tb_td">
 								<xf:input adjustMaxLength="false" id="" style="width: 144px;height: 21px;" ref="data:dlt_BMS_NOTICE_MST.SEND_STS"
-									placeholder="예약전송대기중">
+									placeholder="예약전송대기중" displayFormatter="scwin.sendSTSDisFormatter" readOnly="true">
 								</xf:input>
 							</xf:group>
 						</xf:group>
@@ -566,14 +582,12 @@
 										<w2:anchor id="btn_sub" style="left:0px;top:0px;margin-right: 5px;" class="btn_sh" outerDiv="true"></w2:anchor>
 									</w2:generator>
 								</xf:group>
-								<w2:gridView id="PI0100G1" style="width:100%;height:100%;" scrollByColumn="false" defaultCellHeight="20"
-									scrollByColumnAdaptive="false" dataList="data:dlt_BMS_VHC_MST" autoFit="lastColumn" readOnly="" overflowX="scroll" overflowY="scroll" fixedColumnScrollHidden="">
+								<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
+								<w2:gridView id="PI0100G1" style="width:100%;height:100px;" scrollByColumn="false" defaultCellHeight="20"
+									scrollByColumnAdaptive="false" dataList="data:dlt_BMS_VHC_MST" autoFit="lastColumn" readOnly="" overflowX="auto" overflowY="scroll" fixedColumnScrollHidden="">
 									<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 									<w2:header style="" id="header1">
 										<w2:row style="" id="row1">
-											<w2:column removeBorderStyle="false" width="70" inputType="checkbox" style="height:20px" id="column7"
-												value="" blockSelect="false" displayMode="label">
-											</w2:column>
 											<w2:column removeBorderStyle="false" width="135" inputType="text" style="height:20px" id="column3"
 												value="차량 ID" blockSelect="false" displayMode="label">
 											</w2:column>
@@ -593,9 +607,6 @@
 									</w2:header>
 									<w2:gBody style="" id="gBody1">
 										<w2:row style="" id="row2">
-											<w2:column removeBorderStyle="false" width="70" inputType="checkbox" style="height:20px" id="chk" value=""
-												blockSelect="false" displayMode="label" readOnlyClass="" hidden="" hiddenClass="">
-											</w2:column>
 											<w2:column removeBorderStyle="false" width="135" inputType="text" style="height:20px" id="VHC_ID" value=""
 												blockSelect="false" displayMode="label">
 											</w2:column>
@@ -632,13 +643,10 @@
 									</w2:generator>
 								</xf:group>
 								<w2:gridView autoFit="lastColumn" dataList="data:dlt_BMS_STTN_MST" defaultCellHeight="20" id="PI0100G2" readOnly=""
-									scrollByColumn="false" scrollByColumnAdaptive="false" style="width:100%;height:100%;" overflowY="scroll" overflowX="scroll">
+									scrollByColumn="false" scrollByColumnAdaptive="false" style="width:100%;height:100px;" overflowY="scroll" overflowX="auto">
 									<w2:caption id="caption1" style="" value="this is a grid caption."></w2:caption>
 									<w2:header id="header1" style="">
 										<w2:row id="row1" style="">
-											<w2:column blockSelect="false" displayMode="label" id="column7" inputType="checkbox"
-												removeBorderStyle="false" style="height:20px" value="" width="70">
-											</w2:column>
 											<w2:column blockSelect="false" displayMode="label" id="column3" inputType="text" removeBorderStyle="false"
 												style="height:20px" value="정류소ID" width="166">
 											</w2:column>
@@ -661,9 +669,6 @@
 									</w2:header>
 									<w2:gBody id="gBody1" style="">
 										<w2:row id="row2" style="">
-											<w2:column blockSelect="false" displayMode="label" hidden="" hiddenClass="" id="chk" inputType="checkbox"
-												readOnlyClass="" removeBorderStyle="false" style="height:20px" value="" width="70">
-											</w2:column>
 											<w2:column blockSelect="false" displayMode="label" id="STTN_ID" inputType="text" removeBorderStyle="false"
 												style="height:20px" value="" width="166">
 											</w2:column>

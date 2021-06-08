@@ -8,14 +8,14 @@
 		UPD_ID, CONCAT(DATE_FORMAT(PLAY_ST_DT, '%Y%m%d'), DATE_FORMAT(PLAY_ED_DT, '%Y%m%d')) PLAY_DATE, VOC_PATH 
 		FROM BMS_VOC_INFO
 		<where>
-			<if test="Content != ''">
-				VOC_ID LIKE CONCAT('%',#{Content},'%') OR VOC_NM LIKE CONCAT('%',#{Content},'%')
+			<if test="CONTENT != ''">
+				VOC_ID LIKE CONCAT('%',#{CONTENT},'%') OR VOC_NM LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
 		</where>
 	</select>
 	
 	<select id="PI0201G0K0" resultType="Map">
-		SELECT CONCAT('NO', LPAD(NEXTVAL(SEQ_BMS_VOC_INFO_0), 8, '0')) AS 'SEQ'
+		SELECT CONCAT('VC', LPAD(NEXTVAL(SEQ_BMS_VOC_INFO_0), 8, '0')) AS 'SEQ'
 	</select>	
 
 	<insert id="PI0201G0I0" parameterType="Map">	
@@ -27,7 +27,7 @@
 	</insert>
 
 	<delete id="PI0201G0D0" parameterType="Map">
-		DELETE FROM BMS_VOC_INFO VOC_ID = #{VOC_ID};
+		DELETE FROM BMS_VOC_INFO WHERE VOC_ID = #{VOC_ID};
 	</delete>
 	
 	<update id="PI0201G0U0" parameterType="Map">
@@ -36,7 +36,6 @@
 		REMARK = #{REMARK}, PLAY_TM = #{PLAY_TM}, VOC_DIV = #{VOC_DIV}, CON_ID = #{CON_ID},PLAY_ED_DT = STR_TO_DATE(#{PLAY_ED_DT}, '%Y%m%d'), 
 		STTN_TEXT_A = #{STTN_TEXT_A}, STTN_TEXT_A_EN = #{STTN_TEXT_A_EN}, STTN_TEXT_B = #{STTN_TEXT_B}, STTN_TEXT_B_EN = #{STTN_TEXT_B_EN}, 
 		UPD_DTM = #{UPD_DTM}, UPD_ID = #{UPD_ID}, VOC_PATH = #{VOC_PATH} WHERE VOC_ID = #{VOC_ID}
-		WHERE VOC_ID = #{VOC_ID}
 	</update>
 	
 </mapper>

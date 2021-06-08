@@ -43,7 +43,7 @@
 						<w2:column id="UPD_ID" name="갱신아이디" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataMap baseNode="map" id="SEQ_BMS_NEWS_CFG_INFO_0">
+				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_NEWS_CFG_INFO_0">
 					<w2:keyInfo>
 						<w2:key id="SEQ" name="SEQ" dataType="text"></w2:key>
 					</w2:keyInfo>
@@ -54,11 +54,11 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0301G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0301G0K0" ref="" target="data:json,SEQ_BMS_NEWS_CFG_INFO_0" action="/pi/PI0301G0K0" method="post"
+			<xf:submission id="sub_PI0301G0K0" ref="" target="data:json,dma_SEQ_BMS_NEWS_CFG_INFO_0" action="/pi/PI0301G0K0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				ev:submit="" ev:submitdone="scwin.sub_PI0301G0K0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0301G0S0" ref='data:json,{"action":"updated","id":"dlt_BMS_NEWS_CFG_INFO"}' target=""
+			<xf:submission id="sub_PI0301G0S0" ref='data:json,dlt_BMS_NEWS_CFG_INFO' target=""
 				action="/pi/PI0301G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -72,7 +72,7 @@
 		 };
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
 		
-		scwin.btn_set_onclick();
+		//scwin.btn_set_onclick();
 	};
 	
 	scwin.dateDisFormatter = function(data){
@@ -97,7 +97,10 @@
 		};
 		com.openPopup(("/ui/BMS/PI0301/PI0301P01.xml"), options, data);  
 	};
-	]]></script>
+	
+	scwin.sub_PI0301G0K0_submitdone = function(e) {
+		var insertIndex = com.addGrid(PI0301G0,dma_SEQ_BMS_NEWS_CFG_INFO_0,"PROV_ID","PROV_NM");
+	};]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group class="pgm_container grdr_20_20_a" id="pgm_container" style="">
@@ -135,7 +138,7 @@
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="">
-						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.PI0100G0_onrowindexchange" ev:oncellclick=""
+						<w2:gridView sortEvent="onclick" ev:oncellclick=""
 							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서" sortable="true"
 							rowStatusHeaderValue="상태" adaptive="crosstab" overflowX="scroll" overflowY="scroll" rowStatusVisible="false"
 							fixedColumnWithHidden="true" dataList="data:dlt_BMS_NEWS_CFG_INFO" ignoreCellClick="false" style="height:100%;" autoFit="lastColumn"
@@ -235,7 +238,7 @@
 									<w2:colspan>3</w2:colspan>
 									<w2:rowspan>1</w2:rowspan>
 								</w2:attributes>
-								<xf:input adjustMaxLength="false" id="PROV_NM" placeholder="홍길동" readOnly="true"
+								<xf:input adjustMaxLength="false" id="PROV_NM" placeholder="홍길동" readOnly="false"
 									ref="data:dlt_BMS_NEWS_CFG_INFO.PROV_NM" style="width: 100%;height: 100%;" refSync="">
 								</xf:input>
 							</xf:group></xf:group><xf:group tagname="tr" style="">

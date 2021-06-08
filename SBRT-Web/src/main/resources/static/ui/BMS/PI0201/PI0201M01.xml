@@ -54,7 +54,7 @@
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
 					<w2:keyInfo>
-						<w2:key id="Content" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name1" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_VOC_INFO_0">
@@ -70,9 +70,9 @@
 			</xf:submission>
 			<xf:submission id="sub_PI0201G0K0" ref="" target="data:json,dma_SEQ_BMS_VOC_INFO_0" action="/pi/PI0201G0K0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				ev:submit="" ev:submitdone="scwin.sub_PI0201G0K0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0201G0S0" ref='data:json,{"action":"updated","id":"dlt_BMS_VOC_INFO"}' target=""
+			<xf:submission id="sub_PI0201G0S0" ref='data:json,dlt_BMS_VOC_INFO' target=""
 				action="/pi/PI0201G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -97,24 +97,39 @@
 	}	
 	
 	scwin.upload0_onInputValueChange = function(fileName) {
-		upload0.submit();
+		VOC_PATH.submit();
 	};
+	
+	scwin.PI0201G0_onrowindexchange = function(row, oldRow) {
+		var doc_audio0 = document.getElementById("audio0");
+		scwin.idxRowVOC = row;
+		doc_audio0.src = dlt_BMS_VOC_INFO.getCellData(row, dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"));
+		doc_audio0.pause();
+	};	
 	
 	scwin.upload0_ondone = function(retXml) {
 		var doc_audio0 = document.getElementById("audio0");
 		var filePath = WebSquare.xml.getValue(retXml, "ret/storedFileList");
-		var realPath = "http://127.0.0.1:8081/fileUpload/up/";
+		// 실서버 도메인 변경 필요
+		var realPath = "http://localhost:8081/fileUpload/up/";
+		console.log(realPath);
 		doc_audio0.src = realPath + filePath;
+		//doc_audio0.src = "http://localhost:8081/fileUpload/up/file_example_MP3_5MG.mp3"
+		dlt_BMS_VOC_INFO.setCellData(scwin.idxRowVOC, dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"), doc_audio0.src)
+		console.log(scwin.idxRowVOC + " " + dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"));
+		console.log(doc_audio0.src);
 		doc_audio0.type = "audio/mpeg";
 		doc_audio0.pause();
 		// 서버에 저장되도 404 error 발생함 바로 갱신이 안되는듯함
-		// VOC_PATH 값 저장
 	};
 	
 	scwin.sub_PI0201G0R0_submitdone = function(e) {
 		
 	};
-	]]></script>
+	
+	scwin.sub_PI0201G0K0_submitdone = function(e) {
+		var insertIndex = com.addGrid(PI0201G0,dma_SEQ_BMS_VOC_INFO_0,"VOC_ID","VOC_NM");
+	};]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group class="pgm_container grdr_20_20_a" id="pgm_container" style="">
@@ -152,9 +167,9 @@
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="">
-						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.PI0100G0_onrowindexchange" ev:oncellclick=""
+						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.PI0201G0_onrowindexchange" ev:oncellclick=""
 							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서" sortable="true"
-							rowStatusHeaderValue="상태" adaptive="crosstab" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
+							rowStatusHeaderValue="상태" adaptive="crosstab" overflowX="auto" overflowY="scroll" rowStatusVisible="false"
 							fixedColumnWithHidden="true" dataList="data:dlt_BMS_VOC_INFO" ignoreCellClick="false" style="height:100%;" autoFit="lastColumn"
 							visibleRowNum="" id="PI0201G0" class="cm_grid" tooltipPositionY="">
 							<w2:header style="" id="header1">
@@ -219,10 +234,10 @@
 										blockSelect="false" displayMode="label" readOnly="true" displayFormatter="scwin.playDateDisFormatter">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="116" inputType="text" style="height:25px" id="SCR_TXT" value=""
-										blockSelect="false" displayMode="label" readOnly="true" displayFormatter="scwin.dateDisFormatter">
+										blockSelect="false" displayMode="label" readOnly="true" displayFormatter="">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="108" inputType="text" style="height:25px" id="" value=""
-										blockSelect="false" displayMode="label" displayFormatter="scwin.dateDisFormatter">
+										blockSelect="false" displayMode="label" displayFormatter="">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="84" inputType="text" style="height:25px" id="REMARK" value=""
 										blockSelect="false" displayMode="label" autoFitFilterList="">
@@ -274,7 +289,7 @@
 									<w2:colspan>3</w2:colspan>
 									<w2:rowspan>1</w2:rowspan>
 								</w2:attributes>
-								<xf:input adjustMaxLength="false" id="VOC_ID" style="height: 21px;margin-right: 5px;" ref="data:dlt_BMS_VOC_INFO.VOC_ID"
+								<xf:input adjustMaxLength="false" id="VOC_ID" style="width:100%;height:100%;" ref="data:dlt_BMS_VOC_INFO.VOC_ID"
 									placeholder="홍길동" readOnly="true">
 								</xf:input>
 							</xf:group>
@@ -287,7 +302,7 @@
 								</w2:attributes>
 							</xf:group>
 							<xf:group tagname="td" style="" class="w2tb_td">
-								<xf:input adjustMaxLength="false" id="VOC_NM" style="height: 21px;" ref="data:dlt_BMS_VOC_INFO.VOC_NM"
+								<xf:input adjustMaxLength="false" id="VOC_NM" style="width:100%;height:100%;" ref="data:dlt_BMS_VOC_INFO.VOC_NM"
 									placeholder="업무 협의 요청">
 								</xf:input>
 							</xf:group>
@@ -298,9 +313,20 @@
 								</w2:attributes>
 							</xf:group>
 							<xf:group tagname="td" style="" class="w2tb_td">
-								<xf:input adjustMaxLength="false" id="PLAY_TYPE" style="width: 144px;height: 21px;" ref="data:dlt_BMS_VOC_INFO.PLAY_TYPE"
-									placeholder="예약전송대기중">
-								</xf:input>
+								<xf:select1 id="PLAY_TYPE" chooseOption="" style="width: 148px;height: 21px;" submenuSize="auto"
+									allOption="" disabled="false" direction="auto" appearance="minimal" disabledClass="w2selectbox_disabled" title=""
+									ref="data:dlt_BMS_VOC_INFO.PLAY_TYPE">
+									<xf:choices>
+										<xf:item>
+											<xf:label><![CDATA[TTS]]></xf:label>
+											<xf:value><![CDATA[TTS]]></xf:value>
+										</xf:item>
+										<xf:item>
+											<xf:label><![CDATA[WAV]]></xf:label>
+											<xf:value><![CDATA[WAV]]></xf:value>
+										</xf:item>
+									</xf:choices>
+								</xf:select1>
 							</xf:group>
 						</xf:group>
 						<xf:group tagname="tr" style="">
@@ -312,7 +338,9 @@
 							</xf:group>
 							<xf:group tagname="td" style="" class="w2tb_td">
 								<w2:upload imageStyle="position:absolute;vertical-align:middle;word-wrap:break-word"
-									inputStyle="vertical-align:middle;word-wrap:break-word" style="width: 100%;height: 23px;" id="VOC_PATH" inputClass="" ev:onInputValueChange="scwin.upload0_onInputValueChange" ev:ondone="scwin.upload0_ondone">
+									inputStyle="vertical-align:middle;word-wrap:break-word" style="width: 100%;height: 23px;" id="VOC_PATH" inputClass=""
+									ev:onInputValueChange="scwin.upload0_onInputValueChange" ev:ondone="scwin.upload0_ondone" accept=".wav,.tts,.mp3" title="" type=""
+									disabled="" class="">
 								</w2:upload>
 							</xf:group>
 							<xf:group tagname="th" style="" class="w2tb_th">
@@ -323,7 +351,7 @@
 							</xf:group>
 							<xf:group tagname="td" style="" class="w2tb_td">
 								<w2:inputCalendar footerDiv="false" id="" style="float:left; width:150px; height:23px;" renderDiv="true"
-									focusOnDateSelect="false" calendarValueType="yearMonthDateTime" rightAlign="false" renderType="component"
+									focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component"
 									ref="data:dlt_BMS_VOC_INFO.PLAY_ST_DT" editType="" displayFormat="" ioFormat="" calendarDisplayFormatFunc="">
 								</w2:inputCalendar>
 								<w2:inputCalendar footerDiv="false" id="" style="width: 150px;height: 23px;" renderDiv="true" focusOnDateSelect="false"
@@ -365,7 +393,7 @@
 									<w2:rowspan>1</w2:rowspan>
 								</w2:attributes>
 								<xf:group class="ml5 fr" id="" style=""></xf:group>
-								<xf:textarea id="" ref="data:dlt_BMS_VOC_INFO.SCR_TXT_EN" style="width: 300px;height: 100px;"></xf:textarea>
+								<xf:textarea id="" ref="data:dlt_BMS_VOC_INFO.SCR_TXT_EN" style="width: 100%;height: 100%;"></xf:textarea>
 							</xf:group>
 						</xf:group>
 						<xf:group tagname="tr" style="">
@@ -380,7 +408,7 @@
 									<w2:colspan>3</w2:colspan>
 									<w2:rowspan>1</w2:rowspan>
 								</w2:attributes>
-								<audio controls="" style="width: 250px;height: 100px;" id="audio0" preload="" muted="" loop="" autoplay=""></audio>
+								<audio controls="" style="width: 250px;height: 50px;" id="audio0" preload="" muted="" loop="" autoplay=""></audio>
 							</xf:group>
 						</xf:group>
 						<xf:group tagname="tr" style="">
@@ -395,7 +423,7 @@
 									<w2:colspan>3</w2:colspan>
 									<w2:rowspan>1</w2:rowspan>
 								</w2:attributes>
-								<xf:input adjustMaxLength="false" id="" style="width: 144px;height: 21px;" ref="data:dlt_BMS_VOC_INFO.REMARK"></xf:input>
+								<xf:input adjustMaxLength="false" id="" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.REMARK"></xf:input>
 							</xf:group>
 						</xf:group>
 					</xf:group>

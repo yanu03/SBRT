@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="/cm/css/all.css" type="text/css"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<!-- 
+		#####################################################################
+		파일명 : SM0500M01.xml
+		프로그램명 : 조직 관리 
+		설 명 : 조직을 관리(등록,수정,삭제)하는 화면
+		작성자 : Inswave Systems
+		작성일 : 2016.10.24
+		
+		수정일자	  수정자			 수정내용
+		=====================================================================
+		2016.10.24	Inswave Systems	최초작성
+		2018.01.26	Inswave Systems	WebSquare5 SP2 기능을 적용하도록 소스 업그레이드
+		2018.11.12	Inswave Systems	WebSquare5 SP3 기능을 적용하도록 소스 업그레이드
+		#####################################################################
+		-->
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="CONTENT" name="name1" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_WEAT_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="NOTI_DT" name="발표일시" dataType="text"></w2:column>
+						<w2:column id="SKY_COND" name="하늘상태" dataType="text"></w2:column>
+						<w2:column id="TEMPC" name="온도" dataType="text"></w2:column>
+						<w2:column id="TEMP_MINI" name="최저기온" dataType="text"></w2:column>
+						<w2:column id="TEMP_HIGH" name="최고기온" dataType="text"></w2:column>
+						<w2:column id="HUMI" name="습도" dataType="text"></w2:column>
+						<w2:column id="RAIN_PRO" name="강수확률" dataType="text"></w2:column>
+						<w2:column id="RAINFALL" name="강수량" dataType="text"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ATMO_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="MEAS_DT" name="측정일시" dataType="text"></w2:column>
+						<w2:column id="DUSTC" name="미세먼지농도" dataType="text"></w2:column>
+						<w2:column id="SDUSTC" name="초미세먼지농도" dataType="text"></w2:column>
+						<w2:column id="SDC" name="아황산가스농도" dataType="text"></w2:column>
+						<w2:column id="CMC" name="일산화탄소농도" dataType="text"></w2:column>
+						<w2:column id="OZONEC" name="오존농도" dataType="text"></w2:column>
+						<w2:column id="NDC" name="이산화질소농도" dataType="text"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_PI0400G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_WEAT_INFO" action="/pi/PI0400G0R0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0400G0R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_PI0400G0K0" ref="" target="data:json,SEQ_BMS_NEWS_CFG_INFO_0" action="/pi/PI0400G0K0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_PI0400G0S0" ref='data:json,{"action":"updated","id":"dlt_BMS_NEWS_INFO"}' target=""
+				action="/pi/PI0400G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+	scwin.onpageload = function() {
+		$p.executeSubmission(sub_PI0400G0R0);
+		
+		var autoOptions = {
+			Main : { grid : PI0400G0, srchSbm : sub_PI0400G0R0 }
+		 };
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);		
+	};
+	
+	scwin.dateDisFormatter = function(data){
+		if (data == "") return "";
+		return data.substring(0,4) + "-" + data.substring(4,6) + "-" + data.substring(6,8) + " " + data.substring(8,10) + ":" + data.substring(10,12);
+	}
+	
+	scwin.sub_PI0400G0R0_submitdone = function(e) {
+		
+	};
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="pgm_container grdr_20_20_a" id="pgm_container" style="">
+			<xf:group id="pgm_navi" class="pgm_navi" style="">
+				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe></xf:group>
+			<xf:group id="pgm_header" style="" class="pgm_header">
+				<xf:group class="gr_search" id="" style="">
+					<xf:group class="label" id="" style="">
+						<xf:group class="" id="" style="">
+							<w2:span class="" id="" label="기상/대기 월별 검색"></w2:span>
+						</xf:group>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
+							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
+							style="width: 200px;height: 21px;float: left;" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+							<w2:choices>
+								<w2:itemset nodeset="data:dlt_grgSearchItem">
+									<w2:label ref="GRG_ID"></w2:label>
+									<w2:value ref="GRG_ID"></w2:value>
+								</w2:itemset>
+							</w2:choices>
+						</w2:autoComplete>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group>
+			
+			<xf:group id="pgm_content" style="" class="pgm_content grdc_500_20_a">
+				<xf:group id="pgm_detail" style="" class="pgm_detail grdr_20_2_a">
+					<xf:group id="" style="" class="defaultbox">
+						<w2:textbox id="" style="" class="df_tt fl" label="현재 기상/대기 정보"></w2:textbox>
+
+						
+					</xf:group>
+					<xf:group></xf:group>
+					
+					<xf:group class="" id="" style="">
+						<xf:group adaptive="layout" class="w2tb tb" id="FI0400F0" style="width:100%; height:100%;" tagname="table">
+							<w2:attributes>
+								<w2:summary>
+								</w2:summary>
+							</w2:attributes>
+							<xf:group tagname="colgroup">
+								<xf:group style="width:90px;" tagname="col">
+								</xf:group>
+								<xf:group style="width:120px;" tagname="col">
+								</xf:group>
+								<xf:group style="width:90px;" tagname="col">
+								</xf:group>
+								<xf:group style="width:120px;" tagname="col">
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group class="w2tb_th" style="" tagname="th">업데이트&amp;nbsp;일시</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<xf:select1 allOption="" appearance="minimal" chooseOption="" chooseOptionLabel="전체" direction="auto" disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="AREA" mandatory="true" optionOrder="" ref="data:dlt_BMS_TRANSCOMP_MST.AREA" renderType="component" style="height:24px;" submenuSize="auto" labelWidthAuto="">
+										<xf:choices>
+										</xf:choices>
+									</xf:select1>
+								</xf:group>
+									<xf:group class="w2tb_th" style="" tagname="th">하늘상태</xf:group>
+									<xf:group class="w2tb_td" style="" tagname="td">
+										<w2:attributes>
+											<w2:colspan>1</w2:colspan>
+											<w2:rowspan>1</w2:rowspan>
+										</w2:attributes>
+										<xf:input adjustMaxLength="" class="req" disabled="" id="COMP_NM" mandatory="" ref="data:dlt_BMS_TRANSCOMP_MST.COMP_NM" style="width:100%;height:21px;" fireEventOnInvalid="" validator="" validateOnInput="" validateOnCheckMaxByteLength="" invalidMessageFunc="" readOnly="">
+										</xf:input>
+									</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group class="w2tb_th" style="" tagname="th">온도</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<xf:group id="" style="">
+									<xf:input allowChar="0-9" id="" maxlength="13" ref="data:dlt_BMS_TRANSCOMP_MST.PHONE" style="width:100%;height: 21px;" validator="" dataType="text" disabled="" maskFormat="" minByteLength="" displayFormatter="com.transPhone" customModelFormatter="com.transPhone" customModelUnformatter="">
+									</xf:input>
+									</xf:group>
+								</xf:group>
+								<xf:group class="w2tb_th" style="" tagname="th">초미세먼지농도</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<w2:attributes>
+										<w2:colspan>1</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:group id="" style="">
+										<xf:input allowChar="0-9" id="OFFICE_PHONE1" maxlength="13" ref="data:dlt_BMS_TRANSCOMP_MST.FAX" style="width:100%;height: 21px;" dataType="text" customModelFormatter="com.transPhone" displayFormatter="com.transPhone">
+										</xf:input>
+									</xf:group>
+								</xf:group>
+							</xf:group>
+							<xf:group tagname="tr" style="">
+								<xf:group class="w2tb_th" tagname="th">최고기온
+									<w2:attributes>
+										<w2:scope>row</w2:scope>
+									</w2:attributes>
+								</xf:group>
+								<xf:group class="w2tb_td" tagname="td">
+									<w2:attributes>
+									</w2:attributes>
+									<xf:input adjustMaxLength="" class="" disabled="" id="EMAIL" mandatory="" ref="data:dlt_BMS_TRANSCOMP_MST.EMAIL" style="width:100%;height:21px;" allowChar="aA-zZ,0-9,@,." customModelFormatter="" displayFormatter="" customModelUnformatter="" invalidMessageFunc="" validator="" tooltipFormatter="">
+									</xf:input>
+								</xf:group>
+								<xf:group class="w2tb_th" tagname="th">미세먼지농도
+									<w2:attributes>
+										<w2:scope>row</w2:scope>
+									</w2:attributes>
+								</xf:group>
+								<xf:group class="w2tb_td" tagname="td">
+									<w2:attributes>
+										<w2:colspan>1</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:input adjustMaxLength="" allowChar="0-9" class="" disabled="" id="SI0102F0_COMP_REG_NO" mandatory="" ref="data:dlt_BMS_TRANSCOMP_MST.COMP_REG_NO" style="width:100%;height:21px;" maxlength="10" dataType="text" maskFormat="" maskFormatModelExcludeChar="" displayFormat="" escape="" euroMask="" imeMode="" ioFormat="" applyFormat="" displayFormatter="" customModelFormatter="" validator="">
+									</xf:input>
+								</xf:group>
+								</xf:group>
+								<xf:group tagname="tr" style="">
+									<xf:group class="w2tb_th" tagname="th">최저기온
+										<w2:attributes>
+											<w2:scope>row</w2:scope>
+										</w2:attributes>
+									</xf:group>
+									<xf:group class="w2tb_td" tagname="td">
+										<w2:attributes>
+										</w2:attributes>
+									</xf:group>
+									<xf:group class="w2tb_th" tagname="th">아황산가스농도
+									<w2:attributes>
+											<w2:scope>row</w2:scope>
+										</w2:attributes>
+									</xf:group>
+									<xf:group class="w2tb_td" tagname="td">
+											<w2:attributes>
+											</w2:attributes>
+									</xf:group>
+								</xf:group>
+								<xf:group tagname="tr" style="">
+									<xf:group class="w2tb_th" tagname="th">습도
+										<w2:attributes>
+											<w2:scope>row</w2:scope>
+										</w2:attributes>
+									</xf:group>
+									<xf:group class="w2tb_td" tagname="td">
+										<w2:attributes>
+										</w2:attributes>
+									</xf:group>
+									<xf:group class="w2tb_th" tagname="th">일산화탄소농도
+										<w2:attributes>
+											<w2:scope>row</w2:scope>
+										</w2:attributes>
+									</xf:group>
+									<xf:group class="w2tb_td" tagname="td">
+										<w2:attributes>
+										</w2:attributes>
+									</xf:group>
+								</xf:group>
+								<xf:group tagname="tr" style="">
+									<xf:group tagname="th" class="w2tb_th">강수확률
+										<w2:attributes>
+											<w2:scope>row</w2:scope>
+										</w2:attributes>
+									</xf:group>
+									<xf:group tagname="td" class="w2tb_td">
+										<w2:attributes></w2:attributes>
+									</xf:group><xf:group tagname="th" class="w2tb_th">오존농도
+									<w2:attributes>
+										<w2:scope>row</w2:scope>
+									</w2:attributes>
+								</xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes></w2:attributes>
+								</xf:group></xf:group>
+								<xf:group tagname="tr" style="">
+									<xf:group tagname="th" class="w2tb_th">강수량
+										<w2:attributes>
+											<w2:scope>row</w2:scope>
+										</w2:attributes>
+									</xf:group>
+									<xf:group tagname="td" class="w2tb_td">
+										<w2:attributes></w2:attributes>
+									</xf:group>
+									<xf:group tagname="th" class="w2tb_th">이산화질소농도
+										<w2:attributes> 
+											<w2:scope>row</w2:scope>
+										</w2:attributes>
+									</xf:group>
+									<xf:group tagname="td" class="w2tb_td">
+										<w2:attributes></w2:attributes>
+									</xf:group>
+								</xf:group>
+						</xf:group>
+					</xf:group>
+				</xf:group>
+				<xf:group id="" style="" class="vertical_line"></xf:group>
+				
+				<xf:group class="pgm_list grdr_20_a_20_300">
+					<xf:group id="" style="" class="defaultbox">
+						<w2:textbox id="" style="" class="df_tt fl" label="기상/대기 최근 전송이력"></w2:textbox>
+					</xf:group>
+					<xf:group id="">				
+						<w2:gridView id="PI0400G0" style="width:100%;height:100%;" defaultCellHeight="20" rowNumVisible="true" 
+							useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순번" sortable="true" 
+							rowStatusHeaderValue="상태" adaptive="crosstab" overflowX="scroll" overflowY="scroll" rowStatusVisible="false"
+							fixedColumnWithHidden="true" ignoreCellClick="false" dataList="data:dlt_BMS_WEAT_INFO" class="cm_grid" autoFit="lastColumn">
+							<w2:header style="" id="header1">
+								<w2:row style="" id="row1">
+									<w2:column removeBorderStyle="false" width="91" inputType="text" style="height:20px" id="column5"
+										value="업데이트일시" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="77" inputType="text" style="height:20px" id="column4"
+										value="발표일시" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="350" inputType="text" style="height:20px" id="column3"
+										value="하늘상태" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="167" inputType="text" style="height:20px" id="column2"
+										value="온도(℃)" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="211" inputType="text" style="height:20px" id="column1"
+										value="최저기온(℃)" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="211" inputType="text" style="height:20px" id="column6"
+										value="최고기온(℃)" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="211" inputType="text" style="height:20px" id="column7"
+										value="습도(%)" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="211" inputType="text" style="height:20px" id="column8"
+										value="강수확률(%)" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="211" inputType="text" style="height:20px" id="column9"
+										value="강수량(mm)" blockSelect="false" displayMode="label">
+									</w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody width="40" style="" id="gBody1">
+								<w2:row style="" id="row2">
+									<w2:column removeBorderStyle="false" width="91" inputType="text" style="height:20px" id="UPD_DTM"
+										 blockSelect="false" displayMode="label" displayFormatter="scwin.dateDisFormatter">
+									</w2:column>								
+									<w2:column removeBorderStyle="false" width="91" inputType="text" style="height:20px" id="NOTI_DT"
+										 blockSelect="false" displayMode="label" displayFormatter="scwin.dateDisFormatter">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="77" inputType="text" style="height:20px" id="SKY_COND"
+										value="" blockSelect="false" displayMode="label" hiddenClass="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="350" inputType="text" style="height:20px" id="TEMPC"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="167" inputType="text" style="height:20px" id="TEMP_MINI"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="211" inputType="text" style="height:20px" id="TEMP_HIGH"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="211" inputType="text" style="height:20px" id="HUMI"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="211" inputType="text" style="height:20px" id="RAIN_PRO"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="211" inputType="text" style="height:20px" id="RAINFALL"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer style="" id="footer1">
+								<w2:row style="" id="row3">
+									<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px; border-right:5px" id="column48" value=""
+										blockSelect="false" displayMode="label" colSpan="13" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('GRG_ID')"
+										textAlign="left">
+									</w2:column>
+								</w2:row>
+							</w2:footer>
+						</w2:gridView>
+					</xf:group>
+					
+					<xf:group id="" class="horizontal_line"></xf:group>	
+										
+					<xf:group id="" style="">
+						<xf:group id="" style="" class="defaultbox">
+							<w2:textbox id="" style="" class="df_tt fl" label="기상/대기 최근 전송이력"></w2:textbox>
+						</xf:group>					
+						<w2:gridView dataList="" defaultCellHeight="20" id="PI0400G1" rowNumVisible="true" useShiftKey="true" readOnly="" 
+							scrollByColumn="false" rowNumHeaderValue="순번" sortable="true"
+							rowStatusHeaderValue="상태" adaptive="crosstab" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
+							fixedColumnWithHidden="true" ignoreCellClick="false" style="width: 100%;height: 100%;" class="cm_grid" autoFit="lastColumn">
+							<w2:header id="header1" style="">
+								<w2:row id="row1" style="">
+									<w2:column blockSelect="false" displayMode="label" id="" inputType="text" removeBorderStyle="false"
+										style="height:20px" value="차량번호" width="195">
+									</w2:column>
+									<w2:column blockSelect="false" displayMode="label" id="column4" inputType="text"
+										removeBorderStyle="false" style="height:20px" value="관리 ID" width="133">
+									</w2:column>
+									<w2:column blockSelect="false" displayMode="label" id="column3" inputType="text"
+										removeBorderStyle="false" style="height:20px" value="전송일시" width="174">
+									</w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody id="gBody1" style="">
+								<w2:row id="row2" style="">
+									<w2:column blockSelect="false" displayMode="label" id="column10" inputType="text"
+										removeBorderStyle="false" style="height:20px" value="" width="195">
+									</w2:column>
+									<w2:column blockSelect="false" displayMode="label" id="column9" inputType="text"
+										removeBorderStyle="false" style="height:20px" value="" width="133">
+									</w2:column>
+									<w2:column blockSelect="false" displayMode="label" id="column8" inputType="text"
+										removeBorderStyle="false" style="height:20px" value="" width="174">
+									</w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer style="" id="footer2">
+								<w2:row style="" id="row3">
+									<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px; border-right:5px" id="column48" value=""
+										blockSelect="false" displayMode="label" colSpan="13" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('GRG_ID')"
+										textAlign="left">
+									</w2:column>
+								</w2:row>
+							</w2:footer>
+						</w2:gridView>
+					</xf:group>
+				</xf:group>
+			</xf:group> <!-- content end -->
+		</xf:group> <!-- container end -->
+	</body>
+</html>
