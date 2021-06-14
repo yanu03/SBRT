@@ -20,38 +20,11 @@ public class PI0400Service extends ServiceSupport{
 		Map param = getSimpleDataMap("dma_search");
 		return PI0400Mapper.PI0400G0R0(param);
 	}
-	
-	public Map PI0400G0K0() throws Exception {
-		return PI0400Mapper.PI0400G0K0();
-	}	
-	
-	public Map PI0400G0S0() throws Exception {
-		int iCnt = 0;
-		int uCnt = 0;
-		int dCnt = 0;
-		List param = getSimpleList("dlt_BMS_WEAT_INFO");
-		for (int i = 0; i < param.size(); i++) {
-			Map<String, Object> data = (Map) param.get(i);
-			String rowStatus = (String) data.get("rowStatus");
-			// 데이터베이스 date 타입일때 공백으로 들어가면 에러나는 사항 임시 수정
-			for (String key : data.keySet()) {
-				if (data.get(key).equals("")) {
-					data.put(key, null);
-				}
-			}			
-			if (rowStatus.equals("C")) {
-				iCnt += PI0400Mapper.PI0400G0I0(data);
-			} else if (rowStatus.equals("U")) {
-				uCnt += PI0400Mapper.PI0400G0U0(data);
-			} else if (rowStatus.equals("D")) {
-				dCnt += PI0400Mapper.PI0400G0D0(data);
-			}
-		}
-		Map result = new HashMap();
-		result.put("STATUS", "S");
-		result.put("ICNT", String.valueOf(iCnt));
-		result.put("UCNT", String.valueOf(uCnt));
-		result.put("DCNT", String.valueOf(dCnt));
-		return result;
+	public List<Map> PI0400G1R0() throws Exception{
+		Map param = getSimpleDataMap("dma_search");
+		return PI0400Mapper.PI0400G1R0(param);
+	}
+	public List<Map> PI0400G2R0() throws Exception{
+		return PI0400Mapper.PI0400G2R0();
 	}
 }

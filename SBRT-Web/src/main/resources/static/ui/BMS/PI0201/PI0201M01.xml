@@ -83,7 +83,7 @@
 		
 		var autoOptions = {
 			Main : { grid : PI0201G0, frm : PI0201F0, srchSbm : sub_PI0201G0R0, savSbm : sub_PI0201G0S0, keySbm : sub_PI0201G0K0 }
-		 };
+		};
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);		
 	};
 	
@@ -105,6 +105,12 @@
 		scwin.idxRowVOC = row;
 		doc_audio0.src = dlt_BMS_VOC_INFO.getCellData(row, dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"));
 		doc_audio0.pause();
+		// TTS의 경우 음성파일 업로드 disable
+		if (PLAY_TYPE.getValue() == "WAV"){
+			VOC_PATH.setDisabled(false);
+		}else{
+			VOC_PATH.setDisabled(true);
+		}
 	};	
 	
 	scwin.upload0_ondone = function(retXml) {
@@ -112,13 +118,12 @@
 		var filePath = WebSquare.xml.getValue(retXml, "ret/storedFileList");
 		// 실서버 도메인 변경 필요
 		var realPath = "http://localhost:8081/fileUpload/up/";
-		console.log(realPath);
 		doc_audio0.src = realPath + filePath;
 		//doc_audio0.src = "http://localhost:8081/fileUpload/up/file_example_MP3_5MG.mp3"
 		dlt_BMS_VOC_INFO.setCellData(scwin.idxRowVOC, dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"), doc_audio0.src)
 		console.log(scwin.idxRowVOC + " " + dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"));
 		console.log(doc_audio0.src);
-		doc_audio0.type = "audio/mpeg";
+		doc_audio0.type = "audio/wav";
 		doc_audio0.pause();
 		// 서버에 저장되도 404 error 발생함 바로 갱신이 안되는듯함
 	};
@@ -129,7 +134,17 @@
 	
 	scwin.sub_PI0201G0K0_submitdone = function(e) {
 		var insertIndex = com.addGrid(PI0201G0,dma_SEQ_BMS_VOC_INFO_0,"VOC_ID","VOC_NM");
-	};]]></script>
+	};
+	
+	// 음성유형 TTS, WAV 변경 시 음성파일 업로드 disable 처리
+	scwin.PLAY_TYPE_onviewchange = function(info) {
+		if (info.newValue == "WAV"){
+			VOC_PATH.setDisabled(false);
+		}else{
+			VOC_PATH.setDisabled(true);
+		}	
+	};
+	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group class="pgm_container grdr_20_20_a" id="pgm_container" style="">
@@ -198,9 +213,6 @@
 									<w2:column removeBorderStyle="false" width="84" inputType="text" style="height:25px" id="column41"
 										value="비고" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="97" inputType="text" style="height:25px" id="column42"
-										value="업데이트일시" blockSelect="false" displayMode="label">
-									</w2:column>
 								</w2:row>
 							</w2:header>
 							<w2:gBody width="40" style="" id="gBody4">
@@ -241,9 +253,6 @@
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="84" inputType="text" style="height:25px" id="REMARK" value=""
 										blockSelect="false" displayMode="label" autoFitFilterList="">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="97" inputType="text" style="height:25px" id="UPD_DTM" value=""
-										blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
@@ -315,7 +324,7 @@
 							<xf:group tagname="td" style="" class="w2tb_td">
 								<xf:select1 id="PLAY_TYPE" chooseOption="" style="width: 148px;height: 21px;" submenuSize="auto"
 									allOption="" disabled="false" direction="auto" appearance="minimal" disabledClass="w2selectbox_disabled" title=""
-									ref="data:dlt_BMS_VOC_INFO.PLAY_TYPE">
+									ref="data:dlt_BMS_VOC_INFO.PLAY_TYPE" ev:onchange="scwin.PLAY_TYPE_onchange" ev:onviewchange="scwin.PLAY_TYPE_onviewchange">
 									<xf:choices>
 										<xf:item>
 											<xf:label><![CDATA[TTS]]></xf:label>
