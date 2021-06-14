@@ -3993,7 +3993,7 @@ com.setMainBtn = function(btnOptions, generator) {
 
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
 	
-	com.enableDisp(autoOpt);
+	//com.enableDisp(autoOpt);
 	
 	if(programAuthority.AUTH_CHECK != 'Y')return;
 	

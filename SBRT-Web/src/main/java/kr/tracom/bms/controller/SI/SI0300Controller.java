@@ -31,7 +31,7 @@ public class SI0300Controller extends ControllerSupport{
 	}
 	
 	@RequestMapping("/si/SI0300SHI0")
-	public @ResponseBody Map<String, Object> SI0102G0R2() throws Exception {
+	public @ResponseBody Map<String, Object> SI0300SHI0() throws Exception {
 		result.setData("dlt_searchitem", si0300Service.SI0300SHI0());
 		return result.getResult();
 	}
