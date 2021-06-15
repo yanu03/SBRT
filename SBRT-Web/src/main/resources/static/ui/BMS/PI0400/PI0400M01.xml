@@ -88,20 +88,6 @@
 			Main : { grid : PI0400G0, srchSbm : sub_PI0400G0R0 }
 		 };
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);
-		
-		var tPath = "http://localhost:8081/fileUpload/up/"
-		var fData = dlt_BMS_WEAT_INFO.getCellData(0, "SKY_COND"); 
-		if (fData == "SC001"){
-			FI0400I0.setSrc(tPath + "SC001.png");	
-		}else if(fData == "SC002"){
-			FI0400I0.setSrc(tPath + "SC002.png");
-		}else if(fData == "SC003"){
-			FI0400I0.setSrc(tPath + "SC003.png");
-		}else if(fData == "SC004"){
-			FI0400I0.setSrc(tPath + "SC004.png");
-		}else if(fData == "SC005"){
-			FI0400I0.setSrc(tPath + "SC005.png");
-		}
 	};	
 	scwin.dateDisFormatter = function(data){
 		if (data == "") return "";
@@ -109,15 +95,21 @@
 	}
 	scwin.skyDisFormatter = function(data){
 		if (data == "SC001") {
-			return "SC001";
-		}else if(Data == "SC002"){
-			return "SC002";
-		}else if(Data == "SC003"){
-			return "SC003";
-		}else if(Data == "SC004"){
-			return "SC004";
-		}else if(Data == "SC005"){
-			return "SC005";
+			return "맑음";
+		}else if(data == "SC002"){
+			return "구름조금";
+		}else if(data == "SC003"){
+			return "구름많음";
+		}else if(data == "SC004"){
+			return "흐림";
+		}else if(data == "SC005"){
+			return "비";
+		}else if(data == "SC006"){
+			return "비/눈";
+		}else if(data == "SC007"){
+			return "눈/비";
+		}else if(data == "SC008"){
+			return "눈/비";
 		}
 	}	
 	
@@ -131,7 +123,26 @@
 		F_HUMI.setValue(dlt0.getCellData(0, "HUMI"));
 		F_RAIN_PRO.setValue(dlt0.getCellData(0, "RAIN_PRO"));
 		F_RAINFALL.setValue(dlt0.getCellData(0, "RAINFALL"));
-		
+
+		var tPath = "http://localhost:8081/fileUpload/up/"
+		var fData = dlt_BMS_WEAT_INFO.getCellData(0, "SKY_COND");
+		if (fData == "SC001"){
+			FI0400I0.setSrc(tPath + "SC001.png");	
+		}else if(fData == "SC002"){
+			FI0400I0.setSrc(tPath + "SC002.png");
+		}else if(fData == "SC003"){
+			FI0400I0.setSrc(tPath + "SC003.png");
+		}else if(fData == "SC004"){
+			FI0400I0.setSrc(tPath + "SC004.png");
+		}else if(fData == "SC005"){
+			FI0400I0.setSrc(tPath + "SC005.png");
+		}else if(fData == "SC006"){
+			FI0400I0.setSrc(tPath + "SC006.png");
+		}else if(fData == "SC007"){
+			FI0400I0.setSrc(tPath + "SC007.png");
+		}else if(fData == "SC008"){
+			FI0400I0.setSrc(tPath + "SC008.png");
+		}
 	};
 	
 	scwin.sub_PI0400G1R0_submitdone = function(e) {
@@ -143,6 +154,7 @@
 		F_OZONEC.setValue(dlt0.getCellData(0, "OZONEC"));
 		F_NDC.setValue(dlt0.getCellData(0, "NDC"));
 	};
+	
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -156,18 +168,10 @@
 							<w2:span class="" id="" label="기상/대기 월별 검색"></w2:span>
 						</xf:group>
 					</xf:group>
-					<xf:group class="search" id="" style="">
-						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
-							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
-							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
-							style="width: 200px;height: 21px;float: left;" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
-							<w2:choices>
-								<w2:itemset nodeset="data:dlt_grgSearchItem">
-									<w2:label ref="GRG_ID"></w2:label>
-									<w2:value ref="GRG_ID"></w2:value>
-								</w2:itemset>
-							</w2:choices>
-						</w2:autoComplete>
+					<xf:group class="search" id="search" style="">
+						<w2:inputCalendar footerDiv="false" style="width: 200px;height: 21px;float: left;" renderDiv="true"
+							focusOnDateSelect="false" calendarValueType="yearMonth" rightAlign="false" renderType="component" ref="data:dma_search.CONTENT" ev:onkeydown="scwin.TESTA_onkeydown">
+						</w2:inputCalendar>
 					</xf:group>
 					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
@@ -181,8 +185,8 @@
 					<xf:group></xf:group>
 					
 					<xf:group class="" id="" style="">
-						<xf:group>
-							<xf:image src="" style="width: 100%;height: 200px;" id="FI0400I0"></xf:image>
+						<xf:group style="text-align: center; border: 2px solid #D8D8D8;" >
+							<xf:image src="" style="width: 180px;height: 180px;" id="FI0400I0"></xf:image>
 						</xf:group>
 						<xf:group adaptive="layout" class="w2tb tb" id="FI0400F0" style="width:100%; height:100%;" tagname="table">
 							<w2:attributes>
@@ -202,7 +206,7 @@
 							<xf:group style="" tagname="tr">
 								<xf:group class="w2tb_th" style="" tagname="th">업데이트&amp;nbsp;일시</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
-									<xf:input adjustMaxLength="false" id="F_NOTI_DT" style="width: 100%;height: 21px;" displayFormatter="scwin.dateDisFormatter"></xf:input>
+									<xf:input adjustMaxLength="false" id="F_NOTI_DT" style="width: 100%;height: 21px;" displayFormatter="scwin.dateDisFormatter" readOnly="true"></xf:input>
 								</xf:group>
 								<xf:group class="w2tb_th" style="" tagname="th">하늘상태</xf:group>
 									<xf:group class="w2tb_td" style="" tagname="td">
@@ -210,7 +214,7 @@
 											<w2:colspan>1</w2:colspan>
 											<w2:rowspan>1</w2:rowspan>
 										</w2:attributes>
-										<xf:input adjustMaxLength="" class="" disabled="" id="F_SKY_COND" mandatory="" ref="" style="width:100%;height:21px;" fireEventOnInvalid="" validator="" validateOnInput="" validateOnCheckMaxByteLength="" invalidMessageFunc="" readOnly="">
+										<xf:input adjustMaxLength="" class="" disabled="" id="F_SKY_COND" mandatory="" ref="" style="width:100%;height:21px;" fireEventOnInvalid="" validator="" validateOnInput="" validateOnCheckMaxByteLength="" invalidMessageFunc="" readOnly="true" displayFormatter="scwin.skyDisFormatter">
 										</xf:input>
 									</xf:group>
 							</xf:group>
@@ -218,7 +222,7 @@
 								<xf:group class="w2tb_th" style="" tagname="th">온도</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<xf:group id="" style="">
-									<xf:input allowChar="0-9" id="F_TEMPC" maxlength="13" ref="" style="width:100%;height: 21px;" validator="" dataType="text" disabled="" maskFormat="" minByteLength="" displayFormatter="com.transPhone" customModelFormatter="com.transPhone" customModelUnformatter="">
+									<xf:input id="F_TEMPC" maxlength="13" ref="" style="width:100%;height: 21px;" validator="" dataType="text" readOnly="true">
 									</xf:input>
 									</xf:group>
 								</xf:group>
@@ -229,7 +233,7 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:group id="" style="">
-										<xf:input allowChar="0-9" id="F_SDUSTC" maxlength="13" ref="" style="width:100%;height: 21px;" dataType="text" customModelFormatter="" displayFormatter="">
+										<xf:input id="F_SDUSTC" maxlength="13" ref="" style="width:100%;height: 21px;" dataType="text" readOnly="true">
 										</xf:input>
 									</xf:group>
 								</xf:group>
@@ -243,7 +247,7 @@
 								<xf:group class="w2tb_td" tagname="td">
 									<w2:attributes>
 									</w2:attributes>
-									<xf:input adjustMaxLength="" class="" disabled="" id="F_TEMP_HIGH" mandatory="" ref="" style="width:100%;height:21px;" allowChar="aA-zZ,0-9,@,." customModelFormatter="" displayFormatter="" customModelUnformatter="" invalidMessageFunc="" validator="" tooltipFormatter="" initValue="">
+									<xf:input adjustMaxLength="" class="" id="F_TEMP_HIGH" mandatory="" ref="" style="width:100%;height:21px;" readOnly="true">
 									</xf:input>
 								</xf:group>
 								<xf:group class="w2tb_th" tagname="th">미세먼지농도
@@ -256,7 +260,7 @@
 										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input adjustMaxLength="" allowChar="0-9" class="" disabled="" id="F_DUSTC" mandatory="" ref="" style="width:100%;height:21px;" maxlength="10" dataType="text" maskFormat="" maskFormatModelExcludeChar="" displayFormat="" escape="" euroMask="" imeMode="" ioFormat="" applyFormat="" displayFormatter="" customModelFormatter="" validator="">
+									<xf:input id="F_DUSTC" mandatory="" ref="" style="width:100%;height:21px;" dataType="text" readOnly="true">
 									</xf:input>
 								</xf:group>
 								</xf:group>
@@ -277,7 +281,7 @@
 									</xf:group>
 									<xf:group class="w2tb_td" tagname="td">
 										<w2:attributes></w2:attributes>
-										<xf:input adjustMaxLength="false" id="F_SDC" style="width:100%;height: 21px;" nextTabID=""></xf:input>
+										<xf:input adjustMaxLength="false" id="F_SDC" style="width:100%;height: 21px;" readOnly="true"></xf:input>
 									</xf:group>
 								</xf:group>
 								<xf:group tagname="tr" style="">
@@ -288,7 +292,7 @@
 									</xf:group>
 									<xf:group class="w2tb_td" tagname="td">
 										<w2:attributes></w2:attributes>
-										<xf:input adjustMaxLength="false" id="F_HUMI" style="width:100%;height: 21px;"></xf:input>
+										<xf:input adjustMaxLength="false" id="F_HUMI" style="width:100%;height: 21px;" readOnly="true"></xf:input>
 									</xf:group>
 									<xf:group class="w2tb_th" tagname="th">일산화탄소농도
 										<w2:attributes>
@@ -297,7 +301,7 @@
 									</xf:group>
 									<xf:group class="w2tb_td" tagname="td" id="">
 										<w2:attributes></w2:attributes>
-										<xf:input adjustMaxLength="false" id="F_CMC" style="width:100%;height: 21px;"></xf:input>
+										<xf:input adjustMaxLength="false" id="F_CMC" style="width:100%;height: 21px;" readOnly="true"></xf:input>
 									</xf:group>
 								</xf:group>
 								<xf:group tagname="tr" style="">
@@ -308,7 +312,7 @@
 									</xf:group>
 									<xf:group tagname="td" class="w2tb_td">
 										<w2:attributes></w2:attributes>
-										<xf:input adjustMaxLength="false" id="F_RAIN_PRO" style="width:100%;height: 21px;"></xf:input>
+										<xf:input adjustMaxLength="false" id="F_RAIN_PRO" style="width:100%;height: 21px;" readOnly="true"></xf:input>
 									</xf:group>
 									<xf:group tagname="th" class="w2tb_th">오존농도
 									<w2:attributes>
@@ -317,7 +321,7 @@
 								</xf:group>
 									<xf:group tagname="td" class="w2tb_td">
 										<w2:attributes></w2:attributes>
-										<xf:input adjustMaxLength="false" id="F_OZONEC" style="width:100%;height: 21px;"></xf:input>
+										<xf:input id="F_OZONEC" style="width:100%;height: 21px;" readOnly="true"></xf:input>
 									</xf:group></xf:group>
 								<xf:group tagname="tr" style="">
 									<xf:group tagname="th" class="w2tb_th">강수량
@@ -327,7 +331,7 @@
 									</xf:group>
 									<xf:group tagname="td" class="w2tb_td">
 										<w2:attributes></w2:attributes>
-										<xf:input adjustMaxLength="false" id="F_RAINFALL" style="width:100%;height: 21px;"></xf:input>
+										<xf:input id="F_RAINFALL" style="width:100%;height: 21px;" readOnly="true"></xf:input>
 									</xf:group>
 									<xf:group tagname="th" class="w2tb_th">이산화질소농도
 										<w2:attributes> 
@@ -336,7 +340,7 @@
 									</xf:group>
 									<xf:group tagname="td" class="w2tb_td" id="">
 										<w2:attributes></w2:attributes>
-										<xf:input adjustMaxLength="false" id="F_NDC" style="width:100%;height: 21px;"></xf:input>
+										<xf:input id="F_NDC" style="width:100%;height: 21px;" readOnly="true"></xf:input>
 									</xf:group>
 								</xf:group>
 						</xf:group>
@@ -350,7 +354,7 @@
 							confirmTrueAction="exist" confirmFalseAction="new" alwaysDraw="false" style="width: 100%;height: 100%;" tabScroll="" tableRender="" tabPosition="">
 							<w2:tabs disabled="false" style="width:70px;height:30px;" id="tabs3" label="기상"></w2:tabs>
 							<w2:content alwaysDraw="false" style="height:100;" id="content3">
-								<w2:gridView id="PI0400G0" style="width:100%;height:100%;" defaultCellHeight="20" rowNumVisible="true"
+								<w2:gridView id="PI0400G0" style="width:98%;height:98%;" defaultCellHeight="20" rowNumVisible="true"
 									useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태"
 									adaptive="crosstab" overflowX="auto" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true"
 									ignoreCellClick="false" dataList="data:dlt_BMS_WEAT_INFO" class="cm_grid" autoFit="lastColumn" fixedColumnScrollHidden="" sortOrderReverse="true">
@@ -394,7 +398,7 @@
 												id="NOTI_DT" blockSelect="false" displayMode="label" displayFormatter="scwin.dateDisFormatter">
 											</w2:column>
 											<w2:column removeBorderStyle="false" width="77" inputType="text" style="height:20px"
-												id="SKY_COND" value="" blockSelect="false" displayMode="label" hiddenClass="">
+												id="SKY_COND" value="" blockSelect="false" displayMode="label" displayformatter="scwin.skyDisFormatter">
 											</w2:column>
 											<w2:column removeBorderStyle="false" width="213" inputType="text" style="height:20px" id="TEMPC"
 												value="" blockSelect="false" displayMode="label">
@@ -428,7 +432,7 @@
 							</w2:content>
 							<w2:tabs disabled="false" style="width:70px;height:30px;" id="tabs4" label="대기"></w2:tabs>
 							<w2:content alwaysDraw="false" style="height:170px" id="content4">
-								<w2:gridView id="PI0400G1" style="width:100%;height:100%;" defaultCellHeight="20" rowNumVisible="true"
+								<w2:gridView id="PI0400G1" style="width:98%;height:98%;" defaultCellHeight="20" rowNumVisible="true"
 									useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태"
 									adaptive="crosstab" overflowX="auto" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true"
 									ignoreCellClick="false" dataList="data:dlt_BMS_ATMO_INFO" class="cm_grid" autoFit="lastColumn" fixedColumnScrollHidden="">

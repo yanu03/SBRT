@@ -7,9 +7,9 @@
 		RAIN_PRO, RAINFALL, DATE_FORMAT(UPD_DTM, '%Y%m%d%H%i') UPD_DTM 
 		FROM BMS_WEAT_INFO
 		<where>
-			<if test="CONTENT != ''">
-				NOTI_DT LIKE CONCAT('%',#{CONTENT},'%')
-			</if>
+				<if test="CONTENT != ''">
+					DATE_FORMAT(NOTI_DT,'%Y%m') = #{CONTENT}
+				</if>
 		</where>
 		ORDER BY NOTI_DT DESC
 	</select>
@@ -20,18 +20,25 @@
 		FROM BMS_ATMO_INFO
 		<where>
 			<if test="CONTENT != ''">
-				MEAS_DT LIKE CONCAT('%',#{CONTENT},'%')
+				DATE_FORMAT(MEAS_DT,'%Y%m') = #{CONTENT}
 			</if>
 		</where>
 		ORDER BY MEAS_DT DESC
 	</select>
 	
 	<select id="PI0400G2R0" resultType="Map" parameterType="Map">
-      SELECT V.VHC_ID, V.VHC_NO, MAX(LIV.SEND_DT) AS SEND_DT    
+      SELECT V.VHC_ID, V.VHC_NO, SEND_DT    
       FROM BMS_LIVING_LOG LIV 
       LEFT OUTER JOIN BMS_DVC_INFO DV 
       ON LIV.MNG_ID = DV.MNG_ID 
       LEFT OUTER JOIN BMS_VHC_MST V 
       ON DV.VHC_ID = V.VHC_ID
-	</select>	
+      <where>
+		<if test="value != null">
+			V.VHC_NO LIKE CONCAT('%', #{value}, '%') 
+			AND
+		</if>
+		
+      </where>
+	</select>
 </mapper>

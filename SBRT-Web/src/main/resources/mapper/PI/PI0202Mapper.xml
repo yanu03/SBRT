@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.bms.domain.PI0202.PI0202Mapper">
+
+	<select id="PI0202G0R0" resultType="Map" parameterType="Map">
+		SELECT ROUTE_ID, REP_ROUT_ID, REP_ROUT_NM, ROUT_NM, ROUT_TYPE, RSV_ROUT_YN, ST_STTN_ID, ST_STTN_NM, ST_STTN_ENM, 
+		ED_STTN_ID, ED_STTN_ENM, ED_STTN_NM, RET_STTN_ID, RET_STTN_NM, RET_STTN_ENM, STTN_CNT, ROUT_LEN, ROUT_STRT_LEN, 
+		CURVATURE, JIT_DSPCH_YN, LIC_VHC_CNT, SPR_VHC_CNT, APPL_ST_DT, APPL_ED_DT, WAY_DIV, USER_WAY_DIV, WAY_INFO, AREA, 
+		SHAPE_DIV, USE_YN, REMARK, DATE_FORMAT(UPD_DTM, '%Y%m%d%H%i') UPD_DTM 
+		FROM BMS_ROUT_MST
+		<where>
+			<if test="CONTENT != ''">
+				ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%') OR ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+		</where>
+	</select>
+	<select id="PI0202G1R0" resultType="Map" parameterType="Map">
+		SELECT VOC_ID, VOC_NM, DATE_FORMAT(PLAY_ST_DT, '%Y%m%d') PLAY_ST_DT, PLAY_TYPE, KR_TTS, EN_TTS, 
+		SCR_TXT, SCR_TXT_EN, REMARK, PLAY_TM, VOC_DIV, CON_ID, DATE_FORMAT(PLAY_ED_DT, '%Y%m%d') PLAY_ED_DT, DATE_FORMAT(UPD_DTM, '%Y%m%d%H%i') UPD_DTM, 
+		UPD_ID, CONCAT(DATE_FORMAT(PLAY_ST_DT, '%Y%m%d'), DATE_FORMAT(PLAY_ED_DT, '%Y%m%d')) PLAY_DATE, VOC_PATH 
+		FROM BMS_VOC_INFO
+		<where>
+			<if test="CONTENT != ''">
+				VOC_ID LIKE CONCAT('%',#{CONTENT},'%') OR VOC_NM LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+		</where>
+	</select>
+	<select id="PI0202G2R0" resultType="Map" parameterType="Map">
+		SELECT VOL.ORGA_ID, VOL.VOC_ID, ORGA_NM, ALL_PLAY_TM, GPS_Y, GPS_X, VOI.REMARK FROM BMS_VOC_ORGA_LIST VOL 
+		LEFT JOIN BMS_VOC_ORGA_INFO VOI ON VOL.ORGA_ID = VOI.ORGA_ID 
+		LEFT JOIN BMS_VOC_INFO VI ON VOL.VOC_ID = VI.VOC_ID 
+		<where>
+			<if test="ORGA_ID != ''">
+				VOL.ORGA_ID = #{ORGA_ID}
+			</if>
+		</where>
+	</select>		
+	
+</mapper>
