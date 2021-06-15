@@ -81,7 +81,7 @@ public class SessionCheckInterceptor extends HandlerInterceptorAdapter {
 		String[] skipUrl = { "/", "/I18N" };
 		boolean result = false;
 		String uri = (request.getRequestURI()).replace(request.getContextPath(), "");
-
+		System.out.println("isSkipURI() in uri="+uri);
 		for (int i = 0; i < skipUrl.length; i++) {
 			if (uri.equals(skipUrl[i])) {
 				result = true;

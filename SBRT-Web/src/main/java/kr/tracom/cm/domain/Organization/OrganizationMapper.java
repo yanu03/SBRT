@@ -21,5 +21,7 @@ public interface OrganizationMapper {
 	public int updateOrganizaionBasic(Map param);
 
 	public int deleteOrganizaionBasic(Map param);
+	
+	public Map selectOrganizaionKey();
 
 }

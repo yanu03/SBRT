@@ -64,7 +64,7 @@ public class OrganizationController extends ControllerSupport {
 		Map hash = service.saveOrganizaionBasicList();
 		result.setData("dma_result", hash);
 		result.setData("dlt_organizationBasic", service.selectOrganization());
-		return result.getResult();
+		return result.getResultSave();
 	}
 
 	/**
@@ -77,6 +77,12 @@ public class OrganizationController extends ControllerSupport {
 	@RequestMapping(value = "/organization/selectOrganBasicList")
 	public @ResponseBody Map<String, Object> getOrganBasicList() throws Exception {
 		result.setData("data", service.selectOrganizaionBasicList());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/organization/selectOrganizaionKey")
+	public @ResponseBody Map<String, Object> selectAuthorityKey() throws Exception {
+		result.setData("dma_SEQ_BMS_ORG_MST_0", service.selectOrganizaionKey());
 		return result.getResult();
 	}
 }

@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 import kr.tracom.cm.domain.Member.MemberService;
+import kr.tracom.cm.support.ControllerSupport;
 import kr.tracom.util.Constants;
 import kr.tracom.util.PageURIUtil;
 import kr.tracom.util.Result;
@@ -29,6 +32,8 @@ import kr.tracom.util.Constants;
 
 @Controller
 public class InitController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(InitController.class);
 	
 	@Autowired
 	private MemberService service;
@@ -63,6 +68,7 @@ public class InitController {
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String IndexBase(HttpServletRequest request, Model model) throws Exception {
+		LOGGER.debug("IndexBase() in w2xPath ="+request.getParameter("w2xPath"));
 		model.addAttribute("movePage", getLoginPage(request.getParameter("w2xPath")));
 		return "websquare/websquare";
 	}
@@ -100,19 +106,23 @@ public class InitController {
 	 */
 	private String getLoginPage(String w2xPath) {
 		String movePage = w2xPath;
-
+		
 		// session이 없을 경우 login 화면으로 이동.
 		if (!userInfo.isLogined()) {
 			// session이 있고 w2xPath가 없을 경우 index화면으로 이동.
+			LOGGER.debug("getLoginPage() in PageURIUtil.getLoginPage() before");
 			movePage = PageURIUtil.getLoginPage();
 		} else {
+			LOGGER.debug("getLoginPage() in movePage ="+movePage);
 			if (movePage == null) {
 				// DB 설정조회 초기 page 구성
 				//movePage = PageURIUtil.getIndexPageURI(userInfo.getMainLayoutCode());
 
 				// DB에 값이 저장되어 있지 않은 경우 기본 index화면으로 이동
+				LOGGER.debug("getLoginPage() in movePage before");
 				if (movePage == null) {
 					movePage = PageURIUtil.getIndexPageURI();
+					LOGGER.debug("getLoginPage() in PageURIUtil.getIndexPageURI() after movePage ="+movePage);
 				}
 			}
 		}

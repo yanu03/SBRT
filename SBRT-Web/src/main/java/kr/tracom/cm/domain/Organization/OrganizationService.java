@@ -78,5 +78,8 @@ public class OrganizationService extends ServiceSupport {
 		Map result = saveResult(iCnt, uCnt, dCnt);
 		return result;
 	}
-
+	
+	public Map selectOrganizaionKey() throws Exception {
+		return organizationMapper.selectOrganizaionKey();
+	}
 }

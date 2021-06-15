@@ -194,23 +194,23 @@ public class CommonService extends ServiceSupport {
 		int dCnt_grp = 0; // 삭제한 그룹코드 건수
 		int dCnt_code = 0; // 삭제한 세부코드 건수
 		List paramCodeCo = getSimpleList("dlt_commonCo");
-		List paramCode = getSimpleList("dlt_commonDtl");
+		List paramCodeDtl = getSimpleList("dlt_commonDtl");
 		for (int i = 0; i < paramCodeCo.size(); i++) {
 			Map dataGrp = (Map) paramCodeCo.get(i);
 			String rowStatusGrp = (String) dataGrp.get("rowStatus");
 			if (rowStatusGrp.equals("C")) {
 				iCnt_grp += commonMapper.insertCommonCo(dataGrp);
 
-				for (int j = 0; j < paramCode.size(); j++) {
-					Map dataGrpCode = (Map) paramCode.get(j);
+				for (int j = 0; j < paramCodeDtl.size(); j++) {
+					Map dataGrpCode = (Map) paramCodeDtl.get(j);
 					String rowStatusMenuAuth = (String) dataGrpCode.get("rowStatus");
 					if (rowStatusMenuAuth.equals("C")) {
 						iCnt_code += commonMapper.insertCommonDtl(dataGrpCode);
 					}
 				}
 			} else if (rowStatusGrp.equals("U")) {
-				for (int j = 0; j < paramCode.size(); j++) {
-					Map dataGrpCode = (Map) paramCode.get(j);
+				for (int j = 0; j < paramCodeDtl.size(); j++) {
+					Map dataGrpCode = (Map) paramCodeDtl.get(j);
 					String rowStatusMenuAuth = (String) dataGrpCode.get("rowStatus");
 					if (rowStatusMenuAuth.equals("C")) {
 						iCnt_code += commonMapper.insertCommonDtl(dataGrpCode);
@@ -225,8 +225,15 @@ public class CommonService extends ServiceSupport {
 				commonMapper.deleteCommonDtlAll(dataGrp); // 하위 코드 정보는 전체 삭제
 				dCnt_grp += commonMapper.deleteCommonCo(dataGrp);
 			}
-
+			for (int j = 0; j < paramCodeDtl.size(); j++) {
+				Map dataGrpCode = (Map) paramCodeDtl.get(j);
+				String rowStatusMenuAuth = (String) dataGrpCode.get("rowStatus");
+				if (rowStatusMenuAuth.equals("D")) {
+					dCnt_code += commonMapper.deleteCommonDtl(dataGrpCode);
+				}
+			}
 		}
+		
 		Map result = new HashMap();
 		result.put("STATUS", "S");
 		result.put("ICNT_GRP", String.valueOf(iCnt_grp));
