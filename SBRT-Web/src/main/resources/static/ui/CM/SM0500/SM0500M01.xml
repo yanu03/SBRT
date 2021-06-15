@@ -66,6 +66,11 @@
 						<w2:column id="ORG_NM" name="name2" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_ORG_MST_0">
+					<w2:keyInfo>
+						<w2:key id="SEQ" name="SEQ" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sbm_searchOrganization" ref="data:json,dma_search" target='data:json,dlt_organizationBasic'
@@ -81,6 +86,10 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
+			<xf:submission id="sbm_organizaionKey" ref="" target="data:json,dma_SEQ_BMS_ORG_MST_0" action="/organization/selectOrganizaionKey" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="scwin.sbm_organizaionKey_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
 	/**
@@ -88,10 +97,19 @@
 	 */
 	scwin.onpageload = function() {
 		var codeOptions = [ { "code" : "ORG_DIV", "compID" : "sbx_OrgDiv, grd_organizationBasic:ORG_DIV" } ];
-		com.setCommonDtl(codeOptions);
+		com.setCommonDtl(codeOptions, function() {
+			com.searchGrid(grd_organizationBasic,sbm_searchOrganization);
+		});
 		com.executeSubmission(sbm_organizationSearchItem);
-		com.setEnterKeyEvent(tbl_search, scwin.btn_Search_onclick);
-		com.setGridViewDelCheckBox([grd_organizationBasic]);
+		//com.setEnterKeyEvent(tbl_search, scwin.btn_Search_onclick);
+		//com.setGridViewDelCheckBox([grd_organizationBasic]);
+
+		var autoOptions = {
+			Main : { grid : grd_organizationBasic, srchSbm : sbm_searchOrganization, savSbm : sbm_saveOrganizationBasic
+				, keySbm : sbm_organizaionKey, srchGrp : pgm_header, focusColumn : "ORG_NM", name :  "기관정보" }
+		 };
+
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
 	};
 	
 	scwin.onpageunload = function() {
@@ -124,7 +142,7 @@
 	 * 조직기본관리 버튼 클릭의 콜백메소드 건수 조회, ReadOnly 그리드뷰 컬럼색 변경, 조직 레벨에 따른 기관명, 상위소속명의 폰트색을 변경한다.
 	 */
 	scwin.sbm_searchOrganization_submitdone = function(e) {
-		spn_organizationCnt.setValue(dlt_organizationBasic.getRowCount());
+		
 	};
 	
 	/**
@@ -217,236 +235,230 @@
 	scwin.btn_excelOrganization_onclick = function() {
 		com.downLoadExcel(grd_organizationBasic);
 	};
+	
+	scwin.sbm_organizaionKey_submitdone = function(e) {
+		var insertIndex = com.addGrid(grd_organizationBasic,dma_SEQ_BMS_ORG_MST_0,"ORG_ID","ORG_NM");
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
-		<xf:group class="contentWrap" id="" style="">
-			<w2:wframe id="" style="" src="/cm/common/wf_titleFav.xml" scope="true"></w2:wframe>
-			<xf:group id="" style="" class="section">
-				<xf:group id="tbl_search" style="" class="tbl_search">
-					<xf:group id="" style="width:100%;" adaptive="layout" class="w2tb tbl_sc" adaptiveThreshold="768" tagname="table">
-						<w2:attributes>
-							<w2:summary></w2:summary>
-						</w2:attributes>
-						<xf:group tagname="colgroup">
-							<xf:group style="width:80px;" tagname="col"></xf:group>
-							<xf:group style="" tagname="col"></xf:group>
-							<xf:group style="width:200px;" tagname="col"></xf:group>
-						</xf:group>
-						<xf:group tagname="tr">
-							<xf:group style="" class="w2tb_th" tagname="th">검색항목</xf:group>
-							<xf:group style="" class="w2tb_td" tagname="td">
-								<xf:select1 disabledClass="w2selectbox_disabled" appearance="minimal" direction="auto" chooseOption=""
-									displayMode="label" optionOrder="false" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
-									ref="data:dma_search.TYPE" style="height:20px;width:80px;margin-right: 10px;float:left;" allOption="" submenuSize="auto"
-									disabled="false" textAlign="left">
-									<xf:choices>
-										<xf:item>
-											<xf:label><![CDATA[기관명]]></xf:label>
-											<xf:value><![CDATA[ORG_NM]]></xf:value>
-										</xf:item>
-										<xf:item>
-											<xf:label><![CDATA[기관아이디]]></xf:label>
-											<xf:value><![CDATA[ORG_ID]]></xf:value>
-										</xf:item>
-									</xf:choices>
-								</xf:select1>
-								<w2:autoComplete interactionMode="" chooseOptionValue="" chooseOptionLabel="-전체-" visibleRowNum="" chooseOption="true"
-									caseSensitive="false" displayMode="label" ev:onviewchange="" id="acb_autoChoiceBox" useKeywordHighlight="false" ref=""
-									style="height: 21px;float: left;" search="start" ev:onchange="" allOption="" submenuSize="auto" editType="select" textAlign="left" noResult="useData" class="calc120">
-									<w2:choices>
-										<w2:itemset nodeset="data:dlt_organizationSearchItem">
-											<w2:label ref="ORG_NM"></w2:label>
-											<w2:value ref="ORG_NM"></w2:value>
-										</w2:itemset>
-									</w2:choices>
-								</w2:autoComplete>
-							</xf:group>
-							<xf:group style="" class="w2tb_td" tagname="td">
-								<w2:anchor id="" style="" ev:onclick="scwin.btn_Search_onclick" class="btn_sh" outerDiv="true">
-									<xf:label><![CDATA[조회]]></xf:label>
-								</w2:anchor>
-							</xf:group>
-						</xf:group>
-					</xf:group>
-				</xf:group>
+		<xf:group id="pgm_container" class="pgm_container grdr_20_20_a" style="">
+			<xf:group id="pgm_navi" class="pgm_navi" style="">
+				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
 			</xf:group>
-			<xf:group id="" style="" class="section">
-				<xf:group id="" style="" class="defaultbox">
-					<w2:textbox id="" style="" class="df_tt fl" label="기관"></w2:textbox>
-					<xf:group id="" style="height:22px;" class="fr">
-						<w2:span id="spn_organizationCnt" style="" class="df_total" label="" displayFormat="건"></w2:span>
-						<xf:group id="" style="" class="ml5 fr">
-							<w2:anchor id="btn_addOrganization" style="" clickEventElement="outerDiv"
-								ev:onclick="scwin.btn_addOrganization_onclick" class="btn_gcm" outerDiv="true">
-								<xf:label><![CDATA[등록]]></xf:label>
-							</w2:anchor>
-							<w2:anchor id="btn_delOrganization" style="" clickEventElement="outerDiv"
-								ev:onclick="scwin.btn_delOrganization_onclick" class="btn_gcm" outerDiv="true">
-								<xf:label><![CDATA[삭제]]></xf:label>
-							</w2:anchor>
-							<w2:anchor id="btn_cancelOrganization" style="" clickEventElement="outerDiv"
-								ev:onclick="scwin.btn_cancelOrganization_onclick" class="btn_gcm" outerDiv="true">
-								<xf:label><![CDATA[취소]]></xf:label>
-							</w2:anchor>
-							<w2:anchor id="btn_saveOrganization" style="" clickEventElement="outerDiv"
-								ev:onclick="scwin.btn_saveOrganization_onclick" class="btn_gcm" outerDiv="true">
-								<xf:label><![CDATA[저장]]></xf:label>
-							</w2:anchor>
-							<w2:anchor class="btn_gcm" clickEventElement="outerDiv" ev:onclick="scwin.btn_excelOrganization_onclick"
-								id="btn_excelOrganization" outerDiv="true" style="">
-								<xf:label><![CDATA[엑셀]]></xf:label>
-							</w2:anchor>
+			<xf:group id="pgm_header" class="pgm_header" style="">
+				<xf:group id="" style="" class="gr_search">
+					<xf:group id="" style="" class="label">
+						<xf:group id="" style="" class="">
+							<w2:span id="" class="" label="검색 항목"></w2:span>
 						</xf:group>
 					</xf:group>
+					<xf:group id="" style="" class="search">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
+							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+							textAlign="left" class="">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[기관명]]></xf:label>
+									<xf:value><![CDATA[ORG_NM]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[기관아이디]]></xf:label>
+									<xf:value><![CDATA[ORG_ID]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<w2:autoComplete interactionMode="" chooseOptionValue="" chooseOptionLabel="-전체-" visibleRowNum="" chooseOption="true"
+							caseSensitive="false" displayMode="label" ev:onviewchange="" id="acb_autoChoiceBox" useKeywordHighlight="false" ref=""
+							style="height: 21px;float: left;" search="start" ev:onchange="" allOption="" submenuSize="auto" editType="select" textAlign="left" noResult="useData" class="calc120">
+							<w2:choices>
+								<w2:itemset nodeset="data:dlt_organizationSearchItem">
+									<w2:label ref="ORG_NM"></w2:label>
+									<w2:value ref="ORG_NM"></w2:value>
+								</w2:itemset>
+							</w2:choices>
+						</w2:autoComplete>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
-				<w2:gridView ignoreCellClick="false" ev:onrowindexchange="" autoFit="allColumn" visibleRowNum="10" sortable="true"
-					sortEvent="onclick" class="cm_grid" showSortableImage="" fixedColumnWithHidden="true" dataList="dlt_organizationBasic"
-					id="grd_organizationBasic" readOnly="true" style="height: 280px;" overflowX="hidden" scrollByColumn="false" useShiftKey="true"
-					overflowY="scroll" rowStatusVisible="false" rowStatusHeaderValue="상태" ev:oncellclick="" adaptive="crosstab" rowNumVisible="true" rowNumHeaderValue="순서">
-					<w2:header id="header1" style="">
-						<w2:row id="row2" style="">
-							<w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" displayMode="label"
-								fixColumnWidth="true">
-							</w2:column>
-							<w2:column id="column9" blockSelect="false" style="height:25px;" width="87" inputType="text" value="기관아이디"
-								displayMode="label">
-							</w2:column>
-							<w2:column id="column17" blockSelect="false" style="height:25px;" width="206" inputType="text" value="기관명"
-								displayMode="label">
-							</w2:column>
-							<w2:column id="column11" blockSelect="false" style="height:25px;" width="80" inputType="text" value="기관구분"
-								displayMode="label">
-							</w2:column>
-							<w2:column id="column30" blockSelect="false" style="height:25px;" width="126" inputType="text"
-								value="사업자등록번호">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px" id="column31" value="전화번호"
-								blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column id="column28" blockSelect="false" style="height:25px;" width="70" inputType="text" value="팩스"></w2:column>
-							<w2:column id="column18" blockSelect="false" style="height:25px;" width="70" inputType="text" value="이메일"></w2:column>
-						</w2:row>
-					</w2:header>
-					<w2:gBody id="gBody4" style="" width="40">
-						<w2:row id="row5" style="">
-							<w2:column id="chk" blockSelect="false" readOnly="false" style="height:25px;" width="40" inputType="checkbox"
-								displayMode="label" fixColumnWidth="true">
-							</w2:column>
-							<w2:column id="ORG_ID" blockSelect="false" style="height:25px;" width="87" inputType="text"
-								displayMode="label">
-							</w2:column>
-							<w2:column id="ORG_NM" blockSelect="false" style="height:25px;" width="136" inputType="text"
-								displayMode="label">
-							</w2:column>
-							<w2:column id="ORG_DIV" blockSelect="false" style="height:25px;" width="80" inputType="select"
-								displayMode="label" textAlign="center">
-								<w2:choices>
-									<w2:itemset nodeset="">
-										<w2:label ref=""></w2:label>
-										<w2:value ref=""></w2:value>
-									</w2:itemset>
-								</w2:choices>
-							</w2:column>
-							<w2:column id="COMP_REG_NO" blockSelect="false" style="height:25px;" width="126" inputType="text">
-								<w2:choices>
-									<w2:itemset nodeset="data:dlt_organizationBasic">
-										<w2:label ref="PARENT_ORG_NM"></w2:label>
-										<w2:value ref="PARENT_ORG_NM"></w2:value>
-									</w2:itemset>
-								</w2:choices>
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px" id="PHONE" value=""
-								blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px" id="FAX" value=""
-								blockSelect="false" displayMode="label">
-							</w2:column>
-							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px" id="EMAIL" value=""
-								blockSelect="false" displayMode="label">
-							</w2:column>
-						</w2:row>
-					</w2:gBody>
+			</xf:group><!-- pgm_header -->
+			<xf:group id="pgm_content" class="pgm_content grdc_a_20_700" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
+					<xf:group id="" class="" style="">
+						<xf:group class="defaultbox" id="" style="">
+								<w2:textbox class="df_tt fl" id="" label="기관 정보" style=""></w2:textbox>
+						</xf:group>
+					</xf:group>
+						<xf:group id="" class="" style="">
+						<w2:gridView ignoreCellClick="false" ev:onrowindexchange="" autoFit="allColumn" visibleRowNum="" sortable="true"
+							sortEvent="onclick" class="cm_grid left" showSortableImage="" fixedColumnWithHidden="true" dataList="dlt_organizationBasic"
+							id="grd_organizationBasic" readOnly="true" style="" overflowX="hidden" scrollByColumn="false" useShiftKey="true"
+							overflowY="scroll" rowStatusVisible="false" rowStatusHeaderValue="상태" ev:oncellclick="" adaptive="crosstab" rowNumVisible="true" rowNumHeaderValue="순서">
+							<w2:header id="header1" style="">
+								<w2:row id="row2" style="">
+									<w2:column id="column9" blockSelect="false" style="height:25px;" width="87" inputType="text" value="기관아이디"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="column17" blockSelect="false" style="height:25px;" width="100" inputType="text" value="기관명"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="column11" blockSelect="false" style="height:25px;" width="80" inputType="text" value="기관구분"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="column30" blockSelect="false" style="height:25px;" width="100" inputType="text"
+										value="사업자등록번호">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px" id="column31" value="전화번호"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column id="column28" blockSelect="false" style="height:25px;" width="70" inputType="text" value="팩스"></w2:column>
+									<w2:column id="column18" blockSelect="false" style="height:25px;" width="100" inputType="text" value="이메일"></w2:column>
+									<w2:column id="column19" blockSelect="false" style="height:25px;" width="100%" inputType="text" value="비고"></w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody id="gBody4" style="">
+								<w2:row id="row5" style="">
+									<w2:column id="ORG_ID" blockSelect="false" style="height:25px;" width="" inputType="text"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="ORG_NM" blockSelect="false" style="height:25px;" width="" inputType="text"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="ORG_DIV" blockSelect="false" style="height:25px;" width="" inputType="select"
+										displayMode="label" textAlign="center">
+										<w2:choices>
+											<w2:itemset nodeset="">
+												<w2:label ref=""></w2:label>
+												<w2:value ref=""></w2:value>
+											</w2:itemset>
+										</w2:choices>
+									</w2:column>
+									<w2:column id="COMP_REG_NO" blockSelect="false" style="height:25px;" width="" inputType="text">
+										<w2:choices>
+											<w2:itemset nodeset="data:dlt_organizationBasic">
+												<w2:label ref="PARENT_ORG_NM"></w2:label>
+												<w2:value ref="PARENT_ORG_NM"></w2:value>
+											</w2:itemset>
+										</w2:choices>
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:25px" id="PHONE" value=""
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:25px" id="FAX" value=""
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:25px" id="EMAIL" value=""
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:25px" id="REMARK" value=""
+										blockSelect="false" displayMode="label">
+									</w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer style="" id="footer1">
+								<w2:row style="" id="row3">
+									<w2:column removeBorderStyle="false" width="" inputType="expression" style="height:20px;" id="column42" value=""
+										blockSelect="false" displayMode="label" colSpan="15" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')"
+										textAlign="left">
+									</w2:column>
+									<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column51" value=""
+										blockSelect="false" displayMode="label">
+									</w2:column> -->
+								</w2:row>
+							</w2:footer>
 				</w2:gridView>
-			</xf:group>
-			<xf:group id="grp_organizationBasic" style="" class="section">
-				<xf:group id="" style="width:100%;" class="w2tb tb" tagname="table" adaptive="layout">
-					<w2:attributes>
-						<w2:summary></w2:summary>
-					</w2:attributes>
-					<xf:group tagname="colgroup">
-						<xf:group style="width:150px;" tagname="col"></xf:group>
-						<xf:group style="" tagname="col"></xf:group>
-						<xf:group style="width:150px;" tagname="col"></xf:group>
-						<xf:group style="" tagname="col"></xf:group>
 					</xf:group>
-					<xf:group style="" tagname="tr">
-						<xf:group style="" class="w2tb_th" tagname="th">기관아이디</xf:group>
-						<xf:group style="" class="w2tb_td" tagname="td">
-							<xf:input id="ibx_orgId" ref="data:dlt_organizationBasic.ORG_ID" style="height:24px;" disabled="true"></xf:input>
-						</xf:group>
-						<xf:group class="w2tb_th req" tagname="th">기관명</xf:group>
-						<xf:group class="w2tb_td" tagname="td">
-							<xf:input id="ibx_orgNm" ref="data:dlt_organizationBasic.ORG_NM" style="height:24px;" class="req" mandatory="true"></xf:input>
-						</xf:group>
-					</xf:group>
-					<xf:group style="" tagname="tr">
-						<xf:group style="" class="w2tb_th req" tagname="th">기관구분</xf:group>
-						<xf:group style="" class="w2tb_td" tagname="td">
-							<xf:select1 disabledClass="w2selectbox_disabled" appearance="minimal" chooseOptionLabel="전체" direction="auto"
-								chooseOption="false" mandatory="true" displayMode="label" optionOrder="" id="sbx_OrgDiv" ref="data:dlt_organizationBasic.ORG_DIV"
-								style="height:24px;" allOption="" submenuSize="auto" disabled="false" class="req" renderType="component">
-								<xf:choices></xf:choices>
-							</xf:select1>
-						</xf:group>
-						<xf:group class="w2tb_th" tagname="th">기관영문명</xf:group>
-						<xf:group class="w2tb_td" tagname="td">
-							<xf:input id="ibx_orgEnm" ref="data:dlt_organizationBasic.ORG_ENM" style="height:24px;" refSync=""></xf:input>
-						</xf:group>
-					</xf:group>
-					<xf:group style="" tagname="tr">
-						<xf:group style="" class="w2tb_th" tagname="th">대표자명</xf:group>
-						<xf:group style="" class="w2tb_td" tagname="td">
-							<xf:input id="ibx_repNm" ref="data:dlt_organizationBasic.REP_NM" style="height:24px;"></xf:input>
-						</xf:group>
-						<xf:group class="w2tb_th" tagname="th">사업자등록번호</xf:group>
-						<xf:group class="w2tb_td" tagname="td">
-							<xf:input id="ibx_compRegNo" ref="data:dlt_organizationBasic.COMP_REG_NO" style="height:24px;" readOnly="" readOnlyClass="" initValue=""></xf:input>
-						</xf:group>
-					</xf:group>
-					<xf:group style="" tagname="tr">
-						<xf:group style="" class="w2tb_th" tagname="th">주소</xf:group>
-						<xf:group style="" class="w2tb_td" tagname="td">
-							<xf:input id="ibx_orgAddr" ref="data:dlt_organizationBasic.ADDR" style="height:24px;" disabled="" refSync=""></xf:input>
-						</xf:group>
-						<xf:group class="w2tb_th" tagname="th">전화번호</xf:group>
-						<xf:group class="w2tb_td" tagname="td">
-							<xf:input id="ibx_orgPhone" ref="data:dlt_organizationBasic.PHONE" style="height:24px;" disabled="" refSync=""></xf:input>
-						</xf:group>
-					</xf:group>
-					<xf:group style="" tagname="tr">
-						<xf:group style="" class="w2tb_th" tagname="th">팩스</xf:group>
-						<xf:group style="" class="w2tb_td" tagname="td">
-							<xf:input disabled="" id="ibx_orgFax" ref="data:dlt_organizationBasic.FAX" refSync="" style="height:24px;" initValue=""></xf:input>
-						</xf:group>
-						<xf:group class="w2tb_th" tagname="th">이메일</xf:group>
-						<xf:group class="w2tb_td" tagname="td">
-							<xf:input disabled="" id="ibx_orgEMail" initValue="" ref="data:dlt_organizationBasic.EMAIL" refSync=""
-								style="height:24px;" readOnlyClass="">
-							</xf:input>
-						</xf:group>
-					</xf:group>
-					<xf:group style="" tagname="tr">
-						<xf:group style="" class="w2tb_th" tagname="th">비고</xf:group>
-						<xf:group style="" class="w2tb_td" tagname="td">
-							<w2:attributes>
-								<w2:colspan>3</w2:colspan>
-								<w2:rowspan>1</w2:rowspan>
-							</w2:attributes>
-							<xf:input id="ibx_remark" ref="data:dlt_organizationBasic.REMARK" style="height:24px;"></xf:input>
-						</xf:group>
-					</xf:group>
+				</xf:group><!-- pgm_list -->
+				
+				<xf:group id="" class="vertical_line">
 				</xf:group>
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_a" style="">
+					<xf:group id="" class="gr_sub_header" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="기관 상세 정보" style=""></w2:textbox>
+						</xf:group>
+					</xf:group>
+					<xf:group class="" id="" style="">
+						<xf:group id="" style="width:100%;" class="w2tb tb" tagname="table" adaptive="layout">
+							<w2:attributes>
+								<w2:summary></w2:summary>
+							</w2:attributes>
+							<xf:group tagname="colgroup">
+								<xf:group style="width:150px;" tagname="col"></xf:group>
+								<xf:group style="" tagname="col"></xf:group>
+								<xf:group style="width:150px;" tagname="col"></xf:group>
+								<xf:group style="" tagname="col"></xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group style="" class="w2tb_th" tagname="th">기관아이디</xf:group>
+								<xf:group style="" class="w2tb_td" tagname="td">
+									<xf:input id="ibx_orgId" ref="data:dlt_organizationBasic.ORG_ID" style="height:24px;" disabled="true"></xf:input>
+								</xf:group>
+								<xf:group class="w2tb_th req" tagname="th">기관명</xf:group>
+								<xf:group class="w2tb_td" tagname="td">
+									<xf:input id="ibx_orgNm" ref="data:dlt_organizationBasic.ORG_NM" style="height:24px;" class="req" mandatory="true"></xf:input>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group style="" class="w2tb_th req" tagname="th">기관구분</xf:group>
+								<xf:group style="" class="w2tb_td" tagname="td">
+									<xf:select1 disabledClass="w2selectbox_disabled" appearance="minimal" chooseOptionLabel="전체" direction="auto"
+										chooseOption="false" mandatory="true" displayMode="label" optionOrder="" id="sbx_OrgDiv" ref="data:dlt_organizationBasic.ORG_DIV"
+										style="height:24px;" allOption="" submenuSize="auto" disabled="false" class="req" renderType="component">
+										<xf:choices></xf:choices>
+									</xf:select1>
+								</xf:group>
+								<xf:group class="w2tb_th" tagname="th">기관영문명</xf:group>
+								<xf:group class="w2tb_td" tagname="td">
+									<xf:input id="ibx_orgEnm" ref="data:dlt_organizationBasic.ORG_ENM" style="height:24px;" refSync=""></xf:input>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group style="" class="w2tb_th" tagname="th">대표자명</xf:group>
+								<xf:group style="" class="w2tb_td" tagname="td">
+									<xf:input id="ibx_repNm" ref="data:dlt_organizationBasic.REP_NM" style="height:24px;"></xf:input>
+								</xf:group>
+								<xf:group class="w2tb_th" tagname="th">사업자등록번호</xf:group>
+								<xf:group class="w2tb_td" tagname="td">
+									<xf:input id="ibx_compRegNo" ref="data:dlt_organizationBasic.COMP_REG_NO" style="height:24px;" readOnly="" readOnlyClass="" initValue=""></xf:input>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group style="" class="w2tb_th" tagname="th">주소</xf:group>
+								<xf:group style="" class="w2tb_td" tagname="td">
+									<xf:input id="ibx_orgAddr" ref="data:dlt_organizationBasic.ADDR" style="height:24px;" disabled="" refSync=""></xf:input>
+								</xf:group>
+								<xf:group class="w2tb_th" tagname="th">전화번호</xf:group>
+								<xf:group class="w2tb_td" tagname="td">
+									<xf:input id="ibx_orgPhone" ref="data:dlt_organizationBasic.PHONE" style="height:24px;" disabled="" refSync=""></xf:input>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group style="" class="w2tb_th" tagname="th">팩스</xf:group>
+								<xf:group style="" class="w2tb_td" tagname="td">
+									<xf:input disabled="" id="ibx_orgFax" ref="data:dlt_organizationBasic.FAX" refSync="" style="height:24px;" initValue=""></xf:input>
+								</xf:group>
+								<xf:group class="w2tb_th" tagname="th">이메일</xf:group>
+								<xf:group class="w2tb_td" tagname="td">
+									<xf:input disabled="" id="ibx_orgEMail" initValue="" ref="data:dlt_organizationBasic.EMAIL" refSync=""
+										style="height:24px;" readOnlyClass="">
+									</xf:input>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group style="" class="w2tb_th" tagname="th">비고</xf:group>
+								<xf:group style="" class="w2tb_td" tagname="td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:input id="ibx_remark" ref="data:dlt_organizationBasic.REMARK" style="height:24px;"></xf:input>
+								</xf:group>
+							</xf:group>
+						</xf:group>
+					</xf:group>
+				</xf:group> <!-- pgm_detail -->
 			</xf:group>
 		</xf:group>
 	</body>

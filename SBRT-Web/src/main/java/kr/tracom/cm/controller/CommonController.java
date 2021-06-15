@@ -107,7 +107,7 @@ public class CommonController extends ControllerSupport {
 		Map hash = commonService.saveCodeCoListAll();
 
 		result.setData("dma_result_All", hash);
-		return result.getResult();
+		return result.getResultSave();
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class CommonController extends ControllerSupport {
 		Map hash = commonService.saveCodeCoList();
 		result.setData("dma_result", hash);
 		result.setData("dlt_commonCo", commonService.selectCommonCo());
-		return result.getResult();
+		return result.getResultSave();
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class CommonController extends ControllerSupport {
 		Map hash = commonService.saveCodeDtlList();
 		result.setData("dma_result", hash);
 		result.setData("dlt_commonDtl", commonService.selectCommonDtlList());
-		return result.getResult();
+		return result.getResultSave();
 	}
 
 	/**

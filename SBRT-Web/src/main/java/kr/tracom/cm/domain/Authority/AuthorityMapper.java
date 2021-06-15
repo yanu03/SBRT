@@ -42,5 +42,7 @@ public interface AuthorityMapper {
 	 * @author InswaveSystems
 	 */
 	public int deleteAuthorityMemberAll(Map param);
+	
+	public Map selectAuthorityKey();
 
 }

@@ -141,17 +141,17 @@
 	 * 초기 스크립트 수행 함수 정의
 	 */
 	scwin.onpageload = function() {
-		com.executeSubmission(sbm_commonSearchItem);
-		com.executeSubmission(sbm_commonCo);
 		var autoOptions = {
 			Main : { grid : grd_CoView, srchSbm : sbm_commonCo, savSbm : sbm_saveCo, allSavSbm:sbm_saveCoAll
 				, srchGrp : pgm_header, focusColumn : "CO_CD", name :  "공통코드" },
 			Sub1 : { grid : grd_dtlView, srchSbm : sbm_commonDtl, savSbm : sbm_saveDtl
 				, focusColumn : "DL_CD", name :  "상세코드"}
-		 };
-		 
-
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);
+		};
+		
+		var mainOptions = {
+			SEARCH: scwin.btn_search_onclick
+		};
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions, mainOptions);
 		
 		var subOptions = {
 			ADD:{},
@@ -160,8 +160,10 @@
 			EXL:{},
 			SAVE:{}
 		};
-
 		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);	
+		
+		com.executeSubmission(sbm_commonSearchItem);
+		com.executeSubmission(sbm_commonCo);
 	};
 	
 	scwin.onpageunload = function() {
@@ -190,8 +192,10 @@
 	 * 공통공통코드의 row 선택시 발생하며 하위 코드리스트에 변경사항 있는 경우에는 저장여부를 묻고, 아닌 경우에는 하위 리스트를 조회한다.
 	 */
 	scwin.grd_CoView_onrowindexchange = function(row, oldRow) {
+		var focusOption = {keyColumn : "CO_CD", focusColumn : "CO_NM", keyMap : dma_commonCO};
+		
 		com.changeDualGrid(grd_CoView, grd_dtlView, sbm_saveDtl,
-					sbm_commonDtl, dma_commonCO, "CO_CD", "CO_CD_ORG", row, oldRow, "상세코드");
+					sbm_commonDtl, focusOption, row, oldRow, "상세코드");
 	};
 	
 	/**
@@ -238,7 +242,8 @@
 		} else {
 			dma_search.set("CONTENT", acb_autoChoiceBox.getValue());
 		}
-		com.executeSubmission(sbm_commonCo);
+		//com.executeSubmission(sbm_commonCo);
+		com.searchGrid(grd_CoView,sbm_commonCo);
 	};
 	
 	/**

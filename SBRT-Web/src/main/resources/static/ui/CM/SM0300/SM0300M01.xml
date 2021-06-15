@@ -101,24 +101,13 @@
 	 * sbm_ProgramSearchItem은 검색박스에 검색어들을 나열한다.
 	 */
 	scwin.onpageload = function() {
-		var codeOptions = [{ code : "PROG_GRP_CD", compID : "sbx_ProgramGroup, grd_program:PROG_GRP_CD"}];
-		com.setCommonDtl(codeOptions, function() {
-				com.searchGrid(grd_program,sbm_searchProgram);
-		});
-		
-		
+	
 		var autoOptions = {
 			Main : { grid : grd_program, srchSbm : sbm_searchProgram, savSbm : sbm_saveProgram, allSavSbm:sbm_saveProgramAll
-						, srchGrp : pgm_header, focusColumn : "PROG_GRP_CD", name :  "프로그램"},
+						, srchGrp : pgm_header, keyColumn : "PROG_CD", focusColumn : "PROG_GRP_CD", name :  "프로그램"},
 			Sub1 : { grid : grd_programAuthority, srchSbm : sbm_searchProgramAuthority, savSbm : sbm_saveProgramAuthority
-				, focusColumn : "AUTH_CD", name :  "프로그램별 접근권한"}
+				, keyColumn : "AUTH_CD", focusColumn : "AUTH_CD", name :  "프로그램별 접근권한"}
 		 };
-		 
-		var mainOptions = {
-			SAVE: scwin.btn_saveProgram_onclick
-		};
-		
-
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);
 		
 		var subOptions = {
@@ -128,8 +117,12 @@
 			EXL:{},
 			SAVE:{}
 		};
-
 		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);	
+		
+		var codeOptions = [{ code : "PROG_GRP_CD", compID : "sbx_ProgramGroup, grd_program:PROG_GRP_CD"}];
+		com.setCommonDtl(codeOptions, function() {
+				com.searchGrid(grd_program,sbm_searchProgram);
+		});
 	};
 
 	scwin.onpageunload = function() {
@@ -140,11 +133,13 @@
 	 * 프로그램 조회 버튼 콜백 메소드
 	 */
 	scwin.sbm_searchProgram_submitdone = function(e) {
+	
 		var sCode = com.getResultCode(e);
-		if (sCode == "S") {
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
 			//spn_programCnt.setValue(grd_program.getTotalRow());
-			dlt_programAuthority.removeAll();
-			grd_program.setFocusedCell(0, "PROG_NM");
+			//dlt_programAuthority.removeAll();
+			//grd_program.setFocusedCell(0, "PROG_NM");
+			com.setFocusedCell(grd_program, "PROG_NM");
 		}
 	};
 
@@ -152,8 +147,11 @@
 	 * 프로그램관리 리스트의 row 인덱스 위치가 바뀔때 마다 실행되며 프로그램코드에 해당하는 권한 목록을 가져온다.
 	 */
 	scwin.grd_program_onrowindexchange = function(row, oldRow) {
+		
+		var focusOption = {keyColumn : "PROG_CD", focusColumn : "PROG_CD", keyMap : dma_program, keyMapColumn : "PROG_CD"};
+		
 		com.changeDualGrid(grd_program, grd_programAuthority, sbm_saveProgramAuthority,
-					sbm_searchProgramAuthority, dma_program, "PROG_CD", "PROG_CD", row, oldRow, "프로그램별 접근 권한");
+					sbm_searchProgramAuthority, focusOption , row, oldRow, "프로그램별 접근 권한");
 	};
 
 
@@ -162,7 +160,7 @@
 	 */
 	scwin.sbm_saveProgramAll_submitdone = function(e) {
 		var rsCode = com.getResultCode(e)
-				
+
 		if (rsCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
 		    //com.clearGrid(grd_program);
 			//com.clearGrid(grd_programAuthority);

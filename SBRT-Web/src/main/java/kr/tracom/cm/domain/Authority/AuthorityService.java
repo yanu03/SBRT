@@ -181,4 +181,9 @@ public class AuthorityService extends ServiceSupport {
 		result.put("DCNT_MEM", String.valueOf(dCnt_code));
 		return result;
 	}
+	
+	public Map selectAuthorityKey() throws Exception {
+		return authorityMapper.selectAuthorityKey();
+	}
+
 }

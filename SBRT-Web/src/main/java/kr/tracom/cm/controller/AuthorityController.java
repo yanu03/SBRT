@@ -93,7 +93,7 @@ public class AuthorityController extends ControllerSupport {
 		result.setData("dma_result", hash);
 		result.setData("dlt_authority", authorityService.selectAuthorityList());
 
-		return result.getResult();
+		return result.getResultSave();
 	}
 
 	/**
@@ -111,7 +111,7 @@ public class AuthorityController extends ControllerSupport {
 		Map hash = authorityService.saveAuthorityMember();
 		result.setData("dma_result", hash);
 		result.setData("dlt_authorityMember", authorityService.selectAuthorityMemberList());
-		return result.getResult();
+		return result.getResultSave();
 	}
 
 	/**
@@ -128,6 +128,12 @@ public class AuthorityController extends ControllerSupport {
 
 		Map hash = authorityService.saveAuthorityAll();
 		result.setData("dma_result_All", hash);
+		return result.getResultSave();
+	}
+	
+	@RequestMapping("/authority/selectAuthorityKey")
+	public @ResponseBody Map<String, Object> selectAuthorityKey() throws Exception {
+		result.setData("dma_SEQ_BMS_AUTH_MST_0", authorityService.selectAuthorityKey());
 		return result.getResult();
 	}
 }
