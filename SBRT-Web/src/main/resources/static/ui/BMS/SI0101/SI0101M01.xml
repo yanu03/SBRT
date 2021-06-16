@@ -78,7 +78,7 @@
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_SI0101G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_GRG_MST" action='/si/SI0101G0R0' method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="조회 중입니다..." ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_SI0101G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_SI0101G0S0" ref='data:json,{"action":"modified","id":"dlt_BMS_GRG_MST"}' target="data:json,dma_result" action="/si/SI0101G0S0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
@@ -96,17 +96,17 @@
 
 		<script type="text/javascript"><![CDATA[
 	scwin.onpageload = function() {
+		var autoOptions = {
+			Main : { grid : SI0101G0, srchSbm : sub_SI0101G0R0, savSbm : sub_SI0101G0S0, keySbm : sub_SI0101G0K0 
+					,srchGrp : pgm_header, keyColumn : "GRG_ID", focusColumn : "GRG_NM", name :  "차고지 목록"}
+		};
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions);
+		
 		var codeOptions = [ {code : "OWNER_TYPE", compID : "SI0101G0:OWNER_TYPE" } ];
 		com.setCommonDtl(codeOptions);
 		
 		$p.executeSubmission(sub_SI0101G0R0);
 		$p.executeSubmission(sub_SI0101SHI0);
-		//com.setEnterKeyEvent(pgm_header, scwin.btn_search_onclick);
-			
-		var autoOptions = {
-			Main : { grid : SI0101G0, srchSbm : sub_SI0101G0R0, savSbm : sub_SI0101G0S0, keySbm : sub_SI0101G0K0 }
-		 };
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions);
 
 	};
 
@@ -121,13 +121,20 @@
 	//			  ];
 					
 	
+	scwin.sub_SI0101G0R0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+			com.setFocusedCell(SI0101G0, "GRG_NM");
+		}
+	};
+	
 	/**
 	 * 프로그램관리 저장 버튼의 콜백메소드
 	 */
 	scwin.sub_SI0101G0S0_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
-			com.searchGrid(SI0101G0,sub_SI0101G0R0);
+			com.saveDone(SI0101G0,sub_SI0101G0R0);
 		}
 	};
 
@@ -198,6 +205,10 @@
 			acb_autoChoiceBox.show("");
 		}
 	};
+	
+	scwin.SI0101G0_onrowindexchange = function(row, oldRow) {
+		com.changeSingleGrid(SI0101G0, row, oldRow);
+	};
 ]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -253,7 +264,7 @@
 					</xf:group>
 					<xf:group id="" class="" style="">
 						<w2:gridView adaptive="crosstab" autoFit="lastColumn" class="cm_grid left" dataList="data:dlt_BMS_GRG_MST" enterKeyMove="" ev:onafteredit=""
-							ev:oncellclick="scwin.SI0101G0_oncellclick" ev:oneditkeyup="" ev:onkeyup="" ev:onrowindexchange=""
+							ev:oncellclick="scwin.SI0101G0_oncellclick" ev:oneditkeyup="" ev:onkeyup="" ev:onrowindexchange="scwin.SI0101G0_onrowindexchange"
 							ev:ontextimageclick="" ev:onviewchange="" fixedColumnWithHidden="true" id="SI0101G0"
 							ignoreCellClick="false" rowNumHeaderValue="순번" rowNumVisible="true" rowStatusHeaderValue="" rowStatusVisible="false"
 							rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true" visibleRowNum="" wheelRows=""

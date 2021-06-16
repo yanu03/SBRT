@@ -96,20 +96,18 @@
 	 * 초기 스크립트 수행 함수 정의
 	 */
 	scwin.onpageload = function() {
+		var autoOptions = {
+			Main : { grid : grd_organizationBasic, srchSbm : sbm_searchOrganization, savSbm : sbm_saveOrganizationBasic
+				, keySbm : sbm_organizaionKey, srchGrp : pgm_header, keyColumn : "ORG_ID", focusColumn : "ORG_NM", name :  "기관정보" }
+		 };
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
+		
 		var codeOptions = [ { "code" : "ORG_DIV", "compID" : "sbx_OrgDiv, grd_organizationBasic:ORG_DIV" } ];
 		com.setCommonDtl(codeOptions, function() {
 			com.searchGrid(grd_organizationBasic,sbm_searchOrganization);
 		});
 		com.executeSubmission(sbm_organizationSearchItem);
-		//com.setEnterKeyEvent(tbl_search, scwin.btn_Search_onclick);
-		//com.setGridViewDelCheckBox([grd_organizationBasic]);
 
-		var autoOptions = {
-			Main : { grid : grd_organizationBasic, srchSbm : sbm_searchOrganization, savSbm : sbm_saveOrganizationBasic
-				, keySbm : sbm_organizaionKey, srchGrp : pgm_header, focusColumn : "ORG_NM", name :  "기관정보" }
-		 };
-
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
 	};
 	
 	scwin.onpageunload = function() {
@@ -131,111 +129,31 @@
 	};
 	
 	/**
-	 * 조직기본관리 조회버튼 클릭시 발생하며, 조건에 따른 조직기본관리 리스트를 조회한다.
-	 */
-	scwin.btn_Search_onclick = function() {
-		dma_search.set("CONTENT", acb_autoChoiceBox.getValue());
-		com.executeSubmission(sbm_searchOrganization);
-	};
-	
-	/**
 	 * 조직기본관리 버튼 클릭의 콜백메소드 건수 조회, ReadOnly 그리드뷰 컬럼색 변경, 조직 레벨에 따른 기관명, 상위소속명의 폰트색을 변경한다.
 	 */
 	scwin.sbm_searchOrganization_submitdone = function(e) {
-		
-	};
-	
-	/**
-	 * 조직기본관리 등록 버튼 클릭
-	 */
-	scwin.btn_addOrganization_onclick = function() {
-	
-		var org_cnt = dlt_organizationBasic.getTotalRow();
-		if (org_cnt == 0) {
-			com.alert("조회 후 이용하세요.");
-			return;
-		}
-	
-		if (grd_organizationBasic.getFocusedRealRowIndex() === -1) {
-			grd_organizationBasic.setFocusedCell(0, "ORG_ID");
+		var rsCode = com.getResultCode(e)
+		if (rsCode == "S") {
+			com.setFocusedCell(grd_organizationBasic, "ORG_NM");
 		}
 		
-		scwin.insertRowOrg();
 	};
-	
-	/**
-	 * 같은 레벨의 노트에 조직을 추가한다.
-	 */
-	scwin.insertRowOrg = function() {
-		var focusedRowIndex = grd_organizationBasic.getFocusedRealRowIndex();
-		var curOrgId = dlt_organizationBasic.getCellData(focusedRowIndex, "ORG_ID");
-		var rowIndexArr = dlt_organizationBasic.getMatchedIndex("ORG_ID", curOrgId, true, 0, dlt_organizationBasic.getRowCount());
-		var sortOrder = WebSquare.util.getNumber(dlt_organizationBasic.getCellData(rowIndexArr[rowIndexArr.length - 1], "SORT")) + 1;
-		var insertRowIndex = scwin.getInsertRowIndex(curOrgId);
-		var insertJson = [ {"SORT" : sortOrder } ];
-	
-		dlt_organizationBasic.insertJSON(insertRowIndex, insertJson);
-		grd_organizationBasic.setFocusedCell(insertRowIndex, "ORG_ID");
-		ibx_orgNm.focus();
-	};
-	
-	/**
-	 * 새로 추가되는 조직으로 RowIndex를 반환한다.
-	 */
-	scwin.getInsertRowIndex = function(curOrgId) {
-		var rowIndexArr = dlt_organizationBasic.getMatchedIndex("ORG_ID", curOrgId, true, 0, dlt_organizationBasic.getRowCount());
-		if (rowIndexArr.length > 0) {
-			return rowIndexArr[rowIndexArr.length - 1] + 1;
-		} else {
-			return -1;
-		}
-	};
-	
-	/**
-	 * 조직기본관리 삭제 버튼 클릭
-	 */
-	scwin.btn_delOrganization_onclick = function() {
-		dlt_organizationBasic.deleteRows(grd_organizationBasic.getCheckedIndex("chk"));
-	};
-	
-	/**
-	 * 조직기본관리 취소 버튼 클릭
-	 */
-	scwin.btn_cancelOrganization_onclick = function() {
-		dlt_organizationBasic.undoAll();
-		dlt_organizationBasic.removeRows(dlt_organizationBasic.getInsertedIndex());
-	};
-	
-	/**
-	 * 조직기본관리 저장 버튼 클릭
-	 */
-	scwin.btn_saveOrganization_onclick = function() {
-		var modifiedCount = dlt_organizationBasic.getModifiedIndex().length;
-		
-		if (modifiedCount > 0) {
-			if (com.validateGroup(grp_organizationBasic)) {
-				com.confirm(modifiedCount + "건의 데이타를 반영하시겠습니까", function(rtn) {
-					if (rtn) { 
-						com.executeSubmission(sbm_saveOrganizationBasic);
-					}
-				});
-			}
-		} else {
-			com.alert("저장할 데이터가 없습니다.");
-		}
-	};
+
 	
 	/**
 	 * 조직기본관리 저장 버튼의 콜백메소드
 	 */
 	scwin.sbm_saveOrganizationBasic_submitdone = function(e) {
-		com.executeSubmission(sbm_searchOrganization);
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+			com.saveDone(grd_organizationBasic,sbm_searchOrganization);
+		}
 	};
 	
-	scwin.btn_excelOrganization_onclick = function() {
-		com.downLoadExcel(grd_organizationBasic);
+	scwin.grd_organizationBasic_onrowindexchange = function(row, oldRow) {
+		com.changeSingleGrid(grd_organizationBasic, row, oldRow);
 	};
-	
+
 	scwin.sbm_organizaionKey_submitdone = function(e) {
 		var insertIndex = com.addGrid(grd_organizationBasic,dma_SEQ_BMS_ORG_MST_0,"ORG_ID","ORG_NM");
 	};
@@ -291,7 +209,7 @@
 						</xf:group>
 					</xf:group>
 						<xf:group id="" class="" style="">
-						<w2:gridView ignoreCellClick="false" ev:onrowindexchange="" autoFit="allColumn" visibleRowNum="" sortable="true"
+						<w2:gridView ignoreCellClick="false" ev:onrowindexchange="scwin.grd_organizationBasic_onrowindexchange" autoFit="allColumn" visibleRowNum="" sortable="true"
 							sortEvent="onclick" class="cm_grid left" showSortableImage="" fixedColumnWithHidden="true" dataList="dlt_organizationBasic"
 							id="grd_organizationBasic" readOnly="true" style="" overflowX="hidden" scrollByColumn="false" useShiftKey="true"
 							overflowY="scroll" rowStatusVisible="false" rowStatusHeaderValue="상태" ev:oncellclick="" adaptive="crosstab" rowNumVisible="true" rowNumHeaderValue="순서">

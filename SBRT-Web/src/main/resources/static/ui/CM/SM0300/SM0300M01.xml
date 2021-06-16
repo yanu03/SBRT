@@ -111,11 +111,7 @@
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);
 		
 		var subOptions = {
-			ADD: scwin.btn_addProgramAuthority_onclick,
-			DEL:{},
-			CNL:{},
-			EXL:{},
-			SAVE:{}
+			ADD: scwin.btn_addProgramAuthority_onclick, DEL:{}, CNL:{}, EXL:{}, SAVE:{}
 		};
 		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);	
 		
@@ -136,10 +132,7 @@
 	
 		var sCode = com.getResultCode(e);
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
-			//spn_programCnt.setValue(grd_program.getTotalRow());
-			//dlt_programAuthority.removeAll();
-			//grd_program.setFocusedCell(0, "PROG_NM");
-			com.setFocusedCell(grd_program, "PROG_NM");
+			com.setFocusedCell(grd_program, "PROG_GRP_CD");
 		}
 	};
 
@@ -148,7 +141,7 @@
 	 */
 	scwin.grd_program_onrowindexchange = function(row, oldRow) {
 		
-		var focusOption = {keyColumn : "PROG_CD", focusColumn : "PROG_CD", keyMap : dma_program, keyMapColumn : "PROG_CD"};
+		var focusOption = {keyMap : dma_program, keyMapColumn : "PROG_CD"};
 		
 		com.changeDualGrid(grd_program, grd_programAuthority, sbm_saveProgramAuthority,
 					sbm_searchProgramAuthority, focusOption , row, oldRow, "프로그램별 접근 권한");
@@ -162,9 +155,8 @@
 		var rsCode = com.getResultCode(e)
 
 		if (rsCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
-		    //com.clearGrid(grd_program);
-			//com.clearGrid(grd_programAuthority);
-			com.searchGrid(grd_program,sbm_searchProgram);
+	
+			com.saveDone(grd_program,sbm_searchProgram,grd_programAuthority);
 		}
 	};
 
@@ -175,7 +167,7 @@
 	scwin.sbm_saveProgram_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
-			com.searchGrid(grd_program,sbm_searchProgram);
+			com.saveDone(grd_program,sbm_searchProgram);
 		}
 	};
 	
@@ -229,7 +221,7 @@
 	scwin.sbm_saveProgramAuthority_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
-			com.searchGrid(grd_programAuthority,sbm_searchProgramAuthority);
+			com.saveDone(grd_programAuthority,sbm_searchProgramAuthority);
 		}			
 	};
 

@@ -81,24 +81,19 @@
 	 * sbm_menuSearchItem은 검색박스에 검색어들을 나열한다.
 	 */
 	scwin.onpageload = function() {
-		$p.executeSubmission(sbm_searchMenu);
-		com.executeSubmission(sbm_menuSearchItem, {});
-		//com.setEnterKeyEvent(pgm_header, scwin.btn_search_onclick);
-		//com.setGridViewDelCheckBox([grd_menu]);
-		
-		var systemOptions = [{ code : "SYSTEM_BIT", compID : "grd_menu:SYSTEM_BIT"}];
-		com.setSystemCode(systemOptions);
-
 		var autoOptions = {
-			Main : { grid : grd_menu, srchSbm : sbm_searchMenu, savSbm : sbm_saveMenu,
-				srchGrp : pgm_header}
+			Main : { grid : grd_menu, srchSbm : sbm_searchMenu, savSbm : sbm_saveMenu, srchGrp : pgm_header, name : "메뉴"}
 		 };
 		var mainOptions = {
 			SEARCH: scwin.btn_search_onclick,
 			ADD: scwin.btn_addMenu_onclick
 		};
-
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions, mainOptions);
+		
+		$p.executeSubmission(sbm_searchMenu);
+		com.executeSubmission(sbm_menuSearchItem, {});
+		var systemOptions = [{ code : "SYSTEM_BIT", compID : "grd_menu:SYSTEM_BIT"}];
+		com.setSystemCode(systemOptions);
 	};
 
 	scwin.onpageunload = function() {
@@ -347,21 +342,22 @@
 	scwin.callbackProgramSearch = function(data) {
 		var rowIndex = dlt_menu.getRowPosition();
 		if(data==null){
-			dlt_menu.setBroadcast(false);
+			//dlt_menu.setBroadcast(false);
 			dlt_menu.setCellData(rowIndex, "PROG_CD", "");
 			dlt_menu.setCellData(rowIndex, "PROG_NM", "");
 			dlt_menu.setCellData(rowIndex, "PROG_GRP_CD", "");
 			dlt_menu.setCellData(rowIndex, "PROGRAM_GROUP_NM", "");
-			dlt_menu.setBroadcast(true, true);
+			//dlt_menu.setBroadcast(true, true);
 		}
 		else{
-			dlt_menu.setBroadcast(false);
+			//dlt_menu.setBroadcast(false);
 			dlt_menu.setCellData(rowIndex, "PROG_CD", data.PROG_CD);
 			dlt_menu.setCellData(rowIndex, "PROG_NM", data.PROG_NM);
 			dlt_menu.setCellData(rowIndex, "PROG_GRP_CD", data.PROG_GRP_CD);
 			dlt_menu.setCellData(rowIndex, "PROGRAM_GROUP_NM", data.PROGRAM_GROUP_NM);
-			dlt_menu.setBroadcast(true, true);
+			//dlt_menu.setBroadcast(true, true);
 		}
+		grd_menu.setFocusedCell(rowIndex, "MENU_NM", true);
 	}
 
 	scwin.grd_menu_oneditkeyup = function(info) {
@@ -404,9 +400,7 @@
 		}
 		gridViewObj.setCellChecked(rowIndex, colIndex, newValue);
 	};
-	scwin.btn_excelMenu_onclick = function() {
-		com.downLoadExcel(grd_menu);
-	};
+
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
