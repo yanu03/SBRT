@@ -42,5 +42,4 @@ public interface SI0401Mapper {
 	
 	public int SI0401G1D0(Map param);
 	
-	public int SI0401G1D1(Map param);
 }
