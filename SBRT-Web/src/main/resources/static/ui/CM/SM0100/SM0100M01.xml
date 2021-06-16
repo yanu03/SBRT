@@ -143,18 +143,19 @@
 	scwin.onpageload = function() {
 		var autoOptions = {
 			Main : { grid : grd_CoView, srchSbm : sbm_commonCo, savSbm : sbm_saveCo, allSavSbm:sbm_saveCoAll
-				, srchGrp : pgm_header, focusColumn : "CO_CD", name :  "공통코드" },
+				, srchGrp : pgm_header, keyColumn : "CO_CD", focusColumn : "CO_CD", name :  "공통코드"},
 			Sub1 : { grid : grd_dtlView, srchSbm : sbm_commonDtl, savSbm : sbm_saveDtl
-				, focusColumn : "DL_CD", name :  "상세코드"}
+				, focusColumn : "DL_CD", name : "상세코드"}
 		};
 		
 		var mainOptions = {
-			SEARCH: scwin.btn_search_onclick
+			SEARCH: scwin.btn_search_onclick,
+			ADD : scwin.btn_addCoCell_onclick
 		};
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions, mainOptions);
 		
 		var subOptions = {
-			ADD:{},
+			ADD:scwin.btn_addDtlCell_onclick,
 			DEL:{},
 			CNL:{},
 			EXL:{},
@@ -163,7 +164,7 @@
 		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);	
 		
 		com.executeSubmission(sbm_commonSearchItem);
-		com.executeSubmission(sbm_commonCo);
+		com.searchGrid(grd_CoView,sbm_commonCo,sbm_saveCo);
 	};
 	
 	scwin.onpageunload = function() {
@@ -192,10 +193,10 @@
 	 * 공통공통코드의 row 선택시 발생하며 하위 코드리스트에 변경사항 있는 경우에는 저장여부를 묻고, 아닌 경우에는 하위 리스트를 조회한다.
 	 */
 	scwin.grd_CoView_onrowindexchange = function(row, oldRow) {
-		var focusOption = {keyColumn : "CO_CD", focusColumn : "CO_NM", keyMap : dma_commonCO};
+		var focusOption = {keyMap : dma_commonCO};
 		
 		com.changeDualGrid(grd_CoView, grd_dtlView, sbm_saveDtl,
-					sbm_commonDtl, focusOption, row, oldRow, "상세코드");
+					sbm_commonDtl, focusOption, row, oldRow);
 	};
 	
 	/**
@@ -218,18 +219,8 @@
 	 */
 	scwin.sbm_commonDtl_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
-		if (sCode == "S") {
-			//spn_CodeCnt.setValue(dlt_commonDtl.getRowCount());
-	
-//			var d_grpCd = dlt_commonDtl.getCellData(0, "CO_CD");
-//			var m_grpCd = dlt_commonCo.getCellData(grd_CoView.getFocusedRowIndex(), "CO_CD");
-//			if (d_grpCd != m_grpCd) {
-//				var m_idx = dlt_commonCo.getMatchedIndex("CO_CD", d_grpCd, true);
-//				if (m_idx.length == 0) {
-//					m_idx = grd_CoView.getFocusedRowIndex();
-//				}
-//				grd_CoView.setFocusedCell(m_idx, "CO_CD");
-//			}
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+
 		}
 	};
 	
@@ -242,8 +233,7 @@
 		} else {
 			dma_search.set("CONTENT", acb_autoChoiceBox.getValue());
 		}
-		//com.executeSubmission(sbm_commonCo);
-		com.searchGrid(grd_CoView,sbm_commonCo);
+		com.searchGrid(grd_CoView,sbm_commonCo,sbm_saveCo);
 	};
 	
 	/**
@@ -251,11 +241,8 @@
 	 */
 	scwin.sbm_commonCo_submitdone = function(e) {
 		var rsCode = com.getResultCode(e)
-		if (rsCode == "S") {
-			//spn_CoCnt.setValue(dlt_commonCo.getRowCount());
-			grd_dtlView.initGrid();
-			grd_CoView.setFocusedCell(0, "CO_CD_NM");
-			//scwin.grd_CoView_onrowindexchange(0, 0);
+		if (rsCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+			com.setFocusedCell(grd_CoView, "CO_CD");
 		}
 	};
 	
@@ -268,33 +255,6 @@
 		grd_CoView.setCellReadOnly(insertIndex, "CO_CD", false);
 		grd_CoView.setFocusedCell(insertIndex, "CO_CD", true);
 	};
-	
-	/**
-	 * 공통코드 그룹 및 코드 데이터 저장 버튼 이벤트를 수행한다.
-	 */
-	scwin.btn_saveCoCell_onclick = function() {
-		scwin.saveData();
-	};
-	
-	/**
-	 * 데이터에 대한 유효성 검사 후 데이터를 저장한다.
-	 */
-	scwin.saveData = function() {
-		var grpModifiedIdx = dlt_commonCo.getModifiedIndex().length;
-		var codeModifiedIdx = dlt_commonDtl.getModifiedIndex().length;
-		if ((grpModifiedIdx == 0) && (codeModifiedIdx == 0)) {
-			com.alert("저장할 데이터가 없습니다");
-			return false;
-		}
-
-		if (scwin.validateCodeCo() && scwin.validateCode()) {
-			if (codeModifiedIdx > 0) {
-				com.confirm("해당 코드 그룹 및 코드 데이터가 저장됩니다. \n 진행하시겠습니까? ", "scwin.saveDtl");
-			} else {
-				com.confirm("해당 코드 그룹 데이터가 저장됩니다. \n 진행하시겠습니까? ", "scwin.saveCoCode");
-			}
-		}	
-	}
 	
 	/**
 	 * 코드 그룹의 필수 입력 정보를 체크한다.
@@ -317,37 +277,12 @@
 	}
 	
 	/**
-	 * 공통코드 그룹리스트 및 세부코드리스트에서 rowStatus C,U,D,E 상태(Modify)인것만 저장한다.
-	 */
-	scwin.saveCoCode = function(rtn) { 
-		if (rtn) {
-			com.executeSubmission(sbm_saveCoAll);
-		}
-	};
-	
-	/**
-	 * 세부코드리스트에서 rowStatus C,U,D,E 상태(Modify)인것만 저장한다.
-	 */
-	scwin.saveDtl = function(rtn) {
-		var val_coCdOrg = dlt_commonCo.getCellData(scwin.idxRow, "CO_CD_ORG");
-		if (rtn) {
-			if (val_coCdOrg) {
-				var param = { dma_commonCO : { CO_CD : val_coCdOrg }, dlt_commonDtl : dlt_commonDtl.getAllJSON() };
-				com.executeSubmission(sbm_saveDtl,param);
-			}
-			else {
-				com.executeSubmission(sbm_saveDtl);
-			}
-		}
-	};
-	
-	/**
 	 * Function 공통코드 그룹리스트 및 세부코드리스트 저장 후 callback
 	 */
 	scwin.sbm_saveCoAll_submitdone = function(e) {
 		var rsCode = com.getResultCode(e)
-		if (rsCode == "S") {
-			com.executeSubmission(sbm_commonCo);
+		if (rsCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+			com.saveDone(grd_CoView,sbm_commonCo,grd_dtlView);
 		}
 	};
 	
@@ -366,14 +301,6 @@
 	};
 	
 	/**
-	 * 공통코드 그룹리스트에서 취소 버튼클릭시 데이타를 이전 상태로 바꾸고 추가된 것들은 삭제한다.
-	 */
-	scwin.btn_cancelCo_onclick = function() {
-		dlt_commonCo.undoAll();
-		dlt_commonCo.removeRows(dlt_commonCo.getInsertedIndex());
-	};
-	
-	/**
 	 * 공통코드 리스트에서 등록버튼 클릭시 실행되며 한줄의 row를 생성한다.
 	 */
 	scwin.btn_addDtlCell_onclick = function() {
@@ -383,7 +310,7 @@
 		} else {
 			var rowStatus = dlt_commonCo.getRowStatus(focusRowIdx);
 			if (rowStatus == "C") {
-				com.alert("코드 그룹 등록 후에 사용 가능합니다.");
+				com.alert("공통 코드 등록 후에 사용 가능합니다.");
 			} else {
 				var insertIndex = dlt_commonDtl.insertRow();
 				var CO_CD = dlt_commonCo.getCellData(focusRowIdx, "CO_CD");
@@ -400,8 +327,8 @@
 	 */
 	scwin.sbm_saveCo_submitdone = function(e) {
 		var rsCode = com.getResultCode(e)
-		if (rsCode == "S") {
-			com.executeSubmission(sbm_commonCo);
+		if (rsCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+			com.saveDone(grd_CoView,sbm_commonCo);
 		}
 	};
 	
@@ -410,28 +337,11 @@
 	 */
 	scwin.sbm_saveDtl_submitdone = function(e) {
 		var rsCode = com.getResultCode(e)
-		if (rsCode == "S") {
-			com.executeSubmission(sbm_commonDtl);
+		if (rsCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+			com.saveDone(grd_dtlView,sbm_commonDtl);
 		}
 	};
-	
-	/**
-	 * 공통코드의 수정된 데이타의 상태를 원본으로 돌리고 추가된 데이타는 지운다.
-	 */
-	scwin.btn_cancelDtl_onclick = function() {
-		dlt_commonDtl.undoAll();
-		dlt_commonDtl.removeRows(dlt_commonDtl.getInsertedIndex());
-	};
-	
-	scwin.btn_excelCo_onclick = function() {
-		com.downLoadExcel(grd_CoView);
-	};
-	
-	scwin.btn_excelDtl_onclick = function() {
-	
-	
-		com.downLoadExcel(grd_dtlView);
-	};
+
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -547,11 +457,11 @@
 								<w2:row style="" id="row5">
 									<!-- <w2:column width="50" style="height:25px;" inputType="checkbox" id="chk" blockSelect="false" displayMode="label">
 									</w2:column> -->
-									<w2:column width="80" style="height:25px;" inputType="text" id="CO_CD" class="req" blockSelect="false" displayMode="label">
+									<w2:column width="80" readOnly="true" style="height:25px;" inputType="text" id="CO_CD" class="req" blockSelect="false" displayMode="label" userData1="M">
 									</w2:column>
-									<w2:column textAlign="left" width="200" style="height:25px;" inputType="text" id="CO_CD_NM" class="req" blockSelect="false" displayMode="label">
+									<w2:column textAlign="left" width="200" style="height:25px;" inputType="text" id="CO_CD_NM" class="req" blockSelect="false" displayMode="label" userData1="M">
 									</w2:column>
-									<w2:column width="80" style="height:25px;" inputType="text" id="SORT" allowChar="0-9" class="req" blockSelect="false" displayMode="label">
+									<w2:column width="80" style="height:25px;" inputType="text" id="SORT" allowChar="0-9" class="req" blockSelect="false" displayMode="label" userData1="M">
 									</w2:column>
 									<w2:column falseValue="N" trueValue="Y" valueType="other" width="80" style="height:25px;" inputType="checkbox" id="USE_YN" blockSelect="false" displayMode="">
 									</w2:column>
@@ -622,13 +532,13 @@
 										displayMode="label">
 									</w2:column> -->
 									<w2:column id="DL_CD" blockSelect="false" readOnly="" style="height:25px" width="70" inputType="text"
-										displayMode="label" class="req">
+										displayMode="label" class="req" userData1="M">
 									</w2:column>
 									<w2:column id="DL_CD_NM" blockSelect="false" readOnly="" style="height:25px" width="70" inputType="text"
-										displayMode="label" class="req">
+										displayMode="label" class="req" userData1="M">
 									</w2:column>
 									<w2:column id="SORT" blockSelect="false" style="height:25px;" width="40" inputType="text"
-										displayMode="label" textAlign="center" class="req" allowChar="0-9">
+										displayMode="label" textAlign="center" class="req" allowChar="0-9" userData1="M">
 									</w2:column>
 									<w2:column id="USE_YN" blockSelect="false" trueValue="Y" falseValue="N" style="height:25px" width="70"
 										inputType="checkbox" displayMode="" valueType="other">

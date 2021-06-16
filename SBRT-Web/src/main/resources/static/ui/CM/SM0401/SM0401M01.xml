@@ -94,22 +94,22 @@
 	 */
 	scwin.onpageload = function() {
 	
-		var systemOptions = [{ code : "SYSTEM_BIT", compID : "sbx_system"}];
-		com.setSystemCode(systemOptions, function() {
-				com.searchGrid(grd_memberBasic,sbm_searchMemberBasic);
-		});
-	
-		com.executeSubmission(sbm_memberSearchItem);
-		com.executeSubmission(sbm_searchMemberBasicOrganization);
-		
 		var autoOptions = {
-			Main : { grid : grd_memberBasic, frm : grp_memberBasicDetailTop, focusColumn : "USER_ID", srchSbm : sbm_searchMemberBasic, savSbm : sbm_saveMemberBasic}
+			Main : { grid : grd_memberBasic, frm : grp_memberBasicDetailTop, keyColumn : "USER_ID", focusColumn : "USER_ID"
+					, srchSbm : sbm_searchMemberBasic, savSbm : sbm_saveMemberBasic}
 		};
-		
 		var mainOptions = {
 			SAVE: scwin.btn_saveMember_onclick
 		};
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions, mainOptions);
+		
+		var systemOptions = [{ code : "SYSTEM_BIT", compID : "sbx_system"}];
+		com.setSystemCode(systemOptions, function() {
+			com.searchGrid(grd_memberBasic,sbm_searchMemberBasic);
+		});
+	
+		com.executeSubmission(sbm_memberSearchItem);
+		com.executeSubmission(sbm_searchMemberBasicOrganization);
 	};
 	
 	scwin.onpageunload = function() {
@@ -146,10 +146,10 @@
 	 * 건수 조회, ReadOnly 그리드뷰 컬럼색 변경. ReadOnly속성을 설정한다. 
 	 */
 	scwin.sbm_searchMemberBasic_submitdone = function(e) {
+	debugger;
 		var rsCode = com.getResultCode(e)
 		if (rsCode == "S") {
-			grd_memberBasic.setFocusedCell(0, "USER_ID", false);
-			//spn_memberCnt.setValue(dlt_memberBasic.getRowCount());
+			com.setFocusedCell(grd_memberBasic, "USER_ID");
 		}
 	};
 	
@@ -169,9 +169,16 @@
 			var rowStatus = dlt_memberBasic.getRowStatus(index);
 			
 			if(rowStatus=="C"){
-				com.alert("신규 생성된 사용자 정보에는 비밀번호를 입력해야 합니다.");
-				com.focusGridFrm(grd_memberBasic, grp_memberBasicDetailTop, index, "NEW_USER_PS", false);
-				return;
+				if(modifiedData.NEW_USER_PS.length==0){
+					com.alert("새 비밀번호를 입력해야 합니다.");
+					com.focusGridFrm(grd_memberBasic, grp_memberBasicDetailTop, index, "NEW_USER_PS", false);
+					return;
+				}
+				else if(modifiedData.USER_PS_CONFIRM.length==0){
+					com.alert("비밀번호 확인을 입력해야 합니다.");
+					com.focusGridFrm(grd_memberBasic, grp_memberBasicDetailTop, index, "USER_PS_CONFIRM", false);
+					return;
+				}
 			}
 			
 			if (modifiedData.NEW_USER_PS != modifiedData.USER_PS_CONFIRM)
@@ -208,6 +215,7 @@
 	 * 탭의 ID가 변경될 때 마다 각 사원코드에 맞는 정보가 호출된다.
 	 */
 	scwin.grd_memberBasic_onrowindexchange = function(row, oldRow) {
+		com.changeSingleGrid(grd_memberBasic, row, oldRow);
 		var rowStatus = dlt_memberBasic.getRowStatus(grd_memberBasic.getFocusedRowIndex());
 	
 		if (rowStatus != "C") {

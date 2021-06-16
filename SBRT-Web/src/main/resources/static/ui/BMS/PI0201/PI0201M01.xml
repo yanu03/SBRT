@@ -54,7 +54,7 @@
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
 					<w2:keyInfo>
-						<w2:key id="CONTENT" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="CONTENT" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_VOC_INFO_0">
@@ -84,7 +84,7 @@
 		var autoOptions = {
 			Main : { grid : PI0201G0, frm : PI0201F0, srchSbm : sub_PI0201G0R0, savSbm : sub_PI0201G0S0, keySbm : sub_PI0201G0K0 }
 		};
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);		
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
 	};
 	
 	scwin.dateDisFormatter = function(data){
@@ -97,7 +97,16 @@
 	}	
 	
 	scwin.upload0_onInputValueChange = function(fileName) {
-		VOC_PATH.submit();
+		// 확장자 추출
+		var lastDot = fileName.lastIndexOf('.'); 
+		var fileExtension = fileName.substring(lastDot+1, fileName.length);
+		console.log(VOC_PATH.getValue());
+		if (fileExtension == "wav" || fileExtension == "tts"){
+			VOC_PATH.submit();
+		}else{
+			alert("wav, tts 확장자만 업로드 할 수 있습니다.");
+			VOC_PATH.reset()
+		}
 	};
 	
 	scwin.PI0201G0_onrowindexchange = function(row, oldRow) {
@@ -119,13 +128,11 @@
 		// 실서버 도메인 변경 필요
 		var realPath = "http://localhost:8081/fileUpload/up/";
 		doc_audio0.src = realPath + filePath;
-		//doc_audio0.src = "http://localhost:8081/fileUpload/up/file_example_MP3_5MG.mp3"
-		dlt_BMS_VOC_INFO.setCellData(scwin.idxRowVOC, dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"), doc_audio0.src)
-		console.log(scwin.idxRowVOC + " " + dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"));
-		console.log(doc_audio0.src);
+		dlt_BMS_VOC_INFO.setCellData(scwin.idxRowVOC, dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"), doc_audio0.src);
 		doc_audio0.type = "audio/wav";
 		doc_audio0.pause();
-		// 서버에 저장되도 404 error 발생함 바로 갱신이 안되는듯함
+		// 서버에 저장되도 404 error 발생함 바로 갱신이 안되는 문제
+		// 현재 동일한 파일명으로 업로드 시 (날짜) 형태로 서버에 파일이 생성되는데 괄호가 보안처리에 의해 다른 문자로 치환되서 DB에서 경로 가져올때 문제 있음  
 	};
 	
 	scwin.sub_PI0201G0R0_submitdone = function(e) {
@@ -323,7 +330,7 @@
 							</xf:group>
 							<xf:group tagname="td" style="" class="w2tb_td">
 								<xf:select1 id="PLAY_TYPE" chooseOption="" style="width: 148px;height: 21px;" submenuSize="auto"
-									allOption="" disabled="false" direction="auto" appearance="minimal" disabledClass="w2selectbox_disabled" title=""
+									allOption="" disabled="" direction="auto" appearance="minimal" disabledClass="w2selectbox_disabled" title=""
 									ref="data:dlt_BMS_VOC_INFO.PLAY_TYPE" ev:onchange="scwin.PLAY_TYPE_onchange" ev:onviewchange="scwin.PLAY_TYPE_onviewchange">
 									<xf:choices>
 										<xf:item>
@@ -348,8 +355,8 @@
 							<xf:group tagname="td" style="" class="w2tb_td">
 								<w2:upload imageStyle="position:absolute;vertical-align:middle;word-wrap:break-word"
 									inputStyle="vertical-align:middle;word-wrap:break-word" style="width: 100%;height: 23px;" id="VOC_PATH" inputClass=""
-									ev:onInputValueChange="scwin.upload0_onInputValueChange" ev:ondone="scwin.upload0_ondone" accept=".wav,.tts,.mp3" title="" type=""
-									disabled="" class="">
+									ev:onInputValueChange="scwin.upload0_onInputValueChange" ev:ondone="scwin.upload0_ondone" accept=".wav,.tts" title="" type=""
+									disabled="true" class="">
 								</w2:upload>
 							</xf:group>
 							<xf:group tagname="th" style="" class="w2tb_th">

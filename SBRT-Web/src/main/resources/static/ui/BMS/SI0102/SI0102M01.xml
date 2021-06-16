@@ -134,53 +134,38 @@
 	</script>
         <script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
+		var autoOptions = {
+			Main : { grid : SI0102G0, frm : SI0102F0, srchSbm : sub_SI0102G0R0, savSbm : sub_SI0102G0S0, keySbm : sub_SI0102G0K0
+					, srchGrp : pgm_header, keyColumn : "COMP_ID", focusColumn : "COMP_NM", name :  "운수사 목록"},
+			Sub1 : { grid : SI0102G1, srchSbm : sub_SI0102G1R0, savSbm : sub_SI0102G1S0, name :  "관련차고지"}
+		 };
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions);
+		
+		var subOptions = {
+			ADD: scwin.btn_add2_onclick, DEL:{}, CNL:{}
+		};
+		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
 		
 		var codeOptions = [ {code : "AREA", compID : "AREA, SI0102G0:AREA" } ];
 		var codeOptions2 = [ {code : "OWNER_TYPE", compID : "SI0102G1:OWNER_TYPE" } ];
 		com.setCommonDtl(codeOptions);
 		com.setCommonDtl(codeOptions2);		
 		$p.executeSubmission(sub_SI0102G0R0);
-		$p.executeSubmission(sub_SI0102SHI0);
-
-		var autoOptions = {
-			Main : { grid : SI0102G0, frm : SI0102F0, srchSbm : sub_SI0102G0R0, savSbm : sub_SI0102G0S0, keySbm : sub_SI0102G0K0 },
-			Sub1 : { grid : SI0102G1, srchSbm : sub_SI0102G1R0, savSbm : sub_SI0102G1S0}
-		 };
-		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions);
-		
-		var subOptions = {
-			ADD: scwin.btn_add2_onclick,
-			DEL:{},
-			CNL:{}
-		};
-	
-		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);	
+		$p.executeSubmission(sub_SI0102SHI0);	
 	};
 
 	scwin.onpageunload = function() {
 
 	};
-						 
-	//조회버튼
-	/*scwin.btn_search_onclick = function() {
-		com.searchGridForm(SI0102G0, SI0102F0,sub_SI0102G0R0, sub_SI0102G0S0);
-	};*/
 
 	//조회 콜백 메소드
 	scwin.sub_SI0102G0R0_submitdone = function(e) {
-		SI0102G0.setFocusedCell(0, "COMP_ID", false);
+		com.setFocusedCell(SI0102G0, "COMP_ID");
 	};
-
-	//저장버튼
-	//scwin.btn_save_onclick = function() {
-	//	com.saveGridForm(SI0102G0,SI0102F0,sub_SI0102G0S0);
-			
-	//};
 	
 	//서브그리드 저장 후 조회
 	scwin.sub_SI0102G1S0_submitdone = function(e) {
-		com.executeSubmission(sub_SI0102G1R0);
+		com.saveDone(SI0102G1,sub_SI0102G1R0);
 	};
 	
 	
@@ -190,16 +175,7 @@
 	scwin.sub_SI0102G0S0_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
-			//서브 그리드 저장
-			var val_ModifyJSON = dlt_BMS_GRG_MST.getModifiedJSON();
-			if (val_ModifyJSON !== null) {
-				for (i=0; i< dlt_BMS_GRG_MST.getAllJSON().length; i++) {
-					dlt_BMS_GRG_MST.setCellData(i, "COMP_ID", dma_param_COMPID.get("COMP_ID"));
-				}
-				$p.executeSubmission(sub_SI0102G1S0);
-					
-			}	
-			else com.searchGridForm(SI0102G0, SI0102F0,sub_SI0102G0R0);
+			com.saveDone(SI0102G0,sub_SI0102G0R0);
 		}
 	};
 		
@@ -213,45 +189,7 @@
 		com.addGridForm(SI0102G0, SI0102F0, dma_SEQ_BMS_TRANSCOMP_MST_0, "COMP_ID", "COMP_NM");
 
 	};
-	
-	//삭제
-	//scwin.btn_del_onclick = function() {
-	//	com.delGrid(SI0102G0);
-	//};
-	
-	//취소
-	//scwin.btn_cancel_onclick = function() {
-	//	com.cancelGrid(SI0102G0);
-	//};
-	
-	//닫기
-	//scwin.btn_close_onclick = function() {
-	//	com.closeTab(SI0102G0);
-	//};
-	
-	//엑셀 다운로드
-	//scwin.btn_excel_onclick = function() {
-	//	com.exlGrid(SI0102G0);
-	//};
-	
-	/**	 
-	 * 엑셀의 데이터를 그리드뷰로 업로드 한다.
-	 * 필요한 옵션이 있다면 options배열에 옵션을 넣는다.
-	 */
-	//scwin.btn_uploadExcel_onclick = function() {
-	//	com.exlUploadGrid(SI0102G0);
-	//};
-	
-	
-	/**
-	 * 그리드 Excel 포맷을 다운로드 하는 기능 ( 업로드용  Excel 포맷 )
-	 */
-	//scwin.btn_excelForm_onclick = function() {
-	//	com.exlFrmGri(SI0102G0);	
-	//};
-	
-	
-	
+		
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
 		if (info.newValue == "COMP_NM") {
 			acb_autoChoiceBox.hide();
@@ -323,44 +261,8 @@
 
 //	운수사 목록 그리드 row 변경시 차고지 그리드 변경사항 있는 경우 저장 여부를 묻고, 아닌 경우 차고지 그리드 조회 
 	scwin.SI0102G0_onrowindexchange = function(row,oldRow) {
-				
-	//scwin.idxRow = row;
-	var val_compID = dlt_BMS_TRANSCOMP_MST.getCellData(row, "COMP_ID");
-	
-	var detailCodeModifyCnt = dlt_BMS_GRG_MST.getModifiedIndex().length;
-	if (detailCodeModifyCnt > 0) {
-		com.confirm("관련 차고지 정보를 저장하시겠습니까?", "scwin.indexChgSubGrid");	
-	} else {
-		var status_row = dlt_BMS_TRANSCOMP_MST.getRowStatus(row);
-		if (status_row == "C") {
-			dlt_BMS_GRG_MST.removeAll();	
-		} else {
-			if (val_compID !== null) {
-				dma_param_COMPID.set("COMP_ID", val_compID);
-				com.executeSubmission(sub_SI0102G1R0);
-				}	
-			}	
-		}
-		
-		//서브 그리드 변경점이 있을 경우 콜백 메소드 		
-		scwin.indexChgSubGrid = function(isReturnVal) {
-		if (isReturnVal) {
-			//서브 그리드 저장
-			var val_ModifyJSON = dlt_BMS_GRG_MST.getModifiedJSON();
-			if (val_ModifyJSON !== null) {
-				for (i=0; i< dlt_BMS_GRG_MST.getAllJSON().length; i++) {
-					dlt_BMS_GRG_MST.setCellData(i, "COMP_ID", dma_param_COMPID.get("COMP_ID"));
-				}
-				$p.executeSubmission(sub_SI0102G1S0);
-				dma_param_COMPID.set("COMP_ID", val_compID);
-				com.executeSubmission(sub_SI0102G1R0);	
-			}		
-
-		} else {
-			dma_param_COMPID.set("COMP_ID", val_compID);
-			com.executeSubmission(sub_SI0102G1R0);
-			}
-		};
+		var focusOption = {keyMap : dma_param_COMPID};
+		com.changeDualGrid(SI0102G0, SI0102G1, sub_SI0102G1S0, sub_SI0102G1R0, focusOption, row, oldRow);
 	};
 
 	//서브 그리드 추가 클릭 이벤트
