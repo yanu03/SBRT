@@ -4172,9 +4172,8 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						if(i == gcm.BTN.SEARCH.nm){
 							item.cbFnc = function(){
 								var sub = autoOpt.Sub1;
-								if ((typeof sub !== "undefined")&&(sub !== null)&&
-										(typeof main.allSavSbm !== "undefined")&&(main.allSavSbm !== null)){
-									com.searchAllGrid(main.grid, sub.grid, main.srchSbm, main.allSavSbm);
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.searchAllGrid(main.grid, sub.grid, null, main.srchSbm, main.savSbm, main.allSavSbm, sub.savSbm)
 								}
 								else{
 									com.searchGrid(main.grid, main.srchSbm , main.savSbm);
@@ -4216,9 +4215,8 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						else if(i==gcm.BTN.SAVE.nm){
 							item.cbFnc = function(){
 								var sub = autoOpt.Sub1;
-								if ((typeof sub !== "undefined")&&(sub !== null)&&
-										(typeof main.allSavSbm !== "undefined")&&(main.allSavSbm !== null)){
-									com.saveAllGrid(main.grid, sub.grid, null, main.savSbm, main.allSavSbm, sub.savSbm, main.name, sub.name);
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.saveAllGrid(main.grid, sub.grid, null, main.savSbm, main.allSavSbm, sub.savSbm);
 								}
 								else if ((typeof main.savSbm !== "undefined")&&(main.savSbm !== null)){
 									com.saveGrid(main.grid, main.savSbm);
@@ -4255,9 +4253,10 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 					else if( type == gcm.DISP_TYPE.DUAL_GRID_FORM){ //복함 그리드와 폼
 						if(i == gcm.BTN.SEARCH.nm){
 							item.cbFnc = function(){
-								if ((typeof sub !== "undefined")&&(sub !== null)&&
-										(typeof main.allSavSbm !== "undefined")&&(main.allSavSbm !== null)){
-									com.searchAllGrid(main.grid, sub.grid, main.srchSbm, main.allSavSbm);
+								debugger;
+								var sub = autoOpt.Sub1;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.searchAllGrid(main.grid, sub.grid, main.frm, main.srchSbm, main.savSbm, main.allSavSbm, sub.savSbm)
 								}
 								else{
 									com.searchGrid(main.grid, main.srchSbm , main.savSbm);
@@ -4296,10 +4295,8 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						else if(i==gcm.BTN.SAVE.nm){
 							item.cbFnc = function(){
 								var sub = autoOpt.Sub1;
-								
-								if ((typeof sub !== "undefined")&&(sub !== null)&&
-										(typeof main.allSavSbm !== "undefined")&&(main.allSavSbm !== null)){
-									com.saveAllGrid(main.grid, sub.grid, main.frm, main.savSbm, main.allSavSbm, sub.savSbm, main.name, sub.name);
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.saveAllGrid(main.grid, sub.grid, main.frm, main.savSbm, main.allSavSbm, sub.savSbm);
 								}
 								else {
 									com.saveGrid(main.grid, main.savSbm);
@@ -4664,7 +4661,6 @@ com.saveAllData = function(mainGrid,subGrid,form,saveSbmObj){
 
 
 com.searchGrid = function(grid,searchSbmObj,saveSbmObj,param, str){
-	
 	if(	(typeof saveSbmObj !== "undefined")&&(saveSbmObj !== null)){
 		var idx = grid.getModifiedIndex().length;
 		//저장하지 않고 조회할 경우
@@ -4700,35 +4696,39 @@ com.searchGrid = function(grid,searchSbmObj,saveSbmObj,param, str){
 	}
 }
 
-com.searchAllGrid = function(mainGrid, subGrid, searchSbmObj,allSaveSbmObj,str){
+com.searchAllGrid = function(mainGrid, subGrid, form, searchSbmObj,mainSaveSbmObj,allSaveSbmObj,subSaveSbmObj,str){
 	
-	if(	(typeof allSaveSbmObj !== "undefined")&&(allSaveSbmObj !== null)){
-		var modifiedMainCnt = mainGrid.getModifiedIndex().length;
-		var modifiedSubCnt = subGrid.getModifiedIndex().length;
-		
-		//저장하지 않고 조회할 경우
-		if ((modifiedMainCnt > 0) || (modifiedSubCnt > 0)) {
-			if(	(typeof str == "undefined") || (str.trim() == ""))
-				str = "저장하지 않은 데이터가 있습니다. 저장 후 조회 하시겠습니까?";
-			com.confirm(str, function(rtn){
-				if (rtn) {
-					com.saveAllData(mainGrid,subGrid,null,allSaveSbmObj);
+	
+	var modifiedMainCnt = mainGrid.getModifiedIndex().length;
+	var modifiedSubCnt = subGrid.getModifiedIndex().length;
+	debugger;
+	//저장하지 않고 조회할 경우
+	if ((modifiedMainCnt > 0) || (modifiedSubCnt > 0)) {
+		if(	(typeof str == "undefined") || (str.trim() == ""))
+			str = com.strNotSaveCnt(mainGrid, subGrid) + "의 저장하지 않은 데이터가 있습니다. 저장 후 조회 하시겠습니까?";
+		com.confirm(str, function(rtn){
+			if (rtn) {
+				if (modifiedMainCnt > 0) {
+					if(	(typeof allSaveSbmObj !== "undefined")&&(allSaveSbmObj !== null)){
+						com.saveAllData(mainGrid,subGrid,form,allSaveSbmObj);
+					}
+					else {
+						com.saveData(mainGrid,form,mainSaveSbmObj,null)
+					}
 				}
-				else {
-					com.clearGrid(mainGrid);
-					com.clearGrid(subGrid);
-					com.executeSubmission(searchSbmObj);
-					com.setKeyGridInfo(mainGrid);
+				else if (modifiedSubCnt > 0) {
+					com.saveData(subGrid,null,subSaveSbmObj,null)
 				}
-			});
-		}
-		else {
-			com.clearGrid(mainGrid);
-			com.clearGrid(subGrid);
-			com.executeSubmission(searchSbmObj);
-		}
+			}
+			else {
+				com.clearGrid(mainGrid);
+				com.clearGrid(subGrid);
+				com.executeSubmission(searchSbmObj);
+				com.setKeyGridInfo(mainGrid);
+			}
+		});
 	}
-	else{
+	else {
 		com.clearGrid(mainGrid);
 		com.clearGrid(subGrid);
 		com.executeSubmission(searchSbmObj);
@@ -4967,7 +4967,7 @@ com.saveGrid = function(grid,sbmObj,yesno_str,str){
 }
 
 //부모,자식 그리드 저장
-com.saveAllGrid = function(mainGrid,subGrid,form,mainSaveSbmObj,allSaveSbmObj,subSaveSbmObj,mainName,subName){ //듀얼 그리드에서 부모 자식 저장
+com.saveAllGrid = function(mainGrid,subGrid,form,mainSaveSbmObj,allSaveSbmObj,subSaveSbmObj){ //듀얼 그리드에서 부모 자식 저장
 	var mainData = com.getGridViewDataList(mainGrid);
 	var subData = com.getGridViewDataList(subGrid);
 	
@@ -4996,7 +4996,7 @@ com.saveAllGrid = function(mainGrid,subGrid,form,mainSaveSbmObj,allSaveSbmObj,su
 			});
 		}
 	} else if ((modifiedSubIdx.length > 0) && com.validateGridView(subGrid)) {
-		ccom.confirm(confirmStr+"의 데이터가 저장됩니다. \n 진행하시겠습니까? ", function(rtn) {
+			com.confirm(confirmStr+"의 데이터가 저장됩니다. \n 진행하시겠습니까? ", function(rtn) {
 			if (rtn) {
 				com.saveData(subGrid,null,subSaveSbmObj);
 			}
@@ -5289,15 +5289,17 @@ com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, f
 	var modifiedMainCnt = mainData.getModifiedIndex().length;
 	var modifiedSubCnt = subData.getModifiedIndex().length;
 	var curKeyValue = "";
+	var keyColumn = "";
 	try{
 		curKeyValue = mainData.getCellData(row, gcm.GRID_INFO[mainGrid.org_id].keyColumn);
 		
 		if ((typeof focusOption.keyMapColumn !== "undefined") && (focusOption.keyMapColumn!==null)){ //keyMap의 column명이 다를때...
-			focusOption.keyMap.set(focusOption.keyMapColumn, curKeyValue);
+			keyColumn = focusOption.keyMapColumn;
 		}
 		else{
-			focusOption.keyMap.set(gcm.GRID_INFO[mainGrid.org_id].keyColumn, curKeyValue);
+			keyColumn = gcm.GRID_INFO[mainGrid.org_id].keyColumn;
 		}
+		focusOption.keyMap.set(keyColumn, curKeyValue);
 		subNm = gcm.GRID_INFO[subGrid.org_id].name;
 	} catch (e) {
 		
@@ -5314,7 +5316,7 @@ com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, f
 					com.searchGrid(subGrid,subSrchSbmObj);
 				}
 			} else {
-				var subFocusedValue = mainData.getCellData(mainGrid.getFocusedRowIndex(), keyId);
+				var subFocusedValue = mainData.getCellData(mainGrid.getFocusedRowIndex(), keyColumn);
 				if (subFocusedValue) {
 					com.searchGrid(subGrid,subSrchSbmObj);
 				}
