@@ -156,7 +156,8 @@
 			$(this).parent().parent().find("a").removeClass("on");
 			$(this).addClass("on");
 			$(".submenu").find(".depth3").removeClass("on");
-			$(this).parent().find(".depth3").addClass("on");
+			if($(this).parent().find(".depth3")[0].innerHTML.length > 0)
+				$(this).parent().find(".depth3").addClass("on");
 			$(this).parent().parent().addClass("on");
 		}).mouseleave(function() {
 			$(this).find(".depth3").removeClass("on");
@@ -165,14 +166,12 @@
 			$(this).children("a").removeClass("on");
 		});
 		
-		if(!WebSquare.util.isMobile()){
-			$(".submenu").on({
-				mouseleave:function(){
-					$(this).removeClass("on");
-					$(this).prev().removeClass("on");
-				}
-			});
-		}
+		$(".submenu").on({
+			mouseleave:function(){
+				$(this).removeClass("on");
+				$(this).prev().removeClass("on");
+			}
+		});
 	};
 	
 
@@ -387,8 +386,9 @@ scwin.fn_getInitData = function() {
 
 		$p.parent().wfm_header.getWindow().txt_userNm.setValue(dma_defInfo.get("SSN_USER_NM"));
 
-		//scwin.openMenu("메인","/cm/common/main.xml","MAIN");
-		if(curSystem==1){
+		scwin.openMenu("메인","/cm/common/main.xml","MAIN");
+		
+		/*if(curSystem==1){
 			$p.parent().wfm_header.getWindow().txt_systemNm.setValue("통합운영관리");
 		}
 		else if(curSystem==2){
@@ -403,7 +403,7 @@ scwin.fn_getInitData = function() {
 				break;
 			}
 		}
-		scwin.openMenu(tmpMenus[index].MENU_NM,tmpMenus[index].PROG_PH,tmpMenus[index].MENU_CD);
+		scwin.openMenu(tmpMenus[index].MENU_NM,tmpMenus[index].PROG_PH,tmpMenus[index].MENU_CD);*/
 		
 	};
 	
@@ -585,9 +585,6 @@ scwin.fn_getInitData = function() {
 					</w2:generator>
 				</xf:group>
 			</w2:generator>
-			<!-- <xf:group id="search_box" style="" class="search_box">
-				<w2:textbox id="" style="" class="search_tit" label="통합검색" tagname="span"></w2:textbox>
-			</xf:group> -->
 			<xf:group class="infobox" id="" style="">
 				<w2:textbox class="info_tit name_tit" id="txt_userNm" label="" style=""></w2:textbox>
 				<xf:trigger class="changePassword" ev:onclick="scwin.btn_changePassword_onclick" id="btn_changePassword" style="" type="button">

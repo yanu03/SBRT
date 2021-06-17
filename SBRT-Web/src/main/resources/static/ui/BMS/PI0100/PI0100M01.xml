@@ -127,7 +127,7 @@
 			</xf:submission>
 			<xf:submission id="sub_PI0100G0S0" ref='data:json,{"action":"modified","id":"dlt_BMS_NOTICE_MST"}'
 				target="data:json,dlt_BMS_NOTICE_MST" action="/pi/PI0100G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance=""
-				replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror=""
+				replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0100G0S0_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_PI0100G1R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_VHC_MST" action="/pi/PI0100G1R0"
@@ -140,7 +140,7 @@
 			</xf:submission>
 			<xf:submission id="sub_PI0100G1S0" ref="data:json,dlt_BMS_VHC_MST" target="data:json,dlt_BMS_VHC_MST" action="/pi/PI0100G1S0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0100G1S0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_PI0100G0K0" ref="" target="data:json,dma_SEQ_BMS_NOTICE_MST_0" action="/pi/PI0100G0K0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
@@ -155,52 +155,27 @@
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
 		$p.executeSubmission(sub_PI0100G0R0);
-		/*
-		var btnOptions = 
-		[
-			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick},
-			{userStr:"추가", auth: gcm.BTN.ADD , cbFnc: scwin.btn_add_onclick},
-			{userStr:"삭제", auth: gcm.BTN.DEL, cbFnc: scwin.btn_del_onclick},
-			{userStr:"저장", auth: gcm.BTN.SAVE, cbFnc: scwin.btn_save_onclick},
-			{userStr:"전송", auth: gcm.BTN.EXL, cbFnc: scwin.btn_send_onclick},
-			{userStr:"전송취소", auth: gcm.BTN.CNL, cbFnc: scwin.btn_cancel_onclick},
-			{userStr:"닫기", auth: gcm.BTN.CLOSE, cbFnc: scwin.btn_close_onclick}
-		];
-		com.setMainBtn(btnOptions, btn_main_generator);
-		var btnOptions2 = 
-		[
-			{userStr:"추가", auth: gcm.BTN.ADD , cbFnc: scwin.btn2_add_onclick},
-			{userStr:"삭제", auth: gcm.BTN.DEL, cbFnc: scwin.btn2_del_onclick},
-		];
-		com.setSubBtn(btnOptions2, btn_sub_generator);
-		var btnOptions3 = 
-		[
-			{userStr:"추가", auth: gcm.BTN.ADD , cbFnc: scwin.btn3_add_onclick},
-			{userStr:"삭제", auth: gcm.BTN.DEL, cbFnc: scwin.btn3_del_onclick},
-		];
-		com.setSubBtn(btnOptions3, btn_sub2_generator);
-		*/
+		
 		var autoOptions = {
-			Main : { grid : PI0100G0, srchSbm : sub_PI0100G0R0, savSbm : sub_PI0100G0S0, keySbm : sub_PI0100G0K0 },
-			Sub1 : { grid : PI0100G1, srchSbm : sub_PI0100G1R0, savSbm : sub_PI0100G1S0},
-			Sub2 : { grid : PI0100G2, srchSbm : sub_PI0100G2R0, savSbm : sub_PI0100G2S0}
+			Main : { grid : PI0100G0, srchSbm : sub_PI0100G0R0, savSbm : sub_PI0100G0S0, keySbm : sub_PI0100G0K0
+					 , srchGrp : pgm_header, keyColumn : "NOTICE_ID", focusColumn : "TITLE", name :  "공지 목록"},
+			Sub1 : { grid : PI0100G1, srchSbm : sub_PI0100G1R0, savSbm : sub_PI0100G1S0, name :  "전송할 차량"},
+			Sub2 : { grid : PI0100G2, srchSbm : sub_PI0100G2R0, savSbm : sub_PI0100G2S0, name :  "전송할 정류소"}
 		};
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.THIRD_GRID_FORM, autoOptions);
 		
 		var subOptions = {
-			ADD: scwin.btn2_add_onclick,
-			DEL:{},
-			CNL:{}
+			ADD: scwin.btn2_add_onclick, DEL:{}, CNL:{}
 		};
 		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);		
-	};	
+		
+		var subOptions2 = {
+			ADD: scwin.btn3_add_onclick, DEL:{}, CNL:{}
+		};
+		com.setSubBtn2(wfm_subBtn2, autoOptions, subOptions2);
 
-	scwin.btn_search_onclick = function() {
-		com.searchGrid(PI0100G0, sub_PI0100G0R0, sub_PI0100G0S0);
-	};
-	scwin.btn_add_onclick = function() {
-		$p.executeSubmission(sub_PI0100G0K0);
-	};
+	};	
+	
 	scwin.btn2_add_onclick = function() {
 		var focusRowIdx = scwin.idxRowAuthority;
 		var val_VHC_ID = dlt_BMS_VHC_MST.getColData("VHC_ID");
@@ -245,6 +220,7 @@
 		for (i = 0; i < dLength; i++) {
 			var data = dlt_BMS_VHC_MST.getMatchedIndex("VHC_ID", obj[i].VHC_ID, true);
 			if (data.length == 0) {
+				obj[i].NOTICE_ID = dma_sub_search.get("NOTICE_ID");
 				obj[i].chk = "0";
 				var idx = dlt_BMS_VHC_MST.insertRow();
 				dlt_BMS_VHC_MST.setRowJSON(idx, obj[i], true);
@@ -257,6 +233,7 @@
 		for (i = 0; i < dLength; i++) {
 			var data = dlt_BMS_STTN_MST.getMatchedIndex("STTN_ID", obj[i].VHC_ID, true);
 			if (data.length == 0) {
+				obj[i].NOTICE_ID = dma_sub_search.get("NOTICE_ID");
 				obj[i].chk = "0";
 				var idx = dlt_BMS_STTN_MST.insertRow();
 				dlt_BMS_STTN_MST.setRowJSON(idx, obj[i], true);
@@ -264,7 +241,7 @@
 		}
 	};	
 
-	scwin.btn_save_onclick = function() {
+	/*scwin.btn_save_onclick = function() {
 		//com.saveGrid(PI0100G0, sub_PI0100G0S0);
 		com.saveGridForm(PI0100G0, PI0100F0, sub_PI0100G0S0);
 		var val_NOTICE_ID = dlt_BMS_NOTICE_MST.getCellData(scwin.idxRowAuthority, dlt_BMS_NOTICE_MST.getColumnIndex("NOTICE_ID"))
@@ -278,10 +255,11 @@
 		com.saveGrid(PI0100G1, sub_PI0100G1S0);
 		com.saveGrid(PI0100G2, sub_PI0100G2S0);
 
-	};
+	};*/
 		
 	scwin.PI0100G0_onrowindexchange = function(row, oldRow) {
-		scwin.idxRowAuthority = row;
+
+		/*scwin.idxRowAuthority = row;
 		var val_NOTICE_ID = dlt_BMS_NOTICE_MST.getCellData(row, "NOTICE_ID");		
 		var detailCodeModifyCnt = dlt_BMS_NOTICE_MST.getModifiedIndex().length;
 		
@@ -297,7 +275,12 @@
 			}else{
 				dlt_BMS_VHC_MST.removeAll();
 			}
-		}
+		}*/
+		
+		var focusOption = {keyMap : dma_sub_search};
+		
+		
+		com.changeThirdGrid(PI0100G0, PI0100G1, PI0100G2, sub_PI0100G1S0, sub_PI0100G2S0, sub_PI0100G1R0, sub_PI0100G2R0, focusOption, row, oldRow);
 	};
 	
 	scwin.btn_del_onclick = function() {
@@ -336,29 +319,32 @@
 	}
 	
 	scwin.sub_PI0100G0R0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
-			spn_organizationCnt.setValue(PI0100G0.getTotalRow());
+			com.setFocusedCell(PI0100G0, "TITLE");
 		}
 	};
 	
 	scwin.sub_PI0100G0S0_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
-			com.searchGrid(PI0100G0, sub_PI0100G0R0);
+			com.saveDone(PI0100G0,sub_PI0100G0R0);
 		}
 	};
 	
 	scwin.sub_PI0100G1S0_submitdone = function(e) {
+	
 		var sCode = com.getResultCode(e);
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
-			com.searchGrid(PI0100G1, sub_PI0100G1R0);
+			com.saveDone(PI0100G1,sub_PI0100G1R0);
 		}		
 	};	
 	
 	scwin.sub_PI0100G2S0_submitdone = function(e) {
+	
 		var sCode = com.getResultCode(e);
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
-			com.searchGrid(PI0100G2, sub_PI0100G2R0);
+			com.saveDone(PI0100G2,sub_PI0100G2R0);
 		}		
 	};
 	
@@ -368,7 +354,7 @@
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
-		<xf:group class="pgm_container grdr_20_20_a" id="pgm_container" style="">
+		<xf:group class="pgm_container grdr_41_36_a" id="pgm_container" style="">
 			<xf:group id="pgm_navi" class="pgm_navi" style="">
 				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
 			</xf:group>
@@ -404,24 +390,21 @@
 					<xf:group id="" style="">
 						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.PI0100G0_onrowindexchange" ev:oncellclick=""
 							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="순서"
-							sortable="true" rowStatusHeaderValue="상태" adaptive="crosstab" overflowX="auto" overflowY="scroll" rowStatusVisible="false"
-							fixedColumnWithHidden="true" dataList="data:dlt_BMS_NOTICE_MST" ignoreCellClick="false" style="width:100%;height:100%;"
-							autoFit="lastColumn" visibleRowNum="10" id="PI0100G0" class="cm_grid" tooltipPositionY="" checkReadOnlyOnPasteEnable="">
+							sortable="true" rowStatusHeaderValue="상태"  overflowX="auto" overflowY="scroll" rowStatusVisible="false"
+							fixedColumnWithHidden="true" dataList="data:dlt_BMS_NOTICE_MST" ignoreCellClick="false" style=""
+							autoFit="lastColumn" visibleRowNum="10" id="PI0100G0" class="cm_grid right" tooltipPositionY="" checkReadOnlyOnPasteEnable="">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row2">
-									<w2:column width="134" style="height:25px;" inputType="text" id="column9" value="공지 ID"
+									<w2:column width="100" style="height:25px;" inputType="text" id="column9" value="공지 ID"
 										blockSelect="false" displayMode="label" userData1="" userData2="">
 									</w2:column>
 									<w2:column width="159" style="height:25px;" inputType="text" id="column17" value="제목"
 										blockSelect="false" displayMode="label" userData1="">
 									</w2:column>
-									<w2:column width="80" style="height:25px;" inputType="text" id="column11" value="본 문"
-										blockSelect="false" displayMode="label" userData1="">
-									</w2:column>
-									<w2:column width="126" style="height:25px;" inputType="text" id="column30" value="전송 차량"
+									<w2:column width="0" style="height:25px;" inputType="text" id="column30" value="전송 차량"
 										blockSelect="false">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="121" inputType="text" style="height:25px" id="column31"
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:25px" id="column31"
 										value="예약여부" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column width="116" style="height:25px;" inputType="text" id="column28" value="예약일시"
@@ -430,27 +413,21 @@
 									<w2:column removeBorderStyle="false" width="108" inputType="text" style="height:25px" id="column39"
 										value="업데이트일시" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px" id="column41"
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:25px" id="column41"
 										value="전송상태" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column width="100%" style="height:25px;" inputType="text" id="column11" value="본 문"
+										blockSelect="false" displayMode="label" userData1="">
 									</w2:column>
 								</w2:row>
 							</w2:header>
-							<w2:gBody width="40" style="" id="gBody4">
+							<w2:gBody width="" style="" id="gBody4">
 								<w2:row style="" id="row5">
 									<w2:column width="134" style="height:25px;" inputType="text" id="NOTICE_ID" blockSelect="false"
 										displayMode="label" readOnly="true" userData1="M" userData2="">
 									</w2:column>
 									<w2:column width="159" style="height:25px;" inputType="text" id="TITLE" blockSelect="false"
 										displayMode="label" readOnly="true" userData1="M">
-									</w2:column>
-									<w2:column textAlign="center" width="80" style="height:25px;" inputType="text" id="CONTENTS"
-										blockSelect="false" displayMode="label" readOnly="true" userData1="M">
-										<w2:choices>
-											<w2:itemset nodeset="">
-												<w2:label ref=""></w2:label>
-												<w2:value ref=""></w2:value>
-											</w2:itemset>
-										</w2:choices>
 									</w2:column>
 									<w2:column width="126" style="height:25px;" inputType="text" id="VHC_NO" blockSelect="false"
 										displayFormat="" calendarValueType="yearMonthDateTime" applyFormat="" displayMode="" readOnly="true"
@@ -462,18 +439,27 @@
 											</w2:itemset>
 										</w2:choices>
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="121" inputType="text" style="height:25px" id="SEND_DIV"
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:25px" id="SEND_DIV"
 										value="" blockSelect="false" displayMode="label" readOnly="true" displayFormatter="scwin.sendDIVDisFormatter">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="116" inputType="text" style="height:25px" id="RSV_DTM"
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:25px" id="RSV_DTM"
 										value="" blockSelect="false" displayMode="label" readOnly="true" displayFormatter="scwin.dateDisFormatter">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="108" inputType="text" style="height:25px" id="UPD_DTM"
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:25px" id="UPD_DTM"
 										value="" blockSelect="false" displayMode="label" displayFormatter="scwin.dateDisFormatter">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px" id="SEND_STS"
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:25px" id="SEND_STS"
 										value="" blockSelect="false" displayMode="label" autoFitFilterList="" displayFormatter="scwin.sendSTSDisFormatter"
 										displayFormat="">
+									</w2:column>
+									<w2:column textAlign="center" width="" style="height:25px;" inputType="text" id="CONTENTS"
+										blockSelect="false" displayMode="label" readOnly="true" userData1="M">
+										<w2:choices>
+											<w2:itemset nodeset="">
+												<w2:label ref=""></w2:label>
+												<w2:value ref=""></w2:value>
+											</w2:itemset>
+										</w2:choices>
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
@@ -645,8 +631,11 @@
 						</w2:gridView>
 					</xf:group>
 					<xf:group id="" class="horizontal_line"></xf:group>
-					<xf:group id="" style="" class="defaultbox">
-						<w2:textbox id="" style="" class="df_tt fl" label="전송할 정류소"></w2:textbox>
+						<xf:group class="gr_sub_header">
+						<xf:group id="" style="" class="defaultbox">
+							<w2:textbox id="" style="" class="df_tt fl" label="전송할 정류소"></w2:textbox>
+						</xf:group>
+						<w2:wframe id="wfm_subBtn2" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
 					</xf:group>
 					<xf:group>
 						<w2:gridView autoFit="lastColumn" dataList="data:dlt_BMS_STTN_MST" defaultCellHeight="20" id="PI0100G2" readOnly=""

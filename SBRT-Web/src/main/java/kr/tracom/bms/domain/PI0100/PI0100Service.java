@@ -69,11 +69,7 @@ public class PI0100Service extends ServiceSupport{
 				dCnt += pI0100Mapper.PI0100G0D0(data);
 			}
 		}
-		Map result = new HashMap();
-		result.put("STATUS", "S");
-		result.put("ICNT", String.valueOf(iCnt));
-		result.put("UCNT", String.valueOf(uCnt));
-		result.put("DCNT", String.valueOf(dCnt));
+		Map result = saveResult(iCnt, uCnt, dCnt);
 		return result;
 	}
 	
@@ -91,10 +87,7 @@ public class PI0100Service extends ServiceSupport{
 				dCnt += pI0100Mapper.PI0100G1D0(data);
 			}
 		}
-		Map result = new HashMap();
-		result.put("STATUS", "S");
-		result.put("ICNT", String.valueOf(iCnt));
-		result.put("DCNT", String.valueOf(dCnt));		
+		Map result = saveResult(iCnt, uCnt, dCnt);	
 		return result;
 	}
 
@@ -112,10 +105,7 @@ public class PI0100Service extends ServiceSupport{
 				dCnt += pI0100Mapper.PI0100G2D0(data);
 			}
 		}
-		Map result = new HashMap();
-		result.put("STATUS", "S");
-		result.put("ICNT", String.valueOf(iCnt));
-		result.put("DCNT", String.valueOf(dCnt));	
+		Map result = saveResult(iCnt, uCnt, dCnt);
 		return result;
 	}
 }
