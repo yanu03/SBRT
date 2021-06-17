@@ -83,6 +83,11 @@
 							{code : "VHC_FUEL", compID : "VHC_FUEL, SI0200G0:VHC_FUEL" },								
 							{code : "VHC_STS", compID : "VHC_STS, SI0200G0:VHC_STS" }								
 						];
+						
+		var autoOptions = {
+			Main : { grid : SI0200G0, frm : SI0200F0, srchSbm : sub_SI0200G0R0, savSbm : sub_SI0200G0S0, keySbm : sub_SI0200G0K0, srchGrp : pgm_header, keyColumn : "COMP_ID",
+					focusColumn : "COMP_NM", name : "운수사 목록"}
+		 };
 		
 		com.setCommonDtl(codeOptions, function() {
 			com.searchGrid(SI0200G0, sub_SI0200G0R0);
@@ -90,11 +95,8 @@
 		
 		com.setEnterKeyEvent(pgm_header, scwin.btn_search_onclick);
 		
-		var autoOptions = {
-			Main : { grid : SI0200G0, frm : SI0200F0, srchSbm : sub_SI0200G0R0, savSbm : sub_SI0200G0S0, keySbm : sub_SI0200G0K0 }
-		 };
 		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
 		
 		
 	};
@@ -105,7 +107,7 @@
 	
 	
 	scwin.sub_SI0200G0R0_submitdone = function(e) {
-		SI0200G0.setFocusedCell(0, "VHC_ID", false);
+		com.setFocusedCell(SI0200G0, "VHC_ID");
 	};
 	
 	scwin.sub_SI0200G0K0_submitdone = function(e) {
@@ -132,7 +134,7 @@
 
 
 	scwin.sub_SI0200G0S0_submitdone = function(e) {
-		com.searchGrid(SI0200G0, sub_SI0200G0R0);
+		com.saveDone(SI0200G0,sub_SI0200G0R0);
 	};
 	
 	scwin.COMP_NM_onfocus = function(e) {

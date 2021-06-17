@@ -133,11 +133,11 @@
 		
 		var autoOptions = {
 			Main : { grid : SI0401G0, frm : SI0401F0, srchSbm : sub_SI0401G0R0, savSbm : sub_SI0401G0S0, 
-					 keySbm : sub_SI0401G0K0, srchGrp : pgm_header 
+					 keySbm : sub_SI0401G0K0, srchGrp : pgm_header, keyColumn : "ROUTE_ID", focusColumn : "ROUT_NM", name : "노선 기초정보 목록" 
 				   }
 		 };
 		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions);
 
 		var subOptions = {
 			ADD: scwin.btn_add2_onclick,
@@ -153,7 +153,7 @@
 	};
 	
 	scwin.sub_SI0401G0R0_submitdone = function(e) {
-		SI0401G0.setFocusedCell(0, "ROUTE_ID", false);			
+		com.setFocusedCell(SI0401G0, "ROUTE_ID");	
 	};
 	
 	scwin.sub_SI0401G0K0_submitdone = function(e) {
@@ -161,7 +161,10 @@
 	};
 	
 	scwin.sub_SI0401G0S0_submitdone = function(e) {
-		com.searchGrid(SI0401G0, sub_SI0401G0R0);
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+			com.saveDone(SI0401G0,sub_SI0401G0R0);
+		}
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
@@ -266,8 +269,12 @@
 		REP_ROUT_NM.setValue(obj[0].REP_ROUT_NM);
 	};	
 	
+	scwin.REP_ROUT_NM_onfocus = function(e) {
+		scwin.REP_ROUT_NM_SEARCH_onclick();
+	};
+	
 	scwin.sub_SI0401G1S0_submitdone = function(e) {
-		
+		com.saveDone(SI0401G1, sub_SI0401G1R0);
 	};
 	
 	
@@ -286,6 +293,11 @@
 		ST_STTN_NM.setValue(obj[0].STTN_NM);
 	};
 	
+	
+	scwin.ST_STTN_NM_onfocus = function(e) {
+		scwin.ST_STTN_SEARCH_onclick();
+	};
+	
 	scwin.ED_STTN_SEARCH_onclick = function(e) {
 		var data = {callbackFn : "scwin.ED_STTN_SEARCH_callback" };
 		var options = { id : "SI0401P03",
@@ -301,6 +313,10 @@
 		ED_STTN_NM.setValue(obj[0].STTN_NM);
 	};
 	
+	scwin.ED_STTN_NM_onfocus = function(e) {
+		scwin.ED_STTN_SEARCH_onclick();
+	};	
+		
 	scwin.RET_STTN_SEARCH_onclick = function(e) {
 		var data = {callbackFn : "scwin.RET_STTN_SEARCH_callback" };
 		var options = { id : "SI0401P03",
@@ -314,6 +330,10 @@
 		dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "RET_STTN_ID", obj[0].STTN_ID);
 		dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "RET_STTN_ENM", obj[0].STTN_ENM);
 		RET_STTN_NM.setValue(obj[0].STTN_NM);
+	};
+
+	scwin.RET_STTN_NM_onfocus = function(e) {
+		scwin.RET_STTN_SEARCH_onclick();
 	};
 	]]></script>
 	</head>
@@ -499,7 +519,7 @@
 									<w2:attributes></w2:attributes>
 									<xf:input adjustMaxLength="" class="req" disabled="" fireEventOnInvalid="" id="REP_ROUT_NM"
 										invalidMessageFunc="" mandatory="" readOnly="" ref="data:dlt_BMS_ROUT_MST.REP_ROUT_NM" style="width:80%;height:21px;"
-										validateOnCheckMaxByteLength="" validateOnInput="" validator="">
+										validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:onfocus="scwin.REP_ROUT_NM_onfocus">
 									</xf:input>
 									<xf:image class="btn" ev:onclick="scwin.REP_ROUT_NM_SEARCH_onclick" id="REP_ROUT_NM_SEARCH" longdesc=""
 										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
@@ -511,7 +531,7 @@
 								<xf:group class="w2tb_td" style="" tagname="td">
 
 									<xf:input allowChar="" customModelFormatter="" customModelUnformatter=""
-										dataType="text" disabled="" displayFormatter="com.transPhone" id="ROUT_NM" maskFormat="" maxlength="13" minByteLength=""
+										dataType="text" disabled="" displayFormatter="com.transPhone" id="ROUT_NM" maskFormat="" maxlength="5" minByteLength=""
 										ref="data:dlt_BMS_ROUT_MST.ROUT_NM" style="width:100%;height: 21px;" validator="">
 									</xf:input>
 								</xf:group>
@@ -554,7 +574,7 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:input adjustMaxLength="" class="req" disabled="" ev:oneditenter=""
-										ev:onfocus="scwin.COMP_NM_onfocus" fireEventOnInvalid="" id="ST_STTN_NM" invalidMessageFunc="" mandatory="" readOnly=""
+										ev:onfocus="scwin.ST_STTN_NM_onfocus" fireEventOnInvalid="" id="ST_STTN_NM" invalidMessageFunc="" mandatory="" readOnly=""
 										ref="data:dlt_BMS_ROUT_MST.ST_STTN_NM" style="width:80%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
 										validator="">
 									</xf:input>
@@ -566,7 +586,7 @@
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes></w2:attributes>
 									<xf:input adjustMaxLength="" class="req" disabled="" ev:oneditenter=""
-										ev:onfocus="scwin.COMP_NM_onfocus" fireEventOnInvalid="" id="ED_STTN_NM" invalidMessageFunc="" mandatory="" readOnly=""
+										ev:onfocus="scwin.ED_STTN_NM_onfocus" fireEventOnInvalid="" id="ED_STTN_NM" invalidMessageFunc="" mandatory="" readOnly=""
 										ref="data:dlt_BMS_ROUT_MST.ED_STTN_NM" style="width:80%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
 										validator="">
 									</xf:input>
@@ -578,7 +598,7 @@
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes></w2:attributes>
 									<xf:input adjustMaxLength="" class="req" disabled="" ev:oneditenter=""
-										ev:onfocus="scwin.COMP_NM_onfocus" fireEventOnInvalid="" id="RET_STTN_NM" invalidMessageFunc="" mandatory="" readOnly=""
+										ev:onfocus="scwin.RET_STTN_NM_onfocus" fireEventOnInvalid="" id="RET_STTN_NM" invalidMessageFunc="" mandatory="" readOnly=""
 										ref="data:dlt_BMS_ROUT_MST.RET_STTN_NM" style="width:80%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
 										validator="">
 									</xf:input>

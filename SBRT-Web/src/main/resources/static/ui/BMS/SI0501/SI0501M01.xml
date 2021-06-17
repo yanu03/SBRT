@@ -43,18 +43,19 @@
 						<w2:column id="CENTER_YN" name="중앙차로여부" dataType="text"></w2:column>
 						<w2:column id="STTN_FCLT_TYPE" name="정류소시설유형" dataType="text"></w2:column>
 						<w2:column id="VHC_DOOR_DIR_TYPE" name="버스문열림방향유형" dataType="text"></w2:column>
-						<w2:column id="GPS_X" name="GPS_X좌표" dataType="number"></w2:column>
-						<w2:column id="GPS_Y" name="GPS_Y좌표" dataType="number"></w2:column>
-						<w2:column id="TM_X" name="TM_X좌표" dataType="number"></w2:column>
-						<w2:column id="TM_Y" name="TM_Y좌표" dataType="number"></w2:column>
-						<w2:column id="APPL_RDS" name="적용반경" dataType="text"></w2:column>
+						<w2:column id="GPS_X" name="GPS_X좌표" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="GPS_Y" name="GPS_Y좌표" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="TM_X" name="TM_X좌표" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="TM_Y" name="TM_Y좌표" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="APPL_RDS" name="적용반경" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="BAY_TYPE" name="베이유형" dataType="text"></w2:column>
-						<w2:column id="BAY_LEN" name="베이길이" dataType="text"></w2:column>
-						<w2:column id="LINE_CNT" name="차선수" dataType="text"></w2:column>
+						<w2:column id="BAY_LEN" name="베이길이" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="LINE_CNT" name="차선수" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="APPL_ST_DT" name="적용시작일" dataType="date"></w2:column>
 						<w2:column id="APPL_ED_DT" name="적용종료일" dataType="date"></w2:column>
 						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+						<w2:column id="ROUTE__ID" name="노선아이디" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_STTN_MST_0">
@@ -71,6 +72,7 @@
 						<w2:column id="ROUT_LEN" name="노선거리" dataType="text"></w2:column>
 						<w2:column id="CURVATURE" name="굴곡도" dataType="text"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+						<w2:column id="STTN_ID" name="name8" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_param_STTNID">
@@ -85,7 +87,7 @@
 				processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_SI0501G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_SI0501G0S0" ref='data:json,{"action":"modified","id":"dlt_BMS_STTN_MST"}' target="data:json,dma_result"
-				action="" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
+				action="/si/SI0501G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
 				mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_SI0501G0S0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_SI0501G0K0" ref="" target="data:json,dma_SEQ_BMS_STTN_MST_0" action="/si/SI0501G0K0" method="post"
@@ -100,10 +102,31 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
+			<xf:submission id="sub_SI0501G1S0" ref='data:json,{"action":"modified","id":"dlt_BMS_ROUT_MST"}' target=""
+				action="/si/SI0501G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_SI0501G1S0_submitdone" ev:submiterror=""
+				abortTrigger="">
+			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
         
 	scwin.onpageload = function() {
+		var autoOptions = {
+			Main : { grid : SI0501G0, frm : SI0501F0, srchSbm : sub_SI0501G0R0, savSbm : sub_SI0501G0S0, 
+					 keySbm : sub_SI0501G0K0, srchGrp : pgm_header , keyColumn : "STTN_ID", focusColumn : "STTN_NM", name : "정류소 목록"},
+			Sub1 : { grid : SI0501G1, srchSbm : sub_SI0501G1R0, savSbm : sub_SI0501G1S0, name : "관련 노선" }	
+		 };
+		 
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions);
+		
+		var subOptions = {
+			ADD: scwin.btn_add2_onclick,
+			DEL: {},
+			CNL: {}
+		};
+		
+		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
+		
 		var codeOptions = [ {code : "AREA", compID : "AREA, SI0501G0:AREA" },
 							{code : "VHC_DOOR_DIR_TYPE", compID : "VHC_DOOR_DIR_TYPE, SI0501G0:VHC_DOOR_DIR_TYPE" },						
 							{code : "STTN_FCLT_TYPE", compID : "STTN_FCLT_TYPE, SI0501G0:STTN_FCLT_TYPE" },						
@@ -118,21 +141,7 @@
 		
 		$p.executeSubmission(sub_SI0501SHI0);
 		
-		var autoOptions = {
-			Main : { grid : SI0501G0, frm : SI0501F0, srchSbm : sub_SI0501G0R0, savSbm : sub_SI0501G0S0, 
-					 keySbm : sub_SI0501G0K0, srchGrp : pgm_header 
-				   }
-		 };
-		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);
 
-		var subOptions = {
-			ADD: scwin.btn_add2_onclick,
-			DEL:{},
-			CNL:{}
-		};
-		
-		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
 	};
 	
 	scwin.onpageunload = function() {
@@ -140,11 +149,14 @@
 	};
 	
 	scwin.sub_SI0501G0R0_submitdone = function(e) {
-		SI0501G0.setFocusedCell(0, "STTN_ID", false);
+		com.setFocusedCell(SI0501G0, "STTN_ID");
 	};
 	
 	scwin.sub_SI0501G0S0_submitdone = function(e) {
-		com.searchGrid(SI0501G0, sub_SI0501G0R0);
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+			com.saveDone(SI0501G0,sub_SI0501G0R0);
+		}
 	};
 	
 	scwin.sub_SI0501G0K0_submitdone = function(e) {
@@ -162,43 +174,48 @@
 	};
 	
 	scwin.SI0501G0_onrowindexchange = function(row,oldRow) {
-		var val_ID = dlt_BMS_STTN_MST.getCellData(row, "STTN_ID");		
+		var focusOption = {keyMap : dma_param_STTNID};
+		com.changeDualGrid(SI0501G0, SI0501G1, sub_SI0501G1S0, sub_SI0501G1R0, focusOption, row, oldRow);
 		
-		var detailCodeModifyCnt = dlt_BMS_ROUT_MST.getModifiedIndex().length;
-		if (detailCodeModifyCnt > 0) {
-			com.confirm("관련 운수사 정보를 저장하시겠습니까?", "scwin.indexChgSubGrid");	
-		} else {
-			var status_row = dlt_BMS_STTN_MST.getRowStatus(row);
-			if (status_row == "C") {
-				dlt_BMS_ROUT_MST.removeAll();	
-			} else {
-				if (val_ID !== null) {
-					dma_param_STTNID.set("STTN_ID", val_ID);
-					com.executeSubmission(sub_SI0501G1R0);
-					}	
-				}	
-			}
-			
-			
-			//서브 그리드 변경점이 있을 경우 콜백 메소드 		
-			scwin.indexChgSubGrid = function(isReturnVal) {
-			if (isReturnVal) {
-				//서브 그리드 저장
-				var val_ModifyJSON = dlt_BMS_ROUT_MST.getModifiedJSON();
-				if (val_ModifyJSON !== null) {
-					for (i=0; i< dlt_BMS_ROUT_MST.getAllJSON().length; i++) {
-						dlt_BMS_ROUT_MST.setCellData(i, "STTN_ID", dma_param_STTNID.get("STTN_ID"));
-					}
-					$p.executeSubmission(sub_SI0501G1S0);
-					dma_param_STTNID.set("STTN_ID", val_ID);
-					com.executeSubmission(sub_SI0501G1R0);	
-				}		
-	
-			} else {
-				dma_param_STTNID.set("STTN_ID", val_ID);
-				com.executeSubmission(sub_SI0501G1R0);
-				}
-			};		
+		
+		
+//		var val_ID = dlt_BMS_STTN_MST.getCellData(row, "STTN_ID");		
+//		
+//		var detailCodeModifyCnt = dlt_BMS_ROUT_MST.getModifiedIndex().length;
+//		if (detailCodeModifyCnt > 0) {
+//			com.confirm("관련 노선 정보를 저장하시겠습니까?", "scwin.indexChgSubGrid");	
+//		} else {
+//			var status_row = dlt_BMS_STTN_MST.getRowStatus(row);
+//			if (status_row == "C") {
+//				dlt_BMS_ROUT_MST.removeAll();	
+//			} else {
+//				if (val_ID !== null) {
+//					dma_param_STTNID.set("STTN_ID", val_ID);
+//					com.executeSubmission(sub_SI0501G1R0);
+//					}	
+//				}	
+//			}
+//			
+//			
+//			서브 그리드 변경점이 있을 경우 콜백 메소드 		
+//			scwin.indexChgSubGrid = function(isReturnVal) {
+//			if (isReturnVal) {
+//				서브 그리드 저장
+//				var val_ModifyJSON = dlt_BMS_ROUT_MST.getModifiedJSON();
+//				if (val_ModifyJSON !== null) {
+//					for (i=0; i< dlt_BMS_ROUT_MST.getAllJSON().length; i++) {
+//						dlt_BMS_ROUT_MST.setCellData(i, "STTN_ID", dma_param_STTNID.get("STTN_ID"));
+//					}
+//					$p.executeSubmission(sub_SI0501G1S0);
+//					dma_param_STTNID.set("STTN_ID", val_ID);
+//					com.executeSubmission(sub_SI0501G1R0);	
+//				}		
+//	
+//			} else {
+//				dma_param_STTNID.set("STTN_ID", val_ID);
+//				com.executeSubmission(sub_SI0501G1R0);
+//				}
+//			};		
 	};
 	
 	//서브 그리드 추가 클릭 이벤트
@@ -210,7 +227,7 @@
 		} else {
 			var rowStatus = SI0501G0.getRowStatus(focusRowIdx);
 			if (rowStatus == "C") {
-				com.alert("노선 등록 후에 사용 가능합니다.");
+				com.alert("정류소 등록 후에 사용 가능합니다.");
 			} else {
 				var param = dma_param_STTNID.get("STTN_ID");
 				if (param != "") {
@@ -228,12 +245,12 @@
 	//서브 그리드 추가 콜백함수
 	//팝업창의 data를 서브 그리드에 추가
 	scwin.insertSubGrid = function(obj) {
-		debugger;
 		var dLength = obj.length;
 		for (i = 0; i < dLength; i++) {
-			var data = dlt_BMS_ROUT_MST.getMatchedIndex("STTN_ID", obj[i].STTN_ID, true);
+			//중복 데이터 체크
+			var data = dlt_BMS_ROUT_MST.getMatchedIndex("ROUTE_ID", obj[i].ROUTE_ID, true);
 			if (data.length == 0) {
-				obj[i].ROUTE_ID = dma_param_ROUTEID.get("ROUTE_ID");
+				obj[i].STTN_ID = dma_param_STTNID.get("STTN_ID");
 				obj[i].chk = "0";
 				var idx = dlt_BMS_ROUT_MST.insertRow();
 				dlt_BMS_ROUT_MST.setRowJSON(idx, obj[i], true);
@@ -241,6 +258,10 @@
 		}
 	};
 	
+	
+	scwin.sub_SI0501G1S0_submitdone = function(e) {
+		com.saveDone(SI0501G1, sub_SI0501G1R0);
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -388,14 +409,14 @@
 
 				</xf:group>
 				<xf:group id="" class="vertical_line"></xf:group>
-				<xf:group id="pgm_detail" class="pgm_detail grdr_20_a_20_20_a" style="">
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_a_20_20_a_20_a" style="">
 					<xf:group id="" class="" style="gr_sub_header">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="정류소 상세 정보" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
-					<xf:group class="" id="" style="">
-						<xf:group adaptive="layout" class="w2tb tb" id="SI0501F0" style="width:100%; height:100%;" tagname="table">
+					<xf:group class="" id="" style="height:100px;">
+						<xf:group adaptive="layout" class="w2tb tb" id="SI0501F0" style="width:100%; height:50%;" tagname="table">
 							<w2:attributes>
 								<w2:summary></w2:summary>
 							</w2:attributes>
@@ -538,7 +559,8 @@
 									<w2:attributes></w2:attributes>
 									<w2:inputCalendar calendarDisplayFormat="" calendarDisplayFormatFunc=""
 										calendarValueType="yearMonthDate" displayFormat="" editType="" focusOnDateSelect="false" footerDiv="false" id="APPL_ED_DT"
-										ioFormat="" ref="data:dlt_BMS_STTN_MST.APPL_ED_DT" renderDiv="true" renderType="component" rightAlign="false" style="height:23px;">
+										ioFormat="" ref="data:dlt_BMS_STTN_MST.APPL_ED_DT" renderDiv="true" renderType="component" rightAlign="false"
+										style="height:23px;">
 									</w2:inputCalendar>
 								</xf:group>
 								<xf:group tagname="th" class="w2tb_th">사용여부<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
@@ -577,7 +599,7 @@
 							</xf:group>
 						</xf:group>
 					</xf:group>
-					<xf:group id="" class="holizontal_line">
+					<xf:group id="" class="horizontal_line">
 					</xf:group>
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
@@ -648,6 +670,15 @@
 								</w2:row>
 							</w2:gBody>
 						</w2:gridView>
+					</xf:group>
+					<xf:group id="" class="" style="gr_sub_header">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="지도" style=""></w2:textbox>
+					</xf:group>
+					
+					<xf:group id="" class="" style="">
+					
+					</xf:group>
 					</xf:group>
 				</xf:group> <!--end pgm_detail-->
 			</xf:group> <!-- end content --> 
