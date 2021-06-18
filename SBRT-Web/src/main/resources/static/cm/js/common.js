@@ -5357,19 +5357,19 @@ com.searchGridForm = function(grid,form,searchSbmObj,saveSbmObj,str){
 					com.saveData(grid,form,saveSbmObj)
 				}
 				else {
-					clearGrid(grid);
+					com.clearGrid(grid);
 					com.executeSubmission(searchSbmObj);
 				}
 				return;
 			});
 		} 
 		else {
-			clearGrid(grid);
+			com.clearGrid(grid);
 			com.executeSubmission(searchSbmObj);
 		}
 	}
 	else {
-		clearGrid(grid);
+		com.clearGrid(grid);
 		com.executeSubmission(searchSbmObj);
 	}
 }
