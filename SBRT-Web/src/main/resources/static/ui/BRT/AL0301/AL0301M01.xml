@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ev="http://www.w3.org/2001/xml-events"
+    xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+    <head>
+    <style>
+#chartdiv {
+  width: 100%;
+  height: 500px;
+}
+
+</style>
+    	<w2:type>DEFAULT</w2:type>
+        <w2:buildDate/>
+        <xf:model>
+        	<xf:instance>
+        		<data xmlns="" />
+        	</xf:instance>
+        	<w2:dataCollection baseNode="map">
+        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_OPER_PL_ROUT_INFO" saveRemovedData="true">
+        			<w2:columnInfo>
+        				<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
+        				<w2:column id="DAY_DIV" name="요일구분" dataType="text"></w2:column>
+        				<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
+
+        				<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+        				<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
+
+        				<w2:column id="SHAPE_DIV" name="노선도모양구분" dataType="text"></w2:column>
+        			</w2:columnInfo>
+        		</w2:dataList>
+        		<w2:dataMap baseNode="map" id="dma_search">
+        			<w2:keyInfo>
+        				<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+        				<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+        				<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+        			</w2:keyInfo>
+        		</w2:dataMap>
+        		<w2:dataMap baseNode="map" id="dma_result">
+        			<w2:keyInfo>
+        				<w2:key id="STATUS" name="STATUS" dataType="text"></w2:key>
+        				<w2:key id="ICNT" name="입력건수" dataType="text"></w2:key>
+        				<w2:key id="UCNT" name="수정건수" dataType="text"></w2:key>
+        				<w2:key id="DCNT" name="삭제건수" dataType="text"></w2:key>
+        				<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
+        			</w2:keyInfo>
+        		</w2:dataMap>
+        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
+        			<w2:columnInfo>
+        				<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
+        				<w2:column id="DAY_DIV" name="요일구분" dataType="text"></w2:column>
+        			</w2:columnInfo>
+        		</w2:dataList>
+        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_OPER_PL_ROUT_INFO_CHART" saveRemovedData="true">
+        			<w2:columnInfo>
+        				<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
+        				<w2:column id="DAY_DIV" name="요일구분" dataType="text"></w2:column>
+        				<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
+        				<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+        				<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
+        				<w2:column id="OPER_SN" name="운행순번" dataType="text"></w2:column>
+        				<w2:column id="ROUT_ST_TM" name="노선시작시간" dataType="text"></w2:column>
+
+        				<w2:column id="ROUT_ED_TM" name="노선종료시간" dataType="text"></w2:column>
+        				<w2:column id="WAY_DIV" name="상하행구분" dataType="text"></w2:column>
+        			</w2:columnInfo>
+        		</w2:dataList>
+        		<w2:dataMap baseNode="map" id="dma_param_AL0301C0">
+        			<w2:keyInfo>
+        				<w2:key id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:key>
+        				<w2:key id="DAY_DIV" name="요일구분" dataType="text"></w2:key>
+        			</w2:keyInfo>
+        		</w2:dataMap>
+        	</w2:dataCollection>
+        	<w2:workflowCollection></w2:workflowCollection>
+        	<xf:submission id="sub_AL0301G0R0" ref="data:json,dma_search" target="data:json,dlt_OPER_PL_ROUT_INFO" action="/AL/AL0301G0R0"
+        		method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
+        		mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0301G0R0_submitdone" ev:submiterror=""
+        		abortTrigger="">
+        	</xf:submission>
+        	<xf:submission id="sub_AL0301C0R0" ref="data:json,dma_param_AL0301C0" target="data:json,dlt_OPER_PL_ROUT_INFO_CHART" action="/AL/AL0301C0R0" method="post" mediatype="application/json"
+        		encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit=""
+        		ev:submitdone="scwin.sub_AL0301C0R0_submitdone" ev:submiterror="" abortTrigger="">
+        	</xf:submission>
+        </xf:model>
+
+        <!-- chart API -->
+		<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+		<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+		<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+		
+        <script type="text/javascript" lazy="false"><![CDATA[
+	scwin.onpageload = function() {
+		var autoOptions = {
+			Main : {
+				grid : AL0301G0,
+				srchSbm : sub_AL0301G0R0,
+				srchGrp : pgm_header,
+				keyColumn : "REP_ROUT_ID",
+				name : "배차계획 목록"
+			}
+		};
+
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM,
+				autoOptions);
+
+		var codeOptions = [{
+			code : "DAY_DIV",
+			compID : "AL0301G0:DAY_DIV"
+		}];
+
+		var subOptions = {
+			//			ADD: scwin.btn_add2_onclick, DEL:{}, CNL:{}
+			APPLY : scwin.btn_apply_onclick
+		};
+		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
+
+		com.setCommonDtl(codeOptions, function() {
+			com.searchGrid(AL0301G0, sub_AL0301G0R0);
+		});
+
+		AL0301G0.mergeCells("byrestriccol");
+
+		//차트 script		
+		// Themes begin
+		am4core.useTheme(am4themes_animated);
+		// Themes end
+
+	};
+
+	scwin.onpageunload = function() {
+
+	};
+
+	scwin.sub_AL0301G0R0_submitdone = function(e) {
+		com.setFocusedCell(AL0301G0, "REP_ROUT_NM");
+	};
+
+	scwin.AL0301G0_onrowindexchange = function(row, oldRow) {
+		var val_reproutID = dlt_OPER_PL_ROUT_INFO.getCellData(row,
+				"REP_ROUT_ID");
+		var val_dayDIV = dlt_OPER_PL_ROUT_INFO.getCellData(row, "DAY_DIV");
+		dma_param_AL0301C0.set("REP_ROUT_ID", val_reproutID);
+		dma_param_AL0301C0.set("DAY_DIV", val_dayDIV);
+
+		//보류
+		document.getElementById('chartdiv2').innerText = '';
+		com.executeSubmission(sub_AL0301C0R0);
+	};
+
+	scwin.sub_AL0301C0R0_submitdone = function(e) {
+
+		//노선 유형에 따른 차트 방식
+		var val_shape_div = dlt_OPER_PL_ROUT_INFO.getCellData(AL0301G0
+				.getFocusedRowIndex(), "SHAPE_DIV");
+		if (val_shape_div === "SHA03" || val_shape_div === "SHA04") {
+			showChart2("chartdiv", "WYD01",  "WYD02");
+		
+			//showChart("chartdiv2", "WYD02");
+		}
+
+		else {
+			showChart("chartdiv");
+		}
+
+	};
+
+	scwin.btn_apply_onclick = function() {
+
+	}
+
+	function showChart(div, param_WAY_DIV) {
+		var chart = am4core.create(div, am4charts.XYChart);
+		chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
+
+		chart.paddingRight = 30;
+		chart.dateFormatter.inputDateFormat = "HH:mm:ss";
+
+		var colorSet = new am4core.ColorSet();
+		colorSet.saturation = 0.4;
+
+		chart.data = [];
+
+		//배차순위 = 운행개수 / 배차개수 
+		var cnt = parseInt(194 / 10);
+
+		for (var i = 0; i < dlt_OPER_PL_ROUT_INFO_CHART.getDataLength(); i++) {
+
+			if (typeof param_WAY_DIV === "undefined" || param_WAY_DIV === null) {
+				var info_chart_data = {
+					name : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i % 10,
+							"OPER_SN"),
+					fromDate : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i,
+							"ROUT_ST_TM"),
+					toDate : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i,
+							"ROUT_ED_TM"),
+					ROUT_NM : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i,
+							"ROUT_NM"),
+					ROUT_TYPE : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i,
+							"ROUT_TYPE"),
+					WAY_DIV : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i,
+							"WAY_DIV"),
+					color : colorSet.getIndex(0).brighten(0)
+				};
+				chart.data.push(info_chart_data);
+			}
+
+			else {
+				if (dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i, "WAY_DIV") == param_WAY_DIV) {
+					var info_chart_data = {
+						name : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i % 10,
+								"OPER_SN"),
+						fromDate : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i,
+								"ROUT_ST_TM"),
+						toDate : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i,
+								"ROUT_ED_TM"),
+						ROUT_NM : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i,
+								"ROUT_NM"),
+						ROUT_TYPE : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i,
+								"ROUT_TYPE"),
+						WAY_DIV : param_WAY_DIV,
+						color : colorSet.getIndex(0).brighten(0)
+					};
+					debugger;
+					chart.data.push(info_chart_data);
+				}
+			}
+
+		}
+
+		//세로
+		var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
+		categoryAxis.dataFields.category = "name";
+		categoryAxis.renderer.grid.template.location = 0;
+		categoryAxis.renderer.inversed = true;
+
+		//가로
+		var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+		dateAxis.dateFormatter.dateFormat = "HH:mm:ss";
+		dateAxis.renderer.minGridDistance = 70;
+		dateAxis.baseInterval = {
+			count : 1,
+			timeUnit : "minute"
+		};
+		//		dateAxis.max = new Date(2018, 0, 1, 24, 0, 0, 0).getTime();
+		dateAxis.strictMinMax = true;
+		dateAxis.renderer.tooltipLocation = 0;
+
+		var series1 = chart.series.push(new am4charts.ColumnSeries());
+		series1.columns.template.width = am4core.percent(80);
+		series1.columns.template.tooltipText = "{name}: {openDateX} - {dateX}";
+
+		series1.dataFields.openDateX = "fromDate";
+		series1.dataFields.dateX = "toDate";
+		series1.dataFields.categoryY = "name";
+		series1.dataFields.ROUT_NM = "ROUT_NM";
+		series1.columns.template.propertyFields.fill = "color"; // get color from data
+		series1.columns.template.propertyFields.stroke = "color";
+		series1.columns.template.strokeOpacity = 1;
+
+		series1.name = name;
+		series1.sequencedInterpolation = true;
+		series1.stacked = true;
+		var labelBullet = series1.bullets.push(new am4charts.LabelBullet());
+		labelBullet.label.text = "{ROUT_NM}";
+		labelBullet.locationY = 0.5;
+		labelBullet.label.hideOversized = true;
+
+		series1.events.on("hit", function(ev) {
+			var data = {
+				REP_ROUT_ID : dlt_OPER_PL_ROUT_INFO.getCellData(AL0301G0
+						.getFocusedRowIndex(), "REP_ROUT_ID"),
+				callbackFn : "scwin.series1Callback"
+			};
+
+			var opt = {
+				id : "AL0301M01",
+				popupName : "배차시간 변경",
+				modal : true,
+				width : 580,
+				height : 430
+			};
+			com.openPopup("/ui/BRT/AL0301/AL0301P01.xml", opt, data);
+		});
+
+		scwin.series1Callback = function(returnValue) {
+			COMP_NM.setValue(returnValue[0].COMP_NM);
+			dlt_BMS_DRV_MST.setCellData(SI0300G0.getFocusedRowIndex(),
+					"COMP_ID", returnValue[0].COMP_ID);
+		};
+
+	}
+	
+function showChart2(div, param_WAY_DIV1,  param_WAY_DIV2) {
+		var chart = am4core.create(div, am4charts.XYChart);
+		chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
+
+		chart.paddingRight = 30;
+		chart.dateFormatter.inputDateFormat = "HH:mm:ss";
+
+		var colorSet = new am4core.ColorSet();
+		colorSet.saturation = 0.4;
+
+		chart.data = [];
+
+		//배차순위 = 운행개수 / 배차개수 
+		var cnt = parseInt(194 / 10);
+
+		for (var i = 0; i < dlt_OPER_PL_ROUT_INFO_CHART.getDataLength(); i++) {
+
+
+				if (dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i, "WAY_DIV") == param_WAY_DIV1) {
+					var info_chart_data = {
+						name : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i % 10,
+								"OPER_SN"),
+						fromDate : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i,
+								"ROUT_ST_TM"),
+						toDate : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i,
+								"ROUT_ED_TM"),
+						ROUT_NM : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i,
+								"ROUT_NM"),
+						ROUT_TYPE : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i,
+								"ROUT_TYPE"),
+						WAY_DIV : param_WAY_DIV1,
+						color : colorSet.getIndex(0).brighten(0)
+					};
+
+					chart.data.push(info_chart_data);
+				}
+				
+				if (dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i, "WAY_DIV") == param_WAY_DIV2) {
+					var info_chart_data = {
+						name : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(10+(i % 10),
+								"OPER_SN"),
+						fromDate : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i,
+								"ROUT_ST_TM"),
+						toDate : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i,
+								"ROUT_ED_TM"),
+						ROUT_NM : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i,
+								"ROUT_NM"),
+						ROUT_TYPE : dlt_OPER_PL_ROUT_INFO_CHART.getCellData(i,
+								"ROUT_TYPE"),
+						WAY_DIV : param_WAY_DIV2,
+						color : colorSet.getIndex(1).brighten(0)
+					};
+					chart.data.push(info_chart_data);
+				}
+
+		}
+
+		//세로
+		var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
+		categoryAxis.dataFields.category = "name";
+		categoryAxis.renderer.grid.template.location = 0;
+		categoryAxis.renderer.inversed = true;
+
+		//가로
+		var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+		dateAxis.dateFormatter.dateFormat = "HH:mm:ss";
+		dateAxis.renderer.minGridDistance = 70;
+		dateAxis.baseInterval = {
+			count : 1,
+			timeUnit : "minute"
+		};
+		//		dateAxis.max = new Date(2018, 0, 1, 24, 0, 0, 0).getTime();
+		dateAxis.strictMinMax = true;
+		dateAxis.renderer.tooltipLocation = 0;
+
+		var series1 = chart.series.push(new am4charts.ColumnSeries());
+		series1.columns.template.width = am4core.percent(80);
+		series1.columns.template.tooltipText = "{name}: {openDateX} - {dateX}";
+
+		series1.dataFields.openDateX = "fromDate";
+		series1.dataFields.dateX = "toDate";
+		series1.dataFields.categoryY = "name";
+		series1.dataFields.ROUT_NM = "ROUT_NM";
+		series1.columns.template.propertyFields.fill = "color"; // get color from data
+		series1.columns.template.propertyFields.stroke = "color";
+		series1.columns.template.strokeOpacity = 1;
+
+		series1.name = name;
+		series1.sequencedInterpolation = true;
+		series1.stacked = true;
+		var labelBullet = series1.bullets.push(new am4charts.LabelBullet());
+		labelBullet.label.text = "{ROUT_NM}";
+		labelBullet.locationY = 0.5;
+		labelBullet.label.hideOversized = true;
+
+		series1.events.on("hit", function(ev) {
+			var data = {
+				REP_ROUT_ID : dlt_OPER_PL_ROUT_INFO.getCellData(AL0301G0
+						.getFocusedRowIndex(), "REP_ROUT_ID"),
+				callbackFn : "scwin.series1Callback"
+			};
+
+			var opt = {
+				id : "AL0301M01",
+				popupName : "배차시간 변경",
+				modal : true,
+				width : 580,
+				height : 430
+			};
+			com.openPopup("/ui/BRT/AL0301/AL0301P01.xml", opt, data);
+		});
+
+		scwin.series1Callback = function(returnValue) {
+			COMP_NM.setValue(returnValue[0].COMP_NM);
+			dlt_BMS_DRV_MST.setCellData(SI0300G0.getFocusedRowIndex(),
+					"COMP_ID", returnValue[0].COMP_ID);
+		};
+
+	}	]]></script>
+    </head>
+    <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+ 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
+ 			<xf:group id="pgm_navi" class="pgm_navi" style="">
+				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
+			</xf:group>		
+ 			
+			<xf:group class="pgm_header" id="pgm_header" style="">
+ 				<xf:group class="gr_search" id="" style="">		
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="검색 항목"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
+							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+							textAlign="left">
+
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[운전자명]]></xf:label>
+									<xf:value><![CDATA[DRV_NM]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[운수사명]]></xf:label>
+									<xf:value><![CDATA[COMP_NM]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="-전체-" class="search_select"
+							direction="auto" disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" ev:onblur="scwin.sbx_PositionCd_onblur"
+							id="selectbox2" optionOrder="false" ref="" style="display:none;" submenuSize="auto" textAlign="center">
+							<xf:choices>
+								<xf:itemset nodeset="data:dlt_commonSearchItem">
+									<xf:label ref="CO_CD"></xf:label>
+									<xf:value ref="CO_CD"></xf:value>
+								</xf:itemset>
+							</xf:choices>
+						</xf:select1>
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
+							ev:onviewchange="" id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
+							style="" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="" nextTabByEnter="" disableEdit="">
+							<w2:choices>
+								<w2:itemset nodeset="data:dlt_searchitem">
+									<w2:label ref="DRV_NM"></w2:label>
+									<w2:value ref="DRV_NM"></w2:value>
+								</w2:itemset>
+							</w2:choices>
+						</w2:autoComplete>
+					</xf:group>
+					<w2:wframe class="" id="wfm_mainBtn" scope="true" src="/cm/common/wf_mainBtn.xml" style=""></w2:wframe>		
+ 				</xf:group>
+ 			</xf:group>
+ 			
+			<xf:group id="pgm_content" class="pgm_content grdc_a_20_1400" style=""> 			
+ 			
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style=""> 			
+ 					<xf:group class="defaultbox" id="" style="">
+						<w2:textbox class="df_tt fl" id="" label="배차계획 목록" style=""></w2:textbox>
+					</xf:group>
+					<xf:group></xf:group>
+					<xf:group id="" class="" style="">
+						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid left"
+							dataList="data:dlt_OPER_PL_ROUT_INFO" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup="" ev:onkeyup=""
+							ev:onrowindexchange="scwin.AL0301G0_onrowindexchange" ev:ontextimageclick="" ev:onviewchange="" fixedColumnWithHidden="true"
+							id="AL0301G0" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true" rowStatusHeaderValue=""
+							rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true" visibleRowNum="" wheelRows=""
+							autoFitMinWidth="0" disabledScrollHidden="" editModeEvent="" editModeEventIcon="" checkEditableInputClass="" keyMoveEditMode=""
+							moveKeyEditMode="" moveKeyEditModeAll="" ignoreNonEditableCellTabEnter="" readOnly="true" keepDefaultColumnWidth=""
+							oddEvenColorDisplay="" rowNumWidth="" summaryAuto="" excludeDeletedRows="" useCtrlOnMultisort="" useFilterList=""
+							useFilterListSync="" sortedIconPosition="" sortable="" sortOrderReverse="" showSortableUseFilter="" focusMode="row"
+							rowNumStatusUniqueId="" rowNumStatusResize="" ev:onbeforecolumnmove="" userData1="" mergeCells="" mergeCol="">
+							<w2:header style="" id="header1">
+								<w2:row style="" id="row1">
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="col_REP_ROUT_NM"
+										value="대표노선명" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="81" inputType="text" style="height:20px" id="col_DAY_DIV"
+										value="요일구분" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column width="87" id="col_ROUT_NM" value="노선명"></w2:column>
+									<w2:column width="70" id="column15" value=""></w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody style="" id="gBody1">
+								<w2:row style="" id="row2">
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="REP_ROUT_NM"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="81" inputType="select" style="height:20px" id="DAY_DIV"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column width="87" id="ROUT_NM"></w2:column>
+									<w2:column width="70" id=""></w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer style="" id="footer1">
+								<w2:row style="" id="row3">
+									<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;"
+										id="column42" value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan=""
+										expression="&quot;데이터 개수 : &quot; + COUNT(&apos;COMP_ID&apos;)" textAlign="left">
+									</w2:column>
+								</w2:row>
+							</w2:footer>
+						</w2:gridView>
+					</xf:group>								
+ 				</xf:group> <!-- end list -->
+ 				<xf:group id="" class="vertical_line"></xf:group>				
+ 				<xf:group id="pgm_detail" class="pgm_detail grdr_20_a" style="">
+ 					<xf:group id="" class="gr_sub_header" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="배차순위 상세" style=""></w2:textbox>
+							
+						</xf:group>
+						<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>						
+					</xf:group>
+					<xf:group class="" id="" style="">
+						<xf:group  class="w2tb tb" id="" style="width:100%; height:100%;" tagname="table">
+							<div id="chartdiv" style="height: 100%"></div>
+							<div id="chartdiv2" style="height: 100%"></div>
+						</xf:group>					
+					</xf:group>									
+ 				</xf:group> <!-- end detail -->				
+ 			</xf:group>
+ 		</xf:group>   
+    </body>
+</html>

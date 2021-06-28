@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_TRANSCOMP_MST" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="chk" name="선택" dataType="text"></w2:column>
+						<w2:column id="COMP_ID" name="운수사아이디" dataType="text"></w2:column>
+						<w2:column id="COMP_NM" name="운수사명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_userSearchItem" saveRemovedData="true">
+					<w2:columnInfo></w2:columnInfo>
+				</w2:dataList>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_SI0300P0R0" ref="" target="data:json,dlt_TRANSCOMP_MST" action="/si/SI0300P0R0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+        
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(tbl_search, scwin.btn_search_onclick);
+		$p.executeSubmission(sub_SI0300P0R0);			
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	scwin.btn_search_onclick = function() {
+		$p.executeSubmission(sub_SI0300P0R0);
+	};
+	
+	scwin.btn_confirm_onclick = function() {
+		var data = findCompGrid.getCheckedJSON("chk");
+		com.closePopup(scwin.closeCallbackFncName, data);
+	};
+	
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();
+	};]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="pop_L" id="" style="">
+			<xf:group class="pop_con" id="" style="">
+				<xf:group class="section" id="" style="">
+					<xf:group class="" id="" style="">
+						<xf:group  class="w2tb tb" id="SI0300F0" style="width:100%; height:100%;" tagname="table">
+							<w2:attributes>
+								<w2:summary></w2:summary>
+							</w2:attributes>
+							<xf:group tagname="colgroup">
+								<xf:group style="width:90px;" tagname="col"></xf:group>
+								<xf:group style="width:120px;" tagname="col"></xf:group>
+								<xf:group style="width:120px;" tagname="col"></xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group class="w2tb_th req" style="" tagname="th">노선명</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<w2:attributes>
+										<w2:colspan>2</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:input class="" id="DRV_ID" mandatory="" ref="data:dlt_BMS_DRV_MST.DRV_ID" style="width:100%;height:21px;"
+										disabled="true" adjustMaxLength="">
+									</xf:input>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group class="w2tb_th req" style="" tagname="th">요일구분</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<w2:attributes>
+										<w2:colspan>2</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+
+									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto"
+										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="DAY_DIV" labelWidthAuto="" mandatory="true"
+										optionOrder="" ref="" renderType="component" style="height:24px;" submenuSize="auto">
+										<xf:choices></xf:choices>
+									</xf:select1>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group class="w2tb_th" style="" tagname="th">노선시작시간</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<w2:attributes>
+										<w2:colspan>2</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:input allowChar="0-9" customModelFormatter="com.transPhone" customModelUnformatter=""
+										dataType="text" disabled="" displayFormatter="com.transPhone" id="ROUT_ST_TM" maskFormat="" maxlength="13" minByteLength=""
+										ref="" style="width:100%;height: 21px;" validator="">
+									</xf:input>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group class="w2tb_th" style="" tagname="th">노선종료시간</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<w2:attributes>
+										<w2:colspan>2</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="ROUT_ED_TM" initValue="" mandatory=""
+										ref="" style="width:100%;height:21px;" validateOnInput="false" validator="" maskFormat="" ioFormat="">
+									</xf:input>
+								</xf:group>
+							</xf:group>
+						</xf:group>
+					</xf:group>
+					</xf:group>
+				<xf:group class="section" id="group12" style="text-align:center;">
+					<w2:anchor class="btn_cm" ev:onclick="scwin.btn_confirm_onclick" id="anchor1" style="">
+						<xf:label><![CDATA[확인]]></xf:label>
+					</w2:anchor>
+					<w2:anchor class="btn_cm" ev:onclick="scwin.btn_cancel_onclick" id="anchor2" outerDiv="" style="">
+						<xf:label><![CDATA[취소]]></xf:label>
+					</w2:anchor>
+				</xf:group>
+			</xf:group>
+		</xf:group>
+
+	</body>
+</html>
