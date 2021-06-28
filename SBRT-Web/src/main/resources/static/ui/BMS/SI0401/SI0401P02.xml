@@ -13,7 +13,7 @@
         		<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_REP_ROUT_MST" saveRemovedData="true">
         			<w2:columnInfo>
         				<w2:column id="chk" name="선택" dataType="text"></w2:column>
-        				<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
+        				<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
         				<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
         				<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
         				<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
@@ -21,7 +21,7 @@
         		</w2:dataList>
         		<w2:dataMap baseNode="map" id="dma_REP_ROUT_MST">
         			<w2:keyInfo>
-        				<w2:key id="REP_ROUT_ID" name="운수사아이디" dataType="text"></w2:key>
+        				<w2:key id="REP_ROUT_ID" name="운수사ID" dataType="text"></w2:key>
         				<w2:key id="TYPE" name="name2" dataType="text"></w2:key>
         				<w2:key id="CONTENT" name="name3" dataType="text"></w2:key>
         			</w2:keyInfo>
@@ -109,6 +109,10 @@
 	scwin.sub_SI0401P1S0_submitdone = function(e) {
 		$p.executeSubmission(sub_SI0401P1R0);			
 	};
+	
+	scwin.SI0401P1_onrowindexchange = function(row,oldRow) {
+		SI0401P1.setCellChecked(row,"chk",true);
+	}
 	]]></script>
     </head>
     <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -130,7 +134,7 @@
     						style="height:20px;width:80px;margin-right: 10px;" submenuSize="auto" textAlign="left" chooseOptionLabel="-전체-">
     						<xf:choices>
     							<xf:item>
-    								<xf:label><![CDATA[대표노선아이디]]></xf:label>
+    								<xf:label><![CDATA[대표노선ID]]></xf:label>
     								<xf:value><![CDATA[COMP_ID]]></xf:value>
     							</xf:item>
     							<xf:item>
@@ -149,12 +153,12 @@
     			</xf:group>
     		</xf:group>
     	</xf:group>
-    	<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BMS_REP_ROUT_MST" useShiftKey="false"
+    	<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BMS_REP_ROUT_MST" useShiftKey="false" ev:onrowindexchange="scwin.SI0401P1_onrowindexchange"
     		readOnly="false" style="height:240px;" scrollByColumn="false" id="SI0401P1" autoFit="allColumn" class="cm_grid">
     		<w2:header id="header1" style="">
     			<w2:row id="row1" style="">
     				<w2:column width="39" inputType="radio" style="height:20px" id="chkHeader" value="선택" blockSelect="false"></w2:column>
-    				<w2:column width="70" id="column2" value="대표노선아이디"></w2:column>
+    				<w2:column width="70" id="column2" value="대표노선ID"></w2:column>
     				<w2:column width="70" id="column3" value="대표노선명"></w2:column>
     				<w2:column width="30" id="column16" value="사용여부" dataType="" inputType="text"></w2:column>
     				<w2:column width="70" id="column17" value="비고"></w2:column>

@@ -3,11 +3,11 @@
 <mapper namespace="kr.tracom.bms.domain.PI0100.PI0100Mapper">
 
 	<select id="PI0100G0R0" resultType="Map" parameterType="Map">
-		SELECT NOTICE_ID, (SELECT GROUP_CONCAT(VHC_NO SEPARATOR ',') FROM BMS_VHC_MST WHERE VHC_ID IN (SELECT VHC_ID FROM BMS_NOTICE_VHC_CMPSTN NV WHERE NV.NOTICE_ID = N.NOTICE_ID)) VHC_NO, STTN_RCPT_IDS, TITLE, SEND_DIV, 
+		SELECT NOTICE_ID, (SELECT GROUP_CONCAT(VHC_NO SEPARATOR ',') FROM BMS_VHC_MST WHERE VHC_ID IN (SELECT VHC_ID FROM BMS_NOTICE_VHC_CMPSTN NV WHERE NV.NOTICE_ID = N.NOTICE_ID)) VHC_NO, TITLE, SEND_DIV, 
 		SEND_STS, DATE_FORMAT(REG_DTM, '%Y%m%d%H%i') REG_DTM, DATE_FORMAT(RSV_DTM, '%Y%m%d%H%i') RSV_DTM, DATE_FORMAT(SEND_DTM, '%Y%m%d%H%i') SEND_DTM, DATE_FORMAT(UPD_DTM, '%Y%m%d%H%i') UPD_DTM, CONTENTS, UPD_ID FROM BMS_NOTICE_MST N
 		<where>
-			<if test="SContent != ''">
-				TITLE LIKE CONCAT('%',#{SContent},'%') OR CONTENTS LIKE CONCAT('%',#{SContent},'%') 
+			<if test="CONTENT != ''">
+				NOTICE_ID LIKE CONCAT('%',#{CONTENT},'%') OR TITLE LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 		</where>
 	</select>
@@ -56,13 +56,14 @@
 	
 	<select id="PI0100P1R0" resultType="Map" parameterType="Map">
 		SELECT STTN_ID, STTN_NM, STTN_NO, GPS_X, GPS_Y FROM BMS_STTN_MST
-		<!-- 
-		WHERE STTN_ID
+		<!-- WHERE STTN_ID
 		NOT IN (SELECT STTN_ID FROM BMS_STTN_MST WHERE 
-		<foreach collection="STTN_RCPT_IDS" item="item" separator=" OR "> STTN_ID = #{item}</foreach>
-		)
-		 -->
+		<foreach collection="STTN_ECPT_IDS" item="item" separator=" OR "> STTN_ID = #{item}</foreach>
+		) -->
 		<where>
+		<if test="TYPE == 'ALL'">
+			AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%') || STTN_NO LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
 		<if test="TYPE == 'STTN_NM'">
 			AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
@@ -70,6 +71,7 @@
 			AND STTN_NO LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
 		</where>
+		
 		ORDER BY STTN_ID
 	</select>
 
@@ -78,8 +80,8 @@
 	</select>	
 
 	<insert id="PI0100G0I0" parameterType="Map">	
-		INSERT INTO BMS_NOTICE_MST(NOTICE_ID, VHC_RCPT_IDS, STTN_RCPT_IDS, TITLE, SEND_DIV, SEND_STS, REG_DTM, RSV_DTM, SEND_DTM, UPD_DTM, CONTENTS, UPD_ID) 
-		VALUES (#{NOTICE_ID}, #{VHC_RCPT_IDS}, #{STTN_RCPT_IDS}, #{TITLE}, #{SEND_DIV}, #{SEND_STS}, STR_TO_DATE(#{REG_DTM}, '%Y%m%d%H%i'), STR_TO_DATE(#{RSV_DTM}, '%Y%m%d%H%i'), STR_TO_DATE(#{SEND_DTM}, '%Y%m%d%H%i'), #{UPD_DTM}, #{CONTENTS}, #{UPD_ID})
+		INSERT INTO BMS_NOTICE_MST(NOTICE_ID, TITLE, SEND_DIV, SEND_STS, REG_DTM, RSV_DTM, SEND_DTM, UPD_DTM, CONTENTS, UPD_ID) 
+		VALUES (#{NOTICE_ID}, #{TITLE}, #{SEND_DIV}, #{SEND_STS}, STR_TO_DATE(#{REG_DTM}, '%Y%m%d%H%i'), STR_TO_DATE(#{RSV_DTM}, '%Y%m%d%H%i'), STR_TO_DATE(#{SEND_DTM}, '%Y%m%d%H%i'), #{UPD_DTM}, #{CONTENTS}, #{UPD_ID})
 	</insert>
 
 	<delete id="PI0100G0D0" parameterType="Map">
@@ -89,7 +91,7 @@
 	</delete>
 	
 	<update id="PI0100G0U0" parameterType="Map">
-		UPDATE BMS_NOTICE_MST SET VHC_RCPT_IDS = #{VHC_RCPT_IDS}, STTN_RCPT_IDS = #{STTN_RCPT_IDS}, TITLE = #{TITLE}, SEND_DIV = #{SEND_DIV}, 
+		UPDATE BMS_NOTICE_MST SET TITLE = #{TITLE}, SEND_DIV = #{SEND_DIV}, 
 		SEND_STS = #{SEND_STS}, REG_DTM = STR_TO_DATE(#{REG_DTM}, '%Y%m%d%H%i'), RSV_DTM = STR_TO_DATE(#{RSV_DTM}, '%Y%m%d%H%i'), SEND_DTM = STR_TO_DATE(#{SEND_DTM}, '%Y%m%d%H%i'), UPD_DTM = #{UPD_DTM}, CONTENTS = #{CONTENTS}, UPD_ID = #{UPD_ID}
 		WHERE NOTICE_ID = #{NOTICE_ID}
 	</update>

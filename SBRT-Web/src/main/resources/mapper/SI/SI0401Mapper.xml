@@ -38,6 +38,12 @@
 			
 	from BMS_ROUT_MST
 	<where>
+		<if test="TYPE == 'ALL'">
+			AND ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'ROUTE_ID'">
+			AND ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
 		<if test="TYPE == 'ROUT_NM'">
 			AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
@@ -52,9 +58,9 @@
 </select>
 
 <select id="SI0401SHI0" resultType="Map">
-	select ROUT_NM, REP_ROUT_NM
+	select ROUTE_ID, ROUT_NM, REP_ROUT_NM
 	from BMS_ROUT_MST
-	order by ROUT_NM
+	order by ROUTE_ID
 </select>
 
 <insert id="SI0401G0I0" parameterType="Map">

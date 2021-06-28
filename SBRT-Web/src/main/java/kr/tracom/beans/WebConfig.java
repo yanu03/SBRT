@@ -3,6 +3,7 @@ package kr.tracom.beans;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -26,8 +27,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 		registry.addResourceHandler("/fileUpload/**").addResourceLocations("classpath:/static/fileUpload/");
 		registry.addResourceHandler("/cm/**").addResourceLocations("classpath:/static/cm/");
 		registry.addResourceHandler("/ui/**").addResourceLocations("classpath:/static/ui/");
-		registry.addResourceHandler("/webjars/**").addResourceLocations("/webjars/").resourceChain(false);		
-		
+		registry.addResourceHandler("/ClipReport/**").addResourceLocations("classpath:/static/ClipReport/");
 		super.addResourceHandlers(registry);
 	}
 
@@ -51,6 +51,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(new SessionCheckInterceptor())
+		.excludePathPatterns("/ClipReport/**")
 		.excludePathPatterns("/cm/**")
 		.excludePathPatterns("/fileupload/**")
 		.excludePathPatterns("/lang/**")
@@ -58,5 +59,11 @@ public class WebConfig extends WebMvcConfigurationSupport {
 		.excludePathPatterns("/I18N")
 		.excludePathPatterns("/main/login")
 		.excludePathPatterns("/websquare/**");
+	}
+	
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**")
+			.allowedOrigins("*");
 	}
 }

@@ -17,7 +17,7 @@ public class PI0100Service extends ServiceSupport{
 	private PI0100Mapper pI0100Mapper;
 		
 	public List<Map> PI0100G0R0() throws Exception{
-		Map param = getSimpleDataMap("dma_BMS_NOTICE_MST");
+		Map param = getSimpleDataMap("dma_search");
 		return pI0100Mapper.PI0100G0R0(param);
 	}
 	
@@ -42,8 +42,8 @@ public class PI0100Service extends ServiceSupport{
 	
 	public List<Map> PI0100P1R0() throws Exception{
 		Map param = getSimpleDataMap("dma_search");
-		String temp[] = param.get("STTN_RCPT_IDS").toString().split(",");
-		param.put("STTN_RCPT_IDS", temp);
+		/*String temp[] = param.get("STTN_ECPT_IDS").toString().split(",");
+		param.put("STTN_ECPT_IDS", temp);*/
 		return pI0100Mapper.PI0100P1R0(param);
 	}
 	

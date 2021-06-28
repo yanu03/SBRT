@@ -25,20 +25,24 @@
 				USE_YN,
 				a.REMARK
 		from BMS_VHC_MST a, BMS_TRANSCOMP_MST b
-		where a.COMP_ID = b.COMP_ID
-		<where>
+		where a.COMP_ID = b.COMP_ID	
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
 			<if test="TYPE == 'VHC_ID'">
-				AND VHC_ID LIKE CONCAT('%',#{VHC_ID},'%')
+				AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
 			<if test="TYPE == 'VHC_NO'">
-				AND VHC_NO LIKE CONCAT('%',#{VHC_NO},'%') 
+				AND VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
-			<if test="TYPE == 'AREA'">
-				AND AREA LIKE CONCAT('%',#{AREA},'%') 
-			</if>
-		</where>
 		
 	</select>	
+
+	<select id="SI0200SHI0" resultType="Map">
+		select  VHC_ID, VHC_NO
+		from BMS_VHC_MST
+	</select>
+
 
 	<select id="SI0200G0K0" resultType="Map">
 		SELECT CONCAT('VH', LPAD(NEXTVAL(SEQ_BMS_VHC_MST_0), 8, '0')) AS 'SEQ'

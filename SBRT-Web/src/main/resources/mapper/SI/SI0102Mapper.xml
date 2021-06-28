@@ -12,11 +12,14 @@
 		   PHONE, FAX, EMAIL, DRV_CNT, SVC_ROUT_CNT, LIC_VHC_CNT, SPR_VHC_CNT, REMARK
 	from BMS_TRANSCOMP_MST -->
 	<where>
-		<if test="TYPE == 'COMP_NM'">
-			AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%')
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND COMP_ID LIKE CONCAT('%',#{CONTENT},'%') || COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
-		<if test="TYPE == 'REP_NM'">
-			AND REP_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		<if test="TYPE == 'COMP_ID'">
+			AND COMP_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'COMP_NM'">
+			AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
 	</where>
 </select>
@@ -26,7 +29,7 @@
 </select>
 
 <select id="SI0102SHI0" resultType="Map">
-	select COMP_NM, REP_NM
+	select COMP_ID, COMP_NM
 	from BMS_TRANSCOMP_MST
 	order by COMP_NM
 </select>
@@ -130,6 +133,9 @@
 	select GRG_ID, GRG_NM
 	from BMS_GRG_MST
 	<where>
+		<if test="TYPE == 'ALL'">
+			AND GRG_ID LIKE CONCAT('%',#{CONTENT},'%') || GRG_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
 		<if test="TYPE == 'GRG_ID'">
 			AND GRG_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>

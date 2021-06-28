@@ -98,6 +98,24 @@ public class InitController {
 		return "websquare/blank";
 	}
 
+	@RequestMapping(value = "/Clip", method = RequestMethod.GET)
+	public String Clip(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+		model.addAttribute("movePage", getLoginPage(request.getParameter("w2xPath")));
+		return "/ClipReport/Clip";
+	}
+	
+	@RequestMapping(value = "/report_server", method =  {RequestMethod.POST,RequestMethod.GET})
+	public String report_server(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+		model.addAttribute("movePage", getLoginPage(request.getParameter("w2xPath")));
+		return "/ClipReport/report_server";
+	}
+	
+	@RequestMapping(value = "/report", method = RequestMethod.GET)
+	public String report(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+		model.addAttribute("movePage", getLoginPage(request.getParameter("w2xPath")));
+		return "/ClipReport/report";
+	}
+	
 	/**
 	 * 로그인 페이지 Url을 반환한다.
 	 * 

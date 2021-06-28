@@ -70,7 +70,7 @@
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_grgSearchItem" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="GRG_ID" name="차고지아이디" dataType="text"></w2:column>
+						<w2:column id="GRG_ID" name="차고지ID" dataType="text"></w2:column>
 						<w2:column id="GRG_NM" name="차고지명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
@@ -196,11 +196,17 @@
 		}
 	};
 	
-	scwin.sbx_ChoiceBox_onviewchange = function(info) {
-		if (info.newValue == "GRG_ID") {
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
+		if (info.newValue == "ALL") {
+			acb_autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} else if (info.newValue == "GRG_ID") {
+			search_input.hide();
 			acb_autoChoiceBox.setNodeSet("data:dlt_grgSearchItem", "GRG_ID", "GRG_ID");
 			acb_autoChoiceBox.show("");
 		} else if (info.newValue == "GRG_NM") {
+			search_input.hide();
 			acb_autoChoiceBox.setNodeSet("data:dlt_grgSearchItem", "GRG_NM", "GRG_NM");
 			acb_autoChoiceBox.show("");
 		}
@@ -219,18 +225,20 @@
 			<xf:group id="pgm_header" class="pgm_header" style="">
 				<xf:group id="" style="" class="gr_search">
 					<xf:group id="" style="" class="label">
-						<xf:group id="" style="" class="">
 							<w2:span id="" class="" label="검색 항목"></w2:span>
-						</xf:group>
 					</xf:group>
 					<xf:group id="" style="" class="search">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE"
-							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
-							textAlign="left" class="">
+							optionOrder="false" ref="data:dma_search.TYPE" style="" class="search_type" submenuSize="auto"
+							textAlign="left">
 							<xf:choices>
 								<xf:item>
-									<xf:label><![CDATA[차고지아이디]]></xf:label>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[차고지ID]]></xf:label>
 									<xf:value><![CDATA[GRG_ID]]></xf:value>
 								</xf:item>
 								<xf:item>
@@ -239,10 +247,11 @@
 								</xf:item>
 							</xf:choices>
 						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="차고지 ID 또는 차고지 명"></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
-							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
+							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
 							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
-							style="width: 200px;height: 21px;float: left;" submenuSize="auto" textAlign="left" useKeywordHighlight="false"
+							style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false"
 							visibleRowNum="">
 							<w2:choices>
 								<w2:itemset nodeset="data:dlt_grgSearchItem">
@@ -371,13 +380,10 @@
 							</w2:gBody>
 							<w2:footer style="" id="footer1">
 								<w2:row style="" id="row3">
-									<w2:column removeBorderStyle="false" width="" inputType="expression" style="height:20px; border-right:5px" id="column48" value=""
+									<w2:column removeBorderStyle="false" width="" inputType="expression" style="height:20px;" id="column48" value=""
 										blockSelect="false" displayMode="label" colSpan="13" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('GRG_ID')"
 										textAlign="left">
 									</w2:column>
-									<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column51" value=""
-										blockSelect="false" displayMode="label">
-									</w2:column> -->
 								</w2:row>
 							</w2:footer>
 						</w2:gridView>

@@ -58,11 +58,11 @@ public class LoginController extends ControllerSupport {
 	}
 
 	/**
-	 * login - 요청받은 아이디, 비밀번호를 회원DB와 비교한다.
+	 * login - 요청받은 ID, 비밀번호를 회원DB와 비교한다.
 	 * 
 	 * @date 2017.12.22
-	 * @param dma_loginCheck { USER_ID:"사용자아이디", PASSWORD:"비밀번호" }
-	 * @returns mv dma_resLoginCheck { USER_ID:"사용자아이디", USER_NM:"사용자명", LOGIN:"상태" }
+	 * @param dma_loginCheck { USER_ID:"사용자ID", PASSWORD:"비밀번호" }
+	 * @returns mv dma_resLoginCheck { USER_ID:"사용자ID", USER_NM:"사용자명", LOGIN:"상태" }
 	 * @author Inswave
 	 * @throws Exception 
 	 * @example
@@ -102,9 +102,9 @@ public class LoginController extends ControllerSupport {
 				session.setAttribute(Constants.SSN_CUR_SYSTEM, systemBit);
 			}	
 			
-			// 로그인한 아이디가 시스템 관리자인지 여부를 체크한다.
-			// 시스템 관리자 아이디는 websquareConfig.properties 파일의 system.admin.id 속성에 정의하면 된다.
-			// 시스템 관자자 아이디가 여러 개일 경우 콤마(",") 구분해서 작성할 수 있다.
+			// 로그인한 ID가 시스템 관리자인지 여부를 체크한다.
+			// 시스템 관리자 ID는 websquareConfig.properties 파일의 system.admin.id 속성에 정의하면 된다.
+			// 시스템 관자자 ID가 여러 개일 경우 콤마(",") 구분해서 작성할 수 있다.
 			boolean isAdmin = loginService.isAdmin((String) memberMap.get("USER_ID"));
 			session.setAttribute(Constants.SSN_IS_ADMIN, isAdmin);
 			
@@ -136,7 +136,7 @@ public class LoginController extends ControllerSupport {
 	 * 
 	 * @date 2018.11.29
 	 * @param dma_password { PASSWORD: "현재 비밀번호", NEW_PASSWORD: "새로운 비밀번호", RETRY_PASSWORD: "새로운 비밀번호(재입력)" }
-	 * @returns mv dlt_result { FOCUS:"포커스를 이동할 컬럼 아이디" }
+	 * @returns mv dlt_result { FOCUS:"포커스를 이동할 컬럼 ID" }
 	 * @author InswaveSystems
 	 * @example
 	 */

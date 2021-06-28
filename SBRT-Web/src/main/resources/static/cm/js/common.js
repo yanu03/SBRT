@@ -505,7 +505,7 @@ gcm._sbm_errorHandler = function(resObj) {
  * 
  * @date 2018.06.11
  * @private
- * @param {Object} 컴포넌트 객체 또는 아이디(WFrame Scope 경로를 포함한 Full Path Id)
+ * @param {Object} 컴포넌트 객체 또는 ID(WFrame Scope 경로를 포함한 Full Path Id)
  * @memberOf
  * @author InswaveSystems
  */
@@ -622,7 +622,7 @@ com.isAdmin = function() {
 }
 
 /**
- * 로그인한 사용자의 아이디(사원번호)를 반환한다.
+ * 로그인한 사용자의 ID(사원번호)를 반환한다.
  * 
  * @date 2018.12.01
  * @memberOf com
@@ -1737,7 +1737,7 @@ com.downLoadCSV = function(grdObj, options) {
  * 엑셀 업로드 옵션을 설정하고 확장자 별로 다른 함수(uploadCSV || uploadExcel)를 호출한다.
  * 
  * @date 2017.11.30
- * @param {Object} grdObj 그리드뷰 아이디
+ * @param {Object} grdObj 그리드뷰 ID
  * @param {Array} options JSON형태로 저장된 그리드의 엑셀 업로드 옵션
  * @param {String} type 타입(xls, xlsx, csv)을 구분 후, 적합한 API를 사용하여 업로드 한다.
  * @memberOf com
@@ -2043,7 +2043,7 @@ com.confirm = function(messageStr, closeCallbackFncName) {
  * 
  * @date 2016.10.09
  * @memberOf com
- * @param {String} popId popup창 id로 값이 없을 경우 현재창의 아이디(this.popupID) close.
+ * @param {String} popId popup창 id로 값이 없을 경우 현재창의 ID(this.popupID) close.
  * @param {String} [callbackStr] callbackFunction명으로 부모 객체는 opener || parent으로 참조한다. opener || parent가 없을 경우 window 참조.
  * @param {String} [returnValue] callbackFunction에 넘겨줄 파라메터로 String타입을 권장한다.
  * @author Inswave Systems
@@ -2089,7 +2089,7 @@ com._closePopup = function(popId, callbackFnStr, retStr, winObj) {
  * @date 2016.10.09
  * @param {String} url url 화면경로
  * @param {Array} options Popup창 옵션
- * @param {String} [options.id] Popup창 아이디
+ * @param {String} [options.id] Popup창 ID
  * @param {String} [options.type] 화면 오픈 타입 ("iframePopup", "wframePopup", "browserPopup")
  * @param {String} [options.width] Popup창 넓이
  * @param {String} [options.height] Popup창 높이
@@ -2116,15 +2116,21 @@ com.openPopup = function(url, opt, data) {
 };
 
 com._openPopup = function(url, opt, data) {
-
+	
+	if((typeof opt.width == "undefined")||(opt.width==null)||(opt.width==0))opt.width=800;
+	if((typeof opt.height == "undefined")||(opt.height==null)||(opt.width==0))opt.height=600;
+	
+	var width = opt.width;
+	var height = opt.height ;
+	
+	data.width=opt.width;
+	data.height=opt.height;
 	var _dataObj = {
 		type : "json",
 		data : data,
 		name : "param"
 	};
-
-	var width = opt.width || 500;
-	var height = opt.height || 500;
+	
 	try {
 		var deviceWidth = parseFloat($("body").css("width"));
 		var deviceHeight = parseFloat($("body").css("height"));
@@ -2178,12 +2184,12 @@ com._openPopup = function(url, opt, data) {
  * @memberOf com
  * @param {Object} grpObj 그룹 컴포넌트 객체
  * @param {Object[]} options 유효성 검사 옵션 <br/>
- * @param {String} options[].id : 유효성 검사 대상 DataCollection 컬럼 아이디 <br/> 
+ * @param {String} options[].id : 유효성 검사 대상 DataCollection 컬럼 ID <br/> 
  * @param {Boolean} options[].mandatory : 필수 입력 값 여부 <br/>
  * @param {Number} options[].minLength : 최소 입력 자리수 <br/>
  * @param {requestCallback} options[].valFunc : 사용자 유효성 검사 함수 <br/>
- * @param {String} tacId 그룹이 포함된 TabControl 컴포넌트 아이디
- * @param {String} tabId 그룹이 포함된 TabControl 컴포넌트의 Tab 아이디
+ * @param {String} tacId 그룹이 포함된 TabControl 컴포넌트 ID
+ * @param {String} tabId 그룹이 포함된 TabControl 컴포넌트의 Tab ID
  * @returns {Boolean} 유효성 검사 결과
  * @since 2015.08.05
  * @example
@@ -2372,12 +2378,12 @@ com.validateGroup = function(grpObj, valInfoArr, tacObj, tabId) {
  * @memberOf com
  * @param {Object} gridViewObj GridView 객체
  * @param {Object[]} options 데이터 유효성 검증 옵션
- * @param {String} options[].id 유효성 검사 대상 DataCollection 컬럼 아이디
+ * @param {String} options[].id 유효성 검사 대상 DataCollection 컬럼 ID
  * @param {Boolean} options[].mandatory 필수 입력 값 여부
  * @param {Number} options[].minLength 최소 입력 자리수
  * @param {requestCallback} options[].valFunc 사용자 유효성 검사 함수
  * @param {Object} tacObj GridView가 포함된 TabControl 컴포넌트 객체
- * @param {String} tabId GridView가 포함된 TabControl 컴포넌트의 Tab 아이디
+ * @param {String} tabId GridView가 포함된 TabControl 컴포넌트의 Tab ID
  * @returns {Boolean} 유효성검사 결과
  * @since 2015.08.05
  * @example 
@@ -2547,12 +2553,12 @@ com.validateGridView = function(gridViewObj, tacObj, tabId) {
  * @param {Object} gridViewObj GridView 객체
  * @param :{Object} tableObj Table ID
  * @param {Object[]} options 데이터 유효성 검증 옵션
- * @param {String} options[].id 유효성 검사 대상 DataCollection 컬럼 아이디
+ * @param {String} options[].id 유효성 검사 대상 DataCollection 컬럼 ID
  * @param {Boolean} options[].mandatory 필수 입력 값 여부
  * @param {Number} options[].minLength 최소 입력 자리수
  * @param {requestCallback} options[].valFunc 사용자 유효성 검사 함수
  * @param {Object} tacObj GridView가 포함된 TabControl 컴포넌트 객체
- * @param {String} tabId GridView가 포함된 TabControl 컴포넌트의 Tab 아이디
+ * @param {String} tabId GridView가 포함된 TabControl 컴포넌트의 Tab ID
 * 작성자 : 양현우
 */
 com.validateGridTableView = function(gridViewObj, tableObj, tacObj, tabId) {
@@ -4040,7 +4046,7 @@ var autoOptions = {
 com.setMainBtn2(wfm_mainBtn, btnCom.TYPE.SINGLE_GRID, autoOptions, userOptions);
 */
 	
-com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
+com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt, adtOpt) {
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
 	com.enableDisp(autoOpt);
 	
@@ -4054,19 +4060,37 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 			if(eval("programAuthority."+item.value) == "Y"){
 				var tmpParentIdx = wfm_mainBtn.getWindow().btn_main_generator.insertChild();
 				var mainBtn = wfm_mainBtn.getWindow().btn_main_generator.getChild(tmpParentIdx, "btn_main");
-				var str = item.str;
-				mainBtn.setValue(str);
-				mainBtn.addClass(item.class);
-				
-				if ((typeof usrOpt !== "undefined")&&(usrOpt !== null)&&(typeof eval("usrOpt."+i) === "function")) {
-					mainBtn.bind("onclick", eval("usrOpt."+i));
+
+				if ((typeof usrOpt !== "undefined")&&(usrOpt !== null)) {
+					if (typeof eval("usrOpt."+i) === "function") {
+						var str = item.str;
+						mainBtn.setValue(str);
+						mainBtn.addClass(item.class);
+						mainBtn.bind("onclick", eval("usrOpt."+i));
+					}
+					else {
+						if(typeof eval(usrOpt[i].fncCb) === "function"){
+							mainBtn.bind("onclick", eval(usrOpt[i].fncCb));
+						}
+						if(typeof eval(usrOpt[i].fncNm) !== "undefined"){
+							mainBtn.setValue(usrOpt[i].fncNm);
+						}
+						if(typeof eval(usrOpt[i].class) !== "undefined"){
+							mainBtn.addClass(usrOpt[i].class);
+						}
+					}
 				}
 				else if((typeof autoOpt !== "undefined")&&(autoOpt !== null)){
+					var str = item.str;
+					mainBtn.setValue(str);
+					mainBtn.addClass(item.class);
+					
 					var main = autoOpt.Main;
 				
 					if( type == gcm.DISP_TYPE.SINGLE_GRID){ //단일 그리드
 						if(i == gcm.BTN.SEARCH.nm){
 							item.cbFnc = function(){
+								debugger;
 								com.searchGrid(main.grid, main.srchSbm , main.savSbm);
 							}
 						}
@@ -4119,7 +4143,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 					else if( type == gcm.DISP_TYPE.SINGLE_GRID_FORM){ //단일 그리드와 폼
 						if(i == gcm.BTN.SEARCH.nm){
 							item.cbFnc = function(){
-								com.searchGridForm(main.grid, main.srchSbm , main.savSbm);
+								com.searchGridForm(main.grid, null, main.srchSbm , main.savSbm);
 							}
 						}
 						else if(i == gcm.BTN.ADD.nm){
@@ -4335,7 +4359,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 					else if( type == gcm.DISP_TYPE.THIRD_GRID_FORM){ //3 그리드와 폼
 						if(i == gcm.BTN.SEARCH.nm){
 							item.cbFnc = function(){
-								
+								debugger;
 								var sub1 = autoOpt.Sub1;
 								var sub2 = autoOpt.Sub2;
 								if ((typeof sub1 !== "undefined")&&(sub1 !== null)&&(typeof sub2 !== "undefined")&&(sub2 !== null)){
@@ -4450,7 +4474,7 @@ var btnOptions =
 ];
 com.setMainBtn3(btnOptions, wfm_mainBtn);
 */
-com.setMainBtn3 = function(btnOptions, wfm_mainBtn) {
+com.setMainBtn3 = function(wfm_mainBtn, btnOptions) {
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
 	
 	if(programAuthority.AUTH_CHECK != 'Y')return;
@@ -4513,21 +4537,59 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
 
 	if(programAuthority.AUTH_CHECK != 'Y')return;
-	
+
 	for(var i in subOpt){
+		debugger;
 		try {
 			var item = gcm.BTN[i];
 			if(eval("programAuthority."+item.value) == "Y"){
-				var tmpParentIdx = wfm_subBtn.getWindow().btn_sub_generator.insertChild();
-				var subBtn = wfm_subBtn.getWindow().btn_sub_generator.getChild(tmpParentIdx, "btn_sub");
-				var str = item.str;
-				subBtn.setValue(str);
-				subBtn.addClass(item.class);
 				
-				if ((typeof subOpt !== "undefined")&&(subOpt !== null)&&(typeof eval("subOpt."+i) === "function")) {
-					subBtn.bind("onclick", eval("subOpt."+i));
+				if ((typeof eval("subOpt."+i) === "function")||(subOpt[i].length>0)||(typeof eval(subOpt[i].fncCb) === "function")) {
+					if (typeof eval("subOpt."+i) === "function") {
+						var tmpParentIdx = wfm_subBtn.getWindow().btn_sub_generator.insertChild();
+						var subBtn = wfm_subBtn.getWindow().btn_sub_generator.getChild(tmpParentIdx, "btn_sub");
+						var str = item.str;
+						subBtn.setValue(str);
+						subBtn.addClass(item.class);
+						subBtn.bind("onclick", eval("subOpt."+i));
+					}
+					else if(subOpt[i].length>0){
+						for(var j=0; j<subOpt[i].length; j++){
+							var tmpParentIdx = wfm_subBtn.getWindow().btn_sub_generator.insertChild();
+							var subBtn = wfm_subBtn.getWindow().btn_sub_generator.getChild(tmpParentIdx, "btn_sub");
+							var optArr = subOpt[i];
+							if(typeof eval(optArr[j].fncCb) === "function"){
+								subBtn.bind("onclick", eval(optArr[j].fncCb));
+							}
+							if(typeof optArr[j].fncNm !== "undefined"){
+								subBtn.setValue(optArr[j].fncNm);
+							}
+							if(typeof optArr[j].class !== "undefined"){
+								subBtn.addClass(optArr[j].class);
+							}
+						}
+					}
+					else {
+						var tmpParentIdx = wfm_subBtn.getWindow().btn_sub_generator.insertChild();
+						var subBtn = wfm_subBtn.getWindow().btn_sub_generator.getChild(tmpParentIdx, "btn_sub");
+						if(typeof eval(subOpt[i].fncCb) === "function"){
+							subBtn.bind("onclick", eval(subOpt[i].fncCb));
+						}
+						if(typeof subOpt[i].fncNm !== "undefined"){
+							subBtn.setValue(subOpt[i].fncNm);
+						}
+						if(typeof subOpt[i].class !== "undefined"){
+							subBtn.addClass(subOpt[i].class);
+						}
+					}
 				}
 				else{
+					var tmpParentIdx = wfm_subBtn.getWindow().btn_sub_generator.insertChild();
+					var subBtn = wfm_subBtn.getWindow().btn_sub_generator.getChild(tmpParentIdx, "btn_sub");
+					var str = item.str;
+					subBtn.setValue(str);
+					subBtn.addClass(item.class);
+					
 					var sub = autoOpt.Sub1;
 					var main = autoOpt.Main;
 					if(i == gcm.BTN.SEARCH.nm){
@@ -4892,7 +4954,8 @@ com.searchThirdGrid = function(mainGrid, subGrid1, subGrid2, form, searchSbmObj,
 	}
 	else {
 		com.clearGrid(mainGrid);
-		com.clearGrid(subGrid);
+		com.clearGrid(subGrid1);
+		com.clearGrid(subGrid2);
 		com.executeSubmission(searchSbmObj);
 	}
 }
@@ -5686,6 +5749,15 @@ com.insertMappingGrid = function(targetGrid, sourceObj, pKeyMap, pKey, key){
 	}
 }
 
+
+com.excludeItemsByGrid = function(grid, items, matchedColumn){
+	var data = com.getGridViewDataList(grid);
+	for (i = 0; i < items.length; i++) {
+		var curIndex = data.getMatchedIndex(matchedColumn, items[i]);
+		data.removeRow(curIndex);
+	}
+}
+
 var shortcutTargetElement = document;
 if (shortcutTargetElement.attachEvent) {
 	shortcutTargetElement.detachEvent("keydown", gcm.shortcutEvent.keydownEvent);
@@ -5703,7 +5775,7 @@ if (shortcutTargetElement.attachEvent) {
  * @memberOf com
  * @author 양현우
  * @param {Array} options Popup창 옵션
- * @param {String} [options.id] Popup창 아이디
+ * @param {String} [options.id] Popup창 ID
  * @param {String} [options.type] 화면 오픈 타입 ("iframePopup", "wframePopup", "browserPopup")
  * @param {String} [options.width] Popup창 넓이
  * @param {String} [options.height] Popup창 높이

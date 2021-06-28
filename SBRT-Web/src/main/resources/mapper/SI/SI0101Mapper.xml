@@ -8,6 +8,9 @@
 			SECURE_AREA, <!-- APPL_ST_DT, APPL_ED_DT, --> REMARK
 	from BMS_GRG_MST
 	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND GRG_ID LIKE CONCAT('%',#{CONTENT},'%') || GRG_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
 		<if test="TYPE == 'GRG_ID'">
 			AND GRG_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
