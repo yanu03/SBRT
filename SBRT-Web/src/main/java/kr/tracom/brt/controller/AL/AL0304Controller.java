@@ -33,7 +33,13 @@ public class AL0304Controller extends ControllerSupport {
 	
 	@RequestMapping("/AL/AL0304P0R0")
 	public @ResponseBody Map<String, Object> AL0304P0R0() throws Exception {
-		result.setData("dlt_BRT_COR_MST", al0304Service.AL0304P0R0());
+		result.setData("dlt_COR_MST", al0304Service.AL0304P0R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/AL/AL0304P0R1")
+	public @ResponseBody Map<String, Object> AL0304P0R1() throws Exception {
+		result.setData("dlt_OPER_PL_ROUT_INFO", al0304Service.AL0304P0R1());
 		return result.getResult();
 	}	
 }

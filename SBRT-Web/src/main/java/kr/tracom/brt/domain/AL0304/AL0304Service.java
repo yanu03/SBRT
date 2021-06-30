@@ -27,7 +27,12 @@ public class AL0304Service extends ServiceSupport {
 	}
 	
 	public List AL0304P0R0() throws Exception {
-		Map<String, Object> map = getSimpleDataMap("dma_GRG_MST");
+		Map<String, Object> map = getSimpleDataMap("dma_search");
 		return al0304Mapper.AL0304P0R0(map);
-	}	
+	}
+	
+	public List AL0304P0R1() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_param_AL0304P0R1");
+		return al0304Mapper.AL0304P1R0(map);
+	}		
 }

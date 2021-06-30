@@ -38,15 +38,28 @@
 	</select>
 	
 	<select id="AL0304P0R0" resultType="Map">
-	    select  COR_ID
-				REP_ROUT_ID
+	    select  COR_ID,
+				REP_ROUT_ID,
 				COR_NM
 	
 	      from   BRT_COR_MST
-	      on      a.REP_ROUT_ID = b.REP_ROUT_ID INNER JOIN BMS_ROUT_MST c
+<!-- 	      on      a.REP_ROUT_ID = b.REP_ROUT_ID INNER JOIN BMS_ROUT_MST c
 	      on      a.ROUT_ID = c.ROUTE_ID 
 	      where   a.REP_ROUT_ID = #{REP_ROUT_ID}
-	      and     a.DAY_DIV = #{DAY_DIV}
+	      and     a.DAY_DIV = #{DAY_DIV} -->
 	</select>	
+	
+	<select id="AL0304P1R0" resultType="Map">
+		select  a.REP_ROUT_ID,
+				a.ROUT_ID,
+				b.ROUT_NM,
+				a.OPER_SN,
+				a.ROUT_ST_TM,
+				a.ROUT_ED_TM
+				
+		from	BRT_OPER_PL_ROUT_INFO a INNER JOIN BMS_ROUT_MST b
+		on		a.REP_ROUT_ID = b.REP_ROUT_ID
+		where	b.REP_ROUT_ID = #{REP_ROUT_ID}
+	</select>
 	
 </mapper>
