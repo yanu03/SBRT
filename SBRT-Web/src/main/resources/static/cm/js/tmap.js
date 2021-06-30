@@ -24,8 +24,8 @@ var orgaIcon = "/assets/images/tmap/voice_node.png";
 var busstopIcon = "/assets/images/tmap/busstop.png"
 
 /**티맵 시작**/
-function initTmap(options) {
-	map = new Tmapv2.Map("mapView0",  
+function initTmap(divMapId,options) {
+	map = new Tmapv2.Map(divMapId,  
 	{
 		center: new Tmapv2.LatLng(36.502212, 127.256300), // 지도 초기 좌표
 		width: options.width, 
