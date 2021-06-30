@@ -89,7 +89,7 @@ public class LoginController extends ControllerSupport {
 			/*if (mainLayout == null) {
 				mainLayout = user.getDefaultMainLayoutCode();
 			}*/
-			
+			session.setAttribute(Constants.SSN_DELETED, "false");
 			session.setAttribute(Constants.SSN_USER_ID, (String) memberMap.get("USER_ID"));
 			session.setAttribute(Constants.SSN_USER_NM, (String) memberMap.get("USER_NM"));
 			session.setAttribute(Constants.SSN_SYSTEM_BIT, memberMap.get("SYSTEM_BIT"));

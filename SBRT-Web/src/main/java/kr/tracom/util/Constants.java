@@ -21,4 +21,5 @@ public class Constants {
 	public static final String SSN_MENU_LIST = "SSN_MENU_LIST";
 	
 	public static final String UPD_DTM = "UPD_DTM";
+	public static final String SSN_DELETED = "SSN_DELETED"; //세션 초기화중
 }

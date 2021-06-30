@@ -111,6 +111,23 @@ function drawLine2(lat_arr, lng_arr, seq_arr){
 	});
 }
 
+/**선그리기**/
+function drawLine3(lat_arr, lng_arr, seq_arr){
+	var path = [];
+	for(var i=0; i < lat_arr.length; i++){
+		if(seq_arr[i] != 0){			
+			path.push(new Tmapv2.LatLng(lat_arr[i], lng_arr[i]));
+		}
+	}
+	
+	polyline = new Tmapv2.Polyline({
+		path: path,
+		strokeColor: "#640064", // 라인 색상
+		strokeWeight: 3, // 라인 두게
+		map: map // 지도 객체
+	});
+}
+
 /**선삭제**/
 function deleteLine(){
 	if(polyline != null) {

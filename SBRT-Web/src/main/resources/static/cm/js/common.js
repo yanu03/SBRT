@@ -4060,8 +4060,9 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt, adtOpt) {
 			if(eval("programAuthority."+item.value) == "Y"){
 				var tmpParentIdx = wfm_mainBtn.getWindow().btn_main_generator.insertChild();
 				var mainBtn = wfm_mainBtn.getWindow().btn_main_generator.getChild(tmpParentIdx, "btn_main");
-
-				if ((typeof usrOpt !== "undefined")&&(usrOpt !== null)) {
+				
+				if ((typeof usrOpt !== "undefined")&&(usrOpt !== null)&&
+						((typeof eval("usrOpt."+i) === "function")||(typeof usrOpt[i] !== "undefined"))) {
 					if (typeof eval("usrOpt."+i) === "function") {
 						var str = item.str;
 						mainBtn.setValue(str);
@@ -4090,7 +4091,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt, adtOpt) {
 					if( type == gcm.DISP_TYPE.SINGLE_GRID){ //단일 그리드
 						if(i == gcm.BTN.SEARCH.nm){
 							item.cbFnc = function(){
-								debugger;
+								
 								com.searchGrid(main.grid, main.srchSbm , main.savSbm);
 							}
 						}
@@ -4359,7 +4360,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt, adtOpt) {
 					else if( type == gcm.DISP_TYPE.THIRD_GRID_FORM){ //3 그리드와 폼
 						if(i == gcm.BTN.SEARCH.nm){
 							item.cbFnc = function(){
-								debugger;
+								
 								var sub1 = autoOpt.Sub1;
 								var sub2 = autoOpt.Sub2;
 								if ((typeof sub1 !== "undefined")&&(sub1 !== null)&&(typeof sub2 !== "undefined")&&(sub2 !== null)){
@@ -4539,7 +4540,7 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 	if(programAuthority.AUTH_CHECK != 'Y')return;
 
 	for(var i in subOpt){
-		debugger;
+		
 		try {
 			var item = gcm.BTN[i];
 			if(eval("programAuthority."+item.value) == "Y"){
