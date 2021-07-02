@@ -68,7 +68,8 @@
 		$p.executeSubmission(sub_PI0201G0R0);
 		
 		var autoOptions = {
-			Main : { grid : PI0201G0, frm : PI0201F0, srchSbm : sub_PI0201G0R0, savSbm : sub_PI0201G0S0, keySbm : sub_PI0201G0K0 }
+			Main : { grid : PI0201G0, frm : PI0201F0, srchSbm : sub_PI0201G0R0, savSbm : sub_PI0201G0S0, keySbm : sub_PI0201G0K0 
+								 , srchGrp : pgm_header, keyColumn : "VOC_ID", focusColumn : "VOC_ID", name :  "음성 정보"}
 		};
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
 	};
@@ -83,6 +84,7 @@
 	}	
 	
 	scwin.upload0_onInputValueChange = function(fileName) {
+	debugger;
 		// 확장자 추출
 		var lastDot = fileName.lastIndexOf('.'); 
 		var fileExtension = fileName.substring(lastDot+1, fileName.length);
@@ -112,11 +114,11 @@
 		var doc_audio0 = document.getElementById("audio0");
 		var filePath = WebSquare.xml.getValue(retXml, "ret/storedFileList");
 		// 실서버 도메인 변경 필요
-		var realPath = "http://localhost:8081/fileUpload/up/";
-		doc_audio0.src = realPath + filePath;
-		dlt_BMS_VOC_INFO.setCellData(scwin.idxRowVOC, dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"), doc_audio0.src);
-		doc_audio0.type = "audio/wav";
-		doc_audio0.pause();
+		var realPath = "/data/fileUpload/up/";
+		//doc_audio0.src = realPath + filePath;
+		//dlt_BMS_VOC_INFO.setCellData(scwin.idxRowVOC, dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"), doc_audio0.src);
+		//doc_audio0.type = "audio/wav";
+		//doc_audio0.pause();
 		// 서버에 저장되도 404 error 발생함 바로 갱신이 안되는 문제
 		// 현재 동일한 파일명으로 업로드 시 (날짜) 형태로 서버에 파일이 생성되는데 괄호가 보안처리에 의해 다른 문자로 치환되서 DB에서 경로 가져올때 문제 있음  
 	};

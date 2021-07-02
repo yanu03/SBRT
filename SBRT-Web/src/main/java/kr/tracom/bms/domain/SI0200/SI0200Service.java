@@ -27,8 +27,8 @@ public class SI0200Service extends ServiceSupport {
 	}
 	
 	public List SI0200P0R0() throws Exception {
-		//Map<String, Object> map = getSimpleDataMap("dma_search");
-		return si0200Mapper.SI0200P0R0();
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return si0200Mapper.SI0200P0R0(map);
 	}
 
 	public Map SI0200G0K0() throws Exception {

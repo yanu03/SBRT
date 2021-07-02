@@ -50,7 +50,18 @@
 
 	<select id="SI0200P0R0" resultType="Map">
 		SELECT COMP_ID, COMP_NM
-		FROM BMS_TRANSCOMP_MST;
+		FROM BMS_TRANSCOMP_MST
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND COMP_ID LIKE CONCAT('%',#{CONTENT},'%') || COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'COMP_ID'">
+				AND COMP_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'COMP_NM'">
+				AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>
 	</select>
 	
 	<insert id="SI0200G0I0" parameterType="Map">

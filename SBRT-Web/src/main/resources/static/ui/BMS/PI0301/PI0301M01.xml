@@ -63,11 +63,14 @@
 		$p.executeSubmission(sub_PI0301G0R0);
 		
 		var autoOptions = {
-			Main : { grid : PI0301G0, frm : PI0301F0, srchSbm : sub_PI0301G0R0, savSbm : sub_PI0301G0S0, keySbm : sub_PI0301G0K0 }
+			Main : { grid : PI0301G0, frm : PI0301F0, srchSbm : sub_PI0301G0R0, savSbm : sub_PI0301G0S0, keySbm : sub_PI0301G0K0, 
+					 keySbm : sub_PI0301G0K0, srchGrp : pgm_header, keyColumn : "PROV_ID", focusColumn : "PROV_NM", name :  "뉴스 제공처"
+				   }
 		 };
 		 
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
 		
+		$p.executeSubmission(sub_PI0301SHI0);
 		//scwin.btn_set_onclick();
 	};
 	
@@ -90,9 +93,7 @@
 		com.openPopup(("/ui/BMS/PI0301/PI0301P01.xml"), options, data);  
 	};
 	
-	scwin.sub_PI0301G0K0_submitdone = function(e) {
-		var insertIndex = com.addGrid(PI0301G0,dma_SEQ_BMS_NEWS_CFG_INFO_0,"PROV_ID","PROV_NM");
-	};
+
 	
 	scwin.sub_PI0301G0R0_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
@@ -101,6 +102,29 @@
 		}
 	};
 	
+	scwin.sub_PI0301G0K0_submitdone = function(e) {
+		com.addGridForm(PI0301G0,PI0301F0,dma_SEQ_BMS_NEWS_CFG_INFO_0,"PROV_ID","PROV_NM");
+	};
+	
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {
+		if (info.newValue == "ALL") {
+			acb_autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} else if (info.newValue == "PROV_ID") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_grgSearchItem", "PROV_ID", "PROV_ID");
+			acb_autoChoiceBox.show("");
+		} else if (info.newValue == "PROV_NM") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_grgSearchItem", "PROV_NM", "PROV_NM");
+			acb_autoChoiceBox.show("");
+		}		
+	};
+	
+	scwin.PI0301G0_onviewchange = function(row, oldRow) {
+		com.changeSingleGrid(PI0301G0, row, oldRow);
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -133,10 +157,11 @@
 								</xf:item>
 							</xf:choices>
 						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="뉴스제공처 ID 또는 뉴스제공처"></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
-							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
+							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
 							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
-							style="width: 200px;height: 21px;float: left;" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+							style="" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
 							<w2:choices>
 								<w2:itemset nodeset="data:dlt_grgSearchItem">
 									<w2:label ref="GRG_ID"></w2:label>
@@ -145,21 +170,19 @@
 							</w2:choices>
 						</w2:autoComplete>
 					</xf:group>
-					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
 			</xf:group><!-- pgm_header -->
 			<xf:group id="pgm_content" class="pgm_content grdc_a_20_700" style="">
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
-					<xf:group id="" class="" style="">
-						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="뉴스 제공처 목록" style=""></w2:textbox>
-						</xf:group>
+					<xf:group class="defaultbox" id="" style="">
+						<w2:textbox class="df_tt fl" id="" label="뉴스 제공처 목록" style=""></w2:textbox>
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="" class="" style="">
 						<w2:gridView sortEvent="onclick" ev:oncellclick=""
 							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서" sortable="true"
-							rowStatusHeaderValue="상태"  overflowX="scroll" overflowY="scroll" rowStatusVisible="false"
+							rowStatusHeaderValue="상태"  overflowX="scroll" overflowY="scroll" rowStatusVisible="false" ev:onrowindexchange="scwin.PI0301G0_onviewchange"
 							fixedColumnWithHidden="true" dataList="data:dlt_BMS_NEWS_CFG_INFO" ignoreCellClick="false" style="height:100%;" autoFit="lastColumn"
 							visibleRowNum="" id="PI0301G0" class="cm_grid left" tooltipPositionY="">
 							<w2:header style="" id="header1">
@@ -292,8 +315,8 @@
 							</xf:group>
 						</xf:group>
 					</xf:group>
-				</xf:group> <!-- pgm_detail -->
-			</xf:group>
-		</xf:group>
+				</xf:group> <!--end pgm_detail-->
+			</xf:group> <!-- end content --> 
+		</xf:group> <!-- end container -->
 	</body>
 </html>
