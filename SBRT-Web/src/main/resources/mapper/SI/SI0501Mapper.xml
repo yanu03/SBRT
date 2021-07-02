@@ -144,26 +144,26 @@
 	where STTN_ID = #{STTN_ID};
 	
 	delete
-	from BMS_ROUT_STTN_CMPSTN
+	from BMS_ROUT_NODE_CMPSTN
 	where STTN_ID = #{STTN_ID}
 </delete>
 
 <select id="SI0501G1R0" resultType="Map">
 	select a.ROUTE_ID, a.ROUT_NM, a.ROUT_TYPE, a.STTN_CNT, a.ROUT_LEN, a.CURVATURE, a.REMARK, b.STTN_ID
-	from BMS_ROUT_MST a INNER JOIN BMS_ROUT_STTN_CMPSTN b ON a.ROUTE_ID = b.ROUTE_ID
+	from BMS_ROUT_MST a INNER JOIN BMS_ROUT_NODE_CMPSTN b ON a.ROUTE_ID = b.ROUTE_ID
 	where b.STTN_ID = #{STTN_ID}
 	
 </select>
 
 <insert id="SI0501G1I0" parameterType="Map">
-	insert into BMS_ROUT_STTN_CMPSTN
+	insert into BMS_ROUT_NODE_CMPSTN
 			(ROUTE_ID, STTN_ID, STTN_ID_SN)
 	values (#{ROUTE_ID}, #{STTN_ID}, 0)		
 
 </insert>
 
 <delete id="SI0501G1D0" parameterType="Map">
-	delete from BMS_ROUT_STTN_CMPSTN
+	delete from BMS_ROUT_NODE_CMPSTN
 	where ROUTE_ID = #{ROUTE_ID}
 	and STTN_ID = #{STTN_ID}
 </delete>

@@ -12,7 +12,7 @@ public interface SI0200Mapper {
 	
 	public List SI0200SHI0();
 	
-	public List SI0200P0R0();
+	public List SI0200P0R0(Map param);
 	
 	public Map SI0200G0K0();
 	

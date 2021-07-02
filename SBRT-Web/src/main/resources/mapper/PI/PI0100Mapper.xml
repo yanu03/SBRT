@@ -39,17 +39,17 @@
 	<select id="PI0100P0R0" resultType="Map" parameterType="Map">
 		SELECT VHC_ID, VHC_NO, CHAS_NO, COMP_NM, V.AREA 
 		FROM BMS_VHC_MST V, BMS_TRANSCOMP_MST T 
-		WHERE V.COMP_ID = T.COMP_ID AND V.VHC_ID NOT IN (SELECT V.VHC_ID FROM BMS_VHC_MST V, BMS_TRANSCOMP_MST T
-		<where>
-			VHC_ID = "NOPE"
-			<!--  <foreach collection="VHC_IDS" item="item" separator=" OR "> V.COMP_ID = T.COMP_ID AND VHC_ID = #{item}</foreach>-->
-		</where>
-		)
-		<if test="TYPE == 'VHC_NO'">
-			AND VHC_NO LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
-		<if test="TYPE == 'CHAS_NO'">
-			AND CHAS_NO LIKE CONCAT('%',#{CONTENT},'%')
+		WHERE V.COMP_ID = T.COMP_ID
+		<if test="CONTENT != ''">
+			<if test="TYPE == 'ALL'">
+				AND (VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || VHC_NO LIKE CONCAT('%',#{CONTENT},'%'))
+			</if>
+			<if test="TYPE == 'VHC_ID'">
+				AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'VHC_NO'">
+				AND VHC_NO LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
 		</if>
 		ORDER BY VHC_ID		
 	</select>
@@ -61,14 +61,16 @@
 		<foreach collection="STTN_ECPT_IDS" item="item" separator=" OR "> STTN_ID = #{item}</foreach>
 		) -->
 		<where>
-		<if test="TYPE == 'ALL'">
-			AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%') || STTN_NO LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
-		<if test="TYPE == 'STTN_NM'">
-			AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
-		<if test="TYPE == 'STTN_NO'">
-			AND STTN_NO LIKE CONCAT('%',#{CONTENT},'%')
+		<if test="CONTENT != ''">
+			<if test="TYPE == 'ALL'">
+				AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%') || STTN_NO LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'STTN_NM'">
+				AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'STTN_NO'">
+				AND STTN_NO LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
 		</if>
 		</where>
 		

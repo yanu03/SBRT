@@ -43,13 +43,13 @@
 	 * 사진 업로드를 반환한다.
 	 */
 	scwin.btn_confirm_onclick = function() {
-
-		upd_image.setSubDir('personImage'); 
+debugger;
+		upd_image.setSubDir('subDir'); 
 		upd_image.submit();
 	};
 	
 	scwin.upd_image_ondone = function(retXml) {
-
+		debugger; 
 		var filePath = WebSquare.xml.getValue(retXml, "ret/storedFileList");
 		com.closePopup(scwin.closeCallbackFncName, filePath);
 	};
@@ -60,6 +60,11 @@
 	scwin.btn_cancel_onclick = function() {
 		com.closePopup();
 	};
+	
+	
+	scwin.onfilereadend= function(value) {
+		debugger;
+	};
 ]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -69,7 +74,7 @@
 			</xf:group>
 			<xf:group id="group4" style="height: 80px;" class="">
 				<w2:upload id="upd_image" style="position:relative;width:367px;height:23px;margin-top:30px;margin-left:45px;float:left;" imageStyle="position:absolute;vertical-align:middle;word-wrap:break-word"
-					inputStyle="position:absolute;vertical-align:middle;word-wrap:break-word" type="image" disabled="" ev:ondone="scwin.upd_image_ondone">
+					inputStyle="position:absolute;vertical-align:middle;word-wrap:break-word" type="image" disabled="" ev:ondone="scwin.upd_image_ondone" ev:onfilereadend="scwin.onfilereadend">
 				</w2:upload>
 			</xf:group>
 			<xf:group class="" id="group3" style="width: 100%;height: 40px;">

@@ -108,7 +108,10 @@
 	
 	
 	scwin.sub_SI0300G0R0_submitdone = function(e) {
-		com.setFocusedCell(SI0300G0,"DRV_ID");
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+			com.setFocusedCell(SI0300G0,"DRV_ID");
+		}
 	};
 	
 	scwin.sub_SI0300G0K0_submitdone = function(e) {
@@ -159,13 +162,24 @@
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
-		if (info.newValue == "DRV_NM") {
-			autoChoiceBox.setNodeSet("data:dlt_searchitem", "DRV_NM", "DRV_NM");
+		if (info.newValue == "ALL") {
+			acb_autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} else if (info.newValue == "DRV_ID") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "DRV_ID", "DRV_ID");
+			acb_autoChoiceBox.show("");
+		} else if (info.newValue == "DRV_NM") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "DRV_NM", "DRV_NM");
+			acb_autoChoiceBox.show("");
 		} else if (info.newValue == "COMP_NM") {
-			autoChoiceBox.setNodeSet("data:dlt_searchitem", "COMP_NM", "COMP_NM");
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "COMP_NM", "COMP_NM");
+			acb_autoChoiceBox.show("");
 		}		
 	};
-	
 	scwin.SI0300G0_onviewchange = function(row, oldRow) {
 		com.changeSingleGrid(SI0300G0, row, oldRow);
 	};
@@ -185,11 +199,19 @@
 					</xf:group>
 					<xf:group class="search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
-							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
-							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
+							optionOrder="false" ref="data:dma_search.TYPE" style="" class="search_type" submenuSize="auto"
 							textAlign="left">
 
 							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[운전자ID]]></xf:label>
+									<xf:value><![CDATA[DRV_ID]]></xf:value>
+								</xf:item>
 								<xf:item>
 									<xf:label><![CDATA[운전자명]]></xf:label>
 									<xf:value><![CDATA[DRV_NM]]></xf:value>
@@ -200,20 +222,11 @@
 								</xf:item>
 							</xf:choices>
 						</xf:select1>
-						<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="-전체-" class="search_select"
-							direction="auto" disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" ev:onblur="scwin.sbx_PositionCd_onblur"
-							id="selectbox2" optionOrder="false" ref="" style="display:none;" submenuSize="auto" textAlign="center">
-							<xf:choices>
-								<xf:itemset nodeset="data:dlt_commonSearchItem">
-									<xf:label ref="CO_CD"></xf:label>
-									<xf:value ref="CO_CD"></xf:value>
-								</xf:itemset>
-							</xf:choices>
-						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="뉴스제공처 ID 또는 뉴스제공처"></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
 							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
-							ev:onviewchange="" id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
-							style="" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="" nextTabByEnter="" disableEdit="">
+							ev:onviewchange="" id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
+							style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="" nextTabByEnter="" disableEdit="">
 							<w2:choices>
 								<w2:itemset nodeset="data:dlt_searchitem">
 									<w2:label ref="DRV_NM"></w2:label>
@@ -288,7 +301,7 @@
 							</w2:gBody>
 							<w2:footer style="" id="footer1">
 								<w2:row style="" id="row3">
-									<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;"
+									<w2:column removeBorderStyle="false" width="" inputType="expression" style="height:20px;"
 										id="column42" value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan=""
 										expression="&quot;데이터 개수 : &quot; + COUNT(&apos;COMP_ID&apos;)" textAlign="left">
 									</w2:column>
@@ -296,9 +309,9 @@
 							</w2:footer>
 						</w2:gridView>
 					</xf:group>
-
+				</xf:group><!-- pgm_list end -->
+				<xf:group id="" class="vertical_line">
 				</xf:group>
-				<xf:group id="" class="vertical_line"></xf:group>
 				<xf:group id="pgm_detail" class="pgm_detail grdr_20_350_20_20_a" style="">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">

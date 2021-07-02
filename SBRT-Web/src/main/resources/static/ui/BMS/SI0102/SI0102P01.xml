@@ -64,9 +64,15 @@
 	scwin.btn_cancel_onclick = function() {
 		com.closePopup();		
 	};
-	scwin.SI0102P0_onrowindexchange = function(row,oldRow) {
-		SI0102P0.setCellChecked(row,"chk",true);
-	}
+	scwin.SI0102P0_oncellclick = function(row,col) {
+	
+		if(SI0102P0.getCellChecked(row,"chk")){
+			SI0102P0.setCellChecked(row,"chk",false)
+		}
+		else {
+			SI0102P0.setCellChecked(row,"chk",true)
+		}
+	};
 	
 	scwin.sub_SI0102P0R0_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
@@ -112,7 +118,8 @@
 			
 			<xf:group style="" id="" class="popup_content">
 				<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BMS_GRG_MST" useShiftKey="false" readOnly="true"
-					style="width:775px" scrollByColumn="false" id="SI0102P0" autoFit="allColumn" class="cm_grid popup" ev:onrowindexchange="scwin.SI0102P0_onrowindexchange">
+					style="width:775px" scrollByColumn="false" id="SI0102P0" autoFit="allColumn" class="cm_grid popup"
+					ev:oncellclick="scwin.SI0102P0_oncellclick">
 					<w2:header style="" id="header1">
 						<w2:row style="" id="row1">
 			    				<w2:column width="39" inputType="checkbox" style="height:20px" id="chkHeader" value="선택" blockSelect="false"></w2:column>
