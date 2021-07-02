@@ -4046,7 +4046,7 @@ var autoOptions = {
 com.setMainBtn2(wfm_mainBtn, btnCom.TYPE.SINGLE_GRID, autoOptions, userOptions);
 */
 	
-com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt, adtOpt) {
+com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
 	com.enableDisp(autoOpt);
 	
@@ -4058,18 +4058,21 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt, adtOpt) {
 		try {
 			var item = gcm.BTN[i];
 			if(eval("programAuthority."+item.value) == "Y"){
-				var tmpParentIdx = wfm_mainBtn.getWindow().btn_main_generator.insertChild();
-				var mainBtn = wfm_mainBtn.getWindow().btn_main_generator.getChild(tmpParentIdx, "btn_main");
 				
 				if ((typeof usrOpt !== "undefined")&&(usrOpt !== null)&&
 						((typeof eval("usrOpt."+i) === "function")||(typeof usrOpt[i] !== "undefined"))) {
 					if (typeof eval("usrOpt."+i) === "function") {
+						var tmpParentIdx = wfm_mainBtn.getWindow().btn_main_generator.insertChild();
+						var mainBtn = wfm_mainBtn.getWindow().btn_main_generator.getChild(tmpParentIdx, "btn_main");
 						var str = item.str;
 						mainBtn.setValue(str);
 						mainBtn.addClass(item.class);
 						mainBtn.bind("onclick", eval("usrOpt."+i));
 					}
-					else {
+					else if((typeof eval(usrOpt[i].fncCb) === "function")||(typeof eval(usrOpt[i].fncNm) !== "undefined")
+							||(typeof eval(usrOpt[i].class) !== "undefined")){
+						var tmpParentIdx = wfm_mainBtn.getWindow().btn_main_generator.insertChild();
+						var mainBtn = wfm_mainBtn.getWindow().btn_main_generator.getChild(tmpParentIdx, "btn_main");
 						if(typeof eval(usrOpt[i].fncCb) === "function"){
 							mainBtn.bind("onclick", eval(usrOpt[i].fncCb));
 						}
@@ -4080,8 +4083,13 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt, adtOpt) {
 							mainBtn.addClass(usrOpt[i].class);
 						}
 					}
+					else{
+						
+					}
 				}
 				else if((typeof autoOpt !== "undefined")&&(autoOpt !== null)){
+					var tmpParentIdx = wfm_mainBtn.getWindow().btn_main_generator.insertChild();
+					var mainBtn = wfm_mainBtn.getWindow().btn_main_generator.getChild(tmpParentIdx, "btn_main");
 					var str = item.str;
 					mainBtn.setValue(str);
 					mainBtn.addClass(item.class);
@@ -5612,7 +5620,6 @@ com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, f
 	
 	var mainData = com.getGridViewDataList(mainGrid);
 	var subData = com.getGridViewDataList(subGrid);
-	
 	var modifiedMainCnt = mainData.getModifiedIndex().length;
 	var modifiedSubCnt = subData.getModifiedIndex().length;
 	var curKeyValue = "";
