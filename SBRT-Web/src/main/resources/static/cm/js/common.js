@@ -4552,7 +4552,6 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 		try {
 			var item = gcm.BTN[i];
 			if(eval("programAuthority."+item.value) == "Y"){
-				
 				if ((typeof eval("subOpt."+i) === "function")||(subOpt[i].length>0)||(typeof eval(subOpt[i].fncCb) === "function")) {
 					if (typeof eval("subOpt."+i) === "function") {
 						var tmpParentIdx = wfm_subBtn.getWindow().btn_sub_generator.insertChild();
@@ -4607,8 +4606,9 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 						}
 					}
 					else if(i == gcm.BTN.ADD.nm){
+						
 						item.cbFnc = function(){
-							
+							debugger;
 							var focusRowIdx = main.grid.getFocusedRowIndex();
 							
 							if (focusRowIdx == -1) {
@@ -4618,6 +4618,7 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 								else{
 									com.alert("부모 선택 후에 추가 하실 수 있습니다.");
 								}
+								return;
 							} else {
 								var rowStatus = main.grid.getRowStatus(focusRowIdx);
 								if (rowStatus == "C") {
@@ -4627,8 +4628,8 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 									else{
 										com.alert("부모 등록 후에 추가 가능합니다.");
 									}
+									return;
 								}
-								return;
 							}
 	
 							if ((typeof sub.keySbm !== "undefined")&&(sub.keySbm !== null)) {
