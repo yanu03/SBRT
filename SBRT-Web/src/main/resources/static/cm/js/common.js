@@ -897,6 +897,7 @@ com.setCommonDtl = function(codeOptions, callbackFunc) {
 						var comp = $p.getComponentById(tmpIdArr[0]);
 						comp.setNodeSet("data:" + dltId, gcm.COMMON_CODE_INFO.LABEL, gcm.COMMON_CODE_INFO.VALUE);
 						// gridView 컴포넌트에 대한 Node Setting 설정
+
 					} else {
 						var gridObj = $p.getComponentById(tmpIdArr[0]);
 						gridObj.setColumnNodeSet(tmpIdArr[1], "data:" + dltId, gcm.COMMON_CODE_INFO.LABEL, gcm.COMMON_CODE_INFO.VALUE);
@@ -2941,10 +2942,16 @@ com.getJSON = function(str) {
  * @return {String} String으로 변환된 객체
  */
 com.strSerialize = function(object) {
+	debugger;
 	if (typeof object == 'string') {
 		return object;
 	} else if (com.isJSON(object)) {
-		return JSON.stringify(object);
+		var temp = JSON.stringify(object);
+		var decode_temp = com.decodeXss(temp);
+		
+		/*alert("decode : " + decode_temp);*/
+		
+		return decode_temp;
 	} else if (com.isXmlDoc(object)) {
 		return WebSquare.xml.serialize(object);
 	} else {
@@ -5852,3 +5859,8 @@ com.searchPopup = function(url, opt, column, data) {
 		$p.openPopup(url, options);	
 	
 }
+
+com.decodeXss = function(str) {
+	debugger;
+	   return str.replaceAll("&#40;", "(").replaceAll("&#41;", ")");
+	}

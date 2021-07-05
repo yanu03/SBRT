@@ -35,7 +35,7 @@ public class SI0503Service extends ServiceSupport{
 		int uCnt = 0;
 		int dCnt = 0;		
 		
-		List<Map<String, Object>> param = getSimpleList("dlt_BMS_STTN_MST");
+		List<Map<String, Object>> param = getSimpleList("dlt_BMS_CRS_MST");
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
@@ -67,47 +67,8 @@ public class SI0503Service extends ServiceSupport{
 		
 	}
 	
-	public Map SI0503G1S0() throws Exception {
-		int iCnt = 0;
-		int uCnt = 0;
-		int dCnt = 0;		
-		
-		List<Map<String, Object>> param = getSimpleList("dlt_BMS_ROUT_MST");
-		try {
-			for (int i = 0; i < param.size(); i++) {
-				Map data = (Map) param.get(i);
-				String rowStatus = (String) data.get("rowStatus");
-				if (rowStatus.equals("C")) {
-					iCnt += si0503Mapper.SI0503G1I0(data);
-				} else if (rowStatus.equals("D")) {
-					dCnt += si0503Mapper.SI0503G1D0(data);
-				} 
-			}			
-		} catch(Exception e) {
-			if (e instanceof DuplicateKeyException)
-			{
-				throw new MessageException(Result.ERR_KEY, "중복된 키값의 데이터가 존재합니다.");
-			}
-			else
-			{
-				throw e;
-			}		
-		}
-
-		
-		Map result = saveResult(iCnt, uCnt, dCnt);
-		
-		return result;	
-	}
-	
-	public List SI0503G1R0() throws Exception {
-		// TODO Auto-generated method stub
-		Map param = getSimpleDataMap("dma_param_STTNID");
-		return si0503Mapper.SI0503G1R0(param);
-	}
-	
 	public List SI0503P0R0() throws Exception {
-		Map<String, Object> map = getSimpleDataMap("dma_ROUT_MST");
+		Map<String, Object> map = getSimpleDataMap("");
 		return si0503Mapper.SI0503P0R0(map);
 	}
 		

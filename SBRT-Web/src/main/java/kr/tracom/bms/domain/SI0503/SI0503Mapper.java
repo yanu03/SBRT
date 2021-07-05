@@ -14,8 +14,6 @@ public interface SI0503Mapper {
 	
 	public List SI0503SHI0();
 	
-	public List SI0503G1R0(Map param);
-	
 	public List SI0503P0R0(Map param);
 	
 	public int SI0503G0I0(Map param);
@@ -23,9 +21,5 @@ public interface SI0503Mapper {
 	public int SI0503G0D0(Map param);
 	
 	public int SI0503G0U0(Map param);
-	
-	public int SI0503G1I0(Map param);
-	
-	public int SI0503G1D0(Map param);
 	
 }

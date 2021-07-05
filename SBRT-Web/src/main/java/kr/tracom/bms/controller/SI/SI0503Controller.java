@@ -25,20 +25,14 @@ public class SI0503Controller extends ControllerSupport {
 	}
 	
 	@RequestMapping("/si/SI0503G0K0")
-	public @ResponseBody Map<String, Object> SI0503G0R1() throws Exception {
-		result.setData("dma_SEQ_BMS_STTN_MST_0", si0503Service.SI0503G0K0());
+	public @ResponseBody Map<String, Object> SI0503G0K0() throws Exception {
+		result.setData("dma_SEQ_BMS_CRS_MST_0", si0503Service.SI0503G0K0());
 		return result.getResult();
 	}
 	
 	@RequestMapping("/si/SI0503SHI0")
-	public @ResponseBody Map<String, Object> SI0503G0R2() throws Exception {
+	public @ResponseBody Map<String, Object> SI0503SHI0() throws Exception {
 		result.setData("dlt_searchitem", si0503Service.SI0503SHI0());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/si/SI0503G1R0")
-	public @ResponseBody Map<String, Object> SI0503G1R0() throws Exception {
-		result.setData("dlt_BMS_ROUT_MST", si0503Service.SI0503G1R0());
 		return result.getResult();
 	}
 	
@@ -49,16 +43,9 @@ public class SI0503Controller extends ControllerSupport {
 		return result.getResultSave();
 	}	
 	
-	@RequestMapping("/si/SI0503G1S0")
-	public @ResponseBody Map<String, Object> SI0401G1S0() throws Exception {
-		Map map = si0503Service.SI0503G1S0();
-		result.setData("dma_result", map);
-		return result.getResultSave();
-	}	
-	
 	@RequestMapping("/si/SI0503P0R0")
 	public @ResponseBody Map<String, Object> SI0503P0R0() throws Exception {
-		result.setData("dlt_BMS_ROUT_MST", si0503Service.SI0503P0R0());
+		result.setData("", si0503Service.SI0503P0R0());
 		return result.getResult();
 	}
 
