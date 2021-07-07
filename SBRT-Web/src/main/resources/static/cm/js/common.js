@@ -2942,7 +2942,6 @@ com.getJSON = function(str) {
  * @return {String} String으로 변환된 객체
  */
 com.strSerialize = function(object) {
-	debugger;
 	if (typeof object == 'string') {
 		return object;
 	} else if (com.isJSON(object)) {
@@ -5861,6 +5860,5 @@ com.searchPopup = function(url, opt, column, data) {
 }
 
 com.decodeXss = function(str) {
-	debugger;
 	   return str.replaceAll("&#40;", "(").replaceAll("&#41;", ")");
 	}
