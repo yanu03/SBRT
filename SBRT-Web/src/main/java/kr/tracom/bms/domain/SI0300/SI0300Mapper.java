@@ -10,7 +10,7 @@ public interface SI0300Mapper {
 	
 	public List SI0300G0R0(Map param);
 	
-	public List SI0300P0R0();
+	public List SI0300P0R0(Map param);
 	
 	public List SI0300SHI0();
 	

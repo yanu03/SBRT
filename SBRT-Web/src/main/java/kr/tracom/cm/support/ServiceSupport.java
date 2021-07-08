@@ -1,5 +1,11 @@
 package kr.tracom.cm.support;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -17,6 +23,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import kr.tracom.util.Constants;
 import kr.tracom.util.Result;
@@ -43,6 +50,9 @@ public class ServiceSupport {
 	@Autowired
 	private UserInfo user;
 	
+
+	@Value("${FILE_ROOT}")
+	protected String fileRoot;
 
 	/**
 	 * @throws Exception
@@ -150,7 +160,7 @@ public class ServiceSupport {
 	 */
 	protected String getSimpleParameter(String key) throws Exception
 	{
-		return getSimpleParameter(key, true);
+		return getSimpleParameter(key, false);
 	}
 
 	/**
@@ -334,7 +344,7 @@ public class ServiceSupport {
 	 */
 	protected Map<String, Object> getSimpleDataMap(String key) throws Exception
 	{
-		return getSimpleDataMap(key, true);
+		return getSimpleDataMap(key, false);
 	}
 
 	/**
@@ -507,7 +517,7 @@ public class ServiceSupport {
 	 */
 	protected List<Map<String, Object>> getSimpleList(String key) throws Exception
 	{
-		return getSimpleList(key, true);
+		return getSimpleList(key, false);
 	}
 	
 	/**
@@ -563,5 +573,82 @@ public class ServiceSupport {
 		result.put("DCNT", String.valueOf(dCnt_grd0));
 		result.put("DCNT", String.valueOf(dCnt_grd1));
 		return result;
+	}
+	
+	protected String doMoveFile(String strFilePath, File file) throws Exception
+	{
+		if (file == null)
+		{
+			return "";
+		}
+ 
+		if (strFilePath == null || "".equals(strFilePath))
+		{
+			throw new IllegalArgumentException("경로가 없습니다.");
+		}
+
+		if (!strFilePath.endsWith("/"))
+		{
+			throw new IllegalArgumentException("경로는 '/'로 끝나야합니다.");
+		}
+
+		String strFileName = file.getName();
+
+		if (file == null || "".equals(strFileName))
+		{
+			throw new IllegalArgumentException("파일이름이 유효하지 않습니다.");
+		}
+
+		if (!file.exists())
+		{
+			throw new IllegalArgumentException("파일이 존재하지 않습니다.");
+		}
+	    
+		String strDestPath = (fileRoot + strFilePath).replace("/", File.separator);
+
+		File fileDestPath = new File(strDestPath);
+		if (!fileDestPath.exists())
+		{
+			fileDestPath.mkdirs();
+		}
+
+		String strDestPathFile = (fileRoot + strFilePath + strFileName).replace("/", File.separator);
+
+		Path filePreTarget = Paths.get(file.getAbsolutePath());
+		Path moveDestPath = Paths.get(strDestPathFile);
+
+		Files.move(filePreTarget, moveDestPath, REPLACE_EXISTING);
+
+		return strFileName;
+	}
+	
+	protected void doMoveFile(String sourcePath, String destPath, String sourceFileName, String destFileName) throws Exception
+	{
+		if (sourceFileName == null||"".equals(sourceFileName))
+		{
+			throw new IllegalArgumentException("파일이름이 유효하지 않습니다.");
+		}
+		sourcePath = fileRoot + sourcePath;
+		destPath = fileRoot + destPath;
+		
+		File fileSourcePath = new File(sourcePath);
+		if (!fileSourcePath.exists())
+		{
+			fileSourcePath.mkdirs();
+		}
+		
+		File fileDestPath = new File(destPath);
+		if (!fileDestPath.exists())
+		{
+			fileDestPath.mkdirs();
+		}
+		
+		String strSourcePathFile = (sourcePath + sourceFileName).replace("/", File.separator);
+		Path moveSourcePath = Paths.get(strSourcePathFile);
+		
+		String strDestPathFile = (destPath + destFileName).replace("/", File.separator);
+		Path moveDestPath = Paths.get(strDestPathFile);
+
+		Files.move(moveSourcePath, moveDestPath, REPLACE_EXISTING);
 	}
 }

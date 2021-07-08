@@ -41,6 +41,7 @@ function searchGrid1(caller, act, data){
 /*****************************************/
 //맵 클릭 이벤트
 function onClickMap(e) {
+	
 	$("input:checkbox[id='toggleStn']").prop("checked", true);
 	$("input:checkbox[id='toggleNode']").prop("checked", true);
 	var routNm = selectedRow0.routNm;

@@ -173,6 +173,9 @@
 	select ROUTE_ID, ROUT_NM, ROUT_TYPE, STTN_CNT, ROUT_LEN, CURVATURE, REMARK
 	from BMS_ROUT_MST
 	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
 		<if test="TYPE == 'ROUTE_ID'">
 			AND ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
