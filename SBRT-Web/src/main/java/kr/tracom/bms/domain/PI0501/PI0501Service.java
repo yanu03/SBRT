@@ -19,7 +19,14 @@ public class PI0501Service extends ServiceSupport {
 	
 	public List PI0501G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return pi0501Mapper.PI0501G0R0(map);
+		List returnList = pi0501Mapper.PI0501G0R0(map);
+		
+		for(Object obj:returnList) {
+			Map<String, Object> temp = (Map<String, Object>)obj;
+			temp.put("FILE_PATH", "/fileUpload/PI0501/"+temp.get("VDO_ID"));			
+		}
+		
+		return returnList;
 	}
 	
 	public List PI0501SHI0() throws Exception {
@@ -47,8 +54,18 @@ public class PI0501Service extends ServiceSupport {
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("C")) {
 					iCnt += pi0501Mapper.PI0501G0I0(data);
+					if((data.get("FILE_NM")!=null)&&(data.get("FILE_NM").toString().isEmpty()==false)
+							&&(data.get("VDO_ID").equals(data.get("FILE_NM"))==false))
+						{
+							doMoveFile("up/","PI0501/",data.get("FILE_NM").toString(),data.get("VDO_ID").toString());
+						}					
 				} else if (rowStatus.equals("U")) {
 					uCnt += pi0501Mapper.PI0501G0U0(data);
+					if((data.get("FILE_NM")!=null)&&(data.get("FILE_NM").toString().isEmpty()==false)
+							&&(data.get("VDO_ID").equals(data.get("FILE_NM"))==false)) 
+						{
+							doMoveFile("up/","PI0501/",data.get("FILE_NM").toString(),data.get("VDO_ID").toString());
+						}					
 				} else if (rowStatus.equals("D")) {
 					dCnt += pi0501Mapper.PI0501G0D0(data);
 				} 
