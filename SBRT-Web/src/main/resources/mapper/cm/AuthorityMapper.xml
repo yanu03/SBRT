@@ -38,11 +38,16 @@
 								 WHERE A.ORG_ID = B.ORG_ID 
 								   AND A.USER_ID = C.USER_ID
 								   AND C.AUTH_CD = #{AUTH_CD})
-		<if test="TYPE == 'USER_ID'">
-			AND A.USER_ID LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
-		<if test="TYPE == 'USER_NM'">
-			AND A.USER_NM LIKE CONCAT('%',#{CONTENT},'%')
+		<if test="CONTENT != ''">
+			<if test="TYPE == 'ALL'">
+				AND (USER_ID LIKE CONCAT('%',#{CONTENT},'%') || USER_NM LIKE CONCAT('%',#{CONTENT},'%'))
+			</if>
+			<if test="TYPE == 'USER_ID'">
+				AND A.USER_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'USER_NM'">
+				AND A.USER_NM LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
 		</if>
 		ORDER BY A.USER_ID
 	</select>

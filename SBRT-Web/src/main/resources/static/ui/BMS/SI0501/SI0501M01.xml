@@ -77,6 +77,7 @@
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_param_STTNID">
 					<w2:keyInfo>
+						<w2:key id="ROUTE_IDS" name="노선IDS" dataType="text"></w2:key>
 						<w2:key id="STTN_ID" name="name1" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
@@ -229,13 +230,15 @@
 			if (rowStatus == "C") {
 				com.alert("정류소 등록 후에 사용 가능합니다.");
 			} else {
+			
+				var val_ROUTE_ID = dlt_BMS_ROUT_MST.getColData("ROUTE_ID");
+				dma_param_STTNID.set("ROUTE_IDS", val_ROUTE_ID);
 				var param = dma_param_STTNID.get("STTN_ID");
 				if (param != "") {
 					var data = { data : dma_param_STTNID.getJSON(), callbackFn : "scwin.insertSubGrid" };
 					var options = { id : "SI0501P01",
 									popupName : "노선 목록", 
-									modal : true, 
-									width : 560, height: 400 };
+									modal : true };
 					com.openPopup("/ui/BMS/SI0501/SI0501P01.xml", options, data);
 				}
 			}

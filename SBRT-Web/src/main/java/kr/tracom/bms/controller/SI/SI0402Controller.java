@@ -38,7 +38,7 @@ public class SI0402Controller extends ControllerSupport {
 	
 	@RequestMapping("/si/SI0402G1R0")
 	public @ResponseBody Map<String, Object> SI0402G1R0() throws Exception {
-		result.setData("dlt_BMS_NODE_MST", si0402Service.SI0402G1R0());
+		result.setData("dlt_BMS_ROUT_NODE_CMPSTN", si0402Service.SI0402G1R0());
 		return result.getResult();
 	}
 	
@@ -49,47 +49,9 @@ public class SI0402Controller extends ControllerSupport {
 		return result.getResultSave();
 	}	
 	
-	@RequestMapping("/si/SI0402G1S0")
-	public @ResponseBody Map<String, Object> SI0402G1S0() throws Exception {
-		Map map = si0402Service.SI0402G1S0();
-		result.setData("dma_result", map);
-		return result.getResultSave();
-	}	
-	
 	@RequestMapping("/si/SI0402P0R0")
 	public @ResponseBody Map<String, Object> SI0402P0R0() throws Exception {
-		result.setData("dlt_BMS_TRANSCOMP_MST", si0402Service.SI0402P0R0());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/si/SI0402P1R0")
-	public @ResponseBody Map<String, Object> SI0402P1R0() throws Exception {
-		result.setData("dlt_BMS_REP_ROUT_MST", si0402Service.SI0402P1R0());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/si/SI0402P1K0")
-	public @ResponseBody Map<String, Object> SI0402P1K0() throws Exception {
-		result.setData("dma_SEQ_BMS_REP_ROUT_MST_0", si0402Service.SI0402P1K0());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/si/SI0402P1S0")
-	public @ResponseBody Map<String, Object> SI0402P1S0() throws Exception {
-		Map map = si0402Service.SI0402P1S0();
-		result.setData("dma_result", map);
-		return result.getResultSave();
-	}
-	
-	@RequestMapping("/si/SI0402P2R0")
-	public @ResponseBody Map<String, Object> SI0402P2R0() throws Exception {
-		result.setData("dlt_BMS_STTN_MST", si0402Service.SI0402P2R0());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/si/SI0402P3R0")
-	public @ResponseBody Map<String, Object> SI0402P3R0() throws Exception {
-		result.setData("dlt_BMS_TRANSCOMP_MST", si0402Service.SI0402P3R0());
+		result.setData("dlt_BMS_NODE_MST", si0402Service.SI0402P0R0());
 		return result.getResult();
 	}
 	

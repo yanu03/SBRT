@@ -29,6 +29,8 @@
 						<w2:column id="UPD_ID" name="갱신ID" dataType="text"></w2:column>
 						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
 						<w2:column id="ATTACH_ID" name="첨부ID" dataType="text"></w2:column>
+						<w2:column id="FILE_NM" name="파일명" dataType="text"></w2:column>
+						<w2:column id="FILE_PATH" name="파일경로" dataType="text"></w2:column>
 						<w2:column id="COMP_NM" name="운수사명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
@@ -147,7 +149,7 @@
 	
 	//파일 선택버튼 클릭 이벤트
 	scwin.btn_uploadImage_onclick = function() {
-		var data = { ATTACH_ID : dlt_BMS_DRV_MST.getCellData(SI0300G0.getFocusedRowIndex(), "ATTACH_ID"), callbackFn : "scwin.uploadImageFileCallback" };
+		var data = { FILE_NM : dlt_BMS_DRV_MST.getCellData(SI0300G0.getFocusedRowIndex(), "FILE_NM"), callbackFn : "scwin.uploadImageFileCallback" };
 		var opt = { id : "SI0300P02", 
 					popupName : "사진 업로드", 
 					width : "480", height : "220" }; 
@@ -157,8 +159,9 @@
 	
 	//파일 선택버큰 콜백함수
 	scwin.uploadImageFileCallback = function(returnValue) {
+	
 //		dma_memberBasic.set("IMAGE_PATH", gcm.CONTEXT_PATH + "/fileUpload/up/" + filePath);
-		dlt_BMS_DRV_MST.setCellData(SI0300G0.getFocusedRowIndex(), "ATTACH_ID", returnValue);
+		dlt_BMS_DRV_MST.setCellData(SI0300G0.getFocusedRowIndex(), "FILE_NM", returnValue);
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
@@ -222,7 +225,7 @@
 								</xf:item>
 							</xf:choices>
 						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="뉴스제공처 ID 또는 뉴스제공처"></xf:input>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="운전자 ID 또는 운전자명,운수사명"></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
 							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
 							ev:onviewchange="" id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
@@ -454,9 +457,9 @@
 									<w2:anchor class="btn_com" ev:onclick="scwin.btn_uploadImage_onclick" id="btn_uploadImage" outerDiv="" style="">
 										<xf:label><![CDATA[파일 선택]]></xf:label>
 									</w2:anchor>
-									<xf:input adjustMaxLength="" class="" disabled="" id="ATTACH_ID" mandatory="" ref="data:dlt_BMS_VHC_MST.REMARK"
-										style="width:100%;height:70px;">
-									</xf:input>
+									<xf:image id="image1" ref="data:dlt_BMS_DRV_MST.FILE_PATH" src=""
+										style="width:150px;height:150px;margin-left:2px;margin-bottom:3px;float:left;">
+									</xf:image>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">

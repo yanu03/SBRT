@@ -21,13 +21,16 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	@Value("${spring.mvc.view.suffix}")
 	private String viewSuffix;
 
-    @Value("${static.resource.location}")
-    private String staticResouceLocation;
-    
+	@Value("${static.resource.location}")
+	private String staticResouceLocation;
+
+	@Value("${fileupload.location}")
+	protected String fileuploadLocation;
+
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/websquare/**").addResourceLocations("/websquare/");
-		registry.addResourceHandler("/fileUpload/**").addResourceLocations(staticResouceLocation+"/static/fileUpload/");
+		registry.addResourceHandler("/fileUpload/**").addResourceLocations(fileuploadLocation);
 		registry.addResourceHandler("/cm/**").addResourceLocations(staticResouceLocation+"/static/cm/");
 		registry.addResourceHandler("/ui/**").addResourceLocations(staticResouceLocation+"/static/ui/");
 		registry.addResourceHandler("/ClipReport/**").addResourceLocations(staticResouceLocation+"/static/ClipReport/");

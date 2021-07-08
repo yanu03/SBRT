@@ -19,11 +19,19 @@ public class SI0300Service extends ServiceSupport{
 	
 	public List SI0300G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return si0300Mapper.SI0300G0R0(map);
+		List returnList = si0300Mapper.SI0300G0R0(map);
+		
+		for(Object obj:returnList) {
+			Map<String, Object> temp = (Map<String, Object>)obj;
+			temp.put("FILE_PATH", "/fileUpload/SI0300/"+temp.get("DRV_ID"));
+		}
+		
+		return returnList;
 	}
 	
 	public List SI0300P0R0() throws Exception {
-		return si0300Mapper.SI0300P0R0();
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return si0300Mapper.SI0300P0R0(map);
 	}
 	
 	public List SI0300SHI0() throws Exception {
@@ -46,8 +54,16 @@ public class SI0300Service extends ServiceSupport{
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("C")) {
 					iCnt += si0300Mapper.SI0300G0I0(data);
+					if((data.get("FILE_NM")!=null)&&(data.get("FILE_NM").toString().isEmpty()==false)
+							&&(data.get("DRV_ID").equals(data.get("FILE_NM"))==false)) {
+						doMoveFile("up/","SI0300/",data.get("FILE_NM").toString(),data.get("DRV_ID").toString());
+					}
 				} else if (rowStatus.equals("U")) {
 					uCnt += si0300Mapper.SI0300G0U0(data);
+					if((data.get("FILE_NM")!=null)&&(data.get("FILE_NM").toString().isEmpty()==false)
+							&&(data.get("DRV_ID").equals(data.get("FILE_NM"))==false)) {
+						doMoveFile("up/","SI0300/",data.get("FILE_NM").toString(),data.get("DRV_ID").toString());
+					}
 				} else if (rowStatus.equals("D")) {
 					dCnt += si0300Mapper.SI0300G0D0(data);
 				} 

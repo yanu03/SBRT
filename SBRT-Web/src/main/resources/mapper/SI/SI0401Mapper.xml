@@ -51,6 +51,7 @@
 			AND REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
 	</where>
+	order by REP_ROUT_NM, WAY_DIV
 </select>
 
 <select id="SI0401G0K0" resultType="Map">
@@ -209,20 +210,26 @@
 <select id="SI0401P0R0" resultType="Map">
 	select COMP_ID, COMP_NM
 	from BMS_TRANSCOMP_MST
-	<where>
-		<if test="TYPE == 'COMP_ID'">
-			AND COMP_ID LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
-		<if test="TYPE == 'COMP_NM'">
-			AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
-		</if>
-	</where>
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND COMP_ID LIKE CONCAT('%',#{CONTENT},'%') || COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'COMP_ID'">
+				AND COMP_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'COMP_NM'">
+				AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>
 </select>
 
 <select id="SI0401P1R0" resultType="Map">
 	select REP_ROUT_ID, REP_ROUT_NM, USE_YN, REMARK
 	from BMS_REP_ROUT_MST
 	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
 		<if test="TYPE == 'REP_ROUT_ID'">
 			AND REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
@@ -278,6 +285,9 @@
 	select STTN_ID, STTN_NM, STTN_ENM
 	from BMS_STTN_MST
 	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND STTN_ID LIKE CONCAT('%',#{CONTENT},'%') || STTN_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
 		<if test="TYPE == 'STTN_ID'">
 			AND STTN_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>

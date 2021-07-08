@@ -25,6 +25,7 @@ var busstopIcon = "/assets/images/tmap/busstop.png"
 
 /**티맵 시작**/
 function initTmap(divMapId,options) {
+	
 	map = new Tmapv2.Map(divMapId,  
 	{
 		center: new Tmapv2.LatLng(36.502212, 127.256300), // 지도 초기 좌표
@@ -153,7 +154,7 @@ function addMarkers(lat_arr, lng_arr, id_arr) {
 /**노드마커 추가**/
 function addMarkerInter(data, grid, idx) {
 	var marker = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(data.lati, data.longi), //Marker의 중심좌표 설정.
+        position: new Tmapv2.LatLng(data.GPS_Y, data.GPS_X), //Marker의 중심좌표 설정.
         label: data.label, //Marker의 라벨.
         map: map,
     	icon: data.icon,
@@ -161,13 +162,13 @@ function addMarkerInter(data, grid, idx) {
     });
 		
 		marker.addListener("click", function(e) {
-			grid.selectRow(idx);
-			ax5.util.search(grid.list, function(){
+			grid.setFocusedCell(idx,"NODE_ID");
+			/*ax5.util.search(grid.list, function(){
 				return this["seq"] == data.seq;
-			});
+			});*/
 			data.click({
 				marker: marker,
-				nodeId: data.nodeId,
+				nodeId: data.NODE_ID,
 				index: data.index
 			});
 		});
@@ -325,7 +326,7 @@ function getDistanceToLine(x, y, x1, y1, x2, y2) {
 /***************************** BM0405 *************************************/
 function addMarker(data) {
 	var marker = new Tmapv2.Marker({
-        position: new Tmapv2.LatLng(data.lati, data.longi), //Marker의 중심좌표 설정.
+        position: new Tmapv2.LatLng(data.GPS_Y, data.GPS_X), //Marker의 중심좌표 설정.
         label: data.label, //Marker의 라벨.
         map: map,
     	icon: data.icon,
@@ -390,4 +391,38 @@ function getDrawingNode(lat, lon) {
 	
 	return node;
 }
+
+function returnInsertRouteInfo(lat, lon, routeData) {
+	var min = 10000000;
+	var minIndex = null;
+	
+	for(var i = 0; i < routeData.length - 1; i++) {
+		var result = getDistanceToLine(
+			lat,
+			lon,
+			routeData[i].GPS_Y,
+			routeData[i].GPS_X,
+			routeData[i + 1].GPS_Y,
+			routeData[i + 1].GPS_X
+		)
+		
+		if(result.distance) {
+			if(min > result.distance) {
+				min = result.distance;
+				minIndex = i;
+			}
+		}
+	}
+	
+	if(minIndex == null) {
+		return false;
+	} else {
+		var insertIndex = minIndex + 1;
+		
+		return {
+			index: insertIndex
+		};
+	}
+}
+
 /**************************************************************************/

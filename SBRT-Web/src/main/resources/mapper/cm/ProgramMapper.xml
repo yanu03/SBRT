@@ -53,9 +53,15 @@
 									  FROM BMS_PROG_AUTH_INFO 
 									 WHERE PROG_CD = #{PROG_CD})
 		   AND USE_YN = 'Y'
-		<if test="SEARCH_WORD != null and SEARCH_WORD != ''">
-			AND (AUTH_CD LIKE CONCAT('%', #{SEARCH_WORD}, '%') OR AUTH_NM LIKE CONCAT('%', #{SEARCH_WORD}, '%'))
-		</if>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND (AUTH_CD LIKE CONCAT('%',#{CONTENT},'%') || AUTH_NM LIKE CONCAT('%',#{CONTENT},'%')) 
+			</if>
+			<if test="TYPE == 'AUTH_CD'">
+				AND AUTH_CD LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'AUTH_NM'">
+				AND AUTH_NM LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
 		ORDER BY AUTH_CD
 	</select>
 
