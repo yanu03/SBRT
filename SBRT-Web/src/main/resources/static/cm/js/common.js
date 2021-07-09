@@ -109,7 +109,7 @@ var gcm = {
 		SETTING : { nm : "SETTING", value : "FN6_AH", class : "setting", str : "설정", cbFnc:{}}, //설정
 		INIT : { nm : "INIT", value : "FN7_AH", class : "init", str : "초기화", cbFnc:{}}, //초기화
 		HELP : { nm : "HELP", value : "HELP_AH", class : "help", str : "도움말", cbFnc:{}}, //도움말
-		CLOSE : { nm : "CLOSE", value : "AUTH_CHECK", class : "close", str : "닫기", cbFnc:{}} //닫기
+		CLOSE : { nm : "CLOSE", value : "AUTH_CHECK", class : "close", str : "닫기", cbFnc:{}}, //닫기
 	},
 	
 	// [단축키] 이벤트 설정 객체
