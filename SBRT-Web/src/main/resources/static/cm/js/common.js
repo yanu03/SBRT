@@ -104,6 +104,7 @@ var gcm = {
 		EXL : { nm : "EXL", value : "EXL_AH", class : "exl", str : "엑셀", cbFnc:{}}, //엑셀다운로드
 		EXL_F : { nm : "EXL_F", value : "GEX_AH", class : "exlf", str : "엑셀양식", cbFnc:{}}, //엑셀양식
 		RESERV : { nm : "RESERV", value : "FN3_AH", class : "reserv", str : "예약", cbFnc:{}}, //예약
+		RESERV_CNL : { nm : "RESERV_CNL", value : "FN3_AH", class : "reservcnl", str : "예약취소", cbFnc:{}}, //예약취소
 		PLAY : { nm : "PLAY", value : "FN4_AH", class : "play", str : "실행", cbFnc:{}}, //실행
 		CONFIRM_YN : { nm : "CONFIRM_YN", value : "FN5_AH", class : "confirmyn", str : "확정", cbFnc:{}}, //확정
 		SETTING : { nm : "SETTING", value : "FN6_AH", class : "setting", str : "설정", cbFnc:{}}, //설정
