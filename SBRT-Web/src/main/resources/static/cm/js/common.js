@@ -4733,6 +4733,7 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 					var sub = autoOpt.Sub1;
 					var main = autoOpt.Main;
 					if(i == gcm.BTN.SEARCH.nm){
+						debugger;
 						item.cbFnc = function(){
 							com.searchGrid(sub.grid, sub.srchSbm , sub.savSbm);
 						}
@@ -4812,6 +4813,12 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 					else if(i==gcm.BTN.EXL_F.nm){
 						item.cbFnc = function(){
 							com.exlFrmGrid(sub.grid);
+						}
+					}
+					if(i == gcm.BTN.SEARCH.nm){
+
+						if ((typeof sub.srchGrp !== "undefined")&&(sub.srchGrp !== null)){
+							com.setEnterKeyEvent(sub.srchGrp, item.cbFnc);
 						}
 					}
 					subBtn.bind("onclick", item.cbFnc);

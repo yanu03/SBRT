@@ -3,19 +3,19 @@
 
 <mapper namespace="kr.tracom.bms.domain.PI0503.PI0503Mapper">
 	<select id="PI0503G0R0" resultType="Map">
-		select  ORGA_ID,
-				ORGA_NM,
-				REMARK,
-			   (select COUNT(ORGA_ID)
-				FROM BMS_VDO_ORGA_LIST b
-				WHERE b.ORGA_ID = a.ORGA_ID) VIDEO_COUNT,
-			   (select SUM(PLAY_TM)
-				FROM BMS_VDO_INFO c, BMS_VDO_ORGA_LIST b
-				WHERE c.VDO_ID = b.VDO_ID
-				AND a.ORGA_ID = b.ORGA_ID) TOTAL_TIME
-		
-	
-		from	BMS_VDO_ORGA_INFO a
+		SELECT  	 A.ORGA_ID
+					,A.ORGA_NM
+					,A.REMARK
+					,COUNT(A.ORGA_ID) VIDEO_COUNT
+					,SUM(C.PLAY_TM) TOTAL_TIME
+				
+		FROM 	 	 BMS_VDO_ORGA_INFO A
+		LEFT JOIN 	 BMS_VDO_ORGA_LIST B
+		ON		 	 A.ORGA_ID = B.ORGA_ID	
+		LEFT JOIN	 BMS_VDO_INFO C
+		ON   	     B.VDO_ID = C.VDO_ID
+		GROUP BY 	 A.ORGA_ID
+
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 				AND ORGA_ID LIKE CONCAT('%',#{CONTENT},'%') || ORGA_NM LIKE CONCAT('%',#{CONTENT},'%') 
@@ -30,8 +30,8 @@
 	</select>	
 
 	<select id="PI0503SHI0" resultType="Map">
-		select  VHC_ID, VHC_NO
-		from BMS_VHC_MST
+		SELECT  VHC_ID, VHC_NO
+		FROM BMS_VHC_MST
 	</select>
 
 	<select id="PI0503G1R0" resultType="Map">

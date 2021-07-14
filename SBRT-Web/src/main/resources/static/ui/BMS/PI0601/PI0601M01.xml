@@ -18,18 +18,18 @@
 						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
-				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_VDO_INFO_0">
+				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_BIT_VDO_INFO_0">
 					<w2:keyInfo>
 						<w2:key id="SEQ" name="SEQ" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="COMP_ID" name="운수사ID" dataType="text"></w2:column>
-						<w2:column id="COMP_NM" name="운수사명" dataType="text"></w2:column>
+						<w2:column id="VDO_ID" name="영상ID" dataType="text"></w2:column>
+						<w2:column id="VDO_NM" name="영상명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_VDO_INFO" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BIT_VDO_INFO" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="VDO_ID" name="영상아이디" dataType="text"></w2:column>
 						<w2:column id="VDO_NM" name="영상명" dataType="text"></w2:column>
@@ -55,19 +55,19 @@
 				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_PI0501G0R0" ref="data:json,dma_search" target="data:json,dlt_VDO_INFO" action='/pi/PI0501G0R0' method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_PI0501G0R0_submitdone"
+			<xf:submission id="sub_PI0601G0R0" ref="data:json,dma_search" target="data:json,dlt_BIT_VDO_INFO" action='/pi/PI0601G0R0' method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_PI0601G0R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0501G0S0" ref="data:json,dlt_VDO_INFO" target="data:json,dma_result" action="/pi/PI0501G0S0" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장 중입니다..." ev:submit="" ev:submitdone="scwin.sub_PI0501G0S0_submitdone"
+			<xf:submission id="sub_PI0601G0S0" ref="data:json,dlt_BIT_VDO_INFO" target="data:json,dma_result" action="/pi/PI0601G0S0" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장 중입니다..." ev:submit="" ev:submitdone="scwin.sub_PI0601G0S0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0501G0K0" ref="" target="data:json,dma_SEQ_BMS_VDO_INFO_0" action="/pi/PI0501G0K0" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0501G0K0_submitdone"
+			<xf:submission id="sub_PI0601G0K0" ref="" target="data:json,dma_SEQ_BMS_BIT_VDO_INFO_0" action="/pi/PI0601G0K0" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0601G0K0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0501SHI0" ref="" target="data:json,dlt_searchitem" action="/pi/PI0501SHI0" method="post" mediatype="application/json" encoding="UTF-8"
+			<xf:submission id="sub_PI0601SHI0" ref="" target="data:json,dlt_searchitem" action="/pi/PI0601SHI0" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -76,61 +76,61 @@
 	<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
 		var autoOptions = {
-			Main : { grid : PI0501G0, frm : PI0501F0, srchSbm : sub_PI0501G0R0, savSbm : sub_PI0501G0S0, keySbm : sub_PI0501G0K0, 
+			Main : { grid : PI0601G0, frm : PI0601F0, srchSbm : sub_PI0601G0R0, savSbm : sub_PI0601G0S0, keySbm : sub_PI0601G0K0, 
 					srchGrp : pgm_header, keyColumn : "VDO_ID", focusColumn : "VDO_NM", name : "영상 목록"}
 		 };		
 	
-		var codeOptions = [ {code : "FILE_TYPE", compID : "FILE_TYPE, PI0501G0:FILE_TYPE" }
+		var codeOptions = [ {code : "FILE_TYPE", compID : "FILE_TYPE, PI0601G0:FILE_TYPE" }
 						];		
 						
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);	
 		
 		com.setCommonDtl(codeOptions, function() {
-			com.searchGrid(PI0501G0, sub_PI0501G0R0);
+			com.searchGrid(PI0601G0, sub_PI0601G0R0);
 		});
 		
-		com.executeSubmission(sub_PI0501SHI0);		
+		com.executeSubmission(sub_PI0601SHI0);		
 	};
 
 	scwin.onpageunload = function() {
 
 	};
 	
-	scwin.sub_PI0501G0R0_submitdone = function(e) {
-		com.setFocusedCell(PI0501G0, "VDO_ID");
+	scwin.sub_PI0601G0R0_submitdone = function(e) {
+		com.setFocusedCell(PI0601G0, "VDO_ID");
 	};
 	
-	scwin.sub_PI0501G0K0_submitdone = function(e) {
-		com.addGridForm(PI0501G0, PI0501F0, dma_SEQ_BMS_VDO_INFO_0, "VDO_ID", "VDO_NM");
+	scwin.sub_PI0601G0K0_submitdone = function(e) {
+		com.addGridForm(PI0601G0, PI0601F0, dma_SEQ_BMS_BIT_VDO_INFO_0, "VDO_ID", "VDO_NM");
 	};
 	
-	scwin.sub_PI0501G0S0_submitdone = function(e) {
-		com.saveDone(PI0501G0, sub_PI0501G0R0);
+	scwin.sub_PI0601G0S0_submitdone = function(e) {
+		com.saveDone(PI0601G0, sub_PI0601G0R0);
 	};
 	
 	//파일 선택버튼 클릭 이벤트
 	scwin.btn_upload_onclick = function() {
-		var data = { FILE_NM : dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_NM"), 
+		var data = { FILE_NM : dlt_BIT_VDO_INFO.getCellData(PI0601G0.getFocusedRowIndex(), "FILE_NM"), 
 					callbackFn : "scwin.uploadFileCallback" 
 					};
-		var opt = { id : "PI0501P01", 
+		var opt = { id : "PI0601P01", 
 					popupName : "파일 업로드",
 					width : "480", height : "220"
 					 }; 
 					
-		com.openPopup("/ui/BMS/PI0501/PI0501P01.xml", opt, data);
+		com.openPopup("/ui/BMS/PI0601/PI0601P01.xml", opt, data);
 	};	
 	
 	scwin.uploadFileCallback = function(returnValue) {
-		dlt_VDO_INFO.setCellData(PI0501G0.getFocusedRowIndex(), "FILE_NM", returnValue);
+		dlt_BIT_VDO_INFO.setCellData(PI0601G0.getFocusedRowIndex(), "FILE_NM", returnValue);
 		
-		var fileType = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_TYPE");
+		var fileType = dlt_BIT_VDO_INFO.getCellData(PI0601G0.getFocusedRowIndex(), "FILE_TYPE");
 		var src = "/fileUpload/up/" + returnValue; 
 		if (fileType == "FT001"){
 			var obj_video = document.getElementById("video1");
 			obj_video.addEventListener('loadedmetadata', function() {
 				var duration = parseInt(obj_video.duration);
-				dlt_VDO_INFO.setCellData(PI0501G0.getFocusedRowIndex(), "PLAY_TM", duration);
+				dlt_BIT_VDO_INFO.setCellData(PI0601G0.getFocusedRowIndex(), "PLAY_TM", duration);
 			});			
 			$p.$("#video1").attr("src", src);
 		} else if (fileType == "FT002") {
@@ -138,21 +138,21 @@
 		}
 	}
 
-	scwin.PI0501G0_onrowindexchange = function(row,oldRow) {
+	scwin.PI0601G0_onrowindexchange = function(row,oldRow) {
 				
-		var fileType = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_TYPE");
+		var fileType = dlt_BIT_VDO_INFO.getCellData(PI0601G0.getFocusedRowIndex(), "FILE_TYPE");
 		if (fileType == "FT001"){
 			IMG_PLAY_TM.setDisabled(true);
 			$p.$("#image1").hide();
 			$p.$("#video1").show();
-			var path = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_PATH");
+			var path = dlt_BIT_VDO_INFO.getCellData(PI0601G0.getFocusedRowIndex(), "FILE_PATH");
 			$p.$("#video1").attr("src", path);	
 			
 		} else if (fileType == "FT002") {
 			IMG_PLAY_TM.setDisabled(false);		
 			$p.$("#image1").show();
 			$p.$("#video1").hide();						
-			var path = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_PATH");
+			var path = dlt_BIT_VDO_INFO.getCellData(PI0601G0.getFocusedRowIndex(), "FILE_PATH");
 			$p.$("#image1").attr("src", path);				
 		} else {
 			$p.$("#image1").hide();
@@ -167,14 +167,14 @@
 			IMG_PLAY_TM.setDisabled(true);
 			$p.$("#image1").hide();
 			$p.$("#video1").show();
-			var path = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_PATH");
+			var path = dlt_BIT_VDO_INFO.getCellData(PI0601G0.getFocusedRowIndex(), "FILE_PATH");
 			$p.$("#video1").attr("src", path);	
 		} 
 		else if (fileType == "FT002") {
 			IMG_PLAY_TM.setDisabled(false);					
 			$p.$("#image1").show();
 			$p.$("#video1").hide();	
-			var path = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_PATH");
+			var path = dlt_BIT_VDO_INFO.getCellData(PI0601G0.getFocusedRowIndex(), "FILE_PATH");
 			$p.$("#image1").attr("src", path);	
 		} else {
 			$p.$("#image1").hide();
@@ -220,8 +220,8 @@
 							class="search_auto" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
 							<w2:choices>
 								<w2:itemset nodeset="data:dlt_searchitem">
-									<w2:label ref="COMP_ID"></w2:label>
-									<w2:value ref="COMP_ID"></w2:value>
+									<w2:label ref="VDO_ID"></w2:label>
+									<w2:value ref="VDO_ID"></w2:value>
 								</w2:itemset>
 							</w2:choices>
 						</w2:autoComplete>
@@ -243,9 +243,9 @@
 					<xf:group></xf:group>
 					<xf:group id="" class="" style="">
 						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid left"
-							dataList="data:dlt_VDO_INFO" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup=""
-							ev:onkeyup="" ev:onrowindexchange="scwin.PI0501G0_onrowindexchange" ev:ontextimageclick="" ev:onviewchange=""
-							fixedColumnWithHidden="true" id="PI0501G0" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true"
+							dataList="data:dlt_BIT_VDO_INFO" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup=""
+							ev:onkeyup="" ev:onrowindexchange="scwin.PI0601G0_onrowindexchange" ev:ontextimageclick="" ev:onviewchange=""
+							fixedColumnWithHidden="true" id="PI0601G0" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true"
 							rowStatusHeaderValue="" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true"
 							visibleRowNum="" wheelRows="" autoFitMinWidth="0" disabledScrollHidden="" editModeEvent="" editModeEventIcon=""
 							checkEditableInputClass="" keyMoveEditMode="" moveKeyEditMode="" moveKeyEditModeAll="" ignoreNonEditableCellTabEnter=""
@@ -331,7 +331,7 @@
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group class="" id="" style="">
-						<xf:group class="w2tb tb" id="PI0501F0" style="width:100%; height:100%;" tagname="table">
+						<xf:group class="w2tb tb" id="PI0601F0" style="width:100%; height:100%;" tagname="table">
 							<w2:attributes>
 								<w2:summary></w2:summary>
 							</w2:attributes>
@@ -348,7 +348,7 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input class="" id="VDO_ID" mandatory="" ref="data:dlt_VDO_INFO.VDO_ID"
+									<xf:input class="" id="VDO_ID" mandatory="" ref="data:dlt_BIT_VDO_INFO.VDO_ID"
 										style="width:100%;height:21px;" disabled="true" adjustMaxLength="">
 									</xf:input>
 								</xf:group>
@@ -361,7 +361,7 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:input adjustMaxLength="" allowChar="" class="req" disabled="" id="VDO_NM" initValue=""
-										mandatory="" ref="data:dlt_VDO_INFO.VDO_NM" style="width:100%;height:21px;" validateOnInput="false" validator="">
+										mandatory="" ref="data:dlt_BIT_VDO_INFO.VDO_NM" style="width:100%;height:21px;" validateOnInput="false" validator="">
 									</xf:input>
 								</xf:group>
 							</xf:group>
@@ -374,7 +374,7 @@
 									</w2:attributes>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel=" " direction="auto"
 										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="FILE_TYPE" labelWidthAuto="" mandatory="true"
-										optionOrder="" ref="data:dlt_VDO_INFO.FILE_TYPE" renderType="component" style="height:24px;" submenuSize="auto" ev:onchange="scwin.FILE_TYPE_onchange">
+										optionOrder="" ref="data:dlt_BIT_VDO_INFO.FILE_TYPE" renderType="component" style="height:24px;" submenuSize="auto" ev:onchange="scwin.FILE_TYPE_onchange">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
@@ -400,7 +400,7 @@
 									</w2:attributes>
 									<xf:group id="preview" style="">
 									    <video controls="" style="width: 320px;height: 240px;" id="video1"></video>
-										<xf:image id="image1" ref="data:dlt_VDO_INFO.FILE_PATH" src=""
+										<xf:image id="image1" ref="data:dlt_BIT_VDO_INFO.FILE_PATH" src=""
 											style="width:150px;height:150px;margin-left:2px;margin-bottom:3px;float:left;">
 										</xf:image>									    
 									</xf:group>    
@@ -413,7 +413,7 @@
 								<xf:group class="w2tb_td" tagname="td">
 									<w2:attributes><w2:colspan>3</w2:colspan><w2:rowspan>1</w2:rowspan></w2:attributes>
 									<xf:input adjustMaxLength="" class="" disabled="" id="IMG_PLAY_TM" mandatory=""
-										ref="data:dlt_VDO_INFO.IMG_PLAY_TM" style="width:70%;height:21px;" allowChar="aA-zZ,0-9,@,." customModelFormatter=""
+										ref="data:dlt_BIT_VDO_INFO.IMG_PLAY_TM" style="width:70%;height:21px;" allowChar="aA-zZ,0-9,@,." customModelFormatter=""
 										displayFormatter="" customModelUnformatter="" invalidMessageFunc="" validator="" tooltipFormatter="" initValue="">
 									</xf:input>
 									초
@@ -430,13 +430,13 @@
 									</w2:attributes>
 									<w2:inputCalendar calendarDisplayFormat="" calendarDisplayFormatFunc=""
 										calendarValueType="yearMonthDate" displayFormat="" editType="" focusOnDateSelect="false" footerDiv="false" id="PLAY_ST_DT"
-										ioFormat="" ref="data:dlt_VDO_INFO.PLAY_ST_DT" renderDiv="true" renderType="component" rightAlign="false"
+										ioFormat="" ref="data:dlt_BIT_VDO_INFO.PLAY_ST_DT" renderDiv="true" renderType="component" rightAlign="false"
 										style="height:23px;width: 30%">
 									</w2:inputCalendar>
 									~
 									<w2:inputCalendar calendarDisplayFormat="" calendarDisplayFormatFunc=""
 										calendarValueType="yearMonthDate" displayFormat="" editType="" focusOnDateSelect="false" footerDiv="false" id="PLAY_ED_DT"
-										ioFormat="" ref="data:dlt_VDO_INFO.PLAY_ED_DT" renderDiv="true" renderType="component" rightAlign="false"
+										ioFormat="" ref="data:dlt_BIT_VDO_INFO.PLAY_ED_DT" renderDiv="true" renderType="component" rightAlign="false"
 										style="height:23px;width: 30%">
 									</w2:inputCalendar>									
 								</xf:group>
@@ -454,7 +454,7 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:input adjustMaxLength="" class="" disabled="" id="REMARK" mandatory=""
-										ref="data:dlt_VDO_INFO.REMARK" style="width:100%;height:70px;">
+										ref="data:dlt_BIT_VDO_INFO.REMARK" style="width:100%;height:70px;">
 									</xf:input>
 								</xf:group>
 							</xf:group>
