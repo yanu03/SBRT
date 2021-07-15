@@ -4733,7 +4733,6 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 					var sub = autoOpt.Sub1;
 					var main = autoOpt.Main;
 					if(i == gcm.BTN.SEARCH.nm){
-						debugger;
 						item.cbFnc = function(){
 							com.searchGrid(sub.grid, sub.srchSbm , sub.savSbm);
 						}
