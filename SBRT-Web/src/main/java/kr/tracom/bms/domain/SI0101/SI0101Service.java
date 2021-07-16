@@ -51,4 +51,42 @@ public class SI0101Service extends ServiceSupport{
 		return result;		
 		
 	}
+	
+	public List SI0101P0R0() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return si0101Mapper.SI0101P0R0(map);
+	}
+	
+	public Map SI0101P0S0() throws Exception {
+		int iCnt = 0;
+		int uCnt = 0;
+		int dCnt = 0;		
+		
+		List<Map<String, Object>> param = getSimpleList("dlt_GRG_RDS_INFO");
+		
+		if(param.size()>0) {
+			Map data = (Map) param.get(0);
+			si0101Mapper.SI0101P0DA0(data);
+		}
+		
+		for (int i = 0; i < param.size(); i++) {
+
+			Map data = (Map) param.get(i);
+			data.put("SN", i+1);
+			String rowStatus = (String) data.get("rowStatus");
+			if (rowStatus.equals("C")) {
+				iCnt += si0101Mapper.SI0101P0I0(data);
+			} else if (rowStatus.equals("U")) {
+				uCnt += si0101Mapper.SI0101P0U0(data);
+			} else if (rowStatus.equals("D")) {
+				dCnt += si0101Mapper.SI0101P0D0(data);
+			}
+		}
+		Map result = saveResult(iCnt, uCnt, dCnt);
+		
+		return result;		
+		
+	}
+	
+	
 }

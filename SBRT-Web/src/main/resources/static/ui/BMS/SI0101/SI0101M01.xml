@@ -74,6 +74,13 @@
 						<w2:column id="GRG_NM" name="차고지명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+
+				<w2:dataMap baseNode="map" id="dma_sub_search">
+					<w2:keyInfo>
+						<w2:key id="GRG_ID" name="차고지ID" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>				
+				
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_SI0101G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_GRG_MST" action='/si/SI0101G0R0' method="post"
@@ -180,19 +187,23 @@
 
 	
 	scwin.SI0101G0_oncellclick = function(row, col, colId) {
+	debugger;
 		var gridColumn = SI0101G0.getColumnID(col);
-
+		
 		if (gridColumn == "LOCATION") {
-			var data = { GPS_X : dlt_BMS_GRG_MST.getCellData(row, "GPS_X"), GPS_Y : dlt_BMS_GRG_MST.getCellData(row, "GPS_Y"),
-						GRG_ID : dlt_BMS_GRG_MST.getCellData(row, "GRG_ID"), callbackFn : ""} 
-			var options = {
-				id : "SI0101P01",
-				popupName : "위치 지도",
-				modal : true,
-				width : 800,
-				height : 600
-			};
-			com.openPopup(("/ui/BMS/SI0101/SI0101P01.xml"), options, data);
+				var param = SI0101G0.getDataRow(row).GRG_ID;
+				if (param != "") {
+					dma_sub_search.set("GRG_ID", param);
+					
+					var data = { data : dma_sub_search.getJSON(), callbackFn : scwin.insertPopupData };
+					
+					var options = {
+						id : "SI0101P01",
+						popupName : "위치 지도",
+						modal : true
+					};
+					com.openPopup(("/ui/BMS/SI0101/SI0101P01.xml"), options, data);
+			}
 		}
 	};
 	
@@ -229,7 +240,7 @@
 					</xf:group>
 					<xf:group id="" style="" class="search">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
-							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
 							optionOrder="false" ref="data:dma_search.TYPE" style="" class="search_type" submenuSize="auto"
 							textAlign="left">
 							<xf:choices>

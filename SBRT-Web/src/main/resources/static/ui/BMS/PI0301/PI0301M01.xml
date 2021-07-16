@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet href="/cm/css/all.css" type="text/css"?>
-
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
-	xmlns:xf="http://www.w3.org/2002/xforms">
-	<head>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+	
+	<head meta_vertical_guides="" meta_horizontal_guides="">	  
 		<w2:type>DEFAULT</w2:type>
 		<w2:buildDate />
 		<xf:model>
@@ -13,7 +13,8 @@
 			<w2:dataCollection baseNode="map">
 				<w2:dataMap baseNode="map" id="dma_search">
 					<w2:keyInfo>
-						<w2:key id="CONTENT" name="name1" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_NEWS_CFG_INFO" saveRemovedData="true">
@@ -53,14 +54,14 @@
 				action="/pi/PI0301G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-	        	<xf:submission id="sub_PI0301SHI0" ref="" target="data:json,dlt_searchItem" action="/si/PI0301SHI0" method="post"
+	        	<xf:submission id="sub_PI0301SHI0" ref="" target="data:json,dlt_searchItem" action="/pi/PI0301SHI0" method="post"
 	        		mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 	        		processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 	        	</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
-		$p.executeSubmission(sub_PI0301G0R0);
+		com.executeSubmission(sub_PI0301G0R0);
 		
 		var autoOptions = {
 			Main : { grid : PI0301G0, frm : PI0301F0, srchSbm : sub_PI0301G0R0, savSbm : sub_PI0301G0S0, keySbm : sub_PI0301G0K0, 
@@ -70,7 +71,7 @@
 		 
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
 		
-		$p.executeSubmission(sub_PI0301SHI0);
+		com.executeSubmission(sub_PI0301SHI0);
 		//scwin.btn_set_onclick();
 	};
 	
@@ -107,17 +108,18 @@
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
+		debugger;
 		if (info.newValue == "ALL") {
 			acb_autoChoiceBox.hide();
 			search_input.setValue("");
 			search_input.show("");
 		} else if (info.newValue == "PROV_ID") {
 			search_input.hide();
-			acb_autoChoiceBox.setNodeSet("data:dlt_grgSearchItem", "PROV_ID", "PROV_ID");
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchItem", "PROV_ID", "PROV_ID");
 			acb_autoChoiceBox.show("");
 		} else if (info.newValue == "PROV_NM") {
 			search_input.hide();
-			acb_autoChoiceBox.setNodeSet("data:dlt_grgSearchItem", "PROV_NM", "PROV_NM");
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchItem", "PROV_NM", "PROV_NM");
 			acb_autoChoiceBox.show("");
 		}		
 	};
@@ -140,7 +142,7 @@
 					<xf:group id="" style="" class="search">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
-							optionOrder="false" ref="data:dma_search.TYPE" style="" submenuSize="auto"
+							optionOrder="false" ref="data:dma_search.TYPE" style="" class="search_type" submenuSize="auto"
 							textAlign="left">
 							<xf:choices>
 								<xf:item>
@@ -161,11 +163,12 @@
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
 							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
 							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
-							style="" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+							style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false"
+							visibleRowNum="">
 							<w2:choices>
-								<w2:itemset nodeset="data:dlt_grgSearchItem">
-									<w2:label ref="GRG_ID"></w2:label>
-									<w2:value ref="GRG_ID"></w2:value>
+								<w2:itemset nodeset="data:dlt_searchItem">
+									<w2:label ref="PROV_ID"></w2:label>
+									<w2:value ref="PROV_ID"></w2:value>
 								</w2:itemset>
 							</w2:choices>
 						</w2:autoComplete>

@@ -1,4 +1,4 @@
-package kr.tracom.cm.support;
+package kr.tracom.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -421,5 +421,25 @@ public class CommonUtil {
 		value = value.replaceAll("(?i)onwaiting", "on-waiting");
 
 		return value;
+	}
+	
+	public static double stringToDouble(String object) {
+		double result = (object==null||object.isEmpty())?0:Double.parseDouble(object);
+		return result;
+	}
+	
+	public static double floatToDouble(float object) {
+		double result = Double.parseDouble(Float.toString(object));
+		return result;
+	}
+	
+	public static double objectToDouble(Object object) {
+		double result = 0;
+		try {
+			result = (object==null||((String)object).isEmpty())?0:Double.parseDouble((String)object);
+		}catch (Exception e) {
+			result = (double)object;
+		}
+		return result;
 	}
 }

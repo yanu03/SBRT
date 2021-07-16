@@ -89,7 +89,8 @@ var gcm = {
 	// 화면 유형
 	DISP_TYPE : {
 		SINGLE_GRID : "SINGLE_GRID", //단일 그리드
-		DUAL_GRID : "DUAL_GRID", //복수 그리드
+		DUAL_GRID : "DUAL_GRID", //복수 그리드(메인,서브 둘 다 CRUD)
+		DUAL_GRID2 : "DUAL_GRID2", //복수 그리드(메인 조회,서브는 CRUD)
 		SINGLE_GRID_FORM : "SINGLE_GRID_FORM", //단일 그리드 와 폼 
 		DUAL_GRID_FORM : "DUAL_GRID_FORM" //복수 그리드와 폼
 	},
@@ -104,13 +105,12 @@ var gcm = {
 		EXL : { nm : "EXL", value : "EXL_AH", class : "exl", str : "엑셀", cbFnc:{}}, //엑셀다운로드
 		EXL_F : { nm : "EXL_F", value : "GEX_AH", class : "exlf", str : "엑셀양식", cbFnc:{}}, //엑셀양식
 		RESERV : { nm : "RESERV", value : "FN3_AH", class : "reserv", str : "예약", cbFnc:{}}, //예약
-		RESERV_CNL : { nm : "RESERV_CNL", value : "FN3_AH", class : "reservcnl", str : "예약취소", cbFnc:{}}, //예약취소
 		PLAY : { nm : "PLAY", value : "FN4_AH", class : "play", str : "실행", cbFnc:{}}, //실행
 		CONFIRM_YN : { nm : "CONFIRM_YN", value : "FN5_AH", class : "confirmyn", str : "확정", cbFnc:{}}, //확정
 		SETTING : { nm : "SETTING", value : "FN6_AH", class : "setting", str : "설정", cbFnc:{}}, //설정
 		INIT : { nm : "INIT", value : "FN7_AH", class : "init", str : "초기화", cbFnc:{}}, //초기화
 		HELP : { nm : "HELP", value : "HELP_AH", class : "help", str : "도움말", cbFnc:{}}, //도움말
-		CLOSE : { nm : "CLOSE", value : "AUTH_CHECK", class : "close", str : "닫기", cbFnc:{}}, //닫기
+		CLOSE : { nm : "CLOSE", value : "AUTH_CHECK", class : "close", str : "닫기", cbFnc:{}} //닫기
 	},
 	
 	// [단축키] 이벤트 설정 객체
@@ -4060,6 +4060,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 	
 	if(programAuthority.AUTH_CHECK != 'Y')return;
 	
+	
 	for(var i in gcm.BTN){
 		try {
 			var item = gcm.BTN[i];
@@ -4075,17 +4076,17 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						mainBtn.addClass(item.class);
 						mainBtn.bind("onclick", eval("usrOpt."+i));
 					}
-					else if((typeof eval(usrOpt[i].fncCb) === "function")||(typeof eval(usrOpt[i].fncNm) !== "undefined")
+					else if((typeof eval(usrOpt[i].cbFnc) === "function")||(typeof eval(usrOpt[i].nm) !== "undefined")
 							||(typeof eval(usrOpt[i].class) !== "undefined")){
 						var tmpParentIdx = wfm_mainBtn.getWindow().btn_main_generator.insertChild();
 						var mainBtn = wfm_mainBtn.getWindow().btn_main_generator.getChild(tmpParentIdx, "btn_main");
-						if(typeof eval(usrOpt[i].fncCb) === "function"){
-							mainBtn.bind("onclick", eval(usrOpt[i].fncCb));
+						if(typeof eval(usrOpt[i].cbFnc) === "function"){
+							mainBtn.bind("onclick", eval(usrOpt[i].cbFnc));
 						}
-						if(typeof eval(usrOpt[i].fncNm) !== "undefined"){
-							mainBtn.setValue(usrOpt[i].fncNm);
+						if(usrOpt[i].nm !== "undefined"){
+							mainBtn.setValue(usrOpt[i].nm);
 						}
-						if(typeof eval(usrOpt[i].class) !== "undefined"){
+						if(usrOpt[i].class !== "undefined"){
 							mainBtn.addClass(usrOpt[i].class);
 						}
 					}
@@ -4105,7 +4106,6 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 					if( type == gcm.DISP_TYPE.SINGLE_GRID){ //단일 그리드
 						if(i == gcm.BTN.SEARCH.nm){
 							item.cbFnc = function(){
-								
 								com.searchGrid(main.grid, main.srchSbm , main.savSbm);
 							}
 						}
@@ -4275,6 +4275,69 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						else if(i==gcm.BTN.EXL_F.nm){
 							item.cbFnc = function(){
 								com.exlFrmGrid(main.grid);
+							}
+						}
+						else if(i==gcm.BTN.CLOSE.nm){
+							item.cbFnc = function(){
+								var sub = autoOpt.Sub1;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.closeTab(main.grid, sub.grid);
+								}
+								else{
+									com.closeTab(main.grid);
+								}
+							}
+						}
+					}
+					else if( type == gcm.DISP_TYPE.DUAL_GRID2){ //듀얼 그리드
+						if(i == gcm.BTN.SEARCH.nm){
+							item.cbFnc = function(){
+								var sub = autoOpt.Sub1;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.searchDualGrid(main.grid, sub.grid, null, main.srchSbm, main.savSbm, main.allSavSbm, sub.savSbm)
+								}
+								else{
+									com.searchGrid(main.grid, main.srchSbm , main.savSbm);
+								}
+							}
+						}
+						else if(i == gcm.BTN.DEL.nm){
+							item.cbFnc = function(){
+								var sub = autoOpt.Sub1;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.delGrid(sub.grid);
+								}
+							}
+						}
+						else if(i==gcm.BTN.CNL.nm){
+							item.cbFnc = function(){
+								var sub = autoOpt.Sub1;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.cancelGrid(sub.grid);
+								}
+							}
+						}
+						else if(i==gcm.BTN.SAVE.nm){
+							item.cbFnc = function(){
+								var sub = autoOpt.Sub1;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.saveGrid(sub.grid, sub.savSbm);
+								}
+							}
+						}
+						else if(i==gcm.BTN.EXL_I.nm){
+							item.cbFnc = function(){
+								com.exlUploadGrid(sub.grid);
+							}
+						}
+						else if(i==gcm.BTN.EXL.nm){
+							item.cbFnc = function(){
+								com.exlGrid(sub.grid);
+							}
+						}
+						else if(i==gcm.BTN.EXL_F.nm){
+							item.cbFnc = function(){
+								com.exlFrmGrid(sub.grid);
 							}
 						}
 						else if(i==gcm.BTN.CLOSE.nm){
@@ -4529,7 +4592,7 @@ com.setPopupBtn = function(wfm_mainBtn, popOpt, autoOpt) {
 		try {
 			var item = gcm.BTN[i];
 			if(eval("programAuthority."+item.value) == "Y"){
-				if ((typeof eval("popOpt."+i) === "function")||(popOpt[i].length>0)||(typeof eval(popOpt[i].fncCb) === "function")) {
+				if ((typeof eval("popOpt."+i) === "function")||(popOpt[i].length>0)||(typeof eval(popOpt[i].cbFnc) === "function")) {
 					if (typeof eval("popOpt."+i) === "function") {
 						var tmpParentIdx = wfm_mainBtn.getWindow().btn_main_generator.insertChild();
 						var mainBtn = wfm_mainBtn.getWindow().btn_main_generator.getChild(tmpParentIdx, "btn_main");
@@ -4543,13 +4606,13 @@ com.setPopupBtn = function(wfm_mainBtn, popOpt, autoOpt) {
 							var tmpParentIdx = wfm_mainBtn.getWindow().btn_main_generator.insertChild();
 							var mainBtn = wfm_mainBtn.getWindow().btn_main_generator.getChild(tmpParentIdx, "btn_main");
 							var optArr = popOpt[i];
-							if(typeof eval(optArr[j].fncCb) === "function"){
-								mainBtn.bind("onclick", eval(optArr[j].fncCb));
+							if(typeof eval(optArr[j].cbFnc) === "function"){
+								mainBtn.bind("onclick", eval(optArr[j].cbFnc));
 							}
-							if(typeof optArr[j].fncNm !== "undefined"){
-								mainBtn.setValue(optArr[j].fncNm);
+							if(optArr[j].nm !== "undefined"){
+								mainBtn.setValue(optArr[j].nm);
 							}
-							if(typeof optArr[j].class !== "undefined"){
+							if(optArr[j].class !== "undefined"){
 								mainBtn.addClass(optArr[j].class);
 							}
 						}
@@ -4557,13 +4620,13 @@ com.setPopupBtn = function(wfm_mainBtn, popOpt, autoOpt) {
 					else {
 						var tmpParentIdx = wfm_mainBtn.getWindow().btn_main_generator.insertChild();
 						var mainBtn = wfm_mainBtn.getWindow().btn_main_generator.getChild(tmpParentIdx, "btn_main");
-						if(typeof eval(popOpt[i].fncCb) === "function"){
-							mainBtn.bind("onclick", eval(popOpt[i].fncCb));
+						if(typeof eval(popOpt[i].cbFnc) === "function"){
+							mainBtn.bind("onclick", eval(popOpt[i].cbFnc));
 						}
-						if(typeof popOpt[i].fncNm !== "undefined"){
-							mainBtn.setValue(popOpt[i].fncNm);
+						if(popOpt[i].nm !== "undefined"){
+							mainBtn.setValue(popOpt[i].nm);
 						}
-						if(typeof popOpt[i].class !== "undefined"){
+						if(popOpt[i].class !== "undefined"){
 							mainBtn.addClass(popOpt[i].class);
 						}
 					}
@@ -4684,7 +4747,7 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 		try {
 			var item = gcm.BTN[i];
 			if(eval("programAuthority."+item.value) == "Y"){
-				if ((typeof eval("subOpt."+i) === "function")||(subOpt[i].length>0)||(typeof eval(subOpt[i].fncCb) === "function")) {
+				if ((typeof eval("subOpt."+i) === "function")||(subOpt[i].length>0)||(typeof eval(subOpt[i].cbFnc) === "function")) {
 					if (typeof eval("subOpt."+i) === "function") {
 						var tmpParentIdx = wfm_subBtn.getWindow().btn_sub_generator.insertChild();
 						var subBtn = wfm_subBtn.getWindow().btn_sub_generator.getChild(tmpParentIdx, "btn_sub");
@@ -4698,13 +4761,13 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 							var tmpParentIdx = wfm_subBtn.getWindow().btn_sub_generator.insertChild();
 							var subBtn = wfm_subBtn.getWindow().btn_sub_generator.getChild(tmpParentIdx, "btn_sub");
 							var optArr = subOpt[i];
-							if(typeof eval(optArr[j].fncCb) === "function"){
-								subBtn.bind("onclick", eval(optArr[j].fncCb));
+							if(typeof eval(optArr[j].cbFnc) === "function"){
+								subBtn.bind("onclick", eval(optArr[j].cbFnc));
 							}
-							if(typeof optArr[j].fncNm !== "undefined"){
-								subBtn.setValue(optArr[j].fncNm);
+							if(optArr[j].nm !== "undefined"){
+								subBtn.setValue(optArr[j].nm);
 							}
-							if(typeof optArr[j].class !== "undefined"){
+							if(optArr[j].class !== "undefined"){
 								subBtn.addClass(optArr[j].class);
 							}
 						}
@@ -4712,13 +4775,13 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 					else {
 						var tmpParentIdx = wfm_subBtn.getWindow().btn_sub_generator.insertChild();
 						var subBtn = wfm_subBtn.getWindow().btn_sub_generator.getChild(tmpParentIdx, "btn_sub");
-						if(typeof eval(subOpt[i].fncCb) === "function"){
-							subBtn.bind("onclick", eval(subOpt[i].fncCb));
+						if(typeof eval(subOpt[i].cbFnc) === "function"){
+							subBtn.bind("onclick", eval(subOpt[i].cbFnc));
 						}
-						if(typeof subOpt[i].fncNm !== "undefined"){
-							subBtn.setValue(subOpt[i].fncNm);
+						if(subOpt[i].nm !== "undefined"){
+							subBtn.setValue(subOpt[i].nm);
 						}
-						if(typeof subOpt[i].class !== "undefined"){
+						if(subOpt[i].class !== "undefined"){
 							subBtn.addClass(subOpt[i].class);
 						}
 					}
@@ -4812,12 +4875,6 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 					else if(i==gcm.BTN.EXL_F.nm){
 						item.cbFnc = function(){
 							com.exlFrmGrid(sub.grid);
-						}
-					}
-					if(i == gcm.BTN.SEARCH.nm){
-
-						if ((typeof sub.srchGrp !== "undefined")&&(sub.srchGrp !== null)){
-							com.setEnterKeyEvent(sub.srchGrp, item.cbFnc);
 						}
 					}
 					subBtn.bind("onclick", item.cbFnc);
@@ -5226,7 +5283,7 @@ com.clearGrid = function(grid){
 	data.removeRows(data.getInsertedIndex());
 }
 
-com.delGrid = function(grid,str){
+com.delGrid = function(grid,str,afterCb){
 	var data = com.getGridViewDataList(grid);
 	var focusIdxs = grid.getAllFocusedRowIndex();
 	var count = focusIdxs.length;
@@ -5244,7 +5301,7 @@ com.delGrid = function(grid,str){
 		}
 		com.confirm(str, function(rtn) {
 			if (rtn) {
-				
+				debugger;
 				for(var i=count-1; i>=0; i--){
 					var isCreate = false;
 					try {
@@ -5269,11 +5326,47 @@ com.delGrid = function(grid,str){
 					}
 					else {
 						grid.setRowVisible(focusIdxs[i], false);
+						data.deleteRow(focusIdxs[i]);
 					}
 				}
-				data.deleteRows(focusIdxs);
+				
+				var focusIndex = 0;
+				
+				if(count>0){
+					for(var i=0; i<count; i++){
+						if(grid.getRowVisible(focusIdxs[i])){
+							focusIndex = focusIdxs[i];
+							break;
+						}
+					}
+							
+					if(i==count){
+						if((focusIdxs[count-1] +1)<data.getTotalRow()){
+							focusIndex = focusIdxs[count-1] +1;
+						}
+						else{
+							focusIndex = data.getTotalRow();
+						}
+					}
+				}
+
+				grid.setFocusedCell(focusIndex, 0, false);
+			
+				
+				if((typeof afterCb == "undefined") || (typeof afterCb == "function")){
+					afterCb();
+				}
 			}		
 		});
+	}
+}
+
+com.delAllGrid = function(grid){
+	var data = com.getGridViewDataList(grid);
+	var count = getTotalRow();
+
+	for(var i=count-1; i>=0; i--){
+		data.removeRow(i);
 	}
 }
 
@@ -5320,9 +5413,24 @@ com.delDualGrid = function(mainGrid,subGrid,str){ //듀얼 그리드에서 부�
 					}
 					else {
 						mainGrid.setRowVisible(focusIdxs[i], false);
+						data.deleteRow(focusIdxs[i]);
 					}
 				}
-				data.deleteRows(focusIdxs);
+				
+				debugger;
+				var focusIndex = 0;
+				
+				if(count>0){
+					if((focusIdxs[count-1] +1)<data.getTotalRow()){
+						focusIndex = focusIdxs[count-1] +1;
+					}
+					else{
+						focusIndex = data.getTotalRow();
+					}
+				}
+
+				mainGrid.setFocusedCell(focusIndex, 0, true);
+				
 				if(	(typeof subGrid != "undefined") && (subGrid != null)){
 					var subData = com.getGridViewDataList(subGrid);
 					subData.removeAll();
@@ -5374,9 +5482,23 @@ com.delThirdGrid = function(mainGrid,subGrid1,subGrid2,str){ //3개 그리드에
 					}
 					else {
 						mainGrid.setRowVisible(focusIdxs[i], false);
+						data.deleteRow(focusIdxs[i]);
 					}
 				}
-				data.deleteRows(focusIdxs);
+				
+				var focusIndex = 0;
+				
+				if(count>0){
+					if((focusIdxs[count-1] +1)<data.getTotalRow()){
+						focusIndex = focusIdxs[count-1] +1;
+					}
+					else{
+						focusIndex = data.getTotalRow();
+					}
+				}
+
+				mainGrid.setFocusedCell(focusIndex, 0, true);
+				
 				if(	(typeof subGrid1 != "undefined") && (subGrid1 != null)){
 					com.getGridViewDataList(subGrid1).removeAll();
 				}

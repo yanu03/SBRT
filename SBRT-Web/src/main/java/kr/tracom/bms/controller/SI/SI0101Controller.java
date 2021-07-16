@@ -41,4 +41,17 @@ public class SI0101Controller extends ControllerSupport {
 		result.setData("dlt_grgSearchItem", si0101Service.SI0101SHI0());
 		return result.getResult();
 	}
+	
+	@RequestMapping("/si/SI0101P0R0")
+	public @ResponseBody Map<String, Object> SI0101P0R0() throws Exception {
+		result.setData("dlt_GRG_RDS_INFO", si0101Service.SI0101P0R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping(value = "/si/SI0101P0S0")
+	public @ResponseBody Map<String, Object> SI0101P0S0() throws Exception {
+		result.setData("dma_result", si0101Service.SI0101P0S0());
+
+		return result.getResultSave();
+	}
 }
