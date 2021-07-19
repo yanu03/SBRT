@@ -85,13 +85,36 @@
 						<w2:key id="ORGA_ID" name="ORGA_ID" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
+                <w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_NODE_MST" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="NODE_ID" name="노드아이디" dataType="text"></w2:column>
+						<w2:column id="MOCK_NODE_ID" name="표준노드아이디" dataType="text"></w2:column>
+						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
+						<w2:column id="NODE_ENM" name="노드영문명" dataType="text"></w2:column>
+						<w2:column id="NODE_TYPE" name="노드유형" dataType="text"></w2:column>
+						<w2:column id="GPS_X" name="GPS_X좌표" dataType="text"></w2:column>
+						<w2:column id="GPS_Y" name="GPS_Y좌표" dataType="text"></w2:column>
+						<w2:column id="TM_X" name="TM_X좌표" dataType="text"></w2:column>
+						<w2:column id="TM_Y" name="TM_Y좌표" dataType="text"></w2:column>
+						<w2:column id="ENTRY_RECOG_RADS" name="진입인식반경" dataType="text"></w2:column>
+						<w2:column id="ADVNC_RECOG_RADS" name="진출인식반경" dataType="text"></w2:column>
+						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="text"></w2:column>
+						<w2:column id="UPD_ID" name="갱신아이디" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search2">
+					<w2:keyInfo>
+						<w2:key id="ROUTE_ID" name="ROUTE_ID" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_PI0202G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_MST" action="/pi/PI0202G0R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0202G1R0" ref="" target="" action="/pi/PI0202G1R0" method="post" mediatype="application/json"
+			<xf:submission id="sub_PI0202G1R0" ref="data:json,dma_search2" target="data:json,dlt_BMS_NODE_MST" action="/pi/PI0202G1R0" method="post" mediatype="application/json"
 				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -117,8 +140,10 @@
 	
 	
 	scwin.PI0202G0_onrowindexchange = function(row, oldRow) {
-		dma_search3.set(ORGA_ID, dlt_BMS_ROUT_MST.getCellData(row, "ROUTE_ID"));
-		$p.executeSubmission(sub_PI0202G2R0)
+		dma_search2.set("ROUTE_ID", dlt_BMS_ROUT_MST.getCellData(row, "ROUTE_ID"));
+		//dma_search3.set("ROUTE_ID", dlt_BMS_ROUT_MST.getCellData(row, "ROUTE_ID"));
+		$p.executeSubmission(sub_PI0202G1R0)
+		//$p.executeSubmission(sub_PI0202G2R0)        
 	};	
 	]]></script>
 	</head>
@@ -159,7 +184,7 @@
 					<xf:group id="">
 						<w2:gridView sortEvent="onclick" ev:oncellclick=""
 							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서" sortable="true"
-							rowStatusHeaderValue="상태"  overflowX="auto" overflowY="scroll" rowStatusVisible="false"
+							rowStatusHeaderValue="상태" adaptive="crosstab" overflowX="auto" overflowY="scroll" rowStatusVisible="false"
 							fixedColumnWithHidden="true" dataList="data:dlt_BMS_ROUT_MST" ignoreCellClick="false" style="height:100%;" autoFit="lastColumn"
 							visibleRowNum="" id="PI0202G0" class="cm_grid" tooltipPositionY="" ev:onrowindexchange="scwin.PI0202G0_onrowindexchange">
 							<w2:header style="" id="header1">
@@ -233,8 +258,8 @@
 					<xf:group id="">
 						<w2:gridView sortEvent="onclick" ev:oncellclick=""
 							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서" sortable="true"
-							rowStatusHeaderValue="상태"  overflowX="auto" overflowY="scroll" rowStatusVisible="false"
-							fixedColumnWithHidden="true" dataList="" ignoreCellClick="false" style="height:100%;" autoFit="lastColumn"
+							rowStatusHeaderValue="상태" adaptive="crosstab" overflowX="auto" overflowY="scroll" rowStatusVisible="false"
+							fixedColumnWithHidden="true" dataList="data:dlt_BMS_NODE_MST" ignoreCellClick="false" style="height:100%;" autoFit="lastColumn"
 							visibleRowNum="" id="PI0202G1" class="cm_grid" tooltipPositionY="">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row2">
@@ -260,23 +285,23 @@
 							</w2:header>
 							<w2:gBody width="40" style="" id="gBody4">
 								<w2:row style="" id="row5">
-									<w2:column width="118" style="height:25px;" inputType="text" id="VOC_ID" blockSelect="false"
+                                    <w2:column width="118" style="height:25px;" inputType="text" id="NODE_ID" blockSelect="false"
 										displayMode="label" readOnly="true" userData1="M" userData2="">
 									</w2:column>
-									<w2:column width="159" style="height:25px;" inputType="text" id="VOC_NM" blockSelect="false"
+									<w2:column width="159" style="height:25px;" inputType="text" id="NODE_NM" blockSelect="false"
 										displayMode="label" readOnly="true" userData1="M">
 									</w2:column>
-									<w2:column textAlign="center" width="80" style="height:25px;" inputType="text" id="PLAY_TYPE"
+									<w2:column textAlign="center" width="80" style="height:25px;" inputType="text" id="NODE_TYPE"
 										blockSelect="false" displayMode="label" readOnly="true" userData1="">
 									</w2:column>
-									<w2:column width="126" style="height:25px;" inputType="text" id="VHC_NO" blockSelect="false"
+									<w2:column width="126" style="height:25px;" inputType="text" id="GPS_Y" blockSelect="false"
 										displayFormat="" applyFormat="" displayMode="" readOnly="true">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="163" inputType="text" style="height:25px" id="PLAY_DATE" value=""
-										blockSelect="false" displayMode="label" readOnly="true" displayFormatter="scwin.playDateDisFormatter">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="84" inputType="text" style="height:25px" id="REMARK" value=""
+									<w2:column removeBorderStyle="false" width="84" inputType="text" style="height:25px" id="GPS_X" value=""
 										blockSelect="false" displayMode="label" autoFitFilterList="">
+									</w2:column>									
+									<w2:column removeBorderStyle="false" width="163" inputType="text" style="height:25px" id="UPD_DTM" value=""
+										blockSelect="false" displayMode="label" readOnly="true" displayFormatter="scwin.dateDisFormatter">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
@@ -307,11 +332,11 @@
 						<w2:textbox id="" style="" class="df_tt fl" label="음성 편성 목록"></w2:textbox>
 					</xf:group>
 					<xf:group id="">
-						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.PI0202G0_onrowindexchange" ev:oncellclick=""
+						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.PI0202G2_onrowindexchange" ev:oncellclick=""
 							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서" sortable="true"
-							rowStatusHeaderValue="상태"  overflowX="auto" overflowY="scroll" rowStatusVisible="false"
+							rowStatusHeaderValue="상태" adaptive="crosstab" overflowX="auto" overflowY="scroll" rowStatusVisible="false"
 							fixedColumnWithHidden="true" dataList="" ignoreCellClick="false" style="height:100%;" autoFit="lastColumn"
-							visibleRowNum="" id="" class="cm_grid" tooltipPositionY="">
+							visibleRowNum="" id="PI0202G2" class="cm_grid" tooltipPositionY="">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row2">
 									<w2:column width="118" style="height:25px;" inputType="text" id="column9" value="편성ID" blockSelect="false"

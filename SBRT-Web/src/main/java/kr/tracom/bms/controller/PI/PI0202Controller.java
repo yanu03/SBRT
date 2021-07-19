@@ -26,7 +26,7 @@ public class PI0202Controller extends ControllerSupport {
 	}
 	@RequestMapping("/pi/PI0202G1R0")
 	public @ResponseBody Map<String, Object> PI0202G1R0() throws Exception {
-		result.setData("dlt_BMS_VOC_INFO", PI0202Service.PI0202G1R0());
+		result.setData("dlt_BMS_NODE_MST", PI0202Service.PI0202G1R0());
 		return result.getResult();
 	}
 	@RequestMapping("/pi/PI0202G2R0")

@@ -22,7 +22,7 @@ public class PI0202Service extends ServiceSupport{
 	}
 
 	public List<Map> PI0202G1R0() throws Exception{
-		Map param = getSimpleDataMap("dma_search");
+		Map param = getSimpleDataMap("dma_search2");
 		return PI0202Mapper.PI0202G1R0(param);
 	}
 
