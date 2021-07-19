@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+	
+	<head meta_vertical_guides="" meta_horizontal_guides="">	  
+<!-- 	<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=31aa62fb189294413e43c24caeb82419"></script>
+	<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?autoload=false"></script>
+	<script type="text/javascript">
+	kakao.maps.load(function() {
+		// v3가 모두 로드된 후, 이 콜백 함수가 실행됩니다.
+		var map = new kakao.maps.Map(node, options);
+	});
+	</script>  -->	   
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate/>
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataMap baseNode="map" id="dma_result">
+					<w2:keyInfo>
+						<w2:key id="STATUS" name="STATUS" dataType="text"></w2:key>
+						<w2:key id="ICNT" name="입력건수" dataType="text"></w2:key>
+						<w2:key id="UCNT" name="수정건수" dataType="text"></w2:key>
+						<w2:key id="DCNT" name="삭제건수" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
+					</w2:keyInfo>
+					<w2:data></w2:data>
+				</w2:dataMap>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+						<w2:key id="F_DATE" name="name4" dataType="date"></w2:key>
+						<w2:key id="L_DATE" name="name5" dataType="date"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_USER_HIS" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="OCR_DTM" name="발생일시" dataType="date"></w2:column>
+						<w2:column id="USER_ID" name="사용자ID" dataType="text"></w2:column>
+						<w2:column id="USER_NM" name="사용자명" dataType="text"></w2:column>
+						<w2:column id="LOGIN_STS" name="발생유형" dataType="text"></w2:column>
+						<w2:column id="IP" name="접속IP" dataType="text"></w2:column>
+					</w2:columnInfo>
+					<w2:data use="false">
+						<w2:row></w2:row>
+					</w2:data>
+				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="USER_ID" name="사용자ID" dataType="text"></w2:column>
+						<w2:column id="USER_NM" name="사용자명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_SM0403SHI0" ref="" target="data:json,dlt_searchitem" action="/sm/SM0403SHI0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_SM0403G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_USER_HIS" action="/sm/SM0403G0R0" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_SM0403G0R0_submitdone"
+				ev:submiterror="" abortTrigger="">
+			</xf:submission>
+		</xf:model>
+
+		<script type="text/javascript"><![CDATA[
+	scwin.onpageload = function() {
+		
+		//옵션
+		var autoOptions = {
+			Main : { grid : SM0403G0, srchSbm : sub_SM0403G0R0, srchGrp : pgm_header, keyColumn : "OCR_DTM", focusColumn : "USER_ID", name :  "로그인 이력"}
+		};
+		
+		//버튼 생성
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions);
+		
+		//코드옵션
+		//(code : DataCollection의 컬럼 ID명, compID : "FormId , GridId : GridColumn")
+		//Grid일 경우 inputType이 select여야 함. form일경우 selectBox여야 함.
+		var codeOptions = [ {code : "LOGIN_STS", compID : "SM0403G0:LOGIN_STS" } ];
+		
+		//코드옵션 실행
+		com.setCommonDtl(codeOptions, function() {
+			com.searchGrid(SM0403G0, sub_SM0403G0R0);
+		});
+		
+//		$p.executeSubmission(sub_SI0101SHI0);
+		$p.executeSubmission(sub_SM0403SHI0);
+
+	};
+
+	scwin.onpageunload = function() {
+
+	};
+	
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
+		if (info.newValue == "ALL") {
+			acb_autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} else if (info.newValue == "USER_ID") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "USER_ID", "USER_ID");
+			acb_autoChoiceBox.show("");
+		} else if (info.newValue == "USER_NM") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "USER_NM", "USER_NM");
+			acb_autoChoiceBox.show("");
+		}
+	};
+	
+
+	scwin.sub_SM0403G0R0_submitdone = function(e) {
+		com.setFocusedCell(SM0403G0, "OCR_DTM");		
+	};
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
+			<xf:group id="pgm_navi" class="pgm_navi" style="">
+				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
+			</xf:group>
+			<xf:group id="pgm_header" class="pgm_header" style="">
+				<xf:group id="" style="" class="gr_search">
+					<xf:group id="" style="" class="label">
+							<w2:span id="" class="" label="검색 항목"></w2:span>
+					</xf:group>
+					<xf:group id="" style="" class="search">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
+							optionOrder="false" ref="data:dma_search.TYPE" style="" class="search_type" submenuSize="auto" textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[사용자ID]]></xf:label>
+									<xf:value><![CDATA[USER_ID]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[사용자명]]></xf:label>
+									<xf:value><![CDATA[USER_NM]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="사용자ID 또는 사용자명"
+							style="margin-right: 20px;">
+						</xf:input>
+						<xf:group id=""></xf:group>
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
+							ev:onviewchange="" id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
+							selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+							<w2:choices>
+								<w2:itemset nodeset="data:dlt_grgSearchItem">
+									<w2:label ref="GRG_ID"></w2:label>
+									<w2:value ref="GRG_ID"></w2:value>
+								</w2:itemset>
+							</w2:choices>
+						</w2:autoComplete>
+						<xf:group id="" style="">
+							<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
+								style="width:150px; height:23px; margin-right: 10px; float: left;" id="" renderType="component" renderDiv="true"
+								calendarValueType="yearMonthDate" ref="data:dma_search.F_DATE">
+							</w2:inputCalendar>
+							<w2:span label="~" style="float: left;margin-right: 10px;" id=""></w2:span>
+							<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
+								style="width: 150px;height: 23px;float: left;" id="" renderType="component" renderDiv="true" calendarValueType="yearMonthDate" ref="data:dma_search.L_DATE">
+							</w2:inputCalendar>
+						</xf:group>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group>
+			<xf:group id="pgm_content" class="pgm_content grdc_a" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
+					<xf:group id="" class="" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="로그인 이력" style=""></w2:textbox></xf:group>
+					</xf:group>
+					<xf:group></xf:group>
+					<xf:group id="" class="" style="">							
+						<w2:gridView id="SM0403G0" defaultCellHeight="20" rowNumVisible="true" useShiftKey="true" scrollByColumn="false"
+							owNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태" overflowX="scroll" overflowY="scroll" rowStatusVisible="false"
+							fixedColumnWithHidden="true" ignoreCellClick="false" dataList="data:dlt_BMS_USER_HIS" class="cm_grid left" autoFit="lastColumn"
+							ev:oncellclick="scwin.SI0101G0_oncellclick" ev:onrowindexchange="scwin.SI0101G0_onrowindexchange" sortEvent="onclick">
+
+							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
+							<w2:header style="" id="header1">
+								<w2:row style="" id="row1">
+									<w2:column removeBorderStyle="false" width="136" inputType="text" style="height:22px;" id="column16"
+										value="발생일시" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="186" inputType="text" style="height:22px;" id="column15"
+										value="사용자ID" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="64" inputType="text" style="height:22px;" id="column14"
+										value="사용자명" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="230" inputType="text" style="height:22px;" id="column13"
+										value="발생유형" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:22px;" id="column49"
+										value="접속IP" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:22px;" id="column3"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody style="" id="gBody1">
+								<w2:row style="" id="row2">
+									<w2:column removeBorderStyle="false" width="136" inputType="text" style="height:20px" id="OCR_DTM"
+										value="" blockSelect="false" displayMode="label" headers="SI0101G0_column16">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="186" inputType="text" style="height:20px" id="USER_ID"
+										value="" blockSelect="false" displayMode="label" userData1="M" headers="SI0101G0_column15" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="64" inputType="text" style="height:20px" id="USER_NM"
+										value="" blockSelect="false" displayMode="label" userData1="M" headers="SI0101G0_column14">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="230" inputType="select" style="height:20px" id="LOGIN_STS"
+										value="" blockSelect="false" displayMode="label" headers="SI0101G0_column13">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="IP"
+										value="보기" blockSelect="false" displayMode="label" dataType="" class="" calendarClass="" autocomplete="" headers="SI0101G0_column49">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column50"
+										value="" blockSelect="false" displayMode="label" headers="SI0101G0_column3">
+									</w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer style="" id="footer1">
+								<w2:row style="" id="row3">
+									<w2:column removeBorderStyle="false" width="" inputType="expression" style="height:20px;" id="column48"
+										value="" blockSelect="false" displayMode="label" colSpan="6" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('GRG_ID')"
+										textAlign="left" headers="SI0101G0_column3">
+									</w2:column>
+								</w2:row>
+							</w2:footer>
+						</w2:gridView>
+					</xf:group>
+				</xf:group>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>
