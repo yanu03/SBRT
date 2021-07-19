@@ -19,7 +19,7 @@ public class CommonService extends ServiceSupport {
 	/**
 	 * 헤더메뉴, 사이드메뉴 조회 (로그인 사용자에게 권한이 있는 메뉴만 조회함)
 	 * 
-	 * @param param 사용자 로그인 아이디가 저장된 맵 객체
+	 * @param param 사용자 로그인 ID가 저장된 맵 객체
 	 */
 
 	public List selectMenuList(Map param) throws Exception {
@@ -29,7 +29,7 @@ public class CommonService extends ServiceSupport {
 	/**
 	 * 사용자별 프로그램 권한 리스트 조회 (로그인 사용자에게 권한이 있는 프로그램 권한만 조회함)
 	 * 
-	 * @param param 사용자 로그인 아이디가 저장된  맵 객체
+	 * @param param 사용자 로그인 ID가 저장된  맵 객체
 	 */
 	public List selectProgramAuthorityList(Map param) throws Exception {
 		return commonMapper.selectProgramAuthorityList(param);

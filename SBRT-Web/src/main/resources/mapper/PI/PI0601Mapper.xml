@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.bms.domain.PI0601.PI0601Mapper">
+	<select id="PI0601G0R0" resultType="Map">
+		select  VDO_ID,
+				VDO_NM,
+				DATE_FORMAT(PLAY_ST_DT, '%Y%m%d') PLAY_ST_DT,
+				FILE_TYPE,
+				IMG_PLAY_TM,
+				ATTACH_ID,
+				REMARK,
+				PLAY_TM,
+				DATE_FORMAT(PLAY_ED_DT, '%Y%m%d') PLAY_ED_DT
+				
+		from 	BMS_BIT_VDO_INFO
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND VDO_ID LIKE CONCAT('%',#{CONTENT},'%') || VDO_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'VDO_ID'">
+				AND VDO_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'VDO_NM'">
+				AND VDO_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>		
+	</select>
+
+	<select id="PI0601G0K0" resultType="Map">
+		SELECT CONCAT('BV', LPAD(NEXTVAL(SEQ_BMS_BIT_VDO_INFO_0), 8, '0')) AS 'SEQ'
+	</select>
+	
+	<select id="PI0601SHI0" resultType="Map">
+		select  VDO_ID, VDO_NM
+		from 	BMS_BIT_VDO_INFO
+	</select>
+	
+	<insert id="PI0601G0I0" parameterType="Map">
+		insert into BMS_BIT_VDO_INFO
+			   (
+			    VDO_ID,
+				VDO_NM,
+				PLAY_ST_DT,
+				FILE_TYPE,
+				IMG_PLAY_TM,
+				ATTACH_ID,
+				PLAY_TM,
+				PLAY_ED_DT,
+				REMARK,
+				UPD_DTM,
+				UPD_ID
+			   )
+			   
+		values (
+			    #{VDO_ID},
+				#{VDO_NM},
+				STR_TO_DATE(#{PLAY_ST_DT}, '%Y%m%d'),
+				#{FILE_TYPE},
+				#{IMG_PLAY_TM},
+				#{ATTACH_ID},
+				#{PLAY_TM},
+				STR_TO_DATE(#{PLAY_ED_DT}, '%Y%m%d'),
+				#{REMARK},
+				#{UPD_DTM},
+				#{SSN_USER_ID}
+				)
+	</insert>
+
+	<update id="PI0601G0U0" parameterType="Map">
+		update BMS_BIT_VDO_INFO
+		set 	VDO_NM = #{VDO_NM},
+				PLAY_ST_DT = STR_TO_DATE(#{PLAY_ST_DT}, '%Y%m%d'),
+				FILE_TYPE = #{FILE_TYPE},
+				IMG_PLAY_TM = #{IMG_PLAY_TM},
+				ATTACH_ID = #{ATTACH_ID},
+				PLAY_TM = #{PLAY_TM},
+				PLAY_ED_DT = STR_TO_DATE(#{PLAY_ED_DT}, '%Y%m%d'),
+				REMARK = #{REMARK},
+				UPD_DTM = #{UPD_DTM},
+				UPD_ID = #{SSN_USER_ID}
+		where 	VDO_ID = #{VDO_ID}		
+	</update>
+	
+	<delete id="PI0601G0D0" parameterType="Map">
+		delete
+		from BMS_BIT_VDO_INFO
+		where VDO_ID = #{VDO_ID}
+	</delete>	
+	
+
+
+</mapper>

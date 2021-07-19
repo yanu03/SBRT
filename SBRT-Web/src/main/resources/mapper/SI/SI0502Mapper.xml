@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.bms.domain.SI0502.SI0502Mapper">
+
+<select id="SI0502G0R0" resultType="Map">
+	select  STTN_ID,
+			NODE_ID,
+			STTN_NM,
+			STTN_ENM,
+			AREA,
+			STTN_NO,
+			CENTER_YN,
+			STTN_FCLT_TYPE,
+			VHC_DOOR_DIR_TYPE,
+			GPS_X,
+			GPS_Y,
+			TM_X,
+			TM_Y,
+			APPL_RDS,
+			BAY_TYPE,
+			BAY_LEN,
+			LINE_CNT,
+			DATE_FORMAT(APPL_ST_DT, '%Y%m%d') APPL_ST_DT,
+			DATE_FORMAT(APPL_ED_DT, '%Y%m%d') APPL_ED_DT,
+			USE_YN,
+			REMARK
+			
+	from BMS_STTN_MST
+	<where>
+		<if test="TYPE == 'STTN_ID'">
+			AND STTN_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'STTN_NM'">
+			AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'STTN_NO'">
+			AND STTN_NO LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+</select>
+
+<select id="SI0502G1R0" resultType="Map">
+	select  STTN_ID,
+			TRNS_ID,
+			TRNS_DIV,
+			TRNS_NM,
+			GPS_X,
+			GPS_Y,
+			TM_Y,
+			TM_X,
+			USE_YN,
+			REMARK
+	from 	BMS_TRANSFER_INFO
+	where 	STTN_ID = #{STTN_ID}
+	
+</select>
+
+<select id="SI0502G1K0" resultType="Map">
+	SELECT CONCAT('TR', LPAD(NEXTVAL(SEQ_BMS_STTN_MST_0), 8, '0')) AS 'SEQ'
+</select>
+
+<insert id="SI0502G1I0" parameterType="Map">
+	insert into BMS_TRANSFER_INFO
+			(STTN_ID,
+			TRNS_ID,
+			TRNS_DIV,
+			TRNS_NM,
+			GPS_X,
+			GPS_Y,
+			TM_Y,
+			TM_X,
+			USE_YN,
+			REMARK,
+			UPD_DTM,
+			UPD_ID
+			)
+	values (#{STTN_ID},
+			#{TRNS_ID},
+			#{TRNS_DIV},
+			#{TRNS_NM},
+			#{GPS_X},
+			#{GPS_Y},
+			0,
+			0,
+			#{USE_YN},
+			#{REMARK},
+			#{UPD_DTM},
+			#{SSN_USER_ID}
+			)		
+
+</insert>
+
+<update id="SI0502G1U0" parameterType="Map">
+	update BMS_TRANSFER_INFO
+	set		STTN_ID = #{STTN_ID},
+			TRNS_DIV = #{TRNS_DIV},
+			TRNS_NM = #{TRNS_NM},
+			GPS_X = #{GPS_X},
+			GPS_Y = #{GPS_Y},
+			USE_YN = #{USE_YN},
+			REMARK = #{REMARK}
+	where	TRNS_ID = #{TRNS_ID}		
+</update>
+
+<delete id="SI0502G1D0" parameterType="Map">
+	delete from BMS_TRANSFER_INFO
+	where TRNS_ID = #{TRNS_ID}
+</delete>
+
+</mapper>

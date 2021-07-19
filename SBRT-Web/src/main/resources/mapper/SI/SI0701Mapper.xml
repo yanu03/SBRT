@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.bms.domain.SI0701.SI0701Mapper">
+	<!-- 코드 테이블의 전체 데이타 읽어오기  USE_YN = 'Y' -->
+	<select id="selectSI0701Dtl" resultType="Map" parameterType="Map">
+		SELECT A.CO_CD, A.DL_CD, A.DL_CD_NM, A.SORT 
+		  FROM BMS_DL_CD_INFO A, BMS_CO_CD_INFO B
+		 WHERE B.CO_CD = A.CO_CD 
+		   AND B.USE_YN = 'Y' 
+		   AND A.USE_YN = 'Y' 
+		 ORDER BY A.CO_CD, A.SORT
+	</select>
+	
+	<!-- 코드 테이블의 전체 데이타 읽어오기  USE_YN = 'Y' -->
+	<select id="selectCodeList" resultType="Map">
+		SELECT A.CO_CD, A.DL_CD, A.DL_CD_NM, A.SORT 
+		  FROM BMS_DL_CD_INFO A, BMS_CO_CD_INFO B
+		 WHERE B.CO_CD = A.CO_CD 
+		   AND B.USE_YN = 'Y' 
+		   AND A.USE_YN = 'Y' 
+		   AND A.CO_CD IN
+		<foreach collection="CODE" item="item" index="index"  open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+		ORDER BY A.CO_CD, A.SORT
+	</select>
+	
+	<!-- 코드 테이블의 데이타 읽어오기 CO_CD = ? -->
+	<select id="selectSI0701DtlList" resultType="Map">
+		SELECT CO_CD, DL_CD, DL_CD_NM, SORT, USE_YN, TXT_VAL1, TXT_VAL2, TXT_VAL3, REMARK, NUM_VAL4, NUM_VAL5, NUM_VAL6
+		  FROM BMS_DL_CD_INFO A
+		 WHERE A.CO_CD = #{CO_CD} 
+		 ORDER BY A.SORT
+	</select>	
+	
+	<select id="selectSI0701SearchItem" resultType="Map">
+		SELECT CO_CD, CO_CD_NM, REMARK
+		  FROM BMS_CO_CD_INFO 
+		  WHERE SYSTEM_YN = 'Y'
+		 ORDER BY CO_CD
+	</select>	
+	
+	<!-- 사용자별 메뉴 리스트 -->
+	<select id="selectMenuList" resultType="Map" parameterType="Map">
+		SELECT DISTINCT ME.MENU_CD, ME.MENU_NM, ME.PARENT_MENU_CD, ME.LEVEL, ME.PROG_CD, PR.PROG_PH
+		  FROM (SELECT MENU_CD, MENU_NM, PARENT_MENU_CD, LEVEL, PROG_CD, USE_YN, SORT FROM BMS_MENU_MST
+		  		WHERE SYSTEM_BIT = #{SSN_SYSTEM_BIT} || SYSTEM_BIT = 3) ME 
+		  	   LEFT OUTER JOIN BMS_PROG_MST PR ON ME.PROG_CD = PR.PROG_CD
+			   LEFT OUTER JOIN BMS_PROG_AUTH_INFO PA ON PR.PROG_CD = PA.PROG_CD
+			   LEFT OUTER JOIN BMS_USER_AUTH_CMPSTN UA ON PA.AUTH_CD = UA.AUTH_CD
+		 WHERE ME.PROG_CD IS NULL
+			OR ME.PROG_CD = ''
+			OR UA.USER_ID = #{SSN_USER_ID}
+			
+		AND ME.USE_YN = 'Y'
+		AND PR.USE_YN = 'Y'
+		AND PA.AUTH_CHECK = 'Y'
+		ORDER BY ME.MENU_CD, ME.SORT
+	</select>
+	
+	<!-- 사용자별 프로그램 권한 리스트 -->
+	<select id="selectProgramAuthorityList" resultType="Map" parameterType="Map">
+		SELECT DISTINCT PA.PROG_CD, PA.AUTH_CHECK, PA.SCH_AH, PA.SAV_AH, PA.GEX_AH, PA.IEX_AH, PA.EXL_AH, PA.DEL_AH
+		, PA.FN1_AH, PA.FN2_AH, PA.FN3_AH, PA.FN4_AH, PA.FN5_AH, PA.FN6_AH, PA.FN7_AH, PA.FN8_AH, PA.HELP_AH
+		  FROM BMS_USER_AUTH_CMPSTN UA INNER JOIN BMS_PROG_AUTH_INFO PA ON UA.AUTH_CD = PA.AUTH_CD
+		 WHERE UA.USER_ID = #{SSN_USER_ID}
+	</select>
+		
+	<!-- 공통 코드그룹 리스트 -->
+	<select id="selectSI0701Co" resultType="Map" parameterType="Map">
+		SELECT *
+		  FROM BMS_CO_CD_INFO
+		<where>
+			AND SYSTEM_YN = 'Y'
+			<if test="TYPE == 'CO_CD_NM'">
+				AND CO_CD_NM LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'CO_CD'">
+				AND CO_CD LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'REMARK'">
+				AND REMARK LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="USE_YN != 'all'">
+				AND USE_YN = #{USE_YN}  
+			</if>
+		</where>
+		ORDER BY SORT
+	</select>	
+	<delete id="deleteSI0701Co" parameterType="java.util.Map">
+		DELETE FROM BMS_CO_CD_INFO WHERE CO_CD = #{CO_CD_ORG}
+	</delete>
+	
+	<insert id="insertSI0701Co" parameterType="java.util.Map" >
+		INSERT INTO BMS_CO_CD_INFO(CO_CD, CO_CD_NM, SORT, USE_YN, REMARK, UPD_DTM, UPD_ID, SYSTEM_YN)
+		VALUES (#{CO_CD}, #{CO_CD_NM}, #{SORT}, #{USE_YN}, #{REMARK}, #{UPD_DTM}, #{SSN_USER_ID}, 'Y')
+	</insert>
+
+	<update id="updateSI0701Co" parameterType="java.util.Map">
+		UPDATE BMS_CO_CD_INFO 
+			SET CO_CD = #{CO_CD},CO_CD_NM = #{CO_CD_NM}, SORT = #{SORT}, USE_YN = #{USE_YN}, REMARK = #{REMARK}
+			, UPD_DTM = #{UPD_DTM}, UPD_ID = #{SSN_USER_ID}
+		 WHERE CO_CD = #{CO_CD_ORG}	
+	</update>
+	
+	<delete id="deleteSI0701DtlAll" parameterType="java.util.Map">
+		DELETE FROM BMS_DL_CD_INFO 
+		 WHERE CO_CD = #{CO_CD_ORG}
+	</delete>
+	
+	<delete id="deleteSI0701Dtl" parameterType="java.util.Map">
+		DELETE FROM BMS_DL_CD_INFO 
+		 WHERE CO_CD = #{CO_CD} AND DL_CD = #{DL_CD_ORG}
+	</delete>
+	
+	<insert id="insertSI0701Dtl" parameterType="java.util.Map" >
+		INSERT INTO BMS_DL_CD_INFO(CO_CD, DL_CD, DL_CD_NM, SORT, USE_YN, TXT_VAL1, TXT_VAL2, TXT_VAL3, REMARK, UPD_DTM, UPD_ID
+		<if test="NUM_VAL4 != '' and NUM_VAL4 != null">
+		,NUM_VAL4
+		</if>
+		<if test="NUM_VAL4 != '' and NUM_VAL4 != null">
+		,NUM_VAL5
+		</if>
+		<if test="NUM_VAL4 != '' and NUM_VAL4 != null">
+		,NUM_VAL6
+		</if>
+		)
+		VALUES (#{CO_CD}, #{DL_CD}, #{DL_CD_NM}, #{SORT}, #{USE_YN}, #{TXT_VAL1}, #{TXT_VAL2}, #{TXT_VAL3}, #{REMARK}, #{UPD_DTM}, #{SSN_USER_ID}
+		<if test="NUM_VAL4 != '' and NUM_VAL4 != null">
+		,#{NUM_VAL4}
+		</if>
+		<if test="NUM_VAL5 != '' and NUM_VAL5 != null">
+		, #{NUM_VAL5}
+		</if>
+		<if test="NUM_VAL6 != '' and NUM_VAL6 != null">
+		, #{NUM_VAL6}
+		</if>
+		)
+	</insert>
+
+	<update id="updateSI0701Dtl" parameterType="java.util.Map">
+		UPDATE BMS_DL_CD_INFO 
+			SET DL_CD = #{DL_CD}, DL_CD_NM = #{DL_CD_NM}, SORT = #{SORT}, USE_YN = #{USE_YN}, TXT_VAL1 = #{TXT_VAL1}
+			, TXT_VAL2 = #{TXT_VAL2}, TXT_VAL3 = #{TXT_VAL3}, REMARK = #{REMARK}, UPD_DTM = #{UPD_DTM}, UPD_ID = #{SSN_USER_ID}
+		<if test="NUM_VAL4 != '' and NUM_VAL4 != null">
+			,NUM_VAL4 = #{NUM_VAL4}
+		</if>
+		<if test="NUM_VAL5 != '' and NUM_VAL5 != null">
+			, NUM_VAL5 = #{NUM_VAL5}
+		</if>
+		<if test="NUM_VAL6 != '' and NUM_VAL6 != null">
+			, NUM_VAL6 = #{NUM_VAL6}
+		</if>
+		 WHERE CO_CD = #{CO_CD}
+		   AND DL_CD = #{DL_CD_ORG}
+	</update>
+
+	<!-- 시스템  테이블의  데이타 읽어오기 -->
+	<select id="selectSystemList" resultType="Map">
+		SELECT SYSTEM_CD, SYSTEM_VALUE, SYSTEM_NM
+		  FROM BMS_SYSTEM_MST
+		 WHERE SYSTEM_CD IN
+		<foreach collection="SYSTEM" item="item" index="index"  open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+		ORDER BY SYSTEM_CD, SYSTEM_VALUE
+	</select>
+</mapper>

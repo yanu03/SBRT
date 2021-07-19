@@ -4,21 +4,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
 	xmlns:xf="http://www.w3.org/2002/xforms">
 	<head>
-		<!-- 
-		#####################################################################
-		파일명 : SM0500M01.xml
-		프로그램명 : 조직 관리 
-		설 명 : 조직을 관리(등록,수정,삭제)하는 화면
-		작성자 : Inswave Systems
-		작성일 : 2016.10.24
-		
-		수정일자	  수정자			 수정내용
-		=====================================================================
-		2016.10.24	Inswave Systems	최초작성
-		2018.01.26	Inswave Systems	WebSquare5 SP2 기능을 적용하도록 소스 업그레이드
-		2018.11.12	Inswave Systems	WebSquare5 SP3 기능을 적용하도록 소스 업그레이드
-		#####################################################################
-		-->
 		<w2:type>DEFAULT</w2:type>
 		<w2:buildDate />
 		<xf:model>
@@ -59,7 +44,7 @@
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_LIVING_LOG" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="SEND_DT" name="전송일시" dataType="text"></w2:column>
-						<w2:column id="MNG_ID" name="관리아이디" dataType="text"></w2:column>
+						<w2:column id="MNG_ID" name="관리ID" dataType="text"></w2:column>
 						<w2:column id="ATTR_ID" name="어트리뷰트ID" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
@@ -124,7 +109,7 @@
 		F_RAIN_PRO.setValue(dlt0.getCellData(0, "RAIN_PRO"));
 		F_RAINFALL.setValue(dlt0.getCellData(0, "RAINFALL"));
 
-		var tPath = "http://localhost:8081/fileUpload/up/"
+		var tPath = "/cm/images/bms/"
 		var fData = dlt_BMS_WEAT_INFO.getCellData(0, "SKY_COND");
 		if (fData == "SC001"){
 			FI0400I0.setSrc(tPath + "SC001.png");	
@@ -158,37 +143,35 @@
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
-		<xf:group class="pgm_container grdr_41_36_a" id="pgm_container" style="">
+		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
 			<xf:group id="pgm_navi" class="pgm_navi" style="">
-				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe></xf:group>
-			<xf:group id="pgm_header" style="" class="pgm_header">
+				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
+			</xf:group>
+			<xf:group class="pgm_header" id="pgm_header" style="">
 				<xf:group class="gr_search" id="" style="">
 					<xf:group class="label" id="" style="">
-						<xf:group class="" id="" style="">
-							<w2:span class="" id="" label="기상/대기 월별 검색"></w2:span>
-						</xf:group>
+						<w2:span class="" id="" label="기상/대기 월별 검색"></w2:span>
 					</xf:group>
-					<xf:group class="search" id="search" style="">
-						<w2:inputCalendar footerDiv="false" style="width: 200px;height: 21px;float: left;" renderDiv="true"
+					<xf:group class="search" id="" style="">
+						<w2:inputCalendar footerDiv="false" style="width: 200px;height: 25px;float: left;" renderDiv="true"
 							focusOnDateSelect="false" calendarValueType="yearMonth" rightAlign="false" renderType="component" ref="data:dma_search.CONTENT" ev:onkeydown="scwin.TESTA_onkeydown">
 						</w2:inputCalendar>
 					</xf:group>
-					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+					<w2:wframe class="" id="wfm_mainBtn" scope="true" src="/cm/common/wf_mainBtn.xml" style=""></w2:wframe>
 				</xf:group>
 			</xf:group>
 			
-			<xf:group id="pgm_content" style="" class="pgm_content grdc_500_20_a">
-				<xf:group id="pgm_detail" style="" class="pgm_detail grdr_20_2_a">
-					<xf:group id="" style="" class="defaultbox">
-						<w2:textbox id="" style="" class="df_tt fl" label="현재 기상/대기 정보"></w2:textbox>
+			<xf:group id="pgm_content" class="pgm_content grdc_500_20_a" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
+					<xf:group class="defaultbox" id="" style="">
+						<w2:textbox class="df_tt fl" id="" label="현재 기상/대기 정보" style=""></w2:textbox>
 					</xf:group>
 					<xf:group></xf:group>
-					
-					<xf:group class="" id="" style="">
+					<xf:group id="" class="" style="">
 						<xf:group style="text-align: center; border: 2px solid #D8D8D8;" >
 							<xf:image src="" style="width: 180px;height: 180px;" id="FI0400I0"></xf:image>
 						</xf:group>
-						<xf:group  class="w2tb tb" id="FI0400F0" style="width:100%; height:100%;" tagname="table">
+						<xf:group  class="w2tb tb" id="FI0400F0" style="width:100%;" tagname="table">
 							<w2:attributes>
 								<w2:summary>
 								</w2:summary>
@@ -206,7 +189,7 @@
 							<xf:group style="" tagname="tr">
 								<xf:group class="w2tb_th" style="" tagname="th">업데이트&amp;nbsp;일시</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
-									<xf:input adjustMaxLength="false" id="F_NOTI_DT" style="width: 100%;height: 21px;" displayFormatter="scwin.dateDisFormatter" readOnly="true"></xf:input>
+									<xf:input adjustMaxLength="false" id="F_NOTI_DT" style="width: 100%;height: 25px;" displayFormatter="scwin.dateDisFormatter" readOnly="true"></xf:input>
 								</xf:group>
 								<xf:group class="w2tb_th" style="" tagname="th">하늘상태</xf:group>
 									<xf:group class="w2tb_td" style="" tagname="td">
@@ -214,7 +197,7 @@
 											<w2:colspan>1</w2:colspan>
 											<w2:rowspan>1</w2:rowspan>
 										</w2:attributes>
-										<xf:input adjustMaxLength="" class="" disabled="" id="F_SKY_COND" mandatory="" ref="" style="width:100%;height:21px;" fireEventOnInvalid="" validator="" validateOnInput="" validateOnCheckMaxByteLength="" invalidMessageFunc="" readOnly="true" displayFormatter="scwin.skyDisFormatter">
+										<xf:input adjustMaxLength="" class="" disabled="" id="F_SKY_COND" mandatory="" ref="" style="width:100%;height:25px;" fireEventOnInvalid="" validator="" validateOnInput="" validateOnCheckMaxByteLength="" invalidMessageFunc="" readOnly="true" displayFormatter="scwin.skyDisFormatter">
 										</xf:input>
 									</xf:group>
 							</xf:group>
@@ -222,7 +205,7 @@
 								<xf:group class="w2tb_th" style="" tagname="th">온도</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<xf:group id="" style="">
-									<xf:input id="F_TEMPC" maxlength="13" ref="" style="width:100%;height: 21px;" validator="" dataType="text" readOnly="true">
+									<xf:input id="F_TEMPC" maxlength="13" ref="" style="width:100%;height: 25px;" validator="" dataType="text" readOnly="true">
 									</xf:input>
 									</xf:group>
 								</xf:group>
@@ -233,7 +216,7 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:group id="" style="">
-										<xf:input id="F_SDUSTC" maxlength="13" ref="" style="width:100%;height: 21px;" dataType="text" readOnly="true">
+										<xf:input id="F_SDUSTC" maxlength="13" ref="" style="width:100%;height: 25px;" dataType="text" readOnly="true">
 										</xf:input>
 									</xf:group>
 								</xf:group>
@@ -247,7 +230,7 @@
 								<xf:group class="w2tb_td" tagname="td">
 									<w2:attributes>
 									</w2:attributes>
-									<xf:input adjustMaxLength="" class="" id="F_TEMP_HIGH" mandatory="" ref="" style="width:100%;height:21px;" readOnly="true">
+									<xf:input adjustMaxLength="" class="" id="F_TEMP_HIGH" mandatory="" ref="" style="width:100%;height:25px;" readOnly="true">
 									</xf:input>
 								</xf:group>
 								<xf:group class="w2tb_th" tagname="th">미세먼지농도
@@ -260,7 +243,7 @@
 										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input id="F_DUSTC" mandatory="" ref="" style="width:100%;height:21px;" dataType="text" readOnly="true">
+									<xf:input id="F_DUSTC" mandatory="" ref="" style="width:100%;height:25px;" dataType="text" readOnly="true">
 									</xf:input>
 								</xf:group>
 								</xf:group>
@@ -272,7 +255,7 @@
 									</xf:group>
 									<xf:group class="w2tb_td" tagname="td">
 										<w2:attributes></w2:attributes>
-										<xf:input adjustMaxLength="false" id="F_TEMP_MINI" style="width:100%;height: 21px;"></xf:input>
+										<xf:input adjustMaxLength="false" id="F_TEMP_MINI" style="width:100%;height: 25px;"></xf:input>
 									</xf:group>
 									<xf:group class="w2tb_th" tagname="th">아황산가스농도
 									<w2:attributes>
@@ -281,7 +264,7 @@
 									</xf:group>
 									<xf:group class="w2tb_td" tagname="td">
 										<w2:attributes></w2:attributes>
-										<xf:input adjustMaxLength="false" id="F_SDC" style="width:100%;height: 21px;" readOnly="true"></xf:input>
+										<xf:input adjustMaxLength="false" id="F_SDC" style="width:100%;height: 25px;" readOnly="true"></xf:input>
 									</xf:group>
 								</xf:group>
 								<xf:group tagname="tr" style="">
@@ -292,7 +275,7 @@
 									</xf:group>
 									<xf:group class="w2tb_td" tagname="td">
 										<w2:attributes></w2:attributes>
-										<xf:input adjustMaxLength="false" id="F_HUMI" style="width:100%;height: 21px;" readOnly="true"></xf:input>
+										<xf:input adjustMaxLength="false" id="F_HUMI" style="width:100%;height: 25px;" readOnly="true"></xf:input>
 									</xf:group>
 									<xf:group class="w2tb_th" tagname="th">일산화탄소농도
 										<w2:attributes>
@@ -301,7 +284,7 @@
 									</xf:group>
 									<xf:group class="w2tb_td" tagname="td" id="">
 										<w2:attributes></w2:attributes>
-										<xf:input adjustMaxLength="false" id="F_CMC" style="width:100%;height: 21px;" readOnly="true"></xf:input>
+										<xf:input adjustMaxLength="false" id="F_CMC" style="width:100%;height: 25px;" readOnly="true"></xf:input>
 									</xf:group>
 								</xf:group>
 								<xf:group tagname="tr" style="">
@@ -312,7 +295,7 @@
 									</xf:group>
 									<xf:group tagname="td" class="w2tb_td">
 										<w2:attributes></w2:attributes>
-										<xf:input adjustMaxLength="false" id="F_RAIN_PRO" style="width:100%;height: 21px;" readOnly="true"></xf:input>
+										<xf:input adjustMaxLength="false" id="F_RAIN_PRO" style="width:100%;height: 25px;" readOnly="true"></xf:input>
 									</xf:group>
 									<xf:group tagname="th" class="w2tb_th">오존농도
 									<w2:attributes>
@@ -321,7 +304,7 @@
 								</xf:group>
 									<xf:group tagname="td" class="w2tb_td">
 										<w2:attributes></w2:attributes>
-										<xf:input id="F_OZONEC" style="width:100%;height: 21px;" readOnly="true"></xf:input>
+										<xf:input id="F_OZONEC" style="width:100%;height: 25px;" readOnly="true"></xf:input>
 									</xf:group></xf:group>
 								<xf:group tagname="tr" style="">
 									<xf:group tagname="th" class="w2tb_th">강수량
@@ -331,7 +314,7 @@
 									</xf:group>
 									<xf:group tagname="td" class="w2tb_td">
 										<w2:attributes></w2:attributes>
-										<xf:input id="F_RAINFALL" style="width:100%;height: 21px;" readOnly="true"></xf:input>
+										<xf:input id="F_RAINFALL" style="width:100%;height: 25px;" readOnly="true"></xf:input>
 									</xf:group>
 									<xf:group tagname="th" class="w2tb_th">이산화질소농도
 										<w2:attributes> 
@@ -340,7 +323,7 @@
 									</xf:group>
 									<xf:group tagname="td" class="w2tb_td" id="">
 										<w2:attributes></w2:attributes>
-										<xf:input id="F_NDC" style="width:100%;height: 21px;" readOnly="true"></xf:input>
+										<xf:input id="F_NDC" style="width:100%;height: 25px;" readOnly="true"></xf:input>
 									</xf:group>
 								</xf:group>
 						</xf:group>
@@ -354,10 +337,10 @@
 							confirmTrueAction="exist" confirmFalseAction="new" alwaysDraw="false" style="width: 100%;height: 100%;" tabScroll="" tableRender="" tabPosition="">
 							<w2:tabs disabled="false" style="width:70px;height:30px;" id="tabs3" label="기상"></w2:tabs>
 							<w2:content alwaysDraw="false" style="height:100;" id="content3">
-								<w2:gridView id="PI0400G0" style="width:98%;height:98%;" defaultCellHeight="20" rowNumVisible="true"
+								<w2:gridView id="PI0400G0" style="" defaultCellHeight="20" rowNumVisible="true"
 									useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태"
 									 overflowX="auto" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true"
-									ignoreCellClick="false" dataList="data:dlt_BMS_WEAT_INFO" class="cm_grid" autoFit="lastColumn" fixedColumnScrollHidden="" sortOrderReverse="true">
+									ignoreCellClick="false" dataList="data:dlt_BMS_WEAT_INFO" class="cm_grid right" autoFit="lastColumn" fixedColumnScrollHidden="" sortOrderReverse="true">
 									<w2:header style="" id="header1">
 										<w2:row style="" id="row1">
 											<w2:column removeBorderStyle="false" width="91" inputType="text" style="height:20px"

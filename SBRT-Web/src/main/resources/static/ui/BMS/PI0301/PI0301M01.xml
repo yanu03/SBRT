@@ -1,24 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet href="/cm/css/all.css" type="text/css"?>
-
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
-	xmlns:xf="http://www.w3.org/2002/xforms">
-	<head>
-		<!-- 
-		#####################################################################
-		파일명 : SM0500M01.xml
-		프로그램명 : 조직 관리 
-		설 명 : 조직을 관리(등록,수정,삭제)하는 화면
-		작성자 : Inswave Systems
-		작성일 : 2016.10.24
-		
-		수정일자	  수정자			 수정내용
-		=====================================================================
-		2016.10.24	Inswave Systems	최초작성
-		2018.01.26	Inswave Systems	WebSquare5 SP2 기능을 적용하도록 소스 업그레이드
-		2018.11.12	Inswave Systems	WebSquare5 SP3 기능을 적용하도록 소스 업그레이드
-		#####################################################################
-		-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+	
+	<head meta_vertical_guides="" meta_horizontal_guides="">	  
 		<w2:type>DEFAULT</w2:type>
 		<w2:buildDate />
 		<xf:model>
@@ -28,19 +13,20 @@
 			<w2:dataCollection baseNode="map">
 				<w2:dataMap baseNode="map" id="dma_search">
 					<w2:keyInfo>
-						<w2:key id="CONTENT" name="name1" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_NEWS_CFG_INFO" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="PROV_ID" name="제공처아이디" dataType="text"></w2:column>
+						<w2:column id="PROV_ID" name="제공처ID" dataType="text"></w2:column>
 						<w2:column id="PROV_URL" name="제공처URL" dataType="text"></w2:column>
 						<w2:column id="PROV_NM" name="제공처명" dataType="text"></w2:column>
 						<w2:column id="CATEGORY" name="범주" dataType="text"></w2:column>
 						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
 						<w2:column id="UPD_DTM" name="갱신일시" dataType="text"></w2:column>
-						<w2:column id="UPD_ID" name="갱신아이디" dataType="text"></w2:column>
+						<w2:column id="UPD_ID" name="갱신ID" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_NEWS_CFG_INFO_0">
@@ -48,6 +34,12 @@
 						<w2:key id="SEQ" name="SEQ" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
+				<w2:dataList id="dlt_searchItem" baseNode="list" saveRemovedData="true" repeatNode="map">
+					<w2:columnInfo>
+						<w2:column id="PROV_ID" name="name1" dataType="text"></w2:column>
+						<w2:column id="PROV_URL" name="name2" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_PI0301G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_NEWS_CFG_INFO" action="/pi/PI0301G0R0"
@@ -62,16 +54,24 @@
 				action="/pi/PI0301G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
+	        	<xf:submission id="sub_PI0301SHI0" ref="" target="data:json,dlt_searchItem" action="/pi/PI0301SHI0" method="post"
+	        		mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+	        		processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+	        	</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
-		$p.executeSubmission(sub_PI0301G0R0);
+		com.executeSubmission(sub_PI0301G0R0);
 		
 		var autoOptions = {
-			Main : { grid : PI0301G0, frm : PI0301F0, srchSbm : sub_PI0301G0R0, savSbm : sub_PI0301G0S0, keySbm : sub_PI0301G0K0 }
+			Main : { grid : PI0301G0, frm : PI0301F0, srchSbm : sub_PI0301G0R0, savSbm : sub_PI0301G0S0, keySbm : sub_PI0301G0K0, 
+					 keySbm : sub_PI0301G0K0, srchGrp : pgm_header, keyColumn : "PROV_ID", focusColumn : "PROV_NM", name :  "뉴스 제공처"
+				   }
 		 };
+		 
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
 		
+		com.executeSubmission(sub_PI0301SHI0);
 		//scwin.btn_set_onclick();
 	};
 	
@@ -94,76 +94,125 @@
 		com.openPopup(("/ui/BMS/PI0301/PI0301P01.xml"), options, data);  
 	};
 	
+
+	
+	scwin.sub_PI0301G0R0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+			com.setFocusedCell(PI0301G0, "PROV_NM");
+		}
+	};
+	
 	scwin.sub_PI0301G0K0_submitdone = function(e) {
-		var insertIndex = com.addGrid(PI0301G0,dma_SEQ_BMS_NEWS_CFG_INFO_0,"PROV_ID","PROV_NM");
-	};]]></script>
+		com.addGridForm(PI0301G0,PI0301F0,dma_SEQ_BMS_NEWS_CFG_INFO_0,"PROV_ID","PROV_NM");
+	};
+	
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {
+		debugger;
+		if (info.newValue == "ALL") {
+			acb_autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} else if (info.newValue == "PROV_ID") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchItem", "PROV_ID", "PROV_ID");
+			acb_autoChoiceBox.show("");
+		} else if (info.newValue == "PROV_NM") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchItem", "PROV_NM", "PROV_NM");
+			acb_autoChoiceBox.show("");
+		}		
+	};
+	
+	scwin.PI0301G0_onviewchange = function(row, oldRow) {
+		com.changeSingleGrid(PI0301G0, row, oldRow);
+	};
+	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
-		<xf:group class="pgm_container grdr_41_36_a" id="pgm_container" style="">
+		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
 			<xf:group id="pgm_navi" class="pgm_navi" style="">
 				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
 			</xf:group>
-			<xf:group id="pgm_header" style="" class="pgm_header">
-				<xf:group class="gr_search" id="" style="">
-					<xf:group class="label" id="" style="">
-						<xf:group class="" id="" style="">
-							<w2:span class="" id="" label="뉴스 제공처 목록"></w2:span>
-						</xf:group>
+			<xf:group id="pgm_header" class="pgm_header" style="">
+				<xf:group id="" style="" class="gr_search">
+					<xf:group id="" style="" class="label">
+							<w2:span id="" class="" label="검색 항목"></w2:span>
 					</xf:group>
-					<xf:group class="search" id="" style="">
+					<xf:group id="" style="" class="search">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
+							optionOrder="false" ref="data:dma_search.TYPE" style="" class="search_type" submenuSize="auto"
+							textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[뉴스제공처 ID]]></xf:label>
+									<xf:value><![CDATA[PROV_ID]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[뉴스제공처]]></xf:label>
+									<xf:value><![CDATA[PROV_NM]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="뉴스제공처 ID 또는 뉴스제공처"></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
-							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
+							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
 							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
-							style="width: 200px;height: 21px;float: left;" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+							style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false"
+							visibleRowNum="">
 							<w2:choices>
-								<w2:itemset nodeset="data:dlt_grgSearchItem">
-									<w2:label ref="GRG_ID"></w2:label>
-									<w2:value ref="GRG_ID"></w2:value>
+								<w2:itemset nodeset="data:dlt_searchItem">
+									<w2:label ref="PROV_ID"></w2:label>
+									<w2:value ref="PROV_ID"></w2:value>
 								</w2:itemset>
 							</w2:choices>
 						</w2:autoComplete>
 					</xf:group>
 					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
-			</xf:group>
-			
-			<xf:group id="pgm_content" style="" class="pgm_content grdc_a_20_700">
-				<xf:group id="pgm_list" style="" class="pgm_list grdr_20_2_a">
-					<xf:group id="" style="" class="defaultbox">
-						<w2:textbox id="" style="" class="df_tt fl" label="음성 목록"></w2:textbox>
+			</xf:group><!-- pgm_header -->
+			<xf:group id="pgm_content" class="pgm_content grdc_a_20_700" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
+					<xf:group class="defaultbox" id="" style="">
+						<w2:textbox class="df_tt fl" id="" label="뉴스 제공처 목록" style=""></w2:textbox>
 					</xf:group>
 					<xf:group></xf:group>
-					<xf:group id="">
+					<xf:group id="" class="" style="">
 						<w2:gridView sortEvent="onclick" ev:oncellclick=""
 							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서" sortable="true"
-							rowStatusHeaderValue="상태"  overflowX="scroll" overflowY="scroll" rowStatusVisible="false"
+							rowStatusHeaderValue="상태"  overflowX="scroll" overflowY="scroll" rowStatusVisible="false" ev:onrowindexchange="scwin.PI0301G0_onviewchange"
 							fixedColumnWithHidden="true" dataList="data:dlt_BMS_NEWS_CFG_INFO" ignoreCellClick="false" style="height:100%;" autoFit="lastColumn"
-							visibleRowNum="" id="PI0301G0" class="cm_grid" tooltipPositionY="">
+							visibleRowNum="" id="PI0301G0" class="cm_grid left" tooltipPositionY="">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row2">
-									<w2:column width="118" style="height:25px;" inputType="text" id="column9" value="뉴스제공처 ID" blockSelect="false"
+									<w2:column width="100" style="height:25px;" inputType="text" id="column9" value="뉴스제공처 ID" blockSelect="false"
 										displayMode="label" userData1="" userData2="">
 									</w2:column>
-									<w2:column width="159" style="height:25px;" inputType="text" id="column17" value="뉴스제공처" blockSelect="false"
+									<w2:column width="100" style="height:25px;" inputType="text" id="column17" value="뉴스제공처" blockSelect="false"
 										displayMode="label" userData1="">
 									</w2:column>
-									<w2:column width="195" style="height:25px;" inputType="text" id="column11" value="뉴스 URL" blockSelect="false"
+									<w2:column width="400" style="height:25px;" inputType="text" id="column11" value="뉴스 URL" blockSelect="false"
 										displayMode="label" userData1="">
 									</w2:column>
-									<w2:column width="189" style="height:25px;" inputType="text" id="column30" value="비고"
+									<w2:column width="100%" style="height:25px;" inputType="text" id="column30" value="비고"
 										blockSelect="false">
 									</w2:column>
 								</w2:row>
 							</w2:header>
 							<w2:gBody width="40" style="" id="gBody4">
 								<w2:row style="" id="row5">
-									<w2:column width="118" style="height:25px;" inputType="text" id="PROV_ID" blockSelect="false"
+									<w2:column width="" style="height:25px;" inputType="text" id="PROV_ID" blockSelect="false"
 										displayMode="label" readOnly="true" userData1="M" userData2="">
 									</w2:column>
-									<w2:column width="159" style="height:25px;" inputType="text" id="PROV_NM" blockSelect="false"
+									<w2:column width="" style="height:25px;" inputType="text" id="PROV_NM" blockSelect="false"
 										displayMode="label" readOnly="true" userData1="M">
 									</w2:column>
-									<w2:column textAlign="center" width="195" style="height:25px;" inputType="text" id="PROV_URL"
+									<w2:column textAlign="center" width="" style="height:25px;" inputType="text" id="PROV_URL"
 										blockSelect="false" displayMode="label" readOnly="true" userData1="">
 										<w2:choices>
 											<w2:itemset nodeset="">
@@ -172,7 +221,7 @@
 											</w2:itemset>
 										</w2:choices>
 									</w2:column>
-									<w2:column width="189" style="height:25px;" inputType="text" id="REMARK" blockSelect="false"
+									<w2:column width="" style="height:25px;" inputType="text" id="REMARK" blockSelect="false"
 										displayFormat="" calendarValueType="yearMonthDateTime" applyFormat="" displayMode="" readOnly="true"
 										displayFormatter="">
 										<w2:choices>
@@ -186,90 +235,91 @@
 							</w2:gBody>
 							<w2:footer style="" id="footer1">
 								<w2:row style="" id="row3">
-									<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px; border-right:5px" id="column48" value=""
-										blockSelect="false" displayMode="label" colSpan="13" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('GRG_ID')"
+									<w2:column removeBorderStyle="false" width="" inputType="expression" style="height:20px;" id="column42" value=""
+										blockSelect="false" displayMode="label" colSpan="15" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('GRG_ID')"
 										textAlign="left">
 									</w2:column>
 								</w2:row>
 							</w2:footer>
-						</w2:gridView>
+				</w2:gridView>
 					</xf:group>
+				</xf:group><!-- pgm_list -->
+				
+				<xf:group id="" class="vertical_line">
 				</xf:group>
-				
-				<xf:group id="" style="" class="vertical_line"></xf:group>
-				
-				<xf:group class="pgm_detail grdr_20_2_a">
-					<xf:group id="" style="" class="defaultbox">
-						<w2:textbox id="" style="" class="df_tt fl" label="뉴스 제공처 설정"></w2:textbox>
-					</xf:group>					
-					<xf:group></xf:group>
-					<xf:group tagname="table" style="width:100%;" id="PI0301F0" class="w2tb" tooltipPositionY="">
-						<w2:attributes>
-							<w2:summary></w2:summary>
-						</w2:attributes>
-						<xf:group tagname="caption"></xf:group>
-						<xf:group tagname="colgroup">
-							<xf:group tagname="col" style="width:25.00%;"></xf:group>
-							<xf:group tagname="col" style="width:25.00%"></xf:group>
-							<xf:group tagname="col" style="width:25.00%;"></xf:group>
-							<xf:group tagname="col" style="width:25.00%"></xf:group>
-						</xf:group>
-						<xf:group tagname="tr" style="">
-							<xf:group tagname="th" style="" class="w2tb_th">뉴스제공처&amp;nbsp;ID<w2:attributes>
-									<w2:scope>row</w2:scope>
-								</w2:attributes></xf:group>
-							<xf:group tagname="td" style="" class="w2tb_td">
-								<w2:attributes>
-									<w2:colspan>3</w2:colspan>
-									<w2:rowspan>1</w2:rowspan>
-								</w2:attributes>
-								<xf:input adjustMaxLength="false" id="PROV_ID" style="width: 100%;height: 100%;" ref="data:dlt_BMS_NEWS_CFG_INFO.PROV_ID"
-									placeholder="홍길동" readOnly="true" initValue="">
-								</xf:input>
-							</xf:group>
-						</xf:group>
-						<xf:group tagname="tr" style=""><xf:group tagname="th" class="w2tb_th">뉴스제공처<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
-							<xf:group tagname="td" class="w2tb_td" style="">
-								<w2:attributes>
-									<w2:colspan>3</w2:colspan>
-									<w2:rowspan>1</w2:rowspan>
-								</w2:attributes>
-								<xf:input adjustMaxLength="false" id="PROV_NM" placeholder="홍길동" readOnly="false"
-									ref="data:dlt_BMS_NEWS_CFG_INFO.PROV_NM" style="width: 100%;height: 100%;" refSync="">
-								</xf:input>
-							</xf:group></xf:group><xf:group tagname="tr" style="">
-							<xf:group tagname="th" style="" class="w2tb_th">뉴스URL<w2:attributes>
-									<w2:scope>row</w2:scope>
-								</w2:attributes></xf:group>
-							<xf:group tagname="td" style="" class="w2tb_td">
-								<w2:attributes>
-									<w2:colspan>3</w2:colspan>
-									<w2:rowspan>1</w2:rowspan>
-								</w2:attributes>
-								<xf:group class="ml5 fr" id="" style=""></xf:group>
-			
-								<xf:textarea id="PROV_URL" style="width: 100%;height: 100%;" ref="data:dlt_BMS_NEWS_CFG_INFO.PROV_URL"></xf:textarea>
-							</xf:group>
-						</xf:group>
-						<xf:group tagname="tr" style="">
-							<xf:group tagname="th" class="w2tb_th">
-								비고
-								<w2:attributes>
-									<w2:scope>row</w2:scope>
-								</w2:attributes>
-							</xf:group>
-							<xf:group tagname="td" class="w2tb_td" id="REMARK">
-								<w2:attributes>
-									<w2:colspan>3</w2:colspan>
-									<w2:rowspan>1</w2:rowspan>
-								</w2:attributes>
-								<xf:input adjustMaxLength="false" id="" style="width: 100%;height: 100%;" ref="data:dlt_BMS_NEWS_CFG_INFO.REMARK"></xf:input>
-							</xf:group>
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_a" style="">
+					<xf:group id="" class="gr_sub_header" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="뉴스 제공처 설정" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
-				</xf:group>
-			</xf:group>
+					<xf:group class="" id="" style="">
+						<xf:group id="PI0301F0" style="width:100%;" class="w2tb tb" tagname="table" >
+							<w2:attributes>
+								<w2:summary></w2:summary>
+							</w2:attributes>
+							<xf:group tagname="colgroup">
+								<xf:group style="width:120px;" tagname="col"></xf:group>
+								<xf:group style="" tagname="col"></xf:group>
+								<xf:group style="width:120px;" tagname="col"></xf:group>
+								<xf:group style="" tagname="col"></xf:group>
+							</xf:group>
+							<xf:group tagname="tr" style="">
+								<xf:group tagname="th" style="" class="w2tb_th req">뉴스제공처&amp;nbsp;ID<w2:attributes>
+										<w2:scope>row</w2:scope>
+									</w2:attributes></xf:group>
+								<xf:group tagname="td" style="" class="w2tb_td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:input adjustMaxLength="false" id="PROV_ID" style="width: 100%;height: 24px;" ref="data:dlt_BMS_NEWS_CFG_INFO.PROV_ID"
+										placeholder="홍길동" readOnly="true" initValue="" userData1="M">
+									</xf:input>
+								</xf:group>
+							</xf:group>
+							<xf:group tagname="tr" style=""><xf:group tagname="th" class="w2tb_th req">뉴스제공처<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_td" style="">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:input adjustMaxLength="false" id="PROV_NM" placeholder="" readOnly="false"
+										ref="data:dlt_BMS_NEWS_CFG_INFO.PROV_NM" style="width: 100%;height: 24px;" refSync="" userData1="M">
+									</xf:input>
+								</xf:group></xf:group><xf:group tagname="tr" style="">
+								<xf:group tagname="th" style="" class="w2tb_th req">뉴스URL<w2:attributes>
+										<w2:scope>row</w2:scope>
+									</w2:attributes></xf:group>
+								<xf:group tagname="td" style="" class="w2tb_td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:group class="ml5 fr" id="" style=""></xf:group>
 			
-		</xf:group> <!-- container end -->
+									<xf:textarea id="PROV_URL" style="width: 100%;height: 24px;" ref="data:dlt_BMS_NEWS_CFG_INFO.PROV_URL" userData1="M"></xf:textarea>
+								</xf:group>
+							</xf:group>
+							<xf:group tagname="tr" style="">
+								<xf:group tagname="th" class="w2tb_th">
+									비고
+									<w2:attributes>
+										<w2:scope>row</w2:scope>
+									</w2:attributes>
+								</xf:group>
+								<xf:group tagname="td" class="w2tb_td" id="REMARK">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:input adjustMaxLength="false" id="" style="width: 100%;height: 70px" ref="data:dlt_BMS_NEWS_CFG_INFO.REMARK"></xf:input>
+								</xf:group>
+							</xf:group>
+						</xf:group>
+					</xf:group>
+				</xf:group> <!--end pgm_detail-->
+			</xf:group> <!-- end content --> 
+		</xf:group> <!-- end container -->
 	</body>
 </html>

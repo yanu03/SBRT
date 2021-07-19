@@ -74,7 +74,7 @@ public class SI0401Service extends ServiceSupport {
 	}
 	
 	public List SI0401P0R0() throws Exception {
-		Map<String, Object> map = getSimpleDataMap("dma_TRANSCOMP_MST");
+		Map<String, Object> map = getSimpleDataMap("dma_search");
 		return si0401Mapper.SI0401P0R0(map);
 	}
 	

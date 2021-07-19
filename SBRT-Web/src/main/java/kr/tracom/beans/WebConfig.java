@@ -3,6 +3,7 @@ package kr.tracom.beans;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -20,12 +21,19 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	@Value("${spring.mvc.view.suffix}")
 	private String viewSuffix;
 
+	@Value("${static.resource.location}")
+	private String staticResouceLocation;
+
+	@Value("${fileupload.location}")
+	protected String fileuploadLocation;
+
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/websquare/**").addResourceLocations("/websquare/");
-		registry.addResourceHandler("/fileUpload/**").addResourceLocations("classpath:/static/fileUpload/");
-		registry.addResourceHandler("/cm/**").addResourceLocations("classpath:/static/cm/");
-		registry.addResourceHandler("/ui/**").addResourceLocations("classpath:/static/ui/");
+		registry.addResourceHandler("/fileUpload/**").addResourceLocations(fileuploadLocation);
+		registry.addResourceHandler("/cm/**").addResourceLocations(staticResouceLocation+"/static/cm/");
+		registry.addResourceHandler("/ui/**").addResourceLocations(staticResouceLocation+"/static/ui/");
+		registry.addResourceHandler("/ClipReport/**").addResourceLocations(staticResouceLocation+"/static/ClipReport/");
 		super.addResourceHandlers(registry);
 	}
 
@@ -49,6 +57,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(new SessionCheckInterceptor())
+		.excludePathPatterns("/ClipReport/**")
 		.excludePathPatterns("/cm/**")
 		.excludePathPatterns("/fileupload/**")
 		.excludePathPatterns("/lang/**")
@@ -56,5 +65,11 @@ public class WebConfig extends WebMvcConfigurationSupport {
 		.excludePathPatterns("/I18N")
 		.excludePathPatterns("/main/login")
 		.excludePathPatterns("/websquare/**");
+	}
+	
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**")
+			.allowedOrigins("*");
 	}
 }

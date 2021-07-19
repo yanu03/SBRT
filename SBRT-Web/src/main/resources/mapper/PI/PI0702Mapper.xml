@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.bms.domain.PI0702.PI0702Mapper">
+	<select id="PI0702G0R0" resultType="Map">
+		SELECT 		ROUTE_ID
+					,ROUT_NM
+					,WAY_DIV
+					,ST_STTN_ID
+					,ST_STTN_NM
+					,ED_STTN_ID
+					,ED_STTN_NM
+					,REMARK
+					
+		FROM		BMS_ROUT_MST			
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'ROUTE_ID'">
+				ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'ROUT_NM'">
+				ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>		
+	</select>	
+
+	<select id="PI0702SHI0" resultType="Map">
+		SELECT		 ROUTE_ID
+					,ROUT_NM
+		FROM	     BMS_ROUT_MST
+	</select>
+
+	<select id="PI0702G1R0" resultType="Map">
+		SELECT			 A.VHC_ID
+						,A.VHC_NO
+						,A.COMP_ID
+						,A.AREA
+						,A.MAKER
+						,A.MODEL_NM
+						,A.ROUT_DIV
+						,A.VHC_TYPE
+						,A.VHC_FUEL
+						,A.REMARK
+						,(CASE WHEN C.RSV_ID IS NOT NULL THEN '예약중' END) RSV_STATE
+						,B.MNG_ID
+						,C.RSV_ID
+						,DATE_FORMAT(D.RSV_DT, '%Y%m%d') RSV_DT
+						,E.COMP_NM
+						
+		FROM	  		BMS_VHC_MST A 
+		LEFT JOIN	 	BMS_DVC_INFO B
+		ON				A.VHC_ID = B.VHC_ID
+		LEFT JOIN	  	BMS_DESTI_RSV_RST_INFO C
+		ON				B.MNG_ID = C.MNG_ID
+		LEFT JOIN	  	BMS_DESTI_RSV_INFO D
+		ON				C.RSV_ID = D.RSV_ID		
+		LEFT JOIN	  	BMS_TRANSCOMP_MST E
+		ON				A.COMP_ID = E.COMP_ID
+					
+		WHERE			B.DVC_KIND = 'DK005'
+		<if test="CONTENT != null and CONTENT != ''">
+			AND			A.VHC_NO LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+	
+		ORDER BY		 A.VHC_ID
+						
+	</select>
+	
+	
+	<insert id="PI0702G1I0" parameterType="Map">
+		INSERT INTO BMS_DESTI_RSV_RST_INFO
+				(
+					RSV_ID
+				    ,MNG_ID
+					,PROCE_RST
+					,SEND_DTM
+					,COMPLETE_YN
+				)	
+				   
+		VALUES (
+					(
+						SELECT CONCAT('DR', LPAD(NEXTVAL(SEQ_BMS_DESTI_RSV_INFO_0), 8, '0')) AS RSV_ID
+					) 
+					,#{MNG_ID}
+					,'PR001'
+					,now()
+					,'Y'
+				);
+				
+				
+				
+		INSERT INTO BMS_DESTI_RSV_INFO
+				(
+					RSV_ID
+					,RSV_DT
+				)
+				
+		VALUES	(
+					(
+						SELECT CONCAT('DR', LPAD(LASTVAL(SEQ_BMS_DESTI_RSV_INFO_0), 8, '0')) AS RSV_ID
+					)	
+					,#{RSV_DT}
+				)
+							
+	</insert>
+	
+	<delete id="PI0702G1D0" parameterType="Map">
+		DELETE
+		FROM 		BMS_DESTI_RSV_RST_INFO
+		WHERE		RSV_ID = #{RSV_ID};
+		
+		
+		DELETE
+		FROM		BMS_DESTI_RSV_INFO
+		WHERE		RSV_ID = #{RSV_ID}
+	</delete>
+
+
+</mapper>

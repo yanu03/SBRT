@@ -27,15 +27,15 @@
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="STTN_ID" name="정류소아이디" dataType="text"></w2:column>
+						<w2:column id="STTN_ID" name="정류소ID" dataType="text"></w2:column>
 						<w2:column id="STTN_NM" name="정류소명" dataType="text"></w2:column>
 						<w2:column id="STTN_NO" name="정류소번호" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_STTN_MST" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="STTN_ID" name="정류소아이디" dataType="text"></w2:column>
-						<w2:column id="NODE_ID" name="노드아이디" dataType="text"></w2:column>
+						<w2:column id="STTN_ID" name="정류소ID" dataType="text"></w2:column>
+						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
 						<w2:column id="STTN_NM" name="정류소명" dataType="text"></w2:column>
 						<w2:column id="STTN_ENM" name="정류소영문명" dataType="text"></w2:column>
 						<w2:column id="AREA" name="권역" dataType="text"></w2:column>
@@ -55,7 +55,7 @@
 						<w2:column id="APPL_ED_DT" name="적용종료일" dataType="date"></w2:column>
 						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
-						<w2:column id="ROUTE__ID" name="노선아이디" dataType="text"></w2:column>
+						<w2:column id="ROUTE__ID" name="노선ID" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_STTN_MST_0">
@@ -65,7 +65,7 @@
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_MST" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="ROUTE_ID" name="노선아이디" dataType="text"></w2:column>
+						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 						<w2:column id="ROUT_TYPE" name="노선유형" dataType="text"></w2:column>
 						<w2:column id="STTN_CNT" name="정류소수" dataType="text"></w2:column>
@@ -77,6 +77,7 @@
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_param_STTNID">
 					<w2:keyInfo>
+						<w2:key id="ROUTE_IDS" name="노선IDS" dataType="text"></w2:key>
 						<w2:key id="STTN_ID" name="name1" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
@@ -229,13 +230,15 @@
 			if (rowStatus == "C") {
 				com.alert("정류소 등록 후에 사용 가능합니다.");
 			} else {
+			
+				var val_ROUTE_ID = dlt_BMS_ROUT_MST.getColData("ROUTE_ID");
+				dma_param_STTNID.set("ROUTE_IDS", val_ROUTE_ID);
 				var param = dma_param_STTNID.get("STTN_ID");
 				if (param != "") {
 					var data = { data : dma_param_STTNID.getJSON(), callbackFn : "scwin.insertSubGrid" };
 					var options = { id : "SI0501P01",
 									popupName : "노선 목록", 
-									modal : true, 
-									width : 560, height: 400 };
+									modal : true };
 					com.openPopup("/ui/BMS/SI0501/SI0501P01.xml", options, data);
 				}
 			}
@@ -284,7 +287,7 @@
 
 							<xf:choices>
 								<xf:item>
-									<xf:label><![CDATA[정류소아이디]]></xf:label>
+									<xf:label><![CDATA[정류소ID]]></xf:label>
 									<xf:value><![CDATA[STTN_ID]]></xf:value>
 								</xf:item>
 								<xf:item>
@@ -346,7 +349,7 @@
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column14"
-										value="정류소아이디" blockSelect="false" displayMode="label">
+										value="정류소ID" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="98" inputType="text" style="height:20px" id="column10"
 										value="정류소명" blockSelect="false" displayMode="label">
@@ -411,7 +414,7 @@
 				</xf:group>
 				<xf:group id="" class="vertical_line"></xf:group>
 				<xf:group class="pgm_detail grdr_20_180_20_20_105_20_20_a">
-					<xf:group id="" class="" style="gr_sub_header">
+					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="정류소 상세 정보" style=""></w2:textbox>
 						</xf:group>
@@ -624,7 +627,7 @@
 							<w2:header style="" id="header2">
 								<w2:row style="" id="row4">
 									<w2:column removeBorderStyle="false" width="88" inputType="text" style="height:20px" id="column89"
-										value="노선아이디" blockSelect="false" displayMode="label">
+										value="노선ID" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="104" inputType="text" style="height:20px" id="column88"
 										value="노선명" blockSelect="false" displayMode="label">
@@ -677,7 +680,7 @@
 					<xf:group id="" class="horizontal_line">
 					</xf:group>
 					
-					<xf:group id="" class="" style="gr_sub_header">
+					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="지도" style=""></w2:textbox>
 						</xf:group>

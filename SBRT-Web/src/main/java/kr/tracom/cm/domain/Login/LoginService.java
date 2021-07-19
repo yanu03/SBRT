@@ -54,7 +54,7 @@ public class LoginService {
 	}
 
 	/**
-	 * 해당 사용자 아이디가 관리자 아이디인지를 검사한다.
+	 * 해당 사용자 ID가 관리자 ID인지를 검사한다.
 	 */
 
 	public boolean isAdmin(String userId) {

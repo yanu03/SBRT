@@ -8,6 +8,9 @@
 			SECURE_AREA, <!-- APPL_ST_DT, APPL_ED_DT, --> REMARK
 	from BMS_GRG_MST
 	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND GRG_ID LIKE CONCAT('%',#{CONTENT},'%') || GRG_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
 		<if test="TYPE == 'GRG_ID'">
 			AND GRG_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
@@ -19,9 +22,6 @@
 </select>
 
 <insert id="SI0101G0I0" parameterType="Map">
-	<selectKey keyProperty="corpId" resultType="String" order="BEFORE">
-         SELECT CONCAT('GR', LPAD(NEXTVAL(SEQ_BMS_GRG_MST_0), 8, '0'))
-    </selectKey>
 	insert into BMS_GRG_MST(GRG_ID, GRG_NM, OWNER_TYPE, ADDR, PHONE, FAX, EMAIL, CNG_YN, ELEC_YN, 
 			<if test="LEGAL_AREA != null and LEGAL_AREA != ''">
 				LEGAL_AREA,
@@ -75,6 +75,35 @@
 	from BMS_GRG_MST
 	where GRG_ID = #{GRG_ID}
 
+</delete>
+
+<select id="SI0101P0R0" resultType="Map">
+	select GRG_ID, SN, GPS_X, GPS_Y
+	from BMS_GRG_RDS_INFO
+	where GRG_ID = #{GRG_ID}
+</select>
+
+<insert id="SI0101P0I0" parameterType="Map">
+	insert into BMS_GRG_RDS_INFO(GRG_ID, SN, GPS_X, GPS_Y)
+	values (#{GRG_ID}, #{SN}, #{GPS_X}, #{GPS_Y})
+</insert>
+
+<update id="SI0101P0U0" parameterType="Map">
+ update BMS_GRG_RDS_INFO
+	set GRG_ID = #{GRG_ID}, SN = #{SN}, GPS_X = #{GPS_X}, GPS_Y = #{GPS_Y}
+	where GRG_ID = #{GRG_ID}
+</update>
+
+<delete id="SI0101P0D0" parameterType="Map">
+	delete
+	from BMS_GRG_RDS_INFO
+	where GRG_ID = #{GRG_ID} and SN = #{SN}
+</delete>
+
+<delete id="SI0101P0DA0" parameterType="Map">
+	delete
+	from BMS_GRG_RDS_INFO
+	where GRG_ID = #{GRG_ID}
 </delete>
 
 </mapper>

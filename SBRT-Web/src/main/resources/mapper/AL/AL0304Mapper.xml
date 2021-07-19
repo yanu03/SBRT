@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.brt.domain.AL0304.AL0304Mapper">
+	<select id="AL0304G0R0" resultType="Map">
+		select distinct 
+				a.REP_ROUT_ID,
+				a.ROUT_ID,
+				a.DAY_DIV,
+				b.REP_ROUT_NM,
+				c.ROUT_NM,
+				c.SHAPE_DIV
+				
+		from	BRT_OPER_PL_ROUT_INFO a INNER JOIN BMS_REP_ROUT_MST b
+		on		a.REP_ROUT_ID = b.REP_ROUT_ID INNER JOIN BMS_ROUT_MST c
+		on		a.ROUT_ID = c.ROUTE_ID 
+		order by b.REP_ROUT_NM, a.DAY_DIV
+	</select>
+
+	<select id="AL0304G1R0" resultType="Map">
+	    select  a.REP_ROUT_ID,
+	            a.ROUT_ID,
+	            a.DAY_DIV,
+	            a.ALLOC_NO,
+	            c.ROUT_NM,
+	            a.OPER_SN,
+	            a.COR_ID,
+	            a.REST_TIME,
+	            a.ROUT_SN,
+	            b.REP_ROUT_NM,
+	            c.WAY_DIV
+	
+	      from   BRT_OPER_ALLOC_PL_ROUT_INFO a INNER JOIN BMS_REP_ROUT_MST b
+	      on      a.REP_ROUT_ID = b.REP_ROUT_ID INNER JOIN BMS_ROUT_MST c
+	      on      a.ROUT_ID = c.ROUTE_ID 
+	      where   a.REP_ROUT_ID = #{REP_ROUT_ID}
+	      and     a.DAY_DIV = #{DAY_DIV}
+	</select>
+	
+	<select id="AL0304P0R0" resultType="Map">
+	    select  COR_ID,
+				REP_ROUT_ID,
+				COR_NM
+	
+	      from   BRT_COR_MST
+<!-- 	      on      a.REP_ROUT_ID = b.REP_ROUT_ID INNER JOIN BMS_ROUT_MST c
+	      on      a.ROUT_ID = c.ROUTE_ID 
+	      where   a.REP_ROUT_ID = #{REP_ROUT_ID}
+	      and     a.DAY_DIV = #{DAY_DIV} -->
+	</select>	
+	
+	<select id="AL0304P1R0" resultType="Map">
+		select  a.REP_ROUT_ID,
+				a.ROUT_ID,
+				b.ROUT_NM,
+				a.OPER_SN,
+				a.ROUT_ST_TM,
+				a.ROUT_ED_TM
+				
+		from	BRT_OPER_PL_ROUT_INFO a INNER JOIN BMS_ROUT_MST b
+		on		a.REP_ROUT_ID = b.REP_ROUT_ID
+		where	b.REP_ROUT_ID = #{REP_ROUT_ID}
+	</select>
+	
+</mapper>

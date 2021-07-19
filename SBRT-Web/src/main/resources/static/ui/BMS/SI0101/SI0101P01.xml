@@ -11,64 +11,103 @@
 				<data xmlns="" />
 			</xf:instance>
 			<w2:dataCollection baseNode="map">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_GRG_RDS_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="chk" name="선택" dataType="text"></w2:column>
+						<w2:column id="GRG_ID" name="차고지ID" dataType="text"></w2:column>
+						<w2:column id="SN" name="순번" dataType="text"></w2:column>
+						<w2:column id="GPS_X" name="경도" dataType="text"></w2:column>
+						<w2:column id="GPS_Y" name="위도" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="GRG_ID" name="차고지ID" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
 			</w2:dataCollection>
-			<w2:workflowCollection>
-			</w2:workflowCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_SI0101P0R0" ref="data:json,dma_search" target="data:json,dlt_GRG_RDS_INFO" action="/si/SI0101P0R0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_SI0101P0R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_SI0101P0S0" ref='data:json,{"action":"modified","id":"dlt_GRG_RDS_INFO"}' target="data:json,dma_result"
+				action="/si/SI0101P0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
+	debugger;
 		scwin.param = com.getParameter();
 		
-		var container = document.getElementById('map');
-		var options = {
-			center : new kakao.maps.LatLng(scwin.param.GPS_Y, scwin.param.GPS_X),
-			level : 3
-		};
-		var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+		dma_search.set("GRG_ID" , scwin.param.data.GRG_ID);
+		
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		var btnOptions = {
+			SEARCH:{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick},
+			SAVE:{userStr:"저장", auth: gcm.BTN.SAVE, cbFnc: scwin.btn_save_onclick}
+		}
+		com.setPopupBtn(wfm_mainBtn, btnOptions);
+		
+		com.executeSubmission(sub_SI0101P0R0);
 
-		// 마커가 표시될 위치입니다 
-		var markerPosition  = new kakao.maps.LatLng(scwin.param.GPS_Y, scwin.param.GPS_X); 
-
-		// 마커를 생성합니다
-		var marker = new kakao.maps.Marker({
-    		position: markerPosition
-			});
-
-		// 마커가 지도 위에 표시되도록 설정합니다
-		marker.setMap(map);
-
-		var grgID = scwin.param.GRG_ID;
-
-		var polygonPath = [
-				new kakao.maps.LatLng(36.4706517606239, 127.273369597028),
-				new kakao.maps.LatLng(36.4705846499681, 127.272175501742),
-				new kakao.maps.LatLng(36.4705240511392, 127.27207487186),
-				new kakao.maps.LatLng(36.4687989348011, 127.271809435706),
-				new kakao.maps.LatLng(36.469019760181, 127.273762741563),
-				new kakao.maps.LatLng(36.4692898243842, 127.27388642238), ];
-
-		// 지도에 표시할 다각형을 생성합니다
-		var polygon = new kakao.maps.Polygon({
-			path : polygonPath, // 그려질 다각형의 좌표 배열입니다
-			strokeWeight : 3, // 선의 두께입니다
-			strokeColor : '#39DE2A', // 선의 색깔입니다
-			strokeOpacity : 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
-			strokeStyle : 'longdash', // 선의 스타일입니다
-			fillColor : '#A2FF99', // 채우기 색깔입니다
-			fillOpacity : 0.7 // 채우기 불투명도 입니다
-		});
-
-		// 지도에 다각형을 표시합니다
-		polygon.setMap(map);
 	};
 
 	scwin.onpageunload = function() {
 
 	};
+	
+	//맵 클릭 이벤트
+	scwin.onClickMap = function(e) {
+	
+		addPathByClick2(dlt_GRG_RDS_INFO, dma_search.get("GRG_ID"),e);
+		
+	}
+	
+	scwin.sub_SI0101P0R0_submitdone = function(e) {
+	debugger;
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+			initTmap("map_SI0101", {
+				width:"100%"
+				, height:"100%"
+				, onClick: scwin.onClickMap
+			});
+			
+			drawLineMap(dlt_GRG_RDS_INFO);			
+		}
+	};
+	
+	scwin.btn_search_onclick = function() {
+		com.executeSubmission(sub_SI0101P0R0);
+	};
+	
+
+	scwin.btn_save_onclick = function() {
+		com.executeSubmission(sub_SI0101P0S0);
+	};
 ]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
-		<div id="map" style="width:780px;height:555px;"></div>
-
+		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+				<xf:group class="gr_search" id="" style="">
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group>
+			<xf:group style="" id="" class="popup_content">
+				<div id="map_SI0101" style="width:780px;height:555px;"></div>
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
 	</body>
 </html>

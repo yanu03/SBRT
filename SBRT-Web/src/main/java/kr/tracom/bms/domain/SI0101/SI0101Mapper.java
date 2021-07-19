@@ -19,4 +19,14 @@ public interface SI0101Mapper {
 	public int SI0101G0D0(Map param);
 	
 	public int SI0101G0U0(Map param);
+	
+	public List SI0101P0R0(Map param);
+	
+	public int SI0101P0I0(Map param);
+	
+	public int SI0101P0D0(Map param);
+	
+	public int SI0101P0U0(Map param);
+	
+	public int SI0101P0DA0(Map param);
 }

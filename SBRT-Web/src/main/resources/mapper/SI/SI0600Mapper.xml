@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.bms.domain.SI0600.SI0600Mapper">
+
+<select id="SI0600T0R0" resultType="Map">
+   with recursive CTE AS (
+      SELECT 
+         a.CLSFCTN_ID,
+         a.CLSFCTN_NM,
+         a.CLSFCTN_ENM,
+         a.PARENT_ID,
+         a.LEVEL,
+         a.SORT,
+         CONCAT(a.LEVEL,a.SORT) path
+       FROM	   BMS_EMER_CLSFCTN_MST a
+       WHERE   a.PARENT_ID = ""
+       UNION   ALL
+       SELECT 
+          b.CLSFCTN_ID,
+          b.CLSFCTN_NM,
+          b.CLSFCTN_ENM,
+          b.PARENT_ID,
+          b.LEVEL,
+          b.SORT,
+          CONCAT(c.path,b.LEVEL,b.SORT) path 
+       FROM    CTE c
+       INNER   JOIN BMS_EMER_CLSFCTN_MST b
+       ON      c.CLSFCTN_ID = b.PARENT_ID
+       )
+
+       
+       SELECT CLSFCTN_ID,
+         CLSFCTN_NM,
+         CLSFCTN_ENM,
+         IFNULL(PARENT_ID, 0) AS PARENT_ID,
+         LEVEL,
+         SORT,
+         path
+      FROM CTE order by path
+
+         
+        
+         
+
+     		
+
+</select>
+
+<select id="SI0600T0K0" resultType="Map">
+	SELECT CONCAT('CF', LPAD(NEXTVAL(SEQ_BMS_EMER_CLSFCTN_MST_0), 8, '0')) AS 'SEQ'
+</select>
+
+<insert id="SI0600T0I0" parameterType="Map">
+	insert into BMS_EMER_CLSFCTN_MST
+			(	
+				CLSFCTN_ID,
+				CLSFCTN_NM,
+				PARENT_ID,
+				LEVEL,
+				SORT,
+				UPD_DTM,
+				UPD_ID
+			)
+	values
+			(
+				#{CLSFCTN_ID},
+				#{CLSFCTN_NM},
+				#{PARENT_ID},
+				#{LEVEL},
+				#{SORT},
+				#{UPD_DTM},
+				#{SSN_USER_ID}			
+			)
+</insert>
+
+
+<update id="SI0600T0U0" parameterType="Map">
+	update BMS_EMER_CLSFCTN_MST
+	set		CLSFCTN_NM = #{CLSFCTN_NM},
+			PARENT_ID = #{PARENT_ID},
+			LEVEL = #{LEVEL},
+			SORT = #{SORT},
+			UPD_DTM = #{UPD_DTM},
+			UPD_ID = #{UPD_ID}
+			
+	where 	CLSFCTN_ID = #{CLSFCTN_ID}			
+	
+</update>
+
+<delete id="SI0600T0D0" parameterType="Map">
+	delete
+	from BMS_EMER_CLSFCTN_MST
+	where CLSFCTN_ID = #{CLSFCTN_ID};
+	
+	delete
+	from BMS_EMER_MEMBER_INFO
+	where CLSFCTN_ID = #{CLSFCTN_ID}
+</delete>
+
+<select id="SI0600G0R0" resultType="Map">
+	select  CLSFCTN_ID,
+			MEMER_ID,
+			a.ORG_ID,
+			b.ORG_NM,
+			SN,
+			MEMER_NM,
+			MEMER_DIV,
+			a.PHONE,
+			a.FAX,
+			a.EMAIL,
+			a.REMARK
+			
+	from	BMS_EMER_MEMBER_INFO a, BMS_ORG_MST b
+	where 	a.CLSFCTN_ID = #{CLSFCTN_ID}
+	AND		a.ORG_ID = b.ORG_ID	
+
+</select>
+
+<select id="SI0600P0R0" resultType="Map">
+	select  MEMER_ID,
+			MEMER_NM,
+			b.ORG_NM,
+			MEMER_DIV,
+			a.PHONE,
+			a.FAX,
+			a.EMAIL,
+			a.REMARK
+	
+	from 	BMS_MEMBER_INFO a INNER JOIN BMS_ORG_MST b ON a.ORG_ID = b.ORG_ID
+	<where>
+		<if test="TYPE == 'ALL'">
+			AND MEMER_ID LIKE CONCAT('%',#{CONTENT},'%') || MEMBER_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'MEMER_ID'">
+			AND MEMER_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'MEMBER_NM'">
+			AND MEMBER_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>		
+
+
+</select>
+
+</mapper>

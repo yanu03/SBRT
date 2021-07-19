@@ -30,8 +30,11 @@ public class SessionCheckInterceptor extends HandlerInterceptorAdapter {
 			
 			if (loginInfo != null) {
 				//userInfo.setUserInfo(session);
-			} else {
+			} else {				
 				if (!isSkipURI(request)) {
+					String ssnDeleted =(String) session.getAttribute(Constants.SSN_DELETED);
+					if("true".equals(ssnDeleted))return false;
+					session.setAttribute(Constants.SSN_DELETED, "true");
 					if ((w2xPath != null) || (reqUrl.indexOf(".xml") > -1)) {
 						// 웹스퀘어 화면 호출 시 세션이 종료된 경우, 로그인 페이지로 Redirect 처리한다.
 						result = false;
@@ -78,7 +81,7 @@ public class SessionCheckInterceptor extends HandlerInterceptorAdapter {
 	 */
 	private boolean isSkipURI(HttpServletRequest request) {
 		
-		String[] skipUrl = { "/", "/I18N" };
+		String[] skipUrl = { "/", "/I18N", "/ClipReport" };
 		boolean result = false;
 		String uri = (request.getRequestURI()).replace(request.getContextPath(), "");
 		System.out.println("isSkipURI() in uri="+uri);

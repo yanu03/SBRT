@@ -54,4 +54,8 @@ public class PI0301Service extends ServiceSupport{
 		result.put("DCNT", String.valueOf(dCnt));
 		return result;
 	}
+	
+	public List<Map> PI0301SHI0() throws Exception{
+		return PI0301Mapper.PI0301SHI0();
+	}
 }

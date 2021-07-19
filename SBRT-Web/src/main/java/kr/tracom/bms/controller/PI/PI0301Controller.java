@@ -36,4 +36,11 @@ public class PI0301Controller extends ControllerSupport {
 		result.setData("dma_SEQ_BMS_NEWS_CFG_INFO_0", PI0301Service.PI0301G0K0());
 		return result.getResult();
 	}
+	
+	
+	@RequestMapping("/pi/PI0301SHI0")
+	public @ResponseBody Map<String, Object> SI0200SHI0() throws Exception {
+		result.setData("dlt_searchItem", PI0301Service.PI0301SHI0());
+		return result.getResult();
+	}
 }

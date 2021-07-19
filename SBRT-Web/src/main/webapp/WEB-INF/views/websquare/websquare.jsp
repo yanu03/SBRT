@@ -30,6 +30,7 @@
 				}
 			}
 		</script>
+		<script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&amp;appkey=l7xx6099b61644bf40d78594611b250c9694"></script>
 		<script type="text/javascript" src="/websquare/javascript.wq?q=/bootloader"></script>
 		<script type="text/javascript">
 			window.onload = init;
