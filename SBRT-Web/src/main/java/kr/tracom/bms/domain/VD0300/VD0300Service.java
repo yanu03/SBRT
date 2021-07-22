@@ -37,26 +37,28 @@ public class VD0300Service extends ServiceSupport {
 		return vd0300Mapper.VD0300G1R0(param);
 	}
 
-	public Map VD0300G1K0() throws Exception {
-		return vd0300Mapper.VD0300G1K0(); 
+	public List VD0300G2R0() throws Exception {
+		// TODO Auto-generated method stub
+		Map param = getSimpleDataMap("dma_subsearch2");
+		return vd0300Mapper.VD0300G2R0(param);
 	}
 	
-	public Map VD0300G1S0() throws Exception {
+	public Map VD0300G2S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;		
 		
-		List<Map<String, Object>> param = getSimpleList("dlt_BMS_DVC_INFO");
+		List<Map<String, Object>> param = getSimpleList("dlt_BMS_DVC_HIS");
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("C")) {
-					iCnt += vd0300Mapper.VD0300G1I0(data);
+					iCnt += vd0300Mapper.VD0300G2I0(data);
 				} else if (rowStatus.equals("U")) {
-					uCnt += vd0300Mapper.VD0300G1U0(data);
+					uCnt += vd0300Mapper.VD0300G2U0(data);
 				} else if (rowStatus.equals("D")) {
-					dCnt += vd0300Mapper.VD0300G1D0(data);
+					dCnt += vd0300Mapper.VD0300G2D0(data);
 				} 
 			}			
 		} catch(Exception e) {
@@ -69,19 +71,13 @@ public class VD0300Service extends ServiceSupport {
 				throw e;
 			}		
 		}
-
+		
 		
 		Map result = saveResult(iCnt, uCnt, dCnt);
 		
 		return result;		
 		
 		
-	}
-
-	public List VD0300G2R0() throws Exception {
-		// TODO Auto-generated method stub
-		Map param = getSimpleDataMap("dma_subsearch2");
-		return vd0300Mapper.VD0300G2R0(param);
 	}
 	
 	public List VD0300G3R0() throws Exception {

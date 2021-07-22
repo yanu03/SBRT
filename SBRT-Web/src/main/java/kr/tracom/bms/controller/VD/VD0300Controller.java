@@ -42,23 +42,17 @@ public class VD0300Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
-	@RequestMapping("/vd/VD0300G1K0")
-	public @ResponseBody Map<String, Object> VD0300G1K0() throws Exception {
-		result.setData("dma_SEQ_BMS_DVC_INFO_0", vd0300Service.VD0300G1K0());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/vd/VD0300G1S0")
-	public @ResponseBody Map<String, Object> VD0300G1S0() throws Exception {
-		Map map = vd0300Service.VD0300G1S0();
-		result.setData("dma_result", map);
-		return result.getResultSave();
-	}	
-
 	@RequestMapping("/vd/VD0300G2R0")
 	public @ResponseBody Map<String, Object> VD0300G2R0() throws Exception {
 		result.setData("dlt_BMS_DVC_HIS", vd0300Service.VD0300G2R0());
 		return result.getResult();
+	}
+	
+	@RequestMapping("/vd/VD0300G2S0")
+	public @ResponseBody Map<String, Object> VD0300G2S0() throws Exception {
+		Map map = vd0300Service.VD0300G2S0();
+		result.setData("dma_result", map);
+		return result.getResultSave();
 	}
 	
 	@RequestMapping("/vd/VD0300G3R0")

@@ -91,7 +91,7 @@ var gcm = {
 		SINGLE_GRID : "SINGLE_GRID", //단일 그리드
 		DUAL_GRID : "DUAL_GRID", //복수 그리드(메인,서브 둘 다 CRUD)
 		DUAL_GRID2 : "DUAL_GRID2", //복수 그리드(메인 조회,서브는 CRUD)
-		DUAL_GRID3 : "DUAL_GRID3", //복수 그리드(메인 조회,서브는 CRUD)
+		DUAL_GRID3 : "DUAL_GRID3", //복수 그리드(메인 조회,서브1 CRUD, 서브2 조회)
 		SINGLE_GRID_FORM : "SINGLE_GRID_FORM", //단일 그리드 와 폼 
 		DUAL_GRID_FORM : "DUAL_GRID_FORM", //복수 그리드와 폼(메인 CRUD 폼, 서브 조회)
 		DUAL_GRID_FORM2 : "DUAL_GRID_FORM2" //복수 그리드(메인 조회, 서브 CRUD와 폼)	
@@ -4356,6 +4356,83 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						else if(i==gcm.BTN.CLOSE.nm){
 							item.cbFnc = function(){
 								var sub = autoOpt.Sub1;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.closeTab(main.grid, sub.grid);
+								}
+								else{
+									com.closeTab(main.grid);
+								}
+							}
+						}
+					}
+					else if( type == gcm.DISP_TYPE.DUAL_GRID3){ //듀얼 그리드
+						if(i == gcm.BTN.SEARCH.nm){
+							item.cbFnc = function(){
+								var sub = autoOpt.Sub2;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.searchDualGrid(main.grid, sub.grid, null, main.srchSbm, main.savSbm, main.allSavSbm, sub.savSbm)
+								}
+								else{
+									com.searchGrid(main.grid, main.srchSbm , main.savSbm);
+								}
+							}
+						}
+						else if(i == gcm.BTN.ADD.nm){
+							item.cbFnc = function(){
+								var sub = autoOpt.Sub2;
+								if ((typeof main.keySbm !== "undefined")&&(main.keySbm !== null)){
+									$p.executeSubmission(sub.keySbm);
+								}
+								else{
+									com.addGrid2(sub.grid,sub.focusColumn);
+								}
+							}
+						}
+						else if(i == gcm.BTN.DEL.nm){
+							item.cbFnc = function(){
+								var sub = autoOpt.Sub2;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.delGrid(sub.grid);
+								}
+							}
+						}
+						else if(i==gcm.BTN.CNL.nm){
+							item.cbFnc = function(){
+								var sub = autoOpt.Sub2;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.cancelGrid(sub.grid);
+								}
+							}
+						}
+						else if(i==gcm.BTN.SAVE.nm){
+							item.cbFnc = function(){
+								var sub = autoOpt.Sub2;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.saveGrid(sub.grid, sub.savSbm);
+								}
+							}
+						}
+						else if(i==gcm.BTN.EXL_I.nm){
+							item.cbFnc = function(){
+								var sub = autoOpt.Sub2;
+								com.exlUploadGrid(sub.grid);
+							}
+						}
+						else if(i==gcm.BTN.EXL.nm){
+							item.cbFnc = function(){
+								var sub = autoOpt.Sub2;
+								com.exlGrid(sub.grid);
+							}
+						}
+						else if(i==gcm.BTN.EXL_F.nm){
+							item.cbFnc = function(){
+								var sub = autoOpt.Sub2;
+								com.exlFrmGrid(sub.grid);
+							}
+						}
+						else if(i==gcm.BTN.CLOSE.nm){
+							item.cbFnc = function(){
+								var sub = autoOpt.Sub2;
 								if ((typeof sub !== "undefined")&&(sub !== null)){
 									com.closeTab(main.grid, sub.grid);
 								}

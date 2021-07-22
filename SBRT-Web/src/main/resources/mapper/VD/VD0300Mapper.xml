@@ -84,14 +84,15 @@
 					,DATE_FORMAT(APLY_DATE, '%Y%m%d') APLY_DATE					
 					,WORK_TYPE
 					,WORK_AMT
-					REMARK
+					,REMARK
 	FROM			BMS_DVC_HIS
 	
-	WHERE			DVC_ID = #{DVC_ID}					
+	WHERE			DVC_ID = #{DVC_ID}
+	ORDER BY		SN					
 </select>
 
 <select id="VD0300G3R0" resultType="Map">
-	SELECT 			DATE_FORMAT(SEND_DATE,'%Y-%m-%d %h:%i:%s') DATE_FORMAT
+	SELECT 			DATE_FORMAT(SEND_DATE,'%Y-%m-%d %h:%i:%s') SEND_DATE
 					,MNG_ID
 					,DVC_COND
 					,VER_INFO
@@ -102,68 +103,51 @@
 	AND				DVC_COND = 'DC021'
 </select>
 
-<select id="VD0300G1K0" resultType="Map">
-	SELECT CONCAT('DV', LPAD(NEXTVAL(SEQ_BMS_DVC_INFO_0), 8, '0')) AS 'SEQ'
-</select>
 
-<insert id="VD0300G1I0" parameterType="Map">
-	INSERT INTO		BMS_DVC_INFO	
+<insert id="VD0300G2I0" parameterType="Map">
+	INSERT INTO		BMS_DVC_HIS	
 					(
-						VHC_ID
-						,DVC_ID
-						,ORG_ID
-						,DVC_KIND
-						,INST_LOC
-						,DVC_IP
-						,MNG_ID						
-<!-- 					,MODEL_NM	
-						,DVC_TYPE						
-						,DEV_SERIAL_NO -->
-						,USE_YN
+						DVC_ID
+						,SN
+						,APLY_DATE
+						,WORK_TYPE
+						,WORK_AMT
 						,REMARK
 						,UPD_DTM
 						,UPD_ID
 					)
 	VALUES			(
-						#{VHC_ID}
-						,#{DVC_ID}
-						,#{ORG_ID}
-						,#{DVC_KIND}
-						,#{INST_LOC}
-						,#{DVC_IP}
-						,#{MNG_ID}
-<!-- 					,#{MODEL_NM}
-						,#{DVC_TYPE}						
-						,#{DEV_SERIAL_NO} -->
-						,'Y'
+						#{DVC_ID}
+						,NEXTVAL(SEQ_BMS_DVC_HIS_0)
+						,STR_TO_DATE(#{APLY_DATE}, '%Y%m%d')
+						,#{WORK_TYPE}
+						,#{WORK_AMT}
 						,#{REMARK}
 						,#{UPD_DTM}
-						,#{SSN_USER_ID}					
+						,#{SSN_USER_ID}			
 					)
 	
 	
 						
 </insert>
 
-<update id="VD0300G1U0" parameterType="Map">
-	UPDATE			BMS_DVC_INFO
-	SET				VHC_ID = #{VHC_ID}
-					,ORG_ID = #{ORG_ID}
-					,DVC_KIND = #{DVC_KIND}
-					,INST_LOC = #{INST_LOC}
-					,DVC_IP = #{DVC_IP}
-					,MNG_ID = #{MNG_ID}	
-					,USE_YN = 'Y'
+<update id="VD0300G2U0" parameterType="Map">
+	UPDATE			BMS_DVC_HIS
+	SET				APLY_DATE = STR_TO_DATE(#{APLY_DATE}, '%Y%m%d')
+					,WORK_TYPE = #{WORK_TYPE}
+					,WORK_AMT = #{WORK_AMT}
 					,REMARK = #{REMARK}
 					,UPD_DTM = #{UPD_DTM}
 					,UPD_ID = #{SSN_USER_ID}
 					
-	WHERE			DVC_ID = #{DVC_ID}							 	
+	WHERE			DVC_ID = #{DVC_ID}
+	AND				SN = #{SN}							 	
 </update>
 
-<delete id="VD0300G1D0" parameterType="Map">
-	DELETE FROM 	BMS_DVC_INFO
+<delete id="VD0300G2D0" parameterType="Map">
+	DELETE FROM 	BMS_DVC_HIS
 	WHERE			DVC_ID = #{DVC_ID}
+	AND				SN = #{SN}
 </delete>
 
 </mapper>

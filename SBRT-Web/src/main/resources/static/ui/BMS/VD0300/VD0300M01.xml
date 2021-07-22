@@ -103,7 +103,7 @@
 						<w2:column id="SN" name="순번" dataType="text"></w2:column>
 						<w2:column id="APLY_DATE" name="적용일" dataType="date"></w2:column>
 						<w2:column id="WORK_TYPE" name="작업유형" dataType="text"></w2:column>
-						<w2:column id="WORK_AMT" name="작업비용" dataType="text"></w2:column>
+						<w2:column id="WORK_AMT" name="작업비용" dataType="number" useFilter="" valueType=""></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
@@ -138,10 +138,6 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_VD0300G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_VD0300G1K0" ref="" target="data:json,dma_SEQ_BMS_DVC_INFO_0" action="/vd/VD0300G1K0" method="post"
-				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="scwin.sub_VD0300G1K0_submitdone" ev:submiterror="" abortTrigger="">
-			</xf:submission>
 			<xf:submission id="sub_VD0300SHI0" ref="" target="data:json,dlt_searchitem" action="/vd/VD0300SHI0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
@@ -150,17 +146,17 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="scwin.sub_VD0300G1R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_VD0300G1S0" ref='data:json,{"action":"modified","id":"dlt_BMS_DVC_INFO"}' target="data:json,dma_result"
-				action="/vd/VD0300G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_VD0300G1S0_submitdone" ev:submiterror=""
+			<xf:submission id="sub_VD0300G1S0" ref='' target=""
+				action="" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_VD0300SHI1" ref="" target="data:json,dlt_searchitem2" action="/vd/VD0300SHI1" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_VD0300G2S0" ref="" target="" action="" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
+			<xf:submission id="sub_VD0300G2S0" ref='data:json,{"action":"modified","id":"dlt_BMS_DVC_HIS"}' target="data:json,dma_result" action="/vd/VD0300G2S0" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_VD0300G2S0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_VD0300G2R0" ref="data:json,dma_subsearch2" target="data:json,dlt_BMS_DVC_HIS" action="/vd/VD0300G2R0"
@@ -171,28 +167,22 @@
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_VD0300G3S0" ref="" target="" action="" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
-				ev:submiterror="" abortTrigger="">
-			</xf:submission>
 		</xf:model>
 
-		<script type="text/javascript">
-	kakao.maps.load(function() {
-		// v3가 모두 로드된 후, 이 콜백 함수가 실행됩니다.
-		var map = new kakao.maps.Map(node, options);
-	});
-	</script>
 	<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
 		var autoOptions = {
-			Main : { grid : VD0300G0, srchSbm : sub_VD0300G0R0, srchGrp : pgm_header, keyColumn : "VHC_ID",
-					 focusColumn : "VHC_NO", name :  "차량 목록"},
-			Sub1 : { grid : VD0300G1, srchSbm : sub_VD0300G1R0, savSbm : sub_VD0300G1S0, keyColumn : "DVC_ID",  keySbm : sub_VD0300G1K0, name :  "장치 목록"},
+			Main : { grid : VD0300G0, srchSbm : sub_VD0300G0R0, srchGrp : pgm_header, keyColumn : "VHC_ID", focusColumn : "VHC_NO", name :  "차량 목록"},
+			Sub1 : { grid : VD0300G1, srchSbm : sub_VD0300G1R0, savSbm : sub_VD0300G1S0, keyColumn : "DVC_ID", name :  "장치 목록"},
 			Sub2 : { grid : VD0300G2, srchSbm : sub_VD0300G2R0, savSbm : sub_VD0300G2S0, name :  "유지보수 이력"},
 			Sub3 : { grid : VD0300G3, srchSbm : sub_VD0300G3R0, name :  "장애발생 이력"}
 		 };
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions);
+		
+		var mainOptions = {
+			ADD : scwin.btn_add_onclick
+		};
+		 
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID3, autoOptions, mainOptions);
 		
 		var codeOptions = [ {code : "AREA", compID : "VD0300G0:AREA" },
 							{code : "VHC_KIND", compID : "VD0300G0:VHC_KIND"},
@@ -221,20 +211,9 @@
 		com.setFocusedCell(VD0300G0, "VHC_ID");
 	};
 	
-	//그리드 저장 후 조회
-	scwin.sub_VD0300G1S0_submitdone = function(e) {
-		com.saveDone(VD0300G1,sub_VD0300G1R0);
-	};
-	
-	//키값 추가 submission done
-	scwin.sub_VD0300G1K0_submitdone = function(e) {
-		com.addGridForm(VD0300G1, VD0300F0, dma_SEQ_BMS_DVC_INFO_0, "DVC_ID", "DVC_ID");
-		
-		//VHC_ID 가져와서 SET
-		var focusIndex = VD0300G1.getFocusedRowIndex();
-		dlt_BMS_DVC_INFO.setCellData(focusIndex, "VHC_ID", dlt_BMS_VHC_MST.getCellData(VD0300G0.getFocusedRowIndex(), "VHC_ID"));
-
-	};	
+//	scwin.sub_VD0300G1S0_submitdone = function(e) {
+//		com.saveDone(VD0300G1,sub_VD0300G1R0);
+//	};
 	
 	scwin.sub_VD0300G0S0_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
@@ -289,6 +268,16 @@
 		//장애발생 이력으로 변경시 setCode (임시)
 		var codeOption = [{code : "DVC_COND", compID : "VD0300G3:DVC_COND"}];
 		com.setCommonDtl(codeOption);
+	};
+	
+	scwin.btn_add_onclick = function() {
+		var dvcID = dma_subsearch2.get("DVC_ID");
+		com.addGrid2(VD0300G2, "APLY_DATE");
+		dlt_BMS_DVC_HIS.setCellData(VD0300G2.getFocusedRowIndex(), "DVC_ID", dvcID);
+	}
+	
+	scwin.sub_VD0300G2S0_submitdone = function(e) {
+		com.saveDone(VD0300G2,sub_VD0300G2R0);		
 	};
 	]]></script>
 	</head>
@@ -542,6 +531,7 @@
 								</w2:row>
 							</w2:footer>							
 						</w2:gridView>
+						
 					</xf:group>
 					<xf:group id="" class="horizontal_line">
 					</xf:group>						
@@ -557,13 +547,13 @@
 									<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 									<w2:header style="" id="header1">
 										<w2:row style="" id="row1">
-											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+											<w2:column removeBorderStyle="false" width="123" inputType="text" style="height:20px"
 												id="column4" value="적용일" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+											<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px"
 												id="column3" value="작업유형" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+											<w2:column removeBorderStyle="false" width="126" inputType="text" style="height:20px"
 												id="column2" value="작업비용" blockSelect="false" displayMode="label">
 											</w2:column>
 											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
@@ -573,13 +563,13 @@
 									</w2:header>
 									<w2:gBody style="" id="gBody1">
 										<w2:row style="" id="row2">
-											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+											<w2:column removeBorderStyle="false" width="123" inputType="text" style="height:20px"
 												id="APLY_DATE" value="" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px"
+											<w2:column removeBorderStyle="false" width="120" inputType="select" style="height:20px"
 												id="WORK_TYPE" value="" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+											<w2:column removeBorderStyle="false" width="126" inputType="text" style="height:20px"
 												id="WORK_AMT" value="" blockSelect="false" displayMode="label">
 											</w2:column>
 											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="REMARK"
@@ -591,7 +581,7 @@
 										<w2:row id="row3" style="">
 											<w2:column blockSelect="false" colSpan="14" displayMode="label"
 												expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" id="column42" inputType="expression" removeBorderStyle="false"
-												style="height:20px;" textAlign="left" width="2777">
+												style="height:20px;" textAlign="left" width="2936">
 											</w2:column>
 										</w2:row>
 									</w2:footer>									
@@ -606,16 +596,16 @@
 									<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 									<w2:header style="" id="header1">
 										<w2:row style="" id="row1">
-											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+											<w2:column removeBorderStyle="false" width="129" inputType="text" style="height:20px"
 												id="column5" value="전송일시" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+											<w2:column removeBorderStyle="false" width="107" inputType="text" style="height:20px"
 												id="column4" value="관리아이디" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+											<w2:column removeBorderStyle="false" width="82" inputType="text" style="height:20px"
 												id="column3" value="장치상태" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+											<w2:column removeBorderStyle="false" width="83" inputType="text" style="height:20px"
 												id="column2" value="버전정보" blockSelect="false" displayMode="label">
 											</w2:column>
 											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
@@ -625,16 +615,16 @@
 									</w2:header>
 									<w2:gBody style="" id="gBody1">
 										<w2:row style="" id="row2">
-											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+											<w2:column removeBorderStyle="false" width="129" inputType="text" style="height:20px"
 												id="SEND_DATE" value="" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="MNG_ID"
+											<w2:column removeBorderStyle="false" width="107" inputType="text" style="height:20px" id="MNG_ID"
 												value="" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px"
+											<w2:column removeBorderStyle="false" width="82" inputType="select" style="height:20px"
 												id="DVC_COND" value="" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+											<w2:column removeBorderStyle="false" width="83" inputType="text" style="height:20px"
 												id="VER_INFO" value="" blockSelect="false" displayMode="label">
 											</w2:column>
 											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="REMARK"
@@ -646,7 +636,7 @@
 										<w2:row id="row3" style="">
 											<w2:column blockSelect="false" colSpan="14" displayMode="label"
 												expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" id="column42" inputType="expression" removeBorderStyle="false"
-												style="height:20px;" textAlign="left" width="2777">
+												style="height:20px;" textAlign="left" width="2898">
 											</w2:column>
 										</w2:row>
 									</w2:footer>								
