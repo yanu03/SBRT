@@ -16,7 +16,13 @@ public interface PI0503Mapper {
 	
 	public int PI0503G1I0(Map param);
 	
+	public int PI0503G1I1(Map param); //예약결과 정보 insert
+	
 	public int PI0503G1D0(Map param);
 	
 	/*public int PI0503G1U0(Map param);*/
+	
+	
+	//영상 playlist 생성
+	List<Map<String, Object>> makePlayList(String value);
 }

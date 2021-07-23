@@ -53,7 +53,12 @@
 		order by a.VHC_ID		
 	</select>
 	
-	<insert id="PI0503G1I0" parameterType="Map">
+	<insert id="PI0503G1I0" parameterType="Map">	
+	
+		<selectKey keyProperty="RSV_ID" resultType="String" order="BEFORE">
+    		SELECT CONCAT('RV', LPAD(NEXTVAL(SEQ_BMS_VDO_RSV_INFO_0), 8, '0')) AS RSV_ID
+    	</selectKey>
+	
 		insert into BMS_VDO_RSV_INFO
 				(
 					RSV_ID,
@@ -65,9 +70,7 @@
 				)	
 				   
 		values (
-					(
-						SELECT CONCAT('RV', LPAD(NEXTVAL(SEQ_BMS_VDO_RSV_INFO_0), 8, '0')) AS RSV_ID
-					), 
+					#{RSV_ID},
 					#{MNG_ID},
 					STR_TO_DATE(#{RSV_DT}, '%Y%m%d'),
 					#{ORGA_ID},
@@ -75,6 +78,21 @@
 					#{SSN_USER_ID}
 				)
 	</insert>
+	
+	
+	<insert id="PI0503G1I1" parameterType="Map">
+		INSERT INTO
+			BMS_VDO_RSV_RST_INFO(
+				  RSV_ID
+				, MNG_ID
+				, COMPLETE_YN
+				)
+			VALUES(
+				#{RSV_ID}
+				, #{MNG_ID}
+				, 'N'
+			)
+	</insert>	
 
 <!-- 	<update id="PI0503G1U0" parameterType="Map">
 		update BMS_VHC_MST
@@ -106,6 +124,22 @@
 		from BMS_VDO_RSV_INFO
 		where RSV_ID = #{RSV_ID}
 	</delete>
+	
+	
+	<select id="makePlayList" parameterType="String" resultType="Map">
+		SELECT
+			  IF(VINFO.FILE_TYPE = 'FT001', 'V', 'I') AS VIDEO_TYPE
+			, IF(VINFO.FILE_TYPE = 'FT001', CONCAT(VINFO.VDO_ID, '.mp4'), CONCAT(VINFO.VDO_ID, '.jpg')) AS VIDEO_FILE
+			, DATE_FORMAT(VINFO.PLAY_ST_DT, '%Y%m%d') AS PLAY_ST_DT
+			, DATE_FORMAT(VINFO.PLAY_ED_DT, '%Y%m%d') AS PLAY_ED_DT
+			, VINFO.IMG_PLAY_TM AS RUN_TIME
+		FROM
+			BMS_VDO_ORGA_LIST OLIST
+			LEFT JOIN BMS_VDO_INFO VINFO ON OLIST.VDO_ID = VINFO.VDO_ID
+		WHERE
+			OLIST.ORGA_ID = #{orgaId}
+		ORDER BY OLIST.SN
+	</select>	
 
 
 </mapper>

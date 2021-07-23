@@ -44,4 +44,25 @@ public class Constants {
 	
 	//공공데이터포털 노선검색 KEY
 	public static String KEY_CODE_OPENAPI_ROUT = "KEY01";
+	
+		
+	//통플 연동 관련
+	//통플ID 자리수
+	public static int IMP_ID_DIGIT = 10 ;
+	
+    public static class CSVForms {
+    	public static final String ROW_SEPARATOR			= "\r\n";
+    	public static final String COMMA					= ",";
+    	public static final String VOICE_PLAYLIST_TITLE		= "Seq_No,Voice_Code,Audio_FileName,Start_Date,Expire_Date,Text (256Byte),ild\r\n";
+    	
+    	public static final String ROUTE_VERSION			= "VERSION:";
+    	public static final String ROUTE_LIST				= "FILE_NAME,VERSION,ROUTE_NO,ROUTE_NAME_KO,ROUTE_NM_EN,ROUT_SHAPE,DAY1,DAY2,SATDAY1,SATDAY2,SUNDAY1,SUNDAY2,NAME";
+    	public static final String ROUTE_BUSSTOP_TITLE		= "NODE_ID,NODE_NAME,TYPE,RANGE,X,Y,NODE_ENAME,TRANSIT_CODE";
+    	public static final String ROUTE_NODELIST_TITLE		= "NODE_ID,NODE_NAME,RANGE,X,Y";
+    	public static final String ROUTE_TITLE				= "NODE_ID";
+    	
+    	public static final String VIDEO_PLAY_LIST			="Seq_No,Video_Type,Video_File,Start_Date,Expire_Date,Runtime";
+    	public static final String ELEC_ROUTER				="TIME_KO,TIME_EN,CATEGORY,FRAME,FONT";
+    }
+	
 }
