@@ -5,13 +5,21 @@ public class Constants {
 	public static final Integer SYSTEM_BRT = 2; //차량운행관리
 	public static final Integer SYSTEM_ALL = 3; //전체
 	
-	public static final String NODE_TYPE_1 = "NT01"; //교차로
-	public static final String NODE_TYPE_2 = "NT02"; //정류소
-	public static final String NODE_TYPE_3 = "NT03"; //일반노드
-	public static final String NODE_TYPE_4 = "NT04"; //차고지
-	public static final String NODE_TYPE_5 = "NT05"; //버텍스
-	public static final String NODE_TYPE_6 = "NT06"; //음성노드
-	public static final String NODE_TYPE_7 = "NT07"; //교통진출입점
+	public static final String NODE_TYPE_CROSS = "NT01"; //교차로
+	public static final String NODE_TYPE_BUSSTOP = "NT02"; //정류소
+	public static final String NODE_TYPE_NORMAL = "NT03"; //일반노드
+	public static final String NODE_TYPE_GARAGE = "NT04"; //차고지
+	public static final String NODE_TYPE_VERTEX = "NT05"; //버텍스
+	public static final String NODE_TYPE_SOUND = "NT06"; //음성노드
+	public static final String NODE_TYPE_ENTRY = "NT07"; //교통진출입점
+	
+	public static final String MOCK_NODE_TYPE_CROSS = "101"; //교차로
+	public static final String MOCK_NODE_TYPE_END = "102"; //시종점
+	public static final String MOCK_NODE_TYPE_CHANGE = "103"; //변화점
+	public static final String MOCK_NODE_TYPE_FAC = "104"; //도로시설물
+	public static final String MOCK_NODE_TYPE_BOUNDARY = "105"; //행정경계
+	public static final String MOCK_NODE_TYPE_CONNECTION = "106"; //접속부
+	public static final String MOCK_NODE_TYPE_IC = "107"; //IC 및 JC
 	
 	/**
 	 *

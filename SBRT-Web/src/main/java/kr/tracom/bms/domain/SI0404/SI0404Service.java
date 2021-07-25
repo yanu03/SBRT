@@ -36,10 +36,6 @@ public class SI0404Service extends ServiceSupport {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
 		return si0404Mapper.SI0404G0R0(map);
 	}
-
-	public Map SI0404G0K0() throws Exception {
-		return si0404Mapper.SI0404G0K0(); 
-	}
 	
 	public List SI0404SHI0() throws Exception {
 		return si0404Mapper.SI0404SHI0();
@@ -52,20 +48,46 @@ public class SI0404Service extends ServiceSupport {
 		
 		List<Map<String, Object>> param = getSimpleList("dlt_BMS_ROUT_NODE_CMPSTN");
 		try {
+			//기존 노선노드테이블, 노선링크테이블 삭제
+			if(param.size()>0) {
+				si0404Mapper.SI0404G1DA0(param.get(0));
+				si0404Mapper.SI0404G1DA1(param.get(0));
+			}
 			
-			if(param.size()>0)si0404Mapper.SI0404G1DA0(param.get(0));
-			
-			for (int i = 0; i < param.size(); i++) {
+			for (int i = 0; i < param.size(); i++) { //노드 생성
 				Map data = (Map) param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("C")) {
+					
+					if(data.get("NODE_ID")==null||((String)data.get("NODE_ID")).isEmpty()) {
+						Map key = si0404Mapper.SI0404G1K0();
+						data.put("NODE_ID",key.get("SEQ"));
+					}
+					
+					if(i<param.size()-1)
+					{
+						if(data.get("LINK_ID")==null||((String)data.get("LINK_ID")).isEmpty()) {//라우트와누드 구성에 링크 ID를 넣기 위해 미리 생서함
+							Map key = si0404Mapper.SI0404G1K1();
+							data.put("LINK_ID",key.get("SEQ"));
+						}
+					}
+					data.put("NODE_SN",(i+1));
 					iCnt += si0404Mapper.SI0404G1I0(data);
-				} else if (rowStatus.equals("U")) {
-					uCnt += si0404Mapper.SI0404G1U0(data);
-				} else if (rowStatus.equals("D")) {
-					dCnt += si0404Mapper.SI0404G1D0(data);
+					
 				} 
-			}			
+			}
+			for (int i = 0; i < param.size()-1; i++) { //링크 생성
+				Map data = (Map) param.get(i);
+				String rowStatus = (String) data.get("rowStatus");
+				if (rowStatus.equals("C")) {
+						data.put("LINK_SN",(i+1));
+						data.put("ST_NODE_ID",param.get(i).get("NODE_ID"));
+						data.put("ED_NODE_ID",param.get(i+1).get("NODE_ID"));
+						String linkNm = param.get(i).get("NODE_NM") + "-" + param.get(i+1).get("NODE_NM");
+						data.put("LINK_NM",linkNm);
+						si0404Mapper.SI0404G1I1(data);
+				} 
+			}	
 		} catch(Exception e) {
 			if (e instanceof DuplicateKeyException)
 			{
@@ -103,7 +125,7 @@ public class SI0404Service extends ServiceSupport {
 		
 		
 		if(map.get("NODE_TYPE") == null || ((String)map.get("NODE_TYPE")).isEmpty() 
-				|| Constants.NODE_TYPE_3.equals(map.get("NODE_TYPE"))){
+				|| Constants.NODE_TYPE_NORMAL.equals(map.get("NODE_TYPE"))){
 			//일반 노드 처리
 			param.put("CO_CD", Constants.INTG_URL);
 			param.put("DL_CD", Constants.URL_CODE_SEJONG_ROUT);
@@ -114,7 +136,7 @@ public class SI0404Service extends ServiceSupport {
 		}
 		
 		if(map.get("NODE_TYPE") == null || ((String)map.get("NODE_TYPE")).isEmpty() 
-				|| Constants.NODE_TYPE_2.equals(map.get("NODE_TYPE"))){
+				|| Constants.NODE_TYPE_BUSSTOP.equals(map.get("NODE_TYPE"))){
 			//공공데이터 정류소 처리
 			String routId = "SJB" +  map.get("INT_ROUT_ID");
 			
