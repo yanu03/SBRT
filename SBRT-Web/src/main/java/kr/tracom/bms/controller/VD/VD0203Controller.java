@@ -31,6 +31,20 @@ public class VD0203Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/vd/VD0203G0S0")
+	public @ResponseBody Map<String, Object> VD0203G0S0() throws Exception {
+		Map map = vd0203Service.VD0203G0S0();
+		result.setData("dma_result", map);
+		return result.getResultSave();
+	}
+	
+	/*@RequestMapping("/vd/VD0203G0S0")
+	public @ResponseBody Map<String, Object> PI0501G0S0() throws Exception {
+		Map map = pi0501Service.PI0501G0S0();
+		result.setData("dma_result", map);
+		return result.getResultSave();
+	}*/
+	
 	/*@RequestMapping("/vd/VD0100G0R0")
 	public @ResponseBody Map<String, Object> VD0100G0R0() throws Exception {
 		result.setData("dlt_BMS_VHC_MST", vd0100Service.VD0100G0R0());

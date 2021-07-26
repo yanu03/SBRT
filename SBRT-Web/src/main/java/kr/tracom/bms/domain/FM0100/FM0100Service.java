@@ -18,47 +18,54 @@ import kr.tracom.util.Result;
 public class FM0100Service extends ServiceSupport {
 	
 	@Autowired
-	private VD0100Mapper vd0100Mapper;
+	private FM0100Mapper fm0100Mapper;
 	
-	/*public List VD0100G0R0() throws Exception {
+	public List FM0100G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return vd0100Mapper.VD0100G0R0(map);
+		return fm0100Mapper.FM0100G0R0(map);
 	}
 
-	public List VD0100SHI0() throws Exception {
-		return vd0100Mapper.VD0100SHI0();
+	
+	public List FM0100SHI0() throws Exception {
+		return fm0100Mapper.FM0100SHI0();
 	}
 	
-	public List VD0100SHI1() throws Exception {
-		return vd0100Mapper.VD0100SHI1();
-	}
-	
-	public List VD0100G1R0() throws Exception {
+	public List FM0100G1R0() throws Exception {
 		// TODO Auto-generated method stub
 		Map param = getSimpleDataMap("dma_subsearch");
-		return vd0100Mapper.VD0100G1R0(param);
-	}
-
-	public Map VD0100G1K0() throws Exception {
-		return vd0100Mapper.VD0100G1K0(); 
+		return fm0100Mapper.FM0100G1R0(param);
 	}
 	
-	public Map VD0100G1S0() throws Exception {
+	
+	public List FM0100SHI1() throws Exception {
+		return fm0100Mapper.FM0100SHI1();
+	}
+	
+	public List FM0100SHI2() throws Exception {
+		return fm0100Mapper.FM0100SHI2();
+	}
+	
+	public Map FM0100G1K0() throws Exception {
+		return fm0100Mapper.FM0100G1K0(); 
+	}
+	
+	
+	public Map FM0100G1S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;		
 		
-		List<Map<String, Object>> param = getSimpleList("dlt_BMS_DVC_INFO");
+		List<Map<String, Object>> param = getSimpleList("dlt_BMS_FCLT_INFO");
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("C")) {
-					iCnt += vd0100Mapper.VD0100G1I0(data);
+					iCnt += fm0100Mapper.FM0100G1I0(data);
 				} else if (rowStatus.equals("U")) {
-					uCnt += vd0100Mapper.VD0100G1U0(data);
+					uCnt += fm0100Mapper.FM0100G1U0(data);
 				} else if (rowStatus.equals("D")) {
-					dCnt += vd0100Mapper.VD0100G1D0(data);
+					dCnt += fm0100Mapper.FM0100G1D0(data);
 				} 
 			}			
 		} catch(Exception e) {
@@ -78,7 +85,7 @@ public class FM0100Service extends ServiceSupport {
 		return result;		
 		
 		
-	}*/
+	}
 
 	
 
