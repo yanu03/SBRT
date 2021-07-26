@@ -1,7 +1,6 @@
 //티맵용 전역변수
 var TMAP = {
 	map : {},
-	marker : {},
 	polyline : {},
 	markers : [],
 	markers_user : [],
@@ -13,28 +12,20 @@ var TMAP = {
 	
 	// 노드 드로잉 배열
 	nodes : [],
-	draggable : false
+	draggable : false,
+	dispCheck : ""
 }
 
 var tmapInfo = [];
-
-var map, marker, polyline;
-var markers = [];
-var markers_user = [];
-var infoWindow = null;
-var infoArr = [];
-
-// 반경 표시용 원 배열
-var circles = []; 
-
-// 노드 드로잉 배열
-var nodes = [];
 
 // 제한속도
 var limitSpeed;
 
 // 정류장 노드 타입
-var busstopNodeType = "NT02";
+var nodeType_cross = "NT01";
+var nodeType_busstop = "NT02";
+var nodeType_normal = "NT03";
+var nodeType_vertex = "NT05";
 
 // 음성 편성 노드 타입
 var orgaNodeType;
@@ -49,7 +40,6 @@ var maxNodeCnt = 800;
 	
 /**티맵 시작**/
 function initTmap(mapId,options) {
-	debugger;
 	var map = new Tmapv2.Map(mapId,  
 	{
 		center: new Tmapv2.LatLng(36.502212, 127.256300), // 지도 초기 좌표
@@ -67,7 +57,7 @@ function initTmap(mapId,options) {
 	tmapInfo[mapId] = TMAP;
 	tmapInfo[mapId].map=map;
 	
-	initDisplay(mapId);
+	//initDisplay(mapId);
 
 	return map;
 } 
@@ -101,12 +91,12 @@ function removeMarkers_user(mapId) {
 function mapMarker(mapId, lat, lng){
 	removeMarkers(mapId);
 	
-	tmapInfo[mapId].marker = new Tmapv2.Marker({
+	var marker = new Tmapv2.Marker({
 		position: new Tmapv2.LatLng(lat, lng), //Marker의 중심좌표 설정.
 		map: tmapInfo[mapId].map //Marker가 표시될 Map 설정..
 	});
 	tmapInfo[mapId].map.setCenter(new Tmapv2.LatLng(lat,lng));
-	tmapInfo[mapId].markers.push(tmapInfo[mapId].marker);
+	tmapInfo[mapId].markers.push(marker);
 }
 
 /**선그리기**/
@@ -170,21 +160,20 @@ function deleteLine(mapId){
 /**마커여러개추가**/
 function addMarkers(mapId, lat_arr, lng_arr, id_arr) {
 	for(var i=0; i < lat_arr.length; i++){
-		tmapInfo[mapId].marker = new Tmapv2.Marker({
+		var marker = new Tmapv2.Marker({
 			position: new Tmapv2.LatLng(lat_arr[i], lng_arr[i]), //Marker의 중심좌표 설정.
 			//label: id_arr[i]//, //Marker의 라벨.
 			label: "<span style='background-color: #46414E; color:white; padding: 3px;'>" + id_arr[i] + "</span>"
 			//icon:"http://tmapapi.sktelecom.com//resources/images/common/pin_car.png"
 		});
-		tmapInfo[mapId].marker.setMap(tmapInfo[mapId].map); //Marker가 표시될 Map 설정.
-		tmapInfo[mapId].markers.push(tmapInfo[mapId].marker);
+		marker.setMap(tmapInfo[mapId].map); //Marker가 표시될 Map 설정.
+		tmapInfo[mapId].markers.push(marker);
 	}
 }
 
 /**노드마커 추가**/
 function addMarkerInter(mapId, data, grid, idx) {
-	debugger;
-	tmapInfo[mapId].marker = new Tmapv2.Marker({
+	var marker = new Tmapv2.Marker({
 		position : new Tmapv2.LatLng(data.GPS_Y, data.GPS_X), // Marker의 중심좌표 // 설정.
 		label : data.label, // Marker의 라벨.
 		map : tmapInfo[mapId].map,
@@ -192,18 +181,18 @@ function addMarkerInter(mapId, data, grid, idx) {
 		draggable : data.draggable,
 	});
 		
-	tmapInfo[mapId].marker.addListener("click", function(e) {
+	marker.addListener("click", function(e) {
 			grid.setFocusedCell(idx,"NODE_ID");
 			/*ax5.util.search(grid.list, function(){
 				return this["seq"] == data.seq;
 			});*/
 			data.click({
-				marker: tmapInfo[mapId].marker,
+				marker: marker,
 				nodeId: data.NODE_ID,
 				index: data.index
 			});
 		});
-	tmapInfo[mapId].markers.push(tmapInfo[mapId].marker);
+	tmapInfo[mapId].markers.push(marker);
 }
 /**통통튀는 마커 생성**/
 function addMarkerAni(lat, lng, id) {
@@ -215,7 +204,7 @@ function addMarkerAni(lat, lng, id) {
 	
 	var func = function() {
 		//Marker 객체 생성.
-		tmapInfo[mapId].marker = new Tmapv2.Marker({
+		var marker = new Tmapv2.Marker({
 			position: new Tmapv2.LatLng(lat, lng), //Marker의 중심좌표 설정.
 			draggable: true, //Marker의 드래그 가능 여부.
 			animation: aniType, //Marker 애니메이션.
@@ -379,7 +368,7 @@ function getDistanceToLine2(x, y, x1, y1, x2, y2) {
 /***************************** BM0405 *************************************/
 function addMarker(mapId, data) {
 	
-	tmapInfo[mapId].marker = new Tmapv2.Marker({
+	var marker = new Tmapv2.Marker({
 		position: new Tmapv2.LatLng(data.GPS_Y, data.GPS_X), // Marker의 중심좌표 설정.
 		label: data.label, // Marker의 라벨.
 		map: tmapInfo[mapId].map,
@@ -388,22 +377,22 @@ function addMarker(mapId, data) {
 	});
 	
 	if(data.click) {
-		tmapInfo[mapId].marker.addListener("click", function(e) {
+		marker.addListener("click", function(e) {
 			data.click({
-				marker: tmapInfo[mapId].marker,
+				marker: marker,
 				nodeId: data.nodeId,
 				index: data.index
 			});
 		});
 	}
 	
-	tmapInfo[mapId].markers.push(tmapInfo[mapId].marker);
+	tmapInfo[mapId].markers.push(marker);
 }
 
 function deleteCircle(mapId) {
 	if( tmapInfo[mapId].circles != null &&  tmapInfo[mapId].circles.length != 0) {
 		for(var i = 0; i <  tmapInfo[mapId].circles.length; i++) {
-			if(typeof  tmapInfo[mapId].circles.setMap !== "undefined") 
+			if(typeof  tmapInfo[mapId].circles[i].setMap !== "undefined") 
 				 tmapInfo[mapId].circles[i].setMap(null);
 		}
 		 tmapInfo[mapId].circles = [];
@@ -413,7 +402,7 @@ function deleteCircle(mapId) {
 function deleteNode(mapId) {
 	if( tmapInfo[mapId].nodes != null &&  tmapInfo[mapId].nodes.length != 0) {
 		for(var i = 0; i < tmapInfo[mapId].nodes.length; i++) {
-			if(typeof tmapInfo[mapId].nodes.setMap !== "undefined") 
+			if(typeof tmapInfo[mapId].nodes[i].setMap !== "undefined") 
 				tmapInfo[mapId].nodes[i].setMap(null);
 		}
 		tmapInfo[mapId].nodes = [];
@@ -421,7 +410,7 @@ function deleteNode(mapId) {
 }
 
 function getDrawingCircle(mapId, lat, lon, radius) {
-	tmapInfo[mapId].circle = new Tmapv2.Circle({
+	var circle = new Tmapv2.Circle({
 		center: new Tmapv2.LatLng(lat, lon),
 		radius: radius,
 		strokeColor: "#A872EE",
@@ -431,11 +420,11 @@ function getDrawingCircle(mapId, lat, lon, radius) {
 		map: tmapInfo[mapId].map
 	});
 	
-	return tmapInfo[mapId].circle;
+	return circle;
 }
 
 function getDrawingNode(mapId, lat, lon) {
-	tmapInfo[mapId].node = new Tmapv2.Circle({
+	var node = new Tmapv2.Circle({
 		center: new Tmapv2.LatLng(lat, lon),
 		radius: 4,
 		strokeColor: "#FF005E",
@@ -445,21 +434,26 @@ function getDrawingNode(mapId, lat, lon) {
 		map: tmapInfo[mapId].map
 	});
 	
-	return tmapInfo[mapId].node;
+	return node;
 }
 
-function returnInsertRouteInfo(lat, lon, routeData) {
+function returnInsertRouteInfo(lat, lon, routeData, curIndex) {
 	var min = 10000000;
 	var minIndex = null;
 	
 	for(var i = 0; i < routeData.length - 1; i++) {
+		if(i==curIndex)continue;
+		
+		var plusVal = 1;
+		if((i + 1)==curIndex)plusVal=2;
+			
 		var result = getDistanceToLine(
 			lat,
 			lon,
 			routeData[i].GPS_Y,
 			routeData[i].GPS_X,
-			routeData[i + 1].GPS_Y,
-			routeData[i + 1].GPS_X
+			routeData[i+plusVal].GPS_Y,
+			routeData[i+plusVal].GPS_X
 		)
 		
 		if(result.distance) {
@@ -504,9 +498,9 @@ function addPathByClick(mapId,grid,routeId,e){
 			ROUTE_ID: routeId,
 			NODE_SN: idx,
 			NODE_NM: /*routNm + */"노드_" + getCurrentDate(),
-			NODE_TYPE: 'NT12',
-			GPS_Y: lonlat.lat(),
-			GPS_X: lonlat.lng(),
+			NODE_TYPE: nodeType_normal,
+			GPS_Y: getDispGps(lonlat.lat(),7),
+			GPS_X: getDispGps(lonlat.lng(),7),
 			};
 
 	com.getGridViewDataList(grid).setRowJSON(idx, data, true);
@@ -515,22 +509,101 @@ function addPathByClick(mapId,grid,routeId,e){
 	drawRoute(mapId, grid, idx);
 }
 
+function addVertexByClick(mapId,grid,routeId,e){
+	
+	var routeData = com.getGridViewDataList(grid).getAllJSON();
+	if(routeData.length >= maxNodeCnt){
+		//com.alert ("더이상 추가할 수 없습니다.");
+		return false;
+	}
+	
+	var lonlat = e.latLng;
+	var min = 10000000;
+	var minIndex = null;
+
+	for(var i = 0; i < routeData.length - 1; i++) {
+		var result = getDistanceToLine(
+			lonlat.lat(),
+			lonlat.lng(),
+			routeData[i].GPS_Y,
+			routeData[i].GPS_X,
+			routeData[i + 1].GPS_Y,
+			routeData[i + 1].GPS_X
+		)
+		
+		if(result.distance) {
+			if(min > result.distance) {
+				min = result.distance;
+				minIndex = i;
+			}
+		}
+	}
+	
+	if(minIndex == null) {
+		axDialog.alert("선택할 수 없는 좌표입니다. 경로를 먼저 입력하세요");
+	} else {
+		var idx = minIndex + 1;;
+		
+		idx = com.getGridViewDataList(grid).insertRow(idx);
+	
+		var today = new Date();
+		var data = {
+		
+				ROUTE_ID: routeId,
+				NODE_SN: idx,
+				NODE_NM: /*routNm + */"버텍스_" + getCurrentDate(),
+				NODE_TYPE: nodeType_vertex,
+				GPS_Y: getDispGps(lonlat.lat(),7),
+				GPS_X: getDispGps(lonlat.lng(),7),
+				};
+	
+		com.getGridViewDataList(grid).setRowJSON(idx, data, true);
+		
+		//routeData = com.getGridViewDataList(grid).getAllJSON();
+		drawRoute(mapId, grid, idx, true);
+	}
+}
 function focusNode(mapId, grid,idx, draggable){
 	routeData = com.getGridViewDataList(grid).getAllJSON();
 	drawRoute(mapId, grid, idx, draggable);
 	moveMap(mapId, routeData[idx].GPS_Y, routeData[idx].GPS_X);
 }
 
-function  insertNodeAll(mapId, grid,dataList,routeId,draggable){
-	debugger;
+function  mappingNode(mapId, grid, index, dataList, draggable){
+	
+	if(dataList.length<=0)return;
+	var data = dataList[0];
+
+	if(com.getGridViewDataList(grid).getCellData(index,"NODE_TYPE")==nodeType_busstop){
+		com.getGridViewDataList(grid).setCellData(index, "STTN_ID",data.STTN_ID);
+		com.getGridViewDataList(grid).setCellData(index, "NODE_NM",data.STTN_NM);
+		com.getGridViewDataList(grid).setCellData(index, "STTN_NO",data.STTN_NO);
+	}
+	else if(com.getGridViewDataList(grid).getCellData(index,"NODE_TYPE")==nodeType_cross){
+		com.getGridViewDataList(grid).setCellData(index, "CRS_ID",data.CRS_ID);
+		com.getGridViewDataList(grid).setCellData(index, "NODE_NM",data.CRS_NM);
+	}
+	drawRoute(mapId, grid, -1, draggable);
+}
+
+function  insertNodeAll(mapId, grid,dataList,routeId,area,draggable){
+	
 	for (i = 0; i < dataList.length; i++) {
-		addNode(mapId, grid,dataList[i],routeId);
+		addNode(mapId, grid,dataList[i],routeId,area);
+	}
+	drawRoute(mapId, grid, -1, draggable);
+}
+
+function  insertStdNodeAll(mapId, grid,dataList,routeId,area,draggable){
+	
+	for (i = 0; i < dataList.length; i++) {
+		addStdNode(mapId, grid,dataList[i],routeId,area);
 	}
 	drawRoute(mapId, grid, -1, draggable);
 }
 
 //노드 추가
-function addNode(mapId, grid, data, routeId) {
+function addNode(mapId, grid, data, routeId,area) {
 	var routeData = com.getGridViewDataList(grid).getAllJSON();
 	if(com.getGridViewDataList(grid).length >= maxNodeCnt){
 		//com.alert("더이상 추가할 수 없습니다.");
@@ -546,7 +619,10 @@ function addNode(mapId, grid, data, routeId) {
 				GPS_Y: data.GPS_Y,
 				GPS_X: data.GPS_X,
 				NODE_NM: data.NODE_NM,
-				NODE_TYPE: data.NODE_TYPE
+				NODE_TYPE: data.NODE_TYPE,
+				STTN_NO: data.STTN_NO,
+				STTN_ID: data.STTN_ID,
+				AREA: area
 			};
 		
 		var idx = com.getGridViewDataList(grid).insertRow();
@@ -570,7 +646,10 @@ function addNode(mapId, grid, data, routeId) {
 						GPS_Y: data.GPS_Y,
 						GPS_X: data.GPS_X,
 						NODE_NM: data.NODE_NM,
-						NODE_TYPE: data.NODE_TYPE
+						NODE_TYPE: data.NODE_TYPE,
+						STTN_NO: data.STTN_NO,
+						STTN_ID: data.STTN_ID,
+						AREA: area
 					};
 				
 				var idx = com.getGridViewDataList(grid).insertRow();
@@ -600,7 +679,10 @@ function addNode(mapId, grid, data, routeId) {
 					GPS_Y: data.GPS_Y,
 					GPS_X: data.GPS_X,
 					NODE_NM: data.NODE_NM,
-					NODE_TYPE: data.NODE_TYPE
+					NODE_TYPE: data.NODE_TYPE,
+					STTN_NO: data.STTN_NO,
+					STTN_ID: data.STTN_ID,
+					AREA: area
 				};
 			
 			//routeData.splice(insertIndex, 0, temp);
@@ -613,17 +695,110 @@ function addNode(mapId, grid, data, routeId) {
 	
 }
 
-function moveRoute(mapId, grid, e){
+//표준노드 추가
+function addStdNode(mapId, grid, data, routeId,area) {
+	var routeData = com.getGridViewDataList(grid).getAllJSON();
+	if(com.getGridViewDataList(grid).length >= maxNodeCnt){
+		//com.alert("더이상 추가할 수 없습니다.");
+		return false;
+	}
+	
+	var min = 10000000;
+	var minIndex = null;
+	if(routeData==null||routeData.length==0||routeData.length==1){
+		var temp = {
+				ROUTE_ID: routeId,
+				MOCK_NODE_ID: data.MOCK_NODE_ID,
+				MOCK_LINK_ID: data.MOCK_LINK_ID,
+				GPS_Y: data.GPS_Y,
+				GPS_X: data.GPS_X,
+				NODE_NM: data.NODE_NM,
+				NODE_TYPE: data.NODE_TYPE,
+				AREA: area
+			};
+		
+		var idx = com.getGridViewDataList(grid).insertRow();
+		com.getGridViewDataList(grid).setRowJSON(idx, temp, true);
+		routeData = com.getGridViewDataList(grid).getAllJSON();
+	}
+	else {
+		for(var i = 0; i < routeData.length - 1; i++) {
+			var result = getDistanceToLine(
+				data.GPS_Y,
+				data.GPS_X,
+				routeData[i].GPS_Y,
+				routeData[i].GPS_X,
+				routeData[i + 1].GPS_Y,
+				routeData[i + 1].GPS_X
+			)
+			if(result==false){
+				var temp = {
+						ROUTE_ID: routeId,
+						MOCK_NODE_ID: data.MOCK_NODE_ID,
+						MOCK_LINK_ID: data.MOCK_LINK_ID,
+						GPS_Y: data.GPS_Y,
+						GPS_X: data.GPS_X,
+						NODE_NM: data.NODE_NM,
+						NODE_TYPE: data.NODE_TYPE,
+						AREA: area
+					};
+				
+				var idx = com.getGridViewDataList(grid).insertRow();
+				com.getGridViewDataList(grid).setRowJSON(idx, temp, true);
+				//routeData.splice(idx, 0, temp);
+				return;
+			}
+			if(result.distance) {
+				if(min > result.distance) {
+					min = result.distance;
+					minIndex = i;
+				}
+			}
+		}
+		
+		if(minIndex == null) {
+			//alert.alert("선택할 수 없는 좌표입니다. 경로를 먼저 입력하세요");
+		} else {
+			//isNewData = true;
+			//var seq = 0;
+			//seq = routeData[minIndex].seq + (routeData[minIndex + 1].seq - routeData[minIndex].seq) / 2;				
+			var insertIndex = minIndex + 1;
+			
+			var temp = {
+					ROUTE_ID: routeId,
+					MOCK_NODE_ID: data.MOCK_NODE_ID,
+					MOCK_LINK_ID: data.MOCK_LINK_ID,
+					GPS_Y: data.GPS_Y,
+					GPS_X: data.GPS_X,
+					NODE_NM: data.NODE_NM,
+					NODE_TYPE: data.NODE_TYPE,
+					AREA: area
+				};
+			
+			//routeData.splice(insertIndex, 0, temp);
+			
+			var idx = com.getGridViewDataList(grid).insertRow(insertIndex);
+			com.getGridViewDataList(grid).setRowJSON(idx, temp, true);
+			
+		}
+	}
+	
+}
+
+function moveRoute(mapId, grid, e,draggable){
 	var routeData = com.getGridViewDataList(grid).getAllJSON();
 	var point = e.marker.getPosition();
 	var node = $.extend(true, {}, routeData[e.index]);
 	//routeData.splice(e.index, 1);
-	com.getGridViewDataList(grid).removeRow(e.index);
-	var val = returnInsertRouteInfo(point.lat(), point.lng(),routeData);
 	
-	/*if(e.index == 0 || e.index == routeData.length){
+	var val = false;
+	
+	if(e.index == 0 || e.index == routeData.length){
 		val = true;
-	}*/
+	}
+	else {
+		val = returnInsertRouteInfo(point.lat(), point.lng(),routeData,e.index);
+	}
 	
 	if(val) {
 		var temp = {
@@ -634,13 +809,21 @@ function moveRoute(mapId, grid, e){
 		
 		temp = $.extend(true, node, temp);
 		
-		
 		//routeData.splice(val.index, 0, temp);
 		
-		var idx = com.getGridViewDataList(grid).insertRow(val.index);
-		com.getGridViewDataList(grid).setRowJSON(idx, temp, true);
+		com.getGridViewDataList(grid).removeRow(e.index);
+		
+		var idx = 0;
+		if(val==true){
+			idx = com.getGridViewDataList(grid).insertRow(e.index);
+			com.getGridViewDataList(grid).setRowJSON(idx, temp, true);
+		}
+		else {
+			idx = com.getGridViewDataList(grid).insertRow(val.index);
+			com.getGridViewDataList(grid).setRowJSON(idx, temp, true);
+		}
 
-		drawRoute(mapId, grid, routeData);
+		drawRoute(mapId, grid, idx, draggable);
 		
 		//routeData.sort(function (a,b){ return a.seq - b.seq });
 		//fnObj.gridView1.setData(routeData);
@@ -649,30 +832,30 @@ function moveRoute(mapId, grid, e){
 	} else {
 		//com.alert("선택할 수 없는 좌표입니다.");
 		
-		drawRoute(mapId, grid, routeData);
+		drawRoute(mapId, grid, e.index,draggable);
 	}
 }
 
 function drawRoute(mapId, grid, idx, draggable) {
+	
 	var list = com.getGridViewDataList(grid).getAllJSON();
 	var path = [];
 	//var map = tmapInfo[mapId].map;
 	//var polyline = tmapInfo[mapId].polyline;
 	//var nodes = tmapInfo[mapId].nodes;
 	
-	removeMarkers(mapId);
-	deleteLine(mapId);
-	deleteCircle(mapId);
-	deleteNode(mapId);
+	initDisplay(mapId);
 	
 	if(list != null && list.length != 0) {
 		for(var i = 0; i < list.length; i++) {
 			path.push(new Tmapv2.LatLng(list[i].GPS_Y, list[i].GPS_X));
 			
 			/**드래그이벤트**/
-			list[i].click = function(e) {
-				moveRoute(mapId,grid,e);
-			};
+			if(draggable){
+				list[i].click = function(e) {
+					moveRoute(mapId,grid,e,draggable);
+				};
+			}
 			
 			list[i].index = i;
 			
@@ -685,27 +868,45 @@ function drawRoute(mapId, grid, idx, draggable) {
 				 tmapInfo[mapId].draggable = draggable
 			}
 			
-			// 노드 타입이 버스 정류장 또는 음성편성 노드일 경우 마커 표시
-			if(list[i].NODE_TYPE == busstopNodeType) {
+			// 노드 타입이 버스 정류장 마커 표시
+			if(list[i].NODE_TYPE == nodeType_busstop && tmapInfo[mapId].dispCheck.indexOf(nodeType_busstop)>=0) {
 				if(i == idx){
 					list[i].icon = "/cm/images/tmap/busstop_selected.png";
 				}else{
 					list[i].icon = "/cm/images/tmap/busstop.png";					
 				}
-				list[i].label = "<span style='background-color: white; color:black; padding: 3px; border: 0.5px solid black;'>" + list[i].NODE_NM + "</span>";
+				list[i].label = "<span class='tmap_busstop_label'>" + list[i].NODE_NM + "</span>";
+				addMarkerInter(mapId, list[i], grid, i);
+			}
+			else if(list[i].NODE_TYPE == nodeType_cross && tmapInfo[mapId].dispCheck.indexOf(nodeType_cross)>=0) {
+				if(i == idx){
+					list[i].icon = "/cm/images/tmap/cross_selected.png";
+				}else{
+					list[i].icon = "/cm/images/tmap/cross.png";					
+				}
+				list[i].label = "<span class='tmap_cross_label'>" + list[i].NODE_NM + "</span>";
+				addMarkerInter(mapId, list[i], grid, i);
+			}
+			else if(list[i].NODE_TYPE == nodeType_vertex && tmapInfo[mapId].dispCheck.indexOf(nodeType_vertex)>=0) {
+				if(i == idx){
+					list[i].icon = "/cm/images/tmap/vertex_selected.png";
+				}else{
+					list[i].icon = "/cm/images/tmap/vertex.png";					
+				}
+				list[i].label = "<span class='tmap_vertex_label'>" + list[i].NODE_NM + "</span>";
+				addMarkerInter(mapId, list[i], grid, i);
 			}
 			// 아닐 경우(일반 노드) 네모 박스 표시
-			else {
+			else if(list[i].NODE_TYPE == nodeType_normal && tmapInfo[mapId].dispCheck.indexOf(nodeType_normal)>=0) {
 				if(i == idx){
 					list[i].icon = "/cm/images/tmap/road_selected.png";
 				}else{
 					list[i].icon = "/cm/images/tmap/road_trans.png";										
 				}
-				list[i].label = "<span style='background-color: white; color:black; padding: 3px; border: 0.5px solid black;'>" + list[i].NODE_NM + "</span>";
+				list[i].label = "<span class='tmap_label'>" + list[i].NODE_NM + "</span>";
 				tmapInfo[mapId].nodes.push(getDrawingNode(mapId,list[i].GPS_Y, list[i].GPS_X));
+				addMarkerInter(mapId, list[i], grid, i);
 			}
-			
-			addMarkerInter(mapId, list[i], grid, i);
 		}
 		
 		tmapInfo[mapId].polyline = new Tmapv2.Polyline({
@@ -714,7 +915,7 @@ function drawRoute(mapId, grid, idx, draggable) {
 			strokeWeight: 2,
 			map: tmapInfo[mapId].map,
 			zIndex: -1
-		}); 
+		});
 	}
 }
 
@@ -729,10 +930,7 @@ function drawLinkRoute(mapId, grid,idx) {
 	//var polyline = tmapInfo[mapId].polyline;
 	//var nodes = tmapInfo[mapId].nodes;
 	
-	removeMarkers(mapId);
-	deleteLine(mapId);
-	deleteCircle(mapId);
-	deleteNode(mapId);
+	initDisplay(mapId);
 	
 	var tmpParentIdx = 0;
 	var thirdIndex = 0;
@@ -759,7 +957,7 @@ function drawLinkRoute(mapId, grid,idx) {
 			/**드래그이벤트**/
 			//list[i].draggable = true;
 			// 노드 타입이 버스 정류장 또는 음성편성 노드일 경우 마커 표시
-			/*if(list[i].nodeType == busstopNodeType) {
+			/*if(list[i].nodeType == nodeType_busstop) {
 				if(i == idx){
 					list[i].icon = "/cm/images/tmap/busstop_selected.png";
 				}else{
@@ -776,7 +974,7 @@ function drawLinkRoute(mapId, grid,idx) {
 				}else{
 					list[i].icon = "/cm/images/tmap/road_trans.png";										
 				}
-				list[i].label = "<span style='background-color: white; color:black; padding: 3px; border: 0.5px solid black;'>" + list[i].nodeNm + "</span>";
+				list[i].label = "<span class='tmap_label'>" + list[i].nodeNm + "</span>";
 				tmapInfo[mapId].nodes.push(getDrawingNode(mapId,list[i].ST_GPS_Y, list[i].ST_GPS_X));
 			}
 			
@@ -879,13 +1077,13 @@ function addPathMapByClick(data,grgId,e){
 	data.setRowJSON(idx, data, true);
 	
 	routeData = com.getGridViewDataList(grid).getAllJSON();
-	drawRoute(grid, routeData, idx);
+	drawRoute(grid, routeData, idx, true);
 }
 
 
 //일반 지도 라인 그리기
 function drawLineMap(data) {
-	debugger;
+	
 	var list = data.getAllJSON();
 	var path = [];
 	
@@ -936,5 +1134,9 @@ function initDisplay(mapId){
 	deleteLine(mapId);
 	deleteCircle(mapId);
 	deleteNode(mapId);
+}
+
+function setDispCheck(mapId, dispCheck){
+	tmapInfo[mapId].dispCheck = dispCheck;
 }
 /**************************************************************************/

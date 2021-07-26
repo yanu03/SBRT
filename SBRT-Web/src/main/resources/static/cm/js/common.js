@@ -5049,6 +5049,12 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 							com.exlFrmGrid(sub.grid);
 						}
 					}
+					if(i == gcm.BTN.SEARCH.nm){
+
+						if ((typeof sub.srchGrp !== "undefined")&&(sub.srchGrp !== null)){
+							com.setEnterKeyEvent(sub.srchGrp, item.cbFnc);
+						}
+					}
 					subBtn.bind("onclick", item.cbFnc);
 				}
 			}
@@ -5696,7 +5702,7 @@ com.saveGrid = function(grid,sbmObj,yesno_str,str){
 	if (com.validateGridView(grid)) {
 		if (idx > 0) {
 			if(	(typeof yesno_str == "undefined") || (yesno_str.trim() == "")){
-				yesno_str = com.strModifiedCnt(grid) + "의 데이터를 반영하시겠습니까?";
+				yesno_str = com.strModifiedCnt(grid) + "의 데이터가 저장됩니다. \n 진행하시겠습니까?";
 			}
 			else {
 				yesno_str = idx + yesno_str;
@@ -5721,7 +5727,7 @@ com.saveDualGrid = function(mainGrid,subGrid,form,mainSaveSbmObj,allSaveSbmObj,s
 	var confirmStr = com.strModifiedCnt2([mainGrid, subGrid]);
 	
 	if (modifiedMainIdx.length > 0) {	
-			com.confirm(confirmStr+"의 데이터가 저장됩니다. \n 진행하시겠습니까? ", function(rtn) {
+			com.confirm(confirmStr+"의 데이터가 저장됩니다. \n 진행하시겠습니까?", function(rtn) {
 				if (rtn) {
 					gcm.GRID_INFO[mainGrid.org_id].dualSaving = true;
 					
@@ -5734,7 +5740,7 @@ com.saveDualGrid = function(mainGrid,subGrid,form,mainSaveSbmObj,allSaveSbmObj,s
 				}
 			});
 	} else if (modifiedSubIdx.length > 0) {
-		com.confirm(confirmStr+"의 데이터가 저장됩니다. \n 진행하시겠습니까? ", function(rtn) {
+		com.confirm(confirmStr+"의 데이터가 저장됩니다. \n 진행하시겠습니까?", function(rtn) {
 			if (rtn) {
 				com.saveData(subGrid,null,subSaveSbmObj);
 			}

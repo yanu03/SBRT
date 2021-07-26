@@ -20,3 +20,10 @@ getCurrentDate = function() {
 	
 	return year + month + day + hour + minites + seconds;
 }
+
+
+getDispGps = function(in_gps, point) {
+	var index = Math.pow(10, point);
+	return Math.floor(in_gps*index)/index;
+}
+

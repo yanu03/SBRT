@@ -18,8 +18,8 @@
 			RET_STTN_NM,
 			ROUT_LEN,
 			WAY_DIV,
-			USER_WAY_DIV
-			
+			USER_WAY_DIV,
+			AREA
 	from BMS_ROUT_MST
 	<where>
 		<if test="TYPE == 'ALL'">
@@ -35,6 +35,7 @@
 			AND REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
 	</where>
+	order by REP_ROUT_NM, WAY_DIV
 </select>
 
 <select id="SI0404G0K0" resultType="Map">
@@ -161,57 +162,97 @@
 	where ROUTE_ID = #{ROUTE_ID}
 </update>
 
-<delete id="SI0404G0D0" parameterType="Map">
-	delete
-	from BMS_ROUT_MST
-	where ROUTE_ID = #{ROUTE_ID};
-	
-	delete
-	from BMS_ROUT_COMP_CMPSTN
-	where ROUTE_ID = #{ROUTE_ID};
-</delete>
-
 <select id="SI0404G1R0" resultType="Map">
-	select a.ROUTE_ID, a.LINK_ID, a.LINK_SN, a.MORN_STD, b.LINK_NM, b.ST_NODE_ID, b.ED_NODE_ID,
-		(select c.GPS_X from BMS_NODE_MST c where c.NODE_ID=b.ST_NODE_ID) ST_GPS_X,
-		(select c.GPS_Y from BMS_NODE_MST c where c.NODE_ID=b.ST_NODE_ID) ST_GPS_Y,
-		(select c.GPS_X from BMS_NODE_MST c where c.NODE_ID=b.ED_NODE_ID) ED_GPS_X,
-		(select c.GPS_Y from BMS_NODE_MST c where c.NODE_ID=b.ED_NODE_ID) ED_GPS_Y
-	from BMS_ROUT_LINK_CMPSTN a 
-		INNER JOIN BMS_LINK_MST b ON a.LINK_ID=b.LINK_ID
-	WHERE a.ROUTE_ID = #{ROUTE_ID} order by a.LINK_SN
+	SELECT ROUTE_ID, NODE_ID, NODE_SN, NODE_NM, NODE_ENM, NODE_TYPE, LINK_ID, STTN_ID, STTN_NO, CRS_ID, CRS_NM, ROUT_LEN, MORN_STD, GPS_X, GPS_Y, TM_X, TM_Y, UPD_DTM, UPD_ID
+	FROM BMS_ROUT_NODE_CMPSTN
+	WHERE ROUTE_ID = #{ROUTE_ID}
+	<if test="CONTENT != '' and CONTENT != null">
+		AND NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || NODE_NM LIKE CONCAT('%',#{CONTENT},'%')
+	</if>
+	 ORDER BY NODE_SN
 </select>
-  
+
+<select id="SI0404G1K0" resultType="Map">
+	SELECT CONCAT('ND', LPAD(NEXTVAL(SEQ_BMS_NODE_MST_0), 8, '0')) AS 'SEQ'
+</select>
+
+<select id="SI0404G1K1" resultType="Map">
+	SELECT CONCAT('LK', LPAD(NEXTVAL(SEQ_BMS_LINK_MST_0), 8, '0')) AS 'SEQ'
+</select>
+
+<select id="SI0404G1K2" resultType="Map">
+	SELECT CONCAT('ST', LPAD(NEXTVAL(SEQ_BMS_STTN_MST_0), 8, '0')) AS 'SEQ'
+</select>
+
 <insert id="SI0404G1I0" parameterType="Map">
-	<selectKey keyProperty="NODE_ID" resultType="String" order="BEFORE">
-         SELECT CONCAT('ND', LPAD(NEXTVAL(SEQ_BMS_NODE_MST_0), 8, '0'))
-    </selectKey>
 	INSERT INTO BMS_NODE_MST
-		(NODE_ID,NODE_NM,NODE_TYPE,GPS_X, GPS_Y,UPD_DTM,SSN_USER_ID)
-	VALUES (#{NODE_ID}, #{NODE_NM}, #{NODE_TYPE}, #{GPS_X}, #{GPS_Y}, #{UPD_DTM}, #{SSN_USER_ID});
+		(NODE_ID, NODE_NM,NODE_TYPE,GPS_X, GPS_Y,USE_YN,UPD_DTM,UPD_ID)
+	VALUES (#{NODE_ID}, #{NODE_NM}, #{NODE_TYPE}, #{GPS_X}, #{GPS_Y}, 'Y', #{UPD_DTM}, #{SSN_USER_ID});
 	
 	INSERT INTO BMS_ROUT_NODE_CMPSTN
-		(ROUTE_ID,NODE_ID,NODE_SN,NODE_NM,NODE_TYPE,STTN_ID,STTN_NO,GPS_X,GPS_Y)
-	VALUES(#{ROUTE_ID},#{NODE_ID},#{NODE_SN},#{NODE_NM},#{NODE_TYPE},#{STTN_ID},#{STTN_NO},#{GPS_X},#{GPS_Y});
+		(ROUTE_ID,NODE_ID,NODE_SN,NODE_NM,NODE_TYPE,LINK_ID,STTN_ID,STTN_NO,GPS_X,GPS_Y,LINK_NODE_YN,UPD_DTM,UPD_ID)
+	VALUES(#{ROUTE_ID},#{NODE_ID},#{NODE_SN},#{NODE_NM},#{NODE_TYPE},#{LINK_ID},#{STTN_ID},#{STTN_NO},#{GPS_X},#{GPS_Y},'Y',#{UPD_DTM}, #{SSN_USER_ID});
+ 
+ <if test="STTN_ID != '' and STTN_ID != null">
+	INSERT INTO BMS_STTN_MST
+		(STTN_ID,NODE_ID,STTN_NM,AREA,STTN_NO,USE_YN,UPD_DTM,UPD_ID)
+	VALUES(#{STTN_ID},#{NODE_ID},#{NODE_NM},#{AREA},#{STTN_NO},'Y',#{UPD_DTM},#{UPD_ID})
+	ON DUPLICATE KEY UPDATE
+	  STTN_ID	= VALUES(NODE_ID)
+	, NODE_ID	= VALUES(STTN_ID)
+	, STTN_NM	= VALUES(STTN_NM)
+ 	, AREA		= VALUES(AREA)
+	, STTN_NO	= VALUES(STTN_NO)
+	, USE_YN	= VALUES(USE_YN)
+	, UPD_DTM	= VALUES(UPD_DTM)
+	, UPD_ID	= VALUES(UPD_ID);
+</if>
+	
+	UPDATE BRT_MAIN_ROUT_NODE_INFO
+		SET NODE_SN= #{NODE_SN}, NODE_TYPE= #{NODE_TYPE}
+			, NODE_NM= #{NODE_NM}, STTN_ID= #{STTN_ID}, STTN_NO= #{STTN_NO}, GPS_X= #{GPS_X}, GPS_Y= #{GPS_Y}, LINK_NODE_YN='Y', UPD_DTM= #{UPD_DTM}, UPD_ID= #{SSN_USER_ID}
+	WHERE ROUT_ID= #{ROUTE_ID} AND NODE_ID= #{NODE_ID};
 </insert>
 
 <insert id="SI0404G1I1" parameterType="Map">
-	insert into BMS_ROUT_COMP_CMPSTN
-		   (ROUTE_ID, COMP_ID)
-	values (#{ROUTE_ID}, #{COMP_ID})
+	INSERT INTO BMS_LINK_MST(LINK_ID,LINK_NM,ST_NODE_ID,ED_NODE_ID,USE_YN,SBRT_YN,UPD_DTM,UPD_ID)
+	VALUES(#{LINK_ID},#{LINK_NM},#{ST_NODE_ID},#{ED_NODE_ID},'Y','Y',#{UPD_DTM},#{SSN_USER_ID});
 
+	INSERT INTO BMS_ROUT_LINK_CMPSTN(ROUTE_ID,LINK_ID,LINK_SN,MORN_STD,UPD_DTM,UPD_ID)
+	VALUES(#{ROUTE_ID},#{LINK_ID},#{LINK_SN},'MS001',#{UPD_DTM},#{SSN_USER_ID});
 </insert>
 
-
-
 <delete id="SI0404G1D0" parameterType="Map">
-	delete from BMS_ROUT_COMP_CMPSTN
+	UPDATE BMS_NODE_MST
+		SET USE_YN='N'
+	WHERE NODE_ID= #{NODE_ID};
+	
+	delete from BMS_ROUT_NODE_CMPSTN
 	where ROUTE_ID = #{ROUTE_ID} 
-	and NODE_ID = #{NODE_ID}
+	and NODE_ID = #{NODE_ID};
 </delete>
 
 <delete id="SI0404G1DA0" parameterType="Map">
-	delete from BMS_ROUT_COMP_CMPSTN
+	UPDATE BMS_NODE_MST A
+	INNER JOIN
+		BMS_ROUT_NODE_CMPSTN B 
+		ON A.NODE_ID = B.NODE_ID
+		SET A.USE_YN='N'
+	WHERE B.ROUTE_ID = #{ROUTE_ID};
+	 
+	DELETE FROM BMS_ROUT_NODE_CMPSTN
+	WHERE ROUTE_ID = #{ROUTE_ID};
+</delete>
+
+<delete id="SI0404G1DA1" parameterType="Map">
+	UPDATE BMS_LINK_MST A
+	INNER JOIN
+		BMS_ROUT_LINK_CMPSTN B 
+		ON A.LINK_ID = B.LINK_ID
+		SET A.USE_YN='N'
+	WHERE B.ROUTE_ID = #{ROUTE_ID};
+
+	delete from BMS_ROUT_LINK_CMPSTN
 	where ROUTE_ID = #{ROUTE_ID}
 </delete>
 
@@ -255,7 +296,6 @@
 			UPD_DTM,
 			UPD_ID
 			)
-	
 	values		
 			(
 			#{REP_ROUT_ID},

@@ -24,12 +24,6 @@ public class SI0404Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
-	@RequestMapping("/si/SI0404G0K0")
-	public @ResponseBody Map<String, Object> SI0404G0R1() throws Exception {
-		result.setData("dma_SEQ_BMS_ROUT_MST_0", si0404Service.SI0404G0K0());
-		return result.getResult();
-	}
-	
 	@RequestMapping("/si/SI0404SHI0")
 	public @ResponseBody Map<String, Object> SI0404G0R2() throws Exception {
 		result.setData("dlt_searchitem", si0404Service.SI0404SHI0());

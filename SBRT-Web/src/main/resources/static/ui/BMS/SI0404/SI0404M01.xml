@@ -21,6 +21,8 @@
 						<w2:key id="NODE_IDS" name="노드IDS" dataType="text"></w2:key>
 						<w2:key id="INT_ROUT_ID" name="연계노선ID" dataType="text"></w2:key>
 						<w2:key id="ROUTE_ID" name="노선ID" dataType="text"></w2:key>
+						<w2:key id="AREA" name="권역" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_result">
@@ -57,6 +59,7 @@
 						<w2:column id="ROUT_STRT_LEN" name="노선직선거리" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="WAY_DIV" name="상하행구분" dataType="text"></w2:column>
 						<w2:column id="USER_WAY_DIV" name="사용자상하행구분" dataType="text"></w2:column>
+						<w2:column id="AREA" name="권역" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN" saveRemovedData="true">
@@ -72,6 +75,7 @@
 						<w2:column id="GPS_X" name="경도" dataType="text"></w2:column>
 						<w2:column id="GPS_Y" name="위도" dataType="text"></w2:column>
 						<w2:column id="ROUT_LEN" name="노선거리" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="AREA" name="권역" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_disp_check">
@@ -95,7 +99,7 @@
 			</xf:submission>
 			<xf:submission id="sub_SI0404G1S0" ref='data:json,{"action":"modified","id":"dlt_BMS_ROUT_NODE_CMPSTN"}' target="data:json,dma_result"
 				action="/si/SI0404G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="저장 중입니다.." ev:submit="" ev:submitdone=""
+				customHandler="" mode="asynchronous" processMsg="저장 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0404G1S0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
@@ -107,17 +111,16 @@
 	var isNewData = false;
 
 	scwin.onpageload = function() {
-		debugger;
 		var codeOptions = [{code : "NODE_TYPE", compID : "SI0404G1:NODE_TYPE"},{code : "WAY_DIV", compID : "SI0404G0:WAY_DIV"}];
 		com.setCommonDtl(codeOptions, function() {
 			com.searchGrid(SI0404G0, sub_SI0404G0R0);
 		});	
 		
-		$p.executeSubmission(sub_SI0404SHI0);
+		com.executeSubmission(sub_SI0404SHI0);
 		
 		var autoOptions = {
 			Main : { grid : SI0404G0, srchSbm : sub_SI0404G0R0, srchGrp : pgm_header, keyColumn : "ROUTE_ID", focusColumn : "ROUTE_ID", name : "노선 목록"},
-			Sub1 : { grid : SI0404G1, srchSbm : sub_SI0404G1R0, savSbm : sub_SI0404G1S0, name :  "노선 경로정보"}
+			Sub1 : { grid : SI0404G1, srchSbm : sub_SI0404G1R0, srchGrp : pgm_subList, savSbm : sub_SI0404G1S0, name :  "노선 경로정보"}
 		 };
 		 
 		var mainOptions = {
@@ -129,12 +132,19 @@
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions, mainOptions);
 
 		var subOptions = {
-			SEARCH: {}, DEL:scwin.btn_sub_del
+			SEARCH: {}//, DEL:scwin.btn_sub_del
 		};
 		
 		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
 		
 		SI0404G0.mergeCells("byrestriccol");
+		
+		initTmap("map_SI0404", {width:"100%"
+			, height:"100%"
+			, onClick: scwin.onClickMap
+		});
+
+		scwin.disp_check_all();
 	};
 
 	
@@ -169,29 +179,16 @@
 		}		
 	};
 	
+
+	scwin.dma_disp_check_onviewchange = function(info) {
+		setDispCheck("map_SI0404", disp_check.getValue());
+		drawRoute("map_SI0404", SI0404G1, -1, true);
+	}
+	
 	scwin.SI0404G0_onrowindexchange = function(row,oldRow) {
 	
-
 		var focusOption = {keyMap : dma_sub_search};
 		com.changeDualGrid(SI0404G0, SI0404G1, sub_SI0404G1S0, sub_SI0404G1R0, focusOption, row, oldRow);
-		
-		initTmap("map_SI0404", {width:"100%"
-			, height:"100%"
-			, onClick: scwin.onClickMap
-		});
-	};
-	
-	scwin.btn_sub_del = function() {
-	debugger;
-		com.delGrid(SI0404G1,"",
-			function() { 
-				var index = SI0404G1.getFocusedRowIndex();
-				focusNode("map_SI0404",SI0404G1,index,false); 
-			}
-		);
-		
-		
-		//drawRoute("map_SI0404", SI0404G1);
 	};
 	
 	
@@ -200,30 +197,67 @@
 		focusNode("map_SI0404",SI0404G1,row);
 	};
 	
+	scwin.sub_SI0404G1R0_submitdone = function(e) {
+		drawRoute("map_SI0404", SI0404G1, -1, false);
+		com.setFocusedCell(SI0404G1, "NODE_ID");	
+	};
+	
+	scwin.sub_SI0404G1S0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+			com.saveDone(SI0404G1,sub_SI0404G1R0);
+		}
+	}
 	
 	scwin.btn_integration_onclick = function() {
-		var str = "갱신 후에는 되돌릴수 없습니다. 정말 갱신하시겠습니까?";
-		com.confirm(str, function(rtn) {
-			if (rtn) {
-				var val_NODE_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("NODE_ID");
-				dma_sub_search.set("NODE_IDS", val_NODE_ID);
-				dma_sub_search.set("INT_ROUT_ID", dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "INT_ROUT_ID"));
-						
-				var param = dma_sub_search.get("ROUTE_ID");
-				if (param != "") {
-					var data = { data : dma_sub_search.getJSON(), callbackFn : "scwin.insertNode" };
-					var options = { id : "SI0404P01",
-									popupName : "노드연계", 
-									modal : true};
-					com.openPopup("/ui/BMS/SI0404/SI0404P01.xml", options, data);
+		if(dlt_BMS_ROUT_NODE_CMPSTN.getTotalRow()>0){
+			var str = "갱신 후에는 되돌릴수 없습니다. 정말 갱신하시겠습니까?";
+			com.confirm(str, function(rtn) {
+				if (rtn) {
+					var val_NODE_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("NODE_ID");
+					//dma_sub_search.set("NODE_IDS", val_NODE_ID);
+					dma_sub_search.set("INT_ROUT_ID", dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "INT_ROUT_ID"));
+					dma_sub_search.set("AREA", dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "AREA"));
+					var param = dma_sub_search.get("ROUTE_ID");
+					if (param != "") {
+						var data = { data : dma_sub_search.getJSON(), callbackFn : "scwin.insertNode" };
+						var options = { id : "SI0404P01",
+										popupName : "노드연계", 
+										modal : true};
+						com.openPopup("/ui/BMS/SI0404/SI0404P01.xml", options, data);
+					}
 				}
+			});
+		}
+		else {
+			var val_NODE_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("NODE_ID");
+			//dma_sub_search.set("NODE_IDS", val_NODE_ID);
+			dma_sub_search.set("INT_ROUT_ID", dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "INT_ROUT_ID"));
+					
+			var param = dma_sub_search.get("ROUTE_ID");
+			if (param != "") {
+				var data = { data : dma_sub_search.getJSON(), callbackFn : "scwin.insertNode" };
+				var options = { id : "SI0404P01",
+								popupName : "노드연계", 
+								modal : true};
+				com.openPopup("/ui/BMS/SI0404/SI0404P01.xml", options, data);
 			}
-		});
+		}
 	}
 	
 	scwin.btn_del_onclick = function() {
 
 	};
+	
+	scwin.btn_sub_del = function() {
+		com.delGrid(SI0404G1,"",
+			function() { 
+				var index = SI0404G1.getFocusedRowIndex();
+				focusNode("map_SI0404",SI0404G1,index,false); 
+			}
+		);
+	};
+	
 	
 	scwin.btn_cancel_onclick = function() {
 		var idx = SI0404G1.getModifiedIndex().length;
@@ -246,7 +280,11 @@
 	}
 	
 	scwin.insertNode = function(obj){
-		insertNodeAll("map_SI0404",SI0404G1,obj,SI0404G0.getFocusedCellData("ROUTE_ID"),false);
+	debugger;
+		dlt_BMS_ROUT_NODE_CMPSTN.removeAll();
+		var route_id = dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "ROUTE_ID");
+		var area = dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "AREA");
+		insertNodeAll("map_SI0404",SI0404G1,obj,route_id,area,false);
 	}
 	
 
@@ -263,6 +301,13 @@
 	scwin.subGridDown = function(){
 		var idx = SI0404G1.getFocusedRowIndex();
 		com.getGridViewDataList(SI0404G1).rowMoveDown(idx);
+	}
+	
+	scwin.disp_check_all = function(){
+		disp_check.getCheckboxList()[0].checked = true;
+		disp_check.getCheckboxList()[1].checked = true;
+		disp_check.getCheckboxList()[2].checked = true;
+		setDispCheck("map_SI0404", disp_check.getValue());
 	}
 	
 ]]></script>
@@ -401,7 +446,7 @@
 									<w2:span class="" id="" label="검색 항목"></w2:span>
 								</xf:group>
 								<xf:group class="search" id="" style="">
-									<xf:input id="search_sub_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="노드ID 또는 노드명"></xf:input>
+									<xf:input id="search_sub_input" class="search_input" ref="data:dma_sub_search.CONTENT" placeholder="노드ID 또는 노드명"></xf:input>
 								</xf:group>
 								<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
 							</xf:group>
@@ -414,7 +459,7 @@
 								ev:oncellclick="" ev:oneditkeyup="" ev:onkeyup="" ev:onrowindexchange="scwin.SI0404G1_onrowindexchange" ev:ontextimageclick="" ev:onviewchange=""
 								excludeDeletedRows="" fixedColumnWithHidden="true" dataDragDrop="true" focusMode="row"  ignoreCellClick="false"
 								ignoreNonEditableCellTabEnter="" keepDefaultColumnWidth="" keyMoveEditMode="" moveKeyEditMode="" moveKeyEditModeAll="" nextTabID=""
-								oddEvenColorDisplay="" readOnly="" rowNumHeaderValue="순번" rowNumStatusResize="" rowNumStatusUniqueId="" rowNumVisible="true"
+								oddEvenColorDisplay="" readOnly="true" rowNumHeaderValue="순번" rowNumStatusResize="" rowNumStatusUniqueId="" rowNumVisible="true"
 								rowNumWidth="" rowStatusHeaderValue="" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" showSortableUseFilter=""
 								sortOrderReverse="" sortable="" sortedIconPosition="" style="" summaryAuto="" useCtrlOnMultisort="" useFilterList=""
 								useFilterListSync="" useShiftKey="true" visibleRowNum="" wheelRows="">
@@ -455,7 +500,7 @@
 											style="height:20px" width="">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="GPS_X" inputType="text" removeBorderStyle="false"
-											style="height:20px" width="">
+											style="height:20px" width="" allowChar="" dateValidCheck="" rowSpan="">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="GPS_Y" inputType="text" removeBorderStyle="false"
 											style="height:20px" width="">
@@ -479,6 +524,25 @@
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="지도" style=";"></w2:textbox>
+						</xf:group>
+						<xf:group class="check" id="" style="right: 100px">
+							<xf:select id="disp_check" selectedIndex="0" cols="" appearance="full" style="" rows="1"
+								ref="data:dma_disp_check.check" ev:onviewchange="scwin.dma_disp_check_onviewchange">
+								<xf:choices>
+									<xf:item>	
+										<xf:label><![CDATA[경로]]></xf:label>
+										<xf:value><![CDATA[NT03]]></xf:value>
+									</xf:item>
+									<xf:item>
+										<xf:label><![CDATA[정류소]]></xf:label>
+										<xf:value><![CDATA[NT02]]></xf:value>
+									</xf:item>
+									<xf:item>
+										<xf:label><![CDATA[교차로]]></xf:label>
+										<xf:value><![CDATA[NT01]]></xf:value>
+									</xf:item>
+								</xf:choices>
+							</xf:select>
 						</xf:group>
 					</xf:group>
 					
