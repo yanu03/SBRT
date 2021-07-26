@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.bms.domain.VD0300.VD0300Mapper">
+
+<select id="VD0300G0R0" resultType="Map">
+	SELECT 			A.VHC_ID
+					,A.COMP_ID
+					,B.COMP_NM
+					,A.AREA
+					,A.VHC_NO
+					,A.CHAS_NO
+					,A.MAKER
+					,DATE_FORMAT(A.RELS_DT, '%Y%m%d') RELS_DT
+					,A.MODEL_NM
+					,A.VHC_KIND
+					,A.ROUT_DIV
+					,A.VHC_TYPE
+					,A.VHC_FUEL
+					,A.VHC_STS
+					,A.PSG_CNT
+					,A.SPARE_YN
+					,A.SCRAP_YN
+					,A.APPL_ST_DT
+					,A.APPL_ED_DT
+					,A.USE_YN
+					,A.REMARK
+					
+	FROM			BMS_VHC_MST	A
+	LEFT JOIN	  	BMS_TRANSCOMP_MST B
+	ON				A.COMP_ID = B.COMP_ID 		
+	
+	<where>	
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'VHC_NO'">
+			VHC_NO LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'VHC_ID'">
+			VHC_ID LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+</select>
+	
+<select id="VD0300SHI0" resultType="Map">
+	SELECT			VHC_ID
+					,VHC_NO	
+	FROM			BMS_VHC_MST
+</select>
+	
+<select id="VD0300SHI1" resultType="Map">
+	SELECT			ORG_ID
+					,ORG_NM
+	FROM	  		BMS_ORG_MST
+	WHERE			ORG_DIV = 'OGD08'
+</select>	
+	
+<select id="VD0300G1R0" resultType="Map">
+	SELECT 			A.VHC_ID
+					,A.DVC_ID
+					,A.ORG_ID
+					,A.DVC_KIND
+					,A.INST_LOC
+					,A.DVC_IP
+					,A.MNG_ID	
+<!-- 					,A.DVC_TYPE
+					,A.DEV_SERIAL_NO
+					,A.MODEL_NM -->
+					,A.USE_YN
+					,A.REMARK
+					,B.ORG_NM
+					
+	FROM			BMS_DVC_INFO A	
+	LEFT JOIN	  	BMS_ORG_MST	B
+	ON				A.ORG_ID = B.ORG_ID
+	
+	WHERE			A.VHC_ID = #{VHC_ID}
+</select>
+
+<select id="VD0300G2R0" resultType="Map">
+	SELECT 			DVC_ID
+					,SN
+					,DATE_FORMAT(APLY_DATE, '%Y%m%d') APLY_DATE					
+					,WORK_TYPE
+					,WORK_AMT
+					,REMARK
+	FROM			BMS_DVC_HIS
+	
+	WHERE			DVC_ID = #{DVC_ID}
+	ORDER BY		SN					
+</select>
+
+<select id="VD0300G3R0" resultType="Map">
+	SELECT 			DATE_FORMAT(SEND_DATE,'%Y-%m-%d %h:%i:%s') SEND_DATE
+					,MNG_ID
+					,DVC_COND
+					,VER_INFO
+					,REMARK
+	FROM			BMS_DVC_COND_LOG	
+	
+	WHERE			MNG_ID = #{MNG_ID}
+	AND				DVC_COND = 'DC021'
+</select>
+
+
+<insert id="VD0300G2I0" parameterType="Map">
+	INSERT INTO		BMS_DVC_HIS	
+					(
+						DVC_ID
+						,SN
+						,APLY_DATE
+						,WORK_TYPE
+						,WORK_AMT
+						,REMARK
+						,UPD_DTM
+						,UPD_ID
+					)
+	VALUES			(
+						#{DVC_ID}
+						,NEXTVAL(SEQ_BMS_DVC_HIS_0)
+						,STR_TO_DATE(#{APLY_DATE}, '%Y%m%d')
+						,#{WORK_TYPE}
+						,#{WORK_AMT}
+						,#{REMARK}
+						,#{UPD_DTM}
+						,#{SSN_USER_ID}			
+					)
+	
+	
+						
+</insert>
+
+<update id="VD0300G2U0" parameterType="Map">
+	UPDATE			BMS_DVC_HIS
+	SET				APLY_DATE = STR_TO_DATE(#{APLY_DATE}, '%Y%m%d')
+					,WORK_TYPE = #{WORK_TYPE}
+					,WORK_AMT = #{WORK_AMT}
+					,REMARK = #{REMARK}
+					,UPD_DTM = #{UPD_DTM}
+					,UPD_ID = #{SSN_USER_ID}
+					
+	WHERE			DVC_ID = #{DVC_ID}
+	AND				SN = #{SN}							 	
+</update>
+
+<delete id="VD0300G2D0" parameterType="Map">
+	DELETE FROM 	BMS_DVC_HIS
+	WHERE			DVC_ID = #{DVC_ID}
+	AND				SN = #{SN}
+</delete>
+
+</mapper>

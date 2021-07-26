@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.bms.domain.PI0801.PI0801Mapper">
+	<select id="PI0801G0R0" resultType="Map">
+		SELECT 		ILD_ID
+					,ILD_NM
+					,SN
+					,TXT_A
+					,TXT_B
+					,VOC_ID
+					,REMARK
+					
+		FROM		BMS_INNER_LED_INFO			
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				ILD_ID LIKE CONCAT('%',#{CONTENT},'%') || ILD_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'ILD_ID'">
+				AND ILD_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'ILD_NM'">
+				AND ILD_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>					
+		ORDER BY	SN
+	</select>
+
+	<select id="PI0801SHI0" resultType="Map">
+		SELECT		ILD_ID
+					,ILD_NM
+		FROM		BMS_INNER_LED_INFO
+	
+	</select>
+	
+	<select id="PI0801G0K0" resultType="Map">
+		SELECT CONCAT('IL', LPAD(NEXTVAL(SEQ_BMS_INNER_LED_INFO_0), 8, '0')) AS 'SEQ'
+	</select>
+	
+	<insert id="PI0801G0I0" parameterType="Map">
+		INSERT INTO	BMS_INNER_LED_INFO
+				   (
+					ILD_ID
+					,ILD_NM
+					,SN
+					,TXT_A
+					,TXT_B
+					,VOC_ID
+					,REMARK
+					,UPD_DTM
+					,UPD_ID
+				   )
+			   
+		VALUES		(
+					#{ILD_ID}
+					,#{ILD_NM}
+					<!-- ,LASTVAL(SEQ_BMS_INNER_LED_INFO_0) -->
+					<!-- (SELECT (COUNT(B.ILD_ID) + 1) FROM BMS_INNER_LED_INFO B) -->
+					,#{SN}
+					,#{TXT_A}
+					,#{TXT_B}
+					,#{VOC_ID}
+					,#{REMARK}
+					,#{UPD_DTM}
+					,#{SSN_USER_ID}
+					)		
+	
+	
+	</insert>
+	
+	<update id="PI0801G0U0" parameterType="Map">
+		UPDATE 		BMS_INNER_LED_INFO
+		SET			ILD_NM = #{ILD_NM}
+					,SN = #{SN}
+					,TXT_A = #{TXT_A}
+					,TXT_B = #{TXT_B}
+					,VOC_ID = #{VOC_ID}
+					,REMARK = #{REMARK}
+					,UPD_DTM = #{UPD_DTM}
+					,UPD_ID = #{SSN_USER_ID}
+					
+		WHERE		ILD_ID = #{ILD_ID}			
+		
+	</update>
+	
+	<delete id="PI0801G0D0" parameterType="Map">
+		DELETE
+		FROM		BMS_INNER_LED_INFO
+		
+		WHERE		ILD_ID = #{ILD_ID}
+	</delete>
+</mapper>

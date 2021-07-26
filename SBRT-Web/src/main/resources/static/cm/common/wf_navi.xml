@@ -79,7 +79,21 @@
 			}
 			
 			$p.parent().$p.getFrame().setSrc(pageUrl, options);
-		} else {
+		} 
+		else if (com.getFrameMode() === "wframePreload") {
+			var data = $p.parent().com.getParameter();
+			var pageUrl = $p.parent().$p.getFrame().getSrc();
+			var options = {
+				dataObject : { 
+					type : "json", 
+					name : "param", 
+					data : data
+				}
+			}
+			
+			$p.parent().$p.getFrame().setSrc(pageUrl, options);
+		} 		
+		else {
 			var data = JSON.stringify($p.parent().com.getParameter());
 			var pageUrl = $p.getParameter("w2xPath");
 

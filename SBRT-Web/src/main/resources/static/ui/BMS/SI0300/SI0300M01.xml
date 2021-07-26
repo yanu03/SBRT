@@ -86,7 +86,7 @@
 	scwin.onpageload = function() {
 		var autoOptions = {
 			Main : { grid : SI0300G0, frm : SI0300F0, srchSbm : sub_SI0300G0R0, savSbm : sub_SI0300G0S0, 
-					 keySbm : sub_SI0300G0K0, srchGrp : pgm_header, keyColumn : "DRV_ID", focusColumn : "DRV_NM", name :  "운전자 목록"
+					 srchGrp : pgm_header, keyColumn : "DRV_ID", focusColumn : "DRV_NM", name :  "운전자 목록"
 				   }
 		 };
 		 
@@ -183,8 +183,18 @@
 			acb_autoChoiceBox.show("");
 		}		
 	};
-	scwin.SI0300G0_onviewchange = function(row, oldRow) {
-		com.changeSingleGrid(SI0300G0, row, oldRow);
+	
+	scwin.SI0300G0_onrowindexchange = function(row,oldRow) {
+		com.changeSingleGrid(SI0300G0, row, oldRow)	
+		
+		var rowStatus = dlt_BMS_DRV_MST.getRowStatus(SI0300G0.getFocusedRowIndex());
+		
+		if (rowStatus != "C") {
+			DRV_ID.setDisabled(true);
+		} else if (rowStatus == "C") {
+			DRV_ID.setDisabled(false);
+		}		
+			
 	};
 	]]></script>
 	</head>
@@ -252,7 +262,7 @@
 					<xf:group id="" class="" style="">
 						<w2:gridView  alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle=""
 							class="cm_grid left" dataList="data:dlt_BMS_DRV_MST" enterKeyMove="" ev:onafteredit="" ev:oncellclick=""
-							ev:oneditkeyup="" ev:onkeyup="" ev:onrowindexchange="scwin.SI0300G0_onviewchange" ev:ontextimageclick="" ev:onviewchange="" fixedColumnWithHidden="true"
+							ev:oneditkeyup="" ev:onkeyup="" ev:onrowindexchange="scwin.SI0300G0_onrowindexchange" ev:ontextimageclick="" ev:onviewchange="" fixedColumnWithHidden="true"
 							id="SI0300G0" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true" rowStatusHeaderValue=""
 							rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true" visibleRowNum="" wheelRows=""
 							autoFitMinWidth="0" disabledScrollHidden="" editModeEvent="" editModeEventIcon="" checkEditableInputClass="" keyMoveEditMode=""
@@ -263,7 +273,7 @@
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column14"
-										value="운전자ID" blockSelect="false" displayMode="label">
+										value="사번" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column width="87" id="column6" value="운전자명"></w2:column>
 									<w2:column removeBorderStyle="false" width="154" inputType="text" style="height:20px" id="column13"
@@ -340,7 +350,7 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:input class="" id="DRV_ID" mandatory="" ref="data:dlt_BMS_DRV_MST.DRV_ID" style="width:100%;height:21px;"
-										disabled="true" adjustMaxLength="">
+										disabled="true" adjustMaxLength="" maxlength="6">
 									</xf:input>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_th req">운전자명<w2:attributes></w2:attributes></xf:group>

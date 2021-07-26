@@ -42,9 +42,9 @@ public class SI0402Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
-	@RequestMapping("/si/SI0402G0S0")
-	public @ResponseBody Map<String, Object> SI0402G0S0() throws Exception {
-		Map map = si0402Service.SI0402G0S0();
+	@RequestMapping("/si/SI0402G1S0")
+	public @ResponseBody Map<String, Object> SI0402G1S0() throws Exception {
+		Map map = si0402Service.SI0402G1S0();
 		result.setData("dma_result", map);
 		return result.getResultSave();
 	}	
@@ -55,5 +55,21 @@ public class SI0402Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
-
+	@RequestMapping("/si/SI0402P1R0")
+	public @ResponseBody Map<String, Object> SI0402P1R0() throws Exception {
+		result.setData("dlt_BMS_MOCK_LINK_NODE", si0402Service.SI0402P1R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/si/SI0402P2R0")
+	public @ResponseBody Map<String, Object> SI0402P2R0() throws Exception {
+		result.setData("dlt_BMS_STTN_MST", si0402Service.SI0402P2R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/si/SI0402P3R0")
+	public @ResponseBody Map<String, Object> SI0402P3R0() throws Exception {
+		result.setData("dlt_BMS_CRS_MST", si0402Service.SI0402P3R0());
+		return result.getResult();
+	}
 }

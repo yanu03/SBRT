@@ -92,7 +92,7 @@ public class DataInterface {
 				vo.put("NODE_NM",route_id + "_" + route_ord + "_" + ord);
 				vo.put("GPS_Y", lati);
 				vo.put("GPS_X", longi);
-				vo.put("NODE_TYPE", Constants.NODE_TYPE_3);
+				vo.put("NODE_TYPE", Constants.NODE_TYPE_NORMAL);
 				resultList.add(vo);
 				i++;
 			}
@@ -189,7 +189,7 @@ public class DataInterface {
 	public static List insertSttn(List<Map<String, Object>> nodeList, List<Map<String, Object>> staList) {
 		// 정류장 갯수만큼 for문 돌릴거임
 		for (Map<String, Object> sta : staList) {
-			sta.put("NODE_TYPE",Constants.NODE_TYPE_2);
+			sta.put("NODE_TYPE",Constants.NODE_TYPE_BUSSTOP);
 			int forseq = 0;
 			LocationVO resultVO = new LocationVO();
 			LocationVO tmpVO = new LocationVO();
