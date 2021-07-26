@@ -95,7 +95,7 @@
 	scwin.onpageload = function() {
 	
 		var autoOptions = {
-			Main : { grid : grd_memberBasic, frm : grp_memberBasicDetailTop, keyColumn : "USER_ID", focusColumn : "USER_ID"
+			Main : { grid : grd_memberBasic, frm : grp_memberBasicDetailTop, keyColumn : "USER_ID", focusColumn : "USER_ID", srchGrp : pgm_header
 					, srchSbm : sbm_searchMemberBasic, savSbm : sbm_saveMemberBasic}
 		};
 		var mainOptions = {
@@ -240,9 +240,13 @@
 					<xf:group id="" style="" class="search">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
-							optionOrder="false" ref="data:dma_search.TYPE" style="" submenuSize="auto"
+							optionOrder="false" ref="data:dma_search.TYPE" style="" class="search_type" submenuSize="auto"
 							textAlign="left">
 							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>							
 								<xf:item>
 									<xf:label><![CDATA[사용자명]]></xf:label>
 									<xf:value><![CDATA[USER_NM]]></xf:value>
@@ -257,14 +261,10 @@
 								</xf:item>
 							</xf:choices>
 						</xf:select1>
-						<xf:select1 disabledClass="w2selectbox_disabled" appearance="minimal" chooseOptionLabel="-전체-" direction="auto" 
-							chooseOption="true" displayMode="label" ev:onblur="scwin.sbx_PositionCd_onblur" optionOrder="false" id="sbx_PositionCd"
-							ref="" class="search_select" style="display: none;" allOption="" textAlign="center" disabled="false" submenuSize="auto">
-							<xf:choices></xf:choices>
-						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="운전자 ID 또는 운전자명,운수사명"></xf:input>						
 						<w2:autoComplete interactionMode="" chooseOptionValue="" chooseOptionLabel="-전체-" visibleRowNum=""
 							chooseOption="true" caseSensitive="false" displayMode="label" id="acb_autoChoiceBox" ref="" useKeywordHighlight="false"
-							style="" search="start" allOption="" textAlign="left" submenuSize="auto" editType="select"
+							style="display:none" search="start" allOption="" textAlign="left" submenuSize="auto" editType="select"
 							noResult="useData" class="search_auto">
 							<w2:choices>
 								<w2:itemset nodeset="data:dlt_memberSearchItem">

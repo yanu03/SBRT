@@ -174,7 +174,7 @@
 		var autoOptions = {
 			Main : { grid : VD0300G0, srchSbm : sub_VD0300G0R0, srchGrp : pgm_header, keyColumn : "VHC_ID", focusColumn : "VHC_NO", name :  "차량 목록"},
 			Sub1 : { grid : VD0300G1, srchSbm : sub_VD0300G1R0, savSbm : sub_VD0300G1S0, keyColumn : "DVC_ID", name :  "장치 목록"},
-			Sub2 : { grid : VD0300G2, srchSbm : sub_VD0300G2R0, savSbm : sub_VD0300G2S0, name :  "유지보수 이력"},
+//			Sub2 : { grid : VD0300G2, srchSbm : sub_VD0300G2R0, savSbm : sub_VD0300G2S0, name :  "유지보수 이력"},
 			Sub3 : { grid : VD0300G3, srchSbm : sub_VD0300G3R0, name :  "장애발생 이력"}
 		 };
 		
@@ -182,6 +182,7 @@
 			ADD : scwin.btn_add_onclick
 		};
 		 
+		
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID3, autoOptions, mainOptions);
 		
 		var codeOptions = [ {code : "AREA", compID : "VD0300G0:AREA" },
@@ -191,7 +192,8 @@
 							{code : "VHC_FUEL", compID : "VD0300G0:VHC_FUEL"},
 							{code : "DVC_KIND", compID : "VD0300G1:DVC_KIND"},
 							{code : "INST_LOC", compID : "VD0300G1:INST_LOC"},
-							{code : "WORK_TYPE", compID : "VD0300G2:WORK_TYPE"}
+							{code : "WORK_TYPE", compID : "VD0300G2:WORK_TYPE"},
+							{code : "DVC_COND", compID : "VD0300G3:DVC_COND"}
 		 ];
 		 
 		com.setCommonDtl(codeOptions, function() {
@@ -203,7 +205,6 @@
 	};
 
 	scwin.onpageunload = function() {
-
 	};
 
 	//조회 콜백 메소드
@@ -262,12 +263,6 @@
 		com.executeSubmission(sub_VD0300G3R0);
 						
 		
-	};
-	
-	scwin.VD0300T0_onchange = function(tabID,idx,userTabID) {
-		//장애발생 이력으로 변경시 setCode (임시)
-		var codeOption = [{code : "DVC_COND", compID : "VD0300G3:DVC_COND"}];
-		com.setCommonDtl(codeOption);
 	};
 	
 	scwin.btn_add_onclick = function() {
@@ -537,10 +532,10 @@
 					</xf:group>						
 					<xf:group class="defaultbox" id="" style="">
 						<w2:tabControl useTabKeyOnly="true" id="VD0300T0" useMoveNextTabFocus="false" useConfirmMessage="false"
-							confirmTrueAction="exist" confirmFalseAction="new" alwaysDraw="false" style="width: 100%;height: 100%;" tabScroll="" tableRender="" tabPosition="" ev:onchange="scwin.VD0300T0_onchange">
+							confirmTrueAction="exist" confirmFalseAction="new" alwaysDraw="true" style="width: 100%;height: 100%;" tabScroll="" tableRender="" tabPosition="" ev:onchange="" closable="" hiddenTab="" tabScrollAuto="">
 							<w2:tabs disabled="false" style="width:100px;height:30px;" id="tabs3" label="유지보수 이력"></w2:tabs>
-							<w2:content alwaysDraw="false" style="" id="content3">
-								<w2:gridView id="VD0300G2" style="width:100%;height:100%;" defaultCellHeight="20" rowNumVisible="true"
+							<w2:content alwaysDraw="true" style="" id="content3" frameMode="wframePreload" scope="true" class="" src="/ui/BMS/VD0300/VD0300T01.xml">
+<!-- 								<w2:gridView id="VD0300G2" style="width:100%;height:100%;" defaultCellHeight="20" rowNumVisible="true"
 									useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태"
 									overflowX="auto" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true" ignoreCellClick="false"
 									dataList="data:dlt_BMS_DVC_HIS" class="cm_grid right" autoFit="lastColumn" fixedColumnScrollHidden="" sortOrderReverse="true">
@@ -585,10 +580,10 @@
 											</w2:column>
 										</w2:row>
 									</w2:footer>									
-								</w2:gridView>
+								</w2:gridView> -->
 							</w2:content>
 							<w2:tabs disabled="false" style="width:100px;height:30px;" id="tabs4" label="장애발생 이력"></w2:tabs>
-							<w2:content alwaysDraw="false" style="height:170px" id="content4">
+							<w2:content alwaysDraw="true" style="height:170px" id="content4" frameMode="" scope="true">
 								<w2:gridView id="VD0300G3" style="width:100%;height:100%;" defaultCellHeight="20" rowNumVisible="true"
 									useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태"
 									overflowX="auto" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true" ignoreCellClick="false"

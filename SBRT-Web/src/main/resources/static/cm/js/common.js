@@ -6387,3 +6387,17 @@ com.searchPopup = function(url, opt, column, data) {
 com.decodeXss = function(str) {
 	return str.replaceAll("&#40;", "(").replaceAll("&#41;", ")");
 }
+
+com.setSerialNumberToData= function(grid, column){
+	   var data = com.getGridViewDataList(grid);
+	   var rowData = data.getAllJSON();
+	   var nodeSn = 0;
+	   for(var i = 0; i < rowData.length; i++) { //노선의 노드 순번을 그리드 순서대로 재 할당함.
+	      if(data.getRowStatus(i)!="D"){
+	         nodeSn ++;
+	         if(data.getCellData(i,column) != nodeSn){
+	        	 data.setCellData(i,column, nodeSn);
+	         }
+	      }
+	   }
+}
