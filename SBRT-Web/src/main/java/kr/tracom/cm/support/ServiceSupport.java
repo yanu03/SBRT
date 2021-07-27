@@ -652,4 +652,34 @@ public class ServiceSupport {
 
 		Files.move(moveSourcePath, moveDestPath, REPLACE_EXISTING);
 	}
+	
+	protected void doCopyFile(String sourcePath, String destPath, String sourceFileName, String destFileName) throws Exception
+	{
+		if (sourceFileName == null||"".equals(sourceFileName))
+		{
+			throw new IllegalArgumentException("파일이름이 유효하지 않습니다.");
+		}
+		sourcePath = fileRoot + sourcePath;
+		destPath = fileRoot + destPath;
+		
+		File fileSourcePath = new File(sourcePath);
+		if (!fileSourcePath.exists())
+		{
+			fileSourcePath.mkdirs();
+		}
+		
+		File fileDestPath = new File(destPath);
+		if (!fileDestPath.exists())
+		{
+			fileDestPath.mkdirs();
+		}
+		
+		String strSourcePathFile = (sourcePath + sourceFileName).replace("/", File.separator);
+		Path copySourcePath = Paths.get(strSourcePathFile);
+		
+		String strDestPathFile = (destPath + destFileName).replace("/", File.separator);
+		Path copyDestPath = Paths.get(strDestPathFile);
+
+		Files.copy(copySourcePath, copyDestPath, REPLACE_EXISTING);
+	}
 }
