@@ -5,14 +5,13 @@
 	<select id="VD0203G0R0" resultType="Map">
 		SELECT
 			VM.VHC_NO
-			<!-- ,(IF(UL.COMPLETE_YN IS NULL, '', IF(UL.COMPLETE_YN = 'N', '예약중', ''))) AS COMPLETE_YN -->
-			,(CASE WHEN UL.RSV_ID IS NOT NULL THEN '예약중' END) AS COMPLETE_YN
+			,(IF(UL.COMPLETE_YN IS NULL, '', IF(UL.COMPLETE_YN = 'N', '예약중', ''))) AS COMPLETE_YN
 			,DI.DVC_KIND
 			,OM.ORG_DIV
 			,DI.INST_LOC
 			,DI.DVC_ID
 			,DI.DVC_IP
-			,UL.MNG_ID
+			,DI.MNG_ID
 			,DI.REMARK
 		FROM
 			sbrt.BMS_DVC_INFO DI LEFT JOIN sbrt.BMS_VHC_MST VM ON DI.VHC_ID = VM.VHC_ID
@@ -27,6 +26,9 @@
 			</if>
 			<if test="TYPE == 'COMPLETE_YN'">
 				AND COMPLETE_YN LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'DVC_KIND'">
+				AND DVC_KIND LIKE CONCAT('%',#{DVC_KIND},'%')
 			</if>
 		</where>
 		ORDER BY VM.VHC_NO
@@ -45,26 +47,54 @@
 	</select>
 	
 	<insert id="VD0203G0I0" parameterType="Map">
+	
+		<selectKey keyProperty="RSV_ID" resultType="String" order="BEFORE">
+    		SELECT CONCAT('RV', LPAD(NEXTVAL(SEQ_BMS_UPD_LOG_0), 8, '0')) AS RSV_ID
+    	</selectKey>	
 		insert into BMS_UPD_LOG
 				(
 					RSV_ID
 					,MNG_ID
+					,PROCE_RST
 					,SEND_DATE
 					,COMPLETE_YN
 					,REMARK
-					,PROCE_RST
 				)	
 				   
 		values (
-					(
+					#{RSV_ID}
+					<!-- (
 						SELECT CONCAT('RV', LPAD(NEXTVAL(SEQ_BMS_UPD_LOG_0), 8, '0')) AS SEND_DATE
-					)
+					) -->
 					,#{MNG_ID}
-					,STR_TO_DATE(#{SEND_DATE}, '%Y%m%d')
-					,#{COMPLETE_YN}
-					,#{REMARK}
 					,#{PROCE_RST}
+					,STR_TO_DATE(#{SEND_DATE}, '%Y%m%d')
+					,'N'
+					,#{REMARK}
 				)
+	</insert>
+	
+	<insert id="VD0203G0I1" parameterType="Map">
+		insert into BMS_UPD_RSV_INFO
+				(
+					RSV_ID
+					,MNG_ID
+					,RSV_DT
+					,ATTACH_ID
+					,VER_INFO
+					,UPD_DTM
+					,UPD_ID
+				)
+		values	(
+					#{RSV_ID}
+					,#{MNG_ID}
+					,STR_TO_DATE(#{RSV_DT}, '%Y%m%d')
+					,#{ATTACH_ID}
+					,#{VER_INFO}
+					,#{UPD_DTM}
+					,#{UPD_ID}
+				)
+			
 	</insert>
 	
 	<!-- SELECT 

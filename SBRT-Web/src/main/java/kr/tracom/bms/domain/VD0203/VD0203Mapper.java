@@ -13,6 +13,8 @@ public interface VD0203Mapper {
 	
 	public int VD0203G0I0(Map param);
 	
+	public int VD0203G0I1(Map param);
+	
 	public int VD0203G0D0(Map param);
 	
 	public int VD0203G0U0(Map param);

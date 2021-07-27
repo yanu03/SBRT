@@ -64,13 +64,9 @@
 						<w2:column id="SEND_DATE" name="전송일시" dataType="date"></w2:column>
 						<w2:column id="COMPLETE_YN" name="완료여부" dataType="text"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+						<w2:column id="RSV_DT" name="예약일시" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataMap baseNode="map" id="dma_subsearch">
-					<w2:keyInfo>
-						<w2:key id="MNG_ID" name="관리아이디" dataType="text"></w2:key>
-					</w2:keyInfo>
-				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_VD0203G0R0" ref="data:json,dma_search" target="data:json,dlt_DVC_INFO" action="/vd/VD0203G0R0"
@@ -79,9 +75,9 @@
 			</xf:submission>
 			<xf:submission id="sub_VO0203SHI0" ref="" target="data:json,dlt_searchitem" action="/vd/VD0203SHI0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				ev:submit="" ev:submitdone="scwin.sub_VO0203SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_VD0203G0S0" ref='data:json,["dlt_DVC_INFO","dlt_UPD_LOG","dma_subsearch"]' target="data:json,dma_result" action="/vd/VD0203G0S0" method="post" mediatype="application/json"
+			<xf:submission id="sub_VD0203G0S0" ref='data:json,{"action":"modified","id":"dlt_DVC_INFO"}' target="data:json,dma_result" action="/vd/VD0203G0S0" method="post" mediatype="application/json"
 				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장 중입니다..." ev:submit="" ev:submitdone="scwin.sub_VD0203G0S0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -160,6 +156,20 @@
 		com.saveGrid(VD0203G0, sub_VD0203G0S0);	
 	}
 	
+	scwin.btn_resrvcnl_onclick = function() {
+		var rows = VD0203G0.getCheckedIndex("chk");
+		var count = rows.length;
+		var str = count + " 건의 데이터를 예약 취소 하시겠습니까?";
+		
+		if(count > 0) {
+			com.confirm(str, function(rtn) {
+				if (rtn) {
+					com.executeSubmission(sub_VD0203G0D0);
+				}	
+			});
+		}
+		
+	}
 
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
 		if (info.newValue == "ALL") {
@@ -184,6 +194,11 @@
 	
 	scwin.sub_VD0203G0R0_submitdone = function(e) {
 		com.setFocusedCell(VD0203G0, "VHC_NO");
+	};
+
+	
+	scwin.VD0203G0_oncellclick = function(row,col,colId) {
+		
 	};
 	
 	]]></script>
@@ -245,6 +260,10 @@
 					<xf:group id="" class="" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="차내장치 목록" style=""></w2:textbox>
+							<xf:select1 submenuSize="auto" appearance="minimal" disabledClass="w2selectbox_disabled" chooseOption=""
+								style="width: 148px;float:right;height:21px; margin-right: 10px;" disabled="false" id="" allOption="" direction="auto" ref="">
+							</xf:select1>
+							<w2:span style="float:right;margin-right: 10px;" label="장치종류 : " id=""></w2:span>
 							<w2:upload imageStyle="position:absolute;vertical-align:middle;word-wrap:break-word"
 								inputStyle="vertical-align:middle;word-wrap:break-word" style="height: 23px;float: right;margin-right: 40px;" id="">
 							</w2:upload>
@@ -256,11 +275,12 @@
 						<w2:gridView id="VD0203G0" defaultCellHeight="20" rowNumVisible="false" useShiftKey="true" scrollByColumn="false"
 							owNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태" overflowX="scroll" overflowY="scroll" rowStatusVisible="false"
 							fixedColumnWithHidden="true" ignoreCellClick="false" dataList="data:dlt_DVC_INFO" class="cm_grid left" autoFit="lastColumn"
-							ev:oncellclick="" ev:onrowindexchange="" sortEvent="onclick" disabledScrollHidden="">
+							ev:oncellclick="scwin.VD0203G0_oncellclick" ev:onrowindexchange="scwin.VD0203G0_onrowindexchange" sortEvent="onclick" disabledScrollHidden="" focusMode="row">
 
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
-								<w2:row style="" id="row1"><w2:column removeBorderStyle="false" width="42" inputType="checkbox" style="height:20px" id="chkHeader" value="선택" blockSelect="false" displayMode="label">
+								<w2:row style="" id="row1">
+									<w2:column removeBorderStyle="false" width="42" inputType="checkbox" style="height:20px" id="chkHeader" value="선택" blockSelect="false" displayMode="label">
 									</w2:column><w2:column removeBorderStyle="false" width="186" inputType="text" style="height:22px;" id="column15" value="차번" blockSelect="false" displayMode="label">
 									</w2:column><w2:column removeBorderStyle="false" width="64" inputType="text" style="height:22px;" id="column14" value="예약상태" blockSelect="false" displayMode="label">
 									</w2:column><w2:column removeBorderStyle="false" width="230" inputType="text" style="height:22px;" id="column13" value="장치 유형" blockSelect="false" displayMode="label">
@@ -270,18 +290,33 @@
 									<w2:column width="70" id="column60" value="장치IP"></w2:column>
 									<w2:column width="70" id="column61" value="관리ID"></w2:column>
 									<w2:column width="70" id="column86" value="비고"></w2:column>
-									</w2:row>
+								</w2:row>
 							</w2:header>
 							<w2:gBody style="" id="gBody1">
 								<w2:row style="" id="row2">
 									<w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px"
 				    					inputType="checkbox" id="chk" blockSelect="false">
-				    				</w2:column><w2:column headers="VD0203G0_column15" textAlign="left" removeBorderStyle="false" width="186" inputType="text" style="height:20px" id="VHC_NO" userData1="M" value="" blockSelect="false" displayMode="label">
-									</w2:column><w2:column headers="VD0203G0_column14" removeBorderStyle="false" width="64" inputType="text" style="height:20px" id="COMPLETE_YN" userData1="M" value="" blockSelect="false" displayMode="label">
-									</w2:column><w2:column headers="VD0203G0_column13" removeBorderStyle="false" width="230" inputType="select" style="height:20px" id="DVC_KIND" value="" blockSelect="false" displayMode="label">
-									</w2:column><w2:column headers="VD0203G0_column49" autocomplete="" removeBorderStyle="false" dataType="" blockSelect="false" displayMode="label" calendarClass="" width="70" inputType="select" style="height:20px" id="ORG_DIV" value="보기" class="">
-									</w2:column><w2:column headers="VD0203G0_column3" removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="INST_LOC" value="" blockSelect="false" displayMode="label">
-									</w2:column><w2:column width="70" id="DVC_ID"></w2:column><w2:column width="70" id="DVC_IP"></w2:column><w2:column width="70" id="MNG_ID"></w2:column><w2:column width="70" id="REMARK"></w2:column></w2:row>
+				    				</w2:column>
+				    				<w2:column headers="VD0203G0_column15" textAlign="left" removeBorderStyle="false" width="186" inputType="text" 
+				    					style="height:20px" id="VHC_NO" userData1="M" value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column headers="VD0203G0_column14" removeBorderStyle="false" width="64" inputType="text" style="height:20px" 
+										id="COMPLETE_YN" value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column headers="VD0203G0_column13" removeBorderStyle="false" width="230" inputType="select" 
+										style="height:20px" id="DVC_KIND" value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column headers="VD0203G0_column49" autocomplete="" removeBorderStyle="false" dataType="" 
+										blockSelect="false" displayMode="label" calendarClass="" width="70" inputType="select" style="height:20px" id="ORG_DIV" value="보기" class="">
+									</w2:column>
+									<w2:column headers="VD0203G0_column3" removeBorderStyle="false" width="70" inputType="select" 
+										style="height:20px" id="INST_LOC" value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column width="70" id="DVC_ID"></w2:column>
+									<w2:column width="70" id="DVC_IP"></w2:column>
+									<w2:column width="70" id="MNG_ID"></w2:column>
+									<w2:column width="70" id="REMARK"></w2:column>
+								</w2:row>
 							</w2:gBody>
 							<w2:footer style="" id="footer1">
 								<w2:row style="" id="row3">
