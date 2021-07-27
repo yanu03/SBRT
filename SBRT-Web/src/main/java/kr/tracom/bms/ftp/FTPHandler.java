@@ -175,6 +175,31 @@ public class FTPHandler {
 	}
 	
 	
+	/*
+	// 승무사원 관리 승무사원 사진 업로드
+	public void uploadSI0300(String fileName, MultipartFile file) {
+		String dir1 = Paths.get(getRootLocalPath(), getCommonEmployeePath()).toString();
+		
+		File saveFile = Paths.get(dir1, fileName).toFile();
+		try {
+			FileUtils.writeByteArrayToFile(saveFile, file.getBytes());
+			
+			processSynchronize(getRootLocalPath() + getCommonEmployeePath(), getRootServerPath() + getCommonEmployeePath());
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	*/
+	
+	// 승무사원 관리 승무사원 사진 업로드 to FTP
+	public void uploadSI0300() {
+		try {
+			processSynchronize(getRootLocalPath() + getCommonEmployeePath(), getRootServerPath() + getCommonEmployeePath());
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	//PI0503 영상예약
 	public void reserveVideo(Map<String, Object> param, List<Map<String, Object>> playList) throws Exception {

@@ -36,15 +36,21 @@ public class VD0203Service extends ServiceSupport{
 		int dCnt = 0;		
 
 		List<Map<String, Object>> param = getSimpleList("dlt_DVC_INFO");
-		Map<String, Object> map = getSimpleDataMap("dma_subsearch");
+/*		Map<String, Object> map = getSimpleDataMap("dma_subsearch");*/
 		try {
 			for (int i = 0; i < param.size(); i++) {
-				Map data = (Map) param.get(i);
+				Map<String, Object> data = param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("U")) {
 					
-					data.put("MNG_ID", map.get("MNG_ID"));
+					
+					/*String mngId = String.valueOf(map.get("MNG_ID"));
+					data.put("MNG_ID", mngId);*/
+					
 					iCnt += VD0203Mapper.VD0203G0I0(data);
+					iCnt += VD0203Mapper.VD0203G0I1(data);
+					
+					
 				} 
 				/*else if (rowStatus.equals("D")) {
 					dCnt += pi0503Mapper.PI0503G1D0(data);
