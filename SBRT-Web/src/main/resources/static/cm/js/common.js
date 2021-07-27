@@ -420,7 +420,7 @@ gcm._groupValidationCallback = function() {
 
 /**
  * submission의 공통 설정에서 사용.
- * submisison 통신 직전 호출.
+ * submission 통신 직전 호출.
  * return true일 경우 통신 수행, return false일 경우 통신 중단
  *
  * @date 2016.11.11
