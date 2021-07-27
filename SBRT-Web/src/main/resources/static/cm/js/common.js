@@ -6064,6 +6064,13 @@ com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, f
 	
 	var mainData = com.getGridViewDataList(mainGrid);
 	var subData = com.getGridViewDataList(subGrid);
+	
+	/*var mainData = com.getGridViewDataList(mainGrid);
+	var subData;
+	if (typeof subGrid == "string") {
+		subGrid = $p.getComponentById(subGrid);
+		subData = com.getGridViewDataList(subGrid);
+	}*/
 	var modifiedMainCnt = mainData.getModifiedIndex().length;
 	var modifiedSubCnt = subData.getModifiedIndex().length;
 	var curKeyValue = "";

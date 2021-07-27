@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.bms.domain.PI0901.PI0901Mapper">
+	<select id="PI0901G0R0" resultType="Map">
+		SELECT  	SET_ID
+					,SET_NM
+					,TIME_KO
+					,TIME_EN
+					,CATEGORY
+					,FRAME
+					,FONT
+					,REMARK
+		FROM		BMS_ED_INFO
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND SET_ID LIKE CONCAT('%',#{CONTENT},'%') || SET_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'SET_ID'">
+				AND SET_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'SET_NM'">
+				AND SET_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>
+	</select>	
+
+	<select id="PI0901SHI0" resultType="Map">
+		SELECT		SET_ID
+					,SET_NM
+		FROM 		BMS_ED_INFO
+	</select>
+
+
+	<select id="PI0901G0K0" resultType="Map">
+		SELECT CONCAT('RP', LPAD(NEXTVAL(SEQ_BMS_ED_INFO_0), 8, '0')) AS 'SEQ'
+	</select>
+
+	<insert id="PI0901G0I0" parameterType="Map">
+		INSERT INTO BMS_ED_INFO
+				   (
+					SET_ID
+					,SET_NM
+					,TIME_KO
+					,TIME_EN
+					,CATEGORY
+					,FRAME
+					,FONT
+					,REMARK
+				   )
+			   
+		VALUES		(
+					#{SET_ID}
+					,#{SET_NM}
+					,#{TIME_KO}
+					,#{TIME_EN}
+					,#{CATEGORY}
+					,#{FRAME}
+					,#{FONT}
+					,#{REMARK}
+					)
+	</insert>
+
+	<update id="PI0901G0U0" parameterType="Map">
+		UPDATE 		BMS_ED_INFO
+		SET 		SET_NM = #{SET_NM}
+					,TIME_KO = #{TIME_KO}
+					,TIME_EN = #{TIME_EN}
+					,CATEGORY = #{CATEGORY}
+					,FRAME = #{FRAME}
+					,FONT = #{FONT}
+					,REMARK = #{REMARK}
+		WHERE SET_ID = #{SET_ID}
+	</update>
+	
+	<delete id="PI0901G0D0" parameterType="Map">
+		DELETE
+		FROM 		BMS_ED_INFO
+		WHERE 		SET_ID = #{SET_ID}
+	</delete>
+
+
+</mapper>
