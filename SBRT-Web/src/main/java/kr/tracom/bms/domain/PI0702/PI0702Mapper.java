@@ -18,4 +18,6 @@ public interface PI0702Mapper {
 	
 	public int PI0702G1D0(Map param);
 	
+	public List PI0702G2R0(Map param);
+	
 }

@@ -71,7 +71,6 @@
 					RSV_ID
 				    ,MNG_ID
 					,PROCE_RST
-					,SEND_DTM
 					,COMPLETE_YN
 				)	
 				   
@@ -81,8 +80,7 @@
 					) 
 					,#{MNG_ID}
 					,'PR001'
-					,now()
-					,'Y'
+					,'N'
 				);
 				
 				
@@ -113,5 +111,38 @@
 		WHERE		RSV_ID = #{RSV_ID}
 	</delete>
 
+	<select id="PI0702G2R0" resultType="Map">
+		SELECT 		VHC.VHC_ID
+					,VHC.VHC_NO
+					,DVC.MNG_ID
+					,RST.PROCE_RST
+					,RST.SEND_DTM
+					,ORG.ORG_NM		
+					,DVC.DVC_KIND
+					,DVC.INST_LOC
+					
+		FROM		BMS_VHC_MST VHC
+			LEFT JOIN 	BMS_DVC_INFO DVC
+			ON		  	VHC.VHC_ID = DVC.VHC_ID
+			LEFT JOIN	BMS_ORG_MST ORG
+			ON			DVC.ORG_ID = ORG.ORG_ID AND ORG.ORG_DIV = 'OGD08'
+			LEFT JOIN	BMS_DL_CD_INFO DL
+			ON			DVC.DVC_KIND = DL.DL_CD AND DL.CO_CD = 'DVC_KIND'
+			LEFT JOIN	BMS_DESTI_RSV_RST_INFO RST
+			ON			DVC.MNG_ID = RST.MNG_ID
+		WHERE		VHC.VHC_ID = #{VHC_ID}
+		AND			DL.TXT_VAL1 = 'RD'	
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'ROUTE_ID'">
+				ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'ROUT_NM'">
+				ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>		
+	</select>
 
 </mapper>

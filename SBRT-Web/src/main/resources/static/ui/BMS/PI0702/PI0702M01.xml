@@ -2,7 +2,7 @@
 <?xml-stylesheet href="/cm/css/all.css" type="text/css"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
 	xmlns:xf="http://www.w3.org/2002/xforms">
-	<head>
+	<head meta_vertical_guides="" meta_horizontal_guides="">
 		<w2:type>DEFAULT</w2:type>
 		<w2:buildDate />
 		<xf:model>
@@ -81,6 +81,22 @@
 						<w2:key id="RSV_ID" name="name1" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_DESTI_RSV_RST_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
+						<w2:column id="PROCE_RST" name="예약결과" dataType="text"></w2:column>
+						<w2:column id="SEND_DTM" name="처리일시" dataType="text"></w2:column>
+						<w2:column id="MNG_ID" name="관리ID" dataType="text"></w2:column>
+						<w2:column id="ORG_NM" name="제조사" dataType="text"></w2:column>
+						<w2:column id="DVC_KIND" name="장치종류" dataType="text"></w2:column>
+						<w2:column id="INST_LOC" name="설치위치" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_subsearch2">
+					<w2:keyInfo>
+						<w2:key id="VHC_ID" name="차량ID" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_PI0702G0R0" ref="data:json,dma_search" target="data:json,dlt_BIT_ROUT_MST" action="/pi/PI0702G0R0"
@@ -104,6 +120,10 @@
 				action="/pi/PI0702G1D0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0702G1D0_submitdone" ev:submiterror=""
 				abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_PI0702G2R0" ref="" target="" action="" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
+				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[ 
@@ -347,7 +367,7 @@
 				</xf:group><!-- pgm_list -->
 				<xf:group id="" class="vertical_line">
 				</xf:group>
-				<xf:group id="pgm_detail" class="pgm_detail grdr_20_36_a" style="">
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_36_250_20_20_36_a" style="">
 					<xf:group class="defaultbox" id="" style="">
 						<w2:textbox class="df_tt fl" id="" label="차량 목록" style=""></w2:textbox>
 					</xf:group>
@@ -360,7 +380,7 @@
 								<xf:input id="search_sub_input" class="search_input" ref="data:dma_subsearch.CONTENT" placeholder="차량번호"></xf:input>
 							</xf:group>
 							<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
-						</xf:group>						
+						</xf:group>
 					</xf:group>
 					<xf:group id="" class="" style="">
 						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid left"
@@ -419,9 +439,9 @@
 							</w2:header>
 							<w2:gBody style="" id="gBody1">
 								<w2:row style="" id="row2">
-				    				<w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px"
-				    					inputType="checkbox" id="chk" blockSelect="false">
-				    				</w2:column>
+									<w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px"
+										inputType="checkbox" id="chk" blockSelect="false">
+									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="RSV_STATE"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
@@ -437,11 +457,11 @@
 									<w2:column removeBorderStyle="false" width="134" inputType="text" style="height:20px" id="COMP_NM"
 										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="115" inputType="select" style="height:20px" id="AREA" value=""
-										blockSelect="false" displayMode="label" textAlign="left">
+									<w2:column removeBorderStyle="false" width="115" inputType="select" style="height:20px" id="AREA"
+										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="104" inputType="text" style="height:20px" id="MAKER" value=""
-										blockSelect="false" displayMode="label" textAlign="left">
+									<w2:column removeBorderStyle="false" width="104" inputType="text" style="height:20px" id="MAKER"
+										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="114" inputType="text" style="height:20px" id="MODEL_NM"
 										value="" blockSelect="false" displayMode="label" textAlign="left">
@@ -462,15 +482,144 @@
 							</w2:gBody>
 							<w2:footer style="" id="footer1">
 								<w2:row style="" id="row3">
-									<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;" id="column48"
-										value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')"
-										textAlign="left">
+									<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;"
+										id="column48" value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan=""
+										expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" textAlign="left">
 									</w2:column>
 								</w2:row>
-							</w2:footer>							
+							</w2:footer>
 						</w2:gridView>
 					</xf:group>
-			</xf:group> <!-- pgm_detail -->
+					<xf:group id="" class="horizontal_line"></xf:group>					
+					<xf:group class="defaultbox" id="" style="">
+						<w2:textbox class="df_tt fl" id="" label="예약 상세정보" style=""></w2:textbox>
+					</xf:group>
+					<xf:group id="" class="gr_sub_header" style="">
+						<xf:group class="gr_search" id="" style="">
+							<xf:group class="label" id="" style="">
+								<w2:span class="" id="" label="예약종료여부" style=""></w2:span>
+								<xf:select1 id="" chooseOption="false" style="width: 148px;height: 21px;margin-left:" submenuSize="auto" allOption="false"
+									disabled="false" direction="auto" appearance="minimal" disabledClass="w2selectbox_disabled">
+								</xf:select1>
+							</xf:group>
+							<xf:group class="label" id="" style="">
+								<w2:span class="" id="" label="기준년월"></w2:span>
+								<w2:inputCalendar footerDiv="false" id="" style="width: 150px;height: 23px;" renderDiv="true"
+									focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component">
+								</w2:inputCalendar>
+							</xf:group>
+
+						</xf:group>
+					</xf:group>					
+					<xf:group id="" class="" style="">
+						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid left"
+							dataList="data:dlt_VHC_MST" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup="" ev:onkeyup=""
+							ev:onrowindexchange="" ev:ontextimageclick="" ev:onviewchange="" fixedColumnWithHidden="true" id="PI0702G2" ignoreCellClick="false"
+							nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true" rowStatusHeaderValue="" rowStatusVisible="false" rowStatusWidth="40"
+							scrollByColumn="false" style="" useShiftKey="true" visibleRowNum="" wheelRows="" autoFitMinWidth="0" disabledScrollHidden=""
+							editModeEvent="" editModeEventIcon="" checkEditableInputClass="" keyMoveEditMode="" moveKeyEditMode="" moveKeyEditModeAll=""
+							ignoreNonEditableCellTabEnter="" readOnly="true" keepDefaultColumnWidth="" oddEvenColorDisplay="" rowNumWidth="" summaryAuto=""
+							excludeDeletedRows="" useCtrlOnMultisort="" useFilterList="" useFilterListSync="" sortedIconPosition="" sortable=""
+							sortOrderReverse="" showSortableUseFilter="" focusMode="row" rowNumStatusUniqueId="" rowNumStatusResize="" ev:onbeforecolumnmove=""
+							userData1="">
+							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
+							<w2:header style="" id="header1">
+								<w2:row style="" id="row1">
+									<w2:column removeBorderStyle="false" width="42" inputType="checkbox" style="height:20px" id="chkHeader"
+										value="선택" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column13"
+										value="예약상태" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column11"
+										value="예약날짜" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="112" inputType="text" style="height:20px" id="column10"
+										value="차량ID" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="130" inputType="text" style="height:20px" id="column9"
+										value="차량번호" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="134" inputType="text" style="height:20px" id="column8"
+										value="운수사명" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="115" inputType="text" style="height:20px" id="column7"
+										value="권역" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="104" inputType="text" style="height:20px" id="column6"
+										value="제조사" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="114" inputType="text" style="height:20px" id="column5"
+										value="모델명" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column4"
+										value="노선구분" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column3"
+										value="차량유형" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column2"
+										value="차량연료" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="155" inputType="text" style="height:20px" id="column1"
+										value="비고" blockSelect="false" displayMode="label">
+									</w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody style="" id="gBody1">
+								<w2:row style="" id="row2">
+									<w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px"
+										inputType="checkbox" id="chk" blockSelect="false">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="RSV_STATE"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="RSV_DT"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="112" inputType="text" style="height:20px" id="VHC_ID"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="130" inputType="text" style="height:20px" id="VHC_NO"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="134" inputType="text" style="height:20px" id="COMP_NM"
+										value="" blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="115" inputType="select" style="height:20px" id="AREA"
+										value="" blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="104" inputType="text" style="height:20px" id="MAKER"
+										value="" blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="114" inputType="text" style="height:20px" id="MODEL_NM"
+										value="" blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="ROUT_DIV"
+										value="" blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="VHC_TYPE"
+										value="" blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="VHC_FUEL"
+										value="" blockSelect="false" displayMode="label" dateValidCheck="" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="155" inputType="text" style="height:20px" id="REMARK"
+										value="" blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer style="" id="footer1">
+								<w2:row style="" id="row3">
+									<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;"
+										id="column48" value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan=""
+										expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" textAlign="left">
+									</w2:column>
+								</w2:row>
+							</w2:footer>
+						</w2:gridView>
+					</xf:group>					
+				</xf:group><!-- pgm_detail -->
 		</xf:group>
 	</xf:group>	
 	</body>

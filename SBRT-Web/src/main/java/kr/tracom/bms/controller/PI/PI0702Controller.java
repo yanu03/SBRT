@@ -51,4 +51,10 @@ public class PI0702Controller extends ControllerSupport{
 		return result.getResult();
 	}
 	
+	@RequestMapping("/pi/PI0702G2R0")
+	public @ResponseBody Map<String, Object> PI0702G2R0() throws Exception {
+		result.setData("dlt_BMS_DESTI_RSV_RST_INFO", pi0702Service.PI0702G1R0());
+		return result.getResult();
+	}	
+	
 }
