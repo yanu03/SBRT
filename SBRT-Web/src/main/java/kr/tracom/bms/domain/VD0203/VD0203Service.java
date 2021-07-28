@@ -16,72 +16,102 @@ import kr.tracom.util.DateUtil;
 import kr.tracom.util.Result;
 
 @Service
-public class VD0203Service extends ServiceSupport{
+public class VD0203Service extends ServiceSupport {
 
 	@Autowired
 	private VD0203Mapper VD0203Mapper;
-		
-	public List VD0203G0R0() throws Exception{
+
+	public List VD0203G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
 		return VD0203Mapper.VD0203G0R0(map);
 	}
-	
+
+	public List VD0203G1R0() throws Exception {
+		Map param = getSimpleDataMap("dma_subsearch");
+		return VD0203Mapper.VD0203G1R0(param);
+	}
+
 	public List VD0203SHI0() throws Exception {
 		return VD0203Mapper.VD0203SHI0();
-	}	
-	
+	}
+
 	public Map VD0203G0S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
-		int dCnt = 0;		
+		int dCnt = 0;
 
 		List<Map<String, Object>> param = getSimpleList("dlt_DVC_INFO");
-/*		Map<String, Object> map = getSimpleDataMap("dma_subsearch");*/
+		/* Map<String, Object> map = getSimpleDataMap("dma_subsearch"); */
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map<String, Object> data = param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("U")) {
-					
-					
-					/*String mngId = String.valueOf(map.get("MNG_ID"));
-					data.put("MNG_ID", mngId);*/
-					
+					if ((data.get("FILE_NM") != null) && (data.get("FILE_NM").toString().isEmpty() == false)) {
+						doMoveFile("up/", "TEST/", data.get("FILE_NM").toString(),
+								data.get("DVC_ID").toString() + "." + data.get("FILE_EXTENSION").toString());
+					}
+
+					/*
+					 * String mngId = String.valueOf(map.get("MNG_ID")); data.put("MNG_ID", mngId);
+					 */
+
 					iCnt += VD0203Mapper.VD0203G0I0(data);
 					iCnt += VD0203Mapper.VD0203G0I1(data);
-					
-					
-				} 
-				/*else if (rowStatus.equals("D")) {
-					dCnt += pi0503Mapper.PI0503G1D0(data);
-				}*/ 
-			}			
-		} catch(Exception e) {
-			if (e instanceof DuplicateKeyException)
-			{
-				throw new MessageException(Result.ERR_KEY, "중복된 키값의 데이터가 존재합니다.");
+
+				}
+				/*
+				 * else if (rowStatus.equals("D")) { dCnt += pi0503Mapper.PI0503G1D0(data); }
+				 */
 			}
-			else
-			{
+		} catch (Exception e) {
+			if (e instanceof DuplicateKeyException) {
+				throw new MessageException(Result.ERR_KEY, "중복된 키값의 데이터가 존재합니다.");
+			} else {
 				throw e;
-			}		
+			}
 		}
 
-		
 		Map result = saveResult(iCnt, uCnt, dCnt);
-		
-		return result;		
-		
-		
-	}
-	
-	/*public List<Map> VD0201G0R0() throws Exception{
-		Map param = getSimpleDataMap("dma_search");
-		return VD0201Mapper.VD0201G0R0(param);
+
+		return result;
+
 	}
 
-	public List<Map> VD0201G1R0() throws Exception{
-		Map param = getSimpleDataMap("dma_param_VHC_ID");
-		return VD0201Mapper.VD0201G1R0(param);
-	}*/
+	public Map VD0203G0D0() throws Exception {
+		int iCnt = 0;
+		int uCnt = 0;
+		int dCnt = 0;
+
+		List<Map<String, Object>> param = getSimpleList("dlt_DVC_INFO");
+		try {
+			for (int i = 0; i < param.size(); i++) {
+				Map data = (Map) param.get(i);
+				String rowStatus = (String) data.get("rowStatus");
+				if (rowStatus.equals("U")) {
+					iCnt += VD0203Mapper.VD0203G0D0(data);
+				}
+			}
+		} catch (Exception e) {
+			if (e instanceof DuplicateKeyException) {
+				throw new MessageException(Result.ERR_KEY, "중복된 키값의 데이터가 존재합니다.");
+			} else {
+				throw e;
+			}
+		}
+
+		Map result = saveResult(iCnt, uCnt, dCnt);
+
+		return result;
+
+	}
+
+	/*
+	 * public List<Map> VD0201G0R0() throws Exception{ Map param =
+	 * getSimpleDataMap("dma_search"); return VD0201Mapper.VD0201G0R0(param); }
+	 * 
+	 * public List<Map> VD0201G1R0() throws Exception{ Map param =
+	 * getSimpleDataMap("dma_param_VHC_ID"); return VD0201Mapper.VD0201G1R0(param);
+	 * }
+	 */
 }
