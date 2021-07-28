@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -38,6 +39,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jcraft.jsch.ChannelSftp;
@@ -46,6 +48,7 @@ import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 
 import kr.tracom.bms.domain.PI0503.PI0503Mapper;
+import kr.tracom.cm.domain.Common.CommonMapper;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.util.Constants;
 
@@ -143,6 +146,9 @@ public class FTPHandler {
 	@Autowired
 	private PI0503Mapper pi0503Mapper;
 	
+	@Autowired
+	private CommonMapper commonMapper;
+	
 	
 	private ArrayList<String> serverContentList;
 	private ArrayList<String> pathList;
@@ -174,6 +180,31 @@ public class FTPHandler {
 		
 	}
 	
+	
+	/*
+	// 승무사원 관리 승무사원 사진 업로드
+	public void uploadSI0300(String fileName, MultipartFile file) {
+		String dir1 = Paths.get(getRootLocalPath(), getCommonEmployeePath()).toString();
+		
+		File saveFile = Paths.get(dir1, fileName).toFile();
+		try {
+			FileUtils.writeByteArrayToFile(saveFile, file.getBytes());
+			
+			processSynchronize(getRootLocalPath() + getCommonEmployeePath(), getRootServerPath() + getCommonEmployeePath());
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	*/
+	
+	// 승무사원 관리 승무사원 사진 업로드 to FTP
+	public void uploadSI0300() {
+		try {
+			processSynchronize(getRootLocalPath() + getCommonEmployeePath(), getRootServerPath() + getCommonEmployeePath());
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 	//PI0503 영상예약
@@ -250,6 +281,323 @@ public class FTPHandler {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	
+	/*2021 신버전*/
+	//PI0702 행선지안내기 예약(파일이동)
+	public void reserveDst(Map<String, Object> routeInfo, List<Map<String, Object>> dlist) throws Exception {
+		
+		String routeNm = String.valueOf(routeInfo.get("ROUT_NM"));
+		String wayDiv = String.valueOf(routeInfo.get("TXT_VAL1")); //U or D
+		
+		String dvcName =  routeNm + wayDiv; //노선이름+U or D
+		
+		
+		for(Map<String, Object> map : dlist) {
+			
+			String impId = String.valueOf(map.get("IMP_ID"));
+			String dlCd =  String.valueOf(map.get("DL_CD"));
+			
+			
+			String localPath = Paths.get(getRootLocalPath(), "temp/destination/", dlCd).toString();
+			String localPath2 = Paths.get(getRootLocalPath(), "vehicle/", impId, "/device/destination/images/").toString();
+			//String ftpPath = getRootServerPath() + "/vehicle/"+ dcvo.getImpId() +"/device/destination/images/";
+			
+			File temp = new File(localPath2);
+			
+			//destination폴더 없으면 생성
+			if(!temp.isDirectory()) {
+				temp.mkdirs();
+			}
+			
+			//images폴더 없으면 생성
+			temp = new File(localPath2);
+			if(!temp.isDirectory()) {
+				temp.mkdirs();
+			}
+			
+			String fileNameHeader = String.valueOf(map.get("TXT_VAL2"));
+			String fileNameBody = dvcName;
+			String bmpExt = ".BMP";
+			String schExt = ".SCH";
+					
+			// 로고파일 복사
+			String logoBmpName = fileNameHeader + "LOGO" + bmpExt;
+			String logoSchName = fileNameHeader + "LOGO" + schExt;
+			
+			File logoBmpFile1 = new File(localPath + "/" + logoBmpName);
+			File logoSchFile1 = new File(localPath + "/" + logoSchName);
+			
+			File logoBmpFile2 = new File(localPath2 + "/" + logoBmpName);
+			File logoSchFile2 = new File(localPath2 + "/" + logoSchName);
+			
+			if(logoBmpFile1.exists()) {
+				//복사
+				copyFile(logoBmpFile1, logoBmpFile2);
+			}else {}
+			
+			if(logoSchFile1.exists()) {
+				//복사
+				copyFile(logoSchFile1, logoSchFile2);
+			}else {}
+			
+			File bmp1 = new File(localPath + "/" + fileNameHeader + fileNameBody + bmpExt);
+			File bmp2 = new File(localPath2 + "/" + fileNameHeader + fileNameBody + bmpExt);
+			File sch1 = new File(localPath + "/" + fileNameHeader + fileNameBody + schExt);
+			File sch2 = new File(localPath2 + "/" + fileNameHeader + fileNameBody + schExt);
+			
+			if(bmp1.exists()) {
+				copyFile(bmp1, bmp2);
+			}else {}
+			
+			if(sch1.exists()) {
+				copyFile(sch1, sch2);
+			}else {}
+		}
+	}
+	
+	
+	//PI0702 행선지안내기 예약(list 생성)
+	public void makeDstConfig(List<Map<String, Object>> vhcList, Map<String, Object> routeInfo) throws Exception {
+		
+		//for(VHCInfoVO vhcVo : vhcVOList) {
+		for(Map<String, Object> vhc : vhcList) {
+			
+			String txt = "";
+			String mngId = String.valueOf(vhc.get("MNG_ID"));
+			String impId = mngId.substring(0, Constants.IMP_ID_DIGIT);
+			String localPath2 = Paths.get(getRootLocalPath(), "vehicle/", impId, "/device/destination/images/").toString();
+			File fBmpFile = new File(localPath2 + "/FLOGO.BMP");
+			if(fBmpFile.exists()) {
+				txt +=	"FLOGO.BMP" + Constants.CSVForms.COMMA + "A" + Constants.CSVForms.ROW_SEPARATOR + 
+						"FLOGO.SCH" + Constants.CSVForms.COMMA + "A";
+				
+			}else {}
+			File sBmpFile = new File(localPath2 + "/SLOGO.BMP");
+			if(sBmpFile.exists()) {
+				txt +=	Constants.CSVForms.ROW_SEPARATOR +
+						"SLOGO.BMP" + Constants.CSVForms.COMMA + "A" + Constants.CSVForms.ROW_SEPARATOR +
+						"SLOGO.SCH" + Constants.CSVForms.COMMA + "A";
+			}else {}
+			
+			/*
+			for(int i = 0; i < rsvVO.size(); i ++) {
+				txt +=  Constants.CSVForms.ROW_SEPARATOR + "F" + rsvVO.get(i).getDvcName() + ".BMP" + Constants.CSVForms.COMMA + "A" + 
+						Constants.CSVForms.ROW_SEPARATOR + "F" + rsvVO.get(i).getDvcName() + ".SCH" + Constants.CSVForms.COMMA + "A" +
+						Constants.CSVForms.ROW_SEPARATOR + "S" + rsvVO.get(i).getDvcName() + ".BMP" + Constants.CSVForms.COMMA + "A" + 
+						Constants.CSVForms.ROW_SEPARATOR + "S" + rsvVO.get(i).getDvcName() + ".SCH" + Constants.CSVForms.COMMA + "A";
+			}
+			*/
+			
+			String routeNm = String.valueOf(routeInfo.get("ROUT_NM"));
+			String wayDiv = String.valueOf(routeInfo.get("TXT_VAL1")); //U or D
+			String dvcName =  routeNm + wayDiv; //노선이름+U or D
+			
+			txt +=  Constants.CSVForms.ROW_SEPARATOR + "F" + dvcName + ".BMP" + Constants.CSVForms.COMMA + "A" + 
+					Constants.CSVForms.ROW_SEPARATOR + "F" + dvcName + ".SCH" + Constants.CSVForms.COMMA + "A" +
+					Constants.CSVForms.ROW_SEPARATOR + "S" + dvcName + ".BMP" + Constants.CSVForms.COMMA + "A" + 
+					Constants.CSVForms.ROW_SEPARATOR + "S" + dvcName + ".SCH" + Constants.CSVForms.COMMA + "A";
+			
+			
+			String listLocalPath = Paths.get(getRootLocalPath(), "/vehicle/", impId, "/device/destination/").toString();
+			String listFTPPath = getRootServerPath() + "/vehicle/" + impId + "/device/destination/";
+			File localList = new File(listLocalPath + "/list/" + "list.csv");
+			
+			createCSV(localList, txt);
+			processSynchronize(listLocalPath, listFTPPath);
+			
+		}
+
+	}
+	
+	/*
+	public void makeDstConfig(List<VHCInfoVO> vhcVOList, List<RoutRsvVO> rsvVO) throws Exception {
+		for(VHCInfoVO vhcVo : vhcVOList) {
+			String txt = "";
+			String impId = vhcVo.getMngId().substring(0, 10);
+			String localPath2 = Paths.get(getRootLocalPath(), "vehicle/", impId, "/device/destination/images/").toString();
+			File fBmpFile = new File(localPath2 + "/FLOGO.BMP");
+			if(fBmpFile.exists()) {
+				txt +=	"FLOGO.BMP" + GlobalConstants.CSVForms.COMMA + "A" + GlobalConstants.CSVForms.ROW_SEPARATOR + 
+						"FLOGO.SCH" + GlobalConstants.CSVForms.COMMA + "A";
+				
+			}else {}
+			File sBmpFile = new File(localPath2 + "/SLOGO.BMP");
+			if(sBmpFile.exists()) {
+				txt +=	GlobalConstants.CSVForms.ROW_SEPARATOR +
+						"SLOGO.BMP" + GlobalConstants.CSVForms.COMMA + "A" + GlobalConstants.CSVForms.ROW_SEPARATOR +
+						"SLOGO.SCH" + GlobalConstants.CSVForms.COMMA + "A";
+			}else {}
+			
+			for(int i = 0; i < rsvVO.size(); i ++) {
+				txt +=  GlobalConstants.CSVForms.ROW_SEPARATOR + "F" + rsvVO.get(i).getDvcName() + ".BMP" + GlobalConstants.CSVForms.COMMA + "A" + 
+						GlobalConstants.CSVForms.ROW_SEPARATOR + "F" + rsvVO.get(i).getDvcName() + ".SCH" + GlobalConstants.CSVForms.COMMA + "A" +
+						GlobalConstants.CSVForms.ROW_SEPARATOR + "S" + rsvVO.get(i).getDvcName() + ".BMP" + GlobalConstants.CSVForms.COMMA + "A" + 
+						GlobalConstants.CSVForms.ROW_SEPARATOR + "S" + rsvVO.get(i).getDvcName() + ".SCH" + GlobalConstants.CSVForms.COMMA + "A";
+			}
+			String listLocalPath = Paths.get(getRootLocalPath(), "/vehicle/", impId, "/device/destination/").toString();
+			String listFTPPath = getRootServerPath() + "/vehicle/" + impId + "/device/destination/";
+			File localList = new File(listLocalPath + "/list/" + "list.csv");
+			createCSV(localList, txt);
+			processSynchronize(listLocalPath, listFTPPath);
+		}
+
+	}
+	*/
+	
+	
+	
+	
+	/*
+	 * IL001이면 한글이고
+	 * IL002이면 영어임
+	 * TXT_A값이 있다면
+	 * TXT_VAL1꺼 받아서 젤윗줄붙이고
+	 * TXT_A값 그다음줄
+	 * TXT_B값이 있다면
+	 * TXT_VAL2꺼 받아서 그다음줄
+	 * TXT_B값 그다음줄
+	 * 
+	*/
+	//ild생성
+	public boolean makeIld(Map<String, Object> ild) {
+		String ildPath = Paths.get(getRootLocalPath(), getInnerLEDPath(), "/data").toString();
+		String fileNm = null;
+		String kr = "IL001";
+		String en = "IL002";
+		
+		String txt = "";
+		String ildId = String.valueOf(ild.get("ILD_ID"));
+		String txtA = String.valueOf(ild.get("TXT_A"));
+		String txtB = String.valueOf(ild.get("TXT_B"));
+		String txtCd = String.valueOf(ild.get("TXT_CD"));
+		String vocId = String.valueOf(ild.get("VOC_ID"));
+		
+		if(kr.equals(txtCd)) {//한글안내음성일경우
+			Map<String, Object> param = new HashMap<>();
+			param.put("CO_CD", "INNER_LED");
+			param.put("DL_CD", kr);
+			Map<String, Object> map = ((List<Map<String, Object>>)commonMapper.selectCommonDtlList(param)).get(0);
+			
+			String thisStopKr = String.valueOf(map.get("TXT_VAL1"));
+			String nextStopKr = String.valueOf(map.get("TXT_VAL2"));
+			
+			if(!StringUtils.isEmpty(txtA)) {
+				txt += thisStopKr + Constants.CSVForms.ROW_SEPARATOR + txtA;				
+			}
+			
+			if(!StringUtils.isEmpty(txtB)) {
+				txt += Constants.CSVForms.ROW_SEPARATOR
+						+ nextStopKr + Constants.CSVForms.ROW_SEPARATOR + txtB;			
+			}
+			
+		}else if(en.equals(txtCd)) {//영어안내음성일경우
+			Map<String, Object> param = new HashMap<>();
+			param.put("CO_CD", "INNER_LED");
+			param.put("DL_CD", kr);
+			Map<String, Object> map = ((List<Map<String, Object>>)commonMapper.selectCommonDtlList(param)).get(0);
+			
+			String thisStopEn = String.valueOf(map.get("TXT_VAL1"));
+			String nextStopEn = String.valueOf(map.get("TXT_VAL2"));
+			
+			if(!StringUtils.isEmpty(txtA)) {
+				txt += thisStopEn + Constants.CSVForms.ROW_SEPARATOR + txtA;				
+			}
+			
+			if(!StringUtils.isEmpty(txtB)) {			
+				txt += Constants.CSVForms.ROW_SEPARATOR
+						+ nextStopEn + Constants.CSVForms.ROW_SEPARATOR
+						+ txtB;
+			}
+			
+		}else{//기타음성일경우
+			txt += txtA + Constants.CSVForms.ROW_SEPARATOR + txtB;
+		}
+		
+		
+		if(StringUtils.isEmpty(vocId)) {
+			fileNm = ildId;
+		}else {
+			fileNm = vocId;
+		}
+		File file = new File(ildPath + "/" + fileNm + ".ild");
+		
+		try {
+			createCSV(file, txt);
+			processSynchronize(getRootLocalPath() + getInnerLEDPath() + "/data", getRootServerPath() + getInnerLEDPath() + "/data");
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+
+	public boolean makeIldList(List<Map<String, Object>> ildList) {
+		String listPath = Paths.get(getRootLocalPath(), getInnerLEDPath(), "/list").toString();
+		
+		String txt = "SEQ_NO" + Constants.CSVForms.COMMA + "FILE_NAME" + Constants.CSVForms.ROW_SEPARATOR;
+		
+		for(int i=0; i<ildList.size(); i++) {
+			Map<String, Object> ild = ildList.get(i);
+			
+			String seq = String.valueOf(ild.get("SN"));
+			String vocId = String.valueOf(ild.get("VOC_ID"));
+			
+			if(!StringUtils.isEmpty(seq) && !StringUtils.isEmpty(vocId)) {
+				txt += seq + Constants.CSVForms.COMMA + vocId + ".ild";		
+				if(i < ildList.size() - 1) {
+					txt += Constants.CSVForms.ROW_SEPARATOR;
+				}else {
+				}
+			}
+		}
+		
+		File file = new File(listPath + "/list.csv");
+		
+		try {
+			createCSV(file, txt);
+			processSynchronize(getRootLocalPath() + getInnerLEDPath() + "/list", getRootServerPath() + getInnerLEDPath() + "/list");
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	
+	public boolean deleteIld(String ildId) {
+		String dir = Paths.get(getRootLocalPath(), getInnerLEDPath(), "/data").toString();
+		
+		String fileName = ildId +  ".ild";
+		
+		File saveFile = Paths.get(dir, fileName).toFile();
+		
+		if(saveFile.exists()) {
+			System.gc();
+			System.runFinalization();
+			saveFile.delete();
+		}
+			
+		try {
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			return false;
+		}
+		
+		try {
+			processSynchronize(getRootLocalPath() + getInnerLEDPath() + "/data", getRootServerPath() + getInnerLEDPath() + "/data");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	
+	
+	
 	
 	
 	//디렉토리 내 파일 삭제 

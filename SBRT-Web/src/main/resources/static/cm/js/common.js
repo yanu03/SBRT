@@ -870,7 +870,7 @@ com.setCommonDtl = function(codeOptions, callbackFunc) {
 	var i, j, codeObj, dltId, dltIdArr = [], paramCode = "", compArr, compArrLen, tmpIdArr;
 	var dataListOption = _getCodeDataListOptions(gcm.COMMON_CODE_INFO.FILED_ARR);
 
-	for (i = 0; i < codeOptionsLen; i++) {
+	for (i = 0; i < codeOptionsLen; i++) {debugger;
 		codeObj = codeOptions[i];
 
 		try {
@@ -6064,6 +6064,13 @@ com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, f
 	
 	var mainData = com.getGridViewDataList(mainGrid);
 	var subData = com.getGridViewDataList(subGrid);
+	
+	/*var mainData = com.getGridViewDataList(mainGrid);
+	var subData;
+	if (typeof subGrid == "string") {
+		subGrid = $p.getComponentById(subGrid);
+		subData = com.getGridViewDataList(subGrid);
+	}*/
 	var modifiedMainCnt = mainData.getModifiedIndex().length;
 	var modifiedSubCnt = subData.getModifiedIndex().length;
 	var curKeyValue = "";

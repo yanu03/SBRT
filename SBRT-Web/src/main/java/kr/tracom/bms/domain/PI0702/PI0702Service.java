@@ -103,4 +103,9 @@ public class PI0702Service extends ServiceSupport {
 		
 		
 	}
+	
+	public List PI0702G2R0() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_subsearch2");		
+		return pi0702Mapper.PI0702G2R0(map);
+	}	
 }
