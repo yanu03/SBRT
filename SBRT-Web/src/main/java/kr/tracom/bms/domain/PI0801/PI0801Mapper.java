@@ -22,4 +22,6 @@ public interface PI0801Mapper {
 	
 	public int PI0801G0U0(Map param);
 	
+	public int PI0801G0U1(Map param);
+	
 }
