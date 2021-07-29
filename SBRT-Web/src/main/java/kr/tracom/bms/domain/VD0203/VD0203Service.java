@@ -41,15 +41,14 @@ public class VD0203Service extends ServiceSupport {
 		int dCnt = 0;
 
 		List<Map<String, Object>> param = getSimpleList("dlt_DVC_INFO");
-		/* Map<String, Object> map = getSimpleDataMap("dma_subsearch"); */
+		Map<String, Object> map = getSimpleDataMap("dma_FILE_INFO");
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map<String, Object> data = param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("U")) {
-					if ((data.get("FILE_NM") != null) && (data.get("FILE_NM").toString().isEmpty() == false)) {
-						doMoveFile("up/", "TEST/", data.get("FILE_NM").toString(),
-								data.get("DVC_ID").toString() + "." + data.get("FILE_EXTENSION").toString());
+					if ((map.get("FILE_NM") != null) && (map.get("FILE_NM").toString().isEmpty() == false)) {
+						doMoveFile("up/", "TEST/", map.get("FILE_NM").toString(), map.get("FILE_NM").toString());
 					}
 
 					/*

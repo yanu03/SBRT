@@ -86,6 +86,12 @@
 						<w2:key id="VHC_ID" name="차량번호" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
+				<w2:dataMap baseNode="map" id="dma_FILE_INFO">
+					<w2:keyInfo>
+						<w2:key id="FILE_NM" name="파일명" dataType="text"></w2:key>
+						<w2:key id="FILE_EXTENSION" name="name2" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_VD0203G0R0" ref="data:json,dma_search" target="data:json,dlt_DVC_INFO" action="/vd/VD0203G0R0"
@@ -96,7 +102,7 @@
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_VO0203SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_VD0203G0S0" ref='data:json,{"action":"modified","id":"dlt_DVC_INFO"}' target="data:json,dma_result"
+			<xf:submission id="sub_VD0203G0S0" ref='data:json,[{"action":"modified","id":"dlt_DVC_INFO"},"dma_FILE_INFO"]' target="data:json,dma_result"
 				action="/vd/VD0203G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="저장 중입니다..." ev:submit="" ev:submitdone="scwin.sub_VD0203G0S0_submitdone"
 				ev:submiterror="" abortTrigger="">
@@ -274,6 +280,9 @@
 //		if (fileExtension == "wav" || fileExtension == "tts"){
 //		div_file.addParam("id", dlt_DVC_INFO.getCellData(VD0203G0.getFocusedRowIndex(), "VHC_ID"));
 		div_file.submit();
+		
+		dma_FILE_INFO.set('FILE_NM', real_fileName);
+		dma_FILE_INFO.set('FILE_EXTENSION', fileExtension);
 		
 		var chkData = VD0203G0.getCheckedIndex("chk");
 		
