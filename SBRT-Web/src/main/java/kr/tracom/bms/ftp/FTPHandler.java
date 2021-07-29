@@ -1,5 +1,7 @@
 package kr.tracom.bms.ftp;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -207,6 +209,63 @@ public class FTPHandler {
 	}
 	
 	
+	//VD0203 펌웨어파일 업로드
+	public void uploadVD0203(String mngId, String srcPath, String srcFileName, String fileExt) {
+		
+		String ext = fileExt;
+		String destPath;
+		String destFileName;
+		
+		
+		if(mngId.length() >= Constants.IMP_ID_DIGIT) {
+			
+			String impId = mngId.substring(0, Constants.IMP_ID_DIGIT);
+			
+			//가지고온 관리id값이 통플인지 아닌지 비교
+			if(mngId.length() == Constants.IMP_ID_DIGIT) {
+				//통합플랫폼
+				destPath = "/vehicle/" + impId + "/firmware/";
+				destFileName = "firmware." + ext;				
+			} else {
+				
+				String dvcId = mngId.substring(Constants.IMP_ID_DIGIT);
+				destPath = "/vehicle/" + impId + "/device/" + dvcId + "/firmware/";
+				
+				//행선지안내기
+				if(mngId.substring(Constants.IMP_ID_DIGIT, 12).equals("RD")) {
+					destFileName = "SF2016." + ext.toUpperCase();
+					//키패드
+				}else if(mngId.substring(Constants.IMP_ID_DIGIT, 12).equals("RK")){
+					destFileName = "MANAGERV3." + ext.toUpperCase();
+					//다른장비
+				}else if(mngId.substring(Constants.IMP_ID_DIGIT, 12).equals("ED")) {
+					destFileName = "firmware.dat";
+				}
+				else {
+					destFileName = "firmware." + ext;
+				}			
+				
+			}
+			
+			
+			try {
+				doMoveFile(srcPath, destPath, srcFileName, destFileName);
+				
+				processSynchronize(getRootLocalPath() + destPath, getRootServerPath() + destPath);
+			} catch(Exception e){
+				e.printStackTrace();
+			}
+			
+			
+		} else {
+			
+		}
+		
+		
+		
+	}
+	
+	
 	//PI0503 영상예약
 	public void reserveVideo(Map<String, Object> param, List<Map<String, Object>> playList) throws Exception {
 		
@@ -359,7 +418,7 @@ public class FTPHandler {
 	
 	
 	//PI0702 행선지안내기 예약(list 생성)
-	public void makeDstConfig(List<Map<String, Object>> vhcList, Map<String, Object> routeInfo) throws Exception {
+	public void makeDstConfig(List<Map<String, Object>> vhcList, List<Map<String, Object>> routeInfoList) throws Exception {
 		
 		//for(VHCInfoVO vhcVo : vhcVOList) {
 		for(Map<String, Object> vhc : vhcList) {
@@ -380,24 +439,27 @@ public class FTPHandler {
 						"SLOGO.BMP" + Constants.CSVForms.COMMA + "A" + Constants.CSVForms.ROW_SEPARATOR +
 						"SLOGO.SCH" + Constants.CSVForms.COMMA + "A";
 			}else {}
+
 			
-			/*
-			for(int i = 0; i < rsvVO.size(); i ++) {
-				txt +=  Constants.CSVForms.ROW_SEPARATOR + "F" + rsvVO.get(i).getDvcName() + ".BMP" + Constants.CSVForms.COMMA + "A" + 
-						Constants.CSVForms.ROW_SEPARATOR + "F" + rsvVO.get(i).getDvcName() + ".SCH" + Constants.CSVForms.COMMA + "A" +
-						Constants.CSVForms.ROW_SEPARATOR + "S" + rsvVO.get(i).getDvcName() + ".BMP" + Constants.CSVForms.COMMA + "A" + 
-						Constants.CSVForms.ROW_SEPARATOR + "S" + rsvVO.get(i).getDvcName() + ".SCH" + Constants.CSVForms.COMMA + "A";
-			}
-			*/
-			
-			String routeNm = String.valueOf(routeInfo.get("ROUT_NM"));
-			String wayDiv = String.valueOf(routeInfo.get("TXT_VAL1")); //U or D
-			String dvcName =  routeNm + wayDiv; //노선이름+U or D
-			
-			txt +=  Constants.CSVForms.ROW_SEPARATOR + "F" + dvcName + ".BMP" + Constants.CSVForms.COMMA + "A" + 
-					Constants.CSVForms.ROW_SEPARATOR + "F" + dvcName + ".SCH" + Constants.CSVForms.COMMA + "A" +
-					Constants.CSVForms.ROW_SEPARATOR + "S" + dvcName + ".BMP" + Constants.CSVForms.COMMA + "A" + 
-					Constants.CSVForms.ROW_SEPARATOR + "S" + dvcName + ".SCH" + Constants.CSVForms.COMMA + "A";
+			for(Map<String, Object> routeInfo : routeInfoList) {
+				
+				String routeNm = String.valueOf(routeInfo.get("ROUT_NM"));
+				String wayDiv = String.valueOf(routeInfo.get("TXT_VAL1")); //U or D
+				String dvcName =  routeNm + wayDiv; //노선이름+U or D
+				
+				File rearFile = new File(localPath2 + "/R" + dvcName + ".BMP");
+				
+				txt +=  Constants.CSVForms.ROW_SEPARATOR + "F" + dvcName + ".BMP" + Constants.CSVForms.COMMA + "A" + 
+						Constants.CSVForms.ROW_SEPARATOR + "F" + dvcName + ".SCH" + Constants.CSVForms.COMMA + "A" +
+						Constants.CSVForms.ROW_SEPARATOR + "S" + dvcName + ".BMP" + Constants.CSVForms.COMMA + "A" + 
+						Constants.CSVForms.ROW_SEPARATOR + "S" + dvcName + ".SCH" + Constants.CSVForms.COMMA + "A";
+				
+				if(rearFile.exists()) {
+					txt += Constants.CSVForms.ROW_SEPARATOR + "R" + dvcName + ".BMP" + Constants.CSVForms.COMMA + "A" +
+							Constants.CSVForms.ROW_SEPARATOR + "R" + dvcName + ".SCH" + Constants.CSVForms.COMMA + "A";
+				}				
+				
+    		}
 			
 			
 			String listLocalPath = Paths.get(getRootLocalPath(), "/vehicle/", impId, "/device/destination/").toString();
@@ -411,40 +473,7 @@ public class FTPHandler {
 
 	}
 	
-	/*
-	public void makeDstConfig(List<VHCInfoVO> vhcVOList, List<RoutRsvVO> rsvVO) throws Exception {
-		for(VHCInfoVO vhcVo : vhcVOList) {
-			String txt = "";
-			String impId = vhcVo.getMngId().substring(0, 10);
-			String localPath2 = Paths.get(getRootLocalPath(), "vehicle/", impId, "/device/destination/images/").toString();
-			File fBmpFile = new File(localPath2 + "/FLOGO.BMP");
-			if(fBmpFile.exists()) {
-				txt +=	"FLOGO.BMP" + GlobalConstants.CSVForms.COMMA + "A" + GlobalConstants.CSVForms.ROW_SEPARATOR + 
-						"FLOGO.SCH" + GlobalConstants.CSVForms.COMMA + "A";
-				
-			}else {}
-			File sBmpFile = new File(localPath2 + "/SLOGO.BMP");
-			if(sBmpFile.exists()) {
-				txt +=	GlobalConstants.CSVForms.ROW_SEPARATOR +
-						"SLOGO.BMP" + GlobalConstants.CSVForms.COMMA + "A" + GlobalConstants.CSVForms.ROW_SEPARATOR +
-						"SLOGO.SCH" + GlobalConstants.CSVForms.COMMA + "A";
-			}else {}
-			
-			for(int i = 0; i < rsvVO.size(); i ++) {
-				txt +=  GlobalConstants.CSVForms.ROW_SEPARATOR + "F" + rsvVO.get(i).getDvcName() + ".BMP" + GlobalConstants.CSVForms.COMMA + "A" + 
-						GlobalConstants.CSVForms.ROW_SEPARATOR + "F" + rsvVO.get(i).getDvcName() + ".SCH" + GlobalConstants.CSVForms.COMMA + "A" +
-						GlobalConstants.CSVForms.ROW_SEPARATOR + "S" + rsvVO.get(i).getDvcName() + ".BMP" + GlobalConstants.CSVForms.COMMA + "A" + 
-						GlobalConstants.CSVForms.ROW_SEPARATOR + "S" + rsvVO.get(i).getDvcName() + ".SCH" + GlobalConstants.CSVForms.COMMA + "A";
-			}
-			String listLocalPath = Paths.get(getRootLocalPath(), "/vehicle/", impId, "/device/destination/").toString();
-			String listFTPPath = getRootServerPath() + "/vehicle/" + impId + "/device/destination/";
-			File localList = new File(listLocalPath + "/list/" + "list.csv");
-			createCSV(localList, txt);
-			processSynchronize(listLocalPath, listFTPPath);
-		}
-
-	}
-	*/
+	
 	
 	
 	
@@ -648,6 +677,75 @@ public class FTPHandler {
 		setServerDirectory(localPath, serverPath);
 		synchronize(new File(localPath), serverPath);
 	}
+	
+	
+	//로컬파일 이동
+	protected void doMoveFile(String sourcePath, String destPath, String sourceFileName, String destFileName) throws Exception
+	{
+		if (sourceFileName == null||"".equals(sourceFileName))
+		{
+			throw new IllegalArgumentException("파일이름이 유효하지 않습니다.");
+		}
+		sourcePath = getRootLocalPath() + sourcePath;
+		destPath = getRootLocalPath() + destPath;
+		
+		File fileSourcePath = new File(sourcePath);
+		if (!fileSourcePath.exists())
+		{
+			fileSourcePath.mkdirs();
+		}
+		
+		File fileDestPath = new File(destPath);
+		if (!fileDestPath.exists())
+		{
+			fileDestPath.mkdirs();
+		}
+		
+		String strSourcePathFile = (sourcePath + sourceFileName).replace("/", File.separator);
+		Path moveSourcePath = Paths.get(strSourcePathFile);
+		
+		String strDestPathFile = (destPath + destFileName).replace("/", File.separator);
+		Path moveDestPath = Paths.get(strDestPathFile);
+
+		Files.move(moveSourcePath, moveDestPath, REPLACE_EXISTING);
+	}
+	
+	
+	//로컬파일 복사
+	protected void doCopyFile(String sourcePath, String destPath, String sourceFileName, String destFileName) throws Exception
+	{
+		if (sourceFileName == null||"".equals(sourceFileName))
+		{
+			throw new IllegalArgumentException("파일이름이 유효하지 않습니다.");
+		}
+		sourcePath = getRootLocalPath() + sourcePath;
+		destPath = getRootLocalPath() + destPath;
+		
+		File fileSourcePath = new File(sourcePath);
+		if (!fileSourcePath.exists())
+		{
+			fileSourcePath.mkdirs();
+		}
+		
+		File fileDestPath = new File(destPath);
+		if (!fileDestPath.exists())
+		{
+			fileDestPath.mkdirs();
+		}
+		
+		String strSourcePathFile = (sourcePath + sourceFileName).replace("/", File.separator);
+		Path copySourcePath = Paths.get(strSourcePathFile);
+		
+		String strDestPathFile = (destPath + destFileName).replace("/", File.separator);
+		Path copyDestPath = Paths.get(strDestPathFile);
+
+		Files.copy(copySourcePath, copyDestPath, REPLACE_EXISTING);
+	}
+	
+	
+	
+	
+	
 	
 	
 	/************************ FTP 공통 모듈 ****************************************/
