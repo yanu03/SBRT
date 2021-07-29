@@ -40,6 +40,7 @@ public class PI0702Service extends ServiceSupport {
 		return pi0702Mapper.PI0702G1R1();
 	}
 	
+	//예약
 	public Map PI0702G1S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
@@ -47,32 +48,6 @@ public class PI0702Service extends ServiceSupport {
 		
 		//체크한 노선 리스트 (list_param)
 		List<Map<String, Object>> list_param = getSimpleList("dlt_BIT_ROUT_MST");
-		
-/*		List<Map<String, Object>> param = getSimpleList("dlt_VHC_MST");
-		Map<String, Object> map = getSimpleDataMap("dma_subsearch");
-		try {
-			for (int i = 0; i < param.size(); i++) {
-				Map data = (Map) param.get(i);
-				String rowStatus = (String) data.get("rowStatus");
-				if (rowStatus.equals("U")) {
-					
-					data.put("ORGA_ID",map.get("ORGA_ID"));
-					iCnt += pi0702Mapper.PI0702G1I0(data);
-				} 
-				else if (rowStatus.equals("D")) {
-					dCnt += pi0702Mapper.PI0702G1D0(data);
-				} 
-			}			
-		} catch(Exception e) {
-			if (e instanceof DuplicateKeyException)
-			{
-				throw new MessageException(Result.ERR_KEY, "중복된 키값의 데이터가 존재합니다.");
-			}
-			else
-			{
-				throw e;
-			}		
-		}*/
 		
 		List<Map<String, Object>> param = getSimpleList("dlt_VHC_MST");
 		Map<String, Object> map = getSimpleDataMap("dma_subsearch");
@@ -108,6 +83,7 @@ public class PI0702Service extends ServiceSupport {
 		
 	}
 	
+	//예약 취소
 	public Map PI0702G1U0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
