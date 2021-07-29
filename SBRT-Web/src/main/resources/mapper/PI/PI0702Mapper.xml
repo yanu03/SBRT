@@ -72,6 +72,10 @@
 	
 	<insert id="PI0702G1I0" parameterType="Map">
 	
+		<selectKey keyProperty="RSV_ID" resultType="String" order="BEFORE">
+    		SELECT CONCAT('DR', LPAD(NEXTVAL(SEQ_BMS_DESTI_RSV_INFO_0), 8, '0')) AS RSV_ID
+    	</selectKey>	
+	
 			
 		INSERT INTO BMS_DESTI_RSV_INFO
 				(
@@ -80,9 +84,7 @@
 				)
 				
 		VALUES	(
-					(
-						SELECT CONCAT('DR', LPAD(NEXTVAL(SEQ_BMS_DESTI_RSV_INFO_0), 8, '0')) AS RSV_ID
-					)	
+					#{RSV_ID}	
 					,NOW()
 				);
 	
@@ -92,7 +94,7 @@
 				,MNG_ID
 				,COMPLETE_YN
 			)
-			SELECT 		CONCAT('DR', LPAD(LASTVAL(SEQ_BMS_DESTI_RSV_INFO_0), 8, '0')) AS RSV_ID
+			SELECT 		#{RSV_ID}
 						,DVC.MNG_ID
 						,'N' COMPLETE_YN
 			FROM		BMS_VHC_MST VHC
@@ -172,5 +174,45 @@
 			DL.TXT_VAL1 = 'RD'
 			AND MNG_ID IS NOT NULL
 	</select>
-
+	
+	
+	<!-- 차량별 장치코드리스트  -->
+	<select id="selectDvcCd" parameterType="Map" resultType="Map">
+		SELECT
+			  A.VHC_ID
+			, SUBSTRING(A.MNG_ID, 1, 10) AS IMP_ID
+			, A.DVC_ID
+			, A.MNG_ID
+			, A.DVC_KIND
+			, B.DL_CD
+			, B.DL_CD_NM
+			, B.TXT_VAL1
+			, B.TXT_VAL2
+			, B.TXT_VAL3
+			, B.NUM_VAL4
+			, B.NUM_VAL5
+			, B.NUM_VAL6
+		FROM BMS_DVC_INFO A
+			LEFT JOIN BMS_DL_CD_INFO B ON A.DVC_KIND = B.DL_CD    
+		WHERE A.VHC_ID = #{VHC_ID}
+			AND B.CO_CD = 'DVC_KIND'
+		    AND B.TXT_VAL1 = 'RD'
+		    AND B.USE_YN = 'Y'
+	</select>
+	
+	<!-- 노선정보  -->
+	<select id="selectRouteInfo" parameterType="String" resultType="Map">
+		SELECT
+			A.ROUTE_ID
+			, A.REP_ROUT_ID
+			, A.INT_ROUT_ID
+			, A.REP_ROUT_NM
+			, A.ROUT_NM
+			, A.WAY_DIV
+			, B.TXT_VAL1
+		FROM BMS_ROUT_MST A
+			LEFT JOIN BMS_DL_CD_INFO B ON A.WAY_DIV = B.DL_CD AND B.CO_CD = 'WAY_DIV'
+		WHERE ROUTE_ID = #{routeId}
+	</select>
+ 
 </mapper>

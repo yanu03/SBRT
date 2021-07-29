@@ -26,4 +26,10 @@ public interface PI0702Mapper {
 	
 	public List PI0702G1R1(); 
 	
+	
+	//차량별 장치정보 
+	List<Map<String, Object>> selectDvcCd(String vhcId);
+	//노선정보
+	Map<String, Object> selectRouteInfo(String vhcId);
+	
 }

@@ -359,7 +359,7 @@ public class FTPHandler {
 	
 	
 	//PI0702 행선지안내기 예약(list 생성)
-	public void makeDstConfig(List<Map<String, Object>> vhcList, Map<String, Object> routeInfo) throws Exception {
+	public void makeDstConfig(List<Map<String, Object>> vhcList, List<Map<String, Object>> routeInfoList) throws Exception {
 		
 		//for(VHCInfoVO vhcVo : vhcVOList) {
 		for(Map<String, Object> vhc : vhcList) {
@@ -380,24 +380,27 @@ public class FTPHandler {
 						"SLOGO.BMP" + Constants.CSVForms.COMMA + "A" + Constants.CSVForms.ROW_SEPARATOR +
 						"SLOGO.SCH" + Constants.CSVForms.COMMA + "A";
 			}else {}
+
 			
-			/*
-			for(int i = 0; i < rsvVO.size(); i ++) {
-				txt +=  Constants.CSVForms.ROW_SEPARATOR + "F" + rsvVO.get(i).getDvcName() + ".BMP" + Constants.CSVForms.COMMA + "A" + 
-						Constants.CSVForms.ROW_SEPARATOR + "F" + rsvVO.get(i).getDvcName() + ".SCH" + Constants.CSVForms.COMMA + "A" +
-						Constants.CSVForms.ROW_SEPARATOR + "S" + rsvVO.get(i).getDvcName() + ".BMP" + Constants.CSVForms.COMMA + "A" + 
-						Constants.CSVForms.ROW_SEPARATOR + "S" + rsvVO.get(i).getDvcName() + ".SCH" + Constants.CSVForms.COMMA + "A";
-			}
-			*/
-			
-			String routeNm = String.valueOf(routeInfo.get("ROUT_NM"));
-			String wayDiv = String.valueOf(routeInfo.get("TXT_VAL1")); //U or D
-			String dvcName =  routeNm + wayDiv; //노선이름+U or D
-			
-			txt +=  Constants.CSVForms.ROW_SEPARATOR + "F" + dvcName + ".BMP" + Constants.CSVForms.COMMA + "A" + 
-					Constants.CSVForms.ROW_SEPARATOR + "F" + dvcName + ".SCH" + Constants.CSVForms.COMMA + "A" +
-					Constants.CSVForms.ROW_SEPARATOR + "S" + dvcName + ".BMP" + Constants.CSVForms.COMMA + "A" + 
-					Constants.CSVForms.ROW_SEPARATOR + "S" + dvcName + ".SCH" + Constants.CSVForms.COMMA + "A";
+			for(Map<String, Object> routeInfo : routeInfoList) {
+				
+				String routeNm = String.valueOf(routeInfo.get("ROUT_NM"));
+				String wayDiv = String.valueOf(routeInfo.get("TXT_VAL1")); //U or D
+				String dvcName =  routeNm + wayDiv; //노선이름+U or D
+				
+				File rearFile = new File(localPath2 + "/R" + dvcName + ".BMP");
+				
+				txt +=  Constants.CSVForms.ROW_SEPARATOR + "F" + dvcName + ".BMP" + Constants.CSVForms.COMMA + "A" + 
+						Constants.CSVForms.ROW_SEPARATOR + "F" + dvcName + ".SCH" + Constants.CSVForms.COMMA + "A" +
+						Constants.CSVForms.ROW_SEPARATOR + "S" + dvcName + ".BMP" + Constants.CSVForms.COMMA + "A" + 
+						Constants.CSVForms.ROW_SEPARATOR + "S" + dvcName + ".SCH" + Constants.CSVForms.COMMA + "A";
+				
+				if(rearFile.exists()) {
+					txt += Constants.CSVForms.ROW_SEPARATOR + "R" + dvcName + ".BMP" + Constants.CSVForms.COMMA + "A" +
+							Constants.CSVForms.ROW_SEPARATOR + "R" + dvcName + ".SCH" + Constants.CSVForms.COMMA + "A";
+				}				
+				
+    		}
 			
 			
 			String listLocalPath = Paths.get(getRootLocalPath(), "/vehicle/", impId, "/device/destination/").toString();
@@ -411,40 +414,7 @@ public class FTPHandler {
 
 	}
 	
-	/*
-	public void makeDstConfig(List<VHCInfoVO> vhcVOList, List<RoutRsvVO> rsvVO) throws Exception {
-		for(VHCInfoVO vhcVo : vhcVOList) {
-			String txt = "";
-			String impId = vhcVo.getMngId().substring(0, 10);
-			String localPath2 = Paths.get(getRootLocalPath(), "vehicle/", impId, "/device/destination/images/").toString();
-			File fBmpFile = new File(localPath2 + "/FLOGO.BMP");
-			if(fBmpFile.exists()) {
-				txt +=	"FLOGO.BMP" + GlobalConstants.CSVForms.COMMA + "A" + GlobalConstants.CSVForms.ROW_SEPARATOR + 
-						"FLOGO.SCH" + GlobalConstants.CSVForms.COMMA + "A";
-				
-			}else {}
-			File sBmpFile = new File(localPath2 + "/SLOGO.BMP");
-			if(sBmpFile.exists()) {
-				txt +=	GlobalConstants.CSVForms.ROW_SEPARATOR +
-						"SLOGO.BMP" + GlobalConstants.CSVForms.COMMA + "A" + GlobalConstants.CSVForms.ROW_SEPARATOR +
-						"SLOGO.SCH" + GlobalConstants.CSVForms.COMMA + "A";
-			}else {}
-			
-			for(int i = 0; i < rsvVO.size(); i ++) {
-				txt +=  GlobalConstants.CSVForms.ROW_SEPARATOR + "F" + rsvVO.get(i).getDvcName() + ".BMP" + GlobalConstants.CSVForms.COMMA + "A" + 
-						GlobalConstants.CSVForms.ROW_SEPARATOR + "F" + rsvVO.get(i).getDvcName() + ".SCH" + GlobalConstants.CSVForms.COMMA + "A" +
-						GlobalConstants.CSVForms.ROW_SEPARATOR + "S" + rsvVO.get(i).getDvcName() + ".BMP" + GlobalConstants.CSVForms.COMMA + "A" + 
-						GlobalConstants.CSVForms.ROW_SEPARATOR + "S" + rsvVO.get(i).getDvcName() + ".SCH" + GlobalConstants.CSVForms.COMMA + "A";
-			}
-			String listLocalPath = Paths.get(getRootLocalPath(), "/vehicle/", impId, "/device/destination/").toString();
-			String listFTPPath = getRootServerPath() + "/vehicle/" + impId + "/device/destination/";
-			File localList = new File(listLocalPath + "/list/" + "list.csv");
-			createCSV(localList, txt);
-			processSynchronize(listLocalPath, listFTPPath);
-		}
-
-	}
-	*/
+	
 	
 	
 	
