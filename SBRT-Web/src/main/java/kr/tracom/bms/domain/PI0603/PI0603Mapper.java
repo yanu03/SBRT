@@ -14,8 +14,12 @@ public interface PI0603Mapper {
 	
 	public List PI0603G1R0(Map param);
 	
-	public int PI0603G1I0(Map param);
+	public List PI0603G2R0(Map param);
 	
-	public int PI0603G1D0(Map param);
+	public int PI0603G1I0(Map param);
+
+	public int PI0603G1I1(Map param);
+	
+	public int PI0603G1U0(Map param);
 	
 }

@@ -36,33 +36,73 @@
 	</select>
 
 	<select id="PI0603G1R0" resultType="Map">
-		SELECT	  	 A.FCLT_ID
-					,A.NODE_ID
-					,B.NODE_NM
-					,A.FCLT_KIND
-					,A.FCLT_TYPE
-					,A.INST_LOC
-					,A.MNG_ID
-					,(CASE WHEN C.RSV_ID IS NOT NULL THEN '예약중' END) RSV_STATE
-					,C.RSV_ID
-					,DATE_FORMAT(C.RSV_DT, '%Y%m%d') RSV_DT
+		SELECT	  	 FCLT.FCLT_ID
+					,FCLT.NODE_ID
+					,NODE.NODE_NM
+					,FCLT.FCLT_KIND
+					,FCLT.FCLT_TYPE
+					,FCLT.INST_LOC
+					,FCLT.MNG_ID
+					,IF(RST.COMPLETE_YN = 'N', '예약중', NULL) RSV_STATE
+					,RSV.RSV_ID
+					,DATE_FORMAT(RSV.RSV_DT, '%Y%m%d') RSV_DT
 		
-		FROM 		BMS_FCLT_INFO A 
-		LEFT JOIN 	BMS_NODE_MST B
-		ON 			A.NODE_ID = B.NODE_ID
-		LEFT JOIN	BMS_BIT_VDO_RSV_INFO C
-		ON			A.MNG_ID = C.MNG_ID
-		
+		FROM 		BMS_FCLT_INFO FCLT 
+		LEFT JOIN 	BMS_NODE_MST NODE
+		ON 			FCLT.NODE_ID = NODE.NODE_ID
+		LEFT JOIN	BMS_BIT_VDO_RSV_INFO RSV
+		ON			FCLT.MNG_ID = RSV.MNG_ID
+		LEFT JOIN 	BMS_BIT_VDO_RSV_RST_INFO RST
+		ON			RSV.MNG_ID = RST.MNG_ID
 		<where>
 			<if test="CONTENT != null and CONTENT != ''">
-				B.NODE_NM LIKE CONCAT('%',#{CONTENT},'%')
+				NODE.NODE_NM LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
 		</where>		
 		
-		ORDER BY	A.NODE_ID		
+		ORDER BY	FCLT.FCLT_ID, FCLT.NODE_ID		
+	</select>
+	
+	<select id="PI0603G2R0" resultType="Map">
+		SELECT 		NODE.NODE_NM
+					,RST.RSV_ID
+					,IF(RST.COMPLETE_YN = 'N', '예약중', '예약종료') RSV_STATE	
+					,DATE_FORMAT(RSV.RSV_DT, '%Y%m%d') RSV_DT
+					,RST.PROCE_RST					
+					,DATE_FORMAT(RST.SEND_DATE, '%Y%m%d') SEND_DATE		
+					,FCLT.MNG_ID
+					,FCLT.MAKER
+					,FCLT.FCLT_KIND		
+					,FCLT.INST_LOC
+				
+		FROM	  		BMS_BIT_VDO_RSV_RST_INFO RST
+			LEFT JOIN	BMS_BIT_VDO_RSV_INFO RSV
+			ON			RST.RSV_ID = RSV.RSV_ID
+			LEFT JOIN	BMS_FCLT_INFO FCLT
+			ON			RST.MNG_ID = FCLT.MNG_ID
+			LEFT JOIN	BMS_NODE_MST NODE
+			ON			FCLT.NODE_ID = NODE.NODE_ID
+		
+		WHERE			FCLT.NODE_ID =#{NODE_ID}
+			
+			<if test="RSV_STATE == '예약중'">
+				AND RST.COMPLETE_YN = 'N'
+			</if>
+			<if test="RSV_STATE == '예약종료'">
+				AND RST.COMPLETE_YN = 'Y'
+			</if>			
+			<if test="RSV_DT != null">
+				AND DATE_FORMAT(RSV.RSV_DT, '%Y%m') = ${RSV_DT}
+			</if>			
+		ORDER BY	RSV.RSV_DT	
 	</select>
 	
 	<insert id="PI0603G1I0" parameterType="Map">
+		
+		<selectKey keyProperty="RSV_ID" resultType="String" order="BEFORE">
+    		SELECT CONCAT('RS', LPAD(NEXTVAL(SEQ_BMS_BIT_VDO_RSV_INFO_0), 8, '0')) AS RSV_ID
+    	</selectKey>
+	
 		INSERT INTO BMS_BIT_VDO_RSV_INFO
 				(
 					RSV_ID
@@ -74,14 +114,28 @@
 				)	
 				   
 		values (
-					(
-						SELECT CONCAT('RS', LPAD(NEXTVAL(SEQ_BMS_BIT_VDO_RSV_INFO_0), 8, '0')) AS RSV_ID
-					) 
+					#{RSV_ID}
 					,#{MNG_ID}
 					,STR_TO_DATE(#{RSV_DT}, '%Y%m%d')
 					,#{ORGA_ID}
 					,#{UPD_DTM}
 					,#{SSN_USER_ID}
+				)
+	</insert>
+	
+	<insert id="PI0603G1I1" parameterType="Map">
+		INSERT INTO
+		 	BMS_BIT_VDO_RSV_RST_INFO
+				(
+				  RSV_ID
+				, MNG_ID
+				, COMPLETE_YN
+				)	
+				   
+		VALUES (
+				#{RSV_ID}
+				, #{MNG_ID}
+				, 'N'
 				)
 	</insert>
 
@@ -110,11 +164,31 @@
 		where VHC_ID = #{VHC_ID}
 	</update> -->
 	
-	<delete id="PI0603G1D0" parameterType="Map">
-		DELETE
-		FROM 		BMS_BIT_VDO_RSV_INFO
-		WHERE		RSV_ID = #{RSV_ID}
-	</delete>
+	<update id="PI0603G1U0" parameterType="Map">
+		UPDATE		BMS_BIT_VDO_RSV_RST_INFO
+		SET			
+					PROCE_RST = 'PR008'
+				,	SEND_DATE = NOW()
+				,	COMPLETE_YN = 'Y'
+		WHERE		
+					RSV_ID = #{RSV_ID}	
+	</update>
+
+
+	<!-- <select id="makePlayList" parameterType="String" resultType="Map">
+		SELECT
+			  IF(VINFO.FILE_TYPE = 'FT001', 'V', 'I') AS VIDEO_TYPE
+			, IF(VINFO.FILE_TYPE = 'FT001', CONCAT(VINFO.VDO_ID, '.mp4'), CONCAT(VINFO.VDO_ID, '.jpg')) AS VIDEO_FILE
+			, DATE_FORMAT(VINFO.PLAY_ST_DT, '%Y%m%d') AS PLAY_ST_DT
+			, DATE_FORMAT(VINFO.PLAY_ED_DT, '%Y%m%d') AS PLAY_ED_DT
+			, VINFO.IMG_PLAY_TM AS RUN_TIME
+		FROM
+			BMS_VDO_ORGA_LIST OLIST
+			LEFT JOIN BMS_VDO_INFO VINFO ON OLIST.VDO_ID = VINFO.VDO_ID
+		WHERE
+			OLIST.ORGA_ID = #{orgaId}
+		ORDER BY OLIST.SN
+	</select> -->
 
 
 </mapper>

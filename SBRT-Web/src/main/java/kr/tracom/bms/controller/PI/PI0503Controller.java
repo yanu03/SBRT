@@ -30,6 +30,12 @@ public class PI0503Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/pi/PI0503G2R0")
+	public @ResponseBody Map<String, Object> PI0503G2R0() throws Exception {
+		result.setData("dlt_BMS_VDO_RSV_RST_INFO", pi0503Service.PI0503G2R0());
+		return result.getResult();
+	}
+	
 	@RequestMapping("/pi/PI0503G1S0")
 	public @ResponseBody Map<String, Object> PI0503G1S0() throws Exception {
 		Map map = pi0503Service.PI0503G1S0();
@@ -37,9 +43,9 @@ public class PI0503Controller extends ControllerSupport {
 		return result.getResultSave();
 	}
 	
-	@RequestMapping("/pi/PI0503G1D0")
+	@RequestMapping("/pi/PI0503G1U0")
 	public @ResponseBody Map<String, Object> PI0503G1D0() throws Exception {
-		Map map = pi0503Service.PI0503G1D0();
+		Map map = pi0503Service.PI0503G1U0();
 		result.setData("dma_result", map);
 		return result.getResultSave();
 	}
