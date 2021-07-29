@@ -1,5 +1,7 @@
 package kr.tracom.bms.ftp;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -204,6 +206,63 @@ public class FTPHandler {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	
+	//VD0203 펌웨어파일 업로드
+	public void uploadVD0203(String mngId, String srcPath, String srcFileName, String fileExt) {
+		
+		String ext = fileExt;
+		String destPath;
+		String destFileName;
+		
+		
+		if(mngId.length() >= Constants.IMP_ID_DIGIT) {
+			
+			String impId = mngId.substring(0, Constants.IMP_ID_DIGIT);
+			
+			//가지고온 관리id값이 통플인지 아닌지 비교
+			if(mngId.length() == Constants.IMP_ID_DIGIT) {
+				//통합플랫폼
+				destPath = "/vehicle/" + impId + "/firmware/";
+				destFileName = "firmware." + ext;				
+			} else {
+				
+				String dvcId = mngId.substring(Constants.IMP_ID_DIGIT);
+				destPath = "/vehicle/" + impId + "/device/" + dvcId + "/firmware/";
+				
+				//행선지안내기
+				if(mngId.substring(Constants.IMP_ID_DIGIT, 12).equals("RD")) {
+					destFileName = "SF2016." + ext.toUpperCase();
+					//키패드
+				}else if(mngId.substring(Constants.IMP_ID_DIGIT, 12).equals("RK")){
+					destFileName = "MANAGERV3." + ext.toUpperCase();
+					//다른장비
+				}else if(mngId.substring(Constants.IMP_ID_DIGIT, 12).equals("ED")) {
+					destFileName = "firmware.dat";
+				}
+				else {
+					destFileName = "firmware." + ext;
+				}			
+				
+			}
+			
+			
+			try {
+				doMoveFile(srcPath, destPath, srcFileName, destFileName);
+				
+				processSynchronize(getRootLocalPath() + destPath, getRootServerPath() + destPath);
+			} catch(Exception e){
+				e.printStackTrace();
+			}
+			
+			
+		} else {
+			
+		}
+		
+		
+		
 	}
 	
 	
@@ -618,6 +677,75 @@ public class FTPHandler {
 		setServerDirectory(localPath, serverPath);
 		synchronize(new File(localPath), serverPath);
 	}
+	
+	
+	//로컬파일 이동
+	protected void doMoveFile(String sourcePath, String destPath, String sourceFileName, String destFileName) throws Exception
+	{
+		if (sourceFileName == null||"".equals(sourceFileName))
+		{
+			throw new IllegalArgumentException("파일이름이 유효하지 않습니다.");
+		}
+		sourcePath = getRootLocalPath() + sourcePath;
+		destPath = getRootLocalPath() + destPath;
+		
+		File fileSourcePath = new File(sourcePath);
+		if (!fileSourcePath.exists())
+		{
+			fileSourcePath.mkdirs();
+		}
+		
+		File fileDestPath = new File(destPath);
+		if (!fileDestPath.exists())
+		{
+			fileDestPath.mkdirs();
+		}
+		
+		String strSourcePathFile = (sourcePath + sourceFileName).replace("/", File.separator);
+		Path moveSourcePath = Paths.get(strSourcePathFile);
+		
+		String strDestPathFile = (destPath + destFileName).replace("/", File.separator);
+		Path moveDestPath = Paths.get(strDestPathFile);
+
+		Files.move(moveSourcePath, moveDestPath, REPLACE_EXISTING);
+	}
+	
+	
+	//로컬파일 복사
+	protected void doCopyFile(String sourcePath, String destPath, String sourceFileName, String destFileName) throws Exception
+	{
+		if (sourceFileName == null||"".equals(sourceFileName))
+		{
+			throw new IllegalArgumentException("파일이름이 유효하지 않습니다.");
+		}
+		sourcePath = getRootLocalPath() + sourcePath;
+		destPath = getRootLocalPath() + destPath;
+		
+		File fileSourcePath = new File(sourcePath);
+		if (!fileSourcePath.exists())
+		{
+			fileSourcePath.mkdirs();
+		}
+		
+		File fileDestPath = new File(destPath);
+		if (!fileDestPath.exists())
+		{
+			fileDestPath.mkdirs();
+		}
+		
+		String strSourcePathFile = (sourcePath + sourceFileName).replace("/", File.separator);
+		Path copySourcePath = Paths.get(strSourcePathFile);
+		
+		String strDestPathFile = (destPath + destFileName).replace("/", File.separator);
+		Path copyDestPath = Paths.get(strDestPathFile);
+
+		Files.copy(copySourcePath, copyDestPath, REPLACE_EXISTING);
+	}
+	
+	
+	
+	
+	
 	
 	
 	/************************ FTP 공통 모듈 ****************************************/

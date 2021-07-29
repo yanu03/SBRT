@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.clipsoft.jsEngine.javascript.debug.Debugger;
 
+import kr.tracom.bms.ftp.FTPHandler;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.util.DateUtil;
@@ -18,6 +19,9 @@ import kr.tracom.util.Result;
 @Service
 public class VD0203Service extends ServiceSupport {
 
+	@Autowired
+	FTPHandler ftpHandler;
+	
 	@Autowired
 	private VD0203Mapper VD0203Mapper;
 
@@ -41,22 +45,24 @@ public class VD0203Service extends ServiceSupport {
 		int dCnt = 0;
 
 		List<Map<String, Object>> param = getSimpleList("dlt_DVC_INFO");
-		Map<String, Object> map = getSimpleDataMap("dma_FILE_INFO");
+		Map<String, Object> fileInfo = getSimpleDataMap("dma_FILE_INFO");
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map<String, Object> data = param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("U")) {
-					if ((map.get("FILE_NM") != null) && (map.get("FILE_NM").toString().isEmpty() == false)) {
-						doMoveFile("up/", "TEST/", map.get("FILE_NM").toString(), map.get("FILE_NM").toString());
-					}
-
-					/*
-					 * String mngId = String.valueOf(map.get("MNG_ID")); data.put("MNG_ID", mngId);
-					 */
 
 					iCnt += VD0203Mapper.VD0203G0I0(data);
 					iCnt += VD0203Mapper.VD0203G0I1(data);
+					
+					//장치 펌웨어 업데이트
+					String mngId = String.valueOf(data.get("MNG_ID"));
+					String fileExt = String.valueOf(fileInfo.get("FILE_EXTENSION"));
+					String fileName = String.valueOf(fileInfo.get("FILE_NM"));
+					
+					ftpHandler.uploadVD0203(mngId, "/up/", fileName, fileExt);
+					
+					
 
 				}
 				/*
