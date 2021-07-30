@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.bms.domain.PI0902.PI0902Mapper">
+	<select id="PI0902G0R0" resultType="Map">
+		SELECT  	SET_ID
+					,SET_NM
+					,TIME_KO
+					,TIME_EN
+					,CATEGORY
+					,FRAME
+					,FONT
+					,REMARK
+		FROM		BMS_ED_INFO
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND SET_ID LIKE CONCAT('%',#{CONTENT},'%') || SET_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'SET_ID'">
+				AND SET_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'SET_NM'">
+				AND SET_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>		
+	</select>	
+
+	<select id="PI0902G1K0" resultType="Map">
+		SELECT CONCAT('DR', LPAD(NEXTVAL(SEQ_BMS_DESTI_RSV_INFO_0), 8, '0')) AS 'SEQ'
+	</select>
+
+	<select id="PI0902SHI0" resultType="Map">
+		SELECT		 SET_ID
+					,SET_NM
+		FROM	     BMS_ED_INFO
+	</select>
+
+	<select id="PI0902G1R0" resultType="Map">
+		SELECT
+					  IF(RST.COMPLETE_YN = 'N', '예약중', NULL) RSV_STATE
+					, VHC.VHC_ID
+				    , VHC.VHC_NO
+				    , DVC.DVC_KIND
+				    , DVC.MNG_ID
+				    , DATE_FORMAT(RSV.RSV_DT, '%Y%m%d') RSV_DT
+				    , RSV.RSV_ID
+				    , DVC.INST_LOC
+		FROM 		BMS_VHC_MST VHC
+		    LEFT JOIN BMS_DVC_INFO DVC ON VHC.VHC_ID = DVC.VHC_ID
+		    LEFT JOIN BMS_DL_CD_INFO DL ON DVC.DVC_KIND = DL.DL_CD AND DL.CO_CD = 'DVC_KIND'
+		    LEFT JOIN BMS_ED_RSV_RST_INFO RST ON DVC.MNG_ID = RST.MNG_ID AND COMPLETE_YN = 'N'
+			LEFT JOIN BMS_ED_RSV_INFO RSV ON RST.RSV_ID = RSV.RSV_ID
+		WHERE
+					VHC.USE_YN = 'Y'
+					AND
+					DVC.USE_YN = 'Y'
+					AND DL.TXT_VAL1 = 'ED'
+					AND DVC.MNG_ID IS NOT NULL
+
+		<if test="CONTENT != null and CONTENT != ''">
+		AND			VHC.VHC_NO LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		ORDER BY 	VHC.VHC_ID, DVC.MNG_ID
+						
+	</select>
+	
+	
+	<insert id="PI0902G1I0" parameterType="Map">
+	
+		<selectKey keyProperty="RSV_ID" resultType="String" order="BEFORE">
+    		SELECT CONCAT('ER', LPAD(NEXTVAL(SEQ_BMS_ED_RSV_INFO_0), 8, '0')) AS RSV_ID
+    	</selectKey>	
+	
+			
+		INSERT INTO BMS_ED_RSV_INFO
+				(
+					RSV_ID
+					,RSV_DT
+					,MNG_ID
+					,SET_ID
+				)
+				
+		VALUES	(
+					#{RSV_ID}	
+					,STR_TO_DATE(#{RSV_DT}, '%Y%m%d')
+					,#{MNG_ID}
+					,#{SSN_USER_ID}
+				);
+	
+		INSERT INTO BMS_ED_RSV_RST_INFO
+				(
+					RSV_ID
+					,MNG_ID
+					,COMPLETE_YN
+				)
+			VALUES 
+				(
+					#{RSV_ID}			
+					, #{MNG_ID}
+					, 'N'
+				)
+		
+	</insert>
+
+	<update id="PI0902G1U0" parameterType="Map">
+		UPDATE		BMS_ED_RSV_RST_INFO
+		SET			
+					PROCE_RST = 'PR008'
+				,	SEND_DTM = NOW()
+				,	COMPLETE_YN = 'Y'
+		WHERE		
+					RSV_ID = #{RSV_ID}
+	</update>
+	
+	<select id="PI0902G2R0" resultType="Map">
+		SELECT 		VHC.VHC_ID
+					,VHC.VHC_NO
+					,DVC.MNG_ID
+					,RST.PROCE_RST
+					,DATE_FORMAT(RST.SEND_DTM, '%Y%m%d') SEND_DTM
+					,ORG.ORG_NM		
+					,DVC.DVC_KIND
+					,DVC.INST_LOC
+					,DATE_FORMAT(RSV.RSV_DT, '%Y%m%d') RSV_DT
+					,IF(RST.COMPLETE_YN = 'N', '예약중', '예약종료') RSV_STATE					
+		FROM		BMS_VHC_MST VHC
+			LEFT JOIN 	BMS_DVC_INFO DVC
+			ON		  	VHC.VHC_ID = DVC.VHC_ID
+			LEFT JOIN	BMS_ORG_MST ORG
+			ON			DVC.ORG_ID = ORG.ORG_ID AND ORG.ORG_DIV = 'OGD08'
+			LEFT JOIN	BMS_DL_CD_INFO DL
+			ON			DVC.DVC_KIND = DL.DL_CD AND DL.CO_CD = 'DVC_KIND'
+			LEFT JOIN	BMS_ED_RSV_RST_INFO RST
+			ON			DVC.MNG_ID = RST.MNG_ID
+			LEFT JOIN  	BMS_ED_RSV_INFO RSV
+			ON			RST.RSV_ID = RSV.RSV_ID
+		WHERE		VHC.VHC_ID = #{VHC_ID}
+		AND			DL.TXT_VAL1 = 'ED'
+		
+			<if test="RSV_STATE == '예약중'">
+				AND RST.COMPLETE_YN = 'N'
+			</if>
+			<if test="RSV_STATE == '예약종료'">
+				AND RST.COMPLETE_YN = 'Y'
+			</if>			
+			<if test="RSV_DT != null">
+				AND DATE_FORMAT(RSV.RSV_DT, '%Y%m') = ${RSV_DT}
+			</if>			
+		ORDER BY	RSV.RSV_DT
+	</select>
+	
+	<select id="PI0902G1R1" resultType="Map">
+		SELECT
+		 	DVC.MNG_ID
+		 	,DVC.DVC_ID
+		FROM
+			BMS_VHC_MST VHC
+			LEFT JOIN BMS_DVC_INFO DVC ON VHC.VHC_ID = DVC.VHC_ID
+			LEFT JOIN BMS_DL_CD_INFO DL ON DVC.DVC_KIND = DL.DL_CD AND DL.CO_CD = 'DVC_KIND'
+			
+		WHERE
+			DL.TXT_VAL1 = 'RD'
+			AND MNG_ID IS NOT NULL
+	</select>
+ 
+</mapper>
