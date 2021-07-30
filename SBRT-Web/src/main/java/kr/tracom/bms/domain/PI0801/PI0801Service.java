@@ -47,22 +47,53 @@ public class PI0801Service extends ServiceSupport {
 				Map data = (Map) param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("C")) {
-					iCnt += pi0801Mapper.PI0801G0I0(data);				
 					
-					ftpHandler.makeIld(data);
-					List<Map<String, Object>> ildList = pi0801Mapper.PI0801G0R0(null);
-					ftpHandler.makeIldList(ildList);
+					int retCnt = pi0801Mapper.PI0801G0I0(data);
+					iCnt += retCnt;				
+					
+					if(retCnt > 0) {
+						ftpHandler.makeIld(data);
+						List<Map<String, Object>> ildList = pi0801Mapper.PI0801G0R0(null);
+						ftpHandler.makeIldList(ildList);
+					}
 					
 					
 				} else if (rowStatus.equals("U")) {
-					uCnt += pi0801Mapper.PI0801G0U0(data);
+					int retCnt = pi0801Mapper.PI0801G0U0(data);
+					uCnt += retCnt;
 					
-					ftpHandler.makeIld(data);
-					List<Map<String, Object>> ildList = pi0801Mapper.PI0801G0R0(null);
-					ftpHandler.makeIldList(ildList);
+					if(retCnt > 0) {
+						ftpHandler.makeIld(data);
+						List<Map<String, Object>> ildList = pi0801Mapper.PI0801G0R0(null);
+						ftpHandler.makeIldList(ildList);
+					}
 					
 				} else if (rowStatus.equals("D")) {
-					dCnt += pi0801Mapper.PI0801G0D0(data);
+					int retCnt = pi0801Mapper.PI0801G0D0(data);
+					dCnt += retCnt;
+					
+					if(retCnt > 0) {
+						
+						int resultCnt = 0;
+						List<Map<String, Object>> ildList = pi0801Mapper.PI0801G0R0(null);
+						
+						for(int idx=0; idx<ildList.size(); idx++) {
+							Map<String, Object> ild = ildList.get(idx);
+							
+							String seq = Integer.toString(idx+1);
+							ild.put("SN", seq);
+							
+							if(pi0801Mapper.PI0801G0U1(ild) > 0) {
+								resultCnt++;
+							}
+						}
+						
+						if(resultCnt == ildList.size()) {
+							ftpHandler.makeIldList(ildList);
+						}
+						
+					}
+					
 				} 
 			}			
 		} catch(Exception e) {

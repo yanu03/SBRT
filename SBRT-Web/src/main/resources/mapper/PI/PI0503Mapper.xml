@@ -35,22 +35,27 @@
 	</select>
 
 	<select id="PI0503G1R0" resultType="Map">
-		select	a.VHC_ID,
-				VHC_NO,
-				RSV_ID,
-				a.MNG_ID,
-				DATE_FORMAT(RSV_DT, '%Y%m%d') RSV_DT,
-				ORGA_ID,
-				DVC_KIND,
-				INST_LOC,
-				DVC_ID,
-				(CASE WHEN RSV_ID IS NOT NULL THEN '예약중' END) AS RSV_STATE
-		from BMS_DVC_INFO a LEFT JOIN BMS_VHC_MST b 
-		on a.VHC_ID = b.VHC_ID LEFT JOIN BMS_VDO_RSV_INFO c
-		on a.MNG_ID = c.MNG_ID
+		SELECT			DVC.VHC_ID
+						,VHC.VHC_NO
+						,RSV.RSV_ID
+						,DVC.MNG_ID
+						,DATE_FORMAT(RSV_DT, '%Y%m%d') RSV_DT
+						,RSV.ORGA_ID
+						,DVC.DVC_KIND
+						,DVC.INST_LOC
+						,DVC.DVC_ID
+						,IF(RST.COMPLETE_YN = 'N', '예약중', NULL) RSV_STATE
+						
+		FROM BMS_DVC_INFO DVC 
+			LEFT JOIN BMS_VHC_MST VHC 
+			ON DVC.VHC_ID = VHC.VHC_ID
+			LEFT JOIN BMS_VDO_RSV_INFO RSV 
+			ON DVC.MNG_ID = RSV.MNG_ID
+			LEFT JOIN BMS_VDO_RSV_RST_INFO RST 
+			ON RST.MNG_ID = DVC.MNG_ID 
 		
-		WHERE	DVC_KIND = 'DK003'
-		order by a.VHC_ID		
+		WHERE			DVC_KIND = 'DK003'
+		ORDER BY 		DVC.VHC_ID			
 	</select>
 	
 	<insert id="PI0503G1I0" parameterType="Map">	
@@ -59,7 +64,7 @@
     		SELECT CONCAT('VR', LPAD(NEXTVAL(SEQ_BMS_VDO_RSV_INFO_0), 8, '0')) AS RSV_ID
     	</selectKey>
 	
-		insert into BMS_VDO_RSV_INFO
+		INSERT INTO BMS_VDO_RSV_INFO
 				(
 					RSV_ID,
 					MNG_ID,
@@ -69,7 +74,7 @@
 					UPD_ID
 				)	
 				   
-		values (
+		VALUES (
 					#{RSV_ID},
 					#{MNG_ID},
 					STR_TO_DATE(#{RSV_DT}, '%Y%m%d'),
@@ -94,36 +99,57 @@
 			)
 	</insert>	
 
-<!-- 	<update id="PI0503G1U0" parameterType="Map">
-		update BMS_VHC_MST
-		set 	COMP_ID = #{COMP_ID},
-				AREA = #{AREA},
-				VHC_NO = #{VHC_NO},
-				CHAS_NO = #{CHAS_NO},
-				MAKER = #{MAKER},
-				RELS_DT = STR_TO_DATE(#{RELS_DT}, '%Y%m%d'),
-				MODEL_NM = #{MODEL_NM},
-				VHC_KIND = #{VHC_KIND},
-				ROUT_DIV = #{ROUT_DIV},
-				VHC_TYPE = #{VHC_TYPE},
-				VHC_FUEL = #{VHC_FUEL},
-				VHC_STS = #{VHC_STS},
-				PSG_CNT = #{PSG_CNT},
-				SPARE_YN = #{SPARE_YN},
-				SCRAP_YN = #{SCRAP_YN},
-				APPL_ST_DT = STR_TO_DATE(#{APPL_ST_DT}, '%Y%m%d'),
-				APPL_ED_DT = STR_TO_DATE(#{APPL_ED_DT}, '%Y%m%d'),
-				USE_YN = #{USE_YN},
-				REMARK = #{REMARK},
-				UPD_DTM = #{UPD_DTM}
-		where VHC_ID = #{VHC_ID}
-	</update> -->
+	<select id="PI0503G2R0" resultType="Map">
+		SELECT 		VHC.VHC_ID
+					,VHC.VHC_NO
+					,DVC.MNG_ID
+					,RST.PROCE_RST
+					,DATE_FORMAT(RST.SEND_DTM, '%Y%m%d') SEND_DTM
+					,ORG.ORG_NM		
+					,DVC.DVC_KIND
+					,DVC.INST_LOC
+					,DATE_FORMAT(RSV.RSV_DT, '%Y%m%d') RSV_DT
+					,IF(RST.COMPLETE_YN = 'N', '예약중', '예약종료') RSV_STATE					
+		FROM	  		BMS_VDO_RSV_RST_INFO RST
+			INNER JOIN	BMS_VDO_RSV_INFO RSV
+			ON			RST.RSV_ID = RSV.RSV_ID
+			LEFT JOIN 	BMS_DVC_INFO DVC
+			ON		  	RST.MNG_ID = DVC.MNG_ID
+			LEFT JOIN	BMS_VHC_MST VHC
+			ON			VHC.VHC_ID = DVC.VHC_ID			
+			LEFT JOIN	BMS_ORG_MST ORG
+			ON			DVC.ORG_ID = ORG.ORG_ID AND ORG.ORG_DIV = 'OGD08'
+			LEFT JOIN	BMS_DL_CD_INFO DL
+			ON			DVC.DVC_KIND = DL.DL_CD AND DL.CO_CD = 'DVC_KIND'
+			
+		WHERE		VHC.VHC_ID = #{VHC_ID}
+			<if test="RSV_STATE == '예약중'">
+				AND RST.COMPLETE_YN = 'N'
+			</if>
+			<if test="RSV_STATE == '예약종료'">
+				AND RST.COMPLETE_YN = 'Y'
+			</if>			
+			<if test="RSV_DT != null">
+				AND DATE_FORMAT(RSV.RSV_DT, '%Y%m') = ${RSV_DT}
+			</if>			
+		ORDER BY	RSV.RSV_DT
+	</select>
+
+	<update id="PI0503G1U0" parameterType="Map">
+		UPDATE		BMS_VDO_RSV_RST_INFO
+		SET			
+					PROCE_RST = 'PR008'
+				,	SEND_DTM = NOW()
+				,	COMPLETE_YN = 'Y'
+		WHERE		
+					RSV_ID = #{RSV_ID}
+	</update>
 	
-	<delete id="PI0503G1D0" parameterType="Map">
+<!-- 	<delete id="PI0503G1D0" parameterType="Map">
 		delete
 		from BMS_VDO_RSV_INFO
 		where RSV_ID = #{RSV_ID}
-	</delete>
+	</delete> -->
 	
 	
 	<select id="makePlayList" parameterType="String" resultType="Map">

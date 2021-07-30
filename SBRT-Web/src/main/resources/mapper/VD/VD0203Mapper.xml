@@ -5,7 +5,7 @@
 	<select id="VD0203G0R0" resultType="Map">
 		SELECT
 			VM.VHC_NO
-			,(IF(UL.COMPLETE_YN IS NULL, '', IF(UL.COMPLETE_YN = 'N', '예약중', ''))) AS COMPLETE_YN
+			,MAX(IF(UL.COMPLETE_YN IS NULL, '', IF(UL.COMPLETE_YN = 'N', '예약중', ''))) AS COMPLETE_YN
 			,DI.DVC_KIND
 			,OM.ORG_DIV
 			,DI.INST_LOC
@@ -15,10 +15,10 @@
 			,DI.REMARK
 			,VM.VHC_ID
 			,UL.RSV_ID
-		FROM
-			sbrt.BMS_DVC_INFO DI LEFT JOIN sbrt.BMS_VHC_MST VM ON DI.VHC_ID = VM.VHC_ID
-								LEFT JOIN sbrt.BMS_UPD_LOG UL ON DI.MNG_ID = UL.MNG_ID
-								LEFT JOIN sbrt.BMS_ORG_MST OM ON DI.ORG_ID = OM.ORG_ID
+		FROM BMS_DVC_INFO DI 
+			LEFT JOIN BMS_VHC_MST VM ON DI.VHC_ID = VM.VHC_ID
+			LEFT JOIN BMS_UPD_LOG UL ON DI.MNG_ID = UL.MNG_ID
+			LEFT JOIN BMS_ORG_MST OM ON DI.ORG_ID = OM.ORG_ID
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 				AND USER_ID LIKE CONCAT('%',#{CONTENT},'%') || USER_NM LIKE CONCAT('%',#{CONTENT},'%')
@@ -32,36 +32,12 @@
 			<if test="TYPE == 'DVC_KIND'">
 				AND DVC_KIND LIKE CONCAT('%',#{DVC_KIND},'%')
 			</if>
-			<if test="DVC_KIND == 'DK001'">
-				AND DI.DVC_KIND = 'DK001'
-			</if>
-			<if test="DVC_KIND == 'DK002'">
-				AND DI.DVC_KIND = 'DK002'
-			</if>
-			<if test="DVC_KIND == 'DK003'">
-				AND DI.DVC_KIND = 'DK003'
-			</if>
-			<if test="DVC_KIND == 'DK004'">
-				AND DI.DVC_KIND = 'DK004'
-			</if>
-			<if test="DVC_KIND == 'DK005'">
-				AND DI.DVC_KIND = 'DK005'
-			</if>
-			<if test="DVC_KIND == 'DK006'">
-				AND DI.DVC_KIND = 'DK006'
-			</if>
-			<if test="DVC_KIND == 'DK007'">
-				AND DI.DVC_KIND = 'DK007'
-			</if>
-			<if test="DVC_KIND == 'DK008'">
-				AND DI.DVC_KIND = 'DK008'
-			</if>
-			<if test="DVC_KIND == 'DK009'">
-				AND DI.DVC_KIND = 'DK009'
+			<if test="DVC_KIND != null and DVC_KIND != ''">
+				AND DI.DVC_KIND = #{DVC_KIND}
 			</if>
 		</where>
-		ORDER BY VM.VHC_NO
-		
+		GROUP BY DI.MNG_ID
+		ORDER BY VM.VHC_NO ASC, DI.MNG_ID ASC		
 	</select>
 	
 	<select id="VD0203G1R0" parameterType="Map"  resultType="Map">
@@ -75,12 +51,15 @@
 			,DI.DVC_KIND
 			,DI.INST_LOC
 		FROM
-			sbrt.BMS_DVC_INFO DI LEFT JOIN sbrt.BMS_VHC_MST VM ON DI.VHC_ID = VM.VHC_ID
-								LEFT JOIN sbrt.BMS_UPD_LOG UL ON DI.MNG_ID = UL.MNG_ID
-								LEFT JOIN sbrt.BMS_ORG_MST OM ON DI.ORG_ID = OM.ORG_ID
-								JOIN sbrt.BMS_UPD_RSV_INFO URI ON UL.RSV_ID = URI.RSV_ID
+			BMS_DVC_INFO DI LEFT JOIN sbrt.BMS_VHC_MST VM ON DI.VHC_ID = VM.VHC_ID
+								LEFT JOIN BMS_UPD_LOG UL ON DI.MNG_ID = UL.MNG_ID
+								LEFT JOIN BMS_ORG_MST OM ON DI.ORG_ID = OM.ORG_ID
+								JOIN BMS_UPD_RSV_INFO URI ON UL.RSV_ID = URI.RSV_ID
 		WHERE
 			DI.VHC_ID = #{VHC_ID}
+			<if test="DVC_KIND != null and DVC_KIND != ''">
+				AND DI.DVC_KIND = #{DVC_KIND}
+			</if>			
 		ORDER BY 
 			VM.VHC_NO	
 	</select>
@@ -112,9 +91,6 @@
 				   
 		values (
 					#{RSV_ID}
-					<!-- (
-						SELECT CONCAT('RV', LPAD(NEXTVAL(SEQ_BMS_UPD_LOG_0), 8, '0')) AS SEND_DATE
-					) -->
 					,#{MNG_ID}
 					,#{PROCE_RST}
 					,'N'
@@ -147,12 +123,15 @@
 	
 	<update id="VD0203G0D0" parameterType="Map">
 		UPDATE 
-			sbrt.BMS_UPD_LOG
+			BMS_UPD_LOG
 		SET	
-			SEND_DTM = NOW()
+			PROCE_RST = 'PR008'
+			,SEND_DTM = NOW()
 			,COMPLETE_YN = 'Y'
 		WHERE
-			RSV_ID = #{RSV_ID}
+			MNG_ID = #{MNG_ID}
+			AND COMPLETE_YN = 'N'
+			<!-- RSV_ID = #{RSV_ID} -->
 	</update>
 	
 	<!-- SELECT 

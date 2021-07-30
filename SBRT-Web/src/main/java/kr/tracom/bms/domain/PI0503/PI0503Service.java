@@ -44,6 +44,11 @@ public class PI0503Service extends ServiceSupport {
 		return pi0503Mapper.PI0503G1R0();
 	}
 	
+	public List PI0503G2R0() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_subsearch2");		
+		return pi0503Mapper.PI0503G2R0(map);
+	}
+	
 	
 	@Transactional
 	public Map PI0503G1S0() throws Exception {
@@ -129,7 +134,7 @@ public class PI0503Service extends ServiceSupport {
 		
 	}
 	
-	public Map PI0503G1D0() throws Exception {
+	public Map PI0503G1U0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;		
@@ -140,7 +145,7 @@ public class PI0503Service extends ServiceSupport {
 				Map data = (Map) param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("U")) {
-					iCnt += pi0503Mapper.PI0503G1D0(data);
+					iCnt += pi0503Mapper.PI0503G1U0(data);
 				} 
 			}			
 		} catch(Exception e) {
