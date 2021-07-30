@@ -75,6 +75,7 @@
 		};
 		
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
+
 	};
 	
 	scwin.dateDisFormatter = function(data){
@@ -148,11 +149,58 @@
 		if (rsCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
 			com.setFocusedCell(PI0204G0, "VOC_NUM");
 		}
+		debugger;
+		drawDD(dlt_BMS_VOC_INFO);
 	};
+	
+	function drawDD(res){
+		debugger;
+		var list = res.getAllJSON();
+		var table = '<tr>';
+		
+		for(i = 0; i < list.length; i++){
+			var SCR_TXT = list[i].SCR_TXT;
+			if(SCR_TXT == undefined || SCR_TXT == null){
+				SCR_TXT = "";
+			}
+			
+			table += '<td>';
+			table += '<div style="position:relative">';
+			if(list[i].VOC_NM == null || list[i].VOC_NM == undefined || list[i].VOC_NM == ""){
+				table += '<img onclick="javascript:ddClick(' + i + ')" id="i' + list[i].VOC_NM + '" src="/websquare/images/PI0204/dd_icon_disabled.png" style="position:relative;">';
+				table += '<div onclick="javascript:ddClick(' + i + ')" style="position:absolute; top:25%; left:50%; font-weight:bold; transform:translate(-50%, -50%); color:grey; font-size:30px">' + list[i].VOC_NM + '</div>';
+				table += '<div onclick="javascript:ddClick(' + i + ')" style="position:absolute; top:75%; left:50%; font-weight:bold; transform:translate(-50%, -50%); color:grey; font-size:20px">' + SCR_TXT + '</div>';
+				
+			}else{
+				
+				table += '<img onclick="javascript:ddClick(' + i + ')" id="i' + list[i].VOC_NM + '" src="/websquare/images/PI0204/btn_dd.png" style="position:relative;">';
+				table += '<div onclick="javascript:ddClick(' + i + ')" style="position:absolute; top:25%; left:50%; font-weight:bold; transform:translate(-50%, -50%); color:yellow; font-size:30px">' + list[i].VOC_NM + '</div>';
+				table += '<div onclick="javascript:ddClick(' + i + ')" style="position:absolute; top:75%; left:50%; font-weight:bold; transform:translate(-50%, -50%); color:yellow; font-size:20px">' + SCR_TXT + '</div>';
+				
+			}
+			
+			table += '</div>';
+			table += '</td>';
+			
+			if((i+1)%3 == 0){
+				table += "</tr><tr>";
+			}
+		}
+		
+		
+		
+		document.getElementById("ddTable").innerHTML = table;
+	}
+	
+	function ddClick(num){
+	//	com.setFocusedCell(PI0204G0, "VOC_NUM");
+		PI0204G0.setFocusedCell(num, "VOC_NUM");
+}
 	
 	scwin.sub_PI0204G0K0_submitdone = function(e) {
 		var insertIndex = com.addGrid(PI0204G0,dma_SEQ_BMS_VOC_INFO_0,"VOC_ID","VOC_NM");
 	};
+	
 	
 	// 음성유형 TTS, WAV 변경 시 음성파일 업로드 disable 처리
 	scwin.PLAY_TYPE_onviewchange = function(info) {
@@ -161,6 +209,14 @@
 		}else{
 			VOC_PATH.setDisabled(true);
 		}	
+	};
+
+
+	
+
+	
+	scwin.PI0204G0_oncellclick = function(row,col,colId) {
+				drawDD(dlt_BMS_VOC_INFO);
 	};
 	]]></script>
 	</head>
@@ -199,11 +255,11 @@
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="" class="" style="">
-						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.PI0201G0_onrowindexchange" ev:oncellclick=""
+						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.PI0201G0_onrowindexchange" ev:oncellclick="scwin.PI0204G0_oncellclick"
 							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서"
 							sortable="true" rowStatusHeaderValue="상태" overflowX="auto" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true"
 							dataList="data:dlt_BMS_VOC_INFO" ignoreCellClick="false" style="height:100%;" autoFit="lastColumn" visibleRowNum="" id="PI0204G0"
-							class="cm_grid" tooltipPositionY="">
+							class="cm_grid" tooltipPositionY="" focusMode="row">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row2">
 									<w2:column width="118" style="height:25px;" inputType="text" id="column9" value="선택음성 번호" blockSelect="false"
@@ -274,16 +330,15 @@
 										</w2:attributes>
 										<xf:group tagname="caption"></xf:group>
 										<xf:group tagname="colgroup">
-											<xf:group tagname="col" style="width:50.00%;"></xf:group>
+											<xf:group tagname="col" style="width:4.7%;"></xf:group>
 											<xf:group tagname="col" style="width:50.00%"></xf:group>
 										</xf:group>
 										<xf:group tagname="tr" style="">
-											<xf:group tagname="td" style="" class="w2tb_td">운전자단말기&amp;nbsp;레이아웃</xf:group>
-											<xf:group tagname="td" style="" class="w2tb_td">
-												<xf:image src="/websquare/images/PI0204/btn_dd.png" style="width: 100px;height: 100px;"
-													id="image1" ref="">
-
-												</xf:image>
+											<xf:group tagname="td" style=";text-align:center;" class="w2tb_td">운전자단말기&amp;nbsp;레이아웃</xf:group>
+											<xf:group tagname="td" style="" class="w2tb_td" id="" ref="drawDD" dataList="data:dlt_BMS_VOC_INFO">
+												<xf:group id="" class="">
+													<table id="ddTable"></table>
+												</xf:group>
 											</xf:group>
 										</xf:group>
 									</xf:group>
