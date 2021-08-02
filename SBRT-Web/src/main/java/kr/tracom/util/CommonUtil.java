@@ -3,7 +3,9 @@ package kr.tracom.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
+import java.lang.reflect.Array;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -441,5 +443,48 @@ public class CommonUtil {
 			result = (double)object;
 		}
 		return result;
+	}
+	
+	public static double decimalToDouble(Object object) {
+		double result = 0;
+		try {
+			result = (object==null)?0:Double.parseDouble(String.valueOf(object));
+		}catch (Exception e) {
+			result = (double)object;
+		}
+		return result;
+	}
+	
+	/**
+	 * Object type 변수가 비어있는지 체크
+	 * 
+	 * @param obj
+	 * @return Boolean : true / false
+	 */
+	public static Boolean empty(Object obj) {
+		if (obj instanceof String)
+			return obj == null || "".equals(obj.toString().trim());
+		else if (obj instanceof List)
+			return obj == null || ((List<?>) obj).isEmpty();
+		else if (obj instanceof Map)
+			return obj == null || ((Map<?, ?>) obj).isEmpty();
+		else if (obj instanceof Object[])
+			return obj == null || Array.getLength(obj) == 0;
+		else
+			return obj == null;
+	}
+
+	/**
+	 * Object type 변수가 비어있지 않은지 체크
+	 * 
+	 * @param obj
+	 * @return Boolean : true / false
+	 */
+	public static Boolean notEmpty(Object obj) {
+		return !empty(obj);
+	}
+
+	public static double pointRound(double len,int cnt) {
+		return Math.round(len*Math.pow(10, cnt+1))/Math.pow(10, cnt+1);
 	}
 }
