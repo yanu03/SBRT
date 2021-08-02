@@ -870,7 +870,7 @@ com.setCommonDtl = function(codeOptions, callbackFunc) {
 	var i, j, codeObj, dltId, dltIdArr = [], paramCode = "", compArr, compArrLen, tmpIdArr;
 	var dataListOption = _getCodeDataListOptions(gcm.COMMON_CODE_INFO.FILED_ARR);
 
-	for (i = 0; i < codeOptionsLen; i++) {debugger;
+	for (i = 0; i < codeOptionsLen; i++) {
 		codeObj = codeOptions[i];
 
 		try {
