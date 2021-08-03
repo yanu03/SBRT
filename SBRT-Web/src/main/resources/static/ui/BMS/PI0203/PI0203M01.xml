@@ -225,6 +225,19 @@
 		}
 	};
 	
+	
+	scwin.VOC_PATH_ondone = function(retXml) {
+		var time_audio = document.getElementById("audio0");
+		
+		var path = dlt_BMS_VOC_INFO.getCellData(PI0203G0.getFocusedRowIndex(), "VOC_PATH");
+		$p.$("#audio0").attr("src", path);
+		
+		time_audio.addEventListener('loadedmetadata', function() {
+			var duration = parseInt(time_audio.duration);
+			dlt_BMS_VOC_INFO.setCellData(PI0203G0.getFocusedRowIndex(), "PLAY_TM", duration);
+		});				
+				
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -333,14 +346,8 @@
 											</w2:itemset>
 										</w2:choices>
 									</w2:column>
-									<w2:column width="86" style="height:25px;" inputType="text" id="VHC_NO" blockSelect="false" displayFormat=""
-										calendarValueType="yearMonthDateTime" applyFormat="" displayMode="" readOnly="true" displayFormatter="">
-										<w2:choices>
-											<w2:itemset nodeset="data:dlt_organizationBasic">
-												<w2:label ref="PARENT_ORG_NM"></w2:label>
-												<w2:value ref="PARENT_ORG_NM"></w2:value>
-											</w2:itemset>
-										</w2:choices>
+									<w2:column removeBorderStyle="false" width="86" inputType="text" style="height:25px" id="PLAY_TM" value=""
+										blockSelect="false" displayMode="label" readOnly="true">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="163" inputType="text" style="height:25px" id="PLAY_DATE" value=""
 										blockSelect="false" displayMode="label" readOnly="true">
@@ -463,7 +470,7 @@
 									</w2:attributes>
 									<w2:upload imageStyle="position:absolute;vertical-align:middle;word-wrap:break-word"
 										inputStyle="vertical-align:middle;word-wrap:break-word" style="width: 100%;height: 23px;" id="VOC_PATH" inputClass=""
-										ev:onInputValueChange="scwin.upload0_onInputValueChange" ev:ondone="" accept=".wav,.tts" title="" type=""
+										ev:onInputValueChange="scwin.upload0_onInputValueChange" ev:ondone="scwin.VOC_PATH_ondone" accept=".wav,.tts" title="" type=""
 										disabled="" class="">
 									</w2:upload>
 								</xf:group>

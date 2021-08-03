@@ -105,7 +105,6 @@
 	$p.executeSubmission(sub_PI0201SHI0);
 	
 	scwin.upload0_onInputValueChange = function(fileName) {
-		debugger;
 		// 확장자 추출
 		var lastDot = fileName.lastIndexOf('.'); 
 		var fileExtension = fileName.substring(lastDot+1, fileName.length);
@@ -123,24 +122,6 @@
 			dlt_BMS_VOC_INFO.setCellData(PI0201G0.getFocusedRowIndex(), 'VOC_PATH', '/fileUpload/up/'+dma_AUDIO_INFO.get('AUDIO_NM'));
 			VOC_PATH.submit();
 		
-			/*var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");
-			VOC_PATH.setValue(path);
-			$p.$("#VOC_PATH").val(path);
-			
-			VOC_PATH.addParam("id", dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID"));
-			var doc_audio0 = document.getElementById("audio0");
-			 실서버 도메인 변경 필요
-			var realPath = "http://localhost:8081/fileUpload/up/";
-			if (PLAY_TYPE.getValue() == "WAV"){
-				doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID") + ".wav";
-			}else{
-				doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID") + ".tts";
-			}
-
-			setTimeout(function() {
-				$p.$("#audio0").attr("src", path);
-			},100);*/
-            
         }else{
 			com.alert("wav, tts 확장자만 업로드 할 수 있습니다.");
 			VOC_PATH.reset()
@@ -149,53 +130,24 @@
 	};
 	
 	scwin.PI0201G0_onrowindexchange = function(row, oldRow) {
-		debugger;
 		
 		var audioType = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "PLAY_TYPE");
 		if (audioType == "WAV"){
-//			$p.$("#audio0").show();
 			//VOC_PATH.setDisabled(false);
 			KR_TTS.setDisabled(true);
 			ER_TTS.setDisabled(true);
-			var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");	
-			$p.$("#audio0").attr("src", path);	
 		} else if (audioType == "TTS"){
-//			$p.$("#audio0").hide();
 			//VOC_PATH.setDisabled(true);
 			KR_TTS.setDisabled(false);
 			ER_TTS.setDisabled(false);
-			var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");		
-			$p.$("#audio0").attr("src", path);				
 		}
+		var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");	
+		$p.$("#audio0").attr("src", path);			
 		
-		//var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");
-		//$p.$("#audio0").attr("src", path);	
-		
-		/*
-        // 실서버 도메인 변경 필요
-		var realPath = "http://localhost:8081/fileUpload/up/";
-		scwin.idxRowVOC = row;
-		doc_audio0.src = dlt_BMS_VOC_INFO.getCellData(row, dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"));
-		doc_audio0.pause();
-		// TTS의 경우 음성파일 업로드 disable
-		if (PLAY_TYPE.getValue() == "WAV"){
-			VOC_PATH.setDisabled(false);
-			doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(row, "VOC_ID") + ".wav";
-		}else{
-			VOC_PATH.setDisabled(true);
-			doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(row, "VOC_ID") + ".tts"
-		}
-        console.log(doc_audio0.src);
-		doc_audio0.pause();
-		*/
 	};	
 	
 	scwin.upload0_ondone = function(retXml) {
-		debugger;
 		var time_audio = document.getElementById("audio0");
-		
-		//var duration = parseInt(time_audio.duration);
-		//dlt_BMS_VOC_INFO.setCellData(PI0201G0.getFocusedRowIndex(), "PLAY_TM", duration);
 		
 		var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");
 		$p.$("#audio0").attr("src", path);
@@ -205,14 +157,7 @@
 			dlt_BMS_VOC_INFO.setCellData(PI0201G0.getFocusedRowIndex(), "PLAY_TM", duration);
 		});				
 		
-		/*var doc_audio0 = document.getElementById("audio0");
-		var filePath = WebSquare.xml.getValue(retXml, "ret/storedFileList");
-		 실서버 도메인 변경 필요
-		var realPath = "/data/fileUpload/audio/";
-		doc_audio0.src = realPath + filePath;
-		dlt_BMS_VOC_INFO.setCellData(scwin.idxRowVOC, dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"), doc_audio0.src);
-		doc_audio0.type = "audio/wav";
-		doc_audio0.pause();
+		/*
 		 서버에 저장되도 404 error 발생함 바로 갱신이 안되는 문제
 		 현재 동일한 파일명으로 업로드 시 (날짜) 형태로 서버에 파일이 생성되는데 괄호가 보안처리에 의해 다른 문자로 치환되서 DB에서 경로 가져올때 문제 있음  */
 	};
