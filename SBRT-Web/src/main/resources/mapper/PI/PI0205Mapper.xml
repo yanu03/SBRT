@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.bms.domain.PI0205.PI0205Mapper">
+
+	<select id="PI0205G0R0" resultType="Map" parameterType="Map">
+		SELECT
+			R.ROUTE_ID
+		    , R.ROUT_NM
+		    , R.WAY_DIV
+		    , DATE_FORMAT(R.UPD_DTM, '%Y-%m-%d') AS UPD_DTM
+		    , V.VOC_ID
+		    , V.PLAY_TYPE
+		    , V.KR_TTS
+		    , V.VOC_DIV
+		    , V.REMARK
+		    , V.PLAY_TM
+		FROM
+			BMS_ROUT_MST R
+		    LEFT OUTER JOIN BMS_VOC_INFO V
+		    ON R.ROUTE_ID = V.ROUTE_ID
+		<where>
+			<!-- VOC_DIV = 'VD001'-->
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND R.ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%') || R.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'ROUTE_ID'">
+				AND R.ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'ROUT_NM'">
+				AND R.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>
+	</select>
+	
+	<insert id="PI0205G0I0" parameterType="Map">	
+		INSERT INTO BMS_VOC_INFO(
+			VOC_ID
+			,ROUTE_ID
+			,VOC_NM
+			,PLAY_ST_DT
+			,PLAY_TYPE
+			,KR_TTS
+			,EN_TTS
+			,SCR_TXT
+			,SCR_TXT_EN
+			,REMARK
+			,PLAY_TM
+			,VOC_DIV
+			,CON_ID
+			,PLAY_ED_DT
+			,STTN_TEXT_A
+			,STTN_TEXT_A_EN
+			,STTN_TEXT_B
+			,STTN_TEXT_B_EN
+			,UPD_DTM
+			,UPD_ID
+			) 
+		VALUES (
+			#{VOC_ID}
+			,#{ROUTE_ID}
+			,#{VOC_NM}
+			,STR_TO_DATE(#{PLAY_ST_DT}, '%Y%m%d')
+			,#{PLAY_TYPE}
+			,#{KR_TTS}
+			,#{EN_TTS}
+			,#{SCR_TXT}
+			,#{SCR_TXT_EN}
+			,#{REMARK}
+			,#{PLAY_TM}
+			,'VD001'
+			,#{CON_ID}
+			,STR_TO_DATE(#{PLAY_ED_DT}, '%Y%m%d')
+			,#{STTN_TEXT_A}
+			,#{STTN_TEXT_A_EN}
+			,#{STTN_TEXT_B}
+			,#{STTN_TEXT_B_EN}
+			,#{UPD_DTM}
+			,#{UPD_ID}
+			)
+	</insert>
+
+	<delete id="PI0205G0D0" parameterType="Map">
+		DELETE FROM BMS_VOC_INFO 
+		WHERE VOC_ID = #{VOC_ID};
+	</delete>
+	
+	<update id="PI0205G0U0" parameterType="Map">
+		UPDATE 
+			BMS_VOC_INFO 
+		SET 
+			
+			,PLAY_TYPE = #{PLAY_TYPE}
+			,KR_TTS = #{KR_TTS}
+			,REMARK = #{REMARK}
+			,PLAY_TM = #{PLAY_TM}
+			,VOC_DIV = 'VD001'
+			,UPD_DTM = #{UPD_DTM}
+			,UPD_ID = #{UPD_ID} 
+		WHERE 
+			ROUTE_ID = #{ROUTE_ID}
+			AND VOC_ID = #{VOC_ID}
+	</update>
+	
+	
+	<select id="PI0205SHI0" resultType="Map" parameterType="Map">
+		select  ROUTE_ID, ROUT_NM
+		from 	BMS_ROUT_MST
+	</select>
+	
+	<select id="PI0205G0K0" resultType="Map">
+		SELECT CONCAT('RT', LPAD(NEXTVAL(dma_SEQ_BMS_ROUT_MST_0), 8, '0')) AS 'SEQ'
+	</select>	
+	
+</mapper>
