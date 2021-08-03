@@ -148,12 +148,16 @@
 			EN_TTS.setDisabled(true);
 			playTTS.setDisabled(true);
 			btn_basicPhrase.setDisabled(true);
+			playTTS2.setDisabled(true);
+			btn_basicPhrase2.setDisabled(true);			
 		} else if (audioType == "TTS"){
 //			VOC_PATH.setDisabled(true);
 			KR_TTS.setDisabled(false);
 			EN_TTS.setDisabled(false);
 			playTTS.setDisabled(false);
-			btn_basicPhrase.setDisabled(false);			
+			btn_basicPhrase.setDisabled(false);
+			playTTS2.setDisabled(false);
+			btn_basicPhrase2.setDisabled(false);						
 		}	
 		
 		//오디오 세팅
@@ -176,13 +180,17 @@
 			KR_TTS.setDisabled(true);
 			EN_TTS.setDisabled(true);
 			playTTS.setDisabled(true);
-			btn_basicPhrase.setDisabled(true);			
+			btn_basicPhrase.setDisabled(true);
+			playTTS2.setDisabled(true);
+			btn_basicPhrase2.setDisabled(true);						
 		}else if(info.newValue == "TTS"){
 //			VOC_PATH.setDisabled(true);
 			KR_TTS.setDisabled(false);
 			EN_TTS.setDisabled(false);
 			playTTS.setDisabled(false);
-			btn_basicPhrase.setDisabled(false);			
+			btn_basicPhrase.setDisabled(false);
+			playTTS2.setDisabled(false);
+			btn_basicPhrase2.setDisabled(false);						
 		}		
 	};
 	
@@ -212,18 +220,32 @@
 	};
 	
 	scwin.btn_basicPhrase_onclick = function(e) {
-		var data = { callbackFn : "scwin.insertPhrase" };
+		var data = { callbackFn : "scwin.insertPhraseKor" };
 		var options = { id : "basicPhrase",
 						popupName : "기본문구 목록", 
 						modal : true };
 		com.openPopup("/cm/common/basicPhrase.xml", options, data);			
 	};
 	
-	scwin.insertPhrase = function(obj) {
+	scwin.insertPhraseKor = function(obj) {
 		if(obj != null) {
 			KR_TTS.setValue(obj[0].DL_CD_NM);	
 		}
 	};
+	
+	scwin.btn_basicPhrase2_onclick = function(e) {
+		var data = { callbackFn : "scwin.insertPhraseEng" };
+		var options = { id : "basicPhrase",
+						popupName : "기본문구 목록", 
+						modal : true };
+		com.openPopup("/cm/common/basicPhrase.xml", options, data);			
+	};
+	
+	scwin.insertPhraseEng = function(obj) {
+		if(obj != null) {
+			EN_TTS.setValue(obj[0].DL_CD_NM);	
+		}
+	};	
 	
 	
 	scwin.VOC_PATH_ondone = function(retXml) {
@@ -476,7 +498,7 @@
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" style="height: 100px;" class="w2tb_th req">
+								<xf:group tagname="th" style="" class="w2tb_th req">
 									한국어 TTS
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -489,7 +511,7 @@
 									</w2:attributes>
 									<xf:group class="ml5 fr" id="" style=""></xf:group>
 
-									<xf:textarea id="KR_TTS" style="width: 80%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.KR_TTS"></xf:textarea>
+									<xf:textarea id="KR_TTS" style="width: 80%;height: 100px;" ref="data:dlt_BMS_VOC_INFO.KR_TTS"></xf:textarea>
 									<xf:group style="display: inline;position: absolute;margin-left: 5px;" id="">
 										<xf:trigger type="button" style="width: 100px;height: 20px;margin-bottom: 10px;margin-top: 20px;" id="playTTS" ev:onclick="scwin.playTTS_onclick">
 											<xf:label><![CDATA[미리듣기]]></xf:label>
@@ -514,7 +536,15 @@
 									</w2:attributes>
 									<xf:group class="ml5 fr" id="" style=""></xf:group>
 
-									<xf:textarea id="EN_TTS" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.EN_TTS"></xf:textarea>
+									<xf:textarea id="EN_TTS" style="width: 80%;height: 100px;" ref="data:dlt_BMS_VOC_INFO.EN_TTS"></xf:textarea>
+									<xf:group style="display: inline;position: absolute;margin-left: 5px;" id="">
+										<xf:trigger type="button" style="width: 100px;height: 20px;margin-bottom: 10px;margin-top: 20px;" id="playTTS2" ev:onclick="scwin.playTTS2_onclick">
+											<xf:label><![CDATA[미리듣기]]></xf:label>
+										</xf:trigger>
+										<xf:trigger type="button" style="width: 100px;height: 20px;" id="btn_basicPhrase2" ev:onclick="scwin.btn_basicPhrase2_onclick" disabled="">
+											<xf:label><![CDATA[기본문구 삽입]]></xf:label>
+										</xf:trigger>
+									</xf:group>									
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
