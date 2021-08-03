@@ -25,10 +25,21 @@
 		WHERE
 			VOC_DIV = 'VD001'
 		<where>
-			<if test="CONTENT != ''">
-				VOC_ID LIKE CONCAT('%',#{CONTENT},'%') OR VOC_NM LIKE CONCAT('%',#{CONTENT},'%')
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND VOC_ID LIKE CONCAT('%',#{CONTENT},'%') || VOC_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'VOC_ID'">
+				AND VOC_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'VOC_NM'">
+				AND VOC_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 		</where>
+	</select>
+	
+	<select id="PI0201SHI0" resultType="Map">
+		select  VOC_ID, VOC_NM
+		from 	BMS_VOC_INFO
 	</select>
 	
 	<select id="PI0201G0K0" resultType="Map">

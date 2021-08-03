@@ -29,8 +29,12 @@ public class PI0201Service extends ServiceSupport{
 			temp.put("VOC_PATH", "/fileUpload/audio/"+AUDIO_INFO.get("AUDIO_NM"));			
 		}
 		
-		return returnList;		
-		*/
+		return returnList;		*/
+		
+	}
+	
+	public List PI0201SHI0() throws Exception {
+		return PI0201Mapper.PI0201SHI0();
 	}
 	
 	public Map PI0201G0K0() throws Exception {

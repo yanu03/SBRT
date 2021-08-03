@@ -4,6 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
 	xmlns:xf="http://www.w3.org/2002/xforms">
 	<head>
+		
 
 		<w2:type>DEFAULT</w2:type>
 		<w2:buildDate />
@@ -40,7 +41,9 @@
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
 					<w2:keyInfo>
-						<w2:key id="CONTENT" name="CONTENT" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_VOC_INFO_0">
@@ -54,19 +57,30 @@
 						<w2:key id="AUDIO_EXTENSION" name="확장자" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="VOC_ID" name="음성ID" dataType="text"></w2:column>
+						<w2:column id="VOC_NM" name="음성명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_PI0201G0R0" ref='data:json,["dma_search","dma_AUDIO_INFO"]' target="data:json,dlt_BMS_VOC_INFO" action="/pi/PI0201G0R0"
-				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0201G0R0_submitdone" ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_PI0201G0R0" ref='data:json,["dma_search","dma_AUDIO_INFO"]' target="data:json,dlt_BMS_VOC_INFO"
+				action="/pi/PI0201G0R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0201G0R0_submitdone" ev:submiterror=""
+				abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_PI0201G0K0" ref="" target="data:json,dma_SEQ_BMS_VOC_INFO_0" action="/pi/PI0201G0K0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_PI0201G0K0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0201G0S0" ref='data:json,["dlt_BMS_VOC_INFO","dma_AUDIO_INFO"]' target=""
-				action="/pi/PI0201G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_PI0201G0S0" ref='data:json,["dlt_BMS_VOC_INFO","dma_AUDIO_INFO"]' target="" action="/pi/PI0201G0S0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_PI0201SHI0" ref="" target="data:json,dlt_searchitem" action="/pi/PI0201SHI0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="scwin.sub_PI0201SHI0_submit" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
@@ -80,49 +94,72 @@
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
 	};
 	
+	com.executeSubmission(sub_PI0201SHI0);
+	
 	scwin.upload0_onInputValueChange = function(fileName) {
 		debugger;
 		// 확장자 추출
 		var lastDot = fileName.lastIndexOf('.'); 
 		var fileExtension = fileName.substring(lastDot+1, fileName.length);
-		console.log(VOC_PATH.getValue());
 		
 		var fileNameIndex = fileName.lastIndexOf('\\');
 		//파일명
-		var real_fileName = fileName.substring(fileNameIndex+1, fileName.length);
-		
-		dma_AUDIO_INFO.set('AUDIO_NM', real_fileName);
-		dma_AUDIO_INFO.set('AUDIO_EXTENSION', fileExtension);
-		
-		dlt_BMS_VOC_INFO.setCellData(PI0201G0.getFocusedRowIndex(), 'VOC_PATH', '/fileUpload/up/'+dma_AUDIO_INFO.get('AUDIO_NM'));
-
-		var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");
-		$p.$("#audio0").attr("src", path);
 		
 		
 		if (fileExtension == "wav" || fileExtension == "tts"){
-			VOC_PATH.addParam("id", dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID"));
+			var real_fileName = fileName.substring(fileNameIndex+1, fileName.length);
+			
+			dma_AUDIO_INFO.set('AUDIO_NM', real_fileName);
+			dma_AUDIO_INFO.set('AUDIO_EXTENSION', fileExtension);
+			
+			dlt_BMS_VOC_INFO.setCellData(PI0201G0.getFocusedRowIndex(), 'VOC_PATH', '/fileUpload/up/'+dma_AUDIO_INFO.get('AUDIO_NM'));
 			VOC_PATH.submit();
-			var doc_audio0 = document.getElementById("audio0");
+		
+			var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");
+//			VOC_PATH.setValue(path);
+//			$p.$("#VOC_PATH").val(path);
+			$p.$("#audio0").attr("src", path);
+			
+			
+//			VOC_PATH.addParam("id", dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID"));
+//			var doc_audio0 = document.getElementById("audio0");
 			// 실서버 도메인 변경 필요
-			var realPath = "http://localhost:8081/fileUpload/up/";
-			if (PLAY_TYPE.getValue() == "WAV"){
-				doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID") + ".wav";
-			}else{
-				doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID") + ".tts";
-			}
+//			var realPath = "http://localhost:8081/fileUpload/up/";
+//			if (PLAY_TYPE.getValue() == "WAV"){
+//				doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID") + ".wav";
+//			}else{
+//				doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID") + ".tts";
+//			}
             
         }else{
-			alert("wav, tts 확장자만 업로드 할 수 있습니다.");
+			com.alert("wav, tts 확장자만 업로드 할 수 있습니다.");
 			VOC_PATH.reset()
 		}
 		
 	};
 	
 	scwin.PI0201G0_onrowindexchange = function(row, oldRow) {
+		debugger;
 		
-		var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");
+		var audioType = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "PLAY_TYPE");
+		if (audioType == "WAV"){
+//			$p.$("#audio0").show();
+			VOC_PATH.setDisabled(false);
+			KR_TTS.setDisabled(true);
+			ER_TTS.setDisabled(true);
+			var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");		
 			$p.$("#audio0").attr("src", path);	
+		} else if (audioType == "TTS"){
+//			$p.$("#audio0").hide();
+			VOC_PATH.setDisabled(true);
+			KR_TTS.setDisabled(false);
+			ER_TTS.setDisabled(false);
+			var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");		
+			$p.$("#audio0").attr("src", path);				
+		}
+		
+		//var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");
+		//$p.$("#audio0").attr("src", path);	
 		
 		/*
 		
@@ -176,12 +213,13 @@
 			VOC_PATH.setDisabled(false);
 			KR_TTS.setDisabled(true);
 			ER_TTS.setDisabled(true);
-		}else{
+		}else if(info.newValue == "TTS"){
 			VOC_PATH.setDisabled(true);
 			KR_TTS.setDisabled(false);
 			ER_TTS.setDisabled(false);
 		}	
 	};
+	
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -195,15 +233,23 @@
 						<w2:span class="" id="" label="검색 항목"></w2:span>
 					</xf:group>
 					<xf:group class="search" id="" style="">
-						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
-							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
-							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="" chooseOptionLabel="-전체-" chooseOptionValue=""
+							displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange="" id="acb_autoChoiceBox"
+							interactionMode="" noResult="useData" ref="data:dma_search.TYPE" search="start" selectedData=""
 							style="width: 200px;height: 21px;float: left;" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
 							<w2:choices>
-								<w2:itemset nodeset="">
-									<w2:label ref=""></w2:label>
-									<w2:value ref=""></w2:value>
-								</w2:itemset>
+								<w2:item>
+									<w2:label><![CDATA[전체]]></w2:label>
+									<w2:value><![CDATA[ALL]]></w2:value>
+								</w2:item>
+								<w2:item>
+									<w2:label><![CDATA[음성ID]]></w2:label>
+									<w2:value><![CDATA[VOC_ID]]></w2:value>
+								</w2:item>
+								<w2:item>
+									<w2:label><![CDATA[음성명]]></w2:label>
+									<w2:value><![CDATA[VOC_NM]]></w2:value>
+								</w2:item>
 							</w2:choices>
 						</w2:autoComplete>
 					</xf:group>
@@ -511,7 +557,8 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<audio controls="" style="width: 250px;height: 50px;" id="audio0" preload="" muted="" loop="" autoplay="" ref="data:dlt_BMS_VOC_INFO.VOC_PATH" src=""></audio>
+									<audio controls="" style="width: 250px;height: 50px;" id="audio0" preload="" muted="" loop="" 
+									autoplay="" ref="" src=""></audio>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
