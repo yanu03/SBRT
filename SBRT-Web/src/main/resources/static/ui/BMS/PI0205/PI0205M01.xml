@@ -36,6 +36,8 @@
 						<w2:column id="UPD_ID" name="갱신ID" dataType="text"></w2:column>
 						<w2:column id="PLAY_DATE" name="재생기간" dataType="text"></w2:column>
 						<w2:column id="VOC_PATH" name="음성경로" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
+						<w2:column id="WAY_DIV" name="상하행구분" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
@@ -45,7 +47,7 @@
 
 					</w2:keyInfo>
 				</w2:dataMap>
-				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_VOC_INFO_0">
+				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_ROUT_MST_0">
 					<w2:keyInfo>
 						<w2:key id="SEQ" name="SEQ" dataType="text"></w2:key>
 					</w2:keyInfo>
@@ -58,8 +60,8 @@
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="VOC_ID" name="음성ID" dataType="text"></w2:column>
-						<w2:column id="VOC_NM" name="음성명" dataType="text"></w2:column>
+						<w2:column id="ROUTE_ID" name="노선아이디" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_result">
@@ -73,36 +75,42 @@
 				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_PI0201G0R0" ref='data:json,["dma_search","dma_AUDIO_INFO"]' target="data:json,dlt_BMS_VOC_INFO"
-				action="/pi/PI0201G0R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0201G0R0_submitdone" ev:submiterror=""
+			<xf:submission id="sub_PI0205G0R0" ref='data:json,["dma_search","dma_AUDIO_INFO"]' target="data:json,dlt_BMS_VOC_INFO"
+				action="/pi/PI0205G0R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0205G0R0_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0201G0K0" ref="" target="data:json,dma_SEQ_BMS_VOC_INFO_0" action="/pi/PI0201G0K0" method="post"
+			<xf:submission id="sub_PI0205G0K0" ref="" target="data:json,dma_SEQ_BMS_ROUT_MST_0" action="/pi/PI0205G0K0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="scwin.sub_PI0201G0K0_submitdone" ev:submiterror="" abortTrigger="">
+				ev:submit="" ev:submitdone="scwin.sub_PI0205G0K0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0201G0S0" ref='data:json,["dlt_BMS_VOC_INFO","dma_AUDIO_INFO"]' target="" action="/pi/PI0201G0S0"
+			<xf:submission id="sub_PI0205G0S0" ref='data:json,["dlt_BMS_VOC_INFO","dma_AUDIO_INFO"]' target="" action="/pi/PI0205G0S0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0201SHI0" ref="" target="data:json,dlt_searchitem" action="/pi/PI0201SHI0"
+			<xf:submission id="sub_PI0205SHI0" ref="" target="data:json,dlt_searchitem" action="/pi/PI0205SHI0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="scwin.sub_PI0201SHI0_submit" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				processMsg="" ev:submit="scwin.sub_PI0205SHI0_submit" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
-		com.executeSubmission(sub_PI0201G0R0);
+		com.executeSubmission(sub_PI0205G0R0);
 		
 		var autoOptions = {
-			Main : { grid : PI0201G0, frm : PI0201F0, srchSbm : sub_PI0201G0R0, savSbm : sub_PI0201G0S0, keySbm : sub_PI0201G0K0 
-								 , srchGrp : pgm_header, keyColumn : "VOC_ID", focusColumn : "VOC_ID", name :  "음성 정보"}
+			Main : { grid : PI0205G0, frm : PI0205F0, srchSbm : sub_PI0205G0R0, savSbm : sub_PI0205G0S0, keySbm : sub_PI0205G0K0 
+								 , srchGrp : pgm_header, keyColumn : "ROUT_ID", focusColumn : "ROUT_ID", name :  "노선 목록"}
 		};
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
+		
+		//추가 버튼 감추기
+		var mainOptions = {
+			ADD:{disp:"hide"},
+		};
+		
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions, mainOptions);
 	};
 	
-	$p.executeSubmission(sub_PI0201SHI0);
+	$p.executeSubmission(sub_PI0205SHI0);
 	
 	scwin.upload0_onInputValueChange = function(fileName) {
 		debugger;
@@ -120,23 +128,10 @@
 			dma_AUDIO_INFO.set('AUDIO_NM', real_fileName);
 			dma_AUDIO_INFO.set('AUDIO_EXTENSION', fileExtension);
 			
-			dlt_BMS_VOC_INFO.setCellData(PI0201G0.getFocusedRowIndex(), 'VOC_PATH', '/fileUpload/up/'+dma_AUDIO_INFO.get('AUDIO_NM'));
+			dlt_BMS_VOC_INFO.setCellData(PI0205G0.getFocusedRowIndex(), 'VOC_PATH', '/fileUpload/up/'+dma_AUDIO_INFO.get('AUDIO_NM'));
 			VOC_PATH.submit();
 		
-			/*var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");
-			VOC_PATH.setValue(path);
-			$p.$("#VOC_PATH").val(path);
-			
-			VOC_PATH.addParam("id", dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID"));
-			var doc_audio0 = document.getElementById("audio0");
-			 실서버 도메인 변경 필요
-			var realPath = "http://localhost:8081/fileUpload/up/";
-			if (PLAY_TYPE.getValue() == "WAV"){
-				doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID") + ".wav";
-			}else{
-				doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID") + ".tts";
-			}
-
+			/*
 			setTimeout(function() {
 				$p.$("#audio0").attr("src", path);
 			},100);*/
@@ -148,96 +143,61 @@
 		
 	};
 	
-	scwin.PI0201G0_onrowindexchange = function(row, oldRow) {
-		debugger;
+	scwin.PI0205G0_onrowindexchange = function(row, oldRow) {
 		
-		var audioType = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "PLAY_TYPE");
+		var audioType = dlt_BMS_VOC_INFO.getCellData(PI0205G0.getFocusedRowIndex(), "PLAY_TYPE");
 		if (audioType == "WAV"){
-//			$p.$("#audio0").show();
 			//VOC_PATH.setDisabled(false);
 			KR_TTS.setDisabled(true);
-			ER_TTS.setDisabled(true);
-			var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");	
+			var path = dlt_BMS_VOC_INFO.getCellData(PI0205G0.getFocusedRowIndex(), "VOC_PATH");	
 			$p.$("#audio0").attr("src", path);	
 		} else if (audioType == "TTS"){
-//			$p.$("#audio0").hide();
 			//VOC_PATH.setDisabled(true);
 			KR_TTS.setDisabled(false);
-			ER_TTS.setDisabled(false);
-			var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");		
+			var path = dlt_BMS_VOC_INFO.getCellData(PI0205G0.getFocusedRowIndex(), "VOC_PATH");		
 			$p.$("#audio0").attr("src", path);				
 		}
 		
 		//var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");
 		//$p.$("#audio0").attr("src", path);	
 		
-		/*
-        // 실서버 도메인 변경 필요
-		var realPath = "http://localhost:8081/fileUpload/up/";
-		scwin.idxRowVOC = row;
-		doc_audio0.src = dlt_BMS_VOC_INFO.getCellData(row, dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"));
-		doc_audio0.pause();
-		// TTS의 경우 음성파일 업로드 disable
-		if (PLAY_TYPE.getValue() == "WAV"){
-			VOC_PATH.setDisabled(false);
-			doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(row, "VOC_ID") + ".wav";
-		}else{
-			VOC_PATH.setDisabled(true);
-			doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(row, "VOC_ID") + ".tts"
-		}
-        console.log(doc_audio0.src);
-		doc_audio0.pause();
-		*/
 	};	
 	
 	scwin.upload0_ondone = function(retXml) {
-		debugger;
 		var time_audio = document.getElementById("audio0");
 		
-		//var duration = parseInt(time_audio.duration);
-		//dlt_BMS_VOC_INFO.setCellData(PI0201G0.getFocusedRowIndex(), "PLAY_TM", duration);
-		
-		var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");
+		var path = dlt_BMS_VOC_INFO.getCellData(PI0205G0.getFocusedRowIndex(), "VOC_PATH");
 		$p.$("#audio0").attr("src", path);
 		
 		time_audio.addEventListener('loadedmetadata', function() {
 			var duration = parseInt(time_audio.duration);
-			dlt_BMS_VOC_INFO.setCellData(PI0201G0.getFocusedRowIndex(), "PLAY_TM", duration);
+			dlt_BMS_VOC_INFO.setCellData(PI0205G0.getFocusedRowIndex(), "PLAY_TM", duration);
 		});				
 		
-		/*var doc_audio0 = document.getElementById("audio0");
-		var filePath = WebSquare.xml.getValue(retXml, "ret/storedFileList");
-		 실서버 도메인 변경 필요
-		var realPath = "/data/fileUpload/audio/";
-		doc_audio0.src = realPath + filePath;
-		dlt_BMS_VOC_INFO.setCellData(scwin.idxRowVOC, dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"), doc_audio0.src);
-		doc_audio0.type = "audio/wav";
-		doc_audio0.pause();
-		 서버에 저장되도 404 error 발생함 바로 갱신이 안되는 문제
+		
+		 /*서버에 저장되도 404 error 발생함 바로 갱신이 안되는 문제
 		 현재 동일한 파일명으로 업로드 시 (날짜) 형태로 서버에 파일이 생성되는데 괄호가 보안처리에 의해 다른 문자로 치환되서 DB에서 경로 가져올때 문제 있음  */
 	};
 	
-	scwin.sub_PI0201G0R0_submitdone = function(e) {
+	scwin.sub_PI0205G0R0_submitdone = function(e) {
 		var rsCode = com.getResultCode(e)
 		if (rsCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
-			com.setFocusedCell(PI0201G0, "VOC_NM");
+			com.setFocusedCell(PI0205G0, "ROUTE_ID");
 		}
 	};
 	
-	scwin.sub_PI0201G0K0_submitdone = function(e) {
-		var insertIndex = com.addGrid(PI0201G0,dma_SEQ_BMS_VOC_INFO_0,"VOC_ID","VOC_NM");
-	};
+	/*scwin.sub_PI0205G0K0_submitdone = function(e) {
+		var insertIndex = com.addGrid(PI0205G0,dma_SEQ_BMS_VOC_INFO_0,"VOC_ID","VOC_NM");
+	};*/
 	
 	// 음성유형 TTS, WAV 변경 시 음성파일 업로드 disable 처리
 	scwin.PLAY_TYPE_onviewchange = function(info) {
 		if (info.newValue == "WAV"){
 			//VOC_PATH.setDisabled(false);
 			KR_TTS.setDisabled(true);
-			ER_TTS.setDisabled(true);
 		}else if(info.newValue == "TTS"){
 			//VOC_PATH.setDisabled(true);
 			KR_TTS.setDisabled(false);
-			ER_TTS.setDisabled(false);
 		}	
 	};
 	
@@ -246,13 +206,13 @@
 			acb_autoChoiceBox.hide();
 			search_input.setValue("");
 			search_input.show("");
-		} else if (info.newValue == "VOC_ID") {
+		} else if (info.newValue == "ROUTE_ID") {
 			search_input.hide();
-			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "VOC_ID", "VOC_ID");
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "ROUTE_ID", "ROUTE_ID");
 			acb_autoChoiceBox.show("");
-		} else if (info.newValue == "VOC_NM") {
+		} else if (info.newValue == "ROUT_NM") {
 			search_input.hide();
-			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "VOC_NM", "VOC_NM");
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "ROUT_NM", "ROUT_NM");
 			acb_autoChoiceBox.show("");
 		}
 	};
@@ -280,16 +240,16 @@
 									<xf:value><![CDATA[ALL]]></xf:value>
 								</xf:item>
 								<xf:item>
-									<xf:label><![CDATA[음성ID]]></xf:label>
-									<xf:value><![CDATA[VOC_ID]]></xf:value>
+									<xf:label><![CDATA[노선ID]]></xf:label>
+									<xf:value><![CDATA[ROUTE_ID]]></xf:value>
 								</xf:item>
 								<xf:item>
-									<xf:label><![CDATA[음성명]]></xf:label>
-									<xf:value><![CDATA[VOC_NM]]></xf:value>
+									<xf:label><![CDATA[노선명]]></xf:label>
+									<xf:value><![CDATA[ROUT_NM]]></xf:value>
 								</xf:item>
 							</xf:choices>
 						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="음성ID 또는 음성명"
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="노선ID 또는 노선명"
 							style="margin-right: 20px;">
 						</xf:input>
 						<xf:group id=""></xf:group>
@@ -312,55 +272,31 @@
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 					<xf:group id="" class="" style="">
 						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox id="" style="" class="df_tt fl" label="음성, LED 목록"></w2:textbox>
+							<w2:textbox id="" style="" class="df_tt fl" label="노선 목록"></w2:textbox>
 						</xf:group>
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="" class="" style="">
-						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.PI0201G0_onrowindexchange" ev:oncellclick=""
+						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.PI0205G0_onrowindexchange" ev:oncellclick=""
 							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서" sortable="true"
 							rowStatusHeaderValue="상태" overflowX="auto" overflowY="scroll" rowStatusVisible="false"
 							fixedColumnWithHidden="true" dataList="data:dlt_BMS_VOC_INFO" ignoreCellClick="false" style="height:100%;" autoFit="lastColumn"
-							visibleRowNum="" id="PI0201G0" class="cm_grid" tooltipPositionY="" focusMode="row">
+							visibleRowNum="" id="PI0205G0" class="cm_grid" tooltipPositionY="" focusMode="row">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row2">
-									<w2:column width="118" style="height:25px;" inputType="text" id="column1" value="음성ID" blockSelect="false"
+									<w2:column width="118" style="height:25px;" inputType="text" id="column1" value="노선ID" blockSelect="false"
 										displayMode="label" userData1="" userData2="">
 									</w2:column>
-									<w2:column width="159" style="height:25px;" inputType="text" id="column2" value="음성명" blockSelect="false"
+									<w2:column width="159" style="height:25px;" inputType="text" id="column2" value="노선명" blockSelect="false"
 										displayMode="label" userData1="">
 									</w2:column>
-									<w2:column width="80" style="height:25px;" inputType="text" id="column3" value="음성유형" blockSelect="false"
+									<w2:column width="80" style="height:25px;" inputType="text" id="column3" value="재생유형" blockSelect="false"
 										displayMode="label" userData1="">
 									</w2:column>
 									<w2:column width="80" style="height:25px;" inputType="text" id="column4" value="재생시간(초)"
 										blockSelect="false">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="163" inputType="text" style="height:25px" id="column5"
-										value="재생기간" blockSelect="false" displayMode="label">
-									</w2:column>
 									<w2:column width="180" style="height:25px;" inputType="text" id="column6" value="한국어TTS"
-										blockSelect="false">
-									</w2:column>
-									<w2:column width="180" style="height:25px;" inputType="text" id="column7" value="영어TTS"
-										blockSelect="false">
-									</w2:column>
-									<w2:column width="180" style="height:25px;" inputType="text" id="column8" value="화면표시문구(한글)"
-										blockSelect="false">
-									</w2:column>
-									<w2:column width="180" style="height:25px;" inputType="text" id="column9" value="화면표시문구(영문)"
-										blockSelect="false">
-									</w2:column>
-									<w2:column width="180" style="height:25px;" inputType="text" id="column30" value="이번정류장문구(한글)"
-										blockSelect="false">
-									</w2:column>
-									<w2:column width="180" style="height:25px;" inputType="text" id="column31" value="다음정류장문구(한글)"
-										blockSelect="false">
-									</w2:column>
-									<w2:column width="180" style="height:25px;" inputType="text" id="column32" value="이번정류장문구(영문)"
-										blockSelect="false">
-									</w2:column>
-									<w2:column width="180" style="height:25px;" inputType="text" id="column33" value="다음정류장문구(영문)"
 										blockSelect="false">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="180" inputType="text" style="height:25px" id="column41"
@@ -370,10 +306,10 @@
 							</w2:header>
 							<w2:gBody width="40" style="" id="gBody4">
 								<w2:row style="" id="row5">
-									<w2:column width="118" style="height:25px;" inputType="text" id="VOC_ID" blockSelect="false"
+									<w2:column width="118" style="height:25px;" inputType="text" id="ROUTE_ID" blockSelect="false"
 										displayMode="label" readOnly="true" userData1="M" userData2="">
 									</w2:column>
-									<w2:column width="159" style="height:25px;" inputType="text" id="VOC_NM" blockSelect="false"
+									<w2:column width="159" style="height:25px;" inputType="text" id="ROUT_NM" blockSelect="false"
 										displayMode="label" readOnly="true" userData1="M">
 									</w2:column>
 									<w2:column textAlign="center" width="80" style="height:25px;" inputType="text" id="PLAY_TYPE"
@@ -388,32 +324,8 @@
 									<w2:column width="159" style="height:25px;" inputType="text" id="PLAY_TM" blockSelect="false"
 										displayMode="label" readOnly="true">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="163" inputType="text" style="height:25px" id="PLAY_DATE" value=""
-										blockSelect="false" displayMode="label" readOnly="true" displayFormatter="scwin.playDateDisFormatter">
-									</w2:column>
 									<w2:column removeBorderStyle="false" width="116" inputType="text" style="height:25px" id="KR_TTS" value=""
 										blockSelect="false" displayMode="label" readOnly="true" displayFormatter="">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="108" inputType="text" style="height:25px" id="EN_TTS" value=""
-										blockSelect="false" displayMode="label" displayFormatter="">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="108" inputType="text" style="height:25px" id="SCR_TXT" value=""
-										blockSelect="false" displayMode="label" displayFormatter="">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="108" inputType="text" style="height:25px" id="SCR_TXT_EN" value=""
-										blockSelect="false" displayMode="label" displayFormatter="">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="108" inputType="text" style="height:25px" id="STTN_TEXT_A" value=""
-										blockSelect="false" displayMode="label" displayFormatter="">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="108" inputType="text" style="height:25px" id="STTN_TEXT_B" value=""
-										blockSelect="false" displayMode="label" displayFormatter="">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="108" inputType="text" style="height:25px" id="STTN_TEXT_A_EN" value=""
-										blockSelect="false" displayMode="label" displayFormatter="">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="108" inputType="text" style="height:25px" id="STTN_TEXT_B_EN" value=""
-										blockSelect="false" displayMode="label" displayFormatter="">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="84" inputType="text" style="height:25px" id="REMARK" value=""
 										blockSelect="false" displayMode="label" autoFitFilterList="">
@@ -437,11 +349,11 @@
 				<xf:group id="pgm_detail" class="pgm_detail grdr_20_a" style="">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="음성, LED 정보" style=""></w2:textbox>
+							<w2:textbox class="df_tt fl" id="" label="음성 정보" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
 					<xf:group class="" id="" style="">
-						<xf:group id="PI0201F0" style="width:100%;" class="w2tb tb" tagname="table" >
+						<xf:group id="PI0205F0" style="width:100%;" class="w2tb tb" tagname="table" >
 							<w2:attributes>
 								<w2:summary></w2:summary>
 							</w2:attributes>
@@ -464,23 +376,16 @@
 								</xf:group>
 							</xf:group>
 							<xf:group style="" tagname="tr">
-								<xf:group style="" class="w2tb_th req" tagname="th">음성명</xf:group>
-
-								<xf:group tagname="td" style="" class="w2tb_td">
-									<xf:input adjustMaxLength="false" id="VOC_NM" style="width:100%;height:24px;" ref="data:dlt_BMS_VOC_INFO.VOC_NM"
-										placeholder="">
-									</xf:input>
-								</xf:group>
-								<xf:group tagname="th" style="" class="w2tb_th req">
-									재생유형
+								<xf:group style="" class="w2tb_th req" tagname="th">재생유형</xf:group>
+								<xf:group style="" class="w2tb_td" tagname="td">
 									<w2:attributes>
-										<w2:scope>row</w2:scope>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-								</xf:group>
-								<xf:group tagname="td" style="" class="w2tb_td">
-									<xf:select1 id="PLAY_TYPE" chooseOption="" style="width: 148px;height: 21px;" submenuSize="auto"
+									<xf:select1 id="PLAY_TYPE" chooseOption="true" style="width: 148px;height: 21px;" submenuSize="auto"
 										allOption="" disabled="" direction="auto" appearance="minimal" disabledClass="w2selectbox_disabled" title=""
-										ref="data:dlt_BMS_VOC_INFO.PLAY_TYPE" ev:onchange="scwin.PLAY_TYPE_onchange" ev:onviewchange="scwin.PLAY_TYPE_onviewchange">
+										ref="data:dlt_BMS_VOC_INFO.PLAY_TYPE" ev:onchange="scwin.PLAY_TYPE_onchange" ev:onviewchange="scwin.PLAY_TYPE_onviewchange"
+										chooseOptionLabel="-선택-">
 										<xf:choices>
 											<xf:item>
 												<xf:label><![CDATA[TTS]]></xf:label>
@@ -492,24 +397,6 @@
 											</xf:item>
 										</xf:choices>
 									</xf:select1>
-								</xf:group>
-							</xf:group>
-							<xf:group style="" tagname="tr">
-								<xf:group style="" class="w2tb_th req" tagname="th">재생기간</xf:group>
-								<xf:group style="" class="w2tb_td" tagname="td">
-									<w2:attributes>
-										<w2:colspan>3</w2:colspan>
-										<w2:rowspan>1</w2:rowspan>
-									</w2:attributes>
-									<w2:inputCalendar footerDiv="false" id="" style="float:left; width:150px; height:23px;margin-right: 5px" renderDiv="true"
-										focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component"
-										ref="data:dlt_BMS_VOC_INFO.PLAY_ST_DT" editType="" displayFormat="" ioFormat="" calendarDisplayFormatFunc="">
-									</w2:inputCalendar>
-									<w2:span label="~" style="margin-right: 5px;" id=""></w2:span>
-									<w2:inputCalendar footerDiv="false" id="" style="width: 150px;height: 23px;" renderDiv="true"
-										focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component"
-										ref="data:dlt_BMS_VOC_INFO.PLAY_ED_DT">
-									</w2:inputCalendar>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
@@ -544,60 +431,6 @@
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" style="" class="w2tb_th req">
-									영어 TTS
-									<w2:attributes>
-										<w2:scope>row</w2:scope>
-									</w2:attributes>
-								</xf:group>
-								<xf:group tagname="td" style="" class="w2tb_td">
-									<w2:attributes>
-										<w2:colspan>3</w2:colspan>
-										<w2:rowspan>1</w2:rowspan>
-									</w2:attributes>
-									<xf:group class="ml5 fr" id="" style=""></xf:group>
-			
-									<xf:textarea id="ER_TTS" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.EN_TTS"></xf:textarea>
-								</xf:group>
-							</xf:group>
-							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" style="" class="w2tb_th req">
-									화면&amp;nbsp;표시&amp;nbsp;문구
-									<br></br>
-									(한글)
-									<w2:attributes>
-										<w2:scope>row</w2:scope>
-									</w2:attributes>
-								</xf:group>
-								<xf:group tagname="td" style="" class="w2tb_td">
-									<w2:attributes>
-										<w2:colspan>3</w2:colspan>
-										<w2:rowspan>1</w2:rowspan>
-									</w2:attributes>
-									<xf:group class="ml5 fr" id="" style=""></xf:group>
-			
-									<xf:textarea id="" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.SCR_TXT" userData1=""></xf:textarea>
-								</xf:group>
-							</xf:group>
-							<xf:group style="" tagname="tr">
-								<xf:group class="w2tb_th req" style="" tagname="th">
-									화면&amp;nbsp;표시&amp;nbsp;문구
-									<br></br>
-									(영문)
-									<w2:attributes>
-										<w2:scope>row</w2:scope>
-									</w2:attributes>
-								</xf:group>
-								<xf:group class="w2tb_td" style="" tagname="td">
-									<w2:attributes>
-										<w2:colspan>3</w2:colspan>
-										<w2:rowspan>1</w2:rowspan>
-									</w2:attributes>
-									<xf:group class="ml5 fr" id="" style=""></xf:group>
-									<xf:textarea id="" ref="data:dlt_BMS_VOC_INFO.SCR_TXT_EN" style="width: 100%;height: 100%;"></xf:textarea>
-								</xf:group>
-							</xf:group>
-							<xf:group tagname="tr" style="">
 								<xf:group tagname="th" style="" class="w2tb_th">
 									미리듣기
 									<w2:attributes>
@@ -611,82 +444,6 @@
 									</w2:attributes>
 									<audio controls="" style="width: 250px;height: 50px;" id="audio0" preload="" muted="" loop="" 
 									autoplay="" ref="" src=""></audio>
-								</xf:group>
-							</xf:group>
-							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" style="" class="w2tb_th req">
-									이번정류장문구
-									<br></br>
-									(한글)
-									<w2:attributes>
-										<w2:scope>row</w2:scope>
-									</w2:attributes>
-								</xf:group>
-								<xf:group tagname="td" style="" class="w2tb_td">
-									<w2:attributes>
-										<w2:colspan>3</w2:colspan>
-										<w2:rowspan>1</w2:rowspan>
-									</w2:attributes>
-									<xf:group class="ml5 fr" id="" style=""></xf:group>
-			
-									<xf:textarea id="" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.STTN_TEXT_A"></xf:textarea>
-								</xf:group>
-							</xf:group>
-							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" style="" class="w2tb_th">
-									다음정류장문구
-									<br></br>
-									(한글)
-									<w2:attributes>
-										<w2:scope>row</w2:scope>
-									</w2:attributes>
-								</xf:group>
-								<xf:group tagname="td" style="" class="w2tb_td">
-									<w2:attributes>
-										<w2:colspan>3</w2:colspan>
-										<w2:rowspan>1</w2:rowspan>
-									</w2:attributes>
-									<xf:group class="ml5 fr" id="" style=""></xf:group>
-			
-									<xf:textarea id="" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.STTN_TEXT_B"></xf:textarea>
-								</xf:group>
-							</xf:group>
-							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" style="" class="w2tb_th">
-									이번정류장문구
-									<br></br>
-									(영문)
-									<w2:attributes>
-										<w2:scope>row</w2:scope>
-									</w2:attributes>
-								</xf:group>
-								<xf:group tagname="td" style="" class="w2tb_td">
-									<w2:attributes>
-										<w2:colspan>3</w2:colspan>
-										<w2:rowspan>1</w2:rowspan>
-									</w2:attributes>
-									<xf:group class="ml5 fr" id="" style=""></xf:group>
-			
-									<xf:textarea id="" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.STTN_TEXT_A_EN"></xf:textarea>
-								</xf:group>
-							</xf:group>
-							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" style="" class="w2tb_th">
-									다음정류장문구
-									<br></br>
-									(영문)
-									<w2:attributes>
-										<w2:scope>row</w2:scope>
-									</w2:attributes>
-								</xf:group>
-								<xf:group tagname="td" style="" class="w2tb_td">
-									<w2:attributes>
-										<w2:colspan>3</w2:colspan>
-										<w2:rowspan>1</w2:rowspan>
-									</w2:attributes>
-									<xf:group class="ml5 fr" id="" style=""></xf:group>
-			
-									<xf:textarea id="" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.STTN_TEXT_B_EN"></xf:textarea>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
