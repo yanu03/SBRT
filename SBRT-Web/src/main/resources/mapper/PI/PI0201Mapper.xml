@@ -22,9 +22,9 @@
 			,CONCAT(DATE_FORMAT(PLAY_ST_DT, '%Y-%m-%d'), ' ~ ', DATE_FORMAT(PLAY_ED_DT, '%Y-%m-%d')) PLAY_DATE
 		FROM
 			BMS_VOC_INFO
-		WHERE
-			VOC_DIV = 'VD001'
+		
 		<where>
+			VOC_DIV = 'VD001'
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 				AND VOC_ID LIKE CONCAT('%',#{CONTENT},'%') || VOC_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
@@ -37,7 +37,7 @@
 		</where>
 	</select>
 	
-	<select id="PI0201SHI0" resultType="Map">
+	<select id="PI0201SHI0" resultType="Map" parameterType="Map">
 		select  VOC_ID, VOC_NM
 		from 	BMS_VOC_INFO
 	</select>
@@ -67,7 +67,8 @@
 			,STTN_TEXT_B
 			,STTN_TEXT_B_EN
 			,UPD_DTM
-			,UPD_ID) 
+			,UPD_ID
+			) 
 		VALUES (
 			#{VOC_ID}
 			,#{ROUTE_ID}
@@ -89,6 +90,7 @@
 			,#{STTN_TEXT_B_EN}
 			,#{UPD_DTM}
 			,#{UPD_ID}
+			)
 	</insert>
 
 	<delete id="PI0201G0D0" parameterType="Map">

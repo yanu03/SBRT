@@ -4,7 +4,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
 	xmlns:xf="http://www.w3.org/2002/xforms">
 	<head>
-		
 
 		<w2:type>DEFAULT</w2:type>
 		<w2:buildDate />
@@ -63,6 +62,15 @@
 						<w2:column id="VOC_NM" name="음성명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_result">
+					<w2:keyInfo>
+						<w2:key id="STATUS" name="STATUS" dataType="text"></w2:key>
+						<w2:key id="ICNT" name="입력건수" dataType="text"></w2:key>
+						<w2:key id="UCNT" name="수정건수" dataType="text"></w2:key>
+						<w2:key id="DCNT" name="삭제건수" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_PI0201G0R0" ref='data:json,["dma_search","dma_AUDIO_INFO"]' target="data:json,dlt_BMS_VOC_INFO"
@@ -94,7 +102,7 @@
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
 	};
 	
-	com.executeSubmission(sub_PI0201SHI0);
+	$p.executeSubmission(sub_PI0201SHI0);
 	
 	scwin.upload0_onInputValueChange = function(fileName) {
 		debugger;
@@ -115,21 +123,23 @@
 			dlt_BMS_VOC_INFO.setCellData(PI0201G0.getFocusedRowIndex(), 'VOC_PATH', '/fileUpload/up/'+dma_AUDIO_INFO.get('AUDIO_NM'));
 			VOC_PATH.submit();
 		
-			var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");
-//			VOC_PATH.setValue(path);
-//			$p.$("#VOC_PATH").val(path);
-			$p.$("#audio0").attr("src", path);
+			/*var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");
+			VOC_PATH.setValue(path);
+			$p.$("#VOC_PATH").val(path);
 			
-			
-//			VOC_PATH.addParam("id", dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID"));
-//			var doc_audio0 = document.getElementById("audio0");
-			// 실서버 도메인 변경 필요
-//			var realPath = "http://localhost:8081/fileUpload/up/";
-//			if (PLAY_TYPE.getValue() == "WAV"){
-//				doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID") + ".wav";
-//			}else{
-//				doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID") + ".tts";
-//			}
+			VOC_PATH.addParam("id", dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID"));
+			var doc_audio0 = document.getElementById("audio0");
+			 실서버 도메인 변경 필요
+			var realPath = "http://localhost:8081/fileUpload/up/";
+			if (PLAY_TYPE.getValue() == "WAV"){
+				doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID") + ".wav";
+			}else{
+				doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID") + ".tts";
+			}
+
+			setTimeout(function() {
+				$p.$("#audio0").attr("src", path);
+			},100);*/
             
         }else{
 			com.alert("wav, tts 확장자만 업로드 할 수 있습니다.");
@@ -144,14 +154,14 @@
 		var audioType = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "PLAY_TYPE");
 		if (audioType == "WAV"){
 //			$p.$("#audio0").show();
-			VOC_PATH.setDisabled(false);
+			//VOC_PATH.setDisabled(false);
 			KR_TTS.setDisabled(true);
 			ER_TTS.setDisabled(true);
-			var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");		
+			var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");	
 			$p.$("#audio0").attr("src", path);	
 		} else if (audioType == "TTS"){
 //			$p.$("#audio0").hide();
-			VOC_PATH.setDisabled(true);
+			//VOC_PATH.setDisabled(true);
 			KR_TTS.setDisabled(false);
 			ER_TTS.setDisabled(false);
 			var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");		
@@ -162,7 +172,6 @@
 		//$p.$("#audio0").attr("src", path);	
 		
 		/*
-		
         // 실서버 도메인 변경 필요
 		var realPath = "http://localhost:8081/fileUpload/up/";
 		scwin.idxRowVOC = row;
@@ -178,22 +187,34 @@
 		}
         console.log(doc_audio0.src);
 		doc_audio0.pause();
-		
 		*/
 	};	
 	
 	scwin.upload0_ondone = function(retXml) {
 		debugger;
-		var doc_audio0 = document.getElementById("audio0");
+		var time_audio = document.getElementById("audio0");
+		
+		//var duration = parseInt(time_audio.duration);
+		//dlt_BMS_VOC_INFO.setCellData(PI0201G0.getFocusedRowIndex(), "PLAY_TM", duration);
+		
+		var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");
+		$p.$("#audio0").attr("src", path);
+		
+		time_audio.addEventListener('loadedmetadata', function() {
+			var duration = parseInt(time_audio.duration);
+			dlt_BMS_VOC_INFO.setCellData(PI0201G0.getFocusedRowIndex(), "PLAY_TM", duration);
+		});				
+		
+		/*var doc_audio0 = document.getElementById("audio0");
 		var filePath = WebSquare.xml.getValue(retXml, "ret/storedFileList");
-		// 실서버 도메인 변경 필요
+		 실서버 도메인 변경 필요
 		var realPath = "/data/fileUpload/audio/";
-		//doc_audio0.src = realPath + filePath;
-		//dlt_BMS_VOC_INFO.setCellData(scwin.idxRowVOC, dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"), doc_audio0.src);
-		//doc_audio0.type = "audio/wav";
-		//doc_audio0.pause();
-		// 서버에 저장되도 404 error 발생함 바로 갱신이 안되는 문제
-		// 현재 동일한 파일명으로 업로드 시 (날짜) 형태로 서버에 파일이 생성되는데 괄호가 보안처리에 의해 다른 문자로 치환되서 DB에서 경로 가져올때 문제 있음  
+		doc_audio0.src = realPath + filePath;
+		dlt_BMS_VOC_INFO.setCellData(scwin.idxRowVOC, dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"), doc_audio0.src);
+		doc_audio0.type = "audio/wav";
+		doc_audio0.pause();
+		 서버에 저장되도 404 error 발생함 바로 갱신이 안되는 문제
+		 현재 동일한 파일명으로 업로드 시 (날짜) 형태로 서버에 파일이 생성되는데 괄호가 보안처리에 의해 다른 문자로 치환되서 DB에서 경로 가져올때 문제 있음  */
 	};
 	
 	scwin.sub_PI0201G0R0_submitdone = function(e) {
@@ -210,14 +231,30 @@
 	// 음성유형 TTS, WAV 변경 시 음성파일 업로드 disable 처리
 	scwin.PLAY_TYPE_onviewchange = function(info) {
 		if (info.newValue == "WAV"){
-			VOC_PATH.setDisabled(false);
+			//VOC_PATH.setDisabled(false);
 			KR_TTS.setDisabled(true);
 			ER_TTS.setDisabled(true);
 		}else if(info.newValue == "TTS"){
-			VOC_PATH.setDisabled(true);
+			//VOC_PATH.setDisabled(true);
 			KR_TTS.setDisabled(false);
 			ER_TTS.setDisabled(false);
 		}	
+	};
+	
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
+		if (info.newValue == "ALL") {
+			acb_autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} else if (info.newValue == "VOC_ID") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "VOC_ID", "VOC_ID");
+			acb_autoChoiceBox.show("");
+		} else if (info.newValue == "VOC_NM") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "VOC_NM", "VOC_NM");
+			acb_autoChoiceBox.show("");
+		}
 	};
 	
 	]]></script>
@@ -233,23 +270,38 @@
 						<w2:span class="" id="" label="검색 항목"></w2:span>
 					</xf:group>
 					<xf:group class="search" id="" style="">
-						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="" chooseOptionLabel="-전체-" chooseOptionValue=""
-							displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange="" id="acb_autoChoiceBox"
-							interactionMode="" noResult="useData" ref="data:dma_search.TYPE" search="start" selectedData=""
-							style="width: 200px;height: 21px;float: left;" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE"
+							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+							textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[음성ID]]></xf:label>
+									<xf:value><![CDATA[VOC_ID]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[음성명]]></xf:label>
+									<xf:value><![CDATA[VOC_NM]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="음성ID 또는 음성명"
+							style="margin-right: 20px;">
+						</xf:input>
+						<xf:group id=""></xf:group>
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
+							ev:onviewchange="" id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
+							selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
 							<w2:choices>
-								<w2:item>
-									<w2:label><![CDATA[전체]]></w2:label>
-									<w2:value><![CDATA[ALL]]></w2:value>
-								</w2:item>
-								<w2:item>
-									<w2:label><![CDATA[음성ID]]></w2:label>
-									<w2:value><![CDATA[VOC_ID]]></w2:value>
-								</w2:item>
-								<w2:item>
-									<w2:label><![CDATA[음성명]]></w2:label>
-									<w2:value><![CDATA[VOC_NM]]></w2:value>
-								</w2:item>
+								<w2:itemset nodeset="data:dlt_grgSearchItem">
+									<w2:label ref="VOC_ID"></w2:label>
+									<w2:value ref="VOC_ID"></w2:value>
+								</w2:itemset>
 							</w2:choices>
 						</w2:autoComplete>
 					</xf:group>
@@ -287,31 +339,31 @@
 									<w2:column removeBorderStyle="false" width="163" inputType="text" style="height:25px" id="column5"
 										value="재생기간" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column width="116" style="height:25px;" inputType="text" id="column6" value="한국어TTS"
+									<w2:column width="180" style="height:25px;" inputType="text" id="column6" value="한국어TTS"
 										blockSelect="false">
 									</w2:column>
-									<w2:column width="116" style="height:25px;" inputType="text" id="column7" value="영어TTS"
+									<w2:column width="180" style="height:25px;" inputType="text" id="column7" value="영어TTS"
 										blockSelect="false">
 									</w2:column>
-									<w2:column width="116" style="height:25px;" inputType="text" id="column8" value="화면표시문구(한글)"
+									<w2:column width="180" style="height:25px;" inputType="text" id="column8" value="화면표시문구(한글)"
 										blockSelect="false">
 									</w2:column>
-									<w2:column width="116" style="height:25px;" inputType="text" id="column9" value="화면표시문구(영문)"
+									<w2:column width="180" style="height:25px;" inputType="text" id="column9" value="화면표시문구(영문)"
 										blockSelect="false">
 									</w2:column>
-									<w2:column width="116" style="height:25px;" inputType="text" id="column30" value="이번정류장문구(한글)"
+									<w2:column width="180" style="height:25px;" inputType="text" id="column30" value="이번정류장문구(한글)"
 										blockSelect="false">
 									</w2:column>
-									<w2:column width="116" style="height:25px;" inputType="text" id="column31" value="다음정류장문구(한글)"
+									<w2:column width="180" style="height:25px;" inputType="text" id="column31" value="다음정류장문구(한글)"
 										blockSelect="false">
 									</w2:column>
-									<w2:column width="116" style="height:25px;" inputType="text" id="column32" value="이번정류장문구(영문)"
+									<w2:column width="180" style="height:25px;" inputType="text" id="column32" value="이번정류장문구(영문)"
 										blockSelect="false">
 									</w2:column>
-									<w2:column width="116" style="height:25px;" inputType="text" id="column33" value="다음정류장문구(영문)"
+									<w2:column width="180" style="height:25px;" inputType="text" id="column33" value="다음정류장문구(영문)"
 										blockSelect="false">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="84" inputType="text" style="height:25px" id="column41"
+									<w2:column removeBorderStyle="false" width="180" inputType="text" style="height:25px" id="column41"
 										value="비고" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
@@ -406,8 +458,8 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input adjustMaxLength="false" id="VOC_ID" style="width:100%;height:24px;" ref="data:dlt_BMS_VOC_INFO.VOC_ID"
-										placeholder="" readOnly="true">
+									<xf:input adjustMaxLength="false" id="VOC_ID" style="height:24px;" ref="data:dlt_BMS_VOC_INFO.VOC_ID"
+										placeholder="" readOnly="true" disabled="false">
 									</xf:input>
 								</xf:group>
 							</xf:group>
@@ -470,7 +522,7 @@
 									<w2:upload imageStyle="position:absolute;vertical-align:middle;word-wrap:break-word"
 										inputStyle="vertical-align:middle;word-wrap:break-word" style="width: 100%;height: 23px;" id="VOC_PATH" inputClass=""
 										ev:onInputValueChange="scwin.upload0_onInputValueChange" ev:ondone="scwin.upload0_ondone" accept=".wav,.tts" title="" type=""
-										disabled="true" class="">
+										disabled="false" class="">
 									</w2:upload>
 								</xf:group>
 							</xf:group>
@@ -524,7 +576,7 @@
 									</w2:attributes>
 									<xf:group class="ml5 fr" id="" style=""></xf:group>
 			
-									<xf:textarea id="" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.SCR_TXT"></xf:textarea>
+									<xf:textarea id="" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.SCR_TXT" userData1=""></xf:textarea>
 								</xf:group>
 							</xf:group>
 							<xf:group style="" tagname="tr">
