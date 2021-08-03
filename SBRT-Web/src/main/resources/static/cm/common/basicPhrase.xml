@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+	 <head>
+	<w2:type>DEFAULT</w2:type>
+	<w2:buildDate/>
+	<xf:model>
+		<xf:instance>
+			<data xmlns="" />
+		</xf:instance>
+		<w2:dataCollection baseNode="map">
+			<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_DL_CD_INFO" saveRemovedData="true">
+				<w2:columnInfo>
+					<w2:column id="chk" name="선택" dataType="text"></w2:column>
+					<w2:column id="DL_CD" name="상세코드" dataType="text"></w2:column>
+					<w2:column id="DL_CD_NM" name="상세코드명" dataType="text"></w2:column>
+				</w2:columnInfo>
+			</w2:dataList>
+		</w2:dataCollection>
+		<w2:workflowCollection></w2:workflowCollection>
+		<xf:submission id="sub_basicPhraseList" ref="" target="data:json,dlt_BMS_DL_CD_INFO" action="/phrase/phraseList"
+			method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+			processMsg="" ev:submit="" ev:submitdone="scwin.sub_basicPhraseList_submitdone" ev:submiterror="" abortTrigger="">
+		</xf:submission>
+	</xf:model>
+	<script type="text/javascript" lazy="false"><![CDATA[
+
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		var btnOptions = 
+		[
+			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
+		];
+		com.setMainBtn3(wfm_mainBtn, btnOptions);
+		com.executeSubmission(sub_basicPhraseList);				
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	
+	scwin.btn_search_onclick = function() {
+		com.executeSubmission(sub_basicPhraseList);
+	};
+	
+	scwin.btn_confirm_onclick = function() {
+		var data = basicPhraseGrid.getCheckedJSON("chk");
+		com.closePopup(scwin.closeCallbackFncName, data);		
+	};
+	
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();		
+	};
+	
+	scwin.basicPhraseGrid_oncellclick = function(row,col) {
+		if(col==0)return;
+		if(basicPhraseGrid.getCellChecked(row,"chk")){
+			basicPhraseGrid.setCellChecked(row,"chk",false)
+		}
+		else {
+			basicPhraseGrid.setCellChecked(row,"chk",true)
+		}
+	};
+	
+	scwin.sub_basicPhraseList_submitdone = function(e) {
+//		var sCode = com.getResultCode(e);
+//		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+//		
+//			var ids=dma_GRG_MST.get("GRG_ECPT_ID");
+//			com.excludeItemsByGrid(basicPhraseGrid, ids, "GRG_ID");
+//		}		
+	};
+	
+]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+				<xf:group class="gr_search" id="" style="">
+					<xf:group class="search" id="" style="">
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group>
+			
+			<xf:group style="" id="" class="popup_content">
+				<w2:gridView fixedColumnWithHidden="true" dataList="data:dlt_BMS_DL_CD_INFO" useShiftKey="false" readOnly="true"
+					style="width:775px" scrollByColumn="false" id="basicPhraseGrid" autoFit="allColumn" class="cm_grid popup"
+					ev:oncellclick="scwin.basicPhraseGrid_oncellclick" focusMode="row">
+					<w2:header style="" id="header1">
+						<w2:row style="" id="row1">
+							<w2:column width="39" inputType="radio" style="height:20px" id="chkHeader" value="선택" blockSelect="false"></w2:column>
+							<w2:column width="38" id="column9" value="상세코드"></w2:column>
+							<w2:column width="70" id="column10" value="상세코드명"></w2:column>
+						</w2:row>
+					</w2:header>
+					<w2:gBody id="gBody1" style="">
+						<w2:row id="row2" style="">
+							<w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px"
+								inputType="radio" id="chk" blockSelect="false">
+							</w2:column>
+							<w2:column width="38" id="DL_CD"></w2:column>
+							<w2:column width="70" id="DL_CD_NM" textAlign="left"></w2:column>
+						</w2:row>
+					</w2:gBody>
+				</w2:gridView>
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

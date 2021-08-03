@@ -34,6 +34,8 @@ public class PI0203Service extends ServiceSupport{
 		int uCnt = 0;
 		int dCnt = 0;
 		List param = getSimpleList("dlt_BMS_VOC_INFO");
+        Map<String, Object> AUDIO_INFO = getSimpleDataMap("dma_AUDIO_INFO");
+        
 		for (int i = 0; i < param.size(); i++) {
 			Map<String, Object> data = (Map) param.get(i);
 			String rowStatus = (String) data.get("rowStatus");
@@ -42,6 +44,8 @@ public class PI0203Service extends ServiceSupport{
 				iCnt += PI0203Mapper.PI0203G0I0(data);
 			} else if (rowStatus.equals("U")) {
 				uCnt += PI0203Mapper.PI0203G0U0(data);
+				
+                doMoveFile("up/", "audio/", AUDIO_INFO.get("AUDIO_NM").toString(), AUDIO_INFO.get("AUDIO_NM").toString());
 			} else if (rowStatus.equals("D")) {
 				dCnt += PI0203Mapper.PI0203G0D0(data);
 			}
