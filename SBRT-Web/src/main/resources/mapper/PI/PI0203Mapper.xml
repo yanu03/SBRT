@@ -74,19 +74,19 @@
    			(
    			  #{VOC_ID}
    			, #{VOC_NM}
-   			, #{PLAY_ST_DT}
+   			, STR_TO_DATE(#{PLAY_ST_DT}, '%Y%m%d')
    			, #{PLAY_TYPE}
    			, #{KR_TTS}
    			, #{SCR_TXT}
    			, #{REMARK}
    			, #{PLAY_TM}
    			, 'VD003'
-   			, #{PLAY_ED_DT}
+   			, STR_TO_DATE(#{PLAY_ED_DT}, '%Y%m%d')   			
    			, #{UPD_DTM}
    			, #{SSN_USER_ID}
    			);
    		
-      	INSERT INTO BMS_INNER_LED
+      	INSERT INTO BMS_INNER_LED_INFO
       		(
     		  ILD_ID
     		, TXT_A
@@ -113,8 +113,8 @@
 		DELETE FROM BMS_VOC_INFO 
 		WHERE VOC_ID = #{VOC_ID};
 		
-		DELETE FROM BMS_INNNER_LED
-		WHERE VOC_UD = CONCAT(#{VOC_ID}, 'K')
+		DELETE FROM BMS_INNER_LED_INFO
+		WHERE VOC_ID = CONCAT(#{VOC_ID}, 'K')
 	</delete>
 	
 	<update id="PI0203G0U0" parameterType="Map">
@@ -137,7 +137,7 @@
 		WHERE 		VOC_ID = #{VOC_ID};
 		
 		
-		UPDATE		BMS_INNER_LED
+		UPDATE		BMS_INNER_LED_INFO
 		SET			
 		    		  TXT_A			=	REPLACE(REPLACE(#{TXT_A}, '\r\n', ' '), '\r', '')
 		    		, TXT_B			=	REPLACE(REPLACE(#{TXT_B}, '\r\n', ' '), '\r', '')

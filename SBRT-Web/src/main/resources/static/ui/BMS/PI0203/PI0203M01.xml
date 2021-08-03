@@ -24,7 +24,7 @@
 						<w2:column id="SCR_TXT" name="화면표시문구" dataType="text"></w2:column>
 						<w2:column id="SCR_TXT_EN" name="영어화면표시문구" dataType="text"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
-						<w2:column id="PLAY_TM" name="재생시간" dataType="text"></w2:column>
+						<w2:column id="PLAY_TM" name="재생시간" dataType="text" defaultValue="0"></w2:column>
 						<w2:column id="VOC_DIV" name="음성구분" dataType="text"></w2:column>
 						<w2:column id="CON_ID" name="계약ID" dataType="text"></w2:column>
 						<w2:column id="PLAY_ED_DT" name="재생종료일" dataType="text"></w2:column>
@@ -58,6 +58,15 @@
 						<w2:column id="VOC_NM" name="음성명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_result">
+					<w2:keyInfo>
+						<w2:key id="STATUS" name="STATUS" dataType="text"></w2:key>
+						<w2:key id="ICNT" name="입력건수" dataType="text"></w2:key>
+						<w2:key id="UCNT" name="수정건수" dataType="text"></w2:key>
+						<w2:key id="DCNT" name="삭제건수" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_PI0203G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_VOC_INFO" action="/pi/PI0203G0R0"
@@ -68,9 +77,9 @@
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_PI0203G0K0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0203G0S0" ref='data:json,dlt_BMS_VOC_INFO' target="" action="/pi/PI0203G0S0" method="post"
+			<xf:submission id="sub_PI0203G0S0" ref='data:json,{"action":"modified","id":"dlt_BMS_VOC_INFO"}' target="data:json,dma_result" action="/pi/PI0203G0S0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				ev:submit="" ev:submitdone="scwin.sub_PI0203G0S0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_PI0203SHI0" ref="" target="data:json,dlt_searchitem" action="/pi/PI0203SHI0" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
@@ -152,10 +161,7 @@
 	};
 	
 	scwin.sub_PI0203G0R0_submitdone = function(e) {
-		var rsCode = com.getResultCode(e)
-		if (rsCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
-			com.setFocusedCell(PI0203G0, "VOC_NM");
-		}
+		com.setFocusedCell(PI0203G0, "VOC_NM");
 	};
 	
 	scwin.sub_PI0203G0K0_submitdone = function(e) {
@@ -186,6 +192,10 @@
 			autoChoiceBox.show("");
 		}
 	};	
+	
+	scwin.sub_PI0203G0S0_submitdone = function(e) {
+		com.saveDone(PI0203G0, sub_PI0203G0R0);
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -512,7 +522,7 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<audio controls="" style="width: 250px;height: 50px;" id="audio0" preload="" muted="" loop="" autoplay=""></audio>
+									<audio controls="" style="" id="audio0" preload="" muted="" loop="" autoplay=""></audio>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
