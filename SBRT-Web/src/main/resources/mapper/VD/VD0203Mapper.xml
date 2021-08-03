@@ -44,17 +44,18 @@
 		SELECT
 			VM.VHC_NO
 			,(IF(UL.COMPLETE_YN IS NULL, '', IF(UL.COMPLETE_YN = 'N', '예약중', ''))) AS COMPLETE_YN
-			,date_format(URI.RSV_DT, '%Y-%m-%d%T') as RSV_DT
+			,date_format(URI.RSV_DT, '%Y-%m-%d') as RSV_DT
 			,UL.PROCE_RST
+			,date_format(UL.SEND_DTM,'%Y-%m-%d') as SEND_DTM
 			,DI.MNG_ID
 			,OM.ORG_DIV
 			,DI.DVC_KIND
 			,DI.INST_LOC
 		FROM
-			BMS_DVC_INFO DI LEFT JOIN sbrt.BMS_VHC_MST VM ON DI.VHC_ID = VM.VHC_ID
+				BMS_DVC_INFO DI LEFT JOIN BMS_VHC_MST VM ON DI.VHC_ID = VM.VHC_ID
 								LEFT JOIN BMS_UPD_LOG UL ON DI.MNG_ID = UL.MNG_ID
 								LEFT JOIN BMS_ORG_MST OM ON DI.ORG_ID = OM.ORG_ID
-								JOIN BMS_UPD_RSV_INFO URI ON UL.RSV_ID = URI.RSV_ID
+								LEFT JOIN BMS_UPD_RSV_INFO URI ON UL.RSV_ID = URI.RSV_ID
 		WHERE
 			DI.VHC_ID = #{VHC_ID}
 			<if test="DVC_KIND != null and DVC_KIND != ''">
@@ -112,7 +113,7 @@
 		values	(
 					#{RSV_ID}
 					,#{MNG_ID}
-					,STR_TO_DATE(#{RSV_DT}, '%Y%m%d')
+					,NOW()
 					,#{ATTACH_ID}
 					,#{VER_INFO}
 					,#{UPD_DTM}

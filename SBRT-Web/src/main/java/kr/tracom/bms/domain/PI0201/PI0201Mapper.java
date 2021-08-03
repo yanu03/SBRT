@@ -13,5 +13,5 @@ public interface PI0201Mapper {
 	public int PI0201G0I0(Map param);
 	public int PI0201G0D0(Map param);
 	public int PI0201G0U0(Map param);
-
+	public List PI0201SHI0();
 }
