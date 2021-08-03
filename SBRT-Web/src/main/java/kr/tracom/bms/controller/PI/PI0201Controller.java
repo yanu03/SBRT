@@ -27,7 +27,8 @@ public class PI0201Controller extends ControllerSupport {
 	
 	@RequestMapping("/pi/PI0201G0S0")
 	public @ResponseBody Map<String, Object> PI0201G0S0() throws Exception{
-		result.setData("result", PI0201Service.PI0201G0S0());
+		Map map = PI0201Service.PI0201G0S0();
+		result.setData("dma_result", map);
 		return result.getResultSave();
 	}
 	
