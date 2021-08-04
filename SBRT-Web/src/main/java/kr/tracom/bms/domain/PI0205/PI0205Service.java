@@ -61,6 +61,7 @@ public class PI0205Service extends ServiceSupport{
 						}
     				
     			} else if (rowStatus.equals("U")) {
+    				iCnt += PI0205Mapper.PI0205G0I0(data);
     				uCnt += PI0205Mapper.PI0205G0U0(data);
    
     				if((AUDIO_INFO.get("AUDIO_NM")!=null)&&(AUDIO_INFO.get("AUDIO_NM").toString().isEmpty()==false))
