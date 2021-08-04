@@ -1216,6 +1216,31 @@ com.getGridViewDataList = function(gridViewObj) {
 	}
 };
 
+/*삭제를 제외한 데이터*/
+com.getGridDispJsonData = function(grid) {
+	var data = com.getGridViewDataList(grid);
+	var rowData = data.getAllJSON();
+	var retData = [];
+	for(var i = 0; i < rowData.length; i++) { //노선의 노드 순번을 그리드 순서대로 재 할당함.
+		if(data.getRowStatus(i)!="D"){
+			retData.push(rowData[i]);
+		}
+	}
+	return retData;
+};
+
+com.getGridDispJsonData2 = function(data) {
+	var rowData = data.getAllJSON();
+	var retData = [];
+	for(var i = 0; i < rowData.length; i++) { //노선의 노드 순번을 그리드 순서대로 재 할당함.
+		if(data.getRowStatus(i)!="D"){
+			retData.push(rowData[i]);
+		}
+	}
+	return retData;
+};
+
+
 /**
  * 특정 컴포넌트에 바인된 DataList나 DataMap의 컬럼 이름을 반환한다.
  * 
@@ -4910,6 +4935,7 @@ com.setSubBtn = function(btnOptions, generator) {
 	}
 }
 com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
+	
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
 
 	if(programAuthority.AUTH_CHECK != 'Y')return;
@@ -5479,7 +5505,7 @@ com.delGrid = function(grid,str,afterCb){
 		}
 		com.confirm(str, function(rtn) {
 			if (rtn) {
-				debugger;
+				
 				for(var i=count-1; i>=0; i--){
 					var isCreate = false;
 					try {
@@ -5595,7 +5621,7 @@ com.delDualGrid = function(mainGrid,subGrid,str){ //듀얼 그리드에서 부�
 					}
 				}
 				
-				debugger;
+				
 				var focusIndex = 0;
 				
 				if(count>0){
@@ -5928,7 +5954,7 @@ com.setFocusedCell = function(grid, focusColumn) {
 	try{
 		var gridInfo = gcm.GRID_INFO[grid.org_id];
 		if ((typeof gridInfo != "undefined") && (gridInfo!=null)){
-			if(gridInfo.CUR_ROW_INDEX==-1){
+			if(gridInfo.CUR_ROW_INDEX==-1 || (typeof gridInfo.keyValue != "undefined") || (gridInfo.keyColumn == null)){
 				grid.setFocusedCell(0, focusColumn);
 			}
 			else {

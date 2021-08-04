@@ -13,7 +13,6 @@
 			<w2:dataCollection baseNode="map">
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_GRG_RDS_INFO" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="chk" name="선택" dataType="text"></w2:column>
 						<w2:column id="GRG_ID" name="차고지ID" dataType="text"></w2:column>
 						<w2:column id="SN" name="순번" dataType="text"></w2:column>
 						<w2:column id="GPS_X" name="경도" dataType="text"></w2:column>
@@ -23,6 +22,7 @@
 				<w2:dataMap baseNode="map" id="dma_search">
 					<w2:keyInfo>
 						<w2:key id="GRG_ID" name="차고지ID" dataType="text"></w2:key>
+						<w2:key id="GRG_NM" name="차고지명" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 			</w2:dataCollection>
@@ -37,22 +37,40 @@
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
+		
+	var isEdit = false;
 	scwin.onpageload = function() {
-	debugger;
+	
 		scwin.param = com.getParameter();
 		
 		dma_search.set("GRG_ID" , scwin.param.data.GRG_ID);
+		dma_search.set("GRG_NM" , scwin.param.data.GRG_NM);
 		
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
 		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
 		var btnOptions = {
-			SEARCH:{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick},
-			SAVE:{userStr:"저장", auth: gcm.BTN.SAVE, cbFnc: scwin.btn_save_onclick}
+			ADD:{nm:"편집시작", class: "add", cbFnc: scwin.editClick},
+			CNL:scwin.btn_cancel_onclick,
+			SAVE:scwin.btn_save_onclick
+
 		}
+				
+		var mainOptions = {
+			ADD : scwin.btn_add_onclick
+		};
+		
 		com.setPopupBtn(wfm_mainBtn, btnOptions);
 		
-		com.executeSubmission(sub_SI0101P0R0);
 
+		
+		setTimeout(function() {
+			routMap.initMap("map_SI0101", {
+				width:"100%"
+				, height:"100%"
+				, onClick: scwin.onClickMap
+			});
+			com.executeSubmission(sub_SI0101P0R0);
+		},100);
 	};
 
 	scwin.onpageunload = function() {
@@ -61,32 +79,81 @@
 	
 	//맵 클릭 이벤트
 	scwin.onClickMap = function(e) {
-	
-		addPathByClick2(dlt_GRG_RDS_INFO, dma_search.get("GRG_ID"),e);
-		
+		if(isEdit){
+			routMap.addPolygonByClick("map_SI0101", dlt_GRG_RDS_INFO, dma_search.get("GRG_ID"), dma_search.get("GRG_NM"),e);
+		}
 	}
 	
 	scwin.sub_SI0101P0R0_submitdone = function(e) {
-	debugger;
+		debugger;
 		var sCode = com.getResultCode(e);
-		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
-			initTmap("map_SI0101", {
-				width:"100%"
-				, height:"100%"
-				, onClick: scwin.onClickMap
-			});
-			
-			drawLineMap(dlt_GRG_RDS_INFO);			
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {			
+			routMap.drawPolygon("map_SI0101",dlt_GRG_RDS_INFO, dma_search.get("GRG_NM"));			
 		}
 	};
 	
-	scwin.btn_search_onclick = function() {
-		com.executeSubmission(sub_SI0101P0R0);
+	scwin.editClick = function(){
+		if(isEdit==false){
+			if(dlt_GRG_RDS_INFO.getTotalRow() >0 ){
+				var str = "편집시 화면이 초기화 됩니다. 편집시작하시겠습니까?";
+				com.confirm(str, function(rtn) {
+					if (rtn) {
+						debugger;
+						dlt_GRG_RDS_INFO.removeAll();
+						routMap.initMapInfo("map_SI0101");
+						
+						routMap.drawPolygon("map_SI0101",dlt_GRG_RDS_INFO);	
+						isEdit = true;
+						scwin.changeGeoBtn();
+					}
+				});
+			}
+			else {
+				isEdit = true;
+			}
+		}
+		else {
+			isEdit = false;
+			scwin.changeGeoBtn();
+		}
+
+	}
+	
+	scwin.btn_cancel_onclick = function() {
+		var idx = dlt_GRG_RDS_INFO.getModifiedIndex().length;
+		
+		if (idx > 0) {
+			var str = "저장하지 않은 데이터가 있습니다. 취소 하시겠습니까?";
+			com.confirm(str, function(rtn) {
+				if (rtn) {
+					com.executeSubmission(sub_SI0101P0R0);
+				}
+			});
+		}
+
 	};
 	
 
 	scwin.btn_save_onclick = function() {
 		com.executeSubmission(sub_SI0101P0S0);
+	};
+
+	scwin.changeGeoBtn = function(){
+
+		var temp = wfm_mainBtn.getWindow().btn_main_generator;
+		
+		if(isEdit) {
+			temp.getChild(0,"btn_main").setValue("편집종료");
+			temp.getChild(0,"btn_main").addClass("end");
+		}
+		else {
+			temp.getChild(0,"btn_main").setValue("편집추가");
+			temp.getChild(0,"btn_main").removeClass("end");
+		}
+	}
+
+	scwin.btn_confirm_onclick = function() {
+		com.closePopup();		
 	};
 ]]></script>
 	</head>
@@ -102,10 +169,7 @@
 			</xf:group>
 			<xf:group id="" style="" class="popup_bottom">
 				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
-					<xf:label><![CDATA[확인]]></xf:label>
-				</w2:anchor>
-				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
-					<xf:label><![CDATA[취소]]></xf:label>
+					<xf:label><![CDATA[닫기]]></xf:label>
 				</w2:anchor>
 			</xf:group>
 		</xf:group>

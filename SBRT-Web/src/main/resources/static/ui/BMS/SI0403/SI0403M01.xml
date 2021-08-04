@@ -57,52 +57,52 @@
 						<w2:column id="USER_WAY_DIV" name="사용자상하행구분" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_LINK_CMPSTN_MST" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_LINK_CMPSTN" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="LINK_ID" name="링크ID" dataType="text"></w2:column>
 						<w2:column id="LINK_SN" name="링크순번" dataType="text"></w2:column>
 						<w2:column id="MORN_STD" name="집중모니터링기준" dataType="text"></w2:column>
 						<w2:column id="LINK_NM" name="링크명" dataType="text"></w2:column>
-						<w2:column id="ST_NODE_ID" name="시작노드ID" dataType="text"></w2:column>
+						<w2:column id="NODE_ID" name="시작노드ID" dataType="text"></w2:column>
+						<w2:column id="GPS_X" name="시작 X좌표" dataType="text"></w2:column>
+						<w2:column id="GPS_Y" name="시작 Y좌표" dataType="text"></w2:column>
+						<w2:column id="NODE_TYPE" name="시작노드유형" dataType="text"></w2:column>
+						<w2:column id="NODE_NM" name="시작노드명" dataType="text"></w2:column>
 						<w2:column id="ED_NODE_ID" name="종료노드ID" dataType="text"></w2:column>
-						<w2:column id="ST_GPS_X" name="시작 X좌표" dataType="text"></w2:column>
-						<w2:column id="ST_GPS_Y" name="시작 Y좌표" dataType="text"></w2:column>
 						<w2:column id="ED_GPS_X" name="종료 X좌표" dataType="text"></w2:column>
 						<w2:column id="ED_GPS_Y" name="종료 Y좌표" dataType="text"></w2:column>
+						<w2:column id="ED_NODE_TYPE" name="종료노드유형" dataType="text"></w2:column>
+						<w2:column id="ED_NODE_NM" name="종료노드명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_SI0403G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_MST" action="/si/SI0403G0R0"
+			<xf:submission id="sub_SI0403G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_MST" action="/rout/selectRoutList"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0403G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_SI0403G0S0" ref='data:json,{"action":"modified","id":"dlt_BMS_ROUT_MST"}'
-				target="data:json,dma_result" action="/si/SI0403G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
-				errorHandler="" customHandler="" mode="asynchronous" processMsg="저장 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0403G0S0_submitdone"
-				ev:submiterror="" abortTrigger="">
-			</xf:submission>
-			<xf:submission id="sub_SI0403SHI0" ref="" target="data:json,dlt_searchitem" action="/si/SI0403SHI0" method="post"
+			<xf:submission id="sub_SI0403SHI0" ref="" target="data:json,dlt_searchitem" action="/rout/selectRoutItem" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_SI0403G1R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_LINK_CMPSTN_MST"
+			<xf:submission id="sub_SI0403G1R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_LINK_CMPSTN"
 				action="/si/SI0403G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0403G1R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_SI0403G1S0" ref='data:json,{"action":"modified","id":"dlt_BMS_NODE_MST"}'
+			<xf:submission id="sub_SI0403G1S0" ref='data:json,{"action":"modified","id":"dlt_BMS_ROUT_LINK_CMPSTN"}'
 				target="data:json,dma_result" action="/si/SI0403G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
-				errorHandler="" customHandler="" mode="asynchronous" processMsg="저장 중입니다.." ev:submit="" ev:submitdone="" ev:submiterror=""
+				errorHandler="" customHandler="" mode="asynchronous" processMsg="저장 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0403G1S0_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
 
-		initTmap("map_SI0403", {width:"100%"
+		routMap.initMap("map_SI0403", {width:"100%"
 				, height:"100%"
 				, onClick: scwin.onClickMap
+				, linkMode : true
 		});
 		
 		var codeOptions = [{code : "WAY_DIV", compID : "SI0403G0:WAY_DIV"}
@@ -114,18 +114,24 @@
 		com.executeSubmission(sub_SI0403SHI0);
 		
 		var autoOptions = {
-			Main : { grid : SI0403G0, srchSbm : sub_SI0403G0R0, savSbm : sub_SI0403G0S0, 
-					srchGrp : pgm_header, keyColumn : "ROUTE_ID", focusColumn : "ROUTE_ID", name : "노선 목록"},
-			Sub1 : { grid : SI0403G1, srchSbm : sub_SI0403G1R0, savSbm : sub_SI0403G1S0, name :  "노선 집중모니터링구간"}
+			Main : { grid : SI0403G0, srchSbm : sub_SI0403G0R0, srchGrp : pgm_header, keyColumn : "ROUTE_ID", focusColumn : "ROUTE_ID", name : "노선 목록"},
+			Sub1 : { grid : SI0403G1, srchSbm : sub_SI0403G1R0, srchGrp : gr_sub_header, savSbm : sub_SI0403G1S0, name :  "노선 집중모니터링구간"}
 		 };
 		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);
+		var mainOptions = {
+			ADD:{disp:"hide"},
+			DEL:{disp:"hide"}
+		};
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions, mainOptions);
 
 		var subOptions = {
 			SEARCH: {}
 		};
 		
+		
 		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
+		
+		SI0403G0.mergeCells("byrestriccol");
 	};
 	
 	//맵 클릭 이벤트
@@ -138,13 +144,11 @@
 	};
 	
 	scwin.sub_SI0403G0R0_submitdone = function(e) {
+		
 		com.setFocusedCell(SI0403G0, "ROUTE_ID");	
 	};
 	
-	scwin.sub_SI0403G1R0_submitdone = function(e) {
-		debugger;
-		drawLinkRoute("map_SI0403",SI0403G1);
-	};
+
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
 		if (info.newValue == "ALL") {
@@ -169,9 +173,45 @@
 	};
 	
 	scwin.SI0403G0_onrowindexchange = function(row,oldRow) {
+		routMap.initMapInfo("map_SI0403");
 		var focusOption = {keyMap : dma_sub_search};
 		com.changeDualGrid(SI0403G0, SI0403G1, sub_SI0403G1S0, sub_SI0403G1R0, focusOption, row, oldRow);
 	};
+
+	scwin.SI0403G1_onviewchange = function(info) {
+		routMap.drawRoute("map_SI0403", SI0403G1, SI0403G1.getFocusedRowIndex());
+	}
+	
+	scwin.SI0403G1_onrowindexchange = function(row,oldRow) {
+		
+		routMap.focusNode("map_SI0403",SI0403G1,row);
+	};
+
+	scwin.sub_SI0403G1R0_submitdone = function(e) {
+		
+		//routMap.drawRoute("map_SI0403", SI0403G1, -1, false);
+		if(dlt_BMS_ROUT_LINK_CMPSTN.getTotalRow() == 0){
+			routMap.initDisplay("map_SI0403");
+		}
+		else {
+			//com.setFocusedCell(SI0403G1, "NODE_ID");
+			if(SI0403G1.getFocusedRowIndex() == -1 ){
+				SI0403G1.setFocusedCell( 0, "NODE_ID");
+			}
+			else {
+				SI0403G1.setFocusedCell( SI0403G1.getFocusedRowIndex(), "NODE_ID");
+			}
+		}
+	};
+
+	scwin.sub_SI0403G1S0_submitdone = function(e) {
+		
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+			routMap.initMapInfo("map_SI0403");
+			com.saveDone(SI0403G1,sub_SI0403G1R0);
+		}
+	}
 ]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -233,61 +273,63 @@
 						<w2:textbox class="df_tt fl" id="" label="노선 목록" style=""></w2:textbox>
 					</xf:group>
 					<xf:group></xf:group> <!-- margin -->
-					<xf:group id="" class="" style="">
-						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" id="SI0403G0" class="cm_grid left"
-							dataList="data:dlt_BMS_ROUT_MST" ev:onkeyup="" ev:onrowindexchange="scwin.SI0403G0_onrowindexchange" fixedColumnWithHidden="true"
-							ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true" rowStatusVisible="false" rowStatusWidth="40"
-							scrollByColumn="false" style="height:177px" useShiftKey="true" autoFitMinWidth="0" focusMode="row" rowNumStatusResize=""
-							ev:onbeforecolumnmove="" userData1="">
+					<xf:group id="" class="" style=""> 
+						<w2:gridView  alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle=""
+							id="SI0403G0" class="cm_grid left" dataList="data:dlt_BMS_ROUT_MST"
+							ev:onkeyup="" ev:onrowindexchange="scwin.SI0403G0_onrowindexchange" fixedColumnWithHidden="true"
+							ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true" rowStatusVisible="false"
+							rowStatusWidth="40" scrollByColumn="false" style="height:177px" useShiftKey="true" autoFitMinWidth="0"
+							focusMode="row"
+							rowNumStatusResize="" ev:onbeforecolumnmove="" userData1="">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
-									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column1" value="노선ID"
-										blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:20px" id="column2"
+										value="대표노선" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:20px" id="column2" value="대표노선"
-										blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column4"
+										value="상하행" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column3" value="노선명"
-										blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column1"
+										value="노선ID" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column4" value="상하행"
-										blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column3"
+										value="노선명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column5" value="기점명"
-										blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column5"
+										value="기점명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column6" value="종점명"
-										blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column6"
+										value="종점명" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
 							</w2:header>
 							<w2:gBody style="" id="gBody1">
 								<w2:row style="" id="row2">
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUTE_ID" value=""
-										blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="REP_ROUT_NM"
+										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="REP_ROUT_NM" value=""
-										blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="WAY_DIV"
+										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_NM" value=""
-										blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUTE_ID"
+										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="WAY_DIV" value=""
-										blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_NM"
+										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ST_STTN_NM" value=""
-										blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ST_STTN_NM"
+										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ED_STTN_NM" value=""
-										blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ED_STTN_NM"
+										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
 							<w2:footer style="" id="footer1">
 								<w2:row style="" id="row3">
-									<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;" id="column42" value=""
-										blockSelect="false" displayMode="label" colSpan="15" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT(&apos;COMP_ID&apos;)"
-										textAlign="left">
+									<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;"
+										id="column42" value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan=""
+										expression="&quot;데이터 개수 : &quot; + COUNT(&apos;COMP_ID&apos;)" textAlign="left">
 									</w2:column>
 								</w2:row>
 							</w2:footer>
@@ -299,23 +341,23 @@
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="노선 집중모니터링구간" style=""></w2:textbox>
 						</xf:group>
-						<xf:group id="" class="gr_sub_header" style="">
-							<xf:group class="gr_search" id="" style="">
+						<xf:group id="gr_sub_header" class="gr_sub_header" style="">
+							<xf:group class="gr_sub_search" id="" style="">
 								<xf:group class="label" id="" style="">
 									<w2:span class="" id="" label="검색 항목"></w2:span>
 								</xf:group>
 								<xf:group class="search" id="" style="">
-									<xf:input id="search_sub_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="링크ID 또는 링크명"></xf:input>
+									<xf:input id="search_sub_input" class="search_input" ref="data:dma_sub_search.CONTENT" placeholder="링크ID 또는 링크명"></xf:input>
 								</xf:group>
 								<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
 							</xf:group>
 
 						</xf:group>
 						<xf:group id="" class="" style="">
-							<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" id="SI0403G1" class="cm_grid leftL" autoFitMinWidth="0"
-								captionTitle="" checkEditableInputClass="" dataList="data:dlt_BMS_LINK_CMPSTN_MST" disabledScrollHidden="" editModeEvent=""
+							<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" id="SI0403G1" class="cm_grid leftL" autoFitMinWidth="0" 
+								captionTitle="" checkEditableInputClass="" dataList="data:dlt_BMS_ROUT_LINK_CMPSTN" disabledScrollHidden="" editModeEvent=""
 								editModeEventIcon="" enterKeyMove="" ev:onafteredit="" ev:onbeforecolumnmove="" ev:oncellclick="" ev:oneditkeyup="" ev:onkeyup=""
-								ev:onrowindexchange="" ev:ontextimageclick="" ev:onviewchange="" excludeDeletedRows="" fixedColumnWithHidden="true" focusMode="row"
+								ev:onrowindexchange="scwin.SI0403G1_onrowindexchange" ev:ontextimageclick="" ev:onviewchange="scwin.SI0403G1_onviewchange" excludeDeletedRows="" fixedColumnWithHidden="true" focusMode="row"
 								ignoreCellClick="false" ignoreNonEditableCellTabEnter="" keepDefaultColumnWidth="" keyMoveEditMode="" moveKeyEditMode=""
 								moveKeyEditModeAll="" nextTabID="" oddEvenColorDisplay="" readOnly="" rowNumHeaderValue="순번" rowNumStatusResize=""
 								rowNumStatusUniqueId="" rowNumVisible="true" rowNumWidth="" rowStatusHeaderValue="" rowStatusVisible="false" rowStatusWidth="40"
@@ -335,11 +377,23 @@
 										<w2:column blockSelect="false" displayMode="label" id="column2" inputType="text" removeBorderStyle="false"
 											style="height:20px" value="모니터링" width="55">
 										</w2:column>
+										<w2:column blockSelect="false" displayMode="label" id="column2" inputType="text" removeBorderStyle="false"
+											style="height:20px" value="시작노드ID" width="80">
+										</w2:column>
+										<w2:column blockSelect="false" displayMode="label" id="column2" inputType="text" removeBorderStyle="false"
+											style="height:20px" value="시작노드명" width="100">
+										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="column3" inputType="text" removeBorderStyle="false"
 											style="height:20px" value="시작 X좌표" width="70">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="column4" inputType="text" removeBorderStyle="false"
 											style="height:20px" value="시작 Y좌표" width="70">
+										</w2:column>
+										<w2:column blockSelect="false" displayMode="label" id="column2" inputType="text" removeBorderStyle="false"
+											style="height:20px" value="종료노드ID" width="80">
+										</w2:column>
+										<w2:column blockSelect="false" displayMode="label" id="column2" inputType="text" removeBorderStyle="false"
+											style="height:20px" value="종료노드명" width="100">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="column5" inputType="text" removeBorderStyle="false"
 											style="height:20px" value="종료 X좌표" width="70">
@@ -352,29 +406,40 @@
 								<w2:gBody id="gBody1" style="">
 									<w2:row id="row2" style="">
 										<w2:column blockSelect="false" displayMode="label" id="LINK_ID" inputType="text" removeBorderStyle="false"
-											style="height:20px" width="">
+											style="height:20px" width="" readonly="true">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="LINK_SN" inputType="text" removeBorderStyle="false"
-											style="height:20px" width="">
+											style="height:20px" width="" readonly="true">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="LINK_NM" inputType="text" removeBorderStyle="false"
-											style="height:20px" width="">
+											style="height:20px" width="" readonly="true">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="MORN_STD" inputType="select" removeBorderStyle="false"
 											style="height:20px" width="">
 										</w2:column>
-										
-										<w2:column blockSelect="false" displayMode="label" id="ST_GPS_X" inputType="text" removeBorderStyle="false"
-											style="height:20px" width="">
+										<w2:column blockSelect="false" displayMode="label" id="NODE_ID" inputType="text" removeBorderStyle="false"
+											style="height:20px" width="" readonly="true">
 										</w2:column>
-										<w2:column blockSelect="false" displayMode="label" id="ST_GPS_Y" inputType="text" removeBorderStyle="false"
-											style="height:20px" width="">
+										<w2:column blockSelect="false" displayMode="label" id="NODE_NM" inputType="text" removeBorderStyle="false"
+											style="height:20px" width="" readonly="true">
+										</w2:column>
+										<w2:column blockSelect="false" displayMode="label" id="GPS_X" inputType="text" removeBorderStyle="false"
+											style="height:20px" width="" readonly="true">
+										</w2:column>
+										<w2:column blockSelect="false" displayMode="label" id="GPS_Y" inputType="text" removeBorderStyle="false"
+											style="height:20px" width="" readonly="true">
+										</w2:column>
+										<w2:column blockSelect="false" displayMode="label" id="ED_NODE_ID" inputType="text" removeBorderStyle="false"
+											style="height:20px" width="" readonly="true">
+										</w2:column>
+										<w2:column blockSelect="false" displayMode="label" id="ED_NODE_NM" inputType="text" removeBorderStyle="false"
+											style="height:20px" width="" readonly="true">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="ED_GPS_X" inputType="text" removeBorderStyle="false"
-											style="height:20px" width="">
+											style="height:20px" width="" readonly="true">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="ED_GPS_Y" inputType="text" removeBorderStyle="false"
-											style="height:20px" width="">
+											style="height:20px" width="" readonly="true">
 										</w2:column>
 									</w2:row>
 								</w2:gBody>

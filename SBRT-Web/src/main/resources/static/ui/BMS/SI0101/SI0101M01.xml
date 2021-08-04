@@ -78,6 +78,7 @@
 				<w2:dataMap baseNode="map" id="dma_sub_search">
 					<w2:keyInfo>
 						<w2:key id="GRG_ID" name="차고지ID" dataType="text"></w2:key>
+						<w2:key id="GRG_NM" name="차고지명" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>				
 				
@@ -187,13 +188,15 @@
 
 	
 	scwin.SI0101G0_oncellclick = function(row, col, colId) {
-	debugger;
+	
 		var gridColumn = SI0101G0.getColumnID(col);
 		
 		if (gridColumn == "LOCATION") {
 				var param = SI0101G0.getDataRow(row).GRG_ID;
 				if (param != "") {
 					dma_sub_search.set("GRG_ID", param);
+					dma_sub_search.set("GRG_NM",SI0101G0.getDataRow(row).GRG_NM);
+					
 					
 					var data = { data : dma_sub_search.getJSON(), callbackFn : scwin.insertPopupData };
 					

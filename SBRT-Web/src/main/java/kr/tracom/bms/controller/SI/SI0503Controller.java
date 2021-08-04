@@ -43,6 +43,12 @@ public class SI0503Controller extends ControllerSupport {
 		return result.getResultSave();
 	}	
 	
+	@RequestMapping("/si/SI0503G1R0")
+	public @ResponseBody Map<String, Object> SI0503G1R0() throws Exception {
+		result.setData("dlt_BMS_ROUT_MST", si0503Service.SI0503G1R0());
+		return result.getResult();
+	}
+	
 	@RequestMapping("/si/SI0503P0R0")
 	public @ResponseBody Map<String, Object> SI0503P0R0() throws Exception {
 		result.setData("", si0503Service.SI0503P0R0());

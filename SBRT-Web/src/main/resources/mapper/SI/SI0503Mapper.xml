@@ -10,10 +10,6 @@
 			CRS_ENM,
 			CRS_KIND,
 			SIG_CTR_TYPE,
-			GPS_X,
-			GPS_Y,
-			TM_X,
-			TM_Y,
 			MAIN_PHASE,
 			PHASE_CNT,
 			PERIOD_LEN,
@@ -26,11 +22,16 @@
 	from BMS_CRS_MST
 	
 	<where>
-		<if test="TYPE == 'CRS_ID'">
-			AND CRS_ID LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
-		<if test="TYPE == 'CRS_NM'">
-			AND CRS_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+			<if test="TYPE == 'ALL'">
+				AND (CRS_ID LIKE CONCAT('%',#{CONTENT},'%') || CRS_NM LIKE CONCAT('%',#{CONTENT},'%'))
+			</if>
+			<if test="TYPE == 'CRS_ID'">
+				AND CRS_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'CRS_NM'">
+				AND CRS_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
 		</if>
 	</where>
 </select>
@@ -145,7 +146,10 @@
 </delete>
 
 
-<select id="SI0503P0R0" resultType="Map">
+<select id="SI0503G1R0" resultType="Map">
+	select a.ROUTE_ID, a.ROUT_NM, a.ROUT_TYPE, a.STTN_CNT, a.ROUT_LEN, a.CURVATURE, a.REMARK, b.CRS_ID
+	from BMS_ROUT_MST a INNER JOIN BMS_ROUT_NODE_CMPSTN b ON a.ROUTE_ID = b.ROUTE_ID
+	where b.CRS_ID = #{CRS_ID}
 	
 	
 </select>

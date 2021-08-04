@@ -18,18 +18,15 @@
 		SELECT USER_ID,ORG_ID,SYSTEM_BIT,USER_NM,SCD_PS,EMAIL,HP_NO,USE_YN,REMARK
 		FROM BMS_USER_MST
 		<where>
-			<if test="TYPE == 'USER_NM'">
-				AND USER_NM LIKE concat('%',#{CONTENT},'%')
-			</if>
-			<if test="TYPE == 'USER_ID'">
-				AND USER_ID LIKE concat('%',#{CONTENT},'%')
-			</if>
-			<if test="TYPE == 'ORG_ID'">
-				<if test="CONTENT == ''">
-					AND USER_ID IS NOT NULL
+			<if test="CONTENT != '' and CONTENT != null">
+				<if test="TYPE == 'ALL'">
+					AND USER_ID LIKE CONCAT('%',#{CONTENT},'%') || USER_NM LIKE CONCAT('%',#{CONTENT},'%')
 				</if>
-				<if test="CONTENT != ''">
-					AND ORG_ID = #{CONTENT}
+				<if test="TYPE == 'USER_ID'">
+					AND USER_ID LIKE CONCAT('%',#{CONTENT},'%')
+				</if>
+				<if test="TYPE == 'USER_NM'">
+					AND USER_NM LIKE CONCAT('%',#{CONTENT},'%')
 				</if>
 			</if>
 		</where>
