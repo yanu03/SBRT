@@ -35,15 +35,17 @@ public class RoutController extends ControllerSupport {
 		return result.getResult();
 	}
 	
-	@RequestMapping("/rout/selectNodeRoutList2")
-	public @ResponseBody Map<String, Object> selectNodeRoutList2() throws Exception {
-		result.setData("dlt_BMS_ROUT_NODE_CMPSTN", routService.selectNodeRoutList2());
+	@RequestMapping("/rout/selectNodeListByRouts")
+	public @ResponseBody Map<String, Object> selectNodeListByRouts() throws Exception {
+		result.setData("dlt_BMS_ROUT_NODE_CMPSTN", routService.selectNodeListByRouts());
 		return result.getResult();
 	}
 	
-	@RequestMapping("/rout/selectNodeRoutList")
-	public @ResponseBody Map<String, Object> selectNodeRoutList() throws Exception {
-		result.setData("dlt_BMS_ROUT_NODE_CMPSTN", routService.selectNodeRoutList());
+	@RequestMapping("/rout/selectNodeListByRout")
+	public @ResponseBody Map<String, Object> selectNodeListByRout() throws Exception {
+		result.setData("dlt_BMS_ROUT_NODE_CMPSTN", routService.selectNodeListByRout());
 		return result.getResult();
 	}
+	
+
 }
