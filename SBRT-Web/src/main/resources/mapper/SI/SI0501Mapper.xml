@@ -13,10 +13,6 @@
 			CENTER_YN,
 			STTN_FCLT_TYPE,
 			VHC_DOOR_DIR_TYPE,
-			GPS_X,
-			GPS_Y,
-			TM_X,
-			TM_Y,
 			APPL_RDS,
 			BAY_TYPE,
 			BAY_LEN,
@@ -28,14 +24,19 @@
 			
 	from BMS_STTN_MST
 	<where>
-		<if test="TYPE == 'STTN_ID'">
-			AND STTN_ID LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
-		<if test="TYPE == 'STTN_NM'">
-			AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%') 
-		</if>
-		<if test="TYPE == 'STTN_NO'">
-			AND STTN_NO LIKE CONCAT('%',#{CONTENT},'%') 
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+			<if test="TYPE == 'ALL'">
+				AND (STTN_ID LIKE CONCAT('%',#{CONTENT},'%') || STTN_NM LIKE CONCAT('%',#{CONTENT},'%') || STTN_NO LIKE CONCAT('%',#{CONTENT},'%'))
+			</if>
+			<if test="TYPE == 'STTN_ID'">
+				AND STTN_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'STTN_NM'">
+				AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'STTN_NO'">
+				AND STTN_NO LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
 		</if>
 	</where>
 </select>
@@ -89,10 +90,6 @@
 			#{CENTER_YN},
 			#{STTN_FCLT_TYPE},
 			#{VHC_DOOR_DIR_TYPE},
-			#{GPS_X},
-			#{GPS_Y},
-			#{TM_X},
-			#{TM_Y},
 			<!-- 0,
 			0,
 			0,
@@ -111,8 +108,8 @@
 </insert>
 
 <update id="SI0501G0U0" parameterType="Map">
-	update BMS_STTN_MST
-	set     NODE_ID =#{NODE_ID},
+	UPDATE BMS_STTN_MST
+	SET		NODE_ID =#{NODE_ID},
 			STTN_NM =#{STTN_NM},
 			STTN_ENM =#{STTN_ENM},
 			AREA =#{AREA},
@@ -120,10 +117,6 @@
 			CENTER_YN =#{CENTER_YN},
 			STTN_FCLT_TYPE =#{STTN_FCLT_TYPE},
 			VHC_DOOR_DIR_TYPE =#{VHC_DOOR_DIR_TYPE},
-			GPS_X =#{GPS_X},
-			GPS_Y =#{GPS_Y},
-			TM_X =#{TM_X},
-			TM_Y =#{TM_Y},
 			APPL_RDS =#{APPL_RDS},
 			BAY_TYPE =#{BAY_TYPE},
 			BAY_LEN =#{BAY_LEN},
@@ -134,18 +127,35 @@
 			REMARK = #{REMARK},
 			UPD_DTM = #{UPD_DTM},
 			UPD_ID  = #{SSN_USER_ID}
-
-	where STTN_ID = #{STTN_ID}
+	WHERE STTN_ID = #{STTN_ID}
 </update>
 
 <delete id="SI0501G0D0" parameterType="Map">
-	delete
+	UPDATE BMS_STTN_MST
+	SET		USE_YN = 'N'
+	WHERE STTN_ID = #{STTN_ID}
+	
+	UPDATE BMS_ROUT_NODE_CMPSTN A
+	INNER JOIN
+		BMS_STTN_MST B 
+		ON A.NODE_ID = B.NODE_ID
+		SET A.STTN_ID=NULL, A.STTN_NO=NULL, A.NODE_TYPE = 'NT03'
+	WHERE B.STTN_ID = #{STTN_ID};
+	
+	UPDATE BMS_NODE_MST A
+	INNER JOIN
+		BMS_STTN_MST B 
+		ON A.NODE_ID = B.NODE_ID
+		SET A.NODE_TYPE = 'NT03'
+	WHERE B.STTN_ID = #{STTN_ID};
+	
+	<!-- delete
 	from BMS_STTN_MST
 	where STTN_ID = #{STTN_ID};
 	
 	delete
 	from BMS_ROUT_NODE_CMPSTN
-	where STTN_ID = #{STTN_ID}
+	where STTN_ID = #{STTN_ID} -->
 </delete>
 
 <select id="SI0501G1R0" resultType="Map">

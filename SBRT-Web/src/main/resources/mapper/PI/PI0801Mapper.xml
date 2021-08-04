@@ -12,8 +12,8 @@
 					,TXT_CD
 					,REMARK
 					
-		FROM		BMS_INNER_LED_INFO			
-		<where>
+		FROM		BMS_INNER_LED_INFO
+		WHERE		TXT_CD = 'TC005'
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 				ILD_ID LIKE CONCAT('%',#{CONTENT},'%') || ILD_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
@@ -23,8 +23,6 @@
 			<if test="TYPE == 'ILD_NM'">
 				AND ILD_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
-			AND TXT_CD = 'IL005'
-		</where>					
 		ORDER BY	SN
 	</select>
 
@@ -63,7 +61,7 @@
 					,#{TXT_A}
 					,#{TXT_B}
 					,#{ILD_ID}
-					,'IL005'
+					,'TC005'
 					,#{REMARK}
 					,#{UPD_DTM}
 					,#{SSN_USER_ID}

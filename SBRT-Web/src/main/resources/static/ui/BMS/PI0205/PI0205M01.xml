@@ -149,17 +149,17 @@
 		if (audioType == "WAV"){
 			//VOC_PATH.setDisabled(false);
 			KR_TTS.setDisabled(true);
-			var path = dlt_BMS_VOC_INFO.getCellData(PI0205G0.getFocusedRowIndex(), "VOC_PATH");	
-			$p.$("#audio0").attr("src", path);	
+			playTTS.setDisabled(true);
+			btn_basicPhrase.setDisabled(true);	
 		} else if (audioType == "TTS"){
 			//VOC_PATH.setDisabled(true);
 			KR_TTS.setDisabled(false);
-			var path = dlt_BMS_VOC_INFO.getCellData(PI0205G0.getFocusedRowIndex(), "VOC_PATH");		
-			$p.$("#audio0").attr("src", path);				
+			playTTS.setDisabled(false);
+			btn_basicPhrase.setDisabled(false);			
 		}
 		
-		//var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");
-		//$p.$("#audio0").attr("src", path);	
+		var path = dlt_BMS_VOC_INFO.getCellData(PI0205G0.getFocusedRowIndex(), "VOC_PATH");	
+		$p.$("#audio0").attr("src", path);		
 		
 	};	
 	
@@ -217,6 +217,19 @@
 		}
 	};
 	
+	scwin.btn_basicPhrase_onclick = function(e) {
+		var data = { callbackFn : "scwin.insertPhraseKor" };
+		var options = { id : "basicPhrase",
+						popupName : "기본문구 목록", 
+						modal : true };
+		com.openPopup("/cm/common/basicPhrase.xml", options, data);			
+	};
+	
+	scwin.insertPhraseKor = function(obj) {
+		if(obj != null) {
+			KR_TTS.setValue(obj[0].DL_CD_NM);	
+		}
+	};	
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -427,7 +440,15 @@
 									</w2:attributes>
 									<xf:group class="ml5 fr" id="" style=""></xf:group>
 			
-									<xf:textarea id="KR_TTS" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.KR_TTS"></xf:textarea>
+									<xf:textarea id="KR_TTS" style="width: 80%;height: 100px;" ref="data:dlt_BMS_VOC_INFO.KR_TTS"></xf:textarea>
+									<xf:group style="display: inline;position: absolute;margin-left: 5px;" id="">
+										<xf:trigger type="button" style="width: 100px;height: 20px;margin-bottom: 10px;margin-top: 20px;" id="playTTS" ev:onclick="scwin.playTTS_onclick">
+											<xf:label><![CDATA[미리듣기]]></xf:label>
+										</xf:trigger>
+										<xf:trigger type="button" style="width: 100px;height: 20px;" id="btn_basicPhrase" ev:onclick="scwin.btn_basicPhrase_onclick">
+											<xf:label><![CDATA[기본문구 삽입]]></xf:label>
+										</xf:trigger>
+									</xf:group>									
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">

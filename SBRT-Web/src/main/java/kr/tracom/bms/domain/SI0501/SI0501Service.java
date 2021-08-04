@@ -59,12 +59,9 @@ public class SI0501Service extends ServiceSupport{
 			}		
 		}
 
-		
 		Map result = saveResult(iCnt, uCnt, dCnt);
 		
 		return result;		
-		
-		
 	}
 	
 	public Map SI0501G1S0() throws Exception {
@@ -102,7 +99,7 @@ public class SI0501Service extends ServiceSupport{
 	
 	public List SI0501G1R0() throws Exception {
 		// TODO Auto-generated method stub
-		Map param = getSimpleDataMap("dma_param_STTNID");
+		Map param = getSimpleDataMap("dma_sub_search");
 		return si0501Mapper.SI0501G1R0(param);
 	}
 	

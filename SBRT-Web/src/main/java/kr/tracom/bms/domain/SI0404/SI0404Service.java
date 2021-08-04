@@ -16,8 +16,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import kr.tracom.cm.domain.Common.CommonMapper;
+import kr.tracom.cm.domain.Rout.RoutMapper;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
+import kr.tracom.util.CommonUtil;
 import kr.tracom.util.Constants;
 import kr.tracom.util.DataInterface;
 import kr.tracom.util.Result;
@@ -30,16 +32,9 @@ public class SI0404Service extends ServiceSupport {
 
 	@Autowired
 	private CommonMapper commonMapper;
-
 	
-	public List SI0404G0R0() throws Exception {
-		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return si0404Mapper.SI0404G0R0(map);
-	}
-	
-	public List SI0404SHI0() throws Exception {
-		return si0404Mapper.SI0404SHI0();
-	}	
+	@Autowired
+	private RoutMapper routMapper;	
 	
 	public Map SI0404G1S0() throws Exception {
 		int iCnt = 0;
@@ -57,6 +52,10 @@ public class SI0404Service extends ServiceSupport {
 			for (int i = 0; i < param.size(); i++) { //노드 생성
 				Map data = (Map) param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
+				String rowStatus2 = "";
+				if(i<param.size()-1) {
+					rowStatus2 = (String) param.get(i+1).get("rowStatus");
+				}
 				if (rowStatus.equals("C")) {
 					
 					if(data.get("NODE_ID")==null||((String)data.get("NODE_ID")).isEmpty()) {
@@ -64,9 +63,10 @@ public class SI0404Service extends ServiceSupport {
 						data.put("NODE_ID",key.get("SEQ"));
 					}
 					
-					if(i<param.size()-1)
+					if((i<param.size()-1)&&rowStatus2.equals("C"))
 					{
-						if(data.get("LINK_ID")==null||((String)data.get("LINK_ID")).isEmpty()) {//라우트와누드 구성에 링크 ID를 넣기 위해 미리 생서함
+						
+						if(data.get("LINK_ID")==null||((String)data.get("LINK_ID")).isEmpty()) {//라우트와누드 구성에 링크 ID를 넣기 위해 미리 생성함
 							Map key = si0404Mapper.SI0404G1K1();
 							data.put("LINK_ID",key.get("SEQ"));
 						}
@@ -76,18 +76,48 @@ public class SI0404Service extends ServiceSupport {
 					
 				} 
 			}
-			for (int i = 0; i < param.size()-1; i++) { //링크 생성
+			int sttnCnt = 0;
+			double routLen = 0;
+			for (int i = 0; i < param.size(); i++) { //링크 생성
 				Map data = (Map) param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
+				String rowStatus2 = "";
+				if(i<param.size()-1) {
+					rowStatus2 = (String) param.get(i+1).get("rowStatus");
+				}
 				if (rowStatus.equals("C")) {
-						data.put("LINK_SN",(i+1));
-						data.put("ST_NODE_ID",param.get(i).get("NODE_ID"));
-						data.put("ED_NODE_ID",param.get(i+1).get("NODE_ID"));
-						String linkNm = param.get(i).get("NODE_NM") + "-" + param.get(i+1).get("NODE_NM");
-						data.put("LINK_NM",linkNm);
-						si0404Mapper.SI0404G1I1(data);
-				} 
-			}	
+					if(Constants.NODE_TYPE_BUSSTOP.equals((String) data.get("NODE_TYPE"))){
+						sttnCnt++;
+					}
+					
+					if((i<param.size()-1)&&rowStatus2.equals("C")) {
+							data.put("LINK_SN",(i+1));
+							data.put("ST_NODE_ID",param.get(i).get("NODE_ID"));
+							data.put("ED_NODE_ID",param.get(i+1).get("NODE_ID"));
+							String linkNm = param.get(i).get("NODE_NM") + "-" + param.get(i+1).get("NODE_NM");
+							data.put("LINK_NM",linkNm);
+							
+							double len = DataInterface.getDistanceBetween(Double.parseDouble((String)param.get(i).get("GPS_X")), Double.parseDouble((String)param.get(i).get("GPS_Y")), 
+									Double.parseDouble((String)param.get(i+1).get("GPS_X")), Double.parseDouble((String)param.get(i+1).get("GPS_Y")));
+							
+							data.put("LEN",CommonUtil.pointRound(len,3));
+							routLen += len;
+							si0404Mapper.SI0404G1I1(data);
+					}
+				}
+			}
+			if(param.size()>0) {
+				Map routMap = new HashMap();
+				double routStrtLen = DataInterface.getDistanceBetween(Double.parseDouble((String)param.get(0).get("GPS_X")), Double.parseDouble((String)param.get(0).get("GPS_Y")), 
+						Double.parseDouble((String)param.get(param.size()-1).get("GPS_X")), Double.parseDouble((String)param.get(param.size()-1).get("GPS_Y")));
+						
+				routMap.put("ROUTE_ID", (String)param.get(0).get("ROUTE_ID"));
+				
+				routMap.put("ROUT_LEN", CommonUtil.pointRound(routLen,3));
+				routMap.put("ROUT_STRT_LEN", CommonUtil.pointRound(routStrtLen,3));
+				routMap.put("STTN_CNT", sttnCnt);
+				routMapper.updateRout(routMap);
+			}
 		} catch(Exception e) {
 			if (e instanceof DuplicateKeyException)
 			{

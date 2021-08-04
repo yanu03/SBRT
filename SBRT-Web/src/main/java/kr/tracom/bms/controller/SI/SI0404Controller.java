@@ -18,17 +18,6 @@ public class SI0404Controller extends ControllerSupport {
 	@Autowired
 	private SI0404Service si0404Service;
 	
-	@RequestMapping("/si/SI0404G0R0")
-	public @ResponseBody Map<String, Object> SI0404G0R0() throws Exception {
-		result.setData("dlt_BMS_ROUT_MST", si0404Service.SI0404G0R0());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/si/SI0404SHI0")
-	public @ResponseBody Map<String, Object> SI0404G0R2() throws Exception {
-		result.setData("dlt_searchitem", si0404Service.SI0404SHI0());
-		return result.getResult();
-	}
 	
 	@RequestMapping("/si/SI0404G1R0")
 	public @ResponseBody Map<String, Object> SI0404G1R0() throws Exception {

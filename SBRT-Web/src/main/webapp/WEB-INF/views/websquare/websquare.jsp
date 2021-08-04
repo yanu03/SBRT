@@ -30,8 +30,17 @@
 				}
 			}
 		</script>
-		<script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&amp;appkey=l7xx6099b61644bf40d78594611b250c9694"></script>
+		<!-- <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&amp;appkey=l7xx6099b61644bf40d78594611b250c9694"></script> -->
+		<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=31aa62fb189294413e43c24caeb82419&amp;libraries=services&amp;autoload=false"></script>
+		<script type="text/javascript" src="/cm/js/map.js"></script>
+
 		<script type="text/javascript" src="/websquare/javascript.wq?q=/bootloader"></script>
+		<script type="text/javascript">
+		kakao.maps.load(function() {
+			// v3가 모두 로드된 후, 이 콜백 함수가 실행됩니다.
+			var map = new kakao.maps.Map(node, options);
+		});
+		</script>
 		<script type="text/javascript">
 			window.onload = init;
 

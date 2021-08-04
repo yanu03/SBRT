@@ -85,11 +85,11 @@
 				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_SI0404G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_MST" action="/si/SI0404G0R0"
+			<xf:submission id="sub_SI0404G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_MST" action="/rout/selectRoutList"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0404G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_SI0404SHI0" ref="" target="data:json,dlt_searchitem" action="/si/SI0404SHI0" method="post"
+			<xf:submission id="sub_SI0404SHI0" ref="" target="data:json,dlt_searchitem" action="/rout/selectRoutItem" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -103,6 +103,7 @@
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
+
 		<script type="text/javascript" lazy="false"><![CDATA[
 
 	var isSttnAdd;
@@ -111,6 +112,7 @@
 	var isNewData = false;
 
 	scwin.onpageload = function() {
+		
 		var codeOptions = [{code : "NODE_TYPE", compID : "SI0404G1:NODE_TYPE"},{code : "WAY_DIV", compID : "SI0404G0:WAY_DIV"}];
 		com.setCommonDtl(codeOptions, function() {
 			com.searchGrid(SI0404G0, sub_SI0404G0R0);
@@ -139,10 +141,11 @@
 		
 		SI0404G0.mergeCells("byrestriccol");
 		
-		initTmap("map_SI0404", {width:"100%"
+		routMap.initMap("map_SI0404", {width:"100%"
 			, height:"100%"
 			, onClick: scwin.onClickMap
 		});
+		
 
 		scwin.disp_check_all();
 	};
@@ -182,29 +185,41 @@
 
 	scwin.dma_disp_check_onviewchange = function(info) {
 		setDispCheck("map_SI0404", disp_check.getValue());
-		drawRoute("map_SI0404", SI0404G1, -1, true);
+		//routMap.drawRoute("map_SI0404", SI0404G1, -1, true);
 	}
 	
 	scwin.SI0404G0_onrowindexchange = function(row,oldRow) {
-	
+		routMap.initMapInfo("map_SI0404");
 		var focusOption = {keyMap : dma_sub_search};
 		com.changeDualGrid(SI0404G0, SI0404G1, sub_SI0404G1S0, sub_SI0404G1R0, focusOption, row, oldRow);
 	};
 	
 	
 	scwin.SI0404G1_onrowindexchange = function(row,oldRow) {
-	debugger;
-		focusNode("map_SI0404",SI0404G1,row);
+	
+		routMap.focusNode("map_SI0404",SI0404G1,row);
 	};
 	
 	scwin.sub_SI0404G1R0_submitdone = function(e) {
-		drawRoute("map_SI0404", SI0404G1, -1, false);
-		com.setFocusedCell(SI0404G1, "NODE_ID");	
+		//routMap.drawRoute("map_SI0404", SI0404G1, -1, false);
+		if(dlt_BMS_ROUT_NODE_CMPSTN.getTotalRow() == 0){
+			routMap.initDisplay("map_SI0404");
+		}
+		else {
+			//com.setFocusedCell(SI0404G1, "NODE_ID");
+			if(SI0404G1.getFocusedRowIndex() == -1 ){
+				SI0404G1.setFocusedCell( 0, "NODE_ID");
+			}
+			else {
+				SI0404G1.setFocusedCell( SI0404G1.getFocusedRowIndex(), "NODE_ID");
+			}
+		}
 	};
 	
 	scwin.sub_SI0404G1S0_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+			routMap.initMapInfo("map_SI0404");
 			com.saveDone(SI0404G1,sub_SI0404G1R0);
 		}
 	}
@@ -253,7 +268,7 @@
 		com.delGrid(SI0404G1,"",
 			function() { 
 				var index = SI0404G1.getFocusedRowIndex();
-				focusNode("map_SI0404",SI0404G1,index,false); 
+				routMap.focusNode("map_SI0404",SI0404G1,index,false); 
 			}
 		);
 	};
@@ -267,7 +282,7 @@
 			com.confirm(str, function(rtn) {
 				if (rtn) {
 					com.clearGrid(SI0404G1);
-					drawRoute("map_SI0404", SI0404G1, -1, false);
+					routMap.drawRoute("map_SI0404", SI0404G1, -1, false);
 				}
 			});
 		}
@@ -280,11 +295,11 @@
 	}
 	
 	scwin.insertNode = function(obj){
-	debugger;
+	
 		dlt_BMS_ROUT_NODE_CMPSTN.removeAll();
 		var route_id = dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "ROUTE_ID");
 		var area = dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "AREA");
-		insertNodeAll("map_SI0404",SI0404G1,obj,route_id,area,false);
+		routMap.insertNodeAll("map_SI0404",SI0404G1,obj,route_id,area);
 	}
 	
 
@@ -547,9 +562,8 @@
 					</xf:group>
 					
 					<xf:group id="" class="" style="">
-						<div style="height:100%; overflow:hidden;">
-							<div id="map_SI0404" style="overflow:hidden;"></div>
-						</div> 
+						<!-- <xf:group id="map_SI0404" style="overflow:hidden;"></xf:group> -->
+						<div id="map_SI0404" style="overflow:hidden;"></div>
 					</xf:group>
 				</xf:group> <!--end pgm_detail-->
 			</xf:group> <!-- end content --> 
