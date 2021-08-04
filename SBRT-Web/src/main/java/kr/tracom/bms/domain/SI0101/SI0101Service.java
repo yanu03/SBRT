@@ -72,7 +72,7 @@ public class SI0101Service extends ServiceSupport{
 		for (int i = 0; i < param.size(); i++) {
 
 			Map data = (Map) param.get(i);
-			data.put("SN", i+1);
+			//data.put("SN", i+1);
 			String rowStatus = (String) data.get("rowStatus");
 			if (rowStatus.equals("C")) {
 				iCnt += si0101Mapper.SI0101P0I0(data);

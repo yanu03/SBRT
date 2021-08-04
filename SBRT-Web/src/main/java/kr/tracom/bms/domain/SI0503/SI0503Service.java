@@ -67,6 +67,13 @@ public class SI0503Service extends ServiceSupport{
 		
 	}
 	
+	
+	public List SI0503G1R0() throws Exception {
+		// TODO Auto-generated method stub
+		Map param = getSimpleDataMap("dma_sub_search");
+		return si0503Mapper.SI0503G1R0(param);
+	}
+	
 	public List SI0503P0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("");
 		return si0503Mapper.SI0503P0R0(map);

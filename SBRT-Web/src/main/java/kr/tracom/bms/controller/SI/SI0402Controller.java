@@ -17,25 +17,7 @@ public class SI0402Controller extends ControllerSupport {
 	
 	@Autowired
 	private SI0402Service si0402Service;
-	
-	@RequestMapping("/si/SI0402G0R0")
-	public @ResponseBody Map<String, Object> SI0402G0R0() throws Exception {
-		result.setData("dlt_BMS_ROUT_MST", si0402Service.SI0402G0R0());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/si/SI0402G0K0")
-	public @ResponseBody Map<String, Object> SI0402G0R1() throws Exception {
-		result.setData("dma_SEQ_BMS_ROUT_MST_0", si0402Service.SI0402G0K0());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/si/SI0402SHI0")
-	public @ResponseBody Map<String, Object> SI0402G0R2() throws Exception {
-		result.setData("dlt_searchitem", si0402Service.SI0402SHI0());
-		return result.getResult();
-	}
-	
+		
 	@RequestMapping("/si/SI0402G1R0")
 	public @ResponseBody Map<String, Object> SI0402G1R0() throws Exception {
 		result.setData("dlt_BMS_ROUT_NODE_CMPSTN", si0402Service.SI0402G1R0());
@@ -67,9 +49,35 @@ public class SI0402Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/si/SI0402P2S0")
+	public @ResponseBody Map<String, Object> SI0402P2S0() throws Exception {
+		Map map = si0402Service.SI0402P2S0();
+		result.setData("dma_result", map);
+		return result.getResultSave();
+	}	
+	
+	@RequestMapping("/si/SI0402P2K0")
+	public @ResponseBody Map<String, Object> SI0402P2K0() throws Exception {
+		result.setData("dma_SEQ_BMS_STTN_MST_0", si0402Service.SI0402P2K0());
+		return result.getResult();
+	}
+	
 	@RequestMapping("/si/SI0402P3R0")
 	public @ResponseBody Map<String, Object> SI0402P3R0() throws Exception {
 		result.setData("dlt_BMS_CRS_MST", si0402Service.SI0402P3R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/si/SI0402P3S0")
+	public @ResponseBody Map<String, Object> SI0402P3S0() throws Exception {
+		Map map = si0402Service.SI0402P3S0();
+		result.setData("dma_result", map);
+		return result.getResultSave();
+	}
+	
+	@RequestMapping("/si/SI0402P3K0")
+	public @ResponseBody Map<String, Object> SI0402P3K0() throws Exception {
+		result.setData("dma_SEQ_BMS_CRS_MST_0", si0402Service.SI0402P3K0());
 		return result.getResult();
 	}
 }

@@ -3,171 +3,21 @@
 
 <mapper namespace="kr.tracom.bms.domain.SI0404.SI0404Mapper">
 
-<select id="SI0404G0R0" resultType="Map">
-	select  ROUTE_ID,
-			REP_ROUT_ID,
-			INT_ROUT_ID,
-			REP_ROUT_NM,
-			ROUT_NM,
-			ROUT_TYPE,
-			ST_STTN_ID,
-			ST_STTN_NM,
-			ED_STTN_ID,
-			ED_STTN_NM,
-			RET_STTN_ID,
-			RET_STTN_NM,
-			ROUT_LEN,
-			WAY_DIV,
-			USER_WAY_DIV,
-			AREA
-	from BMS_ROUT_MST
-	<where>
-		<if test="TYPE == 'ALL'">
-			AND ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
-		<if test="TYPE == 'ROUTE_ID'">
-			AND ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
-		<if test="TYPE == 'ROUT_NM'">
-			AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
-		<if test="TYPE == 'REP_ROUT_NM'">
-			AND REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
-		</if>
-	</where>
-	order by REP_ROUT_NM, WAY_DIV
-</select>
-
-<select id="SI0404G0K0" resultType="Map">
-	SELECT CONCAT('RT', LPAD(NEXTVAL(SEQ_BMS_ROUT_MST_0), 8, '0')) AS 'SEQ'
-</select>
-
-<select id="SI0404SHI0" resultType="Map">
-	select ROUTE_ID, ROUT_NM, REP_ROUT_NM
-	from BMS_ROUT_MST
-	order by ROUT_NM
-</select>
-
-<insert id="SI0404G0I0" parameterType="Map">
-	insert into BMS_ROUT_MST
-			(
-			ROUTE_ID,
-			REP_ROUT_ID,
-			REP_ROUT_NM,
-			ROUT_NM,
-			ROUT_TYPE,
-			RSV_ROUT_YN,
-			ST_STTN_ID,
-			ST_STTN_NM,
-			ST_STTN_ENM,
-			ED_STTN_ID,
-			ED_STTN_ENM,
-			ED_STTN_NM,
-			RET_STTN_ID,
-			RET_STTN_NM,
-			RET_STTN_ENM,
-			STTN_CNT,
-			ROUT_LEN,
-			ROUT_STRT_LEN,
-			CURVATURE,
-			JIT_DSPCH_YN,
-			LIC_VHC_CNT,
-			SPR_VHC_CNT,
-			APPL_ST_DT,
-			APPL_ED_DT,
-			WAY_DIV,
-			USER_WAY_DIV,
-			WAY_INFO,
-			AREA,
-			SHAPE_DIV,
-			USE_YN,
-			REMARK,
-			UPD_DTM,
-			UPD_ID
-			)
-	
-	values		
-			(
-			#{ROUTE_ID},
-			#{REP_ROUT_ID},
-			#{REP_ROUT_NM},
-			#{ROUT_NM},
-			#{ROUT_TYPE},
-			#{RSV_ROUT_YN},
-			#{ST_STTN_ID},
-			#{ST_STTN_NM},
-			#{ST_STTN_ENM},
-			#{ED_STTN_ID},
-			#{ED_STTN_ENM},
-			#{ED_STTN_NM},
-			#{RET_STTN_ID},
-			#{RET_STTN_NM},
-			#{RET_STTN_ENM},
-			#{STTN_CNT},
-			#{ROUT_LEN},
-			#{ROUT_STRT_LEN},
-			#{CURVATURE},
-			#{JIT_DSPCH_YN},
-			#{LIC_VHC_CNT},
-			#{SPR_VHC_CNT},
-			STR_TO_DATE(#{APPL_ST_DT}, '%Y%m%d'),
-			STR_TO_DATE(#{APPL_ED_DT}, '%Y%m%d'),
-			#{WAY_DIV},
-			#{USER_WAY_DIV},
-			#{WAY_INFO},
-			#{AREA},
-			#{SHAPE_DIV},
-			#{USE_YN},
-			#{REMARK},
-			#{UPD_DTM},
-			#{SSN_USER_ID}
-			)				
-</insert>
-
-<update id="SI0404G0U0" parameterType="Map">
-	update BMS_ROUT_MST
-	set 	ROUTE_ID = #{ROUTE_ID},
-			REP_ROUT_ID = #{REP_ROUT_ID},
-			REP_ROUT_NM = #{REP_ROUT_NM},
-			ROUT_NM = #{ROUT_NM},
-			ROUT_TYPE = #{ROUT_TYPE},
-			RSV_ROUT_YN = #{RSV_ROUT_YN},
-			ST_STTN_ID = #{ST_STTN_ID},
-			ST_STTN_NM = #{ST_STTN_NM},
-			ST_STTN_ENM = #{ST_STTN_ENM},
-			ED_STTN_ID = #{ED_STTN_ID},
-			ED_STTN_ENM = #{ED_STTN_ENM},
-			ED_STTN_NM = #{ED_STTN_NM},
-			RET_STTN_ID = #{RET_STTN_ID},
-			RET_STTN_NM = #{RET_STTN_NM},
-			RET_STTN_ENM = #{RET_STTN_ENM},
-			STTN_CNT = #{STTN_CNT},
-			ROUT_LEN = #{ROUT_LEN},
-			ROUT_STRT_LEN = #{ROUT_STRT_LEN},
-			CURVATURE = #{CURVATURE},
-			JIT_DSPCH_YN = #{JIT_DSPCH_YN},
-			LIC_VHC_CNT = #{LIC_VHC_CNT},
-			SPR_VHC_CNT = #{SPR_VHC_CNT},
-			APPL_ST_DT = STR_TO_DATE(#{APPL_ST_DT}, '%Y%m%d'),
-			APPL_ED_DT = STR_TO_DATE(#{APPL_ED_DT}, '%Y%m%d'),
-			WAY_DIV = #{WAY_DIV},
-			USER_WAY_DIV = #{USER_WAY_DIV},
-			WAY_INFO = #{WAY_INFO},
-			AREA = #{AREA},
-			SHAPE_DIV = #{SHAPE_DIV},
-			USE_YN = #{USE_YN},
-			REMARK = #{REMARK},
-			UPD_DTM = #{UPD_DTM},
-			UPD_ID  = #{SSN_USER_ID}
-	where ROUTE_ID = #{ROUTE_ID}
-</update>
-
 <select id="SI0404G1R0" resultType="Map">
-	SELECT ROUTE_ID, NODE_ID, NODE_SN, NODE_NM, NODE_ENM, NODE_TYPE, LINK_ID, STTN_ID, STTN_NO, CRS_ID, CRS_NM, ROUT_LEN, MORN_STD, GPS_X, GPS_Y, TM_X, TM_Y, UPD_DTM, UPD_ID
-	FROM BMS_ROUT_NODE_CMPSTN
-	WHERE ROUTE_ID = #{ROUTE_ID}
-	<if test="CONTENT != '' and CONTENT != null">
-		AND NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || NODE_NM LIKE CONCAT('%',#{CONTENT},'%')
+	SELECT A.ROUTE_ID, A.NODE_ID, A.NODE_SN, A.NODE_NM, A.NODE_TYPE, A.LINK_ID, A.STTN_ID, A.STTN_NO, A.CRS_ID,
+			A.GPS_X, A.GPS_Y, A.LINK_NODE_YN, B.MORN_STD
+	FROM BMS_ROUT_NODE_CMPSTN A LEFT OUTER JOIN BMS_ROUT_LINK_CMPSTN B ON A.ROUTE_ID = B.ROUTE_ID AND A.LINK_ID = B.LINK_ID
+	WHERE A.ROUTE_ID = #{ROUTE_ID}
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+		<if test="TYPE == 'ALL'">
+			AND (A.NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || A.NODE_NM LIKE CONCAT('%',#{CONTENT},'%'))
+		</if>
+		<if test="TYPE == 'NODE_ID'">
+			A.NODE_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'NODE_NM'">
+			A.NODE_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
 	</if>
 	 ORDER BY NODE_SN
 </select>
@@ -198,8 +48,8 @@
 		(STTN_ID,NODE_ID,STTN_NM,AREA,STTN_NO,USE_YN,UPD_DTM,UPD_ID)
 	VALUES(#{STTN_ID},#{NODE_ID},#{NODE_NM},#{AREA},#{STTN_NO},'Y',#{UPD_DTM},#{UPD_ID})
 	ON DUPLICATE KEY UPDATE
-	  STTN_ID	= VALUES(NODE_ID)
-	, NODE_ID	= VALUES(STTN_ID)
+	  STTN_ID	= VALUES(STTN_ID)
+	, NODE_ID	= VALUES(NODE_ID)
 	, STTN_NM	= VALUES(STTN_NM)
  	, AREA		= VALUES(AREA)
 	, STTN_NO	= VALUES(STTN_NO)
@@ -215,8 +65,8 @@
 </insert>
 
 <insert id="SI0404G1I1" parameterType="Map">
-	INSERT INTO BMS_LINK_MST(LINK_ID,LINK_NM,ST_NODE_ID,ED_NODE_ID,USE_YN,SBRT_YN,UPD_DTM,UPD_ID)
-	VALUES(#{LINK_ID},#{LINK_NM},#{ST_NODE_ID},#{ED_NODE_ID},'Y','Y',#{UPD_DTM},#{SSN_USER_ID});
+	INSERT INTO BMS_LINK_MST(LINK_ID,LINK_NM,ST_NODE_ID,ED_NODE_ID,LEN,USE_YN,SBRT_YN,UPD_DTM,UPD_ID)
+	VALUES(#{LINK_ID},#{LINK_NM},#{ST_NODE_ID},#{ED_NODE_ID},#{LEN},'Y','Y',#{UPD_DTM},#{SSN_USER_ID});
 
 	INSERT INTO BMS_ROUT_LINK_CMPSTN(ROUTE_ID,LINK_ID,LINK_SN,MORN_STD,UPD_DTM,UPD_ID)
 	VALUES(#{ROUTE_ID},#{LINK_ID},#{LINK_SN},'MS001',#{UPD_DTM},#{SSN_USER_ID});

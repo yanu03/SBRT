@@ -12,10 +12,10 @@
         	<w2:dataCollection baseNode="map">
         		<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_REP_ROUT_MST" saveRemovedData="true">
         			<w2:columnInfo>
-        				<w2:column id="chk" name="선택" dataType="text"></w2:column>
+        				<!-- <w2:column id="chk" name="선택" dataType="text"></w2:column> -->
         				<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
         				<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
-        				<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
+        				<!-- <w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column> -->
         				<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
         			</w2:columnInfo>
         		</w2:dataList>
@@ -56,13 +56,13 @@
         	</xf:submission>
         </xf:model>
         <script type="text/javascript" lazy="false"><![CDATA[
-        
+	var isClose = false;
 	scwin.onpageload = function() {
 		scwin.param = com.getParameter();
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
 		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
 		
-    		var autoOptions = {
+		var autoOptions = {
 			Main : { grid : SI0401P1, srchSbm : sub_SI0401P1R0, savSbm : sub_SI0401P1S0, keySbm : sub_SI0401P1K0 
 				,keyColumn : "REP_ROUT_ID", focusColumn : "REP_ROUT_NM", name :  "대표노선"}
 		};
@@ -89,8 +89,24 @@
 	
 
 	scwin.btn_confirm_onclick = function() {
-		var data = SI0401P1.getCheckedJSON("chk");
-		com.closePopup(scwin.closeCallbackFncName, data);		
+		var idx = SI0401P1.getModifiedIndex().length;
+		if (idx > 0) {
+			isClose = true;
+			if (com.validateGridView(SI0401P1)) {
+				
+				var yesno_str = com.strModifiedCnt(SI0401P1) + "의 데이터가 저장됩니다. \n 진행하시겠습니까?";
+				com.confirm(yesno_str, function(rtn) {
+					if (rtn) {				
+						com.saveData(SI0401P1,null,sub_SI0401P1S0);
+					}
+				});
+			}
+		}
+		else {
+			var data = dlt_BMS_REP_ROUT_MST.getRowData(SI0401P1.getFocusedRowIndex())
+			//var data = SI0401P1.getCheckedJSON("chk");
+			com.closePopup(scwin.closeCallbackFncName, data);
+		}
 	};
 	
 	scwin.btn_cancel_onclick = function() {
@@ -98,12 +114,20 @@
 	};
 	
 	scwin.sub_SI0401P1S0_submitdone = function(e) {
-		com.executeSubmission(sub_SI0401P1R0);			
+		
+		if(isClose){
+			var data = dlt_BMS_REP_ROUT_MST.getRowData(SI0401P1.getFocusedRowIndex())
+			//var data = SI0401P1.getCheckedJSON("chk");
+			com.closePopup(scwin.closeCallbackFncName, data);
+		}
+		else {
+			com.executeSubmission(sub_SI0401P1R0);
+		}
 	};
 	
-	scwin.SI0401P1_onrowindexchange = function(row,oldRow) {
+	/*scwin.SI0401P1_onrowindexchange = function(row,oldRow) {
 		SI0401P1.setCellChecked(row,"chk",true);
-	}
+	}*/
 
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
 		if (info.newValue == "ALL") {
@@ -150,27 +174,27 @@
 			</xf:group>
 			<xf:group style="" id="" class="popup_content">
 				<w2:gridView fixedColumnWithHidden="true" dataList="data:dlt_BMS_REP_ROUT_MST" useShiftKey="false"
-					ev:onrowindexchange="scwin.SI0401P1_onrowindexchange" readOnly="false" style="width:775px" scrollByColumn="false" id="SI0401P1" autoFit="allColumn"
-					class="cm_grid popup">
+					readOnly="false" style="width:775px" scrollByColumn="false" id="SI0401P1" autoFit="allColumn"
+					class="cm_grid popup" focusMode="row">
 					<w2:header id="header1" style="">
 						<w2:row id="row1" style="">
-							<w2:column width="39" inputType="radio" style="height:20px" id="chkHeader" value="선택" blockSelect="false"></w2:column>
+							<!-- <w2:column width="39" inputType="radio" style="height:20px" id="chkHeader" value="선택" blockSelect="false"></w2:column> -->
 							<w2:column width="70" id="column2" value="대표노선ID"></w2:column>
 							<w2:column width="70" id="column3" value="대표노선명"></w2:column>
-							<w2:column width="30" id="column16" value="사용여부" dataType="" inputType="text"></w2:column>
+							<!-- <w2:column width="30" id="column16" value="사용여부" dataType="" inputType="text"></w2:column> -->
 							<w2:column width="70" id="column17" value="비고"></w2:column>
 						</w2:row>
 					</w2:header>
 					<w2:gBody id="gBody1" style="">
 						<w2:row id="row2" style="">
-							<w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px" inputType="radio"
+							<!-- <w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px" inputType="radio"
 								id="chk" blockSelect="false">
-							</w2:column>
+							</w2:column> -->
 							<w2:column width="70" id="REP_ROUT_ID"></w2:column>
 							<w2:column width="70" id="REP_ROUT_NM" maxLength="5"></w2:column>
-							<w2:column id="USE_YN" blockSelect="false" trueValue="Y" falseValue="N" style="height:25px" width="30" inputType="checkbox"
+							<!-- <w2:column id="USE_YN" blockSelect="false" trueValue="Y" falseValue="N" style="height:25px" width="30" inputType="checkbox"
 								displayMode="" valueType="other">
-							</w2:column>
+							</w2:column> -->
 							<w2:column width="70" id="REMARK"></w2:column>
 						</w2:row>
 					</w2:gBody>
