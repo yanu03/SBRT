@@ -13,6 +13,6 @@ public interface RoutMapper {
 	public int updateRout(Map param);
 	public List<Map> selectRoutList(Map param);
 	public List<Map> selectRoutItem();
-	public List<Map> selectNodeRoutList2(Map param);
-	public List<Map> selectNodeRoutList(Map param);
+	public List<Map> selectNodeListByRouts(Map param);
+	public List<Map> selectNodeListByRout(Map param);
 }

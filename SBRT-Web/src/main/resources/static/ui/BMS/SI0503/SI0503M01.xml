@@ -123,7 +123,7 @@
 			method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 			processMsg="" ev:submit="" ev:submitdone="scwin.sub_SI0503G1R0_submitdone" ev:submiterror="" abortTrigger="">
 		</xf:submission>
-		<xf:submission id="sub_SI0503G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN" action="/rout/selectNodeRoutList2"
+		<xf:submission id="sub_SI0503G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN" action="/rout/selectNodeListByRouts"
 			method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 			processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0503G2R0_submitdone" ev:submiterror="" abortTrigger="">
 		</xf:submission>
@@ -204,6 +204,7 @@
 	scwin.sub_SI0503G1R0_submitdone = function(e) {
 		var val_ROUTE_ID = dlt_BMS_ROUT_MST.getColData("ROUTE_ID");
 		dma_sub_search.set("ROUTE_IDS", val_ROUTE_ID);
+		dma_sub_search.set("TYPE", "DISP_NODE");
 		com.executeSubmission(sub_SI0503G2R0);
 	};
 

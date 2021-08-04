@@ -25,16 +25,16 @@ public class RoutService extends ServiceSupport {
 		return routMapper.selectRoutItem();
 	}
 	
-	public List<Map> selectNodeRoutList2() throws Exception {
+	public List<Map> selectNodeListByRouts() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
 		String temp[] = map.get("ROUTE_IDS").toString().replace("[","").replace("]","").split(",");
 		map.put("ROUTE_IDS", temp);
-		return routMapper.selectNodeRoutList2(map);
+		return routMapper.selectNodeListByRouts(map);
 	}
 	
-	public List<Map> selectNodeRoutList() throws Exception {
+	public List<Map> selectNodeListByRout() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
-		return routMapper.selectNodeRoutList(map);
+		return routMapper.selectNodeListByRout(map);
 	}
 
 }
