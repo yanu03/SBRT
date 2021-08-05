@@ -9,6 +9,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import kr.tracom.bms.domain.PI0902.PI0902Mapper;
+import kr.tracom.bms.ftp.FTPHandler;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.util.Result;
@@ -18,6 +19,9 @@ public class PI0902Service extends ServiceSupport{
 
 	@Autowired
 	private PI0902Mapper pi0902Mapper;
+	
+	@Autowired
+	private FTPHandler ftpHandler;
 	
 	public List PI0902G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
@@ -59,8 +63,8 @@ public class PI0902Service extends ServiceSupport{
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("U")) {
 					iCnt = pi0902Mapper.PI0902G1I0(data);		
-//					String vhcId = String.valueOf(data.get("VHC_ID"));
-					
+					ftpHandler.reserveErm(data);//jh
+					//String vhcId = String.valueOf(data.get("VHC_ID"));
 				} 
 			}			
 			

@@ -474,7 +474,32 @@ public class FTPHandler {
 	}
 	
 	
-	
+	//PI0902 전자노선도 예약 jhlee
+	public void reserveErm(Map<String, Object> data) throws Exception {
+		//관리아이디 길이가 16이 아니면
+		if(data.get("MNG_ID").toString().length() != 16) {
+			return;
+		}
+		
+		String impId = data.get("MNG_ID").toString().substring(0, 10);
+		String dvcId = data.get("MNG_ID").toString().substring(10, 16);
+		
+		
+		String localPath = Paths.get(getRootLocalPath(), "/vehicle/", impId, "/device/" + dvcId, "/config").toString();
+		String ftpPath	 = getRootServerPath() + "/vehicle/" + impId + "device/" + dvcId + "/config";
+		
+		File dir = new File(localPath);
+		
+		if(!dir.isDirectory()) {
+			dir.mkdirs();
+		}
+		
+		createFtpDirectory(ftpPath);
+		
+		
+		String txt = Constants.CSVForms.ROW_SEPARATOR
+				+ "";
+	}
 	
 	
 	
