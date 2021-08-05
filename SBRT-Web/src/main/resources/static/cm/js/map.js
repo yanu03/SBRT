@@ -385,7 +385,7 @@ routMap.addMarkerInter = function(mapId, data, grid, idx, focusIdx) {
 //인포윈도우를 표시하는 클로저를 만드는 함수입니다 
 routMap.makeOverListener = function(map, marker, overlay) {
 	return function() {
-		overlay.setMap(map)
+		overlay.setMap(map);
 		//infoWindow.open(map, marker);
 	};
 }
@@ -393,7 +393,7 @@ routMap.makeOverListener = function(map, marker, overlay) {
 // 인포윈도우를 닫는 클로저를 만드는 함수입니다
 routMap.makeOutListener = function(mapInfo,mapInfo,overlay,markerImage) {
 	return function() {
-		overlay.setMap(null)
+		overlay.setMap(null);
 		//infoWindow.close();
         // 클릭된 마커가 없고, mouseout된 마커가 클릭된 마커가 아니면
         // 마커의 이미지를 기본 이미지로 변경합니다
@@ -475,7 +475,7 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx) {
 	}
 
 	marker.normalImage = markerImage;
-
+debugger;
 	var overlay = null;
 	var msg = "<div class = 'busoverlay'>"
 			+ "<span class = 'map_title' style=''>" + data.VHC_NO + "</span>"
@@ -495,6 +495,7 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx) {
 	
 	
 	if(idx!=focusIdx) {
+		overlay.setMap(null);
 		kakao.maps.event.addListener(marker, 'mouseover', routMap.makeOverListener(routMap.mapInfo[mapId].map, marker, overlay));
 		kakao.maps.event.addListener(marker, 'mouseout', routMap.makeOutListener(routMap.mapInfo[mapId],marker,overlay,markerImage));
 	}

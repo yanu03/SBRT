@@ -52,6 +52,8 @@ public class PI0902Service extends ServiceSupport{
 		int dCnt = 0;		
 		
 		List<Map<String, Object>> param = getSimpleList("dlt_VHC_MST");
+		Map<String, Object> map = getSimpleDataMap("dma_BMS_ED_INFO");
+		
 		try {
 			
 			//예약 정보, 예약결과 정보 insert
