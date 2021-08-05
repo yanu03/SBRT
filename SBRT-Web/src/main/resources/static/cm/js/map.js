@@ -475,7 +475,7 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx) {
 	}
 
 	marker.normalImage = markerImage;
-
+debugger;
 	var overlay = null;
 	var msg = "<div class = 'busoverlay'>"
 			+ "<span class = 'map_title' style=''>" + data.VHC_NO + "</span>"
