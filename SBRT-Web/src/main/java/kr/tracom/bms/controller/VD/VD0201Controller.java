@@ -21,13 +21,20 @@ public class VD0201Controller extends ControllerSupport {
 
 	@RequestMapping("/vd/VD0201G0R0")
 	public @ResponseBody Map<String, Object> VD0201G0R0() throws Exception {
-		result.setData("dlt_BMS_VHC_MST", VD0201Service.VD0201G0R0());
+		result.setData("dlt_BRT_CUR_OPER_INFO", VD0201Service.VD0201G0R0());
 		return result.getResult();
 	}
 	
 	@RequestMapping("/vd/VD0201G1R0")
 	public @ResponseBody Map<String, Object> VD0201G1R0() throws Exception {
 		result.setData("dlt_BMS_DVC_INFO", VD0201Service.VD0201G1R0());
+		result.setData("dlt_BMS_DVC_INFO2", VD0201Service.VD0201G1R0());
 		return result.getResult();
-	}	
+	}
+	
+	@RequestMapping("/vd/VD0201SHI0")
+	public @ResponseBody Map<String, Object> VD0201SHI0() throws Exception {
+		result.setData("dlt_searchitem", VD0201Service.VD0201SHI0());
+		return result.getResult();
+	}
 }
