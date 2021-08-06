@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import kr.tracom.bms.domain.PI0902.PI0902Mapper;
 import kr.tracom.bms.ftp.FTPHandler;
+import kr.tracom.cm.domain.Common.CommonMapper;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.util.Result;
@@ -19,6 +20,9 @@ public class PI0902Service extends ServiceSupport{
 
 	@Autowired
 	private PI0902Mapper pi0902Mapper;
+	
+	@Autowired
+	private CommonMapper commonMapper;
 	
 	@Autowired
 	private FTPHandler ftpHandler;
@@ -45,8 +49,9 @@ public class PI0902Service extends ServiceSupport{
 		return pi0902Mapper.PI0902G1R1();
 	}
 	
-	public String PI0902G0R1(Map param) throws Exception {
-		return pi0902Mapper.PI0902G0R1(param);
+	public String getTxtVal1(Map param) throws Exception {
+		List<Map<String, Object>> list = commonMapper.selectCommonDtlList(param);
+		return list.get(0).get("TXT_VAL1").toString();
 	}
 	
 	//예약
@@ -73,15 +78,15 @@ public class PI0902Service extends ServiceSupport{
 					Map m = new HashMap();
 					m.put("CO_CD", "CATEGORY");
 					m.put("DL_CD", map.get("CATEGORY").toString());
-					map.put("CATEGORY_VAL", PI0902G0R1(m));
+					map.put("CATEGORY_VAL", getTxtVal1(m));
 					
 					m.replace("CO_CD", "FRAME");
 					m.replace("DL_CD", map.get("FRAME").toString());
-					map.put("FRAME_VAL", PI0902G0R1(m));
+					map.put("FRAME_VAL", getTxtVal1(m));
 					
 					m.replace("CO_CD", "FONT");
 					m.replace("DL_CD", map.get("FONT").toString());
-					map.put("FONT_VAL", PI0902G0R1(m));
+					map.put("FONT_VAL", getTxtVal1(m));
 					
 					ftpHandler.reserveErm(data, map);//jh
 				} 
