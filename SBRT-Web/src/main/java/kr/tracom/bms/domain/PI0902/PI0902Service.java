@@ -45,6 +45,10 @@ public class PI0902Service extends ServiceSupport{
 		return pi0902Mapper.PI0902G1R1();
 	}
 	
+	public String PI0902G0R1(Map param) throws Exception {
+		return pi0902Mapper.PI0902G0R1(param);
+	}
+	
 	//예약
 	public Map PI0902G1S0() throws Exception {
 		int iCnt = 0;
@@ -64,9 +68,22 @@ public class PI0902Service extends ServiceSupport{
 				Map data = (Map) param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("U")) {
-					iCnt = pi0902Mapper.PI0902G1I0(data);		
-					ftpHandler.reserveErm(data);//jh
-					//String vhcId = String.valueOf(data.get("VHC_ID"));
+					iCnt = pi0902Mapper.PI0902G1I0(data);
+					
+					Map m = new HashMap();
+					m.put("CO_CD", "CATEGORY");
+					m.put("DL_CD", map.get("CATEGORY").toString());
+					map.put("CATEGORY_VAL", PI0902G0R1(m));
+					
+					m.replace("CO_CD", "FRAME");
+					m.replace("DL_CD", map.get("FRAME").toString());
+					map.put("FRAME_VAL", PI0902G0R1(m));
+					
+					m.replace("CO_CD", "FONT");
+					m.replace("DL_CD", map.get("FONT").toString());
+					map.put("FONT_VAL", PI0902G0R1(m));
+					
+					ftpHandler.reserveErm(data, map);//jh
 				} 
 			}			
 			

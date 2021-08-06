@@ -24,5 +24,7 @@ public interface PI0902Mapper {
 	
 	public List PI0902G2R0(Map param);
 	
-	public List PI0902G1R1(); 
+	public List PI0902G1R1();
+	
+	public String PI0902G0R1(Map param);
 }
