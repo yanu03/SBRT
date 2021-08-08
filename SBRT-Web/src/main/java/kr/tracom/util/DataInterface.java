@@ -186,10 +186,9 @@ public class DataInterface {
 		}
 	}
 	
-	public static List insertSttn(List<Map<String, Object>> nodeList, List<Map<String, Object>> staList) {
+	public static List insertNodeToNode(List<Map<String, Object>> nodeList, List<Map<String, Object>> sourceList) {
 		// 정류장 갯수만큼 for문 돌릴거임
-		for (Map<String, Object> sta : staList) {
-			sta.put("NODE_TYPE",Constants.NODE_TYPE_BUSSTOP);
+		for (Map<String, Object> sta : sourceList) {
 			int forseq = 0;
 			LocationVO resultVO = new LocationVO();
 			LocationVO tmpVO = new LocationVO();
@@ -273,6 +272,51 @@ public class DataInterface {
 				voList.add(nodeList.get(i+1));
 			}
 		}
+		return voList;
+	}
+	
+	/*소스 list와 거리가 60이하인 경우 삭제*/
+	public static List<Map<String, Object>> generalNode2(List<Map<String, Object>> sourceList, List<Map<String, Object>> nodeList){
+		List<Map<String, Object>> voList = new ArrayList<>();
+		List<Map<String, Object>> resultList = new ArrayList<>();
+		
+		for(int i=0; i<nodeList.size(); i++) {
+			
+			if(i == 0) {
+				voList.add(nodeList.get(i));
+				continue;
+			}
+			
+			if(i == nodeList.size() - 1) {
+				voList.add(nodeList.get(nodeList.size()-1));
+				break;
+			}
+			
+			String nodeType = (String)nodeList.get(i).get("NODE_TYPE");
+			if(nodeType.equals("NT01")||nodeType.equals("NT02")) {
+				voList.add(nodeList.get(i));
+			}
+			else {
+				double dist = 0;
+				for(int j=0; j<sourceList.size(); j++) {
+					double lati1	= CommonUtil.objectToDouble(sourceList.get(j).get("GPS_Y"));
+					double longi1	= CommonUtil.objectToDouble(sourceList.get(j).get("GPS_X"));
+					double lati2	= CommonUtil.objectToDouble(nodeList.get(i).get("GPS_Y"));
+					double longi2	= CommonUtil.objectToDouble(nodeList.get(i).get("GPS_X"));
+					
+					dist = getDistanceBetween(longi1, lati1, longi2, lati2);
+					
+					//거리가 60이하인경우
+					if(dist <= 60) {
+						break;
+					}
+				}
+				if(dist > 60) {
+					voList.add(nodeList.get(i));
+				}
+			}
+		}
+
 		return voList;
 	}
 	

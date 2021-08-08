@@ -179,6 +179,7 @@
 	};
 	
 	scwin.sub_SI0402G0R0_submitdone = function(e) {
+		scwin.releaseGeoBtn();
 		com.setFocusedCell(SI0402G0, "ROUTE_ID");	
 	};
 	
@@ -277,6 +278,7 @@
 	scwin.sub_SI0402G1S0_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+			scwin.releaseGeoBtn();
 			routMap.initMapInfo("map_SI0402");
 			com.saveDone(SI0402G1,sub_SI0402G1R0);
 		}
@@ -473,6 +475,8 @@
 	}
 	
 	scwin.nodeChangeCb = function(idx) {
+		if(isPathAdd || isVertexAdd || isSttnAdd || isCrossAdd) return;
+		
 		SI0402G1.setFocusedCell(idx,"NODE_ID");
 		
 		var nodeType = dlt_BMS_ROUT_NODE_CMPSTN.getCellData(idx,"NODE_TYPE");
