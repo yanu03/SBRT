@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.brt.domain.AL0102.AL0102Mapper">
+
+	<select id="AL0102G0R0" resultType="Map" parameterType="Map">
+		SELECT
+			DATE_FORMAT(HOLI_DT, '%Y-%m-%d') AS HOLI_DT
+			,DAY_OF_WEEK
+			,HOLI_NM
+			,HOLI_ENM
+			,DAY_TYPE
+			,REMARK
+			,UPD_DTM
+			,UPD_ID
+		FROM
+			BRT_HOLI_MST
+		<where>
+			<!-- VOC_DIV = 'VD001'-->
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND HOLI_DT LIKE CONCAT('%',#{CONTENT},'%') || HOLI_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'HOLI_DT'">
+				AND HOLI_DT LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'HOLI_NM'">
+				AND HOLI_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>
+		ORDER BY
+			HOLI_DT
+	</select>
+
+	<select id="AL0102SHI0" resultType="Map" parameterType="Map">
+		select  DATE_FORMAT(HOLI_DT, '%Y-%m-%d') AS HOLI_DT, HOLI_NM
+		from 	BRT_HOLI_MST
+	</select>
+
+	<update id="AL0102G0U0" parameterType="Map">
+		UPDATE 
+			BRT_HOLI_MST 
+		SET 
+			HOLI_DT = DATE_FORMAT(HOLI_DT, '%Y-%m-%d')
+			,DAY_OF_WEEK = #{DAY_OF_WEEK}
+			,HOLI_NM = #{HOLI_NM}
+			,HOLI_ENM = #{HOLI_ENM}
+			,DAY_TYPE = #{DAY_TYPE}
+			,REMARK = #{REMARK}
+			,UPD_DTM = NOW()
+			,UPD_ID  = #{UPD_ID}
+		WHERE 
+			HOLI_DT = #{HOLI_DT}
+	</update>
+
+	<!--  <select id="PI0205G0R0" resultType="Map" parameterType="Map">
+		SELECT
+			R.ROUTE_ID
+		    , R.ROUT_NM
+		    , R.WAY_DIV
+		    , DATE_FORMAT(R.UPD_DTM, '%Y-%m-%d') AS UPD_DTM
+		    , V.VOC_ID
+		    , V.PLAY_TYPE
+		    , V.KR_TTS
+		    , V.VOC_DIV
+		    , V.REMARK
+		    , V.PLAY_TM
+		FROM
+			BMS_ROUT_MST R
+		    LEFT OUTER JOIN BMS_VOC_INFO V
+		    ON R.ROUTE_ID = V.ROUTE_ID
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND R.ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%') || R.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'ROUTE_ID'">
+				AND R.ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'ROUT_NM'">
+				AND R.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>
+		ORDER BY
+			R.ROUTE_ID
+	</select>
+	
+	<insert id="PI0205G0I0" parameterType="Map">
+		<selectKey keyProperty="VOC_ID" resultType="String" order="BEFORE">
+	    		SELECT CONCAT('RV', LPAD(NEXTVAL(SEQ_BMS_VOC_INFO_2), 8, '0'))
+	    </selectKey>
+	
+		INSERT INTO BMS_VOC_INFO(
+			VOC_ID
+			,ROUTE_ID
+			,PLAY_TYPE
+			,KR_TTS
+			,REMARK
+			,PLAY_TM
+			,VOC_DIV
+			,UPD_DTM
+			,UPD_ID
+			) 
+		VALUES (
+			#{VOC_ID}
+			,#{ROUTE_ID}
+			,#{PLAY_TYPE}
+			,#{KR_TTS}
+			,#{REMARK}
+			,#{PLAY_TM}
+			,'VD004'
+			,#{UPD_DTM}
+			,#{UPD_ID}
+			)
+	</insert>
+
+	<delete id="PI0205G0D0" parameterType="Map">
+		DELETE FROM BMS_VOC_INFO 
+		WHERE VOC_ID = #{VOC_ID};
+	</delete>
+	
+	<update id="PI0205G0U0" parameterType="Map">
+		UPDATE 
+			BMS_VOC_INFO 
+		SET 
+			PLAY_TYPE = #{PLAY_TYPE}
+			,KR_TTS = #{KR_TTS}
+			,REMARK = #{REMARK}
+			,PLAY_TM = #{PLAY_TM}
+			,UPD_DTM = #{UPD_DTM}
+			,UPD_ID = #{UPD_ID} 
+		WHERE 
+			ROUTE_ID = #{ROUTE_ID}
+			AND VOC_ID = #{VOC_ID}
+	</update>
+	
+	
+	-->
+	
+	<!--  <select id="PI0205G0K0" resultType="Map">
+		SELECT CONCAT('RV', LPAD(NEXTVAL(SEQ_BMS_VOC_INFO_2), 8, '0')) AS 'SEQ'
+	</select>	-->
+	
+</mapper>
