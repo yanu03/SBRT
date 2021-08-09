@@ -74,8 +74,7 @@
 				ev:submit="" ev:submitdone="scwin.sbm_systemChange_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
-		<script	src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
-		<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=31aa62fb189294413e43c24caeb82419&amp;libraries=services&amp;autoload=false"></script>		
+		<script	src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>	
 
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
@@ -229,7 +228,11 @@
 			data.menuType = menuType;
 			
 			var _closable = true;
-			if(url == "/cm/common/main.xml"){
+			var curSystem = dma_defInfo.get("SSN_CUR_SYSTEM");
+			if(curSystem==1 && url == "/cm/common/bmsMain.xml"){
+				_closable = false;
+			}
+			else if(curSystem==2 && url == "/cm/common/brtMain.xml"){
 				_closable = false;
 			}
 			
@@ -344,18 +347,18 @@
 	};
 
 	/**
-	 * bis로 이동
+	 * bms로 이동
 	 */
-	scwin.btn_bis_onclick = function(e) {
+	scwin.btn_bms_onclick = function(e) {
 		
 		dma_systemChange.set("SYSTEM_BIT",1); 
 		com.executeSubmission(sbm_systemChange);
 	};
 	
 	/**
-	 * bms로 이동
+	 * brs로 이동
 	 */
-	scwin.btn_bms_onclick = function(e) {
+	scwin.btn_brt_onclick = function(e) {
 		dma_systemChange.set("SYSTEM_BIT",2); 	
 		com.executeSubmission(sbm_systemChange);
 	};
@@ -387,16 +390,21 @@ scwin.fn_getInitData = function() {
 		var curSystem = dma_defInfo.get("SSN_CUR_SYSTEM");
 
 		$p.parent().wfm_header.getWindow().txt_userNm.setValue(dma_defInfo.get("SSN_USER_NM"));
-		scwin.openMenu("메인","/cm/common/main.xml","MAIN");
 		
-		/*if(curSystem==1){
-			$p.parent().wfm_header.getWindow().txt_systemNm.setValue("통합운영관리");
+		if(curSystem==1){
+			//$p.parent().wfm_header.getWindow().txt_systemNm.setValue("통합운영관리");
+			scwin.openMenu("메인","/cm/common/bmsMain.xml","MAIN");
+			$p.parent().wfm_header.getWindow().btn_bms.hide();
+			$p.parent().wfm_header.getWindow().btn_brt.show();
 		}
 		else if(curSystem==2){
-			$p.parent().wfm_header.getWindow().txt_systemNm.setValue("차량운행관리");
+			//$p.parent().wfm_header.getWindow().txt_systemNm.setValue("차량운행관리");
+			scwin.openMenu("메인","/cm/common/brtMain.xml","MAIN");
+			$p.parent().wfm_header.getWindow().btn_brt.hide();
+			$p.parent().wfm_header.getWindow().btn_bms.show();
 		}
 	
-		var index = 0;
+		/*var index = 0;
 		var tmpMenus = dlt_menu.getAllJSON();
 		
 		for (index in tmpMenus) {
@@ -457,7 +465,11 @@ scwin.fn_getInitData = function() {
 			data.menuType = menuType;
 			
 			var _closable = true;
-			if(url == "/cm/common/main.xml"){
+			var curSystem = dma_defInfo.get("SSN_CUR_SYSTEM");
+			if(curSystem==1 && url == "/cm/common/bmsMain.xml"){
+				_closable = false;
+			}
+			else if(curSystem==2 && url == "/cm/common/brtMain.xml"){
 				_closable = false;
 			}
 			
@@ -564,10 +576,10 @@ scwin.fn_getInitData = function() {
 				<xf:image id="" style="" alt="tracom" src="/cm/images/inc/tracom_trans_log.png" ev:onclick=""></xf:image>
 			</xf:group>
 			<xf:group class="sysbtnbox" id="" style="">
-				<xf:trigger class="bis" ev:onclick="scwin.btn_bis_onclick" id="btn_bis" style="" type="button">
+				<xf:trigger id="btn_bms" class="bms" style="" type="button" ev:onclick="scwin.btn_bms_onclick">
 					<xf:label><![CDATA[통합운영관리]]></xf:label>
 				</xf:trigger>
-				<xf:trigger class="bms" id="btn_bms" style="" type="button" ev:onclick="scwin.btn_bms_onclick">
+				<xf:trigger id="btn_brt" class="brt" style="" type="button" ev:onclick="scwin.btn_brt_onclick">
 					<xf:label><![CDATA[차량운행관리]]></xf:label>
 				</xf:trigger>
 			</xf:group>
@@ -576,9 +588,9 @@ scwin.fn_getInitData = function() {
 			<!-- <w2:anchor id="btn_toggle" outerDiv="false" class="btn_aside" ev:onclick="scwin.btn_toggle_onclick">
 				<xf:label><![CDATA[사이드메뉴 열기/닫기]]></xf:label>
 			</w2:anchor> -->
-			<xf:group class="sysbox" id="" style="">
+			<!-- <xf:group class="sysbox" id="" style="">
 				<w2:textbox class="info_tit system_tit" id="txt_systemNm" label="" style=""></w2:textbox>
-			</xf:group>
+			</xf:group> -->
 			<w2:generator style="" id="gen_firstGenerator" tagname="ul" class="nav">
 				<xf:group style="" id="" class="" tagname="li">
 					<w2:anchor outerDiv="false" style="" id="btn_menu1_Label" ev:onclick="scwin.btn_menu1_Label_onclick">

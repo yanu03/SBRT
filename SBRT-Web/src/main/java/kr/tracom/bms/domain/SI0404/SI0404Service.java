@@ -39,12 +39,14 @@ public class SI0404Service extends ServiceSupport {
 	public Map SI0404G1S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
-		int dCnt = 0;		
+		int dCnt = 0;
+		List<Map<String, Object>> soundList = null;
 		
 		List<Map<String, Object>> param = getSimpleList("dlt_BMS_ROUT_NODE_CMPSTN");
 		try {
+			
 			//기존 노선노드테이블, 노선링크테이블 삭제
-			if(param.size()>0) {
+			if(param.size()>0) {				
 				si0404Mapper.SI0404G1DA0(param.get(0));
 				si0404Mapper.SI0404G1DA1(param.get(0));
 			}
@@ -152,8 +154,6 @@ public class SI0404Service extends ServiceSupport {
 		List<Map<String, Object>> nodeList = null;
 		List<Map<String, Object>> staList = null;
 		
-		
-		
 		if(map.get("NODE_TYPE") == null || ((String)map.get("NODE_TYPE")).isEmpty() 
 				|| Constants.NODE_TYPE_NORMAL.equals(map.get("NODE_TYPE"))){
 			//일반 노드 처리
@@ -189,7 +189,7 @@ public class SI0404Service extends ServiceSupport {
 			for(int i = 0; i < tempList.getLength(); i++) { //노선별 정류장에 걸리는 for문
 				Map<String, Object> tmp = new HashMap<String, Object>();
 				Node child = tempList.item(i);
-	
+
 				//한 노선의 정류장 parse
 				if(child.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element)child;
@@ -198,16 +198,51 @@ public class SI0404Service extends ServiceSupport {
 					tmp.put("STTN_NO",DataInterface.getTagValue("nodeno", eElement));
 					tmp.put("GPS_Y",DataInterface.getTagValue("gpslati", eElement));
 					tmp.put("GPS_X",DataInterface.getTagValue("gpslong", eElement));
+					tmp.put("NODE_TYPE",Constants.NODE_TYPE_BUSSTOP);
 					
 					staList.add(tmp);
 				}
 			}
+			//첫번째 정류장과 마지막 정류장이 같은 경우 (순환노선)
+			//첫번째 정류장 삭제
+			if(staList.size() > 0) {
+				if(staList.get(0).get("STTN_ID").equals(staList.get(staList.size()-1).get("STTN_ID"))) {
+					staList.remove(0);
+				}
+			}
 		}
-		
+
 		if(nodeList!=null && nodeList.size() > 0 && staList!=null && staList.size() > 0) {
-			returnList = DataInterface.insertSttn(nodeList, staList);
+			returnList = DataInterface.generalNode2(staList,nodeList);
+			DataInterface.insertNodeToNode(returnList, staList);
+			
+			map.put("NODE_TYPE","NT01");
+			List<Map<String, Object>> crsList = routMapper.selectNodeListByRout(map);
+			if(crsList!=null && crsList.size() > 0) {
+				returnList = DataInterface.generalNode2(crsList,returnList);
+				DataInterface.insertNodeToNode(returnList, crsList);
+			}
+			map.put("NODE_TYPE","NT06");
+			List<Map<String, Object>> sndList = routMapper.selectNodeListByRout(map);
+			if(sndList!=null && sndList.size() > 0) {
+				DataInterface.insertNodeToNode(returnList, sndList);
+			}
 		}else if(nodeList!=null && nodeList.size() > 0) {
-			returnList = nodeList;
+			map.put("NODE_TYPE","NT01");
+			List<Map<String, Object>> crsList = routMapper.selectNodeListByRout(map);
+			if(crsList!=null && crsList.size() > 0) {
+				returnList = DataInterface.generalNode2(crsList,nodeList);
+				DataInterface.insertNodeToNode(returnList, crsList);
+				
+				map.put("NODE_TYPE","NT06");
+				List<Map<String, Object>> sndList = routMapper.selectNodeListByRout(map);
+				if(sndList!=null && sndList.size() > 0) {
+					DataInterface.insertNodeToNode(returnList, sndList);
+				}
+			}
+			else {
+				returnList = nodeList;
+			}
 		}else if(staList!=null && staList.size() > 0) {
 			returnList = staList;
 		}

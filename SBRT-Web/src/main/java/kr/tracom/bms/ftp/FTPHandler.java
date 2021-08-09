@@ -475,18 +475,18 @@ public class FTPHandler {
 	
 	
 	//PI0902 전자노선도 예약 jhlee
-	public void reserveErm(Map<String, Object> data) throws Exception {
+	public void reserveErm(Map<String, Object> vhcData, Map<String, Object> rpData) throws Exception {
 		//관리아이디 길이가 16이 아니면
-		if(data.get("MNG_ID").toString().length() != 16) {
+		if(vhcData.get("MNG_ID").toString().length() != 16) {
 			return;
 		}
 		
-		String impId = data.get("MNG_ID").toString().substring(0, 10);
-		String dvcId = data.get("MNG_ID").toString().substring(10, 16);
+		String impId = vhcData.get("MNG_ID").toString().substring(0, 10);
+		String dvcId = vhcData.get("MNG_ID").toString().substring(10, 16);
 		
 		
 		String localPath = Paths.get(getRootLocalPath(), "/vehicle/", impId, "/device/" + dvcId, "/config").toString();
-		String ftpPath	 = getRootServerPath() + "/vehicle/" + impId + "device/" + dvcId + "/config";
+		String ftpPath	 = getRootServerPath() + "/vehicle/" + impId + "/device/" + dvcId + "/config";
 		
 		File dir = new File(localPath);
 		
@@ -496,12 +496,23 @@ public class FTPHandler {
 		
 		createFtpDirectory(ftpPath);
 		
+		String header = Constants.CSVForms.ELEC_ROUTER;
+		String row = Constants.CSVForms.ROW_SEPARATOR
+				 + rpData.get("TIME_KO") + Constants.CSVForms.COMMA
+				 + rpData.get("TIME_EN") + Constants.CSVForms.COMMA
+				 + rpData.get("CATEGORY_VAL") + Constants.CSVForms.COMMA
+				 + rpData.get("FRAME_VAL") + Constants.CSVForms.COMMA
+				 + rpData.get("FONT_VAL");
 		
-		String txt = Constants.CSVForms.ROW_SEPARATOR
-				+ "";
+		File file = new File(localPath + "/config.csv");
+		
+		try {
+			createCSV(file, header + row);
+			processSynchronize(localPath, ftpPath);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
-	
 	
 	/*
 	 * IL001이면 한글이고

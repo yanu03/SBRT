@@ -231,6 +231,7 @@
 				if (rtn) {
 					var val_NODE_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("NODE_ID");
 					//dma_sub_search.set("NODE_IDS", val_NODE_ID);
+					dma_sub_search.set("ROUTE_ID", dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "ROUTE_ID"));
 					dma_sub_search.set("INT_ROUT_ID", dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "INT_ROUT_ID"));
 					dma_sub_search.set("AREA", dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "AREA"));
 					var param = dma_sub_search.get("ROUTE_ID");
@@ -282,7 +283,7 @@
 			com.confirm(str, function(rtn) {
 				if (rtn) {
 					com.clearGrid(SI0404G1);
-					routMap.drawRoute("map_SI0404", SI0404G1, -1, false);
+					com.searchGrid(SI0404G0, sub_SI0404G0R0);
 				}
 			});
 		}
@@ -295,7 +296,6 @@
 	}
 	
 	scwin.insertNode = function(obj){
-	
 		dlt_BMS_ROUT_NODE_CMPSTN.removeAll();
 		var route_id = dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "ROUTE_ID");
 		var area = dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "AREA");
