@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.bms.domain.PI0207.PI0207Mapper">
+
+<select id="PI0207G0R0" resultType="Map">
+	select  ORGA_ID,
+			ORGA_NM,
+			REMARK,
+		   (select COUNT(ORGA_ID)
+			FROM sbrt.BMS_VOC_ORGA_LIST b
+			WHERE b.ORGA_ID = a.ORGA_ID) AUDIO_COUNT,
+		   (select SUM(PLAY_TM)
+			FROM sbrt.BMS_VOC_INFO c, sbrt.BMS_VOC_ORGA_LIST b
+			WHERE c.VOC_ID = b.VOC_ID
+			AND a.ORGA_ID = b.ORGA_ID) TOTAL_TIME
+	
+
+	from	sbrt.BMS_VOC_ORGA_INFO a
+	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND ORGA_ID LIKE CONCAT('%',#{CONTENT},'%') || ORGA_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'ORGA_ID'">
+			AND ORGA_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'ORGA_NM'">
+			AND ORGA_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+</select>
+	
+<select id="PI0207G0K0" resultType="Map">
+	SELECT CONCAT('AG', LPAD(NEXTVAL(SEQ_BMS_VOC_ORGA_INFO_0), 8, '0')) AS 'SEQ'
+</select>
+
+<select id="PI0207SHI0" resultType="Map">
+	select ORGA_ID, ORGA_NM
+	from BMS_VOC_ORGA_INFO
+	order by ORGA_NM
+</select>
+
+<insert id="PI0207G0I0" parameterType="Map">
+	insert into BMS_VOC_ORGA_INFO
+			(
+				ORGA_ID
+				,ORGA_NM
+				,REMARK
+				,UPD_DTM
+				,UPD_ID
+			)
+	values 
+			(
+				#{ORGA_ID}
+				,#{ORGA_NM}
+				,#{REMARK}
+				,#{UPD_DTM}
+				,#{SSN_USER_ID}				
+			)
+</insert>
+
+<update id="PI0207G0U0" parameterType="Map">
+	update BMS_VOC_ORGA_INFO
+	set 	ORGA_NM = #{ORGA_NM},
+			REMARK = #{REMARK},
+			UPD_DTM = #{UPD_DTM},
+			UPD_ID = #{SSN_USER_ID}
+	where	ORGA_ID = #{ORGA_ID}		
+</update>
+
+<delete id="PI0207G0D0" parameterType="Map">
+	delete
+	from BMS_VOC_ORGA_INFO
+	where ORGA_ID = #{ORGA_ID};
+	
+	DELETE FROM BMS_VOC_ORGA_LIST 
+	WHERE ORGA_ID = #{ORGA_ID}
+</delete>
+
+<select id="PI0207G1R0" resultType="Map">
+	select  VOC_ID,
+			VOC_NM,
+			DATE_FORMAT(PLAY_ST_DT, '%Y%m%d') PLAY_ST_DT,
+			PLAY_TYPE,
+			REMARK,
+			PLAY_TM,
+			DATE_FORMAT(PLAY_ED_DT, '%Y%m%d') PLAY_ED_DT
+			
+	from 	sbrt.BMS_VOC_INFO
+</select>
+
+<select id="PI0207G2R0" resultType="Map" parameterType="Map">
+	select a.ORGA_ID,
+		  	a.VOC_ID,
+		  	a.SN,
+		  	b.VOC_NM,
+		  	b.PLAY_TYPE,
+		  	b.PLAY_TM,
+		  	DATE_FORMAT(PLAY_ST_DT, '%Y%m%d') PLAY_ST_DT,
+		  	DATE_FORMAT(PLAY_ED_DT, '%Y%m%d') PLAY_ED_DT
+	
+	from BMS_VOC_ORGA_LIST a  INNER JOIN BMS_VOC_INFO b ON a.VOC_ID = b.VOC_ID
+	where a.ORGA_ID = #{ORGA_ID}
+	order by a.SN
+</select>
+
+<insert id="PI0207G2I0" parameterType="Map">
+	insert into BMS_VOC_ORGA_LIST
+			(
+				ORGA_ID,
+				VOC_ID,
+				SN
+			)	
+	values 
+			(
+				#{ORGA_ID},
+				#{VOC_ID},
+				#{SN}
+			)
+</insert>
+
+<update id="PI0207G2U0" parameterType="Map"> 
+	update BMS_VOC_ORGA_LIST
+	set SN = #{SN}
+	where ORGA_ID = #{ORGA_ID}
+	and	VOC_ID = #{VOC_ID}		
+
+</update>
+
+<delete id="PI0207G2D0" parameterType="Map">
+	DELETE FROM BMS_VOC_ORGA_LIST 
+	WHERE ORGA_ID = #{ORGA_ID}
+	AND VOC_ID = #{VOC_ID}
+</delete>
+
+
+</mapper>
