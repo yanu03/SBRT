@@ -200,15 +200,19 @@
 	
 	scwin.PI0902G0_onrowindexchange = function(row,oldRow) {
 		//Service에 선택한 row 데이터 넘겨주기용
-		dlt_BMS_ED_RSV_RST_INFO.getCellData(row, "SET_ID")
-		dma_BMS_ED_INFO.set("SET_ID", dlt_BMS_ED_INFO.getCellData(row, "SET_ID"));
-		dma_BMS_ED_INFO.set("SET_NM", dlt_BMS_ED_INFO.getCellData(row, "SET_NM"));
-		dma_BMS_ED_INFO.set("TIME_KO", dlt_BMS_ED_INFO.getCellData(row, "TIME_KO"));
-		dma_BMS_ED_INFO.set("TIME_EN", dlt_BMS_ED_INFO.getCellData(row, "TIME_EN"));
-		dma_BMS_ED_INFO.set("CATEGORY", dlt_BMS_ED_INFO.getCellData(row, "CATEGORY"));
-		dma_BMS_ED_INFO.set("FRAME", dlt_BMS_ED_INFO.getCellData(row, "FRAME"));
-		dma_BMS_ED_INFO.set("FONT", dlt_BMS_ED_INFO.getCellData(row, "FONT"));
-		dma_BMS_ED_INFO.set("REMARK", dlt_BMS_ED_INFO.getCellData(row, "REMARK"));		
+		
+//		dlt_BMS_ED_RSV_RST_INFO.getCellData(row, "SET_ID")
+//		dma_BMS_ED_INFO.set("SET_ID", dlt_BMS_ED_INFO.getCellData(row, "SET_ID"));
+//		dma_BMS_ED_INFO.set("SET_NM", dlt_BMS_ED_INFO.getCellData(row, "SET_NM"));
+//		dma_BMS_ED_INFO.set("TIME_KO", dlt_BMS_ED_INFO.getCellData(row, "TIME_KO"));
+//		dma_BMS_ED_INFO.set("TIME_EN", dlt_BMS_ED_INFO.getCellData(row, "TIME_EN"));
+//		dma_BMS_ED_INFO.set("CATEGORY", dlt_BMS_ED_INFO.getCellData(row, "CATEGORY"));
+//		dma_BMS_ED_INFO.set("FRAME", dlt_BMS_ED_INFO.getCellData(row, "FRAME"));
+//		dma_BMS_ED_INFO.set("FONT", dlt_BMS_ED_INFO.getCellData(row, "FONT"));
+//		dma_BMS_ED_INFO.set("REMARK", dlt_BMS_ED_INFO.getCellData(row, "REMARK"));		
+		
+		var jsonData = dlt_BMS_ED_INFO.getAllJSON()[row];
+		dma_BMS_ED_INFO.setJSON(jsonData);
 		
 		var focusOption = {keyMap : dma_subsearch};
 		com.changeDualGrid(PI0902G0, PI0902G1, sub_PI0902G1S0, sub_PI0902G1R0, focusOption, row, oldRow);
