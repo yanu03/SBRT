@@ -126,7 +126,7 @@
 			</xf:submission>
 			<xf:submission id="sub_PI0702G1R0" ref="data:json,dma_subsearch" target="data:json,dlt_VHC_MST" action="/pi/PI0702G1R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0702G1R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_PI0702G1U0" ref='data:json,{"action":"modified","id":"dlt_VHC_MST"}' target="data:json,dma_result"
 				action="/pi/PI0702G1U0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
@@ -190,6 +190,9 @@
 		
 		RSV_DT.setValue($p.getCurrentServerDate("yyyyMM"));
 	};
+	
+	$p.executeSubmission(sub_PI0702SHI0);
+	
 	
 	scwin.onpageunload = function() {
 		
@@ -304,6 +307,10 @@
 	
 	scwin.RSV_DT_onchange = function() {
 		com.executeSubmission(sub_PI0702G2R0);		
+	};
+	
+	scwin.sub_PI0702G1R0_submitdone = function(e) {
+		com.setFocusedCell(PI0702G1, "VHC_ID");
 	};
 	]]></script>
 	</head>

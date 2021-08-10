@@ -74,6 +74,10 @@ public class LoginService {
 	 */
 
 	public int updatePassword(Map param) {
+		
+		String cryptoPs = Sha256.getHashTwo((String) param.get("NEW_PASSWORD"), "".getBytes(),(String) param.get("USER_ID"));
+		param.put("NEW_PASSWORD",cryptoPs);
+		
 		return loginMapper.updatePassword(param);
 	}
 

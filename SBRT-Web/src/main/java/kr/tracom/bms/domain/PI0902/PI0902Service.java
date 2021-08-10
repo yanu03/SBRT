@@ -9,6 +9,8 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import kr.tracom.bms.domain.PI0902.PI0902Mapper;
+import kr.tracom.bms.ftp.FTPHandler;
+import kr.tracom.cm.domain.Common.CommonMapper;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.util.Result;
@@ -18,6 +20,12 @@ public class PI0902Service extends ServiceSupport{
 
 	@Autowired
 	private PI0902Mapper pi0902Mapper;
+	
+	@Autowired
+	private CommonMapper commonMapper;
+	
+	@Autowired
+	private FTPHandler ftpHandler;
 	
 	public List PI0902G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
@@ -41,6 +49,11 @@ public class PI0902Service extends ServiceSupport{
 		return pi0902Mapper.PI0902G1R1();
 	}
 	
+	public String getTxtVal1(Map param) throws Exception {
+		List<Map<String, Object>> list = commonMapper.selectCommonDtlList(param);
+		return list.get(0).get("TXT_VAL1").toString();
+	}
+	
 	//예약
 	public Map PI0902G1S0() throws Exception {
 		int iCnt = 0;
@@ -60,9 +73,22 @@ public class PI0902Service extends ServiceSupport{
 				Map data = (Map) param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("U")) {
-					iCnt = pi0902Mapper.PI0902G1I0(data);		
-//					String vhcId = String.valueOf(data.get("VHC_ID"));
+					iCnt = pi0902Mapper.PI0902G1I0(data);
 					
+					Map m = new HashMap();
+					m.put("CO_CD", "CATEGORY");
+					m.put("DL_CD", map.get("CATEGORY").toString());
+					map.put("CATEGORY_VAL", getTxtVal1(m));
+					
+					m.replace("CO_CD", "FRAME");
+					m.replace("DL_CD", map.get("FRAME").toString());
+					map.put("FRAME_VAL", getTxtVal1(m));
+					
+					m.replace("CO_CD", "FONT");
+					m.replace("DL_CD", map.get("FONT").toString());
+					map.put("FONT_VAL", getTxtVal1(m));
+					
+					ftpHandler.reserveErm(data, map);//jh
 				} 
 			}			
 			

@@ -7,7 +7,15 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface PI0202Mapper {
-	public List<Map> PI0202G0R0(Map param);
 	public List<Map> PI0202G1R0(Map param);
-	public List<Map> PI0202G2R0(Map param);
+	
+	public int PI0202G1I0(Map param);
+	
+	public int PI0202G1D0(Map param);
+	
+	public int PI0202G1U0(Map param);
+	
+	public Map PI0202G1K0();
+	
+	public List<Map> PI0202P0R0(Map param);
 }

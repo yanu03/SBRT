@@ -17,21 +17,24 @@ import kr.tracom.cm.support.ControllerSupport;
 public class PI0202Controller extends ControllerSupport {
 
 	@Autowired
-	private PI0202Service PI0202Service;
+	private PI0202Service pi0202Service;
 
-	@RequestMapping("/pi/PI0202G0R0")
-	public @ResponseBody Map<String, Object> PI0202G0R0() throws Exception {
-		result.setData("dlt_BMS_ROUT_MST", PI0202Service.PI0202G0R0());
-		return result.getResult();
-	}
 	@RequestMapping("/pi/PI0202G1R0")
 	public @ResponseBody Map<String, Object> PI0202G1R0() throws Exception {
-		result.setData("dlt_BMS_NODE_MST", PI0202Service.PI0202G1R0());
+		result.setData("dlt_BMS_ROUT_NODE_CMPSTN", pi0202Service.PI0202G1R0());
 		return result.getResult();
 	}
-	@RequestMapping("/pi/PI0202G2R0")
-	public @ResponseBody Map<String, Object> PI0202G2R0() throws Exception {
-		result.setData("dlt_BMS_VOC_ORGA_LIST", PI0202Service.PI0202G2R0());
+	
+	@RequestMapping("/pi/PI0202G1S0")
+	public @ResponseBody Map<String, Object> PI0202G1S0() throws Exception {
+		Map map = pi0202Service.PI0202G1S0();
+		result.setData("dma_result", map);
+		return result.getResultSave();
+	}
+	@RequestMapping("/pi/PI0202P0R0")
+	public @ResponseBody Map<String, Object> PI0202P0R0() throws Exception {
+		result.setData("dlt_BMS_VOC_ORGA_INFO", pi0202Service.PI0202P0R0());
 		return result.getResult();
 	}	
+
 }

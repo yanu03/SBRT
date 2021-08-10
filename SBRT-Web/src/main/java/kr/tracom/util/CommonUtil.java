@@ -440,7 +440,7 @@ public class CommonUtil {
 		try {
 			result = (object==null||((String)object).isEmpty())?0:Double.parseDouble((String)object);
 		}catch (Exception e) {
-			result = (double)object;
+			result = (object==null)?0:Double.parseDouble(String.valueOf(object));
 		}
 		return result;
 	}

@@ -11,8 +11,8 @@ public interface RoutMapper {
 	public int updateSttn(Map param);
 	public int updateCrs(Map param);
 	public int updateRout(Map param);
-	public List<Map> selectRoutList(Map param);
-	public List<Map> selectRoutItem();
-	public List<Map> selectNodeListByRouts(Map param);
-	public List<Map> selectNodeListByRout(Map param);
+	public List<Map<String, Object>> selectRoutList(Map param);
+	public List<Map<String, Object>> selectRoutItem();
+	public List<Map<String, Object>> selectNodeListByRouts(Map param);
+	public List<Map<String, Object>> selectNodeListByRout(Map param);
 }

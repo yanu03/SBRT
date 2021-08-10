@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.bms.domain.PI0206.PI0206Mapper">
+	<select id="PI0206G0R0" resultType="Map">
+		SELECT 		ROUTE_ID
+					,ROUT_NM
+					,WAY_DIV
+					,ST_STTN_ID
+					,ST_STTN_NM
+					,ED_STTN_ID
+					,ED_STTN_NM
+					,REMARK
+					
+		FROM		BMS_ROUT_MST			
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'ROUTE_ID'">
+				ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'ROUT_NM'">
+				ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>		
+	</select>	
+
+	<select id="PI0206G1K0" resultType="Map">
+		SELECT CONCAT('AR', LPAD(NEXTVAL(SEQ_BMS_VOC_RSV_INFO_0), 8, '0')) AS 'SEQ'
+	</select>
+
+	<select id="PI0206SHI0" resultType="Map">
+		SELECT		 ROUTE_ID
+					,ROUT_NM
+		FROM	     BMS_ROUT_MST
+	</select>
+
+	<select id="PI0206G1R0" resultType="Map">
+		SELECT
+			 A.VHC_ID
+			,A.VHC_NO
+			,A.COMP_ID
+			,A.CHAS_NO
+			,A.AREA
+			,A.MAKER
+			,DATE_FORMAT(A.RELS_DT, '%Y-%m-%d') RELS_DT
+			,A.MODEL_NM
+			,A.ROUT_DIV
+			,A.VHC_TYPE
+			,A.VHC_KIND
+			,A.VHC_FUEL
+			,A.REMARK
+			,IF(C.COMPLETE_YN = 'N', '예약중', NULL) RSV_STATE
+			,B.MNG_ID
+			,C.RSV_ID
+			,DATE_FORMAT(D.RSV_DT, '%Y-%m-%d') RSV_DT
+			,IF(A.USE_YN = 'Y', '사용', NULL) USE_YN
+			,E.COMP_NM
+		FROM 
+		 	sbrt.BMS_VHC_MST A 
+			LEFT JOIN sbrt.BMS_DVC_INFO B ON A.VHC_ID = B.VHC_ID
+			LEFT JOIN sbrt.BMS_VOC_RSV_RST_INFO C ON B.MNG_ID = C.MNG_ID AND COMPLETE_YN = 'N'
+			LEFT JOIN sbrt.BMS_VOC_RSV_INFO D ON C.RSV_ID = D.RSV_ID		
+			LEFT JOIN sbrt.BMS_TRANSCOMP_MST E ON A.COMP_ID = E.COMP_ID	
+		WHERE
+			A.USE_YN = 'Y'
+			AND B.MNG_ID IS NOT NULL
+		<if test="CONTENT != null and CONTENT != ''">
+			AND	A.VHC_NO LIKE CONCAT('%',#{CONTENT},'%')
+		</if>				
+		GROUP BY 
+			A.VHC_ID
+		ORDER BY 
+			A.VHC_ID
+	</select>
+	
+	
+	<insert id="PI0206G1I0" parameterType="Map">
+	
+		<selectKey keyProperty="RSV_ID" resultType="String" order="BEFORE">
+    		SELECT CONCAT('AR', LPAD(NEXTVAL(SEQ_BMS_VOC_RSV_INFO_0), 8, '0')) AS RSV_ID
+    	</selectKey>	
+	
+			
+		INSERT INTO BMS_VOC_RSV_INFO
+				(
+					RSV_ID
+					,ROUTE_ID
+					,RSV_DT
+				)
+				
+		VALUES	(
+					#{RSV_ID}	
+					,#{ROUTE_ID}
+					,NOW()
+				);
+	
+		INSERT INTO BMS_VOC_RSV_RST_INFO
+			(
+				RSV_ID
+				,MNG_ID
+				,COMPLETE_YN
+			)
+			VALUES(
+				#{RSV_ID}
+				,#{MNG_ID}
+				,'N'
+			);
+		
+	</insert>
+
+	<update id="PI0206G1U0" parameterType="Map">
+		UPDATE		BMS_VOC_RSV_RST_INFO
+		SET			
+					PROCE_RST = 'PR008'
+				,	SEND_DTM = NOW()
+				,	COMPLETE_YN = 'Y'
+		WHERE		
+					RSV_ID = #{RSV_ID}
+	</update>
+	
+	<select id="PI0206G2R0" resultType="Map">
+		SELECT 		
+			VHC.VHC_ID
+			,VHC.VHC_NO
+			,DVC.MNG_ID
+			,RST.PROCE_RST
+			,DATE_FORMAT(RST.SEND_DTM, '%Y-%m-%d') SEND_DTM
+			,VHC.CHAS_NO
+			,VHC.MAKER
+			,VHC.AREA
+			,TSM.COMP_NM
+			,DATE_FORMAT(VHC.RELS_DT, '%Y-%m-%d') RELS_DT
+			,VHC.MODEL_NM
+			,VHC.VHC_KIND
+			,VHC.ROUT_DIV
+			,VHC.VHC_TYPE
+			,VHC.VHC_FUEL
+			,IF(VHC.USE_YN = 'Y', '사용', NULL) USE_YN
+			,VHC.REMARK	
+			,DATE_FORMAT(RSV.RSV_DT, '%Y-%m-%d') RSV_DT
+			,IF(RST.COMPLETE_YN = 'N', '예약중', '예약종료') RSV_STATE					
+		FROM		
+			sbrt.BMS_VHC_MST VHC
+		LEFT JOIN 	sbrt.BMS_DVC_INFO DVC
+		ON		  	VHC.VHC_ID = DVC.VHC_ID
+		LEFT JOIN	sbrt.BMS_VOC_RSV_RST_INFO RST
+		ON			DVC.MNG_ID = RST.MNG_ID
+		LEFT JOIN   sbrt.BMS_VOC_RSV_INFO RSV
+		ON			RST.RSV_ID = RSV.RSV_ID
+		LEFT JOIN	sbrt.BMS_TRANSCOMP_MST	TSM
+		ON			VHC.COMP_ID = TSM.COMP_ID
+		WHERE		
+			VHC.VHC_ID = #{VHC_ID}
+		<if test="RSV_STATE == '예약중'">
+			AND RST.COMPLETE_YN = 'N'
+		</if>
+		<if test="RSV_STATE == '예약종료'">
+			AND RST.COMPLETE_YN = 'Y'
+		</if>			
+		<if test="RSV_DT != null">
+			AND DATE_FORMAT(RSV.RSV_DT, '%Y%m') = ${RSV_DT}
+		</if>	
+		ORDER BY
+			RSV.RSV_DT
+	</select>
+	
+	<select id="PI0206G1R1" resultType="Map">
+		SELECT
+		 	DVC.MNG_ID
+		 	,DVC.DVC_ID
+		FROM
+			BMS_VHC_MST VHC
+			LEFT JOIN BMS_DVC_INFO DVC ON VHC.VHC_ID = DVC.VHC_ID
+		WHERE
+			MNG_ID IS NOT NULL
+	</select>
+	
+	<select id="selectDvcCd" parameterType="Map" resultType="Map">
+		SELECT
+			  A.VHC_ID
+			, SUBSTRING(A.MNG_ID, 1, 10) AS IMP_ID
+			, A.DVC_ID
+			, A.MNG_ID
+			, A.DVC_KIND
+			, B.DL_CD
+			, B.DL_CD_NM
+			, B.TXT_VAL1
+			, B.TXT_VAL2
+			, B.TXT_VAL3
+			, B.NUM_VAL4
+			, B.NUM_VAL5
+			, B.NUM_VAL6
+		FROM BMS_DVC_INFO A
+			LEFT JOIN BMS_DL_CD_INFO B ON A.DVC_KIND = B.DL_CD    
+		WHERE A.VHC_ID = #{VHC_ID}
+			AND B.CO_CD = 'DVC_KIND'
+		    AND B.TXT_VAL1 = 'RD'
+		    AND B.USE_YN = 'Y'
+	</select>
+	
+	<select id="selectRouteInfo" parameterType="String" resultType="Map">
+		SELECT
+			A.ROUTE_ID
+			, A.REP_ROUT_ID
+			, A.INT_ROUT_ID
+			, A.REP_ROUT_NM
+			, A.ROUT_NM
+			, A.WAY_DIV
+			, B.TXT_VAL1
+		FROM BMS_ROUT_MST A
+			LEFT JOIN BMS_DL_CD_INFO B ON A.WAY_DIV = B.DL_CD AND B.CO_CD = 'WAY_DIV'
+		WHERE ROUTE_ID = #{routeId}
+	</select>
+ 
+</mapper>
