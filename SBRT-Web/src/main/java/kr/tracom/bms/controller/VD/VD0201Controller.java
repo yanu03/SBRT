@@ -37,4 +37,11 @@ public class VD0201Controller extends ControllerSupport {
 		result.setData("dlt_searchitem", VD0201Service.VD0201SHI0());
 		return result.getResult();
 	}
+	
+	@RequestMapping("/vd/VD0201G2R0")
+	public @ResponseBody Map<String, Object> VD0201G2R0() throws Exception {
+		result.setData("dlt_BMS_ROUT_LINK_CMPSTN", VD0201Service.VD0201G2R0());
+		return result.getResult();
+	}
+	
 }

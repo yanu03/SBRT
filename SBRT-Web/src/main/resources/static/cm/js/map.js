@@ -633,7 +633,7 @@ routMap.addMarkerAni = function(mapId, lat, lng, id) {
 
 
 /**버스마커 **/
-routMap.showBusMarker = function(mapId, data, idx, focusIdx) {
+routMap.showBusMarker = function(mapId, data, idx, focusIdx, busGrid) {
 	// 마커 이미지의 이미지 크기 입니다
 	var imageSize = new kakao.maps.Size(24, 35); 
 	var markerImage = null;
@@ -676,7 +676,6 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx) {
 	}
 
 	marker.normalImage = markerImage;
-
 	var overlay = null;
 	var msg = "<div class = 'busoverlay'>"
 			+ "<span class = 'map_title' style=''>" + data.VHC_NO + "</span>"
@@ -702,6 +701,53 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx) {
 	
 	marker.setMap(routMap.mapInfo[mapId].map); //Marker가 표시될 Map 설정.
 	routMap.mapInfo[mapId].busMarkers.push(marker);
+	
+	/*
+	// 마커에 click 이벤트를 등록합니다
+	// 여기부터 클릭 이벤트 수정해야함
+	// grid도 나중에 추가한거임 필요없으면 빼야됨
+	kakao.maps.event.addListener(marker, 'click', function() {
+		debugger;
+		busGrid.setFocusedCell(idx,"VHC_ID");		
+		if(routMap.mapInfo[mapId].dragging){
+			data.click({
+				marker: marker,
+				nodeId: data.NODE_ID,
+				index: data.index
+			});
+			routMap.mapInfo[mapId].isMove = false;
+			routMap.mapInfo[mapId].selectedIndex = idx;
+			busGrid.setFocusedCell(idx,"VHC_ID");
+			return;
+		}
+		// 클릭된 마커가 없고, click 마커가 클릭된 마커가 아니면
+		// 마커의 이미지를 클릭 이미지로 변경합니다
+		if (!routMap.mapInfo[mapId].selectedMarker
+				|| routMap.mapInfo[mapId].selectedMarker !== marker) {
+			
+			// 클릭된 마커 객체가 null이 아니면
+			// 클릭된 마커의 이미지를 기본 이미지로 변경하고
+			!!routMap.mapInfo[mapId].selectedMarker
+					&& routMap.mapInfo[mapId].selectedMarker
+							.setImage(routMap.mapInfo[mapId].selectedMarker.normalImage);
+	
+			// 현재 클릭된 마커의 이미지는 클릭 이미지로 변경합니다
+			marker.setImage(markerSelImage);
+		}
+		
+		
+		//routMap.mapInfo[mapId].markers[routMap.mapInfo[mapId].selectedIndex].setImage(routMap.mapInfo[mapId].selectedMarker.normalImage);
+		
+		// 클릭된 마커를 현재 클릭된 마커 객체로 설정합니다
+		routMap.mapInfo[mapId].selectedMarker = marker;
+
+		marker.setZIndex(3);
+		routMap.mapInfo[mapId].isMove = false;
+		routMap.mapInfo[mapId].selectedIndex = idx;
+		busGrid.setFocusedCell(idx,"VHC_ID");
+	});			
+	
+	*/
 }
 
 
@@ -1608,21 +1654,18 @@ routMap.drawRoute = function(mapId, grid, focusIdx) {
 	}
 }
 
-routMap.drawSound = function(mapId, grid, focusIdx) {
-	
-	var list = com.getGridDispJsonData(grid);
-
+routMap.drawRoute2 = function(mapId, list, focusIdx) {
 	if(routMap.mapInfo[mapId].linkMode){
 		if(list.length>0){
 			var data = list[list.length-1];
 			var temp = {
-				NODE_ID: data.ED_NODE_ID,
-				GPS_Y: data.ED_GPS_Y,
-				GPS_X: data.ED_GPS_X,
-				NODE_NM: data.ED_NODE_NM,
-				NODE_TYPE: data.ED_NODE_TYPE
+					NODE_ID: data.ED_NODE_ID,
+					GPS_Y: data.ED_GPS_Y,
+					GPS_X: data.ED_GPS_X,
+					NODE_NM: data.ED_NODE_NM,
+					NODE_TYPE: data.ED_NODE_TYPE
 			};
-			list.push(temp);
+			list.push(temp);	
 		}
 	}
 	routMap.initDisplay(mapId);
@@ -1631,7 +1674,7 @@ routMap.drawSound = function(mapId, grid, focusIdx) {
 		for(var i = 0; i < list.length; i++) {
 			
 			/**드래그이벤트**/
-			if(routMap.mapInfo[mapId].draggable && list[i].NODE_TYPE == routMap.NODE_TYPE.SOUND){
+			if(routMap.mapInfo[mapId].draggable){
 				list[i].click = function(e) {
 					routMap.mapInfo[mapId].dragging = false;
 					routMap.moveRoute(mapId,grid,e);
@@ -1639,33 +1682,28 @@ routMap.drawSound = function(mapId, grid, focusIdx) {
 			}
 			
 			list[i].index = i;
+
+			/**드래그이벤트**/
+			list[i].draggable = routMap.mapInfo[mapId].draggable;
 			
-			if(list[i].NODE_TYPE == routMap.NODE_TYPE.SOUND) {
-				debugger;
-				if( list[i].ALL_PLAY_TM != null && list[i].ALL_PLAY_TM != 0) {
-						var radius = Math.round((routMap.LIMIT_SPEED / 3600 * 1000) * list[i].ALL_PLAY_TM);
-						
-						routMap.mapInfo[mapId].circles.push(routMap.getDrawingCircle(mapId, list[i].GPS_Y, list[i].GPS_X, radius));
-				}
-			}
-			else if(list[i].NODE_TYPE != routMap.NODE_TYPE.VERTEX){
+			if(list[i].NODE_TYPE != routMap.NODE_TYPE.VERTEX){
 				routMap.mapInfo[mapId].nodes.push(routMap.getDrawingNode(mapId,list[i].GPS_Y, list[i].GPS_X));
 			}
+			// 노드 타입이 버스 정류장 마커 표시
+			if(list[i].NODE_TYPE == routMap.NODE_TYPE.BUSSTOP && routMap.mapInfo[mapId].dispCheck.indexOf(routMap.NODE_TYPE.BUSSTOP)>=0) {
+				routMap.addMarkerInter(mapId, list[i], grid, i, focusIdx);
+			}
+			else if(list[i].NODE_TYPE == routMap.NODE_TYPE.CROSS && routMap.mapInfo[mapId].dispCheck.indexOf(routMap.NODE_TYPE.CROSS)>=0) {
+				routMap.addMarkerInter(mapId, list[i], grid, i, focusIdx);
+			}
+			else if(list[i].NODE_TYPE == routMap.NODE_TYPE.VERTEX && routMap.mapInfo[mapId].dispCheck.indexOf(routMap.NODE_TYPE.VERTEX)>=0) {
+				routMap.addMarkerInter(mapId, list[i], grid, i, focusIdx);
+			}
+			// 아닐 경우(일반 노드) 네모 박스 표시
+			else if(list[i].NODE_TYPE == routMap.NODE_TYPE.NORMAL && routMap.mapInfo[mapId].dispCheck.indexOf(routMap.NODE_TYPE.NORMAL)>=0) {
+				routMap.addMarkerInter(mapId, list[i], grid, i, focusIdx);
+			}
 			
-			// 노드 타입이 사운드, 버스, 정류장 마커 표시
-			if(list[i].NODE_TYPE == routMap.NODE_TYPE.SOUND) {
-				list[i].draggable = routMap.mapInfo[mapId].draggable;
-				routMap.addSoundMarkerInter(mapId, list[i], grid, i, focusIdx);
-			}
-			else if(list[i].NODE_TYPE == routMap.NODE_TYPE.BUSSTOP) {
-				list[i].draggable = false;
-				routMap.addSoundMarkerInter(mapId, list[i], grid, i, focusIdx);
-			}
-			else if(list[i].NODE_TYPE == routMap.NODE_TYPE.CROSS) {
-				list[i].draggable = false;
-				routMap.addSoundMarkerInter(mapId, list[i], grid, i, focusIdx);
-			}
-
 			if(i < list.length -1){
 				var color = "#0000FF";
 				if(list[i].MORN_STD=='MS002'){
@@ -1674,12 +1712,11 @@ routMap.drawSound = function(mapId, grid, focusIdx) {
 				else if(list[i].MORN_STD=='MS003'){
 					color = "#FF005E";
 				}
-
+				
 				routMap.drawLine(mapId, list[i], list[i+1], color);
 			}
 		}
 		routMap.mapInfo[mapId].dragging = false;
-
 		
 		if(list.length>0){
 			if(focusIdx!=-1){
@@ -1691,6 +1728,90 @@ routMap.drawSound = function(mapId, grid, focusIdx) {
 		}
 	}
 }
+		
+routMap.drawSound = function(mapId, grid, focusIdx) {
+	   
+	   var list = com.getGridDispJsonData(grid);
+
+	   if(routMap.mapInfo[mapId].linkMode){
+	      if(list.length>0){
+	         var data = list[list.length-1];
+	         var temp = {
+	            NODE_ID: data.ED_NODE_ID,
+	            GPS_Y: data.ED_GPS_Y,
+	            GPS_X: data.ED_GPS_X,
+	            NODE_NM: data.ED_NODE_NM,
+	            NODE_TYPE: data.ED_NODE_TYPE
+	         };
+	         list.push(temp);
+	      }
+	   }
+	   routMap.initDisplay(mapId);
+	   
+	   if(list != null && list.length != 0) {
+	      for(var i = 0; i < list.length; i++) {
+	         
+	         /**드래그이벤트**/
+	         if(routMap.mapInfo[mapId].draggable && list[i].NODE_TYPE == routMap.NODE_TYPE.SOUND){
+	            list[i].click = function(e) {
+	               routMap.mapInfo[mapId].dragging = false;
+	               routMap.moveRoute(mapId,grid,e);
+	            };
+	         }
+	         
+	         list[i].index = i;
+	         
+	         if(list[i].NODE_TYPE == routMap.NODE_TYPE.SOUND) {
+	            debugger;
+	            if( list[i].ALL_PLAY_TM != null && list[i].ALL_PLAY_TM != 0) {
+	                  var radius = Math.round((routMap.LIMIT_SPEED / 3600 * 1000) * list[i].ALL_PLAY_TM);
+	                  
+	                  routMap.mapInfo[mapId].circles.push(routMap.getDrawingCircle(mapId, list[i].GPS_Y, list[i].GPS_X, radius));
+	            }
+	         }
+	         else if(list[i].NODE_TYPE != routMap.NODE_TYPE.VERTEX){
+	            routMap.mapInfo[mapId].nodes.push(routMap.getDrawingNode(mapId,list[i].GPS_Y, list[i].GPS_X));
+	         }
+	         
+	         // 노드 타입이 사운드, 버스, 정류장 마커 표시
+	         if(list[i].NODE_TYPE == routMap.NODE_TYPE.SOUND) {
+	            list[i].draggable = routMap.mapInfo[mapId].draggable;
+	            routMap.addSoundMarkerInter(mapId, list[i], grid, i, focusIdx);
+	         }
+	         else if(list[i].NODE_TYPE == routMap.NODE_TYPE.BUSSTOP) {
+	            list[i].draggable = false;
+	            routMap.addSoundMarkerInter(mapId, list[i], grid, i, focusIdx);
+	         }
+	         else if(list[i].NODE_TYPE == routMap.NODE_TYPE.CROSS) {
+	            list[i].draggable = false;
+	            routMap.addSoundMarkerInter(mapId, list[i], grid, i, focusIdx);
+	         }
+
+	         if(i < list.length -1){
+	            var color = "#0000FF";
+	            if(list[i].MORN_STD=='MS002'){
+	               color = "#dd00dd";
+	            }
+	            else if(list[i].MORN_STD=='MS003'){
+	               color = "#FF005E";
+	            }
+
+	            routMap.drawLine(mapId, list[i], list[i+1], color);
+	         }
+	      }
+	      routMap.mapInfo[mapId].dragging = false;
+
+	      
+	      if(list.length>0){
+	         if(focusIdx!=-1){
+	            routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+	         }
+	         else {
+	            routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
+	         }
+	      }
+	   }
+	}
 
 routMap.showRoute = function(mapId, list, sttn_id, type) {
 
@@ -1743,7 +1864,7 @@ routMap.showRoute = function(mapId, list, sttn_id, type) {
 	}
 }
 
-routMap.showVehicle = function(mapId, list, vhc_id) {
+routMap.showVehicle = function(mapId, list, vhc_id, grid) {
 
 
 	var focusIdx = -1;
@@ -1759,10 +1880,10 @@ routMap.showVehicle = function(mapId, list, vhc_id) {
 			
 			if(list[i].VHC_ID == vhc_id){
 				focusIdx = i;
-				routMap.showBusMarker(mapId, list[i], i, focusIdx);
+				routMap.showBusMarker(mapId, list[i], i, focusIdx, grid);
 			}
 			else {
-				routMap.showBusMarker(mapId, list[i], i, focusIdx);
+				routMap.showBusMarker(mapId, list[i], i, focusIdx, grid);
 			}
 			
 		}
@@ -1779,7 +1900,6 @@ routMap.showVehicle = function(mapId, list, vhc_id) {
 }
 
 routMap.addPolygonByClick = function(mapId, data, grgId, grgNm, e){
-	debugger;
 	var lonlat = e.latLng;
 	
 	var idx = data.insertRow();

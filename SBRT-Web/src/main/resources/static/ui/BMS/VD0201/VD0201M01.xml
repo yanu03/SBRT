@@ -28,9 +28,10 @@
 						<w2:key id="CONTENT2" name="name2" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
-				<w2:dataMap baseNode="map" id="dma_subsearch">
+				<w2:dataMap baseNode="map" id="dma_sub_search">
 					<w2:keyInfo>
 						<w2:key id="VHC_ID" name="차량ID" dataType="text"></w2:key>
+						<w2:key id="ROUTE_ID" name="노선ID" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_DVC_INFO" saveRemovedData="true">
@@ -54,23 +55,68 @@
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
+						<w2:column id="NODE_SN" name="노드순번" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
+						<w2:column id="NODE_TYPE" name="노드유형" dataType="text"></w2:column>
+						<w2:column id="LINK_ID" name="링크ID" dataType="text"></w2:column>
+						<w2:column id="STTN_ID" name="정류소ID" dataType="text"></w2:column>
+						<w2:column id="STTN_NO" name="정류소번호" dataType="text"></w2:column>
+						<w2:column id="CRS_ID" name="교차로ID" dataType="text"></w2:column>
+						<w2:column id="GPS_X" name="경도" dataType="text"></w2:column>
+						<w2:column id="GPS_Y" name="위도" dataType="text"></w2:column>
+						<w2:column id="ROUT_LEN" name="노선거리" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="AREA" name="권역" dataType="text"></w2:column>
+						<w2:column id="MORN_STD" name="집중모니터링기준" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_LINK_CMPSTN" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="LINK_ID" name="링크ID" dataType="text"></w2:column>
+						<w2:column id="LINK_SN" name="링크순번" dataType="text"></w2:column>
+						<w2:column id="MORN_STD" name="집중모니터링기준" dataType="text"></w2:column>
+						<w2:column id="LINK_NM" name="링크명" dataType="text"></w2:column>
+						<w2:column id="NODE_ID" name="시작노드ID" dataType="text"></w2:column>
+						<w2:column id="GPS_X" name="시작 X좌표" dataType="text"></w2:column>
+						<w2:column id="GPS_Y" name="시작 Y좌표" dataType="text"></w2:column>
+						<w2:column id="NODE_TYPE" name="시작노드유형" dataType="text"></w2:column>
+						<w2:column id="NODE_NM" name="시작노드명" dataType="text"></w2:column>
+						<w2:column id="ED_NODE_ID" name="종료노드ID" dataType="text"></w2:column>
+						<w2:column id="ED_GPS_X" name="종료 X좌표" dataType="text"></w2:column>
+						<w2:column id="ED_GPS_Y" name="종료 Y좌표" dataType="text"></w2:column>
+						<w2:column id="ED_NODE_TYPE" name="종료노드유형" dataType="text"></w2:column>
+						<w2:column id="ED_NODE_NM" name="종료노드명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_VD0201G0R0" ref="data:json,dma_search" target="data:json,dlt_BRT_CUR_OPER_INFO" action="/vd/VD0201G0R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="scwin.sub_VD0201G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_VD0201G1R0" ref="data:json,dma_subsearch" target='data:json,["dlt_BMS_DVC_INFO","dlt_BMS_DVC_INFO2"]'
+			<xf:submission id="sub_VD0201G1R0" ref="data:json,dma_sub_search" target='data:json,["dlt_BMS_DVC_INFO","dlt_BMS_DVC_INFO2"]'
 				action="/vd/VD0201G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_VD0201G1R0_submitdone" ev:submiterror=""
+				abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_VD0201SHI0" ref="" target="data:json,dlt_searchitem" action="/vd/VD0201SHI0" method="post" mediatype="application/json"
-				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_VD0201SHI0_submitdone"
+			<xf:submission id="sub_VD0201SHI0" ref="" target="data:json,dlt_searchitem" action="/vd/VD0201SHI0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="scwin.sub_VD0201SHI0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_VD0201G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_LINK_CMPSTN" action="/vd/VD0201G2R0" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_VD0201G2R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
+		//노선 뿌리는거 수정해야함 이상하게 나옴
+		//SI503M01 showRoute부분 참고하면 될거같음
+		
 		 var autoOptions = {
 			Main : { grid : VD0201G0, srchSbm : sub_VD0201G0R0, keyColumn : "VHC_ID", srchGrp : pgm_header, name : "노선 목록"},
 			Sub1 : { grid : VD0201G1, srchSbm : sub_VD0201G1R0, name : "장치 상태"}
@@ -79,6 +125,7 @@
 		 
 		routMap.initMap("map_VD0201", {width:"100%"
 				, height:"100%"
+				, onClick: scwin.onClickMap				
 		});
 		
 		var codeOptions = [ {code : "DVC_KIND", compID : "VD0201G1:DVC_KIND, VD0201G2:DVC_KIND"},
@@ -97,10 +144,15 @@
 	};	
 	
 	scwin.VD0201G0_onrowindexchange = function(row,oldRow) {
-		var focusOption = {keyMap : dma_subsearch};
+		var focusOption = {keyMap : dma_sub_search};
 		com.changeDualGrid(VD0201G0, VD0201G1, null, sub_VD0201G1R0, focusOption, row, oldRow);
 		routMap.showVehicle("map_VD0201", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
-		 dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "VHC_ID"));					
+							 dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "VHC_ID"), VD0201G0);		
+		var routID = dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "ROUT_ID");
+		dma_sub_search.set("ROUTE_ID", routID);
+		com.executeSubmission(sub_VD0201G2R0);		 
+//		routMap.initMapInfo("map_VD0201"); 
+		 			
 	};
 	
 	scwin.tb1_onclick = function(e) {
@@ -113,7 +165,10 @@
 	
 	scwin.sub_VD0201G0R0_submitdone = function(e) {
 		com.setFocusedCell(VD0201G0, "REP_ROUT_NM");	
-		
+//		var list = com.getGridDispJsonData(
+//		routMap.showRoute("map_VD0201", dlt_BRT_CUR_OPER_INFO.getAllJSON());		
+//		routMap.drawRoute("map_VD0201", VD0201G0, VD0201G0.getFocusedRowIndex());
+
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
@@ -122,6 +177,32 @@
 	
 	scwin.sub_VD0201SHI0_submitdone = function(e) {
 		com.searchGrid(VD0201G0, sub_VD0201G0R0);
+	};
+	
+	scwin.sub_VD0201G1R0_submitdone = function(e) {
+
+		
+		
+//		if(dlt_BMS_DVC_INFO.getTotalRow() == 0	){
+//			routMap.initDisplay("map_VD0201");
+//		}
+//		else {
+//			if(VD0201G1.getFocusedRowIndex() == -1 ){
+//				VD0201G1.setFocusedCell( 0, "NODE_ID");
+//			}
+//			else {
+//				VD0201G1.setFocusedCell( VD0201G1.getFocusedRowIndex(), "NODE_ID");
+//			}
+//		}			
+	};
+	
+	scwin.VD0201G1_onrowindexchange = function(row,oldRow) {
+//		routMap.focusNode("map_VD0201",VD0201G1,row);			
+	};
+	
+	scwin.sub_VD0201G2R0_submitdone = function(e) {
+//		routMap.showRoute("map_VD0201", dlt_BMS_ROUT_NODE_	CMPSTN.getAllJSON());			
+		routMap.drawRoute2("map_VD0201", dlt_BMS_ROUT_LINK_CMPSTN.getAllJSON());
 	};
 	]]></script>
 	</head>
@@ -236,7 +317,7 @@
 							<w2:tabs disabled="false" style="width:70px;height:30px;" id="tabs3" label="장치상태"></w2:tabs>
 							<w2:content alwaysDraw="false" style="height:100%;" id="content3">
 									<w2:gridView  autoFit="lastColumn" class="cm_grid" dataList="data:dlt_BMS_DVC_INFO"
-										ev:oncellclick="" ev:onrowindexchange="" fixedColumnWithHidden="true" id="VD0201G1"
+										ev:oncellclick="" ev:onrowindexchange="scwin.VD0201G1_onrowindexchange" fixedColumnWithHidden="true" id="VD0201G1"
 										ignoreCellClick="false" overflowX="hidden" overflowY="scroll" readOnly="" rowNumHeaderValue="순서" rowNumVisible="true"
 										rowStatusHeaderValue="상태" rowStatusVisible="false" scrollByColumn="false" showSortableImage="" sortEvent="onclick" sortable="true"
 										style="height:98%;width: 100%;" tooltipPositionY="" useShiftKey="true" visibleRowNum="">

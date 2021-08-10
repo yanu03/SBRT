@@ -22,11 +22,17 @@ public class VD0201Service extends ServiceSupport{
 	}
 
 	public List<Map> VD0201G1R0() throws Exception{
-		Map param = getSimpleDataMap("dma_subsearch");
+		Map param = getSimpleDataMap("dma_sub_search");
 		return VD0201Mapper.VD0201G1R0(param);
 	}
 	
 	public List<Map> VD0201SHI0() throws Exception{
 		return VD0201Mapper.VD0201SHI0();
 	}
+	
+	public List VD0201G2R0() throws Exception {
+		// TODO Auto-generated method stub
+		Map param = getSimpleDataMap("dma_sub_search");
+		return VD0201Mapper.VD0201G2R0(param);
+	}	
 }
