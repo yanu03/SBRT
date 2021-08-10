@@ -3,23 +3,23 @@
 
 <mapper namespace="kr.tracom.bms.domain.SI0300.SI0300Mapper">
 	<select id="SI0300G0R0" resultType="Map">
-		select  DRV_ID,
+		SELECT  DRV_ID,
 				b.COMP_NM,
 				ATTACH_ID,
 				a.COMP_ID,
 				DRV_NM,
 				DRV_ENM,
-				a.PHONE,
+				CONVERT(AES_DECRYPT(a.PHONE, HEX(SHA2('TRACOM', 512))) USING UTF8) PHONE,
 				BUS_DIV,
 				DATE_FORMAT(EPLY_DATE1, '%Y%m%d') EPLY_DATE1,
-				LIC_NO,
+				CONVERT(AES_DECRYPT(LIC_NO, HEX(SHA2('TRACOM', 512))) USING UTF8) LIC_NO,
 				DATE_FORMAT(CERTI_DT, '%Y%m%d') CERTI_DT,
 				EPLY_YN,
 				DATE_FORMAT(RETIRE_DT, '%Y%m%d') RETIRE_DT,
 				a.REMARK
 	
-		from BMS_DRV_MST a, BMS_TRANSCOMP_MST b
-		where a.COMP_ID = b.COMP_ID
+		FROM BMS_DRV_MST a, BMS_TRANSCOMP_MST b
+		WHERE a.COMP_ID = b.COMP_ID
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 				AND (DRV_ID LIKE CONCAT('%',#{CONTENT},'%') || DRV_NM LIKE CONCAT('%',#{CONTENT},'%') || COMP_NM LIKE CONCAT('%',#{CONTENT},'%')) 
 			</if>
@@ -63,46 +63,48 @@
 	</select>
 	
 	<insert id="SI0300G0I0" parameterType="Map">
-		insert into BMS_DRV_MST
-			   (
-				DRV_ID,
-				ATTACH_ID,
-				COMP_ID,
-				DRV_NM,
-				DRV_ENM,
-				PHONE,
-				BUS_DIV,
-				EPLY_DATE1,
-				EPLY_DATE2,
-				LIC_NO,
-				CERTI_DT,
-				EPLY_YN,
-				RETIRE_DT,
-				REMARK,
-				UPD_DTM,
-				UPD_ID,
-				USE_YN
-			   )
+		INSERT INTO 		BMS_DRV_MST
+						   (
+							DRV_ID
+							,ATTACH_ID
+							,COMP_ID
+							,DRV_NM
+							,DRV_ENM
+							,PHONE
+							,BUS_DIV
+							,EPLY_DATE1
+							,EPLY_DATE2
+							,LIC_NO
+							,CERTI_DT
+							,EPLY_YN
+							,RETIRE_DT
+							,REMARK
+							,UPD_DTM
+							,UPD_ID
+							,USE_YN
+						   )
 			   
-		values (
-				#{DRV_ID},
-				#{ATTACH_ID},
-				#{COMP_ID},
-				#{DRV_NM},
-				#{DRV_ENM},
-				#{PHONE},
-				#{BUS_DIV},
-				STR_TO_DATE(#{EPLY_DATE1}, '%Y%m%d'),
-				STR_TO_DATE(#{EPLY_DATE2}, '%Y%m%d'),
-				#{LIC_NO},
-				STR_TO_DATE(#{CERTI_DT}, '%Y%m%d'),
-				#{EPLY_YN},
-				STR_TO_DATE(#{RETIRE_DT}, '%Y%m%d'),
-				#{REMARK},
-				#{UPD_DTM},
-				#{UPD_ID},
-				#{USE_YN}
-				)
+		VALUES			   (
+							#{DRV_ID}
+							,#{ATTACH_ID}
+							,#{COMP_ID}
+							,#{DRV_NM}
+							,#{DRV_ENM}
+    						, AES_ENCRYPT(#{PHONE}, HEX(SHA2('TRACOM', 512)))							
+							<!-- ,#{PHONE} -->
+							,#{BUS_DIV}
+							,STR_TO_DATE(#{EPLY_DATE1}, '%Y%m%d')
+							,STR_TO_DATE(#{EPLY_DATE2}, '%Y%m%d')
+    						, AES_ENCRYPT(#{LIC_NO}, HEX(SHA2('TRACOM', 512)))								
+							<!-- ,#{LIC_NO} -->
+							,STR_TO_DATE(#{CERTI_DT}, '%Y%m%d')
+							,#{EPLY_YN}
+							,STR_TO_DATE(#{RETIRE_DT}, '%Y%m%d')
+							,#{REMARK}
+							,#{UPD_DTM}
+							,#{SSN_USER_ID}
+							,#{USE_YN}
+							)
 	</insert>
 
 	<update id="SI0300G0U0" parameterType="Map">
@@ -113,11 +115,11 @@
 				COMP_ID = #{COMP_ID},
 				DRV_NM = #{DRV_NM},
 				DRV_ENM = #{DRV_ENM},
-				PHONE = #{PHONE},
+				PHONE = AES_ENCRYPT(#{PHONE}, HEX(SHA2('TRACOM', 512))),
 				BUS_DIV = #{BUS_DIV},
 				EPLY_DATE1 = STR_TO_DATE(#{EPLY_DATE1}, '%Y%m%d'),
 				EPLY_DATE2 = STR_TO_DATE(#{EPLY_DATE2}, '%Y%m%d'),
-				LIC_NO = #{LIC_NO},
+				LIC_NO = AES_ENCRYPT(#{LIC_NO}, HEX(SHA2('TRACOM', 512))),
 				CERTI_DT = STR_TO_DATE(#{CERTI_DT}, '%Y%m%d'),
 				EPLY_YN = #{EPLY_YN},
 				RETIRE_DT = STR_TO_DATE(#{RETIRE_DT}, '%Y%m%d'),
