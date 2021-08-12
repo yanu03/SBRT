@@ -34,5 +34,6 @@ public class VD0201Service extends ServiceSupport{
 		// TODO Auto-generated method stub
 		Map param = getSimpleDataMap("dma_sub_search");
 		return VD0201Mapper.VD0201G2R0(param);
-	}	
+	}
+	
 }
