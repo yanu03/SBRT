@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.brt.domain.MO0302.MO0302Mapper">
+
+	<select id="MO0302G0R0" resultType="Map">
+		SELECT
+			DATE_FORMAT(a.CLCT_DTM, '%Y-%m-%d %H:%i:%s') AS CLCT_DTM
+			,DATE_FORMAT(b.CLOSE_DTM, '%Y-%m-%d %H:%i:%s') AS CLOSE_DTM
+			,a.INCDNT_TYPE
+			,b.INCDNT_RES_TYPE
+			,b.PROG_DIV
+			,a.VHC_NO
+			,a.LINK_ID
+			,DATE_FORMAT(a.UPD_DTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTM
+			,a.REMARK
+		FROM
+			sbrt.BRT_INCDNT_HIS a
+			LEFT JOIN sbrt.BRT_INCDNT_RES_INFO b
+			ON a.OPER_DT = b.OPER_DT AND a.VHC_ID = b.VHC_ID
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND a.INCDNT_TYPE LIKE CONCAT('%',#{CONTENT},'%') || b.PROG_DIV LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'INCDNT_TYPE'">
+				AND a.INCDNT_TYPE LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'PROG_DIV'">
+				AND b.PROG_DIV LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="(CLCT_DT != null and CLCT_DT != '') and (CLOSE_DT == null or CLOSE_DT == '')">
+				<![CDATA[AND CLCT_DTM >= #{CLCT_DT}]]>
+			</if>
+			<if test="(CLCT_DT == null or CLCT_DT == '') and CLOSE_DT != null and CLOSE_DT != '' ">
+				<![CDATA[AND CLOSE_DTM <= #{CLOSE_DT}]]>
+			</if>
+			<if test="CLCT_DT != null and CLCT_DT != '' and CLOSE_DT != null and CLOSE_DT != '' ">
+				AND CLCT_DTM between #{CLCT_DT} and #{CLOSE_DT}
+				AND CLOSE_DTM between #{CLCT_DT} and #{CLOSE_DT}
+			</if>
+		</where>	
+		ORDER BY
+			CLCT_DTM
+	</select>
+
+	<select id="MO0302SHI0" resultType="Map" parameterType="Map">
+		select  INCDNT_TYPE, PROG_DIV
+		from 	BRT_INCDNT_RES_INFO
+	</select>
+
+
+</mapper>
