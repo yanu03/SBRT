@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.cm.domain.RepRout.RepRoutMapper">
+	<select id="selectRepRoutList" resultType="Map">
+		SELECT  		REP_ROUT_ID
+					,	REP_ROUT_NM
+					,	USE_YN
+					,	REMARK
+		FROM BMS_REP_ROUT_MST
+		<where>
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+				<if test="TYPE == 'ALL'">
+					AND REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
+				</if>
+				<if test="TYPE == 'REP_ROUT_ID'">
+					AND REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
+				</if>
+				<if test="TYPE == 'REP_ROUT_NM'">
+					AND REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
+				</if>
+			</if>
+		</where>
+		ORDER BY REP_ROUT_NM
+	</select>
+	
+	<select id="selectRepRoutItem" resultType="Map">
+		SELECT REP_ROUT_ID, REP_ROUT_NM
+		FROM BMS_REP_ROUT_MST
+		ORDER BY REP_ROUT_NM
+	</select>
+	
+</mapper>

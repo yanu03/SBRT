@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.brt.domain.AL0103.AL0103Mapper">
+
+<select id="AL0103G0R0" resultType="Map">
+	SELECT			A.COR_ID
+				,	A.REP_ROUT_ID
+				,	A.COR_NM
+				,	B.REP_ROUT_NM
+			
+	FROM			BRT_COR_MST A
+	LEFT JOIN	  	BMS_REP_ROUT_MST B
+		ON			A.REP_ROUT_ID = B.REP_ROUT_ID
+	<where>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+			<if test="TYPE == 'ALL'">
+				AND (COR_ID LIKE CONCAT('%',#{CONTENT},'%') || COR_NM LIKE CONCAT('%',#{CONTENT},'%'))
+			</if>
+			<if test="TYPE == 'COR_ID'">
+				AND COR_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'COR_NM'">
+				AND COR_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</if>
+	</where>
+</select>
+
+<select id="AL0103G0K0" resultType="Map">
+	SELECT CONCAT('CO', LPAD(NEXTVAL(SEQ_BRT_COR_MST_0), 8, '0')) AS 'SEQ'
+</select>
+
+<select id="AL0103SHI0" resultType="Map">
+	SELECT			COR_ID
+				,	COR_NM
+	FROM			BRT_COR_MST
+	ORDER BY		COR_ID
+</select>
+
+<insert id="AL0103G0I0" parameterType="Map">
+	INSERT	INTO	BRT_COR_MST
+					(
+					COR_ID
+					,REP_ROUT_ID
+					,COR_NM
+					,UPD_DTM
+					,UPD_ID				
+					)
+			
+	VALUES			
+					(
+					#{COR_ID}
+					,#{REP_ROUT_ID}
+					,#{COR_NM}
+					,#{UPD_DTM}
+					,#{SSN_USER_ID}					
+					)				
+
+</insert>
+
+<update id="AL0103G0U0" parameterType="Map">
+	UPDATE			BRT_COR_MST
+	
+	SET				REP_ROUT_ID = #{REP_ROUT_ID}
+					,COR_NM = #{COR_NM}
+					,UPD_DTM = #{UPD_DTM}
+					,UPD_ID	= #{SSN_USER_ID}
+					
+	WHERE			 COR_ID = #{COR_ID}
+</update>
+
+<delete id="AL0103G0D0" parameterType="Map">
+	DELETE	FROM	 BRT_COR_MST
+	WHERE			 COR_ID = #{COR_ID}
+</delete>
+
+<select id="AL0103G1R0" resultType="Map">
+	SELECT			A.COR_ID
+				,	A.MIN_REST_TM
+				,	A.ROUT_SN
+				,	B.ROUTE_ID
+				,	B.ROUT_NM
+				,	B.ROUT_TYPE
+				,	B.STTN_CNT
+				,	B.ROUT_LEN
+				,	B.CURVATURE
+				,	B.JIT_DSPCH_YN
+				,	B.ST_STTN_NM
+				,	B.ED_STTN_NM
+				,	B.WAY_DIV
+				
+	FROM			BRT_COR_DTL_INFO A
+		LEFT JOIN	BMS_ROUT_MST B
+		ON			A.ROUT_ID = B.ROUTE_ID
+			
+	WHERE			A.COR_ID = #{COR_ID}
+	
+	ORDER BY		A.ROUT_SN
+	
+</select>
+
+<insert id="AL0103G1I0" parameterType="Map">
+	INSERT INTO		BRT_COR_DTL_INFO
+					(
+						COR_ID
+					,	ROUT_ID
+					,	MIN_REST_TM
+					,	ROUT_SN
+					,	UPD_DTM
+					,	UPD_ID	
+					)
+	VALUES
+					(
+						#{COR_ID}
+					,	#{ROUTE_ID}
+					,	#{MIN_REST_TM}
+					,	#{ROUT_SN}
+					,	#{UPD_DTM}
+					,	#{SSN_USER_ID}	
+					)			
+
+</insert>
+
+<delete id="AL0103G1D0" parameterType="Map">
+	DELETE FROM		BRT_COR_DTL_INFO
+	WHERE			COR_ID = #{COR_ID}
+	AND				ROUT_ID = #{ROUTE_ID}
+
+</delete>
+
+<select id="AL0103P0R0" resultType="Map">
+	
+	select ROUTE_ID, ROUT_NM, ROUT_TYPE, STTN_CNT, ROUT_LEN, CURVATURE, REMARK
+	from BMS_ROUT_MST
+	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'ROUTE_ID'">
+			AND ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'ROUT_NM'">
+			AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>	
+</select>
+
+</mapper>
