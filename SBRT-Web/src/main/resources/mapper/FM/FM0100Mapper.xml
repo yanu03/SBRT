@@ -3,41 +3,6 @@
 
 <mapper namespace="kr.tracom.bms.domain.FM0100.FM0100Mapper">
 
-<select id="FM0100G0R0" resultType="Map">
-	SELECT 
-		SM.STTN_ID
-		,SM.STTN_NO
-		,SM.STTN_NM
-		,NM.GPS_Y
-		,NM.GPS_X
-		,SM.REMARK
-		,SM.NODE_ID
-	FROM
-		sbrt.BMS_STTN_MST SM 
-	JOIN 
-		sbrt.BMS_NODE_MST NM 
-	ON 
-		SM.NODE_ID = NM.NODE_ID
-	
-	<where>	
-		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-			VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
-		</if>
-		<if test="TYPE == 'STTN_ID'">
-			STTN_ID LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
-		<if test="TYPE == 'STTN_NO'">
-			STTN_NO LIKE CONCAT('%',#{CONTENT},'%') 
-		</if>
-	</where>
-</select>
-
-<select id="FM0100SHI0" resultType="Map">
-	SELECT			STTN_ID
-					,STTN_NO	
-	FROM			BMS_STTN_MST
-</select>
-
 <select id="FM0100G1R0" resultType="Map">
 	SELECT 
 		FCLT_ID

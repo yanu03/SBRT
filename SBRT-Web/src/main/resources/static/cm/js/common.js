@@ -6440,3 +6440,7 @@ com.setSerialNumberToData= function(grid, column){
 	      }
 	   }
 }
+
+com.isEmpty = function(str){
+	return str == ''||str == null||typeof str == "undefined";
+}

@@ -194,6 +194,7 @@ public class SI0404Service extends ServiceSupport {
 				if(child.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element)child;
 					tmp.put("STTN_ID",DataInterface.getTagValue("nodeid", eElement).substring(3));
+					tmp.put("NODE_ID",DataInterface.getTagValue("nodeid", eElement).substring(3));
 					tmp.put("NODE_NM",DataInterface.getTagValue("nodenm", eElement));
 					tmp.put("STTN_NO",DataInterface.getTagValue("nodeno", eElement));
 					tmp.put("GPS_Y",DataInterface.getTagValue("gpslati", eElement));

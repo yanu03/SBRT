@@ -236,7 +236,7 @@
 <select id="SI0401P1R0" resultType="Map">
 	SELECT REP_ROUT_ID, REP_ROUT_NM, USE_YN, REMARK
 	FROM BMS_REP_ROUT_MST WHERE USE_YN = 'Y'
-	<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+	<if test="CONTENT != null and CONTENT != ''">
 		AND REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 	</if>
 	<if test="TYPE == 'REP_ROUT_ID'">
@@ -266,7 +266,7 @@
 			(
 			#{REP_ROUT_ID},
 			#{REP_ROUT_NM},
-			#{USE_YN},
+			'Y',
 			#{REMARK},
 			#{UPD_DTM},
 			#{SSN_USER_ID}
@@ -296,7 +296,7 @@
 	select STTN_ID, STTN_NM, STTN_ENM
 	from BMS_STTN_MST
 	<where>
-		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+		<if test="CONTENT != null and CONTENT != ''">
 			AND STTN_ID LIKE CONCAT('%',#{CONTENT},'%') || STTN_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
 		<if test="TYPE == 'STTN_ID'">

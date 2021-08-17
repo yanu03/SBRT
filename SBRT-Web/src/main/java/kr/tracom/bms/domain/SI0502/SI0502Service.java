@@ -22,6 +22,10 @@ public class SI0502Service extends ServiceSupport {
 		return si0502Mapper.SI0502G0R0(map);
 	}
 
+	public List SI0502SHI0() throws Exception {
+		return si0502Mapper.SI0502SHI0();
+	}	
+	
 	public Map SI0502G1S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;

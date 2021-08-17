@@ -47,5 +47,15 @@ public class RoutController extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/rout/selectSttnList")
+	public @ResponseBody Map<String, Object> selectSttnList() throws Exception {
+		result.setData("dlt_BMS_STTN_MST", routService.selectSttnList());
+		return result.getResult();
+	}
 
+	@RequestMapping("/rout/selectSttnItem")
+	public @ResponseBody Map<String, Object> selectSttnItem() throws Exception {
+		result.setData("dlt_searchitem", routService.selectSttnItem());
+		return result.getResult();
+	}
 }

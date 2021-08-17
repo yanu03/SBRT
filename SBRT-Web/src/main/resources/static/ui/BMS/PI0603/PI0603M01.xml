@@ -218,24 +218,6 @@
 		com.saveDone(PI0603G1, sub_PI0603G1R0);	
 	};
 	
-	scwin.sbx_ChoiceBox_onviewchange = function(info) {
-		if (info.newValue == "ALL") {
-			autoChoiceBox.hide();
-			search_input.setValue("");
-			search_input.show("");
-		} 
-		else if (info.newValue == "ORGA_ID") {
-			search_input.hide();
-			autoChoiceBox.setNodeSet("data:dlt_searchitem", "ORGA_ID", "ORGA_ID");
-			autoChoiceBox.show("");
-		}
-		else if (info.newValue == "ORGA_NM") {
-			search_input.hide();
-			autoChoiceBox.setNodeSet("data:dlt_searchitem", "ORGA_NM", "ORGA_NM");
-			autoChoiceBox.show("");
-		} 
-	};
-	
 	scwin.PI0603G1_onrowindexchange = function(row,oldRow) {
 		var focusOption = {keyMap : dma_subsearch2};
 		com.changeDualGrid(PI0603G1, PI0603G2, null, sub_PI0603G2R0, focusOption, row, oldRow);				
@@ -250,13 +232,31 @@
 	};
 	
 	scwin.PI0603G1_oncellclick = function(row,col,colId) {
-      if (col != "0"){
-         if(PI0603G1.getCellChecked(row, 'chk')==0){
-            PI0603G1.setCellChecked(row, 'chk', true);
-         }else if(PI0603G1.getCellChecked(row, 'chk')==1){
-            PI0603G1.setCellChecked(row, 'chk', false);
-         }
-      }				
+	      if (col != "0"){
+	         if(PI0603G1.getCellChecked(row, 'chk')==0){
+	            PI0603G1.setCellChecked(row, 'chk', true);
+	         }else if(PI0603G1.getCellChecked(row, 'chk')==1){
+	            PI0603G1.setCellChecked(row, 'chk', false);
+	         }
+	      }			
+	};
+	
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {
+		if (info.newValue == "ALL") {
+			acb_autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} 
+		else if (info.newValue == "ORGA_ID") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "ORGA_ID", "ORGA_ID");
+			acb_autoChoiceBox.show("");
+		}
+		else if (info.newValue == "ORGA_NM") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "ORGA_NM", "ORGA_NM");
+			acb_autoChoiceBox.show("");
+		}
 	};
 	]]></script>
 	</head>
@@ -272,8 +272,8 @@
 					</xf:group>
 					<xf:group id="" style="" class="search">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
-							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
-							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right:10px;float:left;" submenuSize="auto"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_item" style="" submenuSize="auto"
 							textAlign="left">
 							<xf:choices>
 								<xf:item>
@@ -290,15 +290,16 @@
 								</xf:item>
 							</xf:choices>
 						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="노선ID 또는 노선명, 대표노선명"></xf:input>
-						<w2:autoComplete interactionMode="" chooseOptionValue="" chooseOptionLabel="-전체-" visibleRowNum=""
-							chooseOption="true" caseSensitive="false" displayMode="label" ev:onviewchange="" id="autoChoiceBox" useKeywordHighlight="false"
-							ref="data:dma_search.CONTENT" class="search_auto" search="start" ev:onchange="" allOption=""
-							submenuSize="auto" editType="select" emptyItem="" selectedData="" emptyValue="" noResult="useData" textAlign="left" style="display: none">
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="편성ID 또는 편성명"></xf:input>
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange"
+							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
+							selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="" nextTabByEnter=""
+							disableEdit="">
 							<w2:choices>
-								<w2:itemset nodeset="data:dlt_SearchItem">
-									<w2:label ref="ORGA_NM"></w2:label>
-									<w2:value ref="ORGA_NM"></w2:value>
+								<w2:itemset nodeset="data:dlt_searchitem">
+									<w2:label ref="ORGA_ID"></w2:label>
+									<w2:value ref="ORGA_ID"></w2:value>
 								</w2:itemset>
 							</w2:choices>
 						</w2:autoComplete>
@@ -381,8 +382,8 @@
 					<xf:group class="defaultbox" id="" style="">
 						<w2:textbox class="df_tt fl" id="" label="안내기 목록" style=""></w2:textbox>
 					</xf:group>
-					<xf:group id="gr_sub_header" class="gr_sub_header" style="">
-						<xf:group class="gr_search" id="" style="">
+					<xf:group id="gr_sub_header" class="gr_sub_header" style="margin-top:4px">
+						<xf:group class="gr_sub_search" id="" style="">
 							<xf:group class="label" id="" style="">
 								<w2:span class="" id="" label="검색 항목"></w2:span>
 							</xf:group>
@@ -468,8 +469,8 @@
 					<xf:group class="defaultbox" id="" style="">
 						<w2:textbox class="df_tt fl" id="" label="예약 상세정보" style=""></w2:textbox>
 					</xf:group>
-					<xf:group id="" class="gr_sub_header" style="">
-						<xf:group class="gr_search" id="" style="">
+					<xf:group id="" class="gr_sub_header" style="margin-top:4px">
+						<xf:group class="gr_sub_search" id="" style="">
 							<xf:group class="label" id="" style="">
 								<w2:span class="" id="" label="예약종료여부" style=""></w2:span>
 								<xf:select1 id="RSV_STATE" chooseOption="" style="width: 148px;height: 21px;margin-left:" submenuSize="auto"

@@ -24,6 +24,12 @@ public class SI0502Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/si/SI0502SHI0")
+	public @ResponseBody Map<String, Object> SI0502G0R2() throws Exception {
+		result.setData("dlt_searchitem", si0502Service.SI0502SHI0());
+		return result.getResult();
+	}
+	
 	@RequestMapping("/si/SI0502G1R0")
 	public @ResponseBody Map<String, Object> SI0502G1R0() throws Exception {
 		result.setData("dlt_TRANSFER_INFO", si0502Service.SI0502G1R0());

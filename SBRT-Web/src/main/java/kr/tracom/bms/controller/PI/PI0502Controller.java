@@ -26,7 +26,7 @@ public class PI0502Controller extends ControllerSupport {
 	
 	@RequestMapping("/pi/PI0502G0K0")
 	public @ResponseBody Map<String, Object> PI0502G0R1() throws Exception {
-		result.setData("dma_SEQ_BMS_STTN_MST_0", pi0502Service.PI0502G0K0());
+		result.setData("dma_SEQ_BMS_VDO_ORGA_INFO_0", pi0502Service.PI0502G0K0());
 		return result.getResult();
 	}
 

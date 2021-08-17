@@ -4,40 +4,40 @@
 <mapper namespace="kr.tracom.bms.domain.SI0501.SI0501Mapper">
 
 <select id="SI0501G0R0" resultType="Map">
-	select  STTN_ID,
-			NODE_ID,
-			STTN_NM,
-			STTN_ENM,
-			AREA,
-			STTN_NO,
-			CENTER_YN,
-			STTN_FCLT_TYPE,
-			VHC_DOOR_DIR_TYPE,
-			APPL_RDS,
-			BAY_TYPE,
-			BAY_LEN,
-			LINE_CNT,
-			DATE_FORMAT(APPL_ST_DT, '%Y%m%d') APPL_ST_DT,
-			DATE_FORMAT(APPL_ED_DT, '%Y%m%d') APPL_ED_DT,
-			USE_YN,
-			REMARK
+	select  A.STTN_ID,
+			A.STTN_NM,
+			A.STTN_ENM,
+			A.AREA,
+			A.STTN_NO,
+			A.CENTER_YN,
+			A.STTN_FCLT_TYPE,
+			A.VHC_DOOR_DIR_TYPE,
+			A.GPS_X,
+			A.GPS_Y,
+			A.APPL_RDS,
+			A.BAY_TYPE,
+			A.BAY_LEN,
+			A.LINE_CNT,
+			A.USE_YN,
+			A.REMARK
 			
-	from BMS_STTN_MST
+	from BMS_STTN_MST A <!-- LEFT OUTER JOIN BMS_NODE_MST B ON A.NODE_ID = B.NODE_ID -->
 	<where>
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
 			<if test="TYPE == 'ALL'">
-				AND (STTN_ID LIKE CONCAT('%',#{CONTENT},'%') || STTN_NM LIKE CONCAT('%',#{CONTENT},'%') || STTN_NO LIKE CONCAT('%',#{CONTENT},'%'))
+				AND (A.STTN_ID LIKE CONCAT('%',#{CONTENT},'%') || A.STTN_NM LIKE CONCAT('%',#{CONTENT},'%') || A.STTN_NO LIKE CONCAT('%',#{CONTENT},'%'))
 			</if>
 			<if test="TYPE == 'STTN_ID'">
-				AND STTN_ID LIKE CONCAT('%',#{CONTENT},'%')
+				AND A.STTN_ID LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
 			<if test="TYPE == 'STTN_NM'">
-				AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%') 
+				AND A.STTN_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 			<if test="TYPE == 'STTN_NO'">
-				AND STTN_NO LIKE CONCAT('%',#{CONTENT},'%') 
+				AND A.STTN_NO LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 		</if>
+
 	</where>
 </select>
 
