@@ -40,21 +40,4 @@ public class AL0102Controller extends ControllerSupport {
 		return result.getResultSave();
 	}
 	
-	/*@RequestMapping("/pi/PI0205G0R0")
-	public @ResponseBody Map<String, Object> PI0205G0R0() throws Exception {
-		result.setData("dlt_BMS_VOC_INFO", PI0205Service.PI0205G0R0());
-		return result.getResult();
-	}	
-	
-	
-	
-	
-	
-	@RequestMapping("/pi/PI0205G0K0")
-	public @ResponseBody Map<String, Object> PI0205G0K0() throws Exception{
-		result.setData("dma_SEQ_BMS_ROUT_MST_0", PI0205Service.PI0205G0K0());
-		return result.getResult();
-	}
-	
-	*/
 }

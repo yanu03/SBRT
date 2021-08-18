@@ -38,14 +38,24 @@ public class AL0102Service extends ServiceSupport{
 			for (int i = 0; i < param.size(); i++) {
 				Map<String, Object> data = param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
-				if (rowStatus.equals("U")) {
+				
+				if (rowStatus.equals("C")) {
+					
+					iCnt += AL0102Mapper.AL0102G0I0(data);
+				}
+				
+				else if (rowStatus.equals("U")) {
 
 					uCnt += AL0102Mapper.AL0102G0U0(data);
 
 				}
-				/*
-				 * else if (rowStatus.equals("D")) { dCnt += pi0503Mapper.PI0503G1D0(data); }
-				 */
+				
+				 else if (rowStatus.equals("D")) { 
+					  
+					  dCnt += AL0102Mapper.AL0102G0D0(data); 
+					  
+				}
+				 
 			}
 		} catch (Exception e) {
 			if (e instanceof DuplicateKeyException) {

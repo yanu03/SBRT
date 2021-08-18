@@ -16,7 +16,6 @@
 					<w2:keyInfo>
 						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
 						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
-
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
@@ -43,8 +42,14 @@
 						<w2:column id="DAY_TYPE" name="비고" dataType="text"></w2:column>
 						<w2:column id="REMARK" name="갱신일시" dataType="text"></w2:column>
 						<w2:column id="UPD_DTM" name="갱신아이디" dataType="text"></w2:column>
+						<w2:column id="SCNRO_NM" name="시나리오명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_SEQ_BRT_INCDNT_SCNRO_MST_0">
+					<w2:keyInfo>
+						<w2:key id="SEQ" name="SEQ" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_MO0301G0R0" ref='data:json,dma_search' target="data:json,dlt_BRT_INCDNT_SCNRO_MST"
@@ -52,31 +57,34 @@
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0301G0R0_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0301G0S0" ref='data:json,{"action":"modified","id":"dlt_BRT_INCDNT_SCNRO_MST"}' target="" action="/mo/MO0301G0S0"
-				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_MO0301G0S0" ref='data:json,{"action":"modified","id":"dlt_BRT_INCDNT_SCNRO_MST"}'
+				target="data:json,dma_result" action="/mo/MO0301G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
+				errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0301SHI0" ref="" target="data:json,dlt_searchitem" action="/mo/MO0301SHI0"
-				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="scwin.sub_MO0301SHI0_submit" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_MO0301SHI0" ref="" target="data:json,dlt_searchitem" action="/mo/MO0301SHI0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="scwin.sub_MO0301SHI0_submit" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_MO0301G0K0" ref="" target="data:json,dma_SEQ_BRT_INCDNT_SCNRO_MST_0" action="/mo/MO0301G0K0" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0301G0K0_submitdone"
+				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
-		com.executeSubmission(sub_MO0301G0R0);
 		
 		var autoOptions = {
-			Main : { grid : MO0301G0, frm : MO0301F0, srchSbm : sub_MO0301G0R0, savSbm : sub_MO0301G0S0,  
+			Main : { grid : MO0301G0, frm : MO0301F0, srchSbm : sub_MO0301G0R0, savSbm : sub_MO0301G0S0,  keySbm : sub_MO0301G0K0,
 								srchGrp : pgm_header, keyColumn : "SCNRO_ID", focusColumn : "SCNRO_ID", name :  "돌발대응시나리오 관리"}
 		};
 		
 		//추가/삭제 버튼 감추기
-		var mainOptions = {
+		/*var mainOptions = {
 			ADD:{disp:"hide"},
 			DEL:{disp:"hide"}
-		};
+		};*/
 		
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions, mainOptions);
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
 		
 		var codeOptions = [{code : "INCDNT_TYPE", compID : "MO0301G0:INCDNT_TYPE"}
 							,{code : "INCDNT_RES_TYPE", compID : "MO0301G0:INCDNT_RES_TYPE"}
@@ -121,7 +129,11 @@
 			com.setFocusedCell(MO0301G0, "SCNRO_ID");
 		}
 	};
-]]></script>
+
+	scwin.sub_MO0301G0K0_submitdone = function(e) {
+		com.addGrid(MO0301G0, dma_SEQ_BRT_INCDNT_SCNRO_MST_0, "SCNRO_ID", "INCDNT_TYPE");
+	};
+	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group class="pgm_container grdr_41_36_a" id="pgm_container" style="">

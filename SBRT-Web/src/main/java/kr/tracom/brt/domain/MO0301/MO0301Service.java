@@ -38,13 +38,23 @@ public class MO0301Service extends ServiceSupport{
 			for (int i = 0; i < param.size(); i++) {
 				Map<String, Object> data = param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
-				if (rowStatus.equals("U")) {
+				
+				if(rowStatus.equals("C")) {
+					
+					iCnt += MO0301Mapper.MO0301G0I0(data);
+					
+				}
+				else if (rowStatus.equals("U")) {
 
 					uCnt += MO0301Mapper.MO0301G0U0(data);
 
 				}
 				
-				 //else if (rowStatus.equals("D")) { dCnt += pi0503Mapper.PI0503G1D0(data); }
+				 else if (rowStatus.equals("D")) { 
+					 
+					dCnt += MO0301Mapper.MO0301G0D0(data); 
+					 
+				 }
 				 
 			}
 		} catch (Exception e) {
@@ -61,7 +71,9 @@ public class MO0301Service extends ServiceSupport{
 
 	}
 	
-	
+	public Map MO0301G0K0() throws Exception {
+		return MO0301Mapper.MO0301G0K0();
+	}
 	
 	/*public List<Map> PI0205G0R0() throws Exception{
 		Map<String, Object> param = getSimpleDataMap("dma_search");

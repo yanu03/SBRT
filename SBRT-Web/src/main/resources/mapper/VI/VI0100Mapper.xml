@@ -57,16 +57,21 @@
 
 <select id="VI0100G1R0" resultType="Map">
 	select  
-		DATE_FORMAT(OCR_DTM, '%Y-%m-%d %H:%i:%s') OCR_DTM
-		,VIOLT_TYPE
-		,GPS_X
-		,GPS_Y
-		,JUDGE
-		,JUDG_ORG
-		,JUDG_TYPE
-		,JUDG_DESC
-	from 	BRT_OPER_VIOLT_HIS
-	where 	VHC_ID = #{VHC_ID}
+		DATE_FORMAT(a.OCR_DTM, '%Y-%m-%d %H:%i:%s') OCR_DTM
+		,a.VIOLT_TYPE
+		,a.GPS_X
+		,a.GPS_Y
+		,a.JUDGE
+		,a.JUDG_ORG
+		,a.JUDG_TYPE
+		,a.JUDG_DESC
+		,b.NODE_NM
+	from 	
+		BRT_OPER_VIOLT_HIS a
+		LEFT JOIN BMS_NODE_MST b
+		ON a.NODE_ID = b.NODE_ID
+	where 	
+		VHC_ID = #{VHC_ID}
 	
 </select>
 

@@ -53,9 +53,9 @@
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0102G0R0_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_AL0102G0S0" ref='data:json,{"action":"modified","id":"dlt_BRT_HOLI_MST"}' target="" action="/al/AL0102G0S0"
+			<xf:submission id="sub_AL0102G0S0" ref='data:json,{"action":"modified","id":"dlt_BRT_HOLI_MST"}' target="data:json,dma_result" action="/al/AL0102G0S0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0102G0S0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_AL0102SHI0" ref="" target="data:json,dlt_searchitem" action="/al/AL0102SHI0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
@@ -64,7 +64,7 @@
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
-		com.executeSubmission(sub_AL0102G0R0);
+		//com.executeSubmission(sub_AL0102G0R0);
 		
 		var autoOptions = {
 			Main : { grid : AL0102G0, frm : AL0102F0, srchSbm : sub_AL0102G0R0, savSbm : sub_AL0102G0S0,  
@@ -72,12 +72,12 @@
 		};
 		
 		//추가/삭제 버튼 감추기
-		var mainOptions = {
+		/*var mainOptions = {
 			ADD:{disp:"hide"},
 			DEL:{disp:"hide"}
-		};
+		};*/
 		
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions, mainOptions);
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
 		
 		var codeOptions = [{code : "DAY_DIV", compID : "AL0102G0:DAY_TYPE"}
 		
@@ -109,12 +109,11 @@
 		} 
 	};
 	
-	scwin.AL0102G0_onrowindexchange = function(row, oldRow) {
+	/*scwin.AL0102G0_onrowindexchange = function(row, oldRow) {
 		
 		var audioType = dlt_BRT_HOLI_MST.getCellData(AL0102G0.getFocusedRowIndex(), "HOLI_DT");
 		
-	};	
-	
+	};	*/
 	
 	scwin.sub_AL0102G0R0_submitdone = function(e) {
 		var rsCode = com.getResultCode(e)
@@ -122,7 +121,49 @@
 			com.setFocusedCell(AL0102G0, "HOLI_DT");
 		}
 	};
-]]></script>
+	
+	scwin.sub_AL0102G0S0_submitdone = function(e) {
+		com.saveDone(AL0102G0, sub_AL0102G0R0);	
+	};
+	
+	//날짜 값대로 요일 가져와서 넣어주기
+	scwin.HOLI_DT_onchange = function(){
+		debugger;
+		
+		var HOLI_DT = HOLI_DT_T.getValue();
+		
+		if(HOLI_DT.toString().length < 9 && HOLI_DT != ""){
+		
+			var year = HOLI_DT.substr(0,4);
+			var month = HOLI_DT.substr(4,2);
+			var day = HOLI_DT.substr(6,2);
+			var DATE = year + "-" + month + "-" + day
+			
+			var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');
+
+	        var today = new Date(DATE).getDay();
+	        
+	        dlt_BRT_HOLI_MST.setCellData(AL0102G0.getFocusedRowIndex(), 'DAY_OF_WEEK', today);
+	        var todayLabel = week[today];
+	
+			DAY_OF_WEEK.setValue(todayLabel);
+			
+		}else if(HOLI_DT.toString().length > 9 && HOLI_DT != ""){
+		
+			var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');
+	
+	        var today = new Date(HOLI_DT).getDay();
+	        dlt_BRT_HOLI_MST.setCellData(AL0102G0.getFocusedRowIndex(), 'DAY_OF_WEEK', today);
+	        var todayLabel = week[today];
+	
+			DAY_OF_WEEK.setValue(todayLabel);
+		
+		}
+		
+		
+	}
+	
+	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group class="pgm_container grdr_41_36_a" id="pgm_container" style="">
@@ -182,26 +223,20 @@
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="" class="" style="">
-						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.AL0102G0_onrowindexchange" ev:oncellclick=""
+						<w2:gridView sortEvent="onclick" ev:onrowindexchange="" ev:oncellclick=""
 							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서" sortable="true"
 							rowStatusHeaderValue="상태" overflowX="auto" overflowY="scroll" rowStatusVisible="false"
 							fixedColumnWithHidden="true" dataList="data:dlt_BRT_HOLI_MST" ignoreCellClick="false" style="height:100%;" autoFit="lastColumn"
 							visibleRowNum="" id="AL0102G0" class="cm_grid" tooltipPositionY="" focusMode="row">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row2">
-									<w2:column width="118" style="height:25px;" inputType="text" id="column1" value="ID" blockSelect="false"
-										displayMode="label" userData1="" userData2="">
-									</w2:column>
-									<w2:column width="80" style="height:25px;" inputType="text" id="column2" value="구분" blockSelect="false"
-										displayMode="label" userData1="">
-									</w2:column>
 									<w2:column width="80" style="height:25px;" inputType="text" id="column3" value="날짜" blockSelect="false"
 										displayMode="label" userData1="">
 									</w2:column>
-									<w2:column width="100" style="height:25px;" inputType="text" id="column4" value="공휴일/이벤트명"
-										blockSelect="false">
+									<w2:column width="60" style="height:25px;" inputType="text" id="column2" value="구분" blockSelect="false"
+										displayMode="label" userData1="">
 									</w2:column>
-									<w2:column width="80" style="height:25px;" inputType="text" id="column6" value="사용여부"
+									<w2:column width="100" style="height:25px;" inputType="text" id="column4" value="공휴일/이벤트명"
 										blockSelect="false">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:25px" id="column41"
@@ -211,20 +246,14 @@
 							</w2:header>
 							<w2:gBody width="40" style="" id="gBody4">
 								<w2:row style="" id="row5">
-									<w2:column width="118" style="height:25px;" inputType="text" id="ROUTE_ID" blockSelect="false"
-										displayMode="label" readOnly="true" userData1="M" userData2="">
+									<w2:column textAlign="center" width="80" style="height:25px;" inputType="text" id="HOLI_DT"
+										blockSelect="false" displayMode="label" readOnly="true" userData1="">
 									</w2:column>
 									<w2:column width="159" style="height:25px;" inputType="select" id="DAY_TYPE" blockSelect="false"
 										displayMode="label" readOnly="true" userData1="M">
 									</w2:column>
-									<w2:column textAlign="center" width="80" style="height:25px;" inputType="text" id="HOLI_DT"
-										blockSelect="false" displayMode="label" readOnly="true" userData1="">
-									</w2:column>
 									<w2:column width="159" style="height:25px;" inputType="text" id="HOLI_NM" blockSelect="false"
 										displayMode="label" readOnly="true">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="116" inputType="text" style="height:25px" id="" value=""
-										blockSelect="false" displayMode="label" readOnly="true" displayFormatter="">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="84" inputType="text" style="height:25px" id="REMARK" value=""
 										blockSelect="false" displayMode="label" autoFitFilterList="">
@@ -265,14 +294,14 @@
 							<xf:group style="" tagname="tr">
 								<xf:group style="" class="w2tb_th req" tagname="th">날짜</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
-									<w2:inputCalendar footerDiv="false" id="HOLI_DT" style="width: 150px;height: 23px;" renderDiv="true"
-										focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component" ref="data:dlt_BRT_HOLI_MST.HOLI_DT">
+									<w2:inputCalendar footerDiv="false" id="HOLI_DT_T" style="width: 150px;height: 23px;" renderDiv="true"
+										focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component" 
+										ref="data:dlt_BRT_HOLI_MST.HOLI_DT" ev:onchange="scwin.HOLI_DT_onchange" ev:onviewchange="">
 									</w2:inputCalendar>
 								</xf:group>
 								<xf:group style="" class="w2tb_th req" tagname="th">요일</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
-									<xf:input adjustMaxLength="false" id="DAY_OF_WEEK" style="height:24px;width: 80px;" ref="data:dlt_BRT_HOLI_MST.DAY_OF_WEEK"
-										placeholder="" readOnly="" disabled="">
+									<xf:input adjustMaxLength="false" id="DAY_OF_WEEK" style="height:24px;width: 80px;" placeholder="" readOnly="" disabled="">
 									</xf:input>
 								</xf:group>
 							</xf:group>
@@ -289,6 +318,10 @@
 							<xf:group tagname="tr" style="">
 								<xf:group tagname="th" style="" class="w2tb_th">구분</xf:group>
 								<xf:group tagname="td" style="" class="w2tb_td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
 									<xf:select1 id="DAY_TYPE" chooseOption="true" style="width: 148px;height: 21px;" submenuSize="auto"
 										allOption="" disabled="false" direction="auto" appearance="minimal" disabledClass="w2selectbox_disabled"
 										ref="data:dlt_BRT_HOLI_MST.DAY_TYPE" chooseOptionLabel="-선택-">
@@ -303,13 +336,6 @@
 											</xf:item>
 										</xf:choices>
 									</xf:select1>
-									<xf:group style="" class="w2tb_th" tagname="th">사용여부</xf:group>
-								<xf:group style="" class="w2tb_td" tagname="td">
-									<xf:select1 id="" chooseOption="true" style="width: 148px;height: 21px;" submenuSize="auto" allOption=""
-										disabled="false" direction="auto" appearance="minimal" disabledClass="w2selectbox_disabled" chooseOptionLabel="-선택-" ref="">
-										<xf:choices></xf:choices>
-									</xf:select1>
-								</xf:group>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">

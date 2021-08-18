@@ -14,16 +14,12 @@ public interface MO0301Mapper {
 	
 	public int MO0301G0U0(Map param);
 	
+	public int MO0301G0I0(Map param);
+	
+	public int MO0301G0D0(Map param);
+	
+	public Map MO0301G0K0();
 	
 	
-	/*public List<Map> PI0205G0R0(Map param);
 	
-	public int PI0205G0I0(Map param);
-	public int PI0205G0D0(Map param);
-	
-	
-	public Map PI0205G0K0();
-	
-	
-	*/
 }
