@@ -91,12 +91,43 @@
 	scwin.sub_PI0701G0S0_submitdone = function(e) {
 	};
 	
-	scwin.btn_upload_onclick = function() {
+	/*scwin.btn_upload_onclick = function() {
 	};	
 	
 	scwin.uploadFileCallback = function(returnValue) {
 
+	};*/
+	
+	scwin.upload0_onInputValueChange = function(returnValue){
+	
+		var fileNameIndex = returnValue.lastIndexOf('\\');
+		var real_fileName = returnValue.substring(fileNameIndex+1, returnValue.length);
+		
+		dlt_ROUT_MST.setCellData(PI0701G0.getFocusedRowIndex(), "FILE_NM", real_fileName);
+		
+		btn_upload.submit();
+		
+	}
+	
+	scwin.upload0_ondone = function(retXml) {
+		var fileType = dlt_ROUT_MST.getCellData(PI0701G0.getFocusedRowIndex(), "FILE_TYPE");
+		var real_fileName = dlt_ROUT_MST.getCellData(PI0701G0.getFocusedRowIndex(), "FILE_NM");
+		var src = "/fileUpload/up/" + real_fileName; 
+		
+		if (fileType == "FT001"){
+			var obj_video = document.getElementById("video1");
+			obj_video.addEventListener('loadedmetadata', function() {
+				var duration = parseInt(obj_video.duration);
+				dlt_ROUT_MST.setCellData(PI0701G0.getFocusedRowIndex(), "PLAY_TM", duration);
+			});			
+			$p.$("#video1").attr("src", src);
+		} else if (fileType == "FT002") {
+			$p.$("#image1").attr("src", src);
+		}			
+		
 	};
+	
+	
 	scwin.PI0701G0_onrowindexchange = function(row,oldRow) {
 				
 	};
@@ -133,7 +164,7 @@
 					<xf:group id="" style="" class="search">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="sbx_ChoiceBox"
-							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_item" style="" submenuSize="auto"
 							textAlign="left">
 							<xf:choices>
 								<xf:item>
@@ -252,7 +283,7 @@
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group class="" id="" style="">
-						<xf:group class="w2tb tb" id="PI0701F0" style="width:100%; height:100%;" tagname="table">
+						<xf:group class="w2tb tb" id="PI0701F0" style="width:100%;" tagname="table">
 							<w2:attributes>
 								<w2:summary></w2:summary>
 							</w2:attributes>
@@ -271,7 +302,7 @@
 									</w2:attributes>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel=" " direction="auto"
 										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" ev:onchange="scwin.FILE_TYPE_onchange" id="ED_STTN_ID"
-										labelWidthAuto="" mandatory="true" optionOrder="" ref="" renderType="component" style="height:24px;"
+										labelWidthAuto="" mandatory="true" optionOrder="" ref="" renderType="component" style="width:30%;height:24px;"
 										submenuSize="auto">
 										<xf:choices></xf:choices>
 									</xf:select1>
@@ -284,9 +315,14 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<w2:anchor class="btn_com" ev:onclick="scwin.btn_upload_onclick" id="btn_upload" outerDiv="" style="">
+									<!--  <w2:anchor class="btn_com" ev:onclick="scwin.btn_upload_onclick" id="btn_upload" outerDiv="" style="">
 										<xf:label><![CDATA[파일 선택]]></xf:label>
-									</w2:anchor>
+									</w2:anchor>-->
+									<w2:upload imageStyle="position:absolute;vertical-align:middle;word-wrap:break-word"
+										inputStyle="vertical-align:middle;word-wrap:break-word" style="width: 100%;height: 23px;" id="btn_upload" inputClass=""
+										ev:onInputValueChange="scwin.upload0_onInputValueChange" ev:ondone="scwin.upload0_ondone" accept=".png,.avi,.mp4,jpg" title="" type=""
+										disabled="false" class="">
+									</w2:upload>
 								</xf:group>
 							</xf:group>
 							<xf:group style="" tagname="tr">
@@ -296,7 +332,7 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid left"
+									<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid inner"
 									dataList="" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup="" ev:onkeyup=""
 									ev:onrowindexchange="" ev:ontextimageclick="" ev:onviewchange="" fixedColumnWithHidden="true"
 									id="PI0701G1" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true" rowStatusHeaderValue=""

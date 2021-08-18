@@ -41,13 +41,28 @@
 
 	<insert id="insertMenu" parameterType="Map">
 		INSERT INTO BMS_MENU_MST(MENU_CD, MENU_NM, SYSTEM_BIT, PARENT_MENU_CD, LEVEL, SORT, PROG_CD, USE_YN, REMARK, UPD_DTM, UPD_ID)
-		VALUES (#{MENU_CD}, #{MENU_NM}, #{SYSTEM_BIT}, #{PARENT_MENU_CD}, #{LEVEL}, #{SORT}, #{PROG_CD}, #{USE_YN}, #{REMARK}, #{UPD_DTM}, #{SSN_USER_ID})
+		VALUES (#{MENU_CD}, #{MENU_NM}, #{SYSTEM_BIT}, #{PARENT_MENU_CD}, #{LEVEL}, #{SORT},
+			 <if test="PROG_NM != ''">
+			 #{PROG_CD}, 
+			 </if>
+			 <if test="PROG_NM == ''">
+			 '', 
+			 </if>
+			 
+			 #{USE_YN}, #{REMARK}, #{UPD_DTM}, #{SSN_USER_ID})
 	</insert>
 
 	<update id="updateMenu" parameterType="Map">
 		UPDATE BMS_MENU_MST
 		   SET MENU_NM = #{MENU_NM}, SYSTEM_BIT = #{SYSTEM_BIT}, PARENT_MENU_CD = #{PARENT_MENU_CD}, LEVEL = #{LEVEL}
-			 , SORT = #{SORT}, PROG_CD = #{PROG_CD}, USE_YN = #{USE_YN}, REMARK = #{REMARK}, UPD_DTM = #{UPD_DTM}, UPD_ID = #{SSN_USER_ID}
+			 , SORT = #{SORT} 
+			 <if test="PROG_NM != ''">
+			 ,PROG_CD = #{PROG_CD} 
+			 </if>
+			 <if test="PROG_NM == ''">
+			 ,PROG_CD = ''
+			 </if>
+			 ,USE_YN = #{USE_YN}, REMARK = #{REMARK}, UPD_DTM = #{UPD_DTM}, UPD_ID = #{SSN_USER_ID}
 		 WHERE MENU_CD = #{MENU_CD}
 	</update>
 

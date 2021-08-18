@@ -1,6 +1,5 @@
 package kr.tracom.cm.domain.Rout;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,8 +26,8 @@ public class RoutService extends ServiceSupport {
 	
 	public List<Map<String, Object>> selectNodeListByRouts() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
-		String temp[] = map.get("ROUTE_IDS").toString().replace("[","").replace("]","").replace(" ","").split(",");
-		map.put("ROUTE_IDS", temp);
+		String temp[] = map.get("ROUT_IDS").toString().replace("[","").replace("]","").replace(" ","").split(",");
+		map.put("ROUT_IDS", temp);
 		return routMapper.selectNodeListByRouts(map);
 	}
 	
@@ -37,4 +36,12 @@ public class RoutService extends ServiceSupport {
 		return routMapper.selectNodeListByRout(map);
 	}
 
+	public List<Map<String, Object>> selectSttnList() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return routMapper.selectSttnList(map);
+	}
+	
+	public List<Map<String, Object>> selectSttnItem() throws Exception {
+		return routMapper.selectSttnItem();
+	}
 }

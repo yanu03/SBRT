@@ -3,7 +3,7 @@
 
 <mapper namespace="kr.tracom.bms.domain.PI0206.PI0206Mapper">
 	<select id="PI0206G0R0" resultType="Map">
-		SELECT 		ROUTE_ID
+		SELECT 		ROUT_ID
 					,ROUT_NM
 					,WAY_DIV
 					,ST_STTN_ID
@@ -15,10 +15,10 @@
 		FROM		BMS_ROUT_MST			
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-				ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+				ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
-			<if test="TYPE == 'ROUTE_ID'">
-				ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%')
+			<if test="TYPE == 'ROUT_ID'">
+				ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
 			<if test="TYPE == 'ROUT_NM'">
 				ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
@@ -31,7 +31,7 @@
 	</select>
 
 	<select id="PI0206SHI0" resultType="Map">
-		SELECT		 ROUTE_ID
+		SELECT		 ROUT_ID
 					,ROUT_NM
 		FROM	     BMS_ROUT_MST
 	</select>
@@ -86,14 +86,14 @@
 		INSERT INTO BMS_VOC_RSV_INFO
 				(
 					RSV_ID
-					,ROUTE_ID
+					,ROUT_ID
 					,RSV_DT
 				)
 				
 		VALUES	(
 					#{RSV_ID}	
-					,#{ROUTE_ID}
-					,NOW()
+					,#{ROUT_ID}
+					,#{RSV_DT}
 				);
 	
 		INSERT INTO BMS_VOC_RSV_RST_INFO
@@ -202,7 +202,7 @@
 	
 	<select id="selectRouteInfo" parameterType="String" resultType="Map">
 		SELECT
-			A.ROUTE_ID
+			A.ROUT_ID
 			, A.REP_ROUT_ID
 			, A.INT_ROUT_ID
 			, A.REP_ROUT_NM
@@ -211,7 +211,7 @@
 			, B.TXT_VAL1
 		FROM BMS_ROUT_MST A
 			LEFT JOIN BMS_DL_CD_INFO B ON A.WAY_DIV = B.DL_CD AND B.CO_CD = 'WAY_DIV'
-		WHERE ROUTE_ID = #{routeId}
+		WHERE ROUT_ID = #{routeId}
 	</select>
  
 </mapper>

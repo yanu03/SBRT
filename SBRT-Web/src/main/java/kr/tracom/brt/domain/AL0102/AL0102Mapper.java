@@ -14,14 +14,8 @@ public interface AL0102Mapper {
 	
 	public int AL0102G0U0(Map param);
 	
-	/*public List<Map> PI0205G0R0(Map param);
+	public int AL0102G0D0(Map param);
 	
-	public int PI0205G0I0(Map param);
-	public int PI0205G0D0(Map param);
+	public int AL0102G0I0(Map param);
 	
-	
-	public Map PI0205G0K0();
-	
-	
-	*/
 }

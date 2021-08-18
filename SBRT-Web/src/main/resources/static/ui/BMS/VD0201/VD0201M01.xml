@@ -31,7 +31,7 @@
 				<w2:dataMap baseNode="map" id="dma_sub_search">
 					<w2:keyInfo>
 						<w2:key id="VHC_ID" name="차량ID" dataType="text"></w2:key>
-						<w2:key id="ROUTE_ID" name="노선ID" dataType="text"></w2:key>
+						<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_DVC_INFO" saveRemovedData="true">
@@ -57,7 +57,7 @@
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
 						<w2:column id="NODE_SN" name="노드순번" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
@@ -73,9 +73,9 @@
 						<w2:column id="MORN_STD" name="집중모니터링기준" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_LINK_CMPSTN" saveRemovedData="true">
+				<!-- <w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_LINK_CMPSTN" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="LINK_ID" name="링크ID" dataType="text"></w2:column>
 						<w2:column id="LINK_SN" name="링크순번" dataType="text"></w2:column>
 						<w2:column id="MORN_STD" name="집중모니터링기준" dataType="text"></w2:column>
@@ -91,7 +91,7 @@
 						<w2:column id="ED_NODE_TYPE" name="종료노드유형" dataType="text"></w2:column>
 						<w2:column id="ED_NODE_NM" name="종료노드명" dataType="text"></w2:column>
 					</w2:columnInfo>
-				</w2:dataList>
+				</w2:dataList> -->
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_VD0201G0R0" ref="data:json,dma_search" target="data:json,dlt_BRT_CUR_OPER_INFO" action="/vd/VD0201G0R0"
@@ -107,11 +107,16 @@
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_VD0201SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_VD0201G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_LINK_CMPSTN" action="/vd/VD0201G2R0" method="post" mediatype="application/json" encoding="UTF-8"
+			<xf:submission id="sub_VD0201G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN" action="/rout/selectNodeListByRout" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_VD0201G2R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
+
+		<style type='text/css'>
+		.VD0201T0 .w2tabcontrol_container{position: absolute; left:0; top:35px; right:0; bottom:0px; border:none; float:none; height:auto !important; border-top:1px solid #c4cad6;}
+		</style>
+
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
 		//노선 뿌리는거 수정해야함 이상하게 나옴
@@ -145,11 +150,9 @@
 	
 	scwin.VD0201G0_onrowindexchange = function(row,oldRow) {
 		var focusOption = {keyMap : dma_sub_search};
-		com.changeDualGrid(VD0201G0, VD0201G1, null, sub_VD0201G1R0, focusOption, row, oldRow);
-		routMap.showVehicle("map_VD0201", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
-							 dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "VHC_ID"), VD0201G0);		
+		com.changeDualGrid(VD0201G0, VD0201G1, null, sub_VD0201G1R0, focusOption, row, oldRow);	
 		var routID = dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "ROUT_ID");
-		dma_sub_search.set("ROUTE_ID", routID);
+		dma_sub_search.set("ROUT_ID", routID);
 		com.executeSubmission(sub_VD0201G2R0);		 
 //		routMap.initMapInfo("map_VD0201"); 
 		 			
@@ -201,8 +204,11 @@
 	};
 	
 	scwin.sub_VD0201G2R0_submitdone = function(e) {
-//		routMap.showRoute("map_VD0201", dlt_BMS_ROUT_NODE_	CMPSTN.getAllJSON());			
-		routMap.drawRoute2("map_VD0201", dlt_BMS_ROUT_LINK_CMPSTN.getAllJSON());
+		routMap.showRoute("map_VD0201", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON());			
+		//routMap.drawRoute2("map_VD0201", dlt_BMS_ROUT_LINK_CMPSTN.getAllJSON());
+
+		routMap.showVehicle("map_VD0201", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
+							 dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "VHC_ID"), VD0201G0);	
 	};
 	]]></script>
 	</head>
@@ -219,7 +225,7 @@
 					<xf:group class="search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
-							optionOrder="false" ref="data:dma_search.CONTENT1" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+							optionOrder="false" ref="data:dma_search.CONTENT1" class="search_item" style="" submenuSize="auto"
 							textAlign="left">
 							<xf:choices>
 								<xf:itemset nodeset="data:dlt_searchitem">
@@ -311,16 +317,16 @@
 						</div>
 					</xf:group>
 					<xf:group></xf:group>
-					<xf:group id="" style="" class="defaultbox">
-						<w2:tabControl useTabKeyOnly="true" id="VD0201T0" useMoveNextTabFocus="false" useConfirmMessage="false"
+					<xf:group id="" style="position:relative;height: 300px;">
+						<w2:tabControl useTabKeyOnly="true" id="VD0201T0" class="VD0201T0" useMoveNextTabFocus="false" useConfirmMessage="false"
 							confirmTrueAction="exist" confirmFalseAction="new" alwaysDraw="false" style="width: 100%;height: 100%;" tabScroll="" tableRender="" tabPosition="">
 							<w2:tabs disabled="false" style="width:70px;height:30px;" id="tabs3" label="장치상태"></w2:tabs>
-							<w2:content alwaysDraw="false" style="height:100%;" id="content3">
-									<w2:gridView  autoFit="lastColumn" class="cm_grid" dataList="data:dlt_BMS_DVC_INFO"
-										ev:oncellclick="" ev:onrowindexchange="scwin.VD0201G1_onrowindexchange" fixedColumnWithHidden="true" id="VD0201G1"
+							<w2:content alwaysDraw="false" style="" id="content3">
+									<w2:gridView  autoFit="lastColumn" class="cm_grid right" dataList="data:dlt_BMS_DVC_INFO"
+										ev:oncellclick="" ev:onrowindexchange="" fixedColumnWithHidden="true" id="VD0201G1"
 										ignoreCellClick="false" overflowX="hidden" overflowY="scroll" readOnly="" rowNumHeaderValue="순서" rowNumVisible="true"
 										rowStatusHeaderValue="상태" rowStatusVisible="false" scrollByColumn="false" showSortableImage="" sortEvent="onclick" sortable="true"
-										style="height:98%;width: 100%;" tooltipPositionY="" useShiftKey="true" visibleRowNum="">
+										style="height:98%;" tooltipPositionY="" useShiftKey="true" visibleRowNum="">
 										<w2:header id="header1" style="">
 											<w2:row id="row2" style="">
 												<w2:column blockSelect="false" displayMode="label" id="column9" inputType="text"
@@ -377,7 +383,7 @@
 								</w2:content>
 								<w2:tabs disabled="false" style="width:100px;height:30px;" id="tabs4" label="차내장치 제어"></w2:tabs>
 								<w2:content alwaysDraw="true" style="height:100%" id="content4">								
-									<w2:gridView id="VD0201G2" style="width:100%;height:98%" defaultCellHeight="20" rowNumVisible="true"
+									<w2:gridView id="VD0201G2" style="width:98%;height:98%" defaultCellHeight="20" rowNumVisible="true"
 									useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태"
 									overflowX="auto" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true" ignoreCellClick="false"
 									dataList="data:dlt_BMS_DVC_INFO" class="cm_grid" autoFit="lastColumn" fixedColumnScrollHidden="">

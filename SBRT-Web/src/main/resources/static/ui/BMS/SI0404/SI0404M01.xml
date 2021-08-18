@@ -20,7 +20,7 @@
 					<w2:keyInfo>
 						<w2:key id="NODE_IDS" name="노드IDS" dataType="text"></w2:key>
 						<w2:key id="INT_ROUT_ID" name="연계노선ID" dataType="text"></w2:key>
-						<w2:key id="ROUTE_ID" name="노선ID" dataType="text"></w2:key>
+						<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
 						<w2:key id="AREA" name="권역" dataType="text"></w2:key>
 						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
 					</w2:keyInfo>
@@ -36,14 +36,14 @@
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_MST" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
 						<w2:column id="INT_ROUT_ID" name="연계노선ID" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
@@ -64,7 +64,7 @@
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
 						<w2:column id="NODE_SN" name="노드순번" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
@@ -121,7 +121,7 @@
 		com.executeSubmission(sub_SI0404SHI0);
 		
 		var autoOptions = {
-			Main : { grid : SI0404G0, srchSbm : sub_SI0404G0R0, srchGrp : pgm_header, keyColumn : "ROUTE_ID", focusColumn : "ROUTE_ID", name : "노선 목록"},
+			Main : { grid : SI0404G0, srchSbm : sub_SI0404G0R0, srchGrp : pgm_header, keyColumn : "ROUT_ID", focusColumn : "ROUT_ID", name : "노선 목록"},
 			Sub1 : { grid : SI0404G1, srchSbm : sub_SI0404G1R0, srchGrp : pgm_subList, savSbm : sub_SI0404G1S0, name :  "노선 경로정보"}
 		 };
 		 
@@ -157,7 +157,7 @@
 	
 
 	scwin.sub_SI0404G0R0_submitdone = function(e) {
-		com.setFocusedCell(SI0404G0, "ROUTE_ID");	
+		com.setFocusedCell(SI0404G0, "ROUT_ID");	
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
@@ -166,9 +166,9 @@
 			search_input.setValue("");
 			search_input.show("");
 		} 
-		else if (info.newValue == "ROUTE_ID") {
+		else if (info.newValue == "ROUT_ID") {
 			search_input.hide();
-			autoChoiceBox.setNodeSet("data:dlt_searchitem", "ROUTE_ID", "ROUTE_ID");
+			autoChoiceBox.setNodeSet("data:dlt_searchitem", "ROUT_ID", "ROUT_ID");
 			autoChoiceBox.show("");
 		}
 		else if (info.newValue == "ROUT_NM") {
@@ -184,8 +184,8 @@
 	
 
 	scwin.dma_disp_check_onviewchange = function(info) {
-		setDispCheck("map_SI0404", disp_check.getValue());
-		//routMap.drawRoute("map_SI0404", SI0404G1, -1, true);
+		routMap.setDispCheck("map_SI0404", disp_check.getValue());
+		routMap.drawRoute("map_SI0404", SI0404G1, -1, true);
 	}
 	
 	scwin.SI0404G0_onrowindexchange = function(row,oldRow) {
@@ -231,10 +231,10 @@
 				if (rtn) {
 					var val_NODE_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("NODE_ID");
 					//dma_sub_search.set("NODE_IDS", val_NODE_ID);
-					dma_sub_search.set("ROUTE_ID", dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "ROUTE_ID"));
+					dma_sub_search.set("ROUT_ID", dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "ROUT_ID"));
 					dma_sub_search.set("INT_ROUT_ID", dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "INT_ROUT_ID"));
 					dma_sub_search.set("AREA", dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "AREA"));
-					var param = dma_sub_search.get("ROUTE_ID");
+					var param = dma_sub_search.get("ROUT_ID");
 					if (param != "") {
 						var data = { data : dma_sub_search.getJSON(), callbackFn : "scwin.insertNode" };
 						var options = { id : "SI0404P01",
@@ -250,7 +250,7 @@
 			//dma_sub_search.set("NODE_IDS", val_NODE_ID);
 			dma_sub_search.set("INT_ROUT_ID", dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "INT_ROUT_ID"));
 					
-			var param = dma_sub_search.get("ROUTE_ID");
+			var param = dma_sub_search.get("ROUT_ID");
 			if (param != "") {
 				var data = { data : dma_sub_search.getJSON(), callbackFn : "scwin.insertNode" };
 				var options = { id : "SI0404P01",
@@ -297,7 +297,7 @@
 	
 	scwin.insertNode = function(obj){
 		dlt_BMS_ROUT_NODE_CMPSTN.removeAll();
-		var route_id = dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "ROUTE_ID");
+		var route_id = dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "ROUT_ID");
 		var area = dlt_BMS_ROUT_MST.getCellData(SI0404G0.getFocusedRowIndex(), "AREA");
 		routMap.insertNodeAll("map_SI0404",SI0404G1,obj,route_id,area);
 	}
@@ -322,7 +322,7 @@
 		disp_check.getCheckboxList()[0].checked = true;
 		disp_check.getCheckboxList()[1].checked = true;
 		disp_check.getCheckboxList()[2].checked = true;
-		setDispCheck("map_SI0404", disp_check.getValue());
+		routMap.setDispCheck("map_SI0404", disp_check.getValue());
 	}
 	
 ]]></script>
@@ -340,7 +340,7 @@
 					<xf:group class="search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
-							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_item" style="" submenuSize="auto"
 							textAlign="left">
 
 							<xf:choices>
@@ -350,7 +350,7 @@
 								</xf:item>
 								<xf:item>
 									<xf:label><![CDATA[노선ID]]></xf:label>
-									<xf:value><![CDATA[ROUTE_ID]]></xf:value>
+									<xf:value><![CDATA[ROUT_ID]]></xf:value>
 								</xf:item>
 								<xf:item>
 									<xf:label><![CDATA[노선명]]></xf:label>
@@ -425,7 +425,7 @@
 									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="WAY_DIV"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUTE_ID"
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_ID"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_NM"
@@ -456,7 +456,7 @@
 							<w2:textbox class="df_tt fl" id="" label="노선 경로정보" style=""></w2:textbox>
 						</xf:group>
 						<xf:group id="" class="gr_sub_header" style="">
-							<xf:group class="gr_search" id="" style="">
+							<xf:group class="gr_sub_search" id="" style="">
 								<xf:group class="label" id="" style="">
 									<w2:span class="" id="" label="검색 항목"></w2:span>
 								</xf:group>
@@ -535,11 +535,12 @@
 					</xf:group><!-- pgm_subList -->
 				</xf:group>
 				<xf:group id="" class="vertical_line"></xf:group>
-				<xf:group id="pgm_detail" class="pgm_detail grdr_20_a" style="">
-					<xf:group id="" class="gr_sub_header" style="">
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_a" style="">
+					<xf:group id="" class="gr_map_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="지도" style=";"></w2:textbox>
 						</xf:group>
+
 						<xf:group class="check" id="" style="right: 100px">
 							<xf:select id="disp_check" selectedIndex="0" cols="" appearance="full" style="" rows="1"
 								ref="data:dma_disp_check.check" ev:onviewchange="scwin.dma_disp_check_onviewchange">
@@ -560,7 +561,8 @@
 							</xf:select>
 						</xf:group>
 					</xf:group>
-					
+					<xf:group class="" id="" style="">
+					</xf:group>
 					<xf:group id="" class="" style="">
 						<!-- <xf:group id="map_SI0404" style="overflow:hidden;"></xf:group> -->
 						<div id="map_SI0404" style="overflow:hidden;"></div>

@@ -19,19 +19,6 @@ public class FM0100Controller extends ControllerSupport {
 	@Autowired
 	private FM0100Service fm0100Service;
 	
-	@RequestMapping("/fm/FM0100G0R0")
-	public @ResponseBody Map<String, Object> FM0100G0R0() throws Exception {
-		result.setData("dlt_BMS_STTN_MST", fm0100Service.FM0100G0R0());
-		return result.getResult();
-	}
-	
-	
-	@RequestMapping("/fm/FM0100SHI0")
-	public @ResponseBody Map<String, Object> FM0100SHI0() throws Exception {
-		result.setData("dlt_searchitem", fm0100Service.FM0100SHI0());
-		return result.getResult();
-	}
-	
 	@RequestMapping("/fm/FM0100G1R0")
 	public @ResponseBody Map<String, Object> FM0100G1R0() throws Exception {
 		result.setData("dlt_BMS_FCLT_INFO", fm0100Service.FM0100G1R0());

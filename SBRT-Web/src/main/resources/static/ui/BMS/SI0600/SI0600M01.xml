@@ -51,6 +51,7 @@
 						<w2:column id="LEVEL" name="레벨" dataType="text"></w2:column>
 						<w2:column id="SORT" name="정렬" dataType="text"></w2:column>
 						<w2:column id="path" name="path" dataType="text"></w2:column>
+						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_EMER_MEMBER_INFO" saveRemovedData="true">
@@ -334,12 +335,12 @@
 			<xf:group id="pgm_header" class="pgm_header" style="">
 				<xf:group id="" style="" class="gr_search">
 					<xf:group id="" style="" class="label">
-						<w2:span id="" class="" label="검색 항목"></w2:span>
+						<w2:span id="" class="" label="검색"></w2:span>
 					</xf:group>
 					<xf:group id="" style="" class="search">
-						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+						<!-- <xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE"
-							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_item" style="" submenuSize="auto"
 							textAlign="left">
 							<xf:choices>
 								<xf:item>
@@ -355,8 +356,8 @@
 									<xf:value><![CDATA[COMP_NM]]></xf:value>
 								</xf:item>
 							</xf:choices>
-						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="운수사 ID 또는 운수사 명"></xf:input>
+						</xf:select1> -->
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="분류 ID 또는 분류 명"></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
 							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
 							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
@@ -372,7 +373,7 @@
 					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
 			</xf:group><!-- pgm_header -->
-			<xf:group id="pgm_content" class="pgm_content grdc_a_20_700" style="">
+			<xf:group id="pgm_content" class="pgm_content2 grdc_a_50_800" style="">
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 					<xf:group id="" class="" style="">
 						<xf:group class="defaultbox" id="" style="">
@@ -380,9 +381,9 @@
 						</xf:group>
 					</xf:group>
 					<xf:group></xf:group>
-					<xf:group id="" class="" style="">
-						<w2:treeview id="SI0600T0" dataType="listed" tooltipGroupClass="false" style="" labelclass=""
-							ev:onchange="scwin.SI0600T0_onchange" dynamicAppend="true">
+					<xf:group id="" class="" style="margin-left:50px">
+						<w2:treeview id="SI0600T0" dataType="listed" tooltipGroupClass="false" style="height:100%" labelclass=""
+							ev:onchange="scwin.SI0600T0_onchange" dynamicAppend="true" >
 							<w2:itemset nodeset="data:dlt_EMER_CLSFCTN_MST">
 								<w2:label ref="CLSFCTN_NM"></w2:label>
 								<w2:value ref="CLSFCTN_ID"></w2:value>
@@ -400,7 +401,7 @@
 					</xf:group>
 				</xf:group><!-- pgm_list -->
 
-				<xf:group id="" class="vertical_line"></xf:group>
+				<xf:group id="" class="vertical_line2"></xf:group>
 				<xf:group id="pgm_detail" class="pgm_detail grdr_20_180_20_20_a" style="">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
@@ -408,7 +409,7 @@
 						</xf:group>
 					</xf:group>
 					<xf:group class="" id="" style="">
-						<xf:group class="w2tb tb" id="SI0600F0" style="width:100%; height:100%;" tagname="table">
+						<xf:group class="w2tb tb" id="SI0600F0" style="width:100%;" tagname="table">
 							<w2:attributes>
 								<w2:summary></w2:summary>
 							</w2:attributes>
@@ -422,25 +423,35 @@
 								<xf:group class="w2tb_th req" style="" tagname="th">분류&amp;nbsp;ID</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<w2:attributes>
-										<w2:colspan>3</w2:colspan>
+										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:input class="" id="" mandatory="" ref="data:dlt_EMER_CLSFCTN_MST.CLSFCTN_ID"
 										style="width:100%;height:21px;" disabled="true" adjustMaxLength="">
 									</xf:input>
 								</xf:group>
+								<xf:group class="w2tb_th req" style="" tagname="th">분류&amp;nbsp;명</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<w2:attributes>
+										<w2:colspan>1</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:input class="req" id=""  mandatory="" ref="data:dlt_EMER_CLSFCTN_MST.CLSFCTN_NM"
+										style="width:100%;height:21px;" disabled="true" adjustMaxLength="">
+									</xf:input>
+								</xf:group>
 							</xf:group>
 							<xf:group style="" tagname="tr">
-								<xf:group class="w2tb_th req" style="" tagname="th">분류명</xf:group>
+								<xf:group class="w2tb_th req" style="" tagname="th">비고</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<w2:attributes>
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input adjustMaxLength="" class="req" disabled="" id="REP_NM" mandatory=""
-										ref="data:dlt_EMER_CLSFCTN_MST.CLSFCTN_NM" style="width:100%;height:21px;" allowChar="" validator="" validateOnInput="false"
+									<xf:textarea adjustMaxLength="" disabled="" id="REMARK" mandatory=""
+										ref="data:dlt_EMER_CLSFCTN_MST.REMARK" style="width:100%;height:110px;" allowChar="" validator="" validateOnInput="false"
 										initValue="">
-									</xf:input>
+									</xf:textarea>
 								</xf:group>
 							</xf:group>
 						</xf:group>

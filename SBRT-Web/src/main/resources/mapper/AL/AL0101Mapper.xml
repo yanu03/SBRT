@@ -159,35 +159,35 @@
 </delete>
 
 <select id="AL0101G1R0" resultType="Map">
-	select a.ROUTE_ID, a.ROUT_NM, a.ROUT_TYPE, a.STTN_CNT, a.ROUT_LEN, a.CURVATURE, a.REMARK, b.STTN_ID
-	from BMS_ROUT_MST a INNER JOIN BMS_ROUT_NODE_CMPSTN b ON a.ROUTE_ID = b.ROUTE_ID AND b.NODE_TYPE != 'NT06'
+	select a.ROUT_ID, a.ROUT_NM, a.ROUT_TYPE, a.STTN_CNT, a.ROUT_LEN, a.CURVATURE, a.REMARK, b.STTN_ID
+	from BMS_ROUT_MST a INNER JOIN BMS_ROUT_NODE_CMPSTN b ON a.ROUT_ID = b.ROUT_ID AND b.NODE_TYPE != 'NT06'
 	where b.STTN_ID = #{STTN_ID}
 	
 </select>
 
 <insert id="AL0101G1I0" parameterType="Map">
 	insert into BMS_ROUT_NODE_CMPSTN
-			(ROUTE_ID, STTN_ID, STTN_ID_SN)
-	values (#{ROUTE_ID}, #{STTN_ID}, 0)		
+			(ROUT_ID, STTN_ID, STTN_ID_SN)
+	values (#{ROUT_ID}, #{STTN_ID}, 0)		
 
 </insert>
 
 <delete id="AL0101G1D0" parameterType="Map">
 	delete from BMS_ROUT_NODE_CMPSTN
-	where ROUTE_ID = #{ROUTE_ID}
+	where ROUT_ID = #{ROUT_ID}
 	and STTN_ID = #{STTN_ID}
 </delete>
 
 <select id="AL0101P0R0" resultType="Map">
 	
-	select ROUTE_ID, ROUT_NM, ROUT_TYPE, STTN_CNT, ROUT_LEN, CURVATURE, REMARK
+	select ROUT_ID, ROUT_NM, ROUT_TYPE, STTN_CNT, ROUT_LEN, CURVATURE, REMARK
 	from BMS_ROUT_MST
 	<where>
 		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-			AND ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
-		<if test="TYPE == 'ROUTE_ID'">
-			AND ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%')
+		<if test="TYPE == 'ROUT_ID'">
+			AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
 		<if test="TYPE == 'ROUT_NM'">
 			AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 

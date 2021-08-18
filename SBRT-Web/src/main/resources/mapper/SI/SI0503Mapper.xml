@@ -5,17 +5,16 @@
 
 <select id="SI0503G0R0" resultType="Map">
 	select  CRS_ID,
-			NODE_ID,
 			CRS_NM,
 			CRS_ENM,
+			GPS_X,
+			GPS_Y,
 			CRS_KIND,
 			SIG_CTR_TYPE,
 			MAIN_PHASE,
 			PHASE_CNT,
 			PERIOD_LEN,
 			PERIOD_CNT,
-			DATE_FORMAT(APPL_ST_DT, '%Y%m%d') APPL_ST_DT,
-			DATE_FORMAT(APPL_ED_DT, '%Y%m%d') APPL_ED_DT,
 			USE_YN,
 			REMARK
 			
@@ -46,21 +45,13 @@
 	order by CRS_ID
 </select>
 
-<insert id="SI0503G0I0" parameterType="Map">
-    <selectKey keyProperty="NODE_ID" resultType="String" order="BEFORE">
-       SELECT CONCAT('ND', LPAD(NEXTVAL(SEQ_BMS_NODE_MST_0), 8, '0'))
-    </selectKey>	
+<insert id="SI0503G0I0" parameterType="Map">	
 	insert into BMS_CRS_MST
 			(
 				CRS_ID,
-				NODE_ID,
 				CRS_NM,
 				CRS_KIND,
 				SIG_CTR_TYPE,
-				GPS_X,
-				GPS_Y,
-				APPL_ST_DT,
-				APPL_ED_DT,
 				USE_YN,
 				REMARK,
 				UPD_DTM,
@@ -70,43 +61,14 @@
 	values		
 			(
 				#{CRS_ID},
-				#{NODE_ID},
 				#{CRS_NM},
 				#{CRS_KIND},
 				#{SIG_CTR_TYPE},
-				#{GPS_X},
-				#{GPS_Y},
-				STR_TO_DATE(#{APPL_ST_DT}, '%Y%m%d'),
-				STR_TO_DATE(#{APPL_ED_DT}, '%Y%m%d'), 
 				#{USE_YN},
 				#{REMARK},
 				#{UPD_DTM},
 				#{SSN_USER_ID}		
 			);
-			
-			
-	insert into BMS_NODE_MST
-			(
-				NODE_ID,
-				NODE_NM,
-				NODE_TYPE,
-				GPS_X,
-				GPS_Y,
-				USE_YN,
-				UPD_DTM,
-				UPD_ID		
-			)
-	values
-			(
-				#{NODE_ID},
-				#{CRS_NM},
-				'NT01',
-				#{GPS_X},
-				#{GPS_Y},
-				#{USE_YN},
-				#{UPD_DTM},
-				#{SSN_USER_ID}				
-			)
 </insert>
 
 <update id="SI0503G0U0" parameterType="Map">
@@ -114,10 +76,6 @@
 	set		CRS_NM = #{CRS_NM},
 			CRS_KIND = #{CRS_KIND},
 			SIG_CTR_TYPE = #{SIG_CTR_TYPE},
-			GPS_X = #{GPS_X},
-			GPS_Y = #{GPS_Y},
-			APPL_ST_DT = STR_TO_DATE(#{APPL_ST_DT}, '%Y%m%d'),
-			APPL_ED_DT = STR_TO_DATE(#{APPL_ED_DT}, '%Y%m%d'),
 			USE_YN = #{USE_YN},
 			REMARK = #{REMARK},
 			UPD_DTM = #{UPD_DTM},
@@ -127,28 +85,38 @@
 	
 	update BMS_NODE_MST
 	set		NODE_NM = #{CRS_NM},
-			GPS_X = #{GPS_X},
-			GPS_Y = #{GPS_Y},
 			USE_YN = #{USE_YN},
 			UPD_DTM = #{UPD_DTM},
 			UPD_ID = #{SSN_USER_ID}
-	where NODE_ID = #{NODE_ID}			  
+	where NODE_ID = #{CRS_ID}			  
 </update>
 
 <delete id="SI0503G0D0" parameterType="Map">
-	delete
+	UPDATE BMS_CRS_MST
+	SET		USE_YN = 'N'
+	WHERE CRS_ID = #{CRS_ID}
+	
+	UPDATE BMS_ROUT_NODE_CMPSTN
+		SET CRS_ID='', NODE_TYPE = 'NT03'
+	WHERE NODE_ID = #{CRS_ID};
+	
+	UPDATE BMS_NODE_MST
+		SET NODE_TYPE = 'NT03'
+	WHERE NODE_ID = #{CRS_ID};
+	
+	<!-- delete
 	from BMS_CRS_MST
 	where CRS_ID = #{CRS_ID};
 	
 	delete
 	from BMS_NODE_MST
-	where NODE_ID = #{NODE_ID}
+	where NODE_ID = #{NODE_ID} -->
 </delete>
 
 
 <select id="SI0503G1R0" resultType="Map">
-	select a.ROUTE_ID, a.ROUT_NM, a.ROUT_TYPE, a.STTN_CNT, a.ROUT_LEN, a.CURVATURE, a.REMARK, b.CRS_ID
-	from BMS_ROUT_MST a INNER JOIN BMS_ROUT_NODE_CMPSTN b ON a.ROUTE_ID = b.ROUTE_ID  AND b.NODE_TYPE != 'NT06'
+	select a.ROUT_ID, a.ROUT_NM, a.ROUT_TYPE, a.STTN_CNT, a.ROUT_LEN, a.CURVATURE, a.REMARK, b.CRS_ID
+	from BMS_ROUT_MST a INNER JOIN BMS_ROUT_NODE_CMPSTN b ON a.ROUT_ID = b.ROUT_ID  AND b.NODE_TYPE != 'NT06'
 	where b.CRS_ID = #{CRS_ID}
 	
 	

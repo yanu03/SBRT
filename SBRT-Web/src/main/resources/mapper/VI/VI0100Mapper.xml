@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.brt.domain.VI0100.VI0100Mapper">
+
+<select id="VI0100G0R0" resultType="Map">
+	SELECT  
+		a.VHC_ID
+		,a.VHC_NO
+		,b.COMP_NM
+		,b.AREA
+		,(IF(d.USE_YN IS NULL, '', IF(d.USE_YN = 'Y', '노선사용', ''))) AS USE_YN
+		,d.ROUT_NM
+	FROM
+		sbrt.BMS_VHC_MST a
+		LEFT JOIN sbrt.BMS_TRANSCOMP_MST b
+		ON a.COMP_ID = b.COMP_ID
+		LEFT JOIN sbrt.BMS_ROUT_COMP_CMPSTN c
+		ON a.COMP_ID = c.COMP_ID
+		LEFT JOIN sbrt.BMS_ROUT_MST d
+		ON c.ROUT_ID = d.ROUT_ID
+	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || VIOLT_TYPE LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'COMP_NM'">
+			AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'ROUT_NM'">
+			AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'VIOLT_TYPE'">
+			AND VIOLT_TYPE LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+	ORDER BY
+		a.VHC_ID
+		
+</select>
+
+<select id="VI0100SHI0" resultType="Map" parameterType="Map">
+	SELECT  
+		b.COMP_NM
+		,d.ROUT_NM
+		,e.VIOLT_TYPE
+	FROM
+		sbrt.BMS_VHC_MST a
+		LEFT JOIN sbrt.BMS_TRANSCOMP_MST b
+		ON a.COMP_ID = b.COMP_ID
+		LEFT JOIN sbrt.BMS_ROUT_COMP_CMPSTN c
+		ON a.COMP_ID = c.COMP_ID
+		LEFT JOIN sbrt.BMS_ROUT_MST d
+		ON c.ROUT_ID = d.ROUT_ID
+		LEFT JOIN sbrt.BRT_OPER_VIOLT_HIS e
+		ON a.VHC_ID = e.VHC_ID
+</select>
+
+<select id="VI0100G1R0" resultType="Map">
+	select  
+		DATE_FORMAT(a.OCR_DTM, '%Y-%m-%d %H:%i:%s') OCR_DTM
+		,a.VIOLT_TYPE
+		,a.GPS_X
+		,a.GPS_Y
+		,a.JUDGE
+		,a.JUDG_ORG
+		,a.JUDG_TYPE
+		,a.JUDG_DESC
+		,b.NODE_NM
+	from 	
+		BRT_OPER_VIOLT_HIS a
+		LEFT JOIN BMS_NODE_MST b
+		ON a.NODE_ID = b.NODE_ID
+	where 	
+		VHC_ID = #{VHC_ID}
+	
+</select>
+
+<delete id="VI0100G1D0" parameterType="Map">
+	delete from BRT_OPER_VIOLT_HIS
+	where VHC_ID = #{VHC_ID}
+</delete>
+
+<!--  <insert id="VI0100G1I0" parameterType="Map">
+	insert into BRT_OPER_VIOLT_HIS
+			(STTN_ID,
+			TRNS_ID,
+			TRNS_DIV,
+			TRNS_NM,
+			GPS_X,
+			GPS_Y,
+			TM_Y,
+			TM_X,
+			USE_YN,
+			REMARK,
+			UPD_DTM,
+			UPD_ID
+			)
+	values (#{STTN_ID},
+			#{TRNS_ID},
+			#{TRNS_DIV},
+			#{TRNS_NM},
+			#{GPS_X},
+			#{GPS_Y},
+			0,
+			0,
+			#{USE_YN},
+			#{REMARK},
+			#{UPD_DTM},
+			#{SSN_USER_ID}
+			)		
+
+</insert>-->
+
+</mapper>

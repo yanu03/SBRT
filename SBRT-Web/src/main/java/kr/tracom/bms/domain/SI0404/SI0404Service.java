@@ -113,7 +113,7 @@ public class SI0404Service extends ServiceSupport {
 				double routStrtLen = DataInterface.getDistanceBetween(Double.parseDouble((String)param.get(0).get("GPS_X")), Double.parseDouble((String)param.get(0).get("GPS_Y")), 
 						Double.parseDouble((String)param.get(param.size()-1).get("GPS_X")), Double.parseDouble((String)param.get(param.size()-1).get("GPS_Y")));
 						
-				routMap.put("ROUTE_ID", (String)param.get(0).get("ROUTE_ID"));
+				routMap.put("ROUT_ID", (String)param.get(0).get("ROUT_ID"));
 				
 				routMap.put("ROUT_LEN", CommonUtil.pointRound(routLen,3));
 				routMap.put("ROUT_STRT_LEN", CommonUtil.pointRound(routStrtLen,3));
@@ -194,6 +194,7 @@ public class SI0404Service extends ServiceSupport {
 				if(child.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element)child;
 					tmp.put("STTN_ID",DataInterface.getTagValue("nodeid", eElement).substring(3));
+					tmp.put("NODE_ID",DataInterface.getTagValue("nodeid", eElement).substring(3));
 					tmp.put("NODE_NM",DataInterface.getTagValue("nodenm", eElement));
 					tmp.put("STTN_NO",DataInterface.getTagValue("nodeno", eElement));
 					tmp.put("GPS_Y",DataInterface.getTagValue("gpslati", eElement));

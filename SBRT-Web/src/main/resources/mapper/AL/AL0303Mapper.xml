@@ -27,6 +27,7 @@
 			,a.DETAILS
 			,a.ROUT_ID
 			,b.INCDNT_TYPE
+			,b.REP_ROUT_NM
 		FROM
 			sbrt.BRT_RPC_VHC_INFO a 
 			LEFT JOIN sbrt.BRT_INCDNT_INFO b 
@@ -120,7 +121,7 @@
 
 	  <select id="PI0205G0R0" resultType="Map" parameterType="Map">
 		SELECT
-			R.ROUTE_ID
+			R.ROUT_ID
 		    , R.ROUT_NM
 		    , R.WAY_DIV
 		    , DATE_FORMAT(R.UPD_DTM, '%Y-%m-%d') AS UPD_DTM
@@ -133,20 +134,20 @@
 		FROM
 			BMS_ROUT_MST R
 		    LEFT OUTER JOIN BMS_VOC_INFO V
-		    ON R.ROUTE_ID = V.ROUTE_ID
+		    ON R.ROUT_ID = V.ROUT_ID
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-				AND R.ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%') || R.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+				AND R.ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || R.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
-			<if test="TYPE == 'ROUTE_ID'">
-				AND R.ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%')
+			<if test="TYPE == 'ROUT_ID'">
+				AND R.ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
 			<if test="TYPE == 'ROUT_NM'">
 				AND R.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 		</where>
 		ORDER BY
-			R.ROUTE_ID
+			R.ROUT_ID
 	</select>
 	
 	<insert id="PI0205G0I0" parameterType="Map">
@@ -156,7 +157,7 @@
 	
 		INSERT INTO BMS_VOC_INFO(
 			VOC_ID
-			,ROUTE_ID
+			,ROUT_ID
 			,PLAY_TYPE
 			,KR_TTS
 			,REMARK
@@ -167,7 +168,7 @@
 			) 
 		VALUES (
 			#{VOC_ID}
-			,#{ROUTE_ID}
+			,#{ROUT_ID}
 			,#{PLAY_TYPE}
 			,#{KR_TTS}
 			,#{REMARK}
@@ -194,7 +195,7 @@
 			,UPD_DTM = #{UPD_DTM}
 			,UPD_ID = #{UPD_ID} 
 		WHERE 
-			ROUTE_ID = #{ROUTE_ID}
+			ROUT_ID = #{ROUT_ID}
 			AND VOC_ID = #{VOC_ID}
 	</update>
 	

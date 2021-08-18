@@ -12,7 +12,6 @@
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_DRV_MST" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="DRV_ID" name="운전자ID" dataType="text"></w2:column>
-
 						<w2:column id="COMP_ID" name="운수사ID" dataType="text"></w2:column>
 						<w2:column id="DRV_NM" name="운전자명" dataType="text"></w2:column>
 						<w2:column id="DRV_ENM" name="운전자영문명" dataType="text"></w2:column>
@@ -148,7 +147,7 @@
 	};
 	
 	//파일 선택버튼 클릭 이벤트
-	scwin.btn_uploadImage_onclick = function() {
+	/*scwin.btn_uploadImage_onclick = function() {
 		var data = { FILE_NM : dlt_BMS_DRV_MST.getCellData(SI0300G0.getFocusedRowIndex(), "FILE_NM"), callbackFn : "scwin.uploadImageFileCallback" };
 		var opt = { id : "SI0300P02", 
 					popupName : "사진 업로드", 
@@ -162,6 +161,29 @@
 	
 //		dma_memberBasic.set("IMAGE_PATH", gcm.CONTEXT_PATH + "/fileUpload/up/" + filePath);
 		dlt_BMS_DRV_MST.setCellData(SI0300G0.getFocusedRowIndex(), "FILE_NM", returnValue);
+	};*/
+	
+	//이미지 파일 선택시
+	scwin.upload0_onInputValueChange = function(returnValue){
+	
+		var fileNameIndex = returnValue.lastIndexOf('\\');
+		var real_fileName = returnValue.substring(fileNameIndex+1, returnValue.length);
+		
+		dlt_BMS_DRV_MST.setCellData(SI0300G0.getFocusedRowIndex(), "FILE_NM", real_fileName);
+		
+		btn_upload.submit();
+		
+	}
+	
+	//이미지 파일 업로드시
+	scwin.upload0_ondone = function(retXml) {
+	
+		var real_fileName = dlt_BMS_DRV_MST.getCellData(SI0300G0.getFocusedRowIndex(), "FILE_NM");
+		var src = "/fileUpload/up/" + real_fileName; 
+		
+		$p.$("#image1").attr("src", src);
+				
+		
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
@@ -325,14 +347,16 @@
 				</xf:group><!-- pgm_list end -->
 				<xf:group id="" class="vertical_line">
 				</xf:group>
-				<xf:group id="pgm_detail" class="pgm_detail grdr_20_350_20_20_a" style="">
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_a" style="">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="운전자 상세정보" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
 					<xf:group class="" id="" style="">
-						<xf:group  class="w2tb tb" id="SI0300F0" style="width:100%; height:100%;" tagname="table">
+					</xf:group>
+					<xf:group class="" id="" style="">
+						<xf:group  class="w2tb tb" id="SI0300F0" style="width:100%;" tagname="table">
 							<w2:attributes>
 								<w2:summary></w2:summary>
 							</w2:attributes>
@@ -452,6 +476,23 @@
 									</w2:inputCalendar>
 								</xf:group>
 							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group class="w2tb_th" style="" tagname="th">파일선택</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<!--  <w2:anchor class="btn_com" ev:onclick="scwin.btn_upload_onclick" id="btn_upload" outerDiv="" style="">
+										<xf:label><![CDATA[파일 선택]]></xf:label>
+									</w2:anchor>-->
+									<w2:upload imageStyle="position:absolute;vertical-align:middle;word-wrap:break-word"
+										inputStyle="vertical-align:middle;word-wrap:break-word" style="width: 100%;height: 23px;" id="btn_upload" inputClass=""
+										ev:onInputValueChange="scwin.upload0_onInputValueChange" ev:ondone="scwin.upload0_ondone" accept=".png,.jpg" title="" type=""
+										disabled="false" class="">
+									</w2:upload>
+								</xf:group>
+							</xf:group>
 							<xf:group tagname="tr" style="">
 								<xf:group tagname="th" class="w2tb_th" style="height: 70px;" id="" tabIndex="">
 									사원이미지
@@ -464,16 +505,13 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<w2:anchor class="btn_com" ev:onclick="scwin.btn_uploadImage_onclick" id="btn_uploadImage" outerDiv="" style="">
-										<xf:label><![CDATA[파일 선택]]></xf:label>
-									</w2:anchor>
 									<xf:image id="image1" ref="data:dlt_BMS_DRV_MST.FILE_PATH" src=""
 										style="width:150px;height:150px;margin-left:2px;margin-bottom:3px;float:left;">
 									</xf:image>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" class="w2tb_th" style="height: 70px;" id="" tabIndex="">
+								<xf:group tagname="th" class="w2tb_th" style="height: 110px;" id="" tabIndex="">
 									비고
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -484,9 +522,9 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input adjustMaxLength="" class="" disabled="" id="REMARK" mandatory="" ref="data:dlt_BMS_DRV_MST.REMARK"
-										style="width:100%;height:70px;">
-									</xf:input>
+									<xf:textarea adjustMaxLength="" class="" disabled="" id="REMARK" mandatory="" ref="data:dlt_BMS_DRV_MST.REMARK"
+										style="width:100%;height:110px;">
+									</xf:textarea>
 								</xf:group>
 							</xf:group>
 						</xf:group>

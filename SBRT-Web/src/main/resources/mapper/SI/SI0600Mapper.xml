@@ -12,6 +12,7 @@
          a.PARENT_ID,
          a.LEVEL,
          a.SORT,
+         a.REMARK,
          CONCAT(a.LEVEL,a.SORT) path
        FROM	   BMS_EMER_CLSFCTN_MST a
        WHERE   a.PARENT_ID = ""
@@ -23,6 +24,7 @@
           b.PARENT_ID,
           b.LEVEL,
           b.SORT,
+          b.REMARK,
           CONCAT(c.path,b.LEVEL,b.SORT) path 
        FROM    CTE c
        INNER   JOIN BMS_EMER_CLSFCTN_MST b
@@ -36,6 +38,7 @@
          IFNULL(PARENT_ID, 0) AS PARENT_ID,
          LEVEL,
          SORT,
+         REMARK,
          path
       FROM CTE order by path
 
@@ -59,6 +62,7 @@
 				PARENT_ID,
 				LEVEL,
 				SORT,
+				REMARK,
 				UPD_DTM,
 				UPD_ID
 			)
@@ -69,6 +73,7 @@
 				#{PARENT_ID},
 				#{LEVEL},
 				#{SORT},
+				#{REMARK},
 				#{UPD_DTM},
 				#{SSN_USER_ID}			
 			)
@@ -81,6 +86,7 @@
 			PARENT_ID = #{PARENT_ID},
 			LEVEL = #{LEVEL},
 			SORT = #{SORT},
+			REMARK = #{REMARK},
 			UPD_DTM = #{UPD_DTM},
 			UPD_ID = #{UPD_ID}
 			

@@ -32,14 +32,14 @@
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_MST" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
 						<w2:column id="INT_ROUT_ID" name="연계노선ID" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
@@ -81,13 +81,13 @@
 						<w2:column id="COMP_NM" name="운수사명" dataType="text"></w2:column>
 
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
-						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_param_ROUTEID">
 					<w2:keyInfo>
 						<w2:key id="COMP_IDS" name="운수사IDS" dataType="text"></w2:key>
-						<w2:key id="ROUTE_ID" name="노선ID" dataType="text"></w2:key>
+						<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 			</w2:dataCollection>
@@ -137,7 +137,7 @@
 		
 		var autoOptions = {
 			Main : { grid : SI0401G0, frm : SI0401F0, srchSbm : sub_SI0401G0R0, savSbm : sub_SI0401G0S0
-				, keySbm : sub_SI0401G0K0, srchGrp : pgm_header, keyColumn : "ROUTE_ID", focusColumn : "ROUT_NM", name : "노선 기초정보 목록"},
+				, keySbm : sub_SI0401G0K0, srchGrp : pgm_header, keyColumn : "ROUT_ID", focusColumn : "ROUT_NM", name : "노선 기초정보 목록"},
 			Sub1 : { grid : SI0401G1, srchSbm : sub_SI0401G1R0, savSbm : sub_SI0401G1S0, name :  "관련운수사"}
 		 };
 		 
@@ -157,11 +157,11 @@
 	};
 	
 	scwin.sub_SI0401G0R0_submitdone = function(e) {
-		com.setFocusedCell(SI0401G0, "ROUTE_ID");	
+		com.setFocusedCell(SI0401G0, "ROUT_ID");	
 	};
 	
 	scwin.sub_SI0401G0K0_submitdone = function(e) {
-		com.addGridForm(SI0401G0, SI0401F0, dma_SEQ_BMS_ROUT_MST_0, "ROUTE_ID", "ROUT_NM");
+		com.addGridForm(SI0401G0, SI0401F0, dma_SEQ_BMS_ROUT_MST_0, "ROUT_ID", "ROUT_NM");
 	};
 	
 	scwin.sub_SI0401G0S0_submitdone = function(e) {
@@ -177,9 +177,9 @@
 			search_input.setValue("");
 			search_input.show("");
 		} 
-		else if (info.newValue == "ROUTE_ID") {
+		else if (info.newValue == "ROUT_ID") {
 			search_input.hide();
-			autoChoiceBox.setNodeSet("data:dlt_searchitem", "ROUTE_ID", "ROUTE_ID");
+			autoChoiceBox.setNodeSet("data:dlt_searchitem", "ROUT_ID", "ROUT_ID");
 			autoChoiceBox.show("");
 		}
 		else if (info.newValue == "ROUT_NM") {
@@ -211,7 +211,7 @@
 			} else {
 				var val_COMP_ID = dlt_BMS_TRANSCOMP_MST.getColData("COMP_ID");
 				dma_param_ROUTEID.set("COMP_IDS", val_COMP_ID);
-				var param = dma_param_ROUTEID.get("ROUTE_ID");
+				var param = dma_param_ROUTEID.get("ROUT_ID");
 				if (param != "") {
 					var data = { data : dma_param_ROUTEID.getJSON(), callbackFn : "scwin.insertSubGrid" };
 					var options = { id : "SI0401P01",
@@ -230,7 +230,7 @@
 		for (i = 0; i < dLength; i++) {
 			var data = dlt_BMS_TRANSCOMP_MST.getMatchedIndex("COMP_ID", obj[i].COMP_ID, true);
 			if (data.length == 0) {
-				obj[i].ROUTE_ID = dma_param_ROUTEID.get("ROUTE_ID");
+				obj[i].ROUT_ID = dma_param_ROUTEID.get("ROUT_ID");
 				obj[i].chk = "0";
 				var idx = dlt_BMS_TRANSCOMP_MST.insertRow();
 				dlt_BMS_TRANSCOMP_MST.setRowJSON(idx, obj[i], true);
@@ -331,7 +331,7 @@
 					<xf:group class="search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
-							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_item" style="" submenuSize="auto"
 							textAlign="left">
 							<xf:choices>
 								<xf:item>
@@ -340,7 +340,7 @@
 								</xf:item>
 								<xf:item>
 									<xf:label><![CDATA[노선ID]]></xf:label>
-									<xf:value><![CDATA[ROUTE_ID]]></xf:value>
+									<xf:value><![CDATA[ROUT_ID]]></xf:value>
 								</xf:item>
 								<xf:item>
 									<xf:label><![CDATA[노선명]]></xf:label>
@@ -428,7 +428,7 @@
 									<w2:column removeBorderStyle="false" width="75" inputType="select" style="height:20px" id="WAY_DIV"
 										userData1="M" value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="ROUTE_ID"
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="ROUT_ID"
 										userData1="M" value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="58" inputType="text" style="height:20px" id="ROUT_NM"
@@ -465,14 +465,16 @@
 
 				</xf:group>
 				<xf:group id="" class="vertical_line"></xf:group>
-				<xf:group id="pgm_detail" class="pgm_detail grdr_20_350_20_20_a" style="">
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_350_20_20_2_a" style="">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="노선 기초 상세정보" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
 					<xf:group class="" id="" style="">
-						<xf:group  class="w2tb tb" id="SI0401F0" style="width:100%; height:100%;" tagname="table">
+					</xf:group>
+					<xf:group class="" id="" style="">
+						<xf:group  class="w2tb tb" id="SI0401F0" style="width:100%;" tagname="table">
 							<w2:attributes>
 								<w2:summary></w2:summary>
 							</w2:attributes>
@@ -487,7 +489,7 @@
 							<xf:group style="" tagname="tr">
 								<xf:group class="w2tb_th req" style="" tagname="th">노선&amp;nbsp;ID</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
-									<xf:input class="" id="ROUTE_ID" mandatory="" ref="data:dlt_BMS_ROUT_MST.ROUTE_ID" style="width:100%;height:21px;"
+									<xf:input class="" id="ROUT_ID" mandatory="" ref="data:dlt_BMS_ROUT_MST.ROUT_ID" style="width:100%;height:21px;"
 										disabled="true" adjustMaxLength="">
 									</xf:input>
 								</xf:group>
@@ -711,7 +713,7 @@
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" class="w2tb_th" style="height: 100px;" id="" tabIndex="">
+								<xf:group tagname="th" class="w2tb_th" style="height: 120px;" id="" tabIndex="">
 									비고
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -722,9 +724,9 @@
 										<w2:colspan>5</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input adjustMaxLength="" class="" disabled="" id="REMARK" mandatory="" ref="data:dlt_BMS_ROUT_MST.REMARK"
-										style="width:100%;height:100px;">
-									</xf:input>
+									<xf:textarea adjustMaxLength="" class="" disabled="" id="REMARK" mandatory="" ref="data:dlt_BMS_ROUT_MST.REMARK"
+										style="width:100%;height:120px;">
+									</xf:textarea>
 								</xf:group>
 							</xf:group>
 						</xf:group>
@@ -736,6 +738,8 @@
 							<w2:textbox class="df_tt fl" id="" label="관련 운수사" style=""></w2:textbox>
 						</xf:group>
 						<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
+					</xf:group>
+					<xf:group class="" id="" style="">
 					</xf:group>
 					<xf:group id="" class="" style="">
 						<w2:gridView   alwaysTriggerScrollStart="" autoFit="lastColumn"

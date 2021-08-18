@@ -15,7 +15,7 @@
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_VOC_INFO" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="VOC_ID" name="음성ID" dataType="text"></w2:column>
-						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="VOC_NM" name="음성명" dataType="text"></w2:column>
 						<w2:column id="PLAY_ST_DT" name="재생시작일" dataType="date"></w2:column>
 						<w2:column id="PLAY_TYPE" name="재생유형" dataType="text"></w2:column>
@@ -60,7 +60,7 @@
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="ROUTE_ID" name="노선아이디" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
@@ -113,7 +113,7 @@
 	$p.executeSubmission(sub_PI0205SHI0);
 	
 	scwin.upload0_onInputValueChange = function(fileName) {
-		debugger;
+		
 		// 확장자 추출
 		var lastDot = fileName.lastIndexOf('.'); 
 		var fileExtension = fileName.substring(lastDot+1, fileName.length);
@@ -182,7 +182,7 @@
 	scwin.sub_PI0205G0R0_submitdone = function(e) {
 		var rsCode = com.getResultCode(e)
 		if (rsCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
-			com.setFocusedCell(PI0205G0, "ROUTE_ID");
+			com.setFocusedCell(PI0205G0, "ROUT_ID");
 		}
 	};
 	
@@ -210,9 +210,9 @@
 			acb_autoChoiceBox.hide();
 			search_input.setValue("");
 			search_input.show("");
-		} else if (info.newValue == "ROUTE_ID") {
+		} else if (info.newValue == "ROUT_ID") {
 			search_input.hide();
-			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "ROUTE_ID", "ROUTE_ID");
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "ROUT_ID", "ROUT_ID");
 			acb_autoChoiceBox.show("");
 		} else if (info.newValue == "ROUT_NM") {
 			search_input.hide();
@@ -249,7 +249,7 @@
 					<xf:group class="search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE"
-							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_item" style="" submenuSize="auto"
 							textAlign="left">
 							<xf:choices>
 								<xf:item>
@@ -258,7 +258,7 @@
 								</xf:item>
 								<xf:item>
 									<xf:label><![CDATA[노선ID]]></xf:label>
-									<xf:value><![CDATA[ROUTE_ID]]></xf:value>
+									<xf:value><![CDATA[ROUT_ID]]></xf:value>
 								</xf:item>
 								<xf:item>
 									<xf:label><![CDATA[노선명]]></xf:label>
@@ -323,7 +323,7 @@
 							</w2:header>
 							<w2:gBody width="40" style="" id="gBody4">
 								<w2:row style="" id="row5">
-									<w2:column width="118" style="height:25px;" inputType="text" id="ROUTE_ID" blockSelect="false"
+									<w2:column width="118" style="height:25px;" inputType="text" id="ROUT_ID" blockSelect="false"
 										displayMode="label" readOnly="true" userData1="M" userData2="">
 									</w2:column>
 									<w2:column width="159" style="height:25px;" inputType="text" id="ROUT_NM" blockSelect="false"
@@ -363,12 +363,13 @@
 				
 				<xf:group id="" class="vertical_line">
 				</xf:group>
-				<xf:group id="pgm_detail" class="pgm_detail grdr_20_a" style="">
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_a" style="">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="음성 정보" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
+					<xf:group class="" id="" style=""></xf:group>
 					<xf:group class="" id="" style="">
 						<xf:group id="PI0205F0" style="width:100%;" class="w2tb tb" tagname="table" >
 							<w2:attributes>
@@ -483,7 +484,8 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input adjustMaxLength="false" id="" style="width: 100%;height: 70px;" ref="data:dlt_BMS_VOC_INFO.REMARK"></xf:input>
+									<xf:textarea adjustMaxLength="false" id="" style="width: 100%;height: 150px;" ref="data:dlt_BMS_VOC_INFO.REMARK">
+									</xf:textarea>
 								</xf:group>
 							</xf:group>
 						</xf:group>

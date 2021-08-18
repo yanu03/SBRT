@@ -38,7 +38,6 @@
 						<w2:column id="STTN_NM" name="정류장명" dataType="text"></w2:column>
 						<w2:column id="GPS_Y" name="위도" dataType="bigDecimal"></w2:column>
 						<w2:column id="GPS_X" name="경도" dataType="bigDecimal"></w2:column>
-
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
 					</w2:columnInfo>
@@ -91,7 +90,7 @@
 				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_FM0100G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_STTN_MST" action="/fm/FM0100G0R0"
+			<xf:submission id="sub_FM0100G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_STTN_MST" action="/rout/selectSttnList"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_FM0100G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -99,7 +98,7 @@
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_FM0100G1K0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_FM0100SHI0" ref="" target="data:json,dlt_searchitem" action="/fm/FM0100SHI0" method="post"
+			<xf:submission id="sub_FM0100SHI0" ref="" target="data:json,dlt_searchitem" action="/rout/selectSttnItem" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -240,7 +239,7 @@
 					<xf:group id="" style="" class="search">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE"
-							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_item" style="" submenuSize="auto"
 							textAlign="left">
 							<xf:choices>
 								<xf:item>
@@ -352,12 +351,14 @@
 				
 				<xf:group id="" class="vertical_line">
 				</xf:group>
-				<xf:group id="pgm_detail" class="pgm_detail grdr_20_350_20_20_a" style="">
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_350_20_20_2_a" style="">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="시설물 목록" style=""></w2:textbox>
 						</xf:group>
 						<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
+					</xf:group>
+					<xf:group id="" class="" style="">
 					</xf:group>
 					<xf:group id="" class="" style="">
 						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" autoFitMinWidth="0" captionTitle=""
@@ -472,6 +473,8 @@
 							<w2:textbox class="df_tt fl" id="" label="시설물 정보" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
+					<xf:group id="" class="" style="">
+					</xf:group>
 					<xf:group class="" id="" style="">
 						<xf:group  class="w2tb tb" id="FM0100F0" style="width:100%; height:100%;" tagname="table">
 							<w2:attributes>
@@ -578,7 +581,7 @@
 										ref="data:dlt_BMS_FCLT_INFO.INST_DT" focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component">
 									</w2:inputCalendar>
 								</xf:group>
-</xf:group>
+							</xf:group>
 							<xf:group tagname="tr" style=""><xf:group tagname="th" class="w2tb_th">사용여부<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes>

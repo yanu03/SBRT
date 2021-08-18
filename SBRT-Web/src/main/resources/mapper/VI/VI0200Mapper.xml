@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.brt.domain.VI0200.VI0200Mapper">
+
+	<select id="VI0200G0R0" resultType="Map">
+		SELECT
+			CPLNT_ID
+			,DATE_FORMAT(OCR_DTM, '%Y-%m-%d') AS OCR_DTM
+			,ROUT_NM
+			,c.COMP_NM
+			,VHC_NO
+			,CPLNT_TYPE
+			,a.GPS_X
+			,a.GPS_Y
+			,CPLNT_CONTS
+			,JUDGE
+			,JUDG_ORG
+			,JUDG_TYPE
+			,JUDG_DESC
+			,DATE_FORMAT(a.UPD_DTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTM
+			,d.NODE_NM
+		FROM
+			BRT_CPLNT_HIS a
+			LEFT JOIN BMS_ROUT_COMP_CMPSTN b
+			ON a.ROUT_ID = b.ROUT_ID
+			LEFT JOIN BMS_TRANSCOMP_MST c
+			ON b.COMP_ID = c.COMP_ID
+			LEFT JOIN BMS_NODE_MST d
+			ON a.NODE_ID = d.NODE_ID
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || CPLNT_TYPE LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'COMP_NM'">
+				AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'ROUT_NM'">
+				AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'CPLNT_TYPE'">
+				AND CPLNT_TYPE LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="OCR_DTM != NULL and OCR_DTM != ''">
+				AND OCR_DTM between #{OCR_DTM} and #{OCR_DTM}
+			</if>
+		</where>	
+		ORDER BY
+			OCR_DTM
+	</select>
+
+	<select id="VI0200SHI0" resultType="Map" parameterType="Map">
+		SELECT  
+			c.COMP_NM
+			,a.ROUT_NM
+			,a.CPLNT_TYPE
+		FROM 	
+			sbrt.BRT_CPLNT_HIS a
+			LEFT JOIN sbrt.BMS_ROUT_COMP_CMPSTN b
+			ON a.ROUT_ID = b.ROUT_ID
+			LEFT JOIN sbrt.BMS_TRANSCOMP_MST c
+			ON b.COMP_ID = c.COMP_ID
+	</select>
+	
+	<select id="VI0200G0K0" resultType="Map">
+		SELECT CONCAT('CI', LPAD(NEXTVAL(SEQ_BRT_CPLNT_HIS_0), 8, '0')) AS 'SEQ'
+	</select>
+	
+	<insert id="VI0200G0I0" parameterType="Map">
+	
+		<selectKey keyProperty="CPLNT_ID" resultType="String" order="BEFORE">
+    		SELECT CONCAT('CI', LPAD(NEXTVAL(SEQ_BRT_CPLNT_HIS_0), 8, '0')) AS CPLNT_ID
+    	</selectKey>
+		
+		INSERT INTO BRT_CPLNT_HIS 
+			(
+				CPLNT_ID
+				,OCR_DTM
+				,ROUT_NM
+				,VHC_NO
+				,CPLNT_TYPE
+				,GPS_X
+				,GPS_Y
+				,CPLNT_CONTS
+				,JUDGE
+				,JUDG_ORG
+				,JUDG_TYPE
+				,JUDG_DESC	
+				,UPD_DTM	
+			)
+		VALUES
+			(
+				#{CPLNT_ID}
+				,#{OCR_DTM}
+				,#{ROUT_NM}
+				,#{VHC_NO}
+				,#{CPLNT_TYPE}
+				,#{GPS_X}
+				,#{GPS_Y}
+				,#{CPLNT_CONTS}
+				,#{JUDGE}
+				,#{JUDG_ORG}
+				,#{JUDG_TYPE}
+				,#{JUDG_DESC}
+				,#{UPD_DTM}
+			)
+	</insert>
+	
+	<update id="VI0200G0U0" parameterType="Map">
+		UPDATE 
+			BRT_CPLNT_HIS
+		SET
+			OCR_DTM = STR_TO_DATE(#{OCR_DTM}, '%Y-%m-%d')
+			,ROUT_NM = #{ROUT_NM}
+			,VHC_NO = #{VHC_NO}
+			,CPLNT_TYPE = #{CPLNT_TYPE}
+			,GPS_X = #{GPS_X}
+			,GPS_Y = #{GPS_Y}
+			,CPLNT_CONTS = #{CPLNT_CONTS}
+			,JUDGE = #{JUDGE}
+			,JUDG_ORG = #{JUDG_ORG}
+			,JUDG_TYPE = #{JUDG_TYPE}
+			,JUDG_DESC = #{JUDG_DESC}
+			,UPD_DTM = #{UPD_DTM}
+		WHERE
+			CPLNT_ID = #{CPLNT_ID}
+	</update>
+	
+	<delete id="VI0200G0D0" parameterType="Map">
+		DELETE FROM BRT_CPLNT_HIS WHERE CPLNT_ID = #{CPLNT_ID}
+	</delete>
+	
+	
+
+</mapper>

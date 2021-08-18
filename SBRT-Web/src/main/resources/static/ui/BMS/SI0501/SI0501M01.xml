@@ -35,7 +35,6 @@
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_STTN_MST" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="STTN_ID" name="정류소ID" dataType="text"></w2:column>
-						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
 						<w2:column id="STTN_NM" name="정류소명" dataType="text"></w2:column>
 						<w2:column id="STTN_ENM" name="정류소영문명" dataType="text"></w2:column>
 						<w2:column id="AREA" name="권역" dataType="text"></w2:column>
@@ -43,16 +42,12 @@
 						<w2:column id="CENTER_YN" name="중앙차로여부" dataType="text"></w2:column>
 						<w2:column id="STTN_FCLT_TYPE" name="정류소시설유형" dataType="text"></w2:column>
 						<w2:column id="VHC_DOOR_DIR_TYPE" name="버스문열림방향유형" dataType="text"></w2:column>
-						<w2:column id="GPS_X" name="GPS_X좌표" dataType="number" defaultValue="0"></w2:column>
-						<w2:column id="GPS_Y" name="GPS_Y좌표" dataType="number" defaultValue="0"></w2:column>
-						<w2:column id="TM_X" name="TM_X좌표" dataType="number" defaultValue="0"></w2:column>
-						<w2:column id="TM_Y" name="TM_Y좌표" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="GPS_X" name="GPS_X좌표" dataType="number"></w2:column>
+						<w2:column id="GPS_Y" name="GPS_Y좌표" dataType="number"></w2:column>
 						<w2:column id="APPL_RDS" name="적용반경" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="BAY_TYPE" name="베이유형" dataType="text"></w2:column>
 						<w2:column id="BAY_LEN" name="베이길이" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="LINE_CNT" name="차선수" dataType="number" defaultValue="0"></w2:column>
-						<w2:column id="APPL_ST_DT" name="적용시작일" dataType="date"></w2:column>
-						<w2:column id="APPL_ED_DT" name="적용종료일" dataType="date"></w2:column>
 						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
 						<w2:column id="ROUTE__ID" name="노선ID" dataType="text"></w2:column>
@@ -65,7 +60,7 @@
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_MST" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 						<w2:column id="ROUT_TYPE" name="노선유형" dataType="text"></w2:column>
 						<w2:column id="STTN_CNT" name="정류소수" dataType="text"></w2:column>
@@ -77,7 +72,7 @@
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
 						<w2:column id="NODE_SN" name="노드순번" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
@@ -95,7 +90,7 @@
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_sub_search">
 					<w2:keyInfo>
-						<w2:key id="ROUTE_IDS" name="노선IDS" dataType="text"></w2:key>
+						<w2:key id="ROUT_IDS" name="노선IDS" dataType="text"></w2:key>
 						<w2:key id="STTN_ID" name="name1" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
@@ -153,8 +148,8 @@
 		
 		routMap.initMap("map_SI0501", {width:"100%"
 			, height:"100%"
-			, onClick: scwin.onClickMap
-			, nodeChangeCb: scwin.nodeChangeCb
+			, onClick: null
+			, nodeChangeCb: null
 			, draggable: false
 		});
 	};
@@ -205,13 +200,15 @@
 	};
 	
 	scwin.sub_SI0501G1R0_submitdone = function(e) {
-		var val_ROUTE_ID = dlt_BMS_ROUT_MST.getColData("ROUTE_ID");
-		dma_sub_search.set("ROUTE_IDS", val_ROUTE_ID);
+		var val_ROUT_ID = dlt_BMS_ROUT_MST.getColData("ROUT_ID");
+		dma_sub_search.set("ROUT_IDS", val_ROUT_ID);
 		dma_sub_search.set("TYPE", "DISP_NODE");
 		com.executeSubmission(sub_SI0501G2R0);
 	};
 	
 	scwin.sub_SI0501G2R0_submitdone = function(e) {
+		
+		//routMap.showRoute2("map_SI0501", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), -1);
 		routMap.showRoute("map_SI0501", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), dma_sub_search.get("STTN_ID"), "BUSSTOP");
 	};
 	
@@ -232,7 +229,7 @@
 					<xf:group class="search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
-							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_item" style="" submenuSize="auto"
 							textAlign="left">
 
 							<xf:choices>
@@ -272,7 +269,7 @@
 				</xf:group>
 			</xf:group>
 
-			<xf:group id="pgm_content" class="pgm_content grdc_a_20_1000" style="">
+			<xf:group id="pgm_content" class="pgm_content grdc_a_20_800" style="">
 
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 					<xf:group class="defaultbox" id="" style="">
@@ -293,26 +290,32 @@
 							userData1="">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column14"
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column14"
 										value="정류소ID" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="98" inputType="text" style="height:20px" id="column10"
+									<w2:column removeBorderStyle="false" width="180" inputType="text" style="height:20px" id="column10"
 										value="정류소명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column16"
+									<w2:column removeBorderStyle="false" width="110" inputType="text" style="height:20px" id="column16"
 										value="권역" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="91" inputType="text" style="height:20px" id="column17"
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column17"
 										value="정류소번호" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="118" inputType="text" style="height:20px" id="column18"
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column18"
 										value="정류소시설유형" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="98" inputType="text" style="height:20px" id="column20"
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column20"
 										value="버스문방향" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="114" inputType="text" style="height:20px" id="column19"
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column19"
 										value="베이유형" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column6"
+										value="경도" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column5"
+										value="위도" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="71" inputType="text" style="height:20px" id="column21"
 										value="비고" blockSelect="false" displayMode="label">
@@ -342,6 +345,12 @@
 									<w2:column removeBorderStyle="false" width="75" inputType="select" style="height:20px"
 										id="BAY_TYPE" value="" blockSelect="false" displayMode="label">
 									</w2:column>
+									<w2:column removeBorderStyle="false" width="95" inputType="text" style="height:20px" id="GPS_X"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="95" inputType="text" style="height:20px" id="GPS_Y"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
 									<w2:column width="70" id="REMARK"></w2:column>
 								</w2:row>
 							</w2:gBody>
@@ -358,14 +367,16 @@
 
 				</xf:group>
 				<xf:group id="" class="vertical_line"></xf:group>
-				<xf:group class="pgm_detail grdr_20_180_20_20_105_20_20_a">
+				<xf:group class="pgm_detail grdr_20_2_180_20_20_2_105_20_20_2_a">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="정류소 상세 정보" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
 					<xf:group class="" id="" style="">
-						<xf:group adaptive="layout" class="w2tb tb" id="SI0501F0" style="height:100%;" tagname="table">
+					</xf:group>
+					<xf:group class="" id="" style="">
+						<xf:group adaptive="layout" class="w2tb tb" id="SI0501F0" style="" tagname="table">
 							<w2:attributes>
 								<w2:summary></w2:summary>
 							</w2:attributes>
@@ -382,7 +393,7 @@
 										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input class="" id="STTN_ID" mandatory="" ref="data:dlt_BMS_STTN_MST.STTN_ID" style="width:30%;height:21px;"
+									<xf:input class="" id="STTN_ID" mandatory="" ref="data:dlt_BMS_STTN_MST.STTN_ID" style="width:100%;height:21px;"
 										disabled="true" adjustMaxLength="">
 									</xf:input>
 								</xf:group>
@@ -528,9 +539,9 @@
 										<w2:colspan>5</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input adjustMaxLength="" class="" disabled="" id="REMARK" mandatory="" ref="data:dlt_BMS_STTN_MST.REMARK"
-										style="width:100%;height: 24px;">
-									</xf:input>
+									<xf:textarea adjustMaxLength="" class="" disabled="" id="REMARK" mandatory="" ref="data:dlt_BMS_STTN_MST.REMARK"
+										style="width:100%;height: 60px;">
+									</xf:textarea>
 								</xf:group>
 							</xf:group>
 						</xf:group>
@@ -543,7 +554,8 @@
 						</xf:group>
 						<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
 					</xf:group>
-					
+					<xf:group class="" id="" style="">
+					</xf:group>
 					<xf:group id="" class="" style="">
 						<w2:gridView   alwaysTriggerScrollStart="" autoFit="lastColumn"
 							autoFitMinWidth="0" captionTitle="" checkEditableInputClass="" class="cm_grid right" dataList="data:dlt_BMS_ROUT_MST"
@@ -583,7 +595,7 @@
 							</w2:header>
 							<w2:gBody style="" id="gBody2">
 								<w2:row style="" id="row5">
-									<w2:column removeBorderStyle="false" width="88" inputType="text" style="height:20px" id="ROUTE_ID"
+									<w2:column removeBorderStyle="false" width="88" inputType="text" style="height:20px" id="ROUT_ID"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="104" inputType="text" style="height:20px" id="ROUT_NM"
@@ -616,6 +628,8 @@
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="지도" style=""></w2:textbox>
 						</xf:group>
+					</xf:group>
+					<xf:group class="" id="" style="">
 					</xf:group>
 					<xf:group id="" class="" style="">
 						<div id="map_SI0501" style="overflow:hidden;"></div>
