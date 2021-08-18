@@ -4,7 +4,7 @@
 <mapper namespace="kr.tracom.bms.domain.SI0401.SI0401Mapper">
 
 <select id="SI0401G0R0" resultType="Map">
-	select  ROUTE_ID,
+	select  ROUT_ID,
 			REP_ROUT_ID,
 			INT_ROUT_ID,
 			REP_ROUT_NM,
@@ -42,10 +42,10 @@
 	<where>
 	<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
 		<if test="TYPE == 'ALL'">
-			AND ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
-		<if test="TYPE == 'ROUTE_ID'">
-			AND ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%')
+		<if test="TYPE == 'ROUT_ID'">
+			AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
 		<if test="TYPE == 'ROUT_NM'">
 			AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
@@ -63,15 +63,15 @@
 </select>
 
 <select id="SI0401SHI0" resultType="Map">
-	select ROUTE_ID, ROUT_NM, REP_ROUT_NM
+	select ROUT_ID, ROUT_NM, REP_ROUT_NM
 	from BMS_ROUT_MST
-	order by ROUTE_ID
+	order by ROUT_ID
 </select>
 
 <insert id="SI0401G0I0" parameterType="Map">
 	insert into BMS_ROUT_MST
 			(
-			ROUTE_ID,
+			ROUT_ID,
 			REP_ROUT_ID,
 			INT_ROUT_ID,
 			REP_ROUT_NM,
@@ -110,7 +110,7 @@
 	
 	values		
 			(
-			#{ROUTE_ID},
+			#{ROUT_ID},
 			#{REP_ROUT_ID},
 			#{INT_ROUT_ID},
 			#{REP_ROUT_NM},
@@ -150,7 +150,7 @@
 
 <update id="SI0401G0U0" parameterType="Map">
 	update BMS_ROUT_MST
-	set 	ROUTE_ID = #{ROUTE_ID},
+	set 	ROUT_ID = #{ROUT_ID},
 			REP_ROUT_ID = #{REP_ROUT_ID},
 			INT_ROUT_ID = #{INT_ROUT_ID},
 			REP_ROUT_NM = #{REP_ROUT_NM},
@@ -185,35 +185,35 @@
 			REMARK = #{REMARK},
 			UPD_DTM = #{UPD_DTM},
 			UPD_ID  = #{SSN_USER_ID}
-	where ROUTE_ID = #{ROUTE_ID}
+	where ROUT_ID = #{ROUT_ID}
 </update>
 
 <delete id="SI0401G0D0" parameterType="Map">
 	delete
 	from BMS_ROUT_MST
-	where ROUTE_ID = #{ROUTE_ID};
+	where ROUT_ID = #{ROUT_ID};
 	
 	delete
 	from BMS_ROUT_COMP_CMPSTN
-	where ROUTE_ID = #{ROUTE_ID};
+	where ROUT_ID = #{ROUT_ID};
 </delete>
 
 <select id="SI0401G1R0" resultType="Map">
- 	select a.COMP_ID, a.AREA, a.COMP_NM, a.REMARK, b.ROUTE_ID
+ 	select a.COMP_ID, a.AREA, a.COMP_NM, a.REMARK, b.ROUT_ID
 	from BMS_TRANSCOMP_MST a INNER JOIN BMS_ROUT_COMP_CMPSTN b ON a.COMP_ID=b.COMP_ID 
-	WHERE b.ROUTE_ID = #{ROUTE_ID}
+	WHERE b.ROUT_ID = #{ROUT_ID}
 </select>
 
 <insert id="SI0401G1I0" parameterType="Map">
 	insert into BMS_ROUT_COMP_CMPSTN
-		   (ROUTE_ID, COMP_ID)
-	values (#{ROUTE_ID}, #{COMP_ID})
+		   (ROUT_ID, COMP_ID)
+	values (#{ROUT_ID}, #{COMP_ID})
 
 </insert>
 
 <delete id="SI0401G1D0" parameterType="Map">
 	delete from BMS_ROUT_COMP_CMPSTN
-	where ROUTE_ID = #{ROUTE_ID} 
+	where ROUT_ID = #{ROUT_ID} 
 	and COMP_ID = #{COMP_ID}
 </delete>
 

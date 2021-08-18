@@ -28,7 +28,7 @@
 
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_MST" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
@@ -48,7 +48,7 @@
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
 						<w2:column id="NODE_SN" name="노드순번" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
@@ -68,7 +68,7 @@
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_sub_search">
 					<w2:keyInfo>
-						<w2:key id="ROUTE_ID" name="ROUTE_ID" dataType="text"></w2:key>
+						<w2:key id="ROUT_ID" name="ROUT_ID" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 			</w2:dataCollection>
@@ -106,7 +106,7 @@
 		
 		
 		var autoOptions = {
-			Main : { grid : PI0202G0, srchSbm : sub_PI0202G0R0, srchGrp : pgm_header, keyColumn : "ROUTE_ID", focusColumn : "ROUTE_ID", name : "노선 목록"},
+			Main : { grid : PI0202G0, srchSbm : sub_PI0202G0R0, srchGrp : pgm_header, keyColumn : "ROUT_ID", focusColumn : "ROUT_ID", name : "노선 목록"},
 			Sub1 : { grid : PI0202G1, srchSbm : sub_PI0202G1R0, srchGrp : pgm_subList, savSbm : sub_PI0202G1S0, name :  "노선 지점"}
 		 };
 		 
@@ -155,7 +155,7 @@
 	
 	scwin.sub_PI0202G0R0_submitdone = function(e) {
 		scwin.releaseGeoBtn();
-		com.setFocusedCell(PI0202G0, "ROUTE_ID");	
+		com.setFocusedCell(PI0202G0, "ROUT_ID");	
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
@@ -165,9 +165,9 @@
 			search_input.setValue("");
 			search_input.show("");
 		} 
-		else if (info.newValue == "ROUTE_ID") {
+		else if (info.newValue == "ROUT_ID") {
 			search_input.hide();
-			autoChoiceBox.setNodeSet("data:dlt_searchitem", "ROUTE_ID", "ROUTE_ID");
+			autoChoiceBox.setNodeSet("data:dlt_searchitem", "ROUT_ID", "ROUT_ID");
 			autoChoiceBox.show("");
 		}
 		else if (info.newValue == "ROUT_NM") {
@@ -184,7 +184,7 @@
 	
 	scwin.PI0202G0_onrowindexchange = function(row, oldRow) {
 		routMap.initMapInfo("map_PI0202");
-		curRoutId = dlt_BMS_ROUT_MST.getCellData(row,"ROUTE_ID");
+		curRoutId = dlt_BMS_ROUT_MST.getCellData(row,"ROUT_ID");
 		var focusOption = {keyMap : dma_sub_search};
 		com.changeDualGrid(PI0202G0, PI0202G1, sub_PI0202G1S0, sub_PI0202G1R0, focusOption, row, oldRow);
        
@@ -223,7 +223,7 @@
 		
 		var val_ORGA_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("ORGA_ID");
 		dma_sub_search.set("ORGA_IDS", val_ORGA_ID);
-		var param = dma_sub_search.get("ROUTE_ID");
+		var param = dma_sub_search.get("ROUT_ID");
 		if (param != "") {
 			var data = null;
 			if(isAdd){
@@ -392,7 +392,7 @@
 								</xf:item>
 								<xf:item>
 									<xf:label><![CDATA[노선ID]]></xf:label>
-									<xf:value><![CDATA[ROUTE_ID]]></xf:value>
+									<xf:value><![CDATA[ROUT_ID]]></xf:value>
 								</xf:item>
 								<xf:item>
 									<xf:label><![CDATA[노선명]]></xf:label>
@@ -466,7 +466,7 @@
 									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="WAY_DIV"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUTE_ID"
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_ID"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_NM"

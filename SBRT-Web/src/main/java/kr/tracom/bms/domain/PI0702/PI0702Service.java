@@ -76,7 +76,7 @@ public class PI0702Service extends ServiceSupport {
 					//예약해야할노선리스트			
 					for(Map<String, Object> route : list_param) {
 						
-						String routeId = String.valueOf(map.get("ROUTE_ID"));
+						String routeId = String.valueOf(map.get("ROUT_ID"));
 						Map<String, Object> routeInfo= pi0702Mapper.selectRouteInfo(routeId);
 						route.put( "TXT_VAL1", String.valueOf(routeInfo.get("TXT_VAL1")) ); //U or D //list_param 의 값을 변경
 

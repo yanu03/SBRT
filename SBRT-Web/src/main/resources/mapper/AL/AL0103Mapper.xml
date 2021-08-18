@@ -79,7 +79,7 @@
 	SELECT			A.COR_ID
 				,	A.MIN_REST_TM
 				,	A.ROUT_SN
-				,	B.ROUTE_ID
+				,	B.ROUT_ID
 				,	B.ROUT_NM
 				,	B.ROUT_TYPE
 				,	B.STTN_CNT
@@ -92,7 +92,7 @@
 				
 	FROM			BRT_COR_DTL_INFO A
 		LEFT JOIN	BMS_ROUT_MST B
-		ON			A.ROUT_ID = B.ROUTE_ID
+		ON			A.ROUT_ID = B.ROUT_ID
 			
 	WHERE			A.COR_ID = #{COR_ID}
 	
@@ -113,7 +113,7 @@
 	VALUES
 					(
 						#{COR_ID}
-					,	#{ROUTE_ID}
+					,	#{ROUT_ID}
 					,	#{MIN_REST_TM}
 					,	#{ROUT_SN}
 					,	#{UPD_DTM}
@@ -125,20 +125,20 @@
 <delete id="AL0103G1D0" parameterType="Map">
 	DELETE FROM		BRT_COR_DTL_INFO
 	WHERE			COR_ID = #{COR_ID}
-	AND				ROUT_ID = #{ROUTE_ID}
+	AND				ROUT_ID = #{ROUT_ID}
 
 </delete>
 
 <select id="AL0103P0R0" resultType="Map">
 	
-	select ROUTE_ID, ROUT_NM, ROUT_TYPE, STTN_CNT, ROUT_LEN, CURVATURE, REMARK
+	select ROUT_ID, ROUT_NM, ROUT_TYPE, STTN_CNT, ROUT_LEN, CURVATURE, REMARK
 	from BMS_ROUT_MST
 	<where>
 		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-			AND ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
-		<if test="TYPE == 'ROUTE_ID'">
-			AND ROUTE_ID LIKE CONCAT('%',#{CONTENT},'%')
+		<if test="TYPE == 'ROUT_ID'">
+			AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
 		<if test="TYPE == 'ROUT_NM'">
 			AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 

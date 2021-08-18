@@ -1,10 +1,32 @@
 package kr.tracom.cm.domain.File;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.SystemUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import kr.tracom.cm.support.ServiceSupport;
+
 @Service
-public class FileService {
+public class FileService extends ServiceSupport {
 	
+	@Autowired
+	private FileMapper fileMapper;
+	
+	@Value("${sftp.linux.local.directory}")
+	private String ROOT_LINUX_LOCAL_PATH;
+	
+	@Value("${sftp.windows.local.directory}")
+	private String ROOT_WINDOWS_LOCAL_PATH;
 	/*
 	private Logger logger = LoggerFactory.getLogger(FileService.class);
 	
@@ -257,4 +279,96 @@ public class FileService {
 	}
 	
 	*/
+	
+	
+	public List selectMultiFileList(String fileId)throws Exception
+	{
+		return fileMapper.selectMultiFileList(fileId);
+		
+	}
+	
+	List selectMultiImageFileList()throws Exception
+	{
+		return fileMapper.selectMultiImageFileList(getSimpleParameters());
+	}
+	
+	List selectMultiFileView()throws Exception
+	{
+		return fileMapper.selectMultiFileView(getSimpleParameters());
+	}
+	
+	List selectMultiFileViewLast()throws Exception
+	{
+		return fileMapper.selectMultiFileViewLast(getSimpleParameters());
+	}
+	
+	public void  insertMultiFile(Map<String, Object> fileUpload)throws Exception
+	{
+		fileMapper.insertMultiFile(fileUpload);
+	}
+	
+	public void  updateMultiFileDelYN(Map<String, Object> deleteMultiFile)throws Exception
+	{
+		fileMapper.updateMultiFileDelYN(deleteMultiFile);
+	}
+	
+	void  deleteMultiFile(Map<String, Object> deleteMultiFile)throws Exception
+	{
+		fileMapper.deleteMultiFile(deleteMultiFile);
+	}
+	
+	void  updateMultiFileCn()throws Exception
+	{
+		fileMapper.updateMultiFileCn(getSimpleParameters());
+	}
+	
+	public String selectNextMultiFileID()throws Exception
+	{
+		return fileMapper.selectNextMultiFileID();
+	}
+	
+	public String selectNextMultiFileSN(String fileId)throws Exception
+	{
+		return fileMapper.selectNextMultiFileSN(fileId);
+	}
+	
+	public void doMoveFile(String sourcePath, String destPath, String sourceFileName, String destFileName) throws Exception
+	{
+		if (sourceFileName == null||"".equals(sourceFileName))
+		{
+			throw new IllegalArgumentException("파일이름이 유효하지 않습니다.");
+		}
+		sourcePath = getRootLocalPath() + sourcePath;
+		destPath = getRootLocalPath() + destPath;
+		
+		File fileSourcePath = new File(sourcePath);
+		if (!fileSourcePath.exists())
+		{
+			fileSourcePath.mkdirs();
+		}
+		
+		File fileDestPath = new File(destPath);
+		if (!fileDestPath.exists())
+		{
+			fileDestPath.mkdirs();
+		}
+		
+		String strSourcePathFile = (sourcePath + sourceFileName).replace("/", File.separator);
+		Path moveSourcePath = Paths.get(strSourcePathFile);
+		
+		String strDestPathFile = (destPath + destFileName).replace("/", File.separator);
+		Path moveDestPath = Paths.get(strDestPathFile);
+
+		Files.move(moveSourcePath, moveDestPath, REPLACE_EXISTING);
+	}
+	
+	public String getRootLocalPath() {
+		if(SystemUtils.IS_OS_WINDOWS) {
+			return ROOT_WINDOWS_LOCAL_PATH;
+		} else if(SystemUtils.IS_OS_LINUX) {
+			return ROOT_LINUX_LOCAL_PATH;
+		} else {
+			return ROOT_LINUX_LOCAL_PATH;
+		}
+	}
 }

@@ -48,7 +48,7 @@
 					<w2:columnInfo>
 						<w2:column id="COR_ID" name="코스ID" dataType="text"></w2:column>
 						<w2:column id="MIN_REST_TM" name="최소휴게시간" dataType="text"></w2:column>
-						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 						<w2:column id="ROUT_TYPE" name="노선유형" dataType="text"></w2:column>
 						<w2:column id="STTN_CNT" name="정류장수" dataType="text"></w2:column>
@@ -63,7 +63,7 @@
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="ROUTE_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
 						<w2:column id="NODE_SN" name="노드순번" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
@@ -82,7 +82,7 @@
 				<w2:dataMap baseNode="map" id="dma_sub_search">
 					<w2:keyInfo>
 						<w2:key id="COR_ID" name="코스ID" dataType="text"></w2:key>
-						<w2:key id="ROUTE_IDS" name="노선IDS" dataType="text"></w2:key>
+						<w2:key id="ROUT_IDS" name="노선IDS" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 			</w2:dataCollection>
@@ -203,8 +203,8 @@
 	};
 	
 	scwin.sub_AL0103G1R0_submitdone = function(e) {
-		var val_ROUTE_ID = dlt_BRT_COR_DTL_INFO.getColData("ROUTE_ID");
-		dma_sub_search.set("ROUTE_IDS", val_ROUTE_ID);
+		var val_ROUT_ID = dlt_BRT_COR_DTL_INFO.getColData("ROUT_ID");
+		dma_sub_search.set("ROUT_IDS", val_ROUT_ID);
 //		dma_sub_search.set("TYPE", "DISP_NODE");
 		com.executeSubmission(sub_AL0103G2R0);
 	};
@@ -222,9 +222,9 @@
 			if (rowStatus == "C") {
 				com.alert("코스 등록 후에 사용 가능합니다.");
 			} else {
-				var val_ROUTE_ID = dlt_BRT_COR_DTL_INFO.getColData("ROUTE_ID");
+				var val_ROUT_ID = dlt_BRT_COR_DTL_INFO.getColData("ROUT_ID");
 				if (true) {
-					var data = { data : val_ROUTE_ID, callbackFn : "scwin.insertGRG" };
+					var data = { data : val_ROUT_ID, callbackFn : "scwin.insertGRG" };
 					var options = { id : "popUpRoutList",
 									popupName : "노선 목록", 
 									modal : true };
@@ -239,7 +239,7 @@
 	scwin.insertGRG = function(obj) {
 		var dLength = obj.length;
 		for (i = 0; i < dLength; i++) {
-			var data = dlt_BRT_COR_DTL_INFO.getMatchedIndex("ROUTE_ID", obj[i].ROUTE_ID, true);
+			var data = dlt_BRT_COR_DTL_INFO.getMatchedIndex("ROUT_ID", obj[i].ROUT_ID, true);
 			if (data.length == 0) {
 				var idx = dlt_BRT_COR_DTL_INFO.insertRow();
 				dlt_BRT_COR_DTL_INFO.setCellData(idx, "COR_ID", dma_sub_search.get("COR_ID"));
@@ -524,7 +524,7 @@
 									<w2:column removeBorderStyle="false" width="144" inputType="text" style="height:20px" id="COR_ID"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="137" inputType="text" style="height:20px" id="ROUTE_ID"
+									<w2:column removeBorderStyle="false" width="137" inputType="text" style="height:20px" id="ROUT_ID"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="ROUT_NM"

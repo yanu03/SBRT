@@ -145,7 +145,7 @@ public class SI0402Service extends ServiceSupport {
 					double routStrtLen = DataInterface.getDistanceBetween(CommonUtil.decimalToDouble(routNodeList.get(0).get("GPS_X")), CommonUtil.decimalToDouble(routNodeList.get(0).get("GPS_Y")), 
 							CommonUtil.decimalToDouble(routNodeList.get(routNodeList.size()-1).get("GPS_X")), CommonUtil.decimalToDouble(routNodeList.get(routNodeList.size()-1).get("GPS_Y")));
 							
-					routMap.put("ROUTE_ID", (String)routNodeList.get(0).get("ROUTE_ID"));
+					routMap.put("ROUT_ID", (String)routNodeList.get(0).get("ROUT_ID"));
 					
 					routMap.put("ROUT_LEN", CommonUtil.pointRound(routLen,3));
 					routMap.put("ROUT_STRT_LEN", CommonUtil.pointRound(routStrtLen,3));
