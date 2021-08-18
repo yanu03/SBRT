@@ -10,6 +10,8 @@ public interface SI0502Mapper {
 	
 	public List SI0502G0R0(Map param);
 	
+	public List SI0502SHI0();
+	
 	public List SI0502G1R0(Map param);
 	
 	public Map SI0502G1K0();

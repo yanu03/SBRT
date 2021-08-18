@@ -247,7 +247,7 @@
 
 	scwin.dma_disp_check_onviewchange = function(info) {
 		scwin.releaseGeoBtn();
-		setDispCheck("map_SI0402", disp_check.getValue());
+		routMap.setDispCheck("map_SI0402", disp_check.getValue());
 		routMap.drawRoute("map_SI0402", SI0402G1, SI0402G1.getFocusedRowIndex());
 	}
 	
@@ -320,6 +320,10 @@
 
 		}
 		else {
+			if(com.isEmpty(obj.GPS_Y)==false && com.isEmpty(obj.GPS_X)==false){
+				curPoint.latLng.Ma = obj.GPS_Y;
+				curPoint.latLng.La = obj.GPS_X;
+			}
 			var idx = routMap.addSttnByClick("map_SI0402", SI0402G1,curRoutId,curPoint);
 			//dlt_BMS_ROUT_NODE_CMPSTN.setCellData(idx,"NODE_TYPE", routMap.NODE_TYPE.BUSSTOP);
 			scwin.mappingNode("map_SI0402", SI0402G1, idx, obj, true);
@@ -362,6 +366,10 @@
 			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE", oldNodeType);
 		}
 		else {
+			if(com.isEmpty(obj.GPS_Y)==false && com.isEmpty(obj.GPS_X)==false){
+				curPoint.latLng.Ma = obj.GPS_Y;
+				curPoint.latLng.La = obj.GPS_X;
+			}
 			var idx = routMap.addCrossByClick("map_SI0402", SI0402G1,curRoutId,curPoint);
 			//dlt_BMS_ROUT_NODE_CMPSTN.setCellData(idx,"NODE_TYPE", routMap.NODE_TYPE.CROSS);
 			scwin.mappingNode("map_SI0402", SI0402G1, idx, obj, true);
@@ -374,11 +382,13 @@
 
 		if(com.getGridViewDataList(grid).getCellData(index,"NODE_TYPE")==routMap.NODE_TYPE.BUSSTOP){
 			com.getGridViewDataList(grid).setCellData(index, "STTN_ID",data.STTN_ID);
+			com.getGridViewDataList(grid).setCellData(index, "NODE_ID",data.STTN_ID);
 			com.getGridViewDataList(grid).setCellData(index, "NODE_NM",data.STTN_NM);
 			com.getGridViewDataList(grid).setCellData(index, "STTN_NO",data.STTN_NO);
 		}
 		else if(com.getGridViewDataList(grid).getCellData(index,"NODE_TYPE")==routMap.NODE_TYPE.CROSS){
 			com.getGridViewDataList(grid).setCellData(index, "CRS_ID",data.CRS_ID);
+			com.getGridViewDataList(grid).setCellData(index, "NODE_ID",data.CRS_ID);
 			com.getGridViewDataList(grid).setCellData(index, "NODE_NM",data.CRS_NM);
 		}
 		routMap.drawRoute(mapId, grid, index, draggable);
@@ -584,14 +594,14 @@
 		disp_check.getCheckboxList()[1].checked = true;
 		disp_check.getCheckboxList()[2].checked = true;
 		disp_check.getCheckboxList()[3].checked = true;
-		setDispCheck("map_SI0402", disp_check.getValue());
+		routMap.setDispCheck("map_SI0402", disp_check.getValue());
 	}
 	
 	scwin.disp_check_normal = function(){
 		disp_check.getCheckboxList()[0].checked = true;
 		disp_check.getCheckboxList()[2].checked = true;
 		disp_check.getCheckboxList()[3].checked = true;
-		setDispCheck("map_SI0402", disp_check.getValue());
+		routMap.setDispCheck("map_SI0402", disp_check.getValue());
 	}
 	
 	
@@ -667,7 +677,7 @@
 					<xf:group class="search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
-							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_item" style="" submenuSize="auto"
 							textAlign="left">
 
 							<xf:choices>
@@ -874,7 +884,7 @@
 				</xf:group>
 				<xf:group id="" class="vertical_line"></xf:group>
 				<xf:group id="pgm_detail" class="pgm_detail grdr_20_a" style="">
-					<xf:group id="" class="gr_sub_header" style="">
+					<xf:group id="" class="gr_map_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="지도" style=";"></w2:textbox>
 						</xf:group>

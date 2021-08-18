@@ -52,7 +52,7 @@ public class PI0503Controller extends ControllerSupport {
 	
 	@RequestMapping("/pi/PI0503SHI0")
 	public @ResponseBody Map<String, Object> PI0503SHI0() throws Exception {
-		result.setData("dlt_vhcSearchItem", pi0503Service.PI0503SHI0());
+		result.setData("dlt_searchitem", pi0503Service.PI0503SHI0());
 		return result.getResult();
 	}
 	

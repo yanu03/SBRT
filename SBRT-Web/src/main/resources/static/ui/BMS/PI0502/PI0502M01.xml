@@ -27,12 +27,11 @@
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="STTN_ID" name="정류소ID" dataType="text"></w2:column>
-						<w2:column id="STTN_NM" name="정류소명" dataType="text"></w2:column>
-						<w2:column id="STTN_NO" name="정류소번호" dataType="text"></w2:column>
+						<w2:column id="ORGA_ID" name="편성ID" dataType="text"></w2:column>
+						<w2:column id="ORGA_NM" name="편성명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_STTN_MST_0">
+				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_VDO_ORGA_INFO_0">
 					<w2:keyInfo>
 						<w2:key id="SEQ" name="SEQ" dataType="text"></w2:key>
 					</w2:keyInfo>
@@ -91,11 +90,11 @@
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장 중입니다..." ev:submit="" ev:submitdone="scwin.sub_PI0502G0S0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0502G0K0" ref="" target="data:json,dma_SEQ_BMS_STTN_MST_0" action="/pi/PI0502G0K0" method="post" mediatype="application/json" encoding="UTF-8"
+			<xf:submission id="sub_PI0502G0K0" ref="" target="data:json,dma_SEQ_BMS_VDO_ORGA_INFO_0" action="/pi/PI0502G0K0" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0502G0K0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0502SHI0" ref="" target="" action="" method="post" mediatype="application/json" encoding="UTF-8"
+			<xf:submission id="sub_PI0502SHI0" ref="" target="data:json,dlt_searchitem" action="/pi/PI0502SHI0" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -129,7 +128,7 @@
 		});	
 
       var subOptions = {
-         SAVE:[{cbFnc:scwin.btn_up_onclick, nm:"상",class:"up"},{cbFnc:scwin.btn_down_onclick,nm:"하",class:"down"}
+         SAVE:[{cbFnc:scwin.btn_up_onclick, nm:"↑",class:"up"},{cbFnc:scwin.btn_down_onclick,nm:"↓",class:"down"}
          		]};
       
       com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);	
@@ -148,7 +147,7 @@
 	};
 	
 	scwin.sub_PI0502G0K0_submitdone = function(e) {
-		com.addGridForm(PI0502G0, PI0502F0, dma_SEQ_BMS_STTN_MST_0, "ORGA_ID", "ORGA_NM");		
+		com.addGridForm(PI0502G0, PI0502F0, dma_SEQ_BMS_VDO_ORGA_INFO_0, "ORGA_ID", "ORGA_NM");		
 	};
 	
 	scwin.sub_PI0502G0S0_submitdone = function(e) {
@@ -213,7 +212,25 @@
 	    for(i=0; i<count; i++) {
 		    dlt_VDO_ORGA_LIST.setCellData(i, "SN", i+1);	
 		   }    		
-	}]]></script>
+	};
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {
+		if (info.newValue == "ALL") {
+			acb_autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} 
+		else if (info.newValue == "ORGA_ID") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "ORGA_ID", "ORGA_ID");
+			acb_autoChoiceBox.show("");
+		}
+		else if (info.newValue == "ORGA_NM") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "ORGA_NM", "ORGA_NM");
+			acb_autoChoiceBox.show("");
+		}
+	};
+	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
@@ -230,43 +247,34 @@
 					<xf:group class="search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
-							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_item" style="" submenuSize="auto"
 							textAlign="left">
 
 							<xf:choices>
 								<xf:item>
-									<xf:label><![CDATA[정류소ID]]></xf:label>
-									<xf:value><![CDATA[STTN_ID]]></xf:value>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
 								</xf:item>
 								<xf:item>
-									<xf:label><![CDATA[정류소명]]></xf:label>
-									<xf:value><![CDATA[STTN_NM]]></xf:value>
+									<xf:label><![CDATA[편성ID]]></xf:label>
+									<xf:value><![CDATA[ORGA_ID]]></xf:value>
 								</xf:item>
 								<xf:item>
-									<xf:label><![CDATA[정류소번호]]></xf:label>
-									<xf:value><![CDATA[STTN_NO]]></xf:value>
+									<xf:label><![CDATA[편성명]]></xf:label>
+									<xf:value><![CDATA[ORGA_NM]]></xf:value>
 								</xf:item>
 							</xf:choices>
 						</xf:select1>
-						<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="-전체-" class="search_select"
-							direction="auto" disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" ev:onblur="scwin.sbx_PositionCd_onblur"
-							id="selectbox2" optionOrder="false" ref="" style="display:none;" submenuSize="auto" textAlign="center">
-							<xf:choices>
-								<xf:itemset nodeset="data:dlt_commonSearchItem">
-									<xf:label ref="CO_CD"></xf:label>
-									<xf:value ref="CO_CD"></xf:value>
-								</xf:itemset>
-							</xf:choices>
-						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="편성ID 또는 편성명"></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
-							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
-							ev:onviewchange="" id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
-							selectedData="" style="" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="" nextTabByEnter=""
+							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange"
+							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
+							selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="" nextTabByEnter=""
 							disableEdit="">
 							<w2:choices>
 								<w2:itemset nodeset="data:dlt_searchitem">
-									<w2:label ref="STTN_ID"></w2:label>
-									<w2:value ref="STTN_ID"></w2:value>
+									<w2:label ref="ORGA_ID"></w2:label>
+									<w2:value ref="ORGA_ID"></w2:value>
 								</w2:itemset>
 							</w2:choices>
 						</w2:autoComplete>
@@ -275,7 +283,7 @@
 				</xf:group>
 			</xf:group>
 
-			<xf:group id="pgm_content" class="pgm_content grdc_a_20_1000" style="">
+			<xf:group id="pgm_content" class="pgm_content grdc_4f_20_6f" style="">
 
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 					<xf:group class="defaultbox" id="" style="">
@@ -342,14 +350,15 @@
 
 				</xf:group>
 				<xf:group id="" class="vertical_line"></xf:group>
-				<xf:group class="pgm_detail grdr_20_200_20_20_a">
+				<xf:group class="pgm_detail grdr_20_2_200_20_20_2_a">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="편성 정보" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
+					<xf:group></xf:group>
 					<xf:group class="" id="" style="">
-						<xf:group adaptive="layout" class="w2tb tb" id="PI0502F0" style="height:100%;" tagname="table">
+						<xf:group adaptive="layout" class="w2tb tb" id="PI0502F0" style="" tagname="table">
 							<w2:attributes>
 								<w2:summary></w2:summary>
 							</w2:attributes>
@@ -410,9 +419,9 @@
 										<w2:colspan>5</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input adjustMaxLength="" class="" disabled="" id="REMARK" mandatory="" ref="data:dlt_VDO_ORGA_INFO.REMARK"
-										style="width:100%;height: 24px;">
-									</xf:input>
+									<xf:textarea adjustMaxLength="" class="" disabled="" id="REMARK" mandatory="" ref="data:dlt_VDO_ORGA_INFO.REMARK"
+										style="width:100%;height: 140px;">
+									</xf:textarea>
 								</xf:group>
 							</xf:group>
 						</xf:group>
@@ -424,7 +433,8 @@
 							<w2:textbox class="df_tt fl" id="" label="영상 목록" style=""></w2:textbox>
 						</xf:group>
 						<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
-					</xf:group>					
+					</xf:group>
+					<xf:group></xf:group>	
 					<xf:group id="" class="pgm_detail2 grdc_a_70_550" style="">
 						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" autoFitMinWidth="0" captionTitle=""
 							checkEditableInputClass="" class="cm_grid right" dataList="data:dlt_VDO_INFO" disabledScrollHidden="" editModeEvent=""
@@ -489,13 +499,15 @@
 								</w2:row>
 							</w2:footer>							
 						</w2:gridView>
-						<xf:group>
-							<w2:anchor class="btn_com" id="btn_grid_add" outerDiv="" style="" ev:onclick="scwin.btn_grid_add_onclick">
-								<xf:label><![CDATA[→]]></xf:label>
-							</w2:anchor>
-							<w2:anchor class="btn_com" id="btn_grid_del" outerDiv="" style="" ev:onclick="scwin.btn_grid_del_onclick">
-								<xf:label><![CDATA[←]]></xf:label>
-							</w2:anchor>
+						<xf:group style="position: relative; text-align: center;">
+							<xf:group style="position: absolute; top: 50%; transform: translate(0px, -30px);">
+								<w2:anchor class="btn_com" id="btn_grid_add" outerDiv="" style="" ev:onclick="scwin.btn_grid_add_onclick">
+									<xf:label><![CDATA[→]]></xf:label>
+								</w2:anchor>
+								<w2:anchor class="btn_com" id="btn_grid_del" outerDiv="" style="margin-top:5px" ev:onclick="scwin.btn_grid_del_onclick">
+									<xf:label><![CDATA[←]]></xf:label>
+								</w2:anchor>
+							</xf:group>
 						</xf:group>
 						<xf:group>
 							<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" autoFitMinWidth="0" captionTitle=""

@@ -68,6 +68,21 @@ public class SI0402Service extends ServiceSupport {
 					
 					if(key!=null)data.put("NODE_ID",key.get("SEQ"));
 					iCnt += si0402Mapper.SI0402G1I0(data);
+					
+					if(CommonUtil.notEmpty(data.get("STTN_ID"))||CommonUtil.notEmpty(data.get("CRS_ID"))){
+						if(CommonUtil.notEmpty(data.get("STTN_ID"))){
+							data.put("TYPE","STTN_ID");	
+							routMapper.updateSttn(data);
+						
+						}
+						else if(CommonUtil.notEmpty(data.get("CRS_ID"))){
+							data.put("TYPE","CRS_ID");
+							routMapper.updateCrs(data);
+						}
+						
+						routMapper.updateRoutNodeToAnotherRoute(data);
+						routMapper.updateMainRoutNodeToAnotherRoute(data);
+					}
 				} else if (rowStatus.equals("U")) {
 					if(Constants.NODE_TYPE_VERTEX.equals((String) data.get("NODE_TYPE"))==false
 						&&Constants.NODE_TYPE_SOUND.equals((String) data.get("NODE_TYPE"))==false
@@ -76,16 +91,29 @@ public class SI0402Service extends ServiceSupport {
 					}
 					
 					uCnt += si0402Mapper.SI0402G1U0(data);
+
 					
-					routMapper.updateSttn(data);
-					routMapper.updateCrs(data);
+					if(CommonUtil.notEmpty(data.get("STTN_ID"))||CommonUtil.notEmpty(data.get("CRS_ID"))){
+						if(CommonUtil.notEmpty(data.get("STTN_ID"))){
+							data.put("TYPE","STTN_ID");	
+							routMapper.updateSttn(data);
+						
+						}
+						else if(CommonUtil.notEmpty(data.get("CRS_ID"))){
+							data.put("TYPE","CRS_ID");
+							routMapper.updateCrs(data);
+						}
+						
+						routMapper.updateRoutNodeToAnotherRoute(data);
+						routMapper.updateMainRoutNodeToAnotherRoute(data);
+					}
 				} else if (rowStatus.equals("D")) {
 					dCnt += si0402Mapper.SI0402G1D0(data);
 					
 					//정류소,교차로 테이블의 NODE_ID 초기화
-					data.put("NODE_ID", "");
-					routMapper.updateSttn(data);
-					routMapper.updateCrs(data);
+					//data.put("NODE_ID", "");
+					//routMapper.updateSttn(data);
+					//routMapper.updateCrs(data);
 				}
 			}
 			
