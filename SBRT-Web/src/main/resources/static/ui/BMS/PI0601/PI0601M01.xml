@@ -109,7 +109,7 @@
 	};
 	
 	//파일 선택버튼 클릭 이벤트
-	scwin.btn_upload_onclick = function() {
+	/*scwin.btn_upload_onclick = function() {
 		var data = { FILE_NM : dlt_BIT_VDO_INFO.getCellData(PI0601G0.getFocusedRowIndex(), "FILE_NM"), 
 					callbackFn : "scwin.uploadFileCallback" 
 					};
@@ -136,7 +136,37 @@
 		} else if (fileType == "FT002") {
 			$p.$("#image1").attr("src", src);
 		}
+	}*/
+	
+	scwin.upload0_onInputValueChange = function(returnValue){
+	
+		var fileNameIndex = returnValue.lastIndexOf('\\');
+		var real_fileName = returnValue.substring(fileNameIndex+1, returnValue.length);
+		
+		dlt_BIT_VDO_INFO.setCellData(PI0601G0.getFocusedRowIndex(), "FILE_NM", real_fileName);
+		
+		btn_upload.submit();
+		
 	}
+	
+	scwin.upload0_ondone = function(retXml) {
+		var fileType = dlt_BIT_VDO_INFO.getCellData(PI0601G0.getFocusedRowIndex(), "FILE_TYPE");
+		var real_fileName = dlt_BIT_VDO_INFO.getCellData(PI0601G0.getFocusedRowIndex(), "FILE_NM");
+		var src = "/fileUpload/up/" + real_fileName; 
+		
+		if (fileType == "FT001"){
+			var obj_video = document.getElementById("video1");
+			obj_video.addEventListener('loadedmetadata', function() {
+				var duration = parseInt(obj_video.duration);
+				dlt_BIT_VDO_INFO.setCellData(PI0601G0.getFocusedRowIndex(), "PLAY_TM", duration);
+			});			
+			$p.$("#video1").attr("src", src);
+		} else if (fileType == "FT002") {
+			$p.$("#image1").attr("src", src);
+		}			
+		
+	};
+	
 
 	scwin.PI0601G0_onrowindexchange = function(row,oldRow) {
 				
@@ -388,7 +418,7 @@
 									</w2:attributes>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel=" " direction="auto"
 										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="FILE_TYPE" labelWidthAuto="" mandatory="true"
-										optionOrder="" ref="data:dlt_VDO_INFO.FILE_TYPE" renderType="component" style="width:30%;height:24px;" submenuSize="auto" ev:onchange="scwin.FILE_TYPE_onchange">
+										optionOrder="" ref="data:dlt_BIT_VDO_INFO.FILE_TYPE" renderType="component" style="width:30%;height:24px;" submenuSize="auto" ev:onchange="scwin.FILE_TYPE_onchange">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
@@ -400,9 +430,14 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<w2:anchor class="btn_com" ev:onclick="scwin.btn_upload_onclick" id="btn_upload" outerDiv="" style="">
+									<!--  <w2:anchor class="btn_com" ev:onclick="scwin.btn_upload_onclick" id="btn_upload" outerDiv="" style="">
 										<xf:label><![CDATA[파일 선택]]></xf:label>
-									</w2:anchor>
+									</w2:anchor>-->
+									<w2:upload imageStyle="position:absolute;vertical-align:middle;word-wrap:break-word"
+										inputStyle="vertical-align:middle;word-wrap:break-word" style="width: 100%;height: 23px;" id="btn_upload" inputClass=""
+										ev:onInputValueChange="scwin.upload0_onInputValueChange" ev:ondone="scwin.upload0_ondone" accept=".png,.avi,.mp4,.jpg" title="" type=""
+										disabled="false" class="">
+									</w2:upload>
 								</xf:group>
 							</xf:group>
 							<xf:group style="" tagname="tr">

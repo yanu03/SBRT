@@ -57,14 +57,14 @@ public class PI0501Service extends ServiceSupport {
 					if((data.get("FILE_NM")!=null)&&(data.get("FILE_NM").toString().isEmpty()==false)
 							&&(data.get("VDO_ID").equals(data.get("FILE_NM"))==false))
 						{
-							doMoveFile("up/", "video/", data.get("FILE_NM").toString(), data.get("VDO_ID").toString());
+							doMoveFile("up/", "PI0501/", data.get("FILE_NM").toString(), data.get("VDO_ID").toString());
 						}					
 				} else if (rowStatus.equals("U")) {
 					uCnt += pi0501Mapper.PI0501G0U0(data);
 					if((data.get("FILE_NM")!=null)&&(data.get("FILE_NM").toString().isEmpty()==false)
 							&&(data.get("VDO_ID").equals(data.get("FILE_NM"))==false)) 
 						{
-							doMoveFile("up/","video/",data.get("FILE_NM").toString(),data.get("VDO_ID").toString());
+							doMoveFile("up/","PI0501/",data.get("FILE_NM").toString(),data.get("VDO_ID").toString());
 						}					
 				} else if (rowStatus.equals("D")) {
 					dCnt += pi0501Mapper.PI0501G0D0(data);

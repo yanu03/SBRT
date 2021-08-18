@@ -129,6 +129,22 @@
 		
 	};
 	
+	scwin.upload0_ondone = function(retXml) {
+		var time_audio = document.getElementById("audio0");
+		
+		var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");
+		$p.$("#audio0").attr("src", path);
+		
+		time_audio.addEventListener('loadedmetadata', function() {
+			var duration = parseInt(time_audio.duration);
+			dlt_BMS_VOC_INFO.setCellData(PI0201G0.getFocusedRowIndex(), "PLAY_TM", duration);
+		});				
+		
+		/*
+		 서버에 저장되도 404 error 발생함 바로 갱신이 안되는 문제
+		 현재 동일한 파일명으로 업로드 시 (날짜) 형태로 서버에 파일이 생성되는데 괄호가 보안처리에 의해 다른 문자로 치환되서 DB에서 경로 가져올때 문제 있음  */
+	};
+	
 	scwin.PI0201G0_onrowindexchange = function(row, oldRow) {
 		
 		var audioType = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "PLAY_TYPE");
@@ -154,21 +170,6 @@
 		
 	};	
 	
-	scwin.upload0_ondone = function(retXml) {
-		var time_audio = document.getElementById("audio0");
-		
-		var path = dlt_BMS_VOC_INFO.getCellData(PI0201G0.getFocusedRowIndex(), "VOC_PATH");
-		$p.$("#audio0").attr("src", path);
-		
-		time_audio.addEventListener('loadedmetadata', function() {
-			var duration = parseInt(time_audio.duration);
-			dlt_BMS_VOC_INFO.setCellData(PI0201G0.getFocusedRowIndex(), "PLAY_TM", duration);
-		});				
-		
-		/*
-		 서버에 저장되도 404 error 발생함 바로 갱신이 안되는 문제
-		 현재 동일한 파일명으로 업로드 시 (날짜) 형태로 서버에 파일이 생성되는데 괄호가 보안처리에 의해 다른 문자로 치환되서 DB에서 경로 가져올때 문제 있음  */
-	};
 	
 	scwin.sub_PI0201G0R0_submitdone = function(e) {
 		var rsCode = com.getResultCode(e)
