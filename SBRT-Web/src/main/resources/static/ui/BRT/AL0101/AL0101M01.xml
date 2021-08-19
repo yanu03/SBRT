@@ -16,6 +16,14 @@
 						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
+				<w2:dataMap baseNode="map" id="dma_sub_search">
+					<w2:keyInfo>
+						<w2:key id="STTN_IDS" name="정류소IDS" dataType="text"></w2:key>
+						<w2:key id="CRS_IDS" name="교차로IDS" dataType="text"></w2:key>
+						<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_result">
 					<w2:keyInfo>
 						<w2:key id="STATUS" name="STATUS" dataType="text"></w2:key>
@@ -32,30 +40,18 @@
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_STTN_MST" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_MAIN_ROUT_NODE_INFO" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="STTN_ID" name="정류소ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
-						<w2:column id="STTN_NM" name="정류소명" dataType="text"></w2:column>
-						<w2:column id="STTN_ENM" name="정류소영문명" dataType="text"></w2:column>
-						<w2:column id="AREA" name="권역" dataType="text"></w2:column>
+						<w2:column id="NODE_SN" name="노드순번" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
+						<w2:column id="NODE_TYPE" name="노드유형" dataType="text"></w2:column>
+						<w2:column id="STTN_ID" name="정류소ID" dataType="text"></w2:column>
 						<w2:column id="STTN_NO" name="정류소번호" dataType="text"></w2:column>
-						<w2:column id="CENTER_YN" name="중앙차로여부" dataType="text"></w2:column>
-						<w2:column id="STTN_FCLT_TYPE" name="정류소시설유형" dataType="text"></w2:column>
-						<w2:column id="VHC_DOOR_DIR_TYPE" name="버스문열림방향유형" dataType="text"></w2:column>
-						<w2:column id="GPS_X" name="GPS_X좌표" dataType="number" defaultValue="0"></w2:column>
-						<w2:column id="GPS_Y" name="GPS_Y좌표" dataType="number" defaultValue="0"></w2:column>
-						<w2:column id="TM_X" name="TM_X좌표" dataType="number" defaultValue="0"></w2:column>
-						<w2:column id="TM_Y" name="TM_Y좌표" dataType="number" defaultValue="0"></w2:column>
-						<w2:column id="APPL_RDS" name="적용반경" dataType="number" defaultValue="0"></w2:column>
-						<w2:column id="BAY_TYPE" name="베이유형" dataType="text"></w2:column>
-						<w2:column id="BAY_LEN" name="베이길이" dataType="number" defaultValue="0"></w2:column>
-						<w2:column id="LINE_CNT" name="차선수" dataType="number" defaultValue="0"></w2:column>
-						<w2:column id="APPL_ST_DT" name="적용시작일" dataType="date"></w2:column>
-						<w2:column id="APPL_ED_DT" name="적용종료일" dataType="date"></w2:column>
-						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
-						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
-						<w2:column id="ROUTE__ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="CRS_ID" name="교차로ID" dataType="text"></w2:column>
+						<w2:column id="GPS_X" name="경도" dataType="text"></w2:column>
+						<w2:column id="GPS_Y" name="위도" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_STTN_MST_0">
@@ -106,25 +102,29 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0101G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_AL0101G0S0" ref='data:json,{"action":"modified","id":"dlt_BMS_STTN_MST"}' target="data:json,dma_result"
-				action="/al/AL0101G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
-				mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0101G0S0_submitdone" ev:submiterror="" abortTrigger="">
-			</xf:submission>
 			<xf:submission id="sub_AL0101G0K0" ref="" target="data:json,dma_SEQ_BMS_STTN_MST_0" action="/al/AL0101G0K0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_AL0101G0K0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_AL0101SHI0" ref="" target="data:json,dlt_searchitem" action="/al/AL0101SHI0" method="post"
+			<xf:submission id="sub_AL0101SHI0" ref="" target="data:json,dlt_searchitem" action="/rout/selectRoutItem" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_AL0101G1R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN" action="/rout/selectNodeListByRout"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_AL0101G1R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_AL0101G1S0" ref='data:json,{"action":"modified","id":"dlt_BMS_STTN_MST"}' target="data:json,dma_result"
+				action="/al/AL0101G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
+				mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0101G0S0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
         
 	scwin.onpageload = function() {
 		var autoOptions = {
-			Main : { grid : AL0101G0, srchSbm : sub_AL0101G0R0, savSbm : sub_AL0101G0S0, 
-					 keySbm : sub_AL0101G0K0, srchGrp : pgm_header , keyColumn : "ROUT_ID", name : "노선 목록"},
+			Main : { grid : AL0101G0, srchSbm : sub_AL0101G0R0, srchGrp : pgm_header , keyColumn : "ROUT_ID", focusColumn : "ROUT_ID",name : "노선 목록"},
+			Sub1 : { grid : AL0101G1, srchSbm : sub_AL0101G1R0, srchGrp : pgm_subList, savSbm : sub_AL0101G1S0, name :  "노선 경로정보"}
 		 };
 		 
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);
@@ -186,12 +186,23 @@
 			autoChoiceBox.show("");
 		}
 	};
+
+	scwin.SI0402G0_onrowindexchange = function(row,oldRow) {
+		
+		routMap.initMapInfo("map_SI0402");
+		curRoutId = dlt_BMS_ROUT_MST.getCellData(row,"ROUT_ID");
+		var focusOption = {keyMap : dma_sub_search};
+		com.changeDualGrid(SI0402G0, SI0402G1, sub_SI0402G1S0, sub_SI0402G1R0, focusOption, row, oldRow);
+	};
 	
-	scwin.sub_AL0101G2R0_submitdone = function(e) {
+	scwin.sub_AL0101G1R0_submitdone = function(e) {
 		//파라미터 수정해야함
 		routMap.showRoute("map_AL0101", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), dma_sub_search.get("STTN_ID"), "BUSSTOP");
 	};
 	
+	scwin.sub_AL0101G1R0_submitdone = function(e) {
+		routMap.showRoute("map_AL0101", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), dma_sub_search.get("STTN_ID"), "ONLYLINE");
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -207,7 +218,7 @@
 					<xf:group class="search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
-							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" submenuSize="auto"
 							textAlign="left">
 
 							<xf:choices>

@@ -46,6 +46,7 @@ scwin.getLayoutId = function() {
 scwin.setResultMessage = function(resultData) {
 
 	if (typeof wfm_footer !== "undefined") {
+		/*
 		var messageObj = wfm_footer.getWindow().spn_message;
 		var curCode = messageObj.getUserData("tmpStatusCode");
 	
@@ -62,6 +63,7 @@ scwin.setResultMessage = function(resultData) {
 		messageObj.setValue(resultData.message);
 		wfm_footer.getWindow().grp_message.setUserData("message", resultData);
 		wfm_footer.getWindow().scwin.spn_message_onclick(); 
+		*/
 	}
 }
 

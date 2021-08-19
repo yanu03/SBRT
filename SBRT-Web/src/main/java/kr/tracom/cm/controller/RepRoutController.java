@@ -19,13 +19,13 @@ public class RepRoutController extends ControllerSupport {
 	@Autowired
 	private RepRoutService reproutService;
 
-	@RequestMapping("/reprout/selectRoutItem")
+	@RequestMapping("/repRout/selectRepRoutItem")
 	public @ResponseBody Map<String, Object> selectRepRoutItem() throws Exception {
 		result.setData("dlt_searchitem", reproutService.selectRepRoutItem());
 		return result.getResult();
 	}
 
-	@RequestMapping("/reprout/selectRoutList")
+	@RequestMapping("/repRout/selectRepRoutList")
 	public @ResponseBody Map<String, Object> selectRepRoutList() throws Exception {
 		result.setData("dlt_BMS_REP_ROUT_MST", reproutService.selectRepRoutList());
 		return result.getResult();
