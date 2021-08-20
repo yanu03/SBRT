@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.cm.domain.Find.FileMapper"> 	
+ 	<!--  파일 리스트 -->
+ 	<select id="selectMultiFileList"  resultType="Map" parameterType="java.lang.String">
+ 		<![CDATA[
+			SELECT A.ATTACH_ID
+				 , B.FILE_SN
+				 , B.FILE_EXT 
+				 , B.FILE_PATH
+				 , B.FILE_NM
+				 , A.ORG_FILE_NM
+				 , B.FILE_SIZE
+			FROM BMS_MULTI_ATTACH_MST A
+				INNER JOIN BMS_MULTI_ATTACH_DTL_INFO B
+				ON A.ATTACH_ID = B.ATTACH_ID
+			 WHERE A.ATTACH_ID = #{fileId}
+			   AND NVL(A.USE_YN, 'Y') = 'Y' 		
+			 ORDER BY B.FILE_SN	
+ 		]]>
+ 	</select>
+ 	
+ 	<!-- 파일 리스트(이미지) -->
+ 	<select id="selectMultiImageFileList" resultType="Map" parameterType="Map">
+ 		<![CDATA[
+			SELECT A.ATTACH_ID
+				 , B.FILE_SN
+				 , B.FILE_EXT 
+				 , B.FILE_PATH
+				 , B.FILE_NM
+				 , A.ORG_FILE_NM
+				 , B.FILE_SIZE
+			FROM BMS_MULTI_ATTACH_MST A
+				INNER JOIN BMS_MULTI_ATTACH_DTL_INFO B
+				ON A.ATTACH_ID = B.ATTACH_ID
+			 WHERE A.ATTACH_ID = #{fileId}
+			   AND NVL(A.USE_YN, 'Y') = 'Y'
+			   AND UPPER(A.FILE_EXT) IN ('GIF','JPG','BMP','PNG') 		
+			 ORDER BY B.FILE_SN	
+ 		]]>
+ 	</select>
+ 	
+ 	<!-- 파일 상세조회 -->
+ 	<select id="selectMultiFileView" resultType="Map" parameterType="Map">
+ 		<![CDATA[
+			SELECT A.ATTACH_ID
+				 , B.FILE_SN
+				 , B.FILE_EXT 
+				 , B.FILE_PATH
+				 , B.FILE_NM
+				 , A.ORG_FILE_NM
+				 , B.FILE_SIZE
+			FROM BMS_MULTI_ATTACH_MST A
+				INNER JOIN BMS_MULTI_ATTACH_DTL_INFO B
+				ON A.ATTACH_ID = B.ATTACH_ID
+			 WHERE A.ATTACH_ID = #{fileId}
+				AND B.FILE_SN = #{fileSn}  		
+ 		]]>
+ 	</select>	
+ 	
+ 	<select id="selectMultiFileViewLast" resultType="Map" parameterType="Map">
+ 		<![CDATA[
+			SELECT A.ATTACH_ID
+				 , B.FILE_SN
+				 , B.FILE_EXT 
+				 , B.FILE_PATH
+				 , B.FILE_NM
+				 , A.ORG_FILE_NM
+				 , B.FILE_SIZE
+			FROM BMS_MULTI_ATTACH_MST A
+				INNER JOIN BMS_MULTI_ATTACH_DTL_INFO B
+				ON A.ATTACH_ID = B.ATTACH_ID
+			 WHERE A.ATTACH_ID = #{fileId}
+			   AND B.FILE_SN = (SELECT MAX(FILE_SN) FROM BMS_MULTI_ATTACH_DTL_INFO WHERE ATTACH_ID = #{fileId} ) 
+ 		]]>
+ 	</select>	
+ 		
+ 	<select id="selectNextMultiFileID" resultType="java.lang.String">
+		<![CDATA[
+			SELECT SEQ_TB_CMN_FILE.NEXTVAL FROM db_root;			
+		]]>
+    </select> 
+    
+     <select id="selectNextMultiFileSN" resultType="java.lang.String" parameterType="java.lang.String">
+		<![CDATA[
+			SELECT NVL(MAX(FILE_SN),0)+1 AS FILE_SN 
+			  FROM BMS_MULTI_ATTACH_MST 
+			 WHERE ATTACH_ID = #{fileId}		
+		]]>
+    </select>  
+    
+ 	<!--  파일 입력  
+ 	* selectKey의 fileSn을 VO에서 String 선언 int인 경우  Integer로 
+ 	-->
+ 	<insert id="insertMultiFile" parameterType="Map">
+ 		<selectKey resultType="java.lang.String" keyProperty="fileSn" order="BEFORE">
+			SELECT NVL(MAX(FILE_SN),0)+1 AS FILE_SN 
+			  FROM BMS_MULTI_ATTACH_MST 
+			 WHERE ATTACH_ID = #{fileId}
+		</selectKey>
+
+		<![CDATA[
+			INSERT INTO BMS_MULTI_ATTACH_MST
+				(ATTACH_ID, FILE_SN, FILE_EXT, FILE_PATH, FILE_NM
+				, ORG_FILE_NM, FILE_SIZE, DISPLAY_SIZE, RGSDE, REGISTER
+				, DEL_AT)
+			VALUES 
+				(#{fileId}, #{fileSn}, #{fileExtsn}, #{filePath}, #{fileNm}
+				, #{name}, #{size}, #{displaySize}, SYSDATE, #{register}
+				, 'N')			
+		]]>
+    </insert>   
+      
+ 	<!-- 파일  삭제여부 수정  -->
+ 	<update id="updateMultiFileDelYN" parameterType="Map"> 
+		<![CDATA[
+			UPDATE BMS_MULTI_ATTACH_MST 
+			   SET DEL_AT = 'Y'
+			     , UPDDE = SYSDATE
+			     , UPDUSR = #{register}
+			 WHERE ATTACH_ID = #{fileId}
+		]]>
+		<if test='fileSn != null'>
+			<![CDATA[	AND FILE_SN = #{fileSn}	]]>
+		</if>
+    </update>
+     
+ 	<!--  파일 삭제  -->
+ 	 <delete id="deleteMultiFile" parameterType="Map"> 
+ 		<![CDATA[
+			DELETE 
+			  FROM BMS_MULTI_ATTACH_MST
+			 WHERE ATTACH_ID = #{fileId}
+		]]>
+		<if test='fileSn != null'>
+			<![CDATA[	AND FILE_SN = #{fileSn}	]]>
+		</if>
+    </delete>
+    
+    <update id="updateMultiFileCn" parameterType="Map"> 
+		UPDATE BMS_MULTI_ATTACH_MST 
+		   SET UPDDE = SYSDATE
+		     , UPDUSR = #{register}
+		 WHERE ATTACH_ID = #{fileId}
+		   AND FILE_SN = #{fileSn}
+    </update>
+    
+</mapper>

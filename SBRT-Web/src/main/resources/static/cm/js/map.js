@@ -1045,7 +1045,7 @@ routMap.addPathByClick = function(mapId,grid,routeId,e){
 	var today = new Date();
 	var data = {
 	
-			ROUTE_ID: routeId,
+			ROUT_ID: routeId,
 			NODE_SN: idx,
 			NODE_NM: /*routNm + */"노드_" + getCurrentDate().substring(4),
 			NODE_TYPE: routMap.NODE_TYPE.NORMAL,
@@ -1100,7 +1100,7 @@ routMap.addVertexByClick = function(mapId,grid,routeId,e){
 		var today = new Date();
 		var data = {
 		
-				ROUTE_ID: routeId,
+				ROUT_ID: routeId,
 				NODE_SN: idx,
 				NODE_NM: /*routNm + */"버텍스_" + getCurrentDate().substring(4),
 				NODE_TYPE: routMap.NODE_TYPE.VERTEX,
@@ -1157,7 +1157,7 @@ routMap.addSttnByClick = function(mapId,grid,routeId,e){
 		var today = new Date();
 		var data = {
 		
-				ROUTE_ID: routeId,
+				ROUT_ID: routeId,
 				NODE_SN: idx,
 				NODE_NM: /*routNm + */"정류소_" + getCurrentDate().substring(4),
 				NODE_TYPE: routMap.NODE_TYPE.BUSSTOP,
@@ -1214,7 +1214,7 @@ routMap.addCrossByClick = function(mapId,grid,routeId,e){
 		var today = new Date();
 		var data = {
 		
-				ROUTE_ID: routeId,
+				ROUT_ID: routeId,
 				NODE_SN: idx,
 				NODE_NM: /*routNm + */"교차로_" + getCurrentDate().substring(4),
 				NODE_TYPE: routMap.NODE_TYPE.CROSS,
@@ -1272,7 +1272,7 @@ routMap.addSoundByClick = function(mapId,grid,routeId,e){
 		var today = new Date();
 		var data = {
 		
-				ROUTE_ID: routeId,
+				ROUT_ID: routeId,
 				NODE_SN: idx,
 				NODE_NM: /*routNm + */"사운드_" + getCurrentDate().substring(4),
 				NODE_TYPE: routMap.NODE_TYPE.SOUND,
@@ -1334,7 +1334,7 @@ routMap.addNode = function(mapId, grid, data, routeId,area) {
 	var minIndex = null;
 	if(routeData==null||routeData.length==0||routeData.length==1){
 		var temp = {
-				ROUTE_ID: routeId,
+				ROUT_ID: routeId,
 				NODE_ID: data.NODE_ID,
 				GPS_Y: data.GPS_Y,
 				GPS_X: data.GPS_X,
@@ -1361,7 +1361,7 @@ routMap.addNode = function(mapId, grid, data, routeId,area) {
 			)
 			if(result==false){
 				var temp = {
-						ROUTE_ID: routeId,
+						ROUT_ID: routeId,
 						NODE_ID: data.NODE_ID,
 						GPS_Y: data.GPS_Y,
 						GPS_X: data.GPS_X,
@@ -1394,7 +1394,7 @@ routMap.addNode = function(mapId, grid, data, routeId,area) {
 			var insertIndex = minIndex + 1;
 			
 			var temp = {
-					ROUTE_ID: routeId,
+					ROUT_ID: routeId,
 					NODE_ID: data.NODE_ID,
 					GPS_Y: data.GPS_Y,
 					GPS_X: data.GPS_X,
@@ -1427,7 +1427,7 @@ routMap.addStdNode = function(mapId, grid, data, routeId,area) {
 	var minIndex = null;
 	if(routeData==null||routeData.length==0||routeData.length==1){
 		var temp = {
-				ROUTE_ID: routeId,
+				ROUT_ID: routeId,
 				MOCK_NODE_ID: data.MOCK_NODE_ID,
 				MOCK_LINK_ID: data.MOCK_LINK_ID,
 				GPS_Y: data.GPS_Y,
@@ -1453,7 +1453,7 @@ routMap.addStdNode = function(mapId, grid, data, routeId,area) {
 			)
 			if(result==false){
 				var temp = {
-						ROUTE_ID: routeId,
+						ROUT_ID: routeId,
 						MOCK_NODE_ID: data.MOCK_NODE_ID,
 						MOCK_LINK_ID: data.MOCK_LINK_ID,
 						GPS_Y: data.GPS_Y,
@@ -1485,7 +1485,7 @@ routMap.addStdNode = function(mapId, grid, data, routeId,area) {
 			var insertIndex = minIndex + 1;
 			
 			var temp = {
-					ROUTE_ID: routeId,
+					ROUT_ID: routeId,
 					MOCK_NODE_ID: data.MOCK_NODE_ID,
 					MOCK_LINK_ID: data.MOCK_LINK_ID,
 					GPS_Y: data.GPS_Y,
@@ -1838,11 +1838,10 @@ routMap.showRoute = function(mapId, list, id, type) {
 				if((list[i].NODE_TYPE != routMap.NODE_TYPE.NORMAL) &&(list[i].NODE_TYPE != routMap.NODE_TYPE.VERTEX))
 					routMap.showMarker(mapId, list[i], i, focusIdx);
 			}
-			else {
+			else if(type != "ONLYLINE"){
 				if((list[i].NODE_TYPE != routMap.NODE_TYPE.NORMAL) &&(list[i].NODE_TYPE != routMap.NODE_TYPE.VERTEX))
 					routMap.showMarker(mapId, list[i], i, focusIdx);
 			}
-			
 			
 			if(i < list.length -1){
 				var color = "#0000FF";
@@ -1852,7 +1851,7 @@ routMap.showRoute = function(mapId, list, id, type) {
 				else if(list[i].MORN_STD=='MS003'){
 					color = "#FF005E";
 				}
-				if(list[i].ROUTE_ID == list[i+1].ROUTE_ID) //동일 노선끼리만 선 연결 되도록 함
+				if(list[i].ROUT_ID == list[i+1].ROUT_ID) //동일 노선끼리만 선 연결 되도록 함
 					routMap.drawLine(mapId, list[i], list[i+1], color);
 			}
 		}
