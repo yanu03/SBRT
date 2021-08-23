@@ -88,24 +88,12 @@
 	scwin.onpageload = function() {
 		var autoOptions = {
 			Main : { grid : VI0100G0, srchSbm : sub_VI0100G0R0, srchGrp : pgm_header , keyColumn : "VHC_ID", focusColumn : "VHC_ID", name : "차량 목록"},
-			Sub1 : { grid : VI0100G1, srchSbm : sub_VI0100G1R0, keyColumn : "OCR_DTM",savSbm : sub_VI0100G1S0, name : "위반 관리 목록" }	
+			Sub1 : { grid : VI0100G1, srchSbm : sub_VI0100G1R0, keyColumn : "OCR_DTM", savSbm : sub_VI0100G1S0, focusColumn : "OCR_DTM", name : "위반 관리 목록" }	
 		 };
 		 		
-		 var mainOptions = {
-			ADD: {disp:"hide"},
-			DEL: {disp:"hide"},
-			CNL: {disp:"hide"}
-		}
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions, mainOptions);		
+		 		
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions );		
 
-		var subOptions = {
-			ADD: {mode:"auto"},
-			DEL: {mode:"auto"},
-			SAVE: {mode:"auto"},
-			CNL: {mode:"auto"}
-		};
-		
-		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
 
 		var codeOptions = [ {code : "AREA", compID : "VI0100G0:AREA" }
 							,{code : "VIOLT_TYPE", compID : "VI0100G1:VIOLT_TYPE" }
@@ -128,6 +116,10 @@
 	
 	scwin.sub_VI0100G0R0_submitdone = function(e) {
 		com.setFocusedCell(VI0100G0, "VHC_ID");		
+	};
+	
+	scwin.sub_VI0100G1R0_submitdone = function(e) {
+		com.setFocusedCell(VI0100G1, "OCR_DTM");		
 	};
 	
 	scwin.VI0100G0_onrowindexchange = function(row,oldRow) {

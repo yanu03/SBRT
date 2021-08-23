@@ -52,7 +52,7 @@ public class PI0206Service extends ServiceSupport {
 		int dCnt = 0;		
 		
 		//체크한 노선 리스트 (list_param)
-		List<Map<String, Object>> list_param = getSimpleList("dlt_BIT_ROUT_MST");
+		List<Map<String, Object>> list_param = getSimpleList("dlt_BRT_COR_MST");
 		
 		List<Map<String, Object>> param = getSimpleList("dlt_VHC_MST");
 		Map<String, Object> map = getSimpleDataMap("dma_subsearch");
@@ -66,7 +66,7 @@ public class PI0206Service extends ServiceSupport {
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("U")) {
 					
-					data.put("ROUT_ID",map.get("ROUT_ID"));
+					data.put("COR_ID",map.get("COR_ID"));
 					iCnt = pi0206Mapper.PI0206G1I0(data);
 					
 					//차량별 장치코드리스트
@@ -76,7 +76,7 @@ public class PI0206Service extends ServiceSupport {
 					//예약해야할노선리스트			
 					for(Map<String, Object> route : list_param) {
 						
-						String routeId = String.valueOf(map.get("ROUT_ID"));
+						String routeId = String.valueOf(map.get("COR_ID"));
 						Map<String, Object> routeInfo= pi0206Mapper.selectRouteInfo(routeId);
 						route.put( "TXT_VAL1", String.valueOf(routeInfo.get("TXT_VAL1")) ); //U or D //list_param 의 값을 변경
 

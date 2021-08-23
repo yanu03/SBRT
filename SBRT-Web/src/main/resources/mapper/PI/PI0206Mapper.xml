@@ -3,16 +3,14 @@
 
 <mapper namespace="kr.tracom.bms.domain.PI0206.PI0206Mapper">
 	<select id="PI0206G0R0" resultType="Map">
-		SELECT 		ROUT_ID
-					,ROUT_NM
-					,WAY_DIV
-					,ST_STTN_ID
-					,ST_STTN_NM
-					,ED_STTN_ID
-					,ED_STTN_NM
-					,REMARK
+		SELECT 		b.REP_ROUT_NM
+					,a.REP_ROUT_ID
+					,a.COR_ID
+					,a.COR_NM
 					
-		FROM		BMS_ROUT_MST			
+		FROM		BRT_COR_MST  a
+					LEFT JOIN BMS_REP_ROUT_MST b
+					ON a.REP_ROUT_ID = b.REP_ROUT_ID
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 				ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
@@ -58,11 +56,15 @@
 			,IF(A.USE_YN = 'Y', '사용', NULL) USE_YN
 			,E.COMP_NM
 		FROM 
-		 	sbrt.BMS_VHC_MST A 
-			LEFT JOIN sbrt.BMS_DVC_INFO B ON A.VHC_ID = B.VHC_ID
-			LEFT JOIN sbrt.BMS_VOC_RSV_RST_INFO C ON B.MNG_ID = C.MNG_ID AND COMPLETE_YN = 'N'
-			LEFT JOIN sbrt.BMS_VOC_RSV_INFO D ON C.RSV_ID = D.RSV_ID		
-			LEFT JOIN sbrt.BMS_TRANSCOMP_MST E ON A.COMP_ID = E.COMP_ID	
+		 	BMS_VHC_MST A 
+			LEFT JOIN BMS_DVC_INFO B 
+			ON A.VHC_ID = B.VHC_ID
+			LEFT JOIN BMS_VOC_RSV_RST_INFO C 
+			ON B.MNG_ID = C.MNG_ID AND COMPLETE_YN = 'N'
+			LEFT JOIN BMS_VOC_RSV_INFO D 
+			ON C.RSV_ID = D.RSV_ID		
+			LEFT JOIN BMS_TRANSCOMP_MST E 
+			ON A.COMP_ID = E.COMP_ID	
 		WHERE
 			A.USE_YN = 'Y'
 			AND B.MNG_ID IS NOT NULL
@@ -97,16 +99,16 @@
 				);
 	
 		INSERT INTO BMS_VOC_RSV_RST_INFO
-			(
-				RSV_ID
-				,MNG_ID
-				,COMPLETE_YN
-			)
-			VALUES(
-				#{RSV_ID}
-				,#{MNG_ID}
-				,'N'
-			);
+				(
+					RSV_ID
+					,MNG_ID
+					,COMPLETE_YN
+				)
+				VALUES(
+					#{RSV_ID}
+					,#{MNG_ID}
+					,'N'
+				);
 		
 	</insert>
 
@@ -142,15 +144,15 @@
 			,DATE_FORMAT(RSV.RSV_DT, '%Y-%m-%d') RSV_DT
 			,IF(RST.COMPLETE_YN = 'N', '예약중', '예약종료') RSV_STATE					
 		FROM		
-			sbrt.BMS_VHC_MST VHC
-		LEFT JOIN 	sbrt.BMS_DVC_INFO DVC
-		ON		  	VHC.VHC_ID = DVC.VHC_ID
-		LEFT JOIN	sbrt.BMS_VOC_RSV_RST_INFO RST
-		ON			DVC.MNG_ID = RST.MNG_ID
-		LEFT JOIN   sbrt.BMS_VOC_RSV_INFO RSV
-		ON			RST.RSV_ID = RSV.RSV_ID
-		LEFT JOIN	sbrt.BMS_TRANSCOMP_MST	TSM
-		ON			VHC.COMP_ID = TSM.COMP_ID
+			BMS_VHC_MST VHC
+			LEFT JOIN BMS_DVC_INFO DVC
+			ON VHC.VHC_ID = DVC.VHC_ID
+			LEFT JOIN BMS_VOC_RSV_RST_INFO RST
+			ON DVC.MNG_ID = RST.MNG_ID
+			LEFT JOIN BMS_VOC_RSV_INFO RSV
+			ON RST.RSV_ID = RSV.RSV_ID
+			LEFT JOIN BMS_TRANSCOMP_MST	TSM
+			ON VHC.COMP_ID = TSM.COMP_ID
 		WHERE		
 			VHC.VHC_ID = #{VHC_ID}
 		<if test="RSV_STATE == '예약중'">
@@ -172,7 +174,8 @@
 		 	,DVC.DVC_ID
 		FROM
 			BMS_VHC_MST VHC
-			LEFT JOIN BMS_DVC_INFO DVC ON VHC.VHC_ID = DVC.VHC_ID
+			LEFT JOIN BMS_DVC_INFO DVC 
+			ON VHC.VHC_ID = DVC.VHC_ID
 		WHERE
 			MNG_ID IS NOT NULL
 	</select>
