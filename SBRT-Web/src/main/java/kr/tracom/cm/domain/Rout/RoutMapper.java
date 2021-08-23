@@ -11,8 +11,8 @@ public interface RoutMapper {
 	public int updateSttn(Map param);
 	public int updateCrs(Map param);
 	public int updateRout(Map param);
-	public int updateRoutNodeToAnotherRoute(Map param); //BMS_ROUT_NODE_CMPSTN¿¡¼­ ´Ù¸¥ route idÀÇ Á¤·ù¼Ò À§Ä¡ Á¤º¸ °»½Å
-	public int updateMainRoutNodeToAnotherRoute(Map param); //BRT_MAIN_ROUT_NODE_INFO¿¡¼­ ´Ù¸¥ route idÀÇ Á¤·ù¼Ò À§Ä¡ Á¤º¸ °»½Å
+	public int updateRoutNodeToAnotherRoute(Map param); //BMS_ROUT_NODE_CMPSTNì—ì„œ ë‹¤ë¥¸ route idì˜ ì •ë¥˜ì†Œ ìœ„ì¹˜ ì •ë³´ ê°±ì‹ 
+	public int updateMainRoutNodeToAnotherRoute(Map param); //BRT_MAIN_ROUT_NODE_INFOì—ì„œ ë‹¤ë¥¸ route idì˜ ì •ë¥˜ì†Œ ìœ„ì¹˜ ì •ë³´ ê°±ì‹ 
 	public List<Map<String, Object>> selectRoutList(Map param);
 	public List<Map<String, Object>> selectRoutItem();
 	public List<Map<String, Object>> selectNodeListByRouts(Map param);

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import kr.tracom.cm.domain.OperPlan.OperPlanMapper;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.util.Result;
@@ -16,6 +17,9 @@ public class SI0401Service extends ServiceSupport {
 
 	@Autowired
 	private SI0401Mapper si0401Mapper;
+	
+	@Autowired
+	private OperPlanMapper operPlanMapper;
 	
 	public List SI0401G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
@@ -42,6 +46,14 @@ public class SI0401Service extends ServiceSupport {
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("C")) {
 					iCnt += si0401Mapper.SI0401G0I0(data);
+					
+					data.put("DAY_DIV", "DY001"); //평일
+					operPlanMapper.insertSimpleOperPlan(data);
+					
+					if("Y".equals(data.get("HOLI_YN"))) {
+						data.put("DAY_DIV", "DY002"); //휴일
+						operPlanMapper.insertSimpleOperPlan(data);
+					}
 				} else if (rowStatus.equals("U")) {
 					uCnt += si0401Mapper.SI0401G0U0(data);
 				} else if (rowStatus.equals("D")) {
