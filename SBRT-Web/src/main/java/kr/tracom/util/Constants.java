@@ -68,7 +68,7 @@ public class Constants {
     	public static final String ROUTE_BUSSTOP_TITLE		= "NODE_ID,NODE_NAME,TYPE,RANGE,X,Y,NODE_ENAME,TRANSIT_CODE";
     	public static final String ROUTE_NODELIST_TITLE		= "NODE_ID,NODE_NAME,RANGE,X,Y";
     	public static final String ROUTE_TITLE				= "NODE_ID";
-    	
+    	public static final String ROUTE_LINK_TITLE			= "LINK_ID,LINK_NAME,ST_NODE,ED_NODE,LEN,MAX_SPD,EVENT_MS";
     	public static final String VIDEO_PLAY_LIST			="Seq_No,Video_Type,Video_File,Start_Date,Expire_Date,Runtime";
     	public static final String ELEC_ROUTER				="TIME_KO,TIME_EN,CATEGORY,FRAME,FONT";
     }

@@ -217,4 +217,130 @@
 		WHERE ROUT_ID = #{routeId}
 	</select>
  
+ 	<!-- 코스정보 JH -->
+ 	<select id="selectCourseInfo" parameterType="String" resultType="Map">
+ 		SELECT
+			A.COR_ID
+		    , A.REP_ROUT_ID
+		    , A.COR_NM
+		    , B.ROUT_ID
+		    , B.ROUT_SN
+		FROM
+			BRT_COR_MST A
+		    LEFT JOIN BRT_COR_DTL_INFO B
+		    ON A.COR_ID = B.COR_ID
+		WHERE
+			A.COR_ID = #{courseId}
+		ORDER BY
+			COR_ID, ROUT_SN
+ 	</select>
+ 	
+ 	<!-- 노선리스트 JH -->
+ 	<select id="selectRoutList" parameterType="Map" resultType="Map">
+ 		SELECT DISTINCT
+			ROUT_ID
+		FROM
+			BRT_COR_DTL_INFO
+		WHERE
+			COR_ID IN (
+			<foreach collection="courseList" item="item" separator=",">
+				#{item.COR_ID}
+			</foreach>
+			)
+		ORDER BY ROUT_ID;
+ 	</select>
+ 	
+ 	<!-- 노드리스트 JH -->
+ 	<select id="selectAllNodeList" parameterType="Map" resultType="Map">
+ 		SELECT DISTINCT
+			NODE_ID
+		    , NODE_NM
+		    , '30' AS 'RANGE'
+		    , TRUNCATE(GPS_X, 6) AS X
+		    , TRUNCATE(GPS_Y, 6) AS Y
+		FROM
+			BMS_ROUT_NODE_CMPSTN
+		WHERE
+			NODE_TYPE IN ('NT001', 'NT003', 'NT004', 'NT005', 'NT007');
+ 	</select>
+ 	
+ 	<!-- 정류장노드, 음성노드 리스트 JH -->
+ 	<select id="selectStnAudioList" resultType="Map">
+ 		SELECT DISTINCT
+			STTN_ID AS NODE_ID
+		    , STTN_NM AS NODE_NM
+		    , '1' AS 'NODE_TYPE'
+		    , '30' AS 'RANGE'
+		    , TRUNCATE(GPS_X, 6) AS X
+		    , TRUNCATE(GPS_Y, 6) AS Y
+		    , IFNULL(STTN_ENM, '') AS NODE_ENAME
+ 	<![CDATA[, IF(IFNULL(IF(LINE_CNT >= 3, 2, LINE_CNT -1), 0) < 0, 0, IFNULL(IF(LINE_CNT >= 3, 2, LINE_CNT -1), 0)) AS TRANSIT_CODE]]>
+		FROM
+			BMS_STTN_MST 
+		WHERE
+			USE_YN = 'Y'
+		
+		UNION ALL
+		
+		SELECT DISTINCT
+			ORGA_ID AS NODE_ID
+		    , ORGA_NM AS NODE_NM
+		    , '898' AS 'NODE_TYPE'
+		    , '30' AS 'RANGE'
+		    , TRUNCATE(GPS_X, 6) AS X
+		    , TRUNCATE(GPS_Y, 6) AS Y
+		    , NULL AS NODE_ENAME
+		    , NULL AS TRANSIT_CODE
+		FROM
+			BMS_VOC_ORGA_INFO
+ 	</select>
+ 	
+ 	<!-- 노선별 노드 리스트 오름차순 JH -->
+ 	<select id="selectRoutNodeList" resultType="Map" parameterType="String">
+ 		SELECT
+			NODE_ID AS NODE_ID
+		FROM
+			BMS_ROUT_NODE_CMPSTN
+		WHERE
+			ROUT_ID = #{routId}
+		ORDER BY NODE_SN ASC
+ 	</select>
+	
+	<!-- 노선 정보 리스트  jh -->	
+	<select id="selectRoutInfoList" parameterType="String" resultType="Map">
+		SELECT
+			A.ROUT_ID
+			, A.REP_ROUT_ID
+			, A.INT_ROUT_ID
+			, A.REP_ROUT_NM
+			, A.ROUT_NM
+			, B.DL_CD_NM
+		FROM BMS_ROUT_MST A
+			LEFT JOIN BMS_DL_CD_INFO B ON A.WAY_DIV = B.DL_CD AND B.CO_CD = 'WAY_DIV'
+		WHERE ROUT_ID IN
+			<foreach collection="routList" item="item" separator=",">
+				#{item.ROUT_ID}
+			</foreach> 
+	</select>
+	
+	<!-- 노선별 링크 리스트 JH -->
+	<select id="selectRoutLinkList" resultType="Map" parameterType="String">
+		SELECT
+			A.LINK_ID		AS LINK_ID
+		    , B.LINK_NM		AS LINK_NAME
+		    , B.ST_NODE_ID	AS ST_NODE
+		    , B.ED_NODE_ID	AS ED_NODE
+		    , B.LEN			AS LEN
+		    , B.MAX_SPD		AS MAX_SPD
+		    , C.TXT_VAL1	AS EVENT_MS
+		FROM
+			BMS_ROUT_LINK_CMPSTN A
+		    LEFT JOIN BMS_LINK_MST B
+		    ON A.LINK_ID = B.LINK_ID
+		    LEFT JOIN BMS_DL_CD_INFO C
+			ON A.MORN_STD = C.DL_CD
+		WHERE ROUT_ID = #{routId}
+		ORDER BY LINK_SN
+	</select>
+ 	
 </mapper>
