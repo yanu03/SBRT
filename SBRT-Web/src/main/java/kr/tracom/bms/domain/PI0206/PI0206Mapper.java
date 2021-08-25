@@ -62,4 +62,10 @@ public interface PI0206Mapper {
 	/** 실내 LED 대본이 있는 음성인지 질의 jh **/
 	public String isExistIld(String vocId);
 	
+	/** 코스 정보 리스트 jh **/
+	public List<Map<String, Object>> selectCourseInfoList(Map param);
+	
+	/** 코스별 노선 리스트 JH **/
+	public List<Map<String, Object>> selectCourseRoutList(String courseId);
+	
 }

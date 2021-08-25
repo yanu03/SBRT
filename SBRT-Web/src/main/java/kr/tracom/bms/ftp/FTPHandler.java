@@ -861,7 +861,7 @@ public class FTPHandler {
     	return true;
 	} 
 	
-	/** ildId 세팅 **/
+	/** 210824 ildId 세팅 jh **/
 	public String setIldID(String vocId) {
 		if(Integer.parseInt(pi0206Mapper.isExistIld(vocId)) > 0) {
 			return vocId + ".ild";
@@ -869,6 +869,127 @@ public class FTPHandler {
 			return "";
 		}
 	}
+	
+	
+	/** 210825 노선별 courseinfo.csv jh **/
+	public void uploadCourseRoutList(List<Map<String, Object>> courseRoutList, String courseId, String courseVer) {
+		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		
+		String txt = Constants.CSVForms.ROUTE_VERSION + courseVer 
+				   + Constants.CSVForms.ROW_SEPARATOR;		
+		
+		txt += Constants.CSVForms.ROUTE_TITLE;
+		
+		String fileName = "courseinfo.csv";
+		
+			
+		for(Map<String, Object> routMap : courseRoutList) {
+			txt += Constants.CSVForms.ROW_SEPARATOR + courseId
+				+ Constants.CSVForms.COMMA + routMap.get("SEQ")
+				+ Constants.CSVForms.COMMA + routMap.get("ROUT_ID");
+		}
+		
+		File file = new File(path + "/" + "courselist" + "/" + courseId + "/" + fileName);
+		
+		try {
+			createCSV(file, txt);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/** 210825 courselist.csv 파일 read jh **/
+	public List<Map<String, Object>> readCourseList(String fileName) throws IOException {
+		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		
+		File file = new File(path + "/" + fileName);
+		
+		List<Map<String, Object>> list = new ArrayList<>();
+		
+        //입력 버퍼 생성
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "CP949"));
+        String line = "";
+        String[] tmp = null;
+        
+        int lineNum = 0;
+        while((line = br.readLine()) != null){
+        	lineNum++;
+        	
+        	if(lineNum <= 2) {
+        		continue;
+        	}else {        		
+        	Map<String, Object> map = new HashMap<>();
+        	tmp = line.split(",");
+        	
+    		map.put("COR_ID",		tmp[0]);
+    		map.put("COR_NM",		tmp[1]);
+    		map.put("COR_ENM",		tmp[2]);
+    			
+        	list.add(map);
+        	}
+        }
+        br.close();
+        
+        return list;
+	}
+	
+	/** 210825 courselist.csv 생성 jh 
+	 * @throws IOException **/
+	public boolean uploadCourseInfo(String fileName, String maxVer, Map<String, Object> newRow) throws IOException {
+		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		
+		File file = new File(path + "/" + fileName);
+		List<Map<String, Object>> list = new ArrayList<>();
+		if(file.exists()) {
+			list = readCourseList("courselist.csv");
+		}else {
+			
+		}
+		
+		if(list.size() > 0) {
+			//기존에 정보가 있으면 업데이트, 없으면 인서트하도록 하겠음
+			int seq = 0;
+			boolean flag = false;
+			
+			loop:
+			for(int i = 0; i < list.size(); i++) {
+				if(list.get(i).get("FILE_NAME").equals(newRow.get("FILE_NAME"))) {
+					flag = true;
+					seq = i;
+					break loop;
+				}			
+			}
+			
+			if(flag) {
+				list.set(seq, newRow);
+			}else {
+				list.add(newRow);
+			}
+			
+		}else {
+			list.add(newRow);
+		}
+					
+		String txt = "";
+		txt += Constants.CSVForms.ROUTE_VERSION + maxVer + Constants.CSVForms.ROW_SEPARATOR;
+		txt += Constants.CSVForms.COURSE_LIST;
+		
+		for(Map<String, Object> map : list) {
+			txt += Constants.CSVForms.ROW_SEPARATOR;
+			txt += map.get("COR_ID")
+				+  Constants.CSVForms.COMMA + map.get("COR_NM") 
+				+  Constants.CSVForms.COMMA + map.get("COR_ENM");
+		}
+		
+		try {
+			createCSV(file, txt);
+			return true;
+		} catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	
 	/*
 	 * IL001이면 한글이고

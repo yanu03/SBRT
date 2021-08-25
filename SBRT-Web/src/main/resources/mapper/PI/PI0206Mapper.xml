@@ -247,7 +247,7 @@
 				#{item.COR_ID}
 			</foreach>
 			)
-		ORDER BY ROUT_ID;
+		ORDER BY ROUT_ID
  	</select>
  	
  	<!-- 노드리스트 JH -->
@@ -318,9 +318,11 @@
 		FROM BMS_ROUT_MST A
 			LEFT JOIN BMS_DL_CD_INFO B ON A.WAY_DIV = B.DL_CD AND B.CO_CD = 'WAY_DIV'
 		WHERE ROUT_ID IN
+			(
 			<foreach collection="routList" item="item" separator=",">
 				#{item.ROUT_ID}
 			</foreach> 
+			)
 	</select>
 	
 	<!-- 노선별 링크 리스트 JH -->
@@ -386,5 +388,32 @@
     		BM_INNER_LED
     	WHERE
     		VOC_ID = CONCAT(#{value})
+    </select>
+    
+    <select id="selectCourseInfoList" resultType="Map" parameterType="String">
+    	SELECT
+			COR_ID
+			, COR_NM
+			, COR_NM AS COR_ENM
+		FROM
+			BRT_COR_MST
+		WHERE
+			COR_ID IN (
+			<foreach collection="courseList" item="item" separator=",">
+				#{item.COR_ID}
+			</foreach> 
+			)
+    </select>
+    
+    <select id="selectCourseRoutList" resultType="Map" parameterType="String">
+    	SELECT
+			COR_ID
+		    , ROUT_SN AS SEQ
+		    , ROUT_ID
+		FROM
+			BRT_COR_DTL_INFO
+		WHERE
+			COR_ID = #{courseId}
+		ORDER BY SEQ ASC
     </select>
 </mapper>
