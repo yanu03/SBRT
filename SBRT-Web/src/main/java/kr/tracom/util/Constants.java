@@ -68,9 +68,23 @@ public class Constants {
     	public static final String ROUTE_BUSSTOP_TITLE		= "NODE_ID,NODE_NAME,TYPE,RANGE,X,Y,NODE_ENAME,TRANSIT_CODE";
     	public static final String ROUTE_NODELIST_TITLE		= "NODE_ID,NODE_NAME,RANGE,X,Y";
     	public static final String ROUTE_TITLE				= "NODE_ID";
-    	
+    	public static final String ROUTE_LINK_TITLE			= "LINK_ID,LINK_NAME,ST_NODE,ED_NODE,LEN,MAX_SPD,EVENT_MS";
     	public static final String VIDEO_PLAY_LIST			="Seq_No,Video_Type,Video_File,Start_Date,Expire_Date,Runtime";
     	public static final String ELEC_ROUTER				="TIME_KO,TIME_EN,CATEGORY,FRAME,FONT";
     }
 	
+    public static class PlayListVoiceTypes {
+    	public static final int BUS_KR		= 0; // 한글정류장안내 음성
+    	public static final int BUS_EN		= 1; // 영문정류장안내 음성
+    	public static final int AD			= 2; // 홍보음성
+    	public static final int ETC			= 3; // 기타음성
+    	public static final int ROUTE		= 4; // 노선선택시 재생 음성
+    }
+    
+    public static class VoiceTypes {
+    	public static final String KR		= "K";	// 한국어
+    	public static final String EN		= "E";	// 영어
+    	public static final String US		= "U";	// 사용자 음성
+    	public static final String RT		= "R";	// 노선별 음성
+    }
 }

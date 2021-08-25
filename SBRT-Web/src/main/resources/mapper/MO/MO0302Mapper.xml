@@ -11,13 +11,16 @@
 			,b.INCDNT_RES_TYPE
 			,b.PROG_DIV
 			,a.VHC_NO
-			,a.LINK_ID
 			,DATE_FORMAT(a.UPD_DTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTM
 			,a.REMARK
+			,a.INCDNT_DETAIL
+			,c.LINK_NM
 		FROM
-			sbrt.BRT_INCDNT_HIS a
-			LEFT JOIN sbrt.BRT_INCDNT_RES_INFO b
+			BRT_INCDNT_HIS a
+			LEFT JOIN BRT_INCDNT_RES_INFO b
 			ON a.OPER_DT = b.OPER_DT AND a.VHC_ID = b.VHC_ID
+			LEFT JOIN BMS_LINK_MST c
+			ON a.LINK_ID = c.LINK_ID
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 				AND a.INCDNT_TYPE LIKE CONCAT('%',#{CONTENT},'%') || b.PROG_DIV LIKE CONCAT('%',#{CONTENT},'%') 

@@ -22,7 +22,7 @@ public class PI0206Controller extends ControllerSupport{
 	
 	@RequestMapping("/pi/PI0206G0R0")
 	public @ResponseBody Map<String, Object> PI0206G0R0() throws Exception {
-		result.setData("dlt_BIT_ROUT_MST", pi0206Service.PI0206G0R0());
+		result.setData("dlt_BRT_COR_MST", pi0206Service.PI0206G0R0());
 		return result.getResult();
 	}
 	
