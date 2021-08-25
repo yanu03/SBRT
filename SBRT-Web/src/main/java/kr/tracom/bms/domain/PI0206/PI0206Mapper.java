@@ -53,5 +53,13 @@ public interface PI0206Mapper {
 	/** 노선정보리스트 jh **/
 	public List<Map<String, Object>> selectRoutInfoList(Map param);
 	
+	/** 노선별 음성편성 리스트 jh **/
+	public List<Map<String, Object>> selectRoutOrgaList(String routId);
+	
+	/** 음성편성별 음성정보 리스트 jh **/
+	public List<Map<String, Object>> selectOrgaVocList(String orgaId);
+	
+	/** 실내 LED 대본이 있는 음성인지 질의 jh **/
+	public String isExistIld(String vocId);
 	
 }

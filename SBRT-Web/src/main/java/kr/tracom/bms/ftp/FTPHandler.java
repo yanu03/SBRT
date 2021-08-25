@@ -49,6 +49,7 @@ import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 
+import kr.tracom.bms.domain.PI0206.PI0206Mapper;
 import kr.tracom.bms.domain.PI0503.PI0503Mapper;
 import kr.tracom.cm.domain.Common.CommonMapper;
 import kr.tracom.cm.support.ServiceSupport;
@@ -151,6 +152,8 @@ public class FTPHandler {
 	@Autowired
 	private CommonMapper commonMapper;
 	
+	@Autowired
+	private PI0206Mapper pi0206Mapper;
 	
 	private ArrayList<String> serverContentList;
 	private ArrayList<String> pathList;
@@ -768,6 +771,102 @@ public class FTPHandler {
 			createCSV(file, txt);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	
+	/** 210824 노선별 playlist파일들 jh **/
+	public boolean uploadVoicePlayList(String routId, List<Map<String, Object>> orgaList) {
+		String routePath = "/route/" + routId + "/playlist";
+		String playListPath = Paths.get(getRootLocalPath(), routePath).toString();
+		
+		try {
+			FileUtils.deleteDirectory(new File(playListPath));
+			
+			FileUtils.forceMkdir(new File(playListPath));
+			
+			for(Map<String, Object> orgaInfo : orgaList) {
+				String orgaId = orgaInfo.get("ORGA_ID").toString();
+				String fileName = orgaId + ".csv";
+				StringBuilder csvContent = new StringBuilder();
+				csvContent.append(Constants.CSVForms.VOICE_PLAYLIST_TITLE);
+				
+				
+				List<Map<String, Object>> orgaVocList = pi0206Mapper.selectOrgaVocList(orgaId);
+				
+				for(Map<String, Object> orgaVoc : orgaVocList) {
+					if(orgaVoc.get("PLAY_TYPE").equals("TTS")) {
+						
+		    			if(Integer.parseInt(orgaVoc.get("VOC_CODE").toString()) == Constants.PlayListVoiceTypes.BUS_KR) {
+		    				//한음
+			    			csvContent.append(
+			    					orgaVoc.get("SEQ") + Constants.CSVForms.COMMA
+					    			+ Constants.PlayListVoiceTypes.BUS_KR + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("VOC_ID") + Constants.VoiceTypes.KR + ".wav" + Constants.CSVForms.COMMA 
+					    			+ orgaVoc.get("START_DATE") + Constants.CSVForms.COMMA 
+					    			+ orgaVoc.get("EXPIRED_DATE") + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("TEXT") + Constants.CSVForms.COMMA
+			    					+ setIldID(orgaVoc.get("VOC_ID") + Constants.VoiceTypes.KR)
+			    					+ Constants.CSVForms.ROW_SEPARATOR);
+			    			
+			    			// 영음
+			    			csvContent.append(
+			    					orgaVoc.get("SEQ") + Constants.CSVForms.COMMA
+					    			+ Constants.PlayListVoiceTypes.BUS_EN + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("VOC_ID") + Constants.VoiceTypes.EN + ".wav" + Constants.CSVForms.COMMA 
+					    			+ orgaVoc.get("START_DATE") + Constants.CSVForms.COMMA 
+					    			+ orgaVoc.get("EXPIRED_DATE") + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("TEXT") + Constants.CSVForms.COMMA
+			    					+ setIldID(orgaVoc.get("VOC_ID") + Constants.VoiceTypes.EN));
+			    		} else {
+			    			// 기타 다른음성들
+			    			csvContent.append(
+			    					orgaVoc.get("SEQ") + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("VOC_CODE") + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("VOC_ID") + Constants.VoiceTypes.KR + ".wav" + Constants.CSVForms.COMMA 
+					    			+ orgaVoc.get("START_DATE") + Constants.CSVForms.COMMA 
+					    			+ orgaVoc.get("EXPIRED_DATE") + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("TEXT") + Constants.CSVForms.COMMA
+			    					+ setIldID(orgaVoc.get("VOC_ID") + Constants.VoiceTypes.KR));
+			    		}
+		    		} else {
+		    			// WAV 업로드 음성
+		    			csvContent.append(
+		    					orgaVoc.get("SEQ") + Constants.CSVForms.COMMA
+				    			+ orgaVoc.get("VOC_CODE") + Constants.CSVForms.COMMA
+				    			+ orgaVoc.get("VOC_ID") + Constants.VoiceTypes.US + ".wav" + Constants.CSVForms.COMMA 
+				    			+ orgaVoc.get("START_DATE") + Constants.CSVForms.COMMA 
+				    			+ orgaVoc.get("EXPIRED_DATE") + Constants.CSVForms.COMMA
+				    			+ orgaVoc.get("TEXT") + Constants.CSVForms.COMMA
+				    			+ setIldID(orgaVoc.get("VOC_ID").toString() + Constants.VoiceTypes.US));
+		    		}
+					
+		    		csvContent.append(Constants.CSVForms.ROW_SEPARATOR);
+				}
+				
+				
+				createCSV(Paths.get(playListPath, fileName).toFile(), csvContent.toString());
+			}
+
+			//TODO: 삭제예정
+			/*
+			processSynchronize(playListPath, getRootServerPath() + routePath);
+			processSynchronize(getRootLocalPath() + getRoutePath(), getRootServerPath() + getRoutePath());
+			processSynchronize(getRootLocalPath() + getCommonAudioPath(), getRootServerPath() + getCommonAudioPath());
+			*/
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+    	return true;
+	} 
+	
+	/** ildId 세팅 **/
+	public String setIldID(String vocId) {
+		if(Integer.parseInt(pi0206Mapper.isExistIld(vocId)) > 0) {
+			return vocId + ".ild";
+		}else {
+			return "";
 		}
 	}
 	

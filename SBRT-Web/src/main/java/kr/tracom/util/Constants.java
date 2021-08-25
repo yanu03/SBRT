@@ -73,4 +73,18 @@ public class Constants {
     	public static final String ELEC_ROUTER				="TIME_KO,TIME_EN,CATEGORY,FRAME,FONT";
     }
 	
+    public static class PlayListVoiceTypes {
+    	public static final int BUS_KR		= 0; // 한글정류장안내 음성
+    	public static final int BUS_EN		= 1; // 영문정류장안내 음성
+    	public static final int AD			= 2; // 홍보음성
+    	public static final int ETC			= 3; // 기타음성
+    	public static final int ROUTE		= 4; // 노선선택시 재생 음성
+    }
+    
+    public static class VoiceTypes {
+    	public static final String KR		= "K";	// 한국어
+    	public static final String EN		= "E";	// 영어
+    	public static final String US		= "U";	// 사용자 음성
+    	public static final String RT		= "R";	// 노선별 음성
+    }
 }

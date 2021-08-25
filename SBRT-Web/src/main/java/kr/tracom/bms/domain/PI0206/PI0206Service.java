@@ -206,22 +206,18 @@ public class PI0206Service extends ServiceSupport {
 		//노선 정보
 		List<Map<String, Object>> routInfoList = pi0206Mapper.selectRoutInfoList(paramMap);
 
-		for(String routId : routList) {
-			
-			//업로드할거임
-		}
-
 		//routelist 하위
 		for(Map<String, Object> routInfo : routInfoList) {
 			String routId = routInfo.get("ROUT_ID").toString();
+			
 			//노선별 노드 리스트
 			List<Map<String, Object>> routNodeList = pi0206Mapper.selectRoutNodeList(routId);
 
 			//노선별 링크 리스트
 			List<Map<String, Object>> routLinkList = pi0206Mapper.selectRoutLinkList(routId);
 			
-			//playlist 리스트
-			
+			//노선별 음성 편성 리스트
+			List<Map<String, Object>> routOrgaList = pi0206Mapper.selectRoutOrgaList(routId);
 			
 			//routeinfo.csv 업로드
 			try {
@@ -240,7 +236,12 @@ public class PI0206Service extends ServiceSupport {
 			}
 			
 			//playlist 생성
-			
+			try {
+				ftpHandler.uploadVoicePlayList(routId, routOrgaList);
+			}catch(Exception e) {
+				logger.error("[PI0206Service] Exception in uploadVoicePlayList....ROUTE_ID = " + routId);
+				return false;
+			}
 			
 			//routelist.csv 업로드
 			try {

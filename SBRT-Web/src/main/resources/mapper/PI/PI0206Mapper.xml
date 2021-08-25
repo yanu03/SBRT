@@ -342,5 +342,49 @@
 		WHERE ROUT_ID = #{routId}
 		ORDER BY LINK_SN
 	</select>
+	
+	<!-- 노선별 음성편성 리스트 JH -->
+	<select id="selectRoutOrgaList" resultType="Map" parameterType="String">
+		SELECT
+			B.ORGA_ID	AS ORGA_ID
+		    , B.ORGA_NM	AS ORGA_NM
+		    , B.REMARK	AS REMARK
+		FROM
+			BMS_ROUT_NODE_CMPSTN A
+		    LEFT JOIN BMS_VOC_ORGA_INFO B
+		    ON A.NODE_ID = B.ORGA_ID
+		WHERE
+			ROUT_ID = #{routId} AND NODE_TYPE = 'NT006'
+	</select>
  	
+ 	<!-- 음성편성별 음성정보 리스트 jh -->
+ 	<select id="selectOrgaVocList" resultType="Map" parameterType="String">
+		SELECT
+			A.ORGA_ID	AS 'ORGA_ID'
+		    , A.SN		AS 'SEQ'
+		    , CAST(C.NUM_VAL4 AS INTEGER) AS 'VOC_CODE'
+		    , A.VOC_ID	AS 'VOC_ID'
+		    , B.PLAY_TYPE	AS 'PLAY_TYPE'
+		    , B.PLAY_ST_DT	AS 'START_DATE'
+		    , B.PLAY_ED_DT	AS 'EXPIRE_DATE'
+		    , B.SCR_TXT	AS 'TEXT'
+		FROM
+			BMS_VOC_ORGA_LIST A
+		    LEFT JOIN BMS_VOC_INFO B
+		    ON A.VOC_ID = B.VOC_ID
+		    LEFT JOIN BMS_DL_CD_INFO C
+		    ON B.VOC_DIV = C.DL_CD
+		WHERE
+			A.ORGA_ID = #{orgaId}
+			AND B.PLAY_ED_DT >= DATE_FORMAT(NOW(), '%Y-%m-%d')
+ 	</select>
+ 	
+    <select id="isExistIld" parameterType="String" resultType="String">
+    	SELECT
+    		COUNT(*) AS COUNT
+    	FROM
+    		BM_INNER_LED
+    	WHERE
+    		VOC_ID = CONCAT(#{value})
+    </select>
 </mapper>
