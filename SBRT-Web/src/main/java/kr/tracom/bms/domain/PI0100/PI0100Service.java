@@ -25,6 +25,10 @@ public class PI0100Service extends ServiceSupport{
 		return pI0100Mapper.PI0100G0K0();
 	}	
 	
+	public List PI0100SHI0() throws Exception {
+		return pI0100Mapper.PI0100SHI0();
+	}
+	
 	public List<Map> PI0100G1R0() throws Exception{
 		Map param = getSimpleDataMap("dma_sub_search");
 		return pI0100Mapper.PI0100G1R0(param);

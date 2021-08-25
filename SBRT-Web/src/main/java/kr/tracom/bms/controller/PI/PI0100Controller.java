@@ -30,6 +30,13 @@ public class PI0100Controller extends ControllerSupport {
 		result.setData("dlt_BMS_VHC_MST", pI0100Service.PI0100G1R0());
 		return result.getResult();
 	}
+	
+	@RequestMapping("/pi/PI0100SHI0")
+	public @ResponseBody Map<String, Object> PI0100SHI0() throws Exception {
+		result.setData("dlt_searchitem", pI0100Service.PI0100SHI0());
+		return result.getResult();
+	}
+	
 	@RequestMapping("/pi/PI0100G2R0")
 	public @ResponseBody Map<String, Object> PI0100G2R0() throws Exception {
 		result.setData("dlt_BMS_STTN_MST", pI0100Service.PI0100G2R0());

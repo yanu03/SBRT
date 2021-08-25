@@ -8,6 +8,8 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface PI0302Mapper {
 	public List<Map> PI0302G0R0(Map param);
+	
+	public List PI0302SHI0();
 	public Map PI0302G0K0();
 	
 	public int PI0302G0I0(Map param);

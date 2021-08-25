@@ -81,7 +81,7 @@ public class PI0206Service extends ServiceSupport {
 						route.put( "TXT_VAL1", String.valueOf(routeInfo.get("TXT_VAL1")) ); //U or D //list_param 의 값을 변경
 
 						//local temp -> local vehicle 폴더로 복사
-						ftpHandler.reserveDst(routeInfo, dlist);
+						//ftpHandler.reserveDst(routeInfo, dlist);
 		    		}
 					
 				} 

@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface PI0100Mapper {
 	public List<Map> PI0100G0R0(Map param);
 	public Map PI0100G0K0();
+	public List PI0100SHI0();
 	public List<Map> PI0100G1R0(Map param);
 	public List<Map> PI0100G2R0(Map param);
 	public List<Map> PI0100P0R0(Map param);

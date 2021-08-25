@@ -5,10 +5,22 @@
 	<select id="PI0302G0R0" resultType="Map" parameterType="Map">
 		SELECT SN, CATEGORY, PROV_NM, NEWS_TITLE, DATE_FORMAT(PUB_DT, '%Y%m%d%H%i') PUB_DT, USE_YN, DATE_FORMAT(UPD_DTM, '%Y%m%d%H%i') UPD_DTM 
 		FROM BMS_NEWS_INFO
-		<where>
-			<if test="CONTENT != ''">
-				NEWS_TITLE LIKE CONCAT('%',#{CONTENT},'%') OR PROV_NM LIKE CONCAT('%',#{CONTENT},'%')
+		<where>	
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				CATEGORY LIKE CONCAT('%',#{CONTENT},'%') || NEWS_TITLE LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'CATEGORY'">
+				CATEGORY LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'NEWS_TITLE'">
+				NEWS_TITLE LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 		</where>
+	</select>
+	
+	<select id="PI0302SHI0" resultType="Map">
+		SELECT			CATEGORY
+						,NEWS_TITLE	
+		FROM			BMS_NEWS_INFO
 	</select>
 </mapper>

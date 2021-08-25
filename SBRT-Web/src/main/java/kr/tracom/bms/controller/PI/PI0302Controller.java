@@ -24,4 +24,10 @@ public class PI0302Controller extends ControllerSupport {
 		result.setData("dlt_BMS_NEWS_INFO", PI0302Service.PI0302G0R0());
 		return result.getResult();
 	}	
+	
+	@RequestMapping("/pi/PI0302SHI0")
+	public @ResponseBody Map<String, Object> PI0302SHI0() throws Exception {
+		result.setData("dlt_searchitem", PI0302Service.PI0302SHI0());
+		return result.getResult();
+	}
 }
