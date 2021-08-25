@@ -111,9 +111,11 @@
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions);
 		
 		var codeOptions = [ {code : "OWNER_TYPE", compID : "SI0101G0:OWNER_TYPE" } ];
-		com.setCommonDtl(codeOptions);
 		
-		$p.executeSubmission(sub_SI0101G0R0);
+		com.setCommonDtl(codeOptions, function(){
+			com.searchGrid(SI0101G0, sub_SI0101G0R0);
+		});			
+		
 		$p.executeSubmission(sub_SI0101SHI0);
 
 	};
@@ -287,37 +289,35 @@
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="" class="" style="">							
-						<w2:gridView id="SI0101G0" defaultCellHeight="20" rowNumVisible="true"
+						<w2:gridView id="SI0101G0" rowNumVisible="true"
 							useShiftKey="true" scrollByColumn="false" owNumHeaderValue="순번" sortable="true" 
 							rowStatusHeaderValue="상태" overflowX="scroll" overflowY="scroll" rowStatusVisible="false"
 							 fixedColumnWithHidden="true" ignoreCellClick="false" dataList="data:dlt_BMS_GRG_MST" class="cm_grid left" autoFit="lastColumn" 
-							ev:oncellclick="scwin.SI0101G0_oncellclick"  ev:onrowindexchange="scwin.SI0101G0_onrowindexchange">
-					
-							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
+							ev:oncellclick="scwin.SI0101G0_oncellclick"  ev:onrowindexchange="scwin.SI0101G0_onrowindexchange" rowNumHeaderValue="순번">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
-									<w2:column removeBorderStyle="false" width="136" inputType="text" style="height:22px;" id="column16" value="차고지ID"
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:22px;" id="column16" value="차고지ID"
 										blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="186" inputType="text" style="height:22px;" id="column15" value="차고지명"
+									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:22px;" id="column15" value="차고지명"
 										blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="64" inputType="text" style="height:22px;" id="column14" value="소유형태"
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:22px;" id="column14" value="소유형태"
 										blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="230" inputType="text" style="height:22px;" id="column13" value="주소"
+									<w2:column removeBorderStyle="false" width="380" inputType="text" style="height:22px;" id="column13" value="주소"
 										blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:22px;" id="column49" value="위치"
 										blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="103" inputType="text" style="height:22px;" id="column12" value="전화번호"
+									<w2:column removeBorderStyle="false" width="110" inputType="text" style="height:22px;" id="column12" value="전화번호"
 										blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="104" inputType="text" style="height:22px;" id="column11" value="팩스"
+									<w2:column removeBorderStyle="false" width="110" inputType="text" style="height:22px;" id="column11" value="팩스"
 										blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="144" inputType="text" style="height:22px;" id="column10" value="이메일"
+									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:22px;" id="column10" value="이메일"
 										blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:22px;" id="column9" value="CNG 충전"
@@ -338,7 +338,7 @@
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column4" value="적용종료일"
 										blockSelect="false" displayMode="label">
 									</w2:column> -->
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:22px;" id="column3" value="비고"
+									<w2:column removeBorderStyle="false" width="380" inputType="text" style="height:22px;" id="column3" value="비고"
 										blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
@@ -349,13 +349,13 @@
 										blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="186" inputType="text" style="height:20px" id="GRG_NM" value=""
-										blockSelect="false" displayMode="label" userData1="M">
+										blockSelect="false" displayMode="label" userData1="M" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="64" inputType="select" style="height:20px" id="OWNER_TYPE" value=""
 										blockSelect="false" displayMode="label" userData1="M">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="230" inputType="text" style="height:20px" id="ADDR" value=""
-										blockSelect="false" displayMode="label">
+										blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="button" style="height:20px" id="LOCATION" value="보기"
 										blockSelect="false" displayMode="label" dataType="" class="" calendarClass="" autocomplete="">
@@ -367,7 +367,7 @@
 										blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="144" inputType="text" style="height:20px" id="EMAIL" value=""
-										blockSelect="false" displayMode="label" userData2="com.checkEmail">
+										blockSelect="false" displayMode="label" userData2="com.checkEmail" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="checkbox" style="height:20px" id="CNG_YN" value=""
 										blockSelect="false" displayMode="label" valueType="other" falseValue="N" trueValue="Y">
@@ -376,10 +376,10 @@
 										blockSelect="false" displayMode="label" valueType="other" falseValue="N" trueValue="Y">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="LEGAL_AREA" value=""
-										blockSelect="false" displayMode="label">
+										blockSelect="false" displayMode="label" textAlign="right">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="SECURE_AREA" value=""
-										blockSelect="false" displayMode="label">
+										blockSelect="false" displayMode="label" textAlign="right">
 									</w2:column>
 									<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="APPL_ST_DT" value=""
 										blockSelect="false" displayMode="label">
@@ -388,7 +388,7 @@
 										blockSelect="false" displayMode="label">
 									</w2:column> -->
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="REMARK" value=""
-										blockSelect="false" displayMode="label">
+										blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
