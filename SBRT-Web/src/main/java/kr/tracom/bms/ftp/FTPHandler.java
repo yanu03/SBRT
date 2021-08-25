@@ -49,6 +49,7 @@ import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 
+import kr.tracom.bms.domain.PI0206.PI0206Mapper;
 import kr.tracom.bms.domain.PI0503.PI0503Mapper;
 import kr.tracom.cm.domain.Common.CommonMapper;
 import kr.tracom.cm.support.ServiceSupport;
@@ -151,6 +152,8 @@ public class FTPHandler {
 	@Autowired
 	private CommonMapper commonMapper;
 	
+	@Autowired
+	private PI0206Mapper pi0206Mapper;
 	
 	private ArrayList<String> serverContentList;
 	private ArrayList<String> pathList;
@@ -514,6 +517,480 @@ public class FTPHandler {
 		}
 	}
 	
+	
+	/** null 이면 공백으로 jh **/
+	private String checkNull(Object txt) {
+		if(txt == null) {
+			return "";
+		}
+		else {
+			if( txt.equals("null") || txt.equals("NULL") ) {
+				return "";
+			}else {
+				return String.valueOf(txt);
+			}
+		}
+	}
+	
+	/** 210823 busstop.csv jh **/
+	public void uploadBusstop(List<Map<String, Object>> stopList, String fileName, String routVer) throws FileNotFoundException, IOException {
+		String txt = Constants.CSVForms.ROUTE_VERSION + routVer + Constants.CSVForms.ROW_SEPARATOR;
+		txt += Constants.CSVForms.ROUTE_BUSSTOP_TITLE;
+		for(Map<String, Object> map : stopList) {
+				txt += Constants.CSVForms.ROW_SEPARATOR +
+					checkNull(map.getOrDefault("NODE_ID",		"")) + Constants.CSVForms.COMMA +
+					checkNull(map.getOrDefault("NODE_NM",		"")) + Constants.CSVForms.COMMA +
+					checkNull(map.getOrDefault("NODE_TYPE",		"")) + Constants.CSVForms.COMMA +
+					checkNull(map.getOrDefault("RANGE",			"")) + Constants.CSVForms.COMMA +
+					checkNull(map.getOrDefault("X",				"")) + Constants.CSVForms.COMMA +
+					checkNull(map.getOrDefault("Y",				"")) + Constants.CSVForms.COMMA +
+					checkNull(map.getOrDefault("NODE_ENAME",	"")) + Constants.CSVForms.COMMA +
+					checkNull(map.getOrDefault("TRANSIT_CODE",	""));
+		}
+		
+		//sbrt\routemap
+		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		File file = new File(path + "/" + fileName);
+		
+		try {
+			createCSV(file, txt);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/** 210824 node.csv jh **/
+	public void uploadNodeList(List<Map<String, Object>> nodeList, String fileName, String routVer) throws FileNotFoundException, IOException {
+		String txt = Constants.CSVForms.ROUTE_VERSION + routVer + Constants.CSVForms.ROW_SEPARATOR;
+		txt += Constants.CSVForms.ROUTE_NODELIST_TITLE;
+		
+		for(Map<String, Object> map : nodeList) {
+				txt += Constants.CSVForms.ROW_SEPARATOR +
+					checkNull(map.getOrDefault("NODE_ID", 	"")) 	+ Constants.CSVForms.COMMA +
+					checkNull(map.getOrDefault("NODE_NM",	"")) 	+ Constants.CSVForms.COMMA +
+					checkNull(map.getOrDefault("RANGE", 	""))	+ Constants.CSVForms.COMMA +
+					checkNull(map.getOrDefault("X", 		""))	+ Constants.CSVForms.COMMA +
+					checkNull(map.getOrDefault("Y", 		""));
+		}
+		
+		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		File file = new File(path + "/" + fileName);
+		
+		try {
+			createCSV(file, txt);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/** 210824 routelist.csv 파일 read jh **/
+	public List<Map<String, Object>> readRoutList(String fileName) throws IOException {
+		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		
+		File file = new File(path + "/" + fileName);
+		
+		List<Map<String, Object>> list = new ArrayList<>();
+		
+        //입력 버퍼 생성
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "CP949"));
+        String line = "";
+        String[] tmp = null;
+        
+        int lineNum = 0;
+        while((line = br.readLine()) != null){
+        	lineNum++;
+        	
+        	if(lineNum <= 2) {
+        		continue;
+        	}else {        		
+        	Map<String, Object> map = new HashMap<>();
+        	tmp = line.split(",");
+        	
+    		map.put("FILE_NAME",	tmp[0]);
+    		map.put("VERSION",		tmp[1]);
+    		map.put("DESTI_NO",		tmp[2]);
+    		map.put("ROUT_SHAPE",	tmp[3]);
+    		map.put("DAY1",			tmp[4]);
+    		map.put("DAY2",			tmp[5]);
+    		map.put("SATDAY1",		tmp[6]);
+    		map.put("SATDAY2",		tmp[7]);
+    		map.put("SUNDAY1",		tmp[8]);
+    		map.put("SUNDAY2",		tmp[9]);
+    		map.put("REP_NAME",		tmp[10]);
+        		
+        	list.add(map);
+        	}
+        }
+        br.close();
+        
+        return list;
+	}
+	
+	
+	/** 210824 routelist.csv 업로드 **/
+	public void uploadRoutList(String fileName, String routVer, String maxVer, Map<String, Object> newRow) throws IOException{
+		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		
+		File file = new File(path + "/" + fileName);
+		List<Map<String, Object>> list = new ArrayList<>();
+		if(file.exists()) {
+			list = readRoutList("routelist.csv");
+		}else {
+			
+		}
+		
+		if(list.size() > 0) {
+			//기존에 정보가 있으면 업데이트, 없으면 인서트하도록 하겠음
+			int seq = 0;
+			boolean flag = false;
+			
+			loop:
+			for(int i = 0; i < list.size(); i++) {
+				if(list.get(i).get("FILE_NAME").equals(newRow.get("FILE_NAME"))) {
+					flag = true;
+					seq = i;
+					break loop;
+				}			
+			}
+			
+			if(flag) {
+				list.set(seq, newRow);
+			}else {
+				list.add(newRow);
+			}
+			
+		}else {
+			list.add(newRow);
+		}
+					
+		String txt = "";
+		txt += Constants.CSVForms.ROUTE_VERSION + maxVer + Constants.CSVForms.ROW_SEPARATOR;
+		txt += Constants.CSVForms.ROUTE_LIST;
+		
+		for(Map<String, Object> map : list) {
+			txt += Constants.CSVForms.ROW_SEPARATOR;
+			txt += map.get("FILE_NAME")
+				+  Constants.CSVForms.COMMA + map.get("FILE_NAME") 
+				+  Constants.CSVForms.COMMA + map.get("VERSION") 
+				+  Constants.CSVForms.COMMA + map.get("DESTI_NO")
+				+  Constants.CSVForms.COMMA + map.get("ROUT_SHAPE")
+				+  Constants.CSVForms.COMMA + map.get("DAY1")
+				+  Constants.CSVForms.COMMA + map.get("DAY2")
+				+  Constants.CSVForms.COMMA + map.get("SATDAY1")
+				+  Constants.CSVForms.COMMA + map.get("SATDAY2")
+				+  Constants.CSVForms.COMMA + map.get("SUNDAY1")
+				+  Constants.CSVForms.COMMA + map.get("SUNDAY2")
+				+  Constants.CSVForms.COMMA + map.get("REP_NAME");
+		}
+		
+		try {
+			createCSV(file, txt);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/** 210824 노선 파일 삭제 (수정중) jh **/
+	//TODO: 수정 필요함
+	public void deleteRoutemap(String routId) {
+		String routeOriPath = Paths.get(getRootLocalPath(), getRouteOriPath()).toString();
+		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		
+		File routeCsv = new File(path + "/" + routId + ".csv");
+		File routePlayList = new File(routeOriPath + "/" + routId);
+		
+		if(routeCsv.exists()) {
+			routeCsv.delete();
+		}
+		
+		if(routePlayList.exists()) {
+			File[] deleteFileList = routePlayList.listFiles();
+			if(deleteFileList != null && deleteFileList.length > 0) {
+				for(File f : deleteFileList) {
+					f.delete();
+				}				
+			}
+			routePlayList.delete();
+		}
+		
+		
+	}
+	
+	/** 210824 노선별 routeinfo.csv jh **/
+	public void uploadRoutNodeList(List<Map<String, Object>> routNodeList, String routId, String routVer) {
+		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		
+		String txt = Constants.CSVForms.ROUTE_VERSION + routVer 
+				   + Constants.CSVForms.ROW_SEPARATOR;		
+		
+		txt += Constants.CSVForms.ROUTE_TITLE;
+		
+		String fileName = "routeinfo.csv";
+		
+			
+		for(Map<String, Object> nodeMap : routNodeList) {
+			txt += Constants.CSVForms.ROW_SEPARATOR + nodeMap.get("NODE_ID");
+		}
+		
+		File file = new File(path + "/" + routId + "/" + fileName);
+		
+		try {
+			createCSV(file, txt);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/** 210824 노선별 link.csv jh **/
+	public void uploadRoutLinkList(List<Map<String, Object>> routLinkList, String routId, String routVer) {
+		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		
+		String txt = Constants.CSVForms.ROUTE_VERSION + routVer 
+				   + Constants.CSVForms.ROW_SEPARATOR;		
+		
+		txt += Constants.CSVForms.ROUTE_LINK_TITLE;
+		
+		String fileName = "link.csv";
+		
+		for(Map<String, Object> linkMap : routLinkList) {
+			txt += Constants.CSVForms.ROW_SEPARATOR + linkMap.get("LINK_ID")
+			 	+  Constants.CSVForms.COMMA + linkMap.get("LINK_NAME")
+			 	+  Constants.CSVForms.COMMA + linkMap.get("ST_NODE")
+			 	+  Constants.CSVForms.COMMA + linkMap.get("ED_NODE")
+			 	+  Constants.CSVForms.COMMA + linkMap.get("LEN")
+			 	+  Constants.CSVForms.COMMA + linkMap.get("MAX_SPD")
+			 	+  Constants.CSVForms.COMMA + linkMap.get("EVENT_MS");
+		}
+		
+		File file = new File(path + "/" + routId + "/" + fileName);
+		
+		try {
+			createCSV(file, txt);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/** 210824 노선별 playlist파일들 jh **/
+	public boolean uploadVoicePlayList(String routId, List<Map<String, Object>> orgaList) {
+		String routePath = "/route/" + routId + "/playlist";
+		String playListPath = Paths.get(getRootLocalPath(), routePath).toString();
+		
+		try {
+			FileUtils.deleteDirectory(new File(playListPath));
+			
+			FileUtils.forceMkdir(new File(playListPath));
+			
+			for(Map<String, Object> orgaInfo : orgaList) {
+				String orgaId = orgaInfo.get("ORGA_ID").toString();
+				String fileName = orgaId + ".csv";
+				StringBuilder csvContent = new StringBuilder();
+				csvContent.append(Constants.CSVForms.VOICE_PLAYLIST_TITLE);
+				
+				
+				List<Map<String, Object>> orgaVocList = pi0206Mapper.selectOrgaVocList(orgaId);
+				
+				for(Map<String, Object> orgaVoc : orgaVocList) {
+					if(orgaVoc.get("PLAY_TYPE").equals("TTS")) {
+						
+		    			if(Integer.parseInt(orgaVoc.get("VOC_CODE").toString()) == Constants.PlayListVoiceTypes.BUS_KR) {
+		    				//한음
+			    			csvContent.append(
+			    					orgaVoc.get("SEQ") + Constants.CSVForms.COMMA
+					    			+ Constants.PlayListVoiceTypes.BUS_KR + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("VOC_ID") + Constants.VoiceTypes.KR + ".wav" + Constants.CSVForms.COMMA 
+					    			+ orgaVoc.get("START_DATE") + Constants.CSVForms.COMMA 
+					    			+ orgaVoc.get("EXPIRED_DATE") + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("TEXT") + Constants.CSVForms.COMMA
+			    					+ setIldID(orgaVoc.get("VOC_ID") + Constants.VoiceTypes.KR)
+			    					+ Constants.CSVForms.ROW_SEPARATOR);
+			    			
+			    			// 영음
+			    			csvContent.append(
+			    					orgaVoc.get("SEQ") + Constants.CSVForms.COMMA
+					    			+ Constants.PlayListVoiceTypes.BUS_EN + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("VOC_ID") + Constants.VoiceTypes.EN + ".wav" + Constants.CSVForms.COMMA 
+					    			+ orgaVoc.get("START_DATE") + Constants.CSVForms.COMMA 
+					    			+ orgaVoc.get("EXPIRED_DATE") + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("TEXT") + Constants.CSVForms.COMMA
+			    					+ setIldID(orgaVoc.get("VOC_ID") + Constants.VoiceTypes.EN));
+			    		} else {
+			    			// 기타 다른음성들
+			    			csvContent.append(
+			    					orgaVoc.get("SEQ") + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("VOC_CODE") + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("VOC_ID") + Constants.VoiceTypes.KR + ".wav" + Constants.CSVForms.COMMA 
+					    			+ orgaVoc.get("START_DATE") + Constants.CSVForms.COMMA 
+					    			+ orgaVoc.get("EXPIRED_DATE") + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("TEXT") + Constants.CSVForms.COMMA
+			    					+ setIldID(orgaVoc.get("VOC_ID") + Constants.VoiceTypes.KR));
+			    		}
+		    		} else {
+		    			// WAV 업로드 음성
+		    			csvContent.append(
+		    					orgaVoc.get("SEQ") + Constants.CSVForms.COMMA
+				    			+ orgaVoc.get("VOC_CODE") + Constants.CSVForms.COMMA
+				    			+ orgaVoc.get("VOC_ID") + Constants.VoiceTypes.US + ".wav" + Constants.CSVForms.COMMA 
+				    			+ orgaVoc.get("START_DATE") + Constants.CSVForms.COMMA 
+				    			+ orgaVoc.get("EXPIRED_DATE") + Constants.CSVForms.COMMA
+				    			+ orgaVoc.get("TEXT") + Constants.CSVForms.COMMA
+				    			+ setIldID(orgaVoc.get("VOC_ID").toString() + Constants.VoiceTypes.US));
+		    		}
+					
+		    		csvContent.append(Constants.CSVForms.ROW_SEPARATOR);
+				}
+				
+				
+				createCSV(Paths.get(playListPath, fileName).toFile(), csvContent.toString());
+			}
+
+			//TODO: 삭제예정
+			/*
+			processSynchronize(playListPath, getRootServerPath() + routePath);
+			processSynchronize(getRootLocalPath() + getRoutePath(), getRootServerPath() + getRoutePath());
+			processSynchronize(getRootLocalPath() + getCommonAudioPath(), getRootServerPath() + getCommonAudioPath());
+			*/
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+    	return true;
+	} 
+	
+	/** 210824 ildId 세팅 jh **/
+	public String setIldID(String vocId) {
+		if(Integer.parseInt(pi0206Mapper.isExistIld(vocId)) > 0) {
+			return vocId + ".ild";
+		}else {
+			return "";
+		}
+	}
+	
+	
+	/** 210825 노선별 courseinfo.csv jh **/
+	public void uploadCourseRoutList(List<Map<String, Object>> courseRoutList, String courseId, String courseVer) {
+		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		
+		String txt = Constants.CSVForms.ROUTE_VERSION + courseVer 
+				   + Constants.CSVForms.ROW_SEPARATOR;		
+		
+		txt += Constants.CSVForms.ROUTE_TITLE;
+		
+		String fileName = "courseinfo.csv";
+		
+			
+		for(Map<String, Object> routMap : courseRoutList) {
+			txt += Constants.CSVForms.ROW_SEPARATOR + courseId
+				+ Constants.CSVForms.COMMA + routMap.get("SEQ")
+				+ Constants.CSVForms.COMMA + routMap.get("ROUT_ID");
+		}
+		
+		File file = new File(path + "/" + "courselist" + "/" + courseId + "/" + fileName);
+		
+		try {
+			createCSV(file, txt);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/** 210825 courselist.csv 파일 read jh **/
+	public List<Map<String, Object>> readCourseList(String fileName) throws IOException {
+		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		
+		File file = new File(path + "/" + fileName);
+		
+		List<Map<String, Object>> list = new ArrayList<>();
+		
+        //입력 버퍼 생성
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "CP949"));
+        String line = "";
+        String[] tmp = null;
+        
+        int lineNum = 0;
+        while((line = br.readLine()) != null){
+        	lineNum++;
+        	
+        	if(lineNum <= 2) {
+        		continue;
+        	}else {        		
+        	Map<String, Object> map = new HashMap<>();
+        	tmp = line.split(",");
+        	
+    		map.put("COR_ID",		tmp[0]);
+    		map.put("COR_NM",		tmp[1]);
+    		map.put("COR_ENM",		tmp[2]);
+    			
+        	list.add(map);
+        	}
+        }
+        br.close();
+        
+        return list;
+	}
+	
+	/** 210825 courselist.csv 생성 jh 
+	 * @throws IOException **/
+	public boolean uploadCourseInfo(String fileName, String maxVer, Map<String, Object> newRow) throws IOException {
+		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		
+		File file = new File(path + "/" + fileName);
+		List<Map<String, Object>> list = new ArrayList<>();
+		if(file.exists()) {
+			list = readCourseList("courselist.csv");
+		}else {
+			
+		}
+		
+		if(list.size() > 0) {
+			//기존에 정보가 있으면 업데이트, 없으면 인서트하도록 하겠음
+			int seq = 0;
+			boolean flag = false;
+			
+			loop:
+			for(int i = 0; i < list.size(); i++) {
+				if(list.get(i).get("FILE_NAME").equals(newRow.get("FILE_NAME"))) {
+					flag = true;
+					seq = i;
+					break loop;
+				}			
+			}
+			
+			if(flag) {
+				list.set(seq, newRow);
+			}else {
+				list.add(newRow);
+			}
+			
+		}else {
+			list.add(newRow);
+		}
+					
+		String txt = "";
+		txt += Constants.CSVForms.ROUTE_VERSION + maxVer + Constants.CSVForms.ROW_SEPARATOR;
+		txt += Constants.CSVForms.COURSE_LIST;
+		
+		for(Map<String, Object> map : list) {
+			txt += Constants.CSVForms.ROW_SEPARATOR;
+			txt += map.get("COR_ID")
+				+  Constants.CSVForms.COMMA + map.get("COR_NM") 
+				+  Constants.CSVForms.COMMA + map.get("COR_ENM");
+		}
+		
+		try {
+			createCSV(file, txt);
+			return true;
+		} catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	
 	/*
 	 * IL001이면 한글이고
 	 * IL002이면 영어임
@@ -778,9 +1255,7 @@ public class FTPHandler {
 		Files.copy(copySourcePath, copyDestPath, REPLACE_EXISTING);
 	}
 	
-	
-	
-	
+
 	
 	
 	
