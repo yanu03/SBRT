@@ -196,7 +196,7 @@ public class PI0206Service extends ServiceSupport {
 		
 		//노선 정보
 		List<Map<String, Object>> routInfoList = pi0206Mapper.selectRoutInfoList(paramMap);
-
+		
 		//routelist 하위
 		for(Map<String, Object> routInfo : routInfoList) {
 			String routId = routInfo.get("ROUT_ID").toString();
@@ -236,7 +236,8 @@ public class PI0206Service extends ServiceSupport {
 			
 			//routelist.csv 업로드
 			try {
-				ftpHandler.uploadRoutList("routelist.csv", "00000000", "00000000", routInfo);
+				Map<String, Object> newRow = pi0206Mapper.makeRoutNewRow(routId);
+				ftpHandler.uploadRoutList("routelist.csv", "00000000", "00000000", newRow);
 			} catch (IOException e) {
 				logger.error("[PI0206Service] IOException in uploadRoutList....ROUTE_ID = " + routId);
 				return false;
@@ -264,7 +265,7 @@ public class PI0206Service extends ServiceSupport {
 			try {
 				ftpHandler.uploadCourseRoutList(courseRoutList, courseId, "00000000");
 			} catch (Exception e) {
-				logger.error("[PI0206Service] IOException in uploadCourseRoutList....COR_ID = " + courseId);
+				logger.error("[PI0206Service] Exception in uploadCourseRoutList....COR_ID = " + courseId);
 				return false;
 			}
 			
@@ -272,7 +273,7 @@ public class PI0206Service extends ServiceSupport {
 			try {
 				ftpHandler.uploadCourseInfo("courselist.csv", "00000000", courseInfo);
 			} catch (Exception e) {
-				logger.error("[PI0206Service] IOException in uploadCourseInfo....COR_ID = " + courseId);
+				logger.error("[PI0206Service] Exception in uploadCourseInfo....COR_ID = " + courseId);
 				return false;
 			}
 		}
