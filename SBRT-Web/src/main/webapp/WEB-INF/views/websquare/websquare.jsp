@@ -52,6 +52,7 @@
 				}
 			}
 		</script>
+		<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js?autoload=false"></script>
 	</head>
 <body></body>
 </html>
