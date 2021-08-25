@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+	
+	
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_OPER_APPR_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="OPER_APPR_ID" name="운행승인ID" dataType="text"></w2:column>
+						<w2:column id="SN" name="순번" dataType="text"></w2:column>
+						<w2:column id="GPS_X" name="경도" dataType="text"></w2:column>
+						<w2:column id="GPS_Y" name="위도" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="OCR_DTM" name="발생일시" dataType="date"></w2:key>
+						<w2:key id="VHC_NO" name="차량번호" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_MO500P0R0" ref="data:json,dma_search" target="data:json,dlt_BRT_OPER_APPR_INFO" action="/mo/MO500P0R0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO500P0R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_MO500P0S0" ref='data:json,{"action":"modified","id":"dlt_BRT_OPER_APPR_INFO"}' target="data:json,dma_result"
+				action="/mo/MO500P0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+		
+	var isEdit = false;
+	scwin.onpageload = function() {
+	
+		scwin.param = com.getParameter();
+		
+		dma_search.set("OCR_DTM" , scwin.param.data.OCR_DTM);
+		dma_search.set("VHC_NO" , scwin.param.data.VHC_NO);
+		
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		var btnOptions = {
+			ADD:{nm:"편집시작", class: "add", cbFnc: scwin.editClick},
+			CNL:scwin.btn_cancel_onclick,
+			SAVE:scwin.btn_save_onclick
+
+		}
+				
+		var mainOptions = {
+			ADD : scwin.btn_add_onclick
+		};
+		
+		com.setPopupBtn(wfm_mainBtn, btnOptions);
+		
+
+		
+		setTimeout(function() {
+			routMap.initMap("map_MO500", {
+				width:"100%"
+				, height:"100%"
+				, onClick: scwin.onClickMap
+			});
+			com.executeSubmission(sub_MO500P0R0);
+		},100);
+	};
+
+	scwin.onpageunload = function() {
+
+	};
+	
+	//맵 클릭 이벤트
+	scwin.onClickMap = function(e) {
+		if(isEdit){
+			routMap.addPolygonByClick("map_MO500", dlt_BRT_OPER_APPR_INFO, dma_search.get("OCR_DTM"), dma_search.get("VHC_NO"),e);
+		}
+	}
+	
+	scwin.sub_MO500P0R0_submitdone = function(e) {
+		debugger;
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {			
+			routMap.drawPolygon("map_MO500",dlt_BRT_OPER_APPR_INFO, dma_search.get("VHC_NO"));			
+		}
+	};
+	
+	scwin.editClick = function(){
+		if(isEdit==false){
+			if(dlt_BRT_OPER_APPR_INFO.getTotalRow() >0 ){
+				var str = "편집시 화면이 초기화 됩니다. 편집시작하시겠습니까?";
+				com.confirm(str, function(rtn) {
+					if (rtn) {
+						debugger;
+						dlt_BRT_OPER_APPR_INFO.removeAll();
+						routMap.initMapInfo("map_MO500");
+						
+						routMap.drawPolygon("map_MO500",dlt_BRT_OPER_APPR_INFO);	
+						isEdit = true;
+						scwin.changeGeoBtn();
+					}
+				});
+			}
+			else {
+				isEdit = true;
+			}
+		}
+		else {
+			isEdit = false;
+			scwin.changeGeoBtn();
+		}
+
+	}
+	
+	scwin.btn_cancel_onclick = function() {
+		var idx = dlt_BRT_OPER_APPR_INFO.getModifiedIndex().length;
+		
+		if (idx > 0) {
+			var str = "저장하지 않은 데이터가 있습니다. 취소 하시겠습니까?";
+			com.confirm(str, function(rtn) {
+				if (rtn) {
+					com.executeSubmission(sub_MO500P0R0);
+				}
+			});
+		}
+
+	};
+	
+
+	scwin.btn_save_onclick = function() {
+		com.executeSubmission(sub_MO500P0S0);
+	};
+
+	scwin.changeGeoBtn = function(){
+
+		var temp = wfm_mainBtn.getWindow().btn_main_generator;
+		
+		if(isEdit) {
+			temp.getChild(0,"btn_main").setValue("편집종료");
+			temp.getChild(0,"btn_main").addClass("end");
+		}
+		else {
+			temp.getChild(0,"btn_main").setValue("편집추가");
+			temp.getChild(0,"btn_main").removeClass("end");
+		}
+	}
+
+	scwin.btn_confirm_onclick = function() {
+		com.closePopup();		
+	};
+]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+				<xf:group class="gr_search" id="" style="">
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group>
+			<xf:group style="" id="" class="popup_content">
+				<div id="map_MO500" style="width:780px;height:555px;"></div>
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[닫기]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>
