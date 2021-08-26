@@ -87,11 +87,6 @@ public class SI0402Service extends ServiceSupport {
 					if(Constants.NODE_TYPE_VERTEX.equals((String) data.get("NODE_TYPE"))==false
 						&&Constants.NODE_TYPE_SOUND.equals((String) data.get("NODE_TYPE"))==false
 					) {
-						if(CommonUtil.empty(data.get("LINK_ID"))&&i<param.size()-1)
-						{
-							Map linkKeyMap = si0402Mapper.SI0402G1K1();
-							data.put("LINK_ID",linkKeyMap.get("SEQ"));	
-						}
 						data.put("LINK_NODE_YN","Y");
 					}
 					
