@@ -39,7 +39,7 @@
 						<w2:column id="GPS_Y" name="위도" dataType="bigDecimal"></w2:column>
 						<w2:column id="GPS_X" name="경도" dataType="bigDecimal"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
-						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
+						<!-- <w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column> -->
 					</w2:columnInfo>
 					<w2:data use="false">
 						<w2:row></w2:row>
@@ -75,6 +75,7 @@
 				<w2:dataMap baseNode="map" id="dma_subsearch">
 					<w2:keyInfo>
 						<w2:key id="NODE_ID" name="노드ID" dataType="text"></w2:key>
+						<w2:key id="STTN_ID" name="정류소ID" dataType="text"></w2:key>
 						<w2:key id="key3" name="name3" dataType="text"></w2:key>
 					</w2:keyInfo>
 					<w2:data></w2:data>
@@ -126,7 +127,7 @@
 	<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
 		var autoOptions = {
-			Main : { grid : FM0100G0, frm : FM0100F0, srchSbm : sub_FM0100G0R0, srchGrp : pgm_header, keyColumn : "NODE_ID",
+			Main : { grid : FM0100G0, frm : FM0100F0, srchSbm : sub_FM0100G0R0, srchGrp : pgm_header, keyColumn : "STTN_ID",
 					 focusColumn : "STTN_NO", name :  "정류장 목록"},
 			Sub1 : { grid : FM0100G1, srchSbm : sub_FM0100G1R0, savSbm : sub_FM0100G1S0,  keySbm : sub_FM0100G1K0, name :  "시설물 목록"}
 		 };
@@ -218,7 +219,7 @@
 	
 	//노드ID 넣어주는 스크립트
 	scwin.FM0100G1_onrowindexchange = function(row,oldRow) {
-		dlt_BMS_FCLT_INFO.setCellData(row, "NODE_ID", dma_subsearch.get("NODE_ID"));
+		dlt_BMS_FCLT_INFO.setCellData(row, "NODE_ID", dma_subsearch.get("STTN_ID"));
 	};
 	]]></script>
 	</head>
