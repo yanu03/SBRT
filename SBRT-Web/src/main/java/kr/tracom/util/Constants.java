@@ -5,13 +5,13 @@ public class Constants {
 	public static final Integer SYSTEM_BRT = 2; //차량운행관리
 	public static final Integer SYSTEM_ALL = 3; //전체
 	
-	public static final String NODE_TYPE_CROSS = "NT01"; //교차로
-	public static final String NODE_TYPE_BUSSTOP = "NT02"; //정류소
-	public static final String NODE_TYPE_NORMAL = "NT03"; //일반노드
-	public static final String NODE_TYPE_GARAGE = "NT04"; //차고지
-	public static final String NODE_TYPE_VERTEX = "NT05"; //버텍스
-	public static final String NODE_TYPE_SOUND = "NT06"; //음성노드
-	public static final String NODE_TYPE_ENTRY = "NT07"; //교통진출입점
+	public static final String NODE_TYPE_CROSS = "NT001"; //교차로
+	public static final String NODE_TYPE_BUSSTOP = "NT002"; //정류소
+	public static final String NODE_TYPE_NORMAL = "NT003"; //일반노드
+	public static final String NODE_TYPE_GARAGE = "NT004"; //차고지
+	public static final String NODE_TYPE_VERTEX = "NT005"; //버텍스
+	public static final String NODE_TYPE_SOUND = "NT006"; //음성노드
+	public static final String NODE_TYPE_ENTRY = "NT007"; //교통진출입점
 	
 	public static final String MOCK_NODE_TYPE_CROSS = "101"; //교차로
 	public static final String MOCK_NODE_TYPE_END = "102"; //시종점

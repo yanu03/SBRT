@@ -217,23 +217,23 @@
 		
 		oldNodeType = info.oldValue;
 		
-		if (info.newValue == "NT05") {
+		if (info.newValue == "NT005") {
 			com.alert("버텍스로 변경 할수 없습니다.");
 			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE", oldNodeType);
 			return;
 		}
 		
-		if (info.newValue == "NT06") {
+		if (info.newValue == "NT006") {
 			com.alert("음성노드는 음성 편성에서만 선택할 수 있습니다.");
 			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE", oldNodeType);
 			return;
 		}
 		
-		if ((info.newValue == "NT01") || (info.newValue == "NT02")) { //교차로, 정류소 선택
-			if(info.newValue == "NT02"){
+		if ((info.newValue == "NT001") || (info.newValue == "NT002")) { //교차로, 정류소 선택
+			if(info.newValue == "NT002"){
 				scwin.select_sttn(false);
 			}
-			else if(info.newValue == "NT01"){
+			else if(info.newValue == "NT001"){
 				scwin.select_cross(false);
 			}
 		}
@@ -491,10 +491,10 @@
 		
 		var nodeType = dlt_BMS_ROUT_NODE_CMPSTN.getCellData(idx,"NODE_TYPE");
 	
-		if(nodeType == "NT02"){
+		if(nodeType == "NT002"){
 			scwin.select_sttn(false);
 		}
-		else if(nodeType == "NT01"){
+		else if(nodeType == "NT001"){
 			scwin.select_cross(false);
 		}
 	}
@@ -583,7 +583,7 @@
 	scwin.refreshGridStatus = function(){
 		var routeData = dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON();
 		for(var i = 0; i < routeData.length; i++) {
-			if(routeData[i].NODE_TYPE == "NT01" || routeData[i].NODE_TYPE == "NT02"){
+			if(routeData[i].NODE_TYPE == "NT001" || routeData[i].NODE_TYPE == "NT002"){
 				SI0402G1.setCellReadOnly(i, "NODE_TYPE", true);
 			}
 		}
@@ -672,7 +672,7 @@
 			<xf:group class="pgm_header" id="pgm_header" style="">
 				<xf:group class="gr_search" id="" style="">
 					<xf:group class="label" id="" style="">
-						<w2:span class="" id="" label="검색 항목"></w2:span>
+						<w2:span class="" id="" label="검색"></w2:span>
 					</xf:group>
 					<xf:group class="search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
@@ -894,19 +894,19 @@
 								<xf:choices>
 									<xf:item>	
 										<xf:label><![CDATA[경로]]></xf:label>
-										<xf:value><![CDATA[NT03]]></xf:value>
+										<xf:value><![CDATA[NT003]]></xf:value>
 									</xf:item>
 									<xf:item>
 									<xf:label><![CDATA[버텍스]]></xf:label>
-										<xf:value><![CDATA[NT05]]></xf:value>
+										<xf:value><![CDATA[NT005]]></xf:value>
 									</xf:item>
 									<xf:item>
 										<xf:label><![CDATA[정류소]]></xf:label>
-										<xf:value><![CDATA[NT02]]></xf:value>
+										<xf:value><![CDATA[NT002]]></xf:value>
 									</xf:item>
 									<xf:item>
 										<xf:label><![CDATA[교차로]]></xf:label>
-										<xf:value><![CDATA[NT01]]></xf:value>
+										<xf:value><![CDATA[NT001]]></xf:value>
 									</xf:item>
 								</xf:choices>
 							</xf:select>

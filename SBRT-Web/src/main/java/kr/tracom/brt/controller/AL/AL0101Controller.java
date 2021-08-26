@@ -18,36 +18,11 @@ public class AL0101Controller extends ControllerSupport {
 	@Autowired
 	private AL0101Service al0101Service;
 	
-	@RequestMapping("/al/AL0101G0R0")
-	public @ResponseBody Map<String, Object> AL0101G0R0() throws Exception {
-		result.setData("dlt_BMS_STTN_MST", al0101Service.AL0101G0R0());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/al/AL0101G0K0")
-	public @ResponseBody Map<String, Object> AL0101G0R1() throws Exception {
-		result.setData("dma_SEQ_BMS_STTN_MST_0", al0101Service.AL0101G0K0());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/al/AL0101SHI0")
-	public @ResponseBody Map<String, Object> AL0101G0R2() throws Exception {
-		result.setData("dlt_searchitem", al0101Service.AL0101SHI0());
-		return result.getResult();
-	}
-	
 	@RequestMapping("/al/AL0101G1R0")
 	public @ResponseBody Map<String, Object> AL0101G1R0() throws Exception {
-		result.setData("dlt_BMS_ROUT_MST", al0101Service.AL0101G1R0());
+		result.setData("dlt_BRT_MAIN_ROUT_NODE_INFO", al0101Service.AL0101G1R0());
 		return result.getResult();
 	}
-	
-	@RequestMapping("/al/AL0101G0S0")
-	public @ResponseBody Map<String, Object> AL0101G0S0() throws Exception {
-		Map map = al0101Service.AL0101G0S0();
-		result.setData("dma_result", map);
-		return result.getResultSave();
-	}	
 	
 	@RequestMapping("/al/AL0101G1S0")
 	public @ResponseBody Map<String, Object> SI0401G1S0() throws Exception {
@@ -56,9 +31,9 @@ public class AL0101Controller extends ControllerSupport {
 		return result.getResultSave();
 	}	
 	
-	@RequestMapping("/si/AL0101P0R0")
+	@RequestMapping("/al/AL0101P0R0")
 	public @ResponseBody Map<String, Object> AL0101P0R0() throws Exception {
-		result.setData("dlt_BMS_ROUT_MST", al0101Service.AL0101P0R0());
+		result.setData("dlt_BMS_NODE_MST", al0101Service.AL0101P0R0());
 		return result.getResult();
 	}
 

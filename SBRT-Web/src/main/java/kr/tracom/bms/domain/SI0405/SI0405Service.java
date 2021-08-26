@@ -1,4 +1,4 @@
-package kr.tracom.brt.domain.AL0101;
+package kr.tracom.bms.domain.SI0405;
 
 import java.util.List;
 import java.util.Map;
@@ -7,38 +7,49 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
-import kr.tracom.brt.domain.AL0101.AL0101Mapper;
+import kr.tracom.cm.domain.OperPlan.OperPlanService;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.util.Result;
 
 @Service
-public class AL0101Service extends ServiceSupport {
-
+public class SI0405Service extends ServiceSupport {
 
 	@Autowired
-	private AL0101Mapper al0101Mapper;
+	private SI0405Mapper si0405Mapper;
 	
-	public List AL0101G1R0() throws Exception {
-		// TODO Auto-generated method stub
-		Map param = getSimpleDataMap("dma_sub_search");
-		return al0101Mapper.AL0101G1R0(param);
+	@Autowired
+	private OperPlanService operPlanService;
+
+	
+	public List SI0405G0R0() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return si0405Mapper.SI0405G0R0(map);
 	}
 	
-	public Map AL0101G1S0() throws Exception {
+	public Map SI0405G0K0() throws Exception {
+		return si0405Mapper.SI0405G0K0(); 
+	}
+	
+	
+	public Map SI0405G0S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;		
 		
-		List<Map<String, Object>> param = getSimpleList("dlt_BRT_MAIN_ROUT_NODE_INFO");
+		List<Map<String, Object>> param = getSimpleList("dlt_BMS_REP_ROUT_MST");
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("C")) {
-					iCnt += al0101Mapper.AL0101G1I0(data);
+					operPlanService.insertSimpleOperPlan(data);
+					iCnt += si0405Mapper.SI0405G0I0(data);
+				} else if (rowStatus.equals("U")) {
+					operPlanService.insertSimpleOperPlan(data);
+					uCnt += si0405Mapper.SI0405G0U0(data);
 				} else if (rowStatus.equals("D")) {
-					dCnt += al0101Mapper.AL0101G1D0(data);
+					dCnt += si0405Mapper.SI0405G0D0(data);
 				} 
 			}			
 		} catch(Exception e) {
@@ -55,14 +66,8 @@ public class AL0101Service extends ServiceSupport {
 		
 		Map result = saveResult(iCnt, uCnt, dCnt);
 		
-		return result;	
-	}
-	
-	public List AL0101P0R0() throws Exception {
-		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return al0101Mapper.AL0101P0R0(map);
-	}
-	
+		return result;		
 		
-	
+		
+	}
 }
