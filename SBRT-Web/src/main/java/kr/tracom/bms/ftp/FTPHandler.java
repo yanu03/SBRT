@@ -479,6 +479,103 @@ public class FTPHandler {
 
 	}
 	
+	/** 210826 행선지안내기 스케쥴 파일 Read jh **/
+	public List<Map<String, Object>> readSCH(String deviceCd, String fileName) throws IOException {
+		String path = Paths.get(getRootLocalPath(), "/temp/destination/", deviceCd).toString();
+		File file = new File(path + "/" + fileName);
+		FileReader fr = null;
+		List<Map<String, Object>> scheduleList = new ArrayList<>();
+
+		try {
+			fr = new FileReader(file);
+		} catch (FileNotFoundException e) {
+			createSCH(deviceCd, fileName);
+			fr = new FileReader(file);
+		}
+        //입력 버퍼 생성
+        BufferedReader br = new BufferedReader(fr);
+        String line = "";
+        String[] tmp = null;
+        
+        while((line = br.readLine()) != null){
+        	Map<String, Object> map = new HashMap<>();
+        	Map<String, Object> param = new HashMap<>();
+        	param.put("COL", "DL_CD_NM");
+        	param.put("CO_CD", "EFFECT_TYPE");
+        	param.put("DL_CD_NM", tmp[1]);
+        	
+        	tmp = line.split("\t");
+        	
+        	map.put("FRAME_NO", tmp[0]);
+        	map.put("EFFECT_TYPE", commonMapper.selectDlCdCol(param));
+        	map.put("EFFECT_SPEED", tmp[2]);
+        	map.put("SHOW_TIME", tmp[3]);
+        	
+        	scheduleList.add(map);
+        }
+        br.close();
+        return scheduleList;
+	}
+	
+	/** 210826 행선지안내기 스케쥴 파일 create jh **/
+	public boolean createSCH(String deviceCd, String fileName) {
+		List<Map<String, Object>> scheduleList = new ArrayList<>();
+		int max = 10;
+		
+		if(fileName.contains("LOGO")) {
+			max = 3;
+		}
+		
+		for(int i = 0; i < max; i ++) {
+			Map<String, Object> scheduleRow = new HashMap<>();
+			int seq = i + 1;
+			
+			scheduleRow.put("FRAME_NO", "FRAME" + seq);
+			scheduleRow.put("EFFECT_TYPE", "화면그대로 표출");
+			scheduleRow.put("EFFECT_SPEED", "05");
+			scheduleRow.put("SHOW_TIME", "0000");
+			
+			scheduleList.add(scheduleRow);
+		}
+		return writeSCH(scheduleList, deviceCd, fileName);
+	}
+	
+	/** 210826 행선지안내기 스케쥴 파일 write jh**/
+	public boolean writeSCH(List<Map<String, Object>> scheduleList, String deviceCd, String fileName) {
+		String path = Paths.get(getRootLocalPath(), "/temp/destination/", deviceCd).toString();
+		String txt = "";
+
+		for(int i = 0; i < scheduleList.size(); i++) {
+			Map<String, Object> param = new HashMap<>();
+			param.put("COL", "TXT_VAL1");
+			param.put("CO_CD", "EFFECT_TYPE");
+			param.put("DL_CD_NM", scheduleList.get(i).get("EFFECT_TYPE").toString());
+			
+			if(i == 0) {
+				txt += scheduleList.get(i).get("FRAME_NO") + Constants.Schedule.TAB 
+					+ commonMapper.selectDlCdCol(param) + Constants.Schedule.TAB 
+					+ String.format("%02d", Integer.valueOf(scheduleList.get(i).get("EFFECT_SPEED").toString())) + Constants.Schedule.TAB 
+					+ String.format("%04d", Integer.valueOf(scheduleList.get(i).get("SHOW_TIME").toString()));
+			}else {
+				txt += Constants.CSVForms.ROW_SEPARATOR
+					+ scheduleList.get(i).get("FRAME_NO") + Constants.Schedule.TAB 
+					+ commonMapper.selectDlCdCol(param) + Constants.Schedule.TAB 
+					+ String.format("%02d", Integer.valueOf(scheduleList.get(i).get("EFFECT_SPEED").toString())) + Constants.Schedule.TAB 
+					+ String.format("%04d", Integer.valueOf(scheduleList.get(i).get("SHOW_TIME").toString()));
+			}
+		}
+		
+		File file = new File(path + "/" + fileName);
+		
+		try {
+			createCSV(file, txt);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	
 	//PI0902 전자노선도 예약 jhlee
 	public void reserveErm(Map<String, Object> vhcData, Map<String, Object> rpData) throws Exception {
@@ -977,6 +1074,19 @@ public class FTPHandler {
 			return true;
 		} catch(Exception e) {
 			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	/** 210826 routemap 경로 local -> ftp 업로드 **/
+	public boolean syncRouteMap() {
+		String localPath = Paths.get(getRootLocalPath(), getRouteMapPath()).toString();
+		String ftpPath = getRootServerPath() + "/routemap/";
+		
+		try {
+			processSynchronize(localPath, ftpPath);
+			return true;
+		} catch(Exception e) {
 			return false;
 		}
 	}

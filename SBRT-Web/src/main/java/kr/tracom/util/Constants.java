@@ -89,4 +89,9 @@ public class Constants {
     	public static final String US		= "U";	// 사용자 음성
     	public static final String RT		= "R";	// 노선별 음성
     }
+    
+    public static class Schedule {
+    	public static final String ROW_SEPARATOR			= "\r\n";
+    	public static final String TAB						= "\t";
+    }
 }
