@@ -223,6 +223,9 @@
 			<if test="@kr.tracom.util.CommonUtil@notEmpty(ROUT_DIV)">
 			ROUT_DIV = #{ROUT_DIV},
 			</if>
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(DVC_NAME)">
+			DVC_NAME = #{DVC_NAME},
+			</if>
 			<if test="@kr.tracom.util.CommonUtil@notEmpty(RSV_ROUT_YN)">
 			RSV_ROUT_YN = #{RSV_ROUT_YN},
 			</if>
@@ -325,13 +328,13 @@
 				</when>  
 				<otherwise>
 					<if test="TYPE == 'DISP_NODE'">
-					AND A.NODE_TYPE != 'NT06'
+					AND A.NODE_TYPE != 'NT006'
 					</if>
 					<if test="TYPE == 'LINK_NODE'">
 					AND A.LINK_NODE_YN = 'Y'
 					</if>
 					<if test="TYPE == 'SOUND_NODE'">
-					AND A.NODE_TYPE != 'NT05'
+					AND A.NODE_TYPE != 'NT005'
 					</if>
 				</otherwise>
 			</choose>
@@ -350,13 +353,13 @@
 				</when>  
 				<otherwise>
 					<if test="TYPE == 'DISP_NODE'">
-					AND A.NODE_TYPE != 'NT06'
+					AND A.NODE_TYPE != 'NT006'
 					</if>
 					<if test="TYPE == 'LINK_NODE'">
 					AND A.LINK_NODE_YN = 'Y'
 					</if>
 					<if test="TYPE == 'SOUND_NODE'">
-					AND A.NODE_TYPE != 'NT05'
+					AND A.NODE_TYPE != 'NT005'
 					</if>
 				</otherwise>
 			</choose>
@@ -385,7 +388,7 @@
 		<where>
 			A.USE_YN = 'Y'
 			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
-				<if test="TYPE == 'ALL'">
+				<if test="TYPE == 'ALL' || TYPE == ''">
 					AND (A.STTN_ID LIKE CONCAT('%',#{CONTENT},'%') || A.STTN_NM LIKE CONCAT('%',#{CONTENT},'%') || A.STTN_NO LIKE CONCAT('%',#{CONTENT},'%'))
 				</if>
 				<if test="TYPE == 'STTN_ID'">

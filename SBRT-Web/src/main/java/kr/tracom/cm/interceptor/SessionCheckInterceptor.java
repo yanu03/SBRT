@@ -32,9 +32,9 @@ public class SessionCheckInterceptor extends HandlerInterceptorAdapter {
 				//userInfo.setUserInfo(session);
 			} else {				
 				if (!isSkipURI(request)) {
-					String ssnDeleted =(String) session.getAttribute(Constants.SSN_DELETED);
-					if("true".equals(ssnDeleted))return false;
-					session.setAttribute(Constants.SSN_DELETED, "true");
+					//String ssnDeleted =(String) session.getAttribute(Constants.SSN_DELETED);
+					//if(ssnDeleted!=null&&"true".equals(ssnDeleted))return false;
+					//session.setAttribute(Constants.SSN_DELETED, "true");
 					if ((w2xPath != null) || (reqUrl.indexOf(".xml") > -1)) {
 						// 웹스퀘어 화면 호출 시 세션이 종료된 경우, 로그인 페이지로 Redirect 처리한다.
 						result = false;

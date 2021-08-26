@@ -15,7 +15,13 @@
         				<!-- <w2:column id="chk" name="선택" dataType="text"></w2:column> -->
         				<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
         				<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
-        				<!-- <w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column> -->
+        				<w2:column id="ROUT_TYPE" name="노선유형" dataType="text"></w2:column>
+        				<w2:column id="ST_STTN_ID" name="시작정류소ID" dataType="text"></w2:column>
+        				<w2:column id="ST_STTN_NM" name="시작정류소명" dataType="text"></w2:column>
+        				<w2:column id="ED_STTN_ID" name="종료정류소ID" dataType="text"></w2:column>
+        				<w2:column id="ED_STTN_NM" name="종료정류소명" dataType="text"></w2:column>
+        				<w2:column id="WAY_YN" name="상하행여부" dataType="text"></w2:column>
+        				<w2:column id="HOLI_YN" name="휴일여부" dataType="text"></w2:column>
         				<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
         			</w2:columnInfo>
         		</w2:dataList>
@@ -40,6 +46,12 @@
         				<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
         			</w2:keyInfo>
         		</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="STTN_ID" name="정류장ID" dataType="text"></w2:column>
+						<w2:column id="STTN_NM" name="정류장명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
         	</w2:dataCollection>
         	<w2:workflowCollection></w2:workflowCollection>
         	<xf:submission id="sub_SI0401P1R0" ref="data:json,dma_REP_ROUT_MST" target="data:json,dlt_BMS_REP_ROUT_MST"
@@ -54,10 +66,22 @@
         		mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
         		processMsg="" ev:submit="" ev:submitdone="scwin.sub_SI0401P1K0_submitdone" ev:submiterror="" abortTrigger="">
         	</xf:submission>
+			<xf:submission id="sub_SI0401P1SHI0" ref="" target="data:json,dlt_searchitem" action="/rout/selectSttnItem" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+
         </xf:model>
         <script type="text/javascript" lazy="false"><![CDATA[
 	var isClose = false;
 	scwin.onpageload = function() {
+	
+		var codeOptions = [ {code : "ROUT_TYPE", compID : "SI0401P1:ROUT_TYPE" }];
+	
+		com.setCommonDtl(codeOptions, function() {
+			com.executeSubmission(sub_SI0401P1R0);	
+		});	
+		
 		scwin.param = com.getParameter();
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
 		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
@@ -73,8 +97,6 @@
 			SAVE: {}
 		};
 		com.setPopupBtn(wfm_mainBtn, popupOptions, autoOptions);
-		
-		com.executeSubmission(sub_SI0401P1R0);				
 	};
 	
 	scwin.onpageunload = function() {
@@ -105,9 +127,14 @@
 			}
 		}
 		else {
-			var data = dlt_BMS_REP_ROUT_MST.getRowData(SI0401P1.getFocusedRowIndex())
-			//var data = SI0401P1.getCheckedJSON("chk");
-			com.closePopup(scwin.closeCallbackFncName, data);
+			if(SI0401P1.getFocusedRowIndex()==-1){
+				com.alert("선택 후 확인을 클릭 하십시요!");
+			}
+			else{
+				var data = dlt_BMS_REP_ROUT_MST.getRowData(SI0401P1.getFocusedRowIndex())
+				//var data = SI0401P1.getCheckedJSON("chk");
+				com.closePopup(scwin.closeCallbackFncName, data);
+			}
 		}
 	};
 	
@@ -181,10 +208,15 @@
 					<w2:header id="header1" style="">
 						<w2:row id="row1" style="">
 							<!-- <w2:column width="39" inputType="radio" style="height:20px" id="chkHeader" value="선택" blockSelect="false"></w2:column> -->
-							<w2:column width="70" id="column2" value="대표노선ID"></w2:column>
-							<w2:column width="70" id="column3" value="대표노선명"></w2:column>
+							<w2:column width="70" id="column1" value="대표노선ID"></w2:column>
+							<w2:column width="70" id="column2" value="대표노선명"></w2:column>
+							<w2:column width="70" id="column3" value="노선유형"></w2:column>
+							<w2:column width="120" id="column3" value="기점"></w2:column>
+							<w2:column width="120" id="column3" value="종점"></w2:column>
+							<w2:column width="50" id="column3" value="상하행여부"></w2:column>
+							<w2:column width="50" id="column3" value="휴일여부"></w2:column>
 							<!-- <w2:column width="30" id="column16" value="사용여부" dataType="" inputType="text"></w2:column> -->
-							<w2:column width="70" id="column17" value="비고"></w2:column>
+							<w2:column width="70" id="column5" value="비고"></w2:column>
 						</w2:row>
 					</w2:header>
 					<w2:gBody id="gBody1" style="">
@@ -192,12 +224,39 @@
 							<!-- <w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px" inputType="radio"
 								id="chk" blockSelect="false">
 							</w2:column> -->
-							<w2:column width="70" id="REP_ROUT_ID"></w2:column>
-							<w2:column width="70" id="REP_ROUT_NM" maxLength="5"></w2:column>
-							<!-- <w2:column id="USE_YN" blockSelect="false" trueValue="Y" falseValue="N" style="height:25px" width="30" inputType="checkbox"
-								displayMode="" valueType="other">
-							</w2:column> -->
-							<w2:column width="70" id="REMARK"></w2:column>
+							<w2:column width="" id="REP_ROUT_ID"></w2:column>
+							<w2:column width="" id="REP_ROUT_NM" maxLength="5"></w2:column>
+							<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="ROUT_TYPE" value=""
+								blockSelect="false" displayMode="label" userData1="M">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="" inputType="autoComplete " style="height:20px" id="ST_STTN_ID" value=""
+								blockSelect="false" displayMode="label" valueType="other" falseValue="N" trueValue="Y">
+								<w2:choices>
+									<w2:itemset nodeset="data:dlt_searchItem">
+										<w2:label ref="ST_STTN_ID"></w2:label>
+										<w2:value ref="ST_STTN_NM"></w2:value>
+									</w2:itemset>
+								</w2:choices>
+
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="" inputType="autoComplete " style="height:20px" id="ED_STTN_ID" value=""
+								blockSelect="false" displayMode="label" valueType="other" falseValue="N" trueValue="Y">
+								<w2:choices>
+									<w2:itemset nodeset="data:dlt_searchItem">
+										<w2:label ref="ED_STTN_ID"></w2:label>
+										<w2:value ref="ED_STTN_NM"></w2:value>
+									</w2:itemset>
+								</w2:choices>
+
+							</w2:column>
+
+							<w2:column removeBorderStyle="false" width="" inputType="checkbox" style="height:20px" id="WAY_YN" value=""
+								blockSelect="false" displayMode="label" valueType="other" falseValue="N" trueValue="Y">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="" inputType="checkbox" style="height:20px" id="HOLI_YN" value=""
+								blockSelect="false" displayMode="label" valueType="other" falseValue="N" trueValue="Y">
+							</w2:column>
+							<w2:column width="" id="REMARK"></w2:column>
 						</w2:row>
 					</w2:gBody>
 				</w2:gridView>

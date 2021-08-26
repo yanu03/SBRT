@@ -10,6 +10,7 @@
 			REP_ROUT_NM,
 			ROUT_NM,
 			ROUT_TYPE,
+			DVC_NM,
 			RSV_ROUT_YN,
 			ST_STTN_ID,
 			ST_STTN_NM,
@@ -79,6 +80,7 @@
 			ROUT_NM,
 			ROUT_TYPE,
 			ROUT_DIV,
+			DVC_NM,
 			RSV_ROUT_YN,
 			ST_STTN_ID,
 			ST_STTN_NM,
@@ -121,6 +123,7 @@
 			#{ROUT_NM},
 			#{ROUT_TYPE},
 			#{ROUT_DIV},
+			#{DVC_NM},
 			#{RSV_ROUT_YN},
 			#{ST_STTN_ID},
 			#{ST_STTN_NM},
@@ -164,6 +167,7 @@
 			ROUT_NM = #{ROUT_NM},
 			ROUT_TYPE = #{ROUT_TYPE},
 			ROUT_DIV = #{ROUT_DIV},
+			DVC_NM = #{DVC_NM},
 			RSV_ROUT_YN = #{RSV_ROUT_YN},
 			ST_STTN_ID = #{ST_STTN_ID},
 			ST_STTN_NM = #{ST_STTN_NM},
@@ -242,7 +246,7 @@
 </select>
 
 <select id="SI0401P1R0" resultType="Map">
-	SELECT REP_ROUT_ID, REP_ROUT_NM, USE_YN, REMARK
+	SELECT REP_ROUT_ID, REP_ROUT_NM, ROUT_TYPE, WAY_YN, HOLI_YN, REMARK
 	FROM BMS_REP_ROUT_MST WHERE USE_YN = 'Y'
 	<if test="CONTENT != null and CONTENT != ''">
 		AND REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
@@ -264,6 +268,9 @@
 			(
 			REP_ROUT_ID,
 			REP_ROUT_NM,
+			ROUT_TYPE,
+			WAY_YN,
+			HOLI_YN,
 			USE_YN,
 			REMARK,
 			UPD_DTM,
@@ -274,6 +281,9 @@
 			(
 			#{REP_ROUT_ID},
 			#{REP_ROUT_NM},
+			#{ROUT_TYPE},
+			#{WAY_YN},
+			#{HOLI_YN},
 			'Y',
 			#{REMARK},
 			#{UPD_DTM},
@@ -284,6 +294,9 @@
 <update id="SI0401P1U0" parameterType="Map">
 	update BMS_REP_ROUT_MST
 	set 	REP_ROUT_NM = #{REP_ROUT_NM},
+			ROUT_TYPE = #{ROUT_TYPE},
+			WAY_YN = #{WAY_YN},
+			HOLI_YN = #{HOLI_YN},
 			USE_YN = 'Y',
 			REMARK = #{REMARK},
 			UPD_DTM = #{UPD_DTM},

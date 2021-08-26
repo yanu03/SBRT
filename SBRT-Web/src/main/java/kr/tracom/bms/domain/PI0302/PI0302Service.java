@@ -21,6 +21,10 @@ public class PI0302Service extends ServiceSupport{
 		return PI0302Mapper.PI0302G0R0(param);
 	}
 	
+	public List PI0302SHI0() throws Exception {
+		return PI0302Mapper.PI0302SHI0();
+	}
+	
 	public Map PI0302G0K0() throws Exception {
 		return PI0302Mapper.PI0302G0K0();
 	}	

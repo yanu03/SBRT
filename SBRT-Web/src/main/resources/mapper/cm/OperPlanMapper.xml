@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.tracom.brt.domain.AL0201.AL0201Mapper">
+<mapper namespace="kr.tracom.cm.domain.OperPlan.OperPlanMapper">
 
 
 <insert id="insertSimpleOperPlan" parameterType="Map">
-INSERT INTO BRT_OPER_PL_MST( REP_ROUT_ID,ROUT_ID,DAY_DIV,UPD_DTM,UPD_ID )
-VALUES(#{REP_ROUT_ID},#{ROUT_ID},#{DAY_DIV},#{UPD_DTM},#{SSN_USER_ID});
+INSERT INTO BRT_OPER_PL_MST( REP_ROUT_ID,WAY_DIV,DAY_DIV,UPD_DTM,UPD_ID )
+VALUES(#{REP_ROUT_ID},#{WAY_DIV},#{DAY_DIV},#{UPD_DTM},#{SSN_USER_ID})
+ON DUPLICATE KEY UPDATE
+WAY_DIV	= VALUES(WAY_DIV)
+, DAY_DIV		= VALUES(DAY_DIV)
+, UPD_DTM		= VALUES(UPD_DTM)
+, UPD_ID		= VALUES(UPD_ID);
 </insert>
 
 </mapper>

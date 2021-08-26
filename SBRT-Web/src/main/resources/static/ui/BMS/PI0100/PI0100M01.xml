@@ -42,7 +42,7 @@
 
 						<w2:column id="MODEL_NM" name="모델명" dataType="text"></w2:column>
 						<w2:column id="VHC_KIND" name="차량종류" dataType="text"></w2:column>
-						<w2:column id="ROUT_DIV" name="노선구분" dataType="text"></w2:column>
+						<w2:column id="ROUT_TYPE" name="노선유형" dataType="text"></w2:column>
 						<w2:column id="VHC_TYPE" name="차량유형" dataType="text"></w2:column>
 						<w2:column id="VHC_FUEL" name="차량연료" dataType="text"></w2:column>
 						<w2:column id="VHC_STS" name="버스상태" dataType="text"></w2:column>
@@ -61,7 +61,9 @@
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
 					<w2:keyInfo>
-						<w2:key id="CONTENT" name="검색내용" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_STTN_MST" saveRemovedData="true">
@@ -103,17 +105,22 @@
 						<w2:key id="SEQ" name="SEQ" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="NOTICE_ID" name="공지ID" dataType="text"></w2:column>
+						<w2:column id="TITLE" name="제목" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_PI0100G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_NOTICE_MST"
-				action="/pi/PI0100G0R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0100G0R0_submitdone" ev:submiterror=""
-				abortTrigger="">
+			<xf:submission id="sub_PI0100G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_NOTICE_MST" action="/pi/PI0100G0R0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0100G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_PI0100G0S0" ref='data:json,{"action":"modified","id":"dlt_BMS_NOTICE_MST"}'
 				target="data:json,dlt_BMS_NOTICE_MST" action="/pi/PI0100G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance=""
-				replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0100G0S0_submitdone" ev:submiterror=""
-				abortTrigger="">
+				replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit=""
+				ev:submitdone="scwin.sub_PI0100G0S0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_PI0100G1R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_VHC_MST" action="/pi/PI0100G1R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
@@ -132,9 +139,13 @@
 				ev:submit="" ev:submitdone="scwin.sub_PI0100G0K0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_PI0100G2S0" ref='data:json,{"action":"modified","id":"dlt_BMS_STTN_MST"}'
-				target="data:json,dlt_BMS_STTN_MST" action="/pi/PI0100G2S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
-				errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit=""
+				target="data:json,dlt_BMS_STTN_MST" action="/pi/PI0100G2S0" method="post" mediatype="application/json" encoding="UTF-8" instance=""
+				replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit=""
 				ev:submitdone="scwin.sub_PI0100G2S0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_PI0100SHI0" ref="" target="data:json,dlt_searchitem" action="/pi/PI0100SHI0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
@@ -161,6 +172,8 @@
 			ADD: scwin.btn3_add_onclick, DEL:{}, CNL:{}
 		};
 		com.setSubBtn2(wfm_subBtn2, autoOptions, subOptions2);
+		
+		$p.executeSubmission(sub_PI0100SHI0);	
 	};	
 	
 	scwin.btn2_add_onclick = function() {
@@ -321,6 +334,23 @@
 	scwin.sub_PI0100G0K0_submitdone = function(e) {
 		var insertIndex = com.addGrid(PI0100G0,dma_SEQ_BMS_NOTICE_MST_0,"NOTICE_ID","TITLE");
 	};
+	
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {
+		
+		if (info.newValue == "ALL") {
+			autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} else if (info.newValue == "NOTICE_ID") {
+			search_input.hide();
+			autoChoiceBox.setNodeSet("data:dlt_searchitem", "NOTICE_ID", "NOTICE_ID");
+			autoChoiceBox.show("");
+		} else if (info.newValue == "TITLE") {
+			search_input.hide();
+			autoChoiceBox.setNodeSet("data:dlt_searchitem", "TITLE", "TITLE");
+			autoChoiceBox.show("");
+		}
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -334,13 +364,43 @@
 						<w2:span class="" id="" label="검색"></w2:span>
 					</xf:group>
 					<xf:group class="search" id="" style="">
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="공지 ID 또는 제목"></xf:input>
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" style="" submenuSize="auto"
+							textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[공지ID]]></xf:label>
+									<xf:value><![CDATA[NOTICE_ID]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[제목]]></xf:label>
+									<xf:value><![CDATA[TITLE]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="공지ID 또는 제목"></xf:input>
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
+							id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
+							class="search_auto" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+							<w2:choices>
+								<w2:itemset nodeset="data:dlt_searchitem">
+									<w2:label ref="VHC_NO"></w2:label>
+									<w2:value ref="VHC_ID"></w2:value>
+								</w2:itemset>
+							</w2:choices>
+						</w2:autoComplete>
 					</xf:group>
 					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
 			</xf:group>
 
-			<xf:group id="pgm_content" style="" class="pgm_content grdc_a_20_800">
+			<xf:group id="pgm_content" style="" class="pgm_content grdc_a_20_900">
 				<xf:group id="pgm_list" style="" class="pgm_list grdr_20_a">
 					<xf:group id="" style="" class="defaultbox">
 						<w2:textbox id="" style="" class="df_tt fl" label="공지 목록"></w2:textbox>
@@ -350,14 +410,15 @@
 							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="순서"
 							sortable="true" rowStatusHeaderValue="상태"  overflowX="auto" overflowY="scroll" rowStatusVisible="false"
 							fixedColumnWithHidden="true" dataList="data:dlt_BMS_NOTICE_MST" ignoreCellClick="false" style=""
-							autoFit="lastColumn" visibleRowNum="10" id="PI0100G0" class="cm_grid right" tooltipPositionY="" checkReadOnlyOnPasteEnable="">
+							autoFit="lastColumn" visibleRowNum="10" id="PI0100G0" class="cm_grid right" tooltipPositionY="" checkReadOnlyOnPasteEnable="" 
+							focusFlow="" focusMove="" keyMoveEditMode="" focusDefaultColumn="" focusMode="row" userData1="">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row2">
 									<w2:column width="100" style="height:25px;" inputType="text" id="column9" value="공지 ID"
-										blockSelect="false" displayMode="label" userData1="" userData2="">
+										blockSelect="false" displayMode="label" userData1="M" userData2="" class="req">
 									</w2:column>
-									<w2:column width="159" style="height:25px;" inputType="text" id="column17" value="제목"
-										blockSelect="false" displayMode="label" userData1="">
+									<w2:column width="300" style="height:25px;" inputType="text" id="column17" value="제목"
+										blockSelect="false" displayMode="label" userData1="M" class="req">
 									</w2:column>
 									<w2:column width="0" style="height:25px;" inputType="text" id="column30" value="전송 차량"
 										blockSelect="false">
@@ -365,17 +426,17 @@
 									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:25px" id="column31"
 										value="예약여부" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column width="116" style="height:25px;" inputType="text" id="column28" value="예약일시"
+									<w2:column width="120" style="height:25px;" inputType="text" id="column28" value="예약일시"
 										blockSelect="false">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="108" inputType="text" style="height:25px" id="column39"
+									<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:25px" id="column39"
 										value="업데이트일시" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:25px" id="column41"
+									<w2:column removeBorderStyle="false" width="110" inputType="text" style="height:25px" id="column41"
 										value="전송상태" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column width="100%" style="height:25px;" inputType="text" id="column11" value="본 문"
-										blockSelect="false" displayMode="label" userData1="">
+									<w2:column width="300" style="height:25px;" inputType="text" id="column11" value="본 문"
+										blockSelect="false" displayMode="label" userData1="M" class="req">
 									</w2:column>
 								</w2:row>
 							</w2:header>
@@ -385,7 +446,7 @@
 										displayMode="label" readOnly="true" userData1="M" userData2="">
 									</w2:column>
 									<w2:column width="159" style="height:25px;" inputType="text" id="TITLE" blockSelect="false"
-										displayMode="label" readOnly="true" userData1="M">
+										displayMode="label" readOnly="true" userData1="M" textAlign="left">
 									</w2:column>
 									<w2:column width="126" style="height:25px;" inputType="text" id="VHC_NO" blockSelect="false"
 										displayFormat="" calendarValueType="yearMonthDateTime" applyFormat="" displayMode="" readOnly="true"
@@ -410,8 +471,8 @@
 										value="" blockSelect="false" displayMode="label" autoFitFilterList="" displayFormatter="scwin.sendSTSDisFormatter"
 										displayFormat="">
 									</w2:column>
-									<w2:column textAlign="center" width="" style="height:25px;" inputType="text" id="CONTENTS"
-										blockSelect="false" displayMode="label" readOnly="true" userData1="M">
+									<w2:column textAlign="left" width="" style="height:25px;" inputType="text" id="CONTENTS"
+										blockSelect="false" displayMode="label" readOnly="true" userData1="M" >
 										<w2:choices>
 											<w2:itemset nodeset="">
 												<w2:label ref=""></w2:label>
@@ -453,7 +514,7 @@
 							<xf:group tagname="col" style="width:25.00%"></xf:group>
 						</xf:group>
 						<xf:group tagname="tr" style="height:10px;">
-							<xf:group tagname="th" style="" class="w2tb_th">
+							<xf:group tagname="th" style="" class="w2tb_th req">
 								공지&amp;nbsp;ID
 								<w2:attributes>
 									<w2:scope>row</w2:scope>
@@ -464,13 +525,13 @@
 									<w2:colspan>3</w2:colspan>
 									<w2:rowspan>1</w2:rowspan>
 								</w2:attributes>
-								<xf:input adjustMaxLength="false" id="" style="width:100%;height:100%;"
-									ref="data:dlt_BMS_NOTICE_MST.NOTICE_ID" placeholder="홍길동" readOnly="true">
+								<xf:input adjustMaxLength="false" id="" style="width:100px;height:100%;"
+									ref="data:dlt_BMS_NOTICE_MST.NOTICE_ID" placeholder="홍길동" readOnly="true" disabled="true">
 								</xf:input>
 							</xf:group>
 						</xf:group>
 						<xf:group tagname="tr" style="">
-							<xf:group tagname="th" style="" class="w2tb_th">
+							<xf:group tagname="th" style="" class="w2tb_th req">
 								제&amp;nbsp;목
 								<w2:attributes>
 									<w2:scope>row</w2:scope>
@@ -478,7 +539,7 @@
 							</xf:group>
 							<xf:group tagname="td" style="" class="w2tb_td">
 								<xf:input adjustMaxLength="false" id="TITLE" style="height: 21px;" ref="data:dlt_BMS_NOTICE_MST.TITLE"
-									placeholder="업무 협의 요청">
+									placeholder="업무 협의 요청" maxlength="100">
 								</xf:input>
 							</xf:group>
 							<xf:group tagname="th" style="" class="w2tb_th">
@@ -530,7 +591,7 @@
 						</xf:group>
 
 						<xf:group tagname="tr" style="">
-							<xf:group tagname="th" style="" class="w2tb_th">
+							<xf:group tagname="th" style="vertical-align: top" class="w2tb_th req">
 								본문
 								<w2:attributes>
 									<w2:scope>row</w2:scope>
@@ -541,7 +602,7 @@
 									<w2:colspan>3</w2:colspan>
 									<w2:rowspan>1</w2:rowspan>
 								</w2:attributes>
-								<xf:textarea id="CONTENTS" style="width:100%;height:200px;" ref="data:dlt_BMS_NOTICE_MST.CONTENTS"></xf:textarea>
+								<xf:textarea id="CONTENTS" style="width:100%;height:200px;" ref="data:dlt_BMS_NOTICE_MST.CONTENTS" maxlength="3000"></xf:textarea>
 							</xf:group>
 						</xf:group>
 					</xf:group>
@@ -557,17 +618,17 @@
 					<xf:group>
 						<w2:gridView id="PI0100G1" style="width:100%;height:100%;" scrollByColumn="false" defaultCellHeight="20"
 							class="cm_grid" scrollByColumnAdaptive="false" dataList="data:dlt_BMS_VHC_MST" autoFit="lastColumn" readOnly="" overflowX="auto"
-							overflowY="scroll" fixedColumnScrollHidden="">
+							overflowY="scroll" fixedColumnScrollHidden="" focusMode="row">
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column3"
 										value="차량 ID" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px" id="column2"
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column2"
 										value="차량번호" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column1"
+									<w2:column removeBorderStyle="false" width="170" inputType="text" style="height:20px" id="column1"
 										value="차대번호" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column8"
@@ -587,10 +648,10 @@
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="CHAS_NO"
-										value="" blockSelect="false" displayMode="label">
+										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="COMP_NM"
-										value="" blockSelect="false" displayMode="label">
+										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="AREA" value=""
 										blockSelect="false" displayMode="label">
@@ -611,26 +672,26 @@
 					<xf:group>
 						<w2:gridView autoFit="lastColumn" dataList="data:dlt_BMS_STTN_MST" defaultCellHeight="20" id="PI0100G2" readOnly=""
 							class="cm_grid" scrollByColumn="false" scrollByColumnAdaptive="false" style="width:100%;height:100%;" overflowY="scroll"
-							overflowX="auto">
+							overflowX="auto" focusMode="row">
 							<w2:caption id="caption1" style="" value="this is a grid caption."></w2:caption>
 							<w2:header id="header1" style="">
 								<w2:row id="row1" style="">
 									<w2:column blockSelect="false" displayMode="label" id="column3" inputType="text"
-										removeBorderStyle="false" style="height:20px" value="정류소ID" width="166">
+										removeBorderStyle="false" style="height:20px" value="정류소ID" width="100">
 									</w2:column>
 									<w2:column blockSelect="false" displayMode="label" id="column2" inputType="text"
-										removeBorderStyle="false" style="height:20px" value="정류소명" width="70">
+										removeBorderStyle="false" style="height:20px" value="정류소명" width="150">
 									</w2:column>
 									<w2:column blockSelect="false" displayMode="label" id="column1" inputType="text"
-										removeBorderStyle="false" style="height:20px" value="정류소번호" width="89">
+										removeBorderStyle="false" style="height:20px" value="정류소번호" width="90">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="75" inputType="text" style="height:20px" id="column4"
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column4"
 										value="위도" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="73" inputType="text" style="height:20px" id="column5"
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column5"
 										value="경도" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="97" inputType="text" style="height:20px" id="column6"
+									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column6"
 										value="비고" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
@@ -641,19 +702,19 @@
 										removeBorderStyle="false" style="height:20px" value="" width="166">
 									</w2:column>
 									<w2:column blockSelect="false" displayMode="label" id="STTN_NM" inputType="text"
-										removeBorderStyle="false" style="height:20px" value="" width="70">
+										removeBorderStyle="false" style="height:20px" value="" width="70" textAlign="left">
 									</w2:column>
 									<w2:column blockSelect="false" displayMode="label" id="STTN_NO" inputType="text"
 										removeBorderStyle="false" style="height:20px" value="" width="89">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="75" inputType="text" style="height:20px" id="GPS_X" value=""
-										blockSelect="false" displayMode="label">
+										blockSelect="false" displayMode="label" textAlign="right">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="73" inputType="text" style="height:20px" id="GPS_Y" value=""
-										blockSelect="false" displayMode="label">
+										blockSelect="false" displayMode="label" textAlign="right">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="97" inputType="text" style="height:20px" id="REMARK"
-										value="" blockSelect="false" displayMode="label">
+										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>

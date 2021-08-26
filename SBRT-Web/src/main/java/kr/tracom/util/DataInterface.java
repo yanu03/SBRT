@@ -293,7 +293,7 @@ public class DataInterface {
 			}
 			
 			String nodeType = (String)nodeList.get(i).get("NODE_TYPE");
-			if(nodeType.equals("NT01")||nodeType.equals("NT02")) {
+			if(nodeType.equals("NT001")||nodeType.equals("NT002")) {
 				voList.add(nodeList.get(i));
 			}
 			else {

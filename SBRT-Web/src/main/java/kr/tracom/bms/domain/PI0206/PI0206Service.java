@@ -1,6 +1,7 @@
 package kr.tracom.bms.domain.PI0206;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,41 +71,37 @@ public class PI0206Service extends ServiceSupport {
 			Map<String, Object> listMap = new HashMap();
 			listMap.put("courseList", list_param);
 			
-			//노선 리스트(중복없음)
+			//중복 제거한 노선 리스트
 			List<Map<String, Object>> routList = pi0206Mapper.selectRoutList(listMap);
 						
-			//노선관련 파일 생성
-			
-			//코스관련 파일 생성
-			
-			
-			//예약 정보, 예약결과 정보 insert
-			Map<String, Object> paramMap = new HashMap<String, Object>();
-			
-			for (int i = 0; i < param.size(); i++) {
-				Map data = (Map) param.get(i);
-				String rowStatus = (String) data.get("rowStatus");
-				if (rowStatus.equals("U")) {
-					
-					data.put("COR_ID",map.get("COR_ID"));
-					iCnt = pi0206Mapper.PI0206G1I0(data);
-					
-					
-					/*
-					//예약해야할노선리스트			
-					for(Map<String, Object> route : list_param) {
+			//공통파일 생성
+			if(makeCommonFile()) {
+				//노선관련 파일 생성
+				List<String> strRoutList = listMapToList(routList, "ROUT_ID");
+				if(makeRouteFile(strRoutList)) {
+					//코스관련 파일 생성
+					List<String> strCourseList = listMapToList(list_param, "COR_ID");
+					if(makeCourseFile(strCourseList)) {
+						//예약 정보, 예약결과 정보 insert
+						Map<String, Object> paramMap = new HashMap<String, Object>();
 						
-						String courseId = String.valueOf(map.get("COR_ID"));
-						Map<String, Object> courseInfo= pi0206Mapper.selectCourseInfo(courseId);
-																		
-		    		}
-		    		*/
-					
-				} 
-				else if (rowStatus.equals("D")) {
-					dCnt += pi0206Mapper.PI0206G1D0(data);
-				} 
-			}			
+						for (int i = 0; i < param.size(); i++) {
+							Map data = (Map) param.get(i);
+							String rowStatus = (String) data.get("rowStatus");
+							if (rowStatus.equals("U")) {
+								
+								data.put("COR_ID",map.get("COR_ID"));
+								iCnt = pi0206Mapper.PI0206G1I0(data);
+													
+							} 
+							else if (rowStatus.equals("D")) {
+								dCnt += pi0206Mapper.PI0206G1D0(data);
+							} 
+						}
+					}
+				}
+				
+			}
 			
 		} catch(Exception e) {
 			if (e instanceof DuplicateKeyException)
@@ -197,15 +194,9 @@ public class PI0206Service extends ServiceSupport {
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("routList", routList);
 		
-		//routelist폴더하위
-		//routelist.csv
-		//routeinfo.csv
-		//link.csv
-		//playlist\~~~
-		
 		//노선 정보
 		List<Map<String, Object>> routInfoList = pi0206Mapper.selectRoutInfoList(paramMap);
-
+		
 		//routelist 하위
 		for(Map<String, Object> routInfo : routInfoList) {
 			String routId = routInfo.get("ROUT_ID").toString();
@@ -245,7 +236,8 @@ public class PI0206Service extends ServiceSupport {
 			
 			//routelist.csv 업로드
 			try {
-				ftpHandler.uploadRoutList("routelist.csv", "00000000", "00000000", routInfo);
+				Map<String, Object> newRow = pi0206Mapper.makeRoutNewRow(routId);
+				ftpHandler.uploadRoutList("routelist.csv", "00000000", "00000000", newRow);
 			} catch (IOException e) {
 				logger.error("[PI0206Service] IOException in uploadRoutList....ROUTE_ID = " + routId);
 				return false;
@@ -256,9 +248,48 @@ public class PI0206Service extends ServiceSupport {
 	}
 	
 	/** courselist경로 하위 파일 생성 jh **/
-	public void makeCourseFile(String courseId) {
-		//courselist 폴더 하위
-		//courseinfo.csv
-		//courlist.csv
+	public boolean makeCourseFile(List<String> courseList) {
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("courseList", courseList);
+		
+		//코스정보 리스트
+		List<Map<String, Object>> courseInfoList = pi0206Mapper.selectCourseInfoList(paramMap);
+		
+		for(Map<String, Object> courseInfo : courseInfoList) {
+			String courseId = courseInfo.get("COR_ID").toString();
+			
+			//코스별 노선 리스트
+			List<Map<String, Object>> courseRoutList = pi0206Mapper.selectCourseRoutList(courseId);
+			
+			//courseinfo.csv 업로드
+			try {
+				ftpHandler.uploadCourseRoutList(courseRoutList, courseId, "00000000");
+			} catch (Exception e) {
+				logger.error("[PI0206Service] Exception in uploadCourseRoutList....COR_ID = " + courseId);
+				return false;
+			}
+			
+			//courselist.csv 업로드
+			try {
+				ftpHandler.uploadCourseInfo("courselist.csv", "00000000", courseInfo);
+			} catch (Exception e) {
+				logger.error("[PI0206Service] Exception in uploadCourseInfo....COR_ID = " + courseId);
+				return false;
+			}
+		}
+		
+		return true;
 	}
+	
+	/** Map List -> List jh **/
+	public List<String> listMapToList(List<Map<String, Object>> listMap, String key){
+		List<String> result = new ArrayList<>();
+		
+		for(Map<String, Object> map : listMap) {
+			result.add(map.get(key).toString());
+		}
+		
+		return result;
+	}
+	
 }

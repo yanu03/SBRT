@@ -28,19 +28,28 @@
 			<w2:dataCollection baseNode="map">
 				<w2:dataMap baseNode="map" id="dma_search">
 					<w2:keyInfo>
-						<w2:key id="CONTENT" name="name1" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="CATEGORY" name="범주" dataType="text"></w2:column>
+						<w2:column id="NEWS_TITLE" name="뉴스제목" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_NEWS_INFO" saveRemovedData="true">
 					<w2:columnInfo>
+						<w2:column id="chk" name="선택" dataType="text" defaultValue="0"></w2:column>
 						<w2:column id="SN" name="순번" dataType="text"></w2:column>
-						<w2:column id="PROV_URL" name="범주" dataType="text"></w2:column>
 						<w2:column id="PROV_NM" name="제공처명" dataType="text"></w2:column>
 						<w2:column id="NEWS_TITLE" name="뉴스제목" dataType="text"></w2:column>
 						<w2:column id="PUB_DT" name="출판일시" dataType="text"></w2:column>
 						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
 						<w2:column id="UPD_DTM" name="갱신일시" dataType="text"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+						<w2:column id="CATEGORY" name="범주" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 			</w2:dataCollection>
@@ -57,6 +66,10 @@
 				action="/pi/PI0302G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
+			<xf:submission id="sub_PI0302SHI0" ref="" target="data:json,dlt_searchitem" action="/pi/PI0302SHI0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
@@ -65,7 +78,10 @@
 		var autoOptions = {
 			Main : { grid : PI0302G0, srchSbm : sub_PI0302G0R0 }
 		 };
+		 
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);		
+		
+		$p.executeSubmission(sub_PI0302SHI0);
 	};
 	
 	scwin.dateDisFormatter = function(data){
@@ -74,7 +90,34 @@
 	}
 	
 	scwin.sub_PI0302G0R0_submitdone = function(e) {
+		com.setFocusedCell(PI0302G0, "CATEGORY");
+	};
+	
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {
 		
+		if (info.newValue == "ALL") {
+			autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} else if (info.newValue == "CATEGORY") {
+			search_input.hide();
+			autoChoiceBox.setNodeSet("data:dlt_searchitem", "CATEGORY", "CATEGORY");
+			autoChoiceBox.show("");
+		} else if (info.newValue == "NEWS_TITLE") {
+			search_input.hide();
+			autoChoiceBox.setNodeSet("data:dlt_searchitem", "NEWS_TITLE", "NEWS_TITLE");
+			autoChoiceBox.show("");
+		}
+	};
+	
+	scwin.PI0302G0_oncellclick = function(row,col,colId) {
+		if (col != "0"){
+			if(PI0302G0.getCellChecked(row, 'chk')==0){
+				PI0302G0.setCellChecked(row, 'chk', true);
+			}else if(PI0302G0.getCellChecked(row, 'chk')==1){
+				PI0302G0.setCellChecked(row, 'chk', false);
+			}
+		}
 	};
 	]]></script>
 	</head>
@@ -90,15 +133,35 @@
 							<w2:span class="" id="" label="검색"></w2:span>
 						</xf:group>
 					</xf:group>
-					<xf:group class="search" id="" style="">
+					<xf:group id="" style="" class="search">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" style="" submenuSize="auto"
+							textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[범주]]></xf:label>
+									<xf:value><![CDATA[CATEGORY]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[뉴스내용]]></xf:label>
+									<xf:value><![CDATA[NEWS_TITLE]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="범주 또는 뉴스 내용"></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
 							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
-							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
-							style="width: 200px;height: 21px;float: left;" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+							id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
+							class="search_auto" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
 							<w2:choices>
-								<w2:itemset nodeset="data:dlt_grgSearchItem">
-									<w2:label ref="GRG_ID"></w2:label>
-									<w2:value ref="GRG_ID"></w2:value>
+								<w2:itemset nodeset="data:dlt_searchitem">
+									<w2:label ref="STTN_NO"></w2:label>
+									<w2:value ref="VHC_ID"></w2:value>
 								</w2:itemset>
 							</w2:choices>
 						</w2:autoComplete>
@@ -117,42 +180,49 @@
 						<w2:gridView id="PI0302G0" style="width:100%;height:100%;" defaultCellHeight="20" rowNumVisible="true" 
 							useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순번" sortable="true" 
 							rowStatusHeaderValue="상태"  overflowX="scroll" overflowY="scroll" rowStatusVisible="false"
-							fixedColumnWithHidden="true" ignoreCellClick="false" dataList="data:dlt_BMS_NEWS_INFO" class="cm_grid left" autoFit="lastColumn">
+							fixedColumnWithHidden="true" ignoreCellClick="false" dataList="data:dlt_BMS_NEWS_INFO" class="cm_grid left" 
+							autoFit="lastColumn" focusMode="row" ev:oncellclick="scwin.PI0302G0_oncellclick">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
-									<w2:column removeBorderStyle="false" width="91" inputType="text" style="height:20px" id="column5"
+									<w2:column removeBorderStyle="false" width="30" inputType="checkbox" style="height:20px" id="chkHeader"
+										value="선택" blockSelect="false" displayMode="label" sortable="false">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column5"
 										value="범주" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="77" inputType="text" style="height:20px" id="column4"
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column4"
 										value="뉴스제공처" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="350" inputType="text" style="height:20px" id="column3"
+									<w2:column removeBorderStyle="false" width="450" inputType="text" style="height:20px" id="column3"
 										value="뉴스 내용" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="167" inputType="text" style="height:20px" id="column2"
+									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column2"
 										value="출판일시" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="211" inputType="text" style="height:20px" id="column1"
+									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column1"
 										value="비고" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
 							</w2:header>
 							<w2:gBody width="40" style="" id="gBody1">
 								<w2:row style="" id="row2">
-									<w2:column removeBorderStyle="false" width="91" inputType="text" style="height:20px" id="CATEGORY"
-										 blockSelect="false" displayMode="label">
+									<w2:column falseValue="0" defaultValue="" trueValue="1" width="" readOnly="false" style="height:20px"
+										inputType="checkbox" id="chk" blockSelect="false">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="CATEGORY"
+										 blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="77" inputType="text" style="height:20px" id="PROV_NM"
-										value="" blockSelect="false" displayMode="label" hiddenClass="">
+										value="" blockSelect="false" displayMode="label" hiddenClass="" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="350" inputType="text" style="height:20px" id="NEWS_TITLE"
-										value="" blockSelect="false" displayMode="label">
+										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="167" inputType="text" style="height:20px" id="PUB_DT"
 										value="" blockSelect="false" displayMode="label" displayFormatter="scwin.dateDisFormatter">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="211" inputType="text" style="height:20px" id="column6"
-										value="" blockSelect="false" displayMode="label">
+										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
@@ -183,10 +253,10 @@
 							<w2:header id="header1" style="">
 								<w2:row id="row1" style="">
 									<w2:column blockSelect="false" displayMode="label" id="" inputType="text" removeBorderStyle="false"
-										style="height:20px" value="차량번호" width="195">
+										style="height:20px" value="차량번호" width="110">
 									</w2:column>
 									<w2:column blockSelect="false" displayMode="label" id="column4" inputType="text"
-										removeBorderStyle="false" style="height:20px" value="관리 ID" width="133">
+										removeBorderStyle="false" style="height:20px" value="관리 ID" width="110">
 									</w2:column>
 									<w2:column blockSelect="false" displayMode="label" id="column3" inputType="text"
 										removeBorderStyle="false" style="height:20px" value="전송일시" width="174">

@@ -94,6 +94,9 @@ public class FTPHandler {
 	@Value("${sftp.routeori.directory}")
 	private String ROUTE_ORI;
 	
+	@Value("${sftp.routemap.directory}")
+	private String ROUTEMAP;
+	
 	@Value("${sftp.device.firmware.directory}")
 	private String DEVICE_FIRMWARE_PATH;
 	
@@ -549,7 +552,7 @@ public class FTPHandler {
 		}
 		
 		//sbrt\routemap
-		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		String path = Paths.get(getRootLocalPath(), getRouteMapPath()).toString();
 		File file = new File(path + "/" + fileName);
 		
 		try {
@@ -574,7 +577,7 @@ public class FTPHandler {
 					checkNull(map.getOrDefault("Y", 		""));
 		}
 		
-		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		String path = Paths.get(getRootLocalPath(), getRouteMapPath()).toString();
 		File file = new File(path + "/" + fileName);
 		
 		try {
@@ -587,7 +590,7 @@ public class FTPHandler {
 	
 	/** 210824 routelist.csv 파일 read jh **/
 	public List<Map<String, Object>> readRoutList(String fileName) throws IOException {
-		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		String path = Paths.get(getRootLocalPath(), getRouteMapPath()).toString();
 		
 		File file = new File(path + "/" + fileName);
 		
@@ -631,10 +634,11 @@ public class FTPHandler {
 	
 	/** 210824 routelist.csv 업로드 **/
 	public void uploadRoutList(String fileName, String routVer, String maxVer, Map<String, Object> newRow) throws IOException{
-		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		String path = Paths.get(getRootLocalPath(), getRouteMapPath()).toString();
 		
 		File file = new File(path + "/" + fileName);
 		List<Map<String, Object>> list = new ArrayList<>();
+		
 		if(file.exists()) {
 			list = readRoutList("routelist.csv");
 		}else {
@@ -672,8 +676,7 @@ public class FTPHandler {
 		for(Map<String, Object> map : list) {
 			txt += Constants.CSVForms.ROW_SEPARATOR;
 			txt += map.get("FILE_NAME")
-				+  Constants.CSVForms.COMMA + map.get("FILE_NAME") 
-				+  Constants.CSVForms.COMMA + map.get("VERSION") 
+				+  Constants.CSVForms.COMMA + map.get("VERSION")
 				+  Constants.CSVForms.COMMA + map.get("DESTI_NO")
 				+  Constants.CSVForms.COMMA + map.get("ROUT_SHAPE")
 				+  Constants.CSVForms.COMMA + map.get("DAY1")
@@ -697,7 +700,7 @@ public class FTPHandler {
 	//TODO: 수정 필요함
 	public void deleteRoutemap(String routId) {
 		String routeOriPath = Paths.get(getRootLocalPath(), getRouteOriPath()).toString();
-		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		String path = Paths.get(getRootLocalPath(), getRouteMapPath()).toString();
 		
 		File routeCsv = new File(path + "/" + routId + ".csv");
 		File routePlayList = new File(routeOriPath + "/" + routId);
@@ -714,14 +717,12 @@ public class FTPHandler {
 				}				
 			}
 			routePlayList.delete();
-		}
-		
-		
+		}	
 	}
 	
 	/** 210824 노선별 routeinfo.csv jh **/
 	public void uploadRoutNodeList(List<Map<String, Object>> routNodeList, String routId, String routVer) {
-		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		String path = Paths.get(getRootLocalPath(), getRouteMapPath()).toString();
 		
 		String txt = Constants.CSVForms.ROUTE_VERSION + routVer 
 				   + Constants.CSVForms.ROW_SEPARATOR;		
@@ -735,7 +736,7 @@ public class FTPHandler {
 			txt += Constants.CSVForms.ROW_SEPARATOR + nodeMap.get("NODE_ID");
 		}
 		
-		File file = new File(path + "/" + routId + "/" + fileName);
+		File file = new File(path + "/" + "routelist" + "/" + routId + "/" + fileName);
 		
 		try {
 			createCSV(file, txt);
@@ -746,7 +747,7 @@ public class FTPHandler {
 	
 	/** 210824 노선별 link.csv jh **/
 	public void uploadRoutLinkList(List<Map<String, Object>> routLinkList, String routId, String routVer) {
-		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		String path = Paths.get(getRootLocalPath(), getRouteMapPath()).toString();
 		
 		String txt = Constants.CSVForms.ROUTE_VERSION + routVer 
 				   + Constants.CSVForms.ROW_SEPARATOR;		
@@ -765,7 +766,7 @@ public class FTPHandler {
 			 	+  Constants.CSVForms.COMMA + linkMap.get("EVENT_MS");
 		}
 		
-		File file = new File(path + "/" + routId + "/" + fileName);
+		File file = new File(path + "/" + "routelist" + "/" + routId + "/" + fileName);
 		
 		try {
 			createCSV(file, txt);
@@ -777,7 +778,7 @@ public class FTPHandler {
 	
 	/** 210824 노선별 playlist파일들 jh **/
 	public boolean uploadVoicePlayList(String routId, List<Map<String, Object>> orgaList) {
-		String routePath = "/route/" + routId + "/playlist";
+		String routePath = "/routemap/routelist/" + routId + "/playlist";
 		String playListPath = Paths.get(getRootLocalPath(), routePath).toString();
 		
 		try {
@@ -847,13 +848,6 @@ public class FTPHandler {
 				
 				createCSV(Paths.get(playListPath, fileName).toFile(), csvContent.toString());
 			}
-
-			//TODO: 삭제예정
-			/*
-			processSynchronize(playListPath, getRootServerPath() + routePath);
-			processSynchronize(getRootLocalPath() + getRoutePath(), getRootServerPath() + getRoutePath());
-			processSynchronize(getRootLocalPath() + getCommonAudioPath(), getRootServerPath() + getCommonAudioPath());
-			*/
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -861,7 +855,7 @@ public class FTPHandler {
     	return true;
 	} 
 	
-	/** ildId 세팅 **/
+	/** 210824 ildId 세팅 jh **/
 	public String setIldID(String vocId) {
 		if(Integer.parseInt(pi0206Mapper.isExistIld(vocId)) > 0) {
 			return vocId + ".ild";
@@ -869,6 +863,124 @@ public class FTPHandler {
 			return "";
 		}
 	}
+	
+	
+	/** 210825 노선별 courseinfo.csv jh **/
+	public void uploadCourseRoutList(List<Map<String, Object>> courseRoutList, String courseId, String courseVer) {
+		String path = Paths.get(getRootLocalPath(), getRouteMapPath()).toString();
+		String fileName = "courseinfo.csv";
+		
+		String txt = Constants.CSVForms.ROUTE_VERSION + courseVer 
+				   + Constants.CSVForms.ROW_SEPARATOR;		
+		
+		txt += Constants.CSVForms.ROUTE_TITLE;
+		
+		for(Map<String, Object> routMap : courseRoutList) {
+			txt += Constants.CSVForms.ROW_SEPARATOR + courseId
+				+ Constants.CSVForms.COMMA + routMap.get("SEQ")
+				+ Constants.CSVForms.COMMA + routMap.get("ROUT_ID");
+		}
+		
+		File file = new File(path + "/" + "courselist" + "/" + courseId + "/" + fileName);
+		
+		try {
+			createCSV(file, txt);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/** 210825 courselist.csv 파일 read jh **/
+	public List<Map<String, Object>> readCourseList(String fileName) throws IOException {
+		String path = Paths.get(getRootLocalPath(), getRouteMapPath()).toString();
+		
+		File file = new File(path + "/" + fileName);
+		
+		List<Map<String, Object>> list = new ArrayList<>();
+		
+        //입력 버퍼 생성
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "CP949"));
+        String line = "";
+        String[] tmp = null;
+        
+        int lineNum = 0;
+        while((line = br.readLine()) != null){
+        	lineNum++;
+        	
+        	if(lineNum <= 2) {
+        		continue;
+        	}else {        		
+        	Map<String, Object> map = new HashMap<>();
+        	tmp = line.split(",");
+        	
+    		map.put("COR_ID",		tmp[0]);
+    		map.put("COR_NM",		tmp[1]);
+    		map.put("COR_ENM",		tmp[2]);
+    			
+        	list.add(map);
+        	}
+        }
+        br.close();
+        
+        return list;
+	}
+	
+	/** 210825 courselist.csv 생성 jh **/
+	public boolean uploadCourseInfo(String fileName, String maxVer, Map<String, Object> newRow) {
+		String path = Paths.get(getRootLocalPath(), getRouteMapPath()).toString();
+		
+		File file = new File(path + "/" + fileName);
+		List<Map<String, Object>> list = new ArrayList<>();
+		if(file.exists()) {
+			try {
+				list = readCourseList("courselist.csv");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}else {
+			
+		}
+		
+		if(list.size() > 0) {
+			//기존에 정보가 있으면 업데이트, 없으면 인서트하도록 하겠음
+			int seq = 0;
+			boolean flag = false;
+			loop:
+			for(int i = 0; i < list.size(); i++) {
+				if(list.get(i).get("COR_ID").equals(newRow.get("COR_ID"))) {
+					flag = true;
+					seq = i;
+					break loop;
+				}			
+			}
+			if(flag) {
+				list.set(seq, newRow);
+			}else {
+				list.add(newRow);
+			}
+		}else {
+			list.add(newRow);
+		}
+					
+		String txt = "";
+		txt += Constants.CSVForms.ROUTE_VERSION + maxVer + Constants.CSVForms.ROW_SEPARATOR;
+		txt += Constants.CSVForms.COURSE_LIST;
+		
+		for(Map<String, Object> map : list) {
+			txt += Constants.CSVForms.ROW_SEPARATOR;
+			txt += map.get("COR_ID")
+				+  Constants.CSVForms.COMMA + map.get("COR_NM") 
+				+  Constants.CSVForms.COMMA + map.get("COR_ENM");
+		}
+		try {
+			createCSV(file, txt);
+			return true;
+		} catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	
 	/*
 	 * IL001이면 한글이고
@@ -1406,6 +1518,10 @@ public class FTPHandler {
 	
 	public String getRoutePath() {
 		return ROUTE_PATH;
+	}
+	
+	public String getRouteMapPath() {
+		return ROUTEMAP;
 	}
 	
 	public String getRouteOriPath() {
