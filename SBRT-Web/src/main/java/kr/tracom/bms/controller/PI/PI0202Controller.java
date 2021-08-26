@@ -36,5 +36,11 @@ public class PI0202Controller extends ControllerSupport {
 		result.setData("dlt_BMS_VOC_ORGA_INFO", pi0202Service.PI0202P0R0());
 		return result.getResult();
 	}	
+	
+	@RequestMapping("/pi/PI0202SHI0")
+	public @ResponseBody Map<String, Object> PI0202SHI0() throws Exception {
+		result.setData("dlt_searchitem", pi0202Service.PI0202SHI0());
+		return result.getResult();
+	}
 
 }

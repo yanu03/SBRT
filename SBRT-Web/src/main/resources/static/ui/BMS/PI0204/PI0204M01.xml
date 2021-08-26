@@ -33,11 +33,10 @@
 						<w2:column id="STTN_TEXT_A_EN" name="영어이번정류장문구" dataType="text"></w2:column>
 						<w2:column id="STTN_TEXT_B" name="다음정류장문구" dataType="text"></w2:column>
 						<w2:column id="STTN_TEXT_B_EN" name="영어다음정류장문구" dataType="text"></w2:column>
-						<w2:column id="UPD_DTM" name="갱신일시" dataType="text"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="date"></w2:column>
 						<w2:column id="UPD_ID" name="갱신ID" dataType="text"></w2:column>
 						<w2:column id="PLAY_DATE" name="재생기간" dataType="text"></w2:column>
 						<w2:column id="VOC_PATH" name="음성경로" dataType="text"></w2:column>
-						
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
@@ -74,17 +73,13 @@
 								 , srchGrp : pgm_header, keyColumn : "VOC_ID", focusColumn : "VOC_ID", name :  "음성 정보"}
 		};
 		
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
+		var mainOptions = {
+			ADD: {disp:"hide"}
+		}
+		
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions, mainOptions);
 	};
 	
-	scwin.dateDisFormatter = function(data){
-		if (data == "") return "";
-		return data.substring(0,4) + "-" + data.substring(4,6) + "-" + data.substring(6,8) + " " + data.substring(8,10) + ":" + data.substring(10,12);
-	}
-	scwin.playDateDisFormatter = function(data){
-		if (data == "") return "";
-		return data.substring(0,4) + "-" + data.substring(4,6) + "-" + data.substring(6,8) + "~" + data.substring(8,12) + "-" + data.substring(12,14) + "-" + data.substring(14,16);
-	}	
 	
 	scwin.upload0_onInputValueChange = function(fileName) {
 		
@@ -110,6 +105,20 @@
 		}
 	};
 	
+	scwin.upload0_ondone = function(retXml) {
+		
+		var doc_audio0 = document.getElementById("audio0");
+		var filePath = WebSquare.xml.getValue(retXml, "ret/storedFileList");
+		// 실서버 도메인 변경 필요
+		var realPath = "/data/fileUpload/up/";
+		//doc_audio0.src = realPath + filePath;
+		//dlt_BMS_VOC_INFO.setCellData(scwin.idxRowVOC, dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"), doc_audio0.src);
+		//doc_audio0.type = "audio/wav";
+		//doc_audio0.pause();
+		// 서버에 저장되도 404 error 발생함 바로 갱신이 안되는 문제
+		// 현재 동일한 파일명으로 업로드 시 (날짜) 형태로 서버에 파일이 생성되는데 괄호가 보안처리에 의해 다른 문자로 치환되서 DB에서 경로 가져올때 문제 있음  
+	};
+	
 	scwin.PI0201G0_onrowindexchange = function(row, oldRow) {
 		var doc_audio0 = document.getElementById("audio0");
         // 실서버 도메인 변경 필요
@@ -128,20 +137,6 @@
         console.log(doc_audio0.src);
 		doc_audio0.pause();
 	};	
-	
-	scwin.upload0_ondone = function(retXml) {
-		
-		var doc_audio0 = document.getElementById("audio0");
-		var filePath = WebSquare.xml.getValue(retXml, "ret/storedFileList");
-		// 실서버 도메인 변경 필요
-		var realPath = "/data/fileUpload/up/";
-		//doc_audio0.src = realPath + filePath;
-		//dlt_BMS_VOC_INFO.setCellData(scwin.idxRowVOC, dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"), doc_audio0.src);
-		//doc_audio0.type = "audio/wav";
-		//doc_audio0.pause();
-		// 서버에 저장되도 404 error 발생함 바로 갱신이 안되는 문제
-		// 현재 동일한 파일명으로 업로드 시 (날짜) 형태로 서버에 파일이 생성되는데 괄호가 보안처리에 의해 다른 문자로 치환되서 DB에서 경로 가져올때 문제 있음  
-	};
 	
 	scwin.sub_PI0204G0R0_submitdone = function(e) {
 		var rsCode = com.getResultCode(e)
@@ -244,7 +239,7 @@
 					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
 			</xf:group><!-- pgm_header -->
-			<xf:group id="pgm_content" class="pgm_content grdc_a_20_700" style="">
+			<xf:group id="pgm_content" class="pgm_content grdc_a_20_900" style="">
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_280_20_a" style="">
 					<xf:group id="" class="" style="">
 						<xf:group class="defaultbox" id="" style="">
@@ -260,16 +255,16 @@
 							class="cm_grid" tooltipPositionY="" focusMode="row">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row2">
-									<w2:column width="118" style="height:25px;" inputType="text" id="column9" value="선택음성 번호" blockSelect="false"
-										displayMode="label" userData1="" userData2="">
+									<w2:column width="100" style="height:25px;" inputType="text" id="column9" value="선택음성 번호" blockSelect="false"
+										displayMode="label" userData1="" userData2="" class="req">
 									</w2:column>
-									<w2:column width="159" style="height:25px;" inputType="text" id="column17" value="선택음성명" blockSelect="false"
+									<w2:column width="200" style="height:25px;" inputType="text" id="column17" value="선택음성명" blockSelect="false"
+										displayMode="label" userData1="" class="req">
+									</w2:column>
+									<w2:column width="70" style="height:25px;" inputType="text" id="column11" value="재생유형" blockSelect="false"
 										displayMode="label" userData1="">
 									</w2:column>
-									<w2:column width="80" style="height:25px;" inputType="text" id="column11" value="재생유형" blockSelect="false"
-										displayMode="label" userData1="">
-									</w2:column>
-									<w2:column width="126" style="height:25px;" inputType="text" id="column30" value="재생시간" blockSelect="false">
+									<w2:column width="80" style="height:25px;" inputType="text" id="column30" value="재생시간" blockSelect="false">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="163" inputType="text" style="height:25px" id="column31" value="비고"
 										blockSelect="false" displayMode="label">
@@ -282,7 +277,7 @@
 										readOnly="true" userData1="M" userData2="">
 									</w2:column>
 									<w2:column width="159" style="height:25px;" inputType="text" id="VOC_NM" blockSelect="false" displayMode="label"
-										readOnly="true" userData1="M">
+										readOnly="true" userData1="M" textAlign="left">
 									</w2:column>
 									<w2:column textAlign="center" width="80" style="height:25px;" inputType="text" id="PLAY_TYPE" blockSelect="false"
 										displayMode="label" readOnly="true" userData1="">
@@ -294,7 +289,7 @@
 										</w2:choices>
 									</w2:column>
 									<w2:column width="126" style="height:25px;" inputType="text" id="PLAY_TM" blockSelect="false" displayFormat=""
-										calendarValueType="yearMonthDateTime" applyFormat="" displayMode="" readOnly="true" displayFormatter="">
+										calendarValueType="yearMonthDateTime" applyFormat="" displayMode="" readOnly="true" displayFormatter="" textAlign="right">
 										<w2:choices>
 											<w2:itemset nodeset="data:dlt_organizationBasic">
 												<w2:label ref="PARENT_ORG_NM"></w2:label>
@@ -303,7 +298,7 @@
 										</w2:choices>
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="163" inputType="text" style="height:25px" id="REMARK" value=""
-										blockSelect="false" displayMode="label" readOnly="true" displayFormatter="scwin.playDateDisFormatter">
+										blockSelect="false" displayMode="label" readOnly="true" textAlign="left">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
@@ -376,8 +371,8 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input adjustMaxLength="false" id="VOC_ID" style="width:100%;height:24px;" ref="data:dlt_BMS_VOC_INFO.VOC_ID"
-										placeholder="" readOnly="true">
+									<xf:input adjustMaxLength="false" id="VOC_ID" style="width:100px;height:24px;" ref="data:dlt_BMS_VOC_INFO.VOC_ID"
+										placeholder="" readOnly="true" disabled="true">
 									</xf:input>
 								</xf:group>
 							</xf:group>
@@ -389,7 +384,7 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:input adjustMaxLength="false" id="VOC_NM" style="width:100%;height:24px;" ref="data:dlt_BMS_VOC_INFO.VOC_NM"
-										placeholder="">
+										placeholder="" maxlength="20">
 									</xf:input>
 								</xf:group>
 							</xf:group>
@@ -405,7 +400,7 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:select1 id="PLAY_TYPE" chooseOption="" style="width: 148px;height: 21px;" submenuSize="auto" allOption=""
+									<xf:select1 id="PLAY_TYPE" chooseOption="" style="width: 120px;height: 21px;" submenuSize="auto" allOption=""
 										disabled="" direction="auto" appearance="minimal" disabledClass="w2selectbox_disabled" title=""
 										ref="data:dlt_BMS_VOC_INFO.PLAY_TYPE" ev:onchange="scwin.PLAY_TYPE_onchange" ev:onviewchange="scwin.PLAY_TYPE_onviewchange">
 										<xf:choices>
@@ -434,14 +429,14 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<w2:upload imageStyle="position:absolute;vertical-align:middle;word-wrap:break-word"
-										inputStyle="vertical-align:middle;word-wrap:break-word" style="width: 100%;height: 23px;" id="VOC_PATH" inputClass=""
+										inputStyle="vertical-align:middle;word-wrap:break-word" style="width: 272px;height: 23px;" id="VOC_PATH" inputClass=""
 										ev:onInputValueChange="scwin.upload0_onInputValueChange" ev:ondone="scwin.upload0_ondone" accept=".wav,.tts" title="" type=""
 										disabled="true" class="">
 									</w2:upload>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" style="" class="w2tb_th">
+								<xf:group tagname="th" style="vertical-align: top;vertical-align: top;" class="w2tb_th">
 									화면&amp;nbsp;표시&amp;nbsp;문구
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -454,7 +449,7 @@
 									</w2:attributes>
 									<xf:group class="ml5 fr" id="" style=""></xf:group>
 
-									<xf:textarea id="SCR_TXT" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.SCR_TXT"></xf:textarea>
+									<xf:textarea id="SCR_TXT" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.SCR_TXT" maxlength="200"></xf:textarea>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
@@ -469,12 +464,12 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<audio controls="" style="width: 250px;height: 50px;" id="audio0" preload="" muted="" loop="" autoplay="">
+									<audio controls="" style="width: 250px;height: 25px;" id="audio0" preload="" muted="" loop="" autoplay="">
 									</audio>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" class="w2tb_th" style="height: 70px;" id="" tabIndex="">
+								<xf:group tagname="th" class="w2tb_th" style="height: 70px;vertical-align: top;" id="" tabIndex="">
 									비고
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -485,8 +480,9 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input adjustMaxLength="false" id="" style="width: 100%;height: 70px;" ref="data:dlt_BMS_VOC_INFO.REMARK">
-									</xf:input>
+									<xf:textarea adjustMaxLength="" class="" disabled="" id="REMARK" mandatory="" ref="data:dlt_BMS_VOC_INFO.REMARK"
+										style="width:100%;height:70px;" maxlength="200">
+									</xf:textarea>
 								</xf:group>
 							</xf:group>
 						</xf:group>
