@@ -5,13 +5,13 @@ public class Constants {
 	public static final Integer SYSTEM_BRT = 2; //차량운행관리
 	public static final Integer SYSTEM_ALL = 3; //전체
 	
-	public static final String NODE_TYPE_CROSS = "NT01"; //교차로
-	public static final String NODE_TYPE_BUSSTOP = "NT02"; //정류소
-	public static final String NODE_TYPE_NORMAL = "NT03"; //일반노드
-	public static final String NODE_TYPE_GARAGE = "NT04"; //차고지
-	public static final String NODE_TYPE_VERTEX = "NT05"; //버텍스
-	public static final String NODE_TYPE_SOUND = "NT06"; //음성노드
-	public static final String NODE_TYPE_ENTRY = "NT07"; //교통진출입점
+	public static final String NODE_TYPE_CROSS = "NT001"; //교차로
+	public static final String NODE_TYPE_BUSSTOP = "NT002"; //정류소
+	public static final String NODE_TYPE_NORMAL = "NT003"; //일반노드
+	public static final String NODE_TYPE_GARAGE = "NT004"; //차고지
+	public static final String NODE_TYPE_VERTEX = "NT005"; //버텍스
+	public static final String NODE_TYPE_SOUND = "NT006"; //음성노드
+	public static final String NODE_TYPE_ENTRY = "NT007"; //교통진출입점
 	
 	public static final String MOCK_NODE_TYPE_CROSS = "101"; //교차로
 	public static final String MOCK_NODE_TYPE_END = "102"; //시종점
@@ -64,8 +64,9 @@ public class Constants {
     	public static final String VOICE_PLAYLIST_TITLE		= "Seq_No,Voice_Code,Audio_FileName,Start_Date,Expire_Date,Text (256Byte),ild\r\n";
     	
     	public static final String ROUTE_VERSION			= "VERSION:";
-    	public static final String ROUTE_LIST				= "FILE_NAME,VERSION,ROUTE_NO,ROUTE_NAME_KO,ROUTE_NM_EN,ROUT_SHAPE,DAY1,DAY2,SATDAY1,SATDAY2,SUNDAY1,SUNDAY2,NAME";
+    	public static final String ROUTE_LIST				= "FILE_NAME,VERSION,DESTI_NO,ROUT_SHAPE,DAY1,DAY2,SATDAY1,SATDAY2,SUNDAY1,SUNDAY2,REP_NAME";
     	public static final String COURSE_LIST				= "COURSE_ID,COURSE_NAME_KO,COURSE_NAME_EN";
+    	public static final String COURSE_TITLE				= "COURSE_ID,SEQ,ROUTE_ID";
     	public static final String ROUTE_BUSSTOP_TITLE		= "NODE_ID,NODE_NAME,TYPE,RANGE,X,Y,NODE_ENAME,TRANSIT_CODE";
     	public static final String ROUTE_NODELIST_TITLE		= "NODE_ID,NODE_NAME,RANGE,X,Y";
     	public static final String ROUTE_TITLE				= "NODE_ID";

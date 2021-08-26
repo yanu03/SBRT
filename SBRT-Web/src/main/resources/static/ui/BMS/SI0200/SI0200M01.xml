@@ -22,16 +22,16 @@
 						<w2:column id="RELS_DT" name="출고일자" dataType="date"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column><w2:column id="MODEL_NM" name="모델명" dataType="text"></w2:column>
 						<w2:column id="VHC_KIND" name="차량종류" dataType="text"></w2:column>
-						<w2:column id="ROUT_DIV" name="노선구분" dataType="text"></w2:column>
+						<w2:column id="ROUT_TYPE" name="노선유형" dataType="text"></w2:column>
 						<w2:column id="VHC_TYPE" name="차량유형" dataType="text"></w2:column>
 						<w2:column id="VHC_FUEL" name="차량연료" dataType="text"></w2:column>
 						<w2:column id="VHC_STS" name="버스상태" dataType="text"></w2:column>
 						<w2:column id="PSG_CNT" name="승차인원" dataType="number" defaultValue="0"></w2:column>
-						<w2:column id="SPARE_YN" name="예비차여부" dataType="text"></w2:column>
-						<w2:column id="SCRAP_YN" name="대폐차여부" dataType="text"></w2:column>
+						<w2:column id="SPARE_YN" name="예비차여부" dataType="text" defaultValue="N"></w2:column>
+						<w2:column id="SCRAP_YN" name="대폐차여부" dataType="text" defaultValue="N"></w2:column>
 						<w2:column id="APPL_ST_DT" name="적용시작일" dataType="date"></w2:column>
 						<w2:column id="APPL_ED_DT" name="적용종료일" dataType="date"></w2:column>
-						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
+						<w2:column id="USE_YN" name="사용여부" dataType="text" defaultValue="Y"></w2:column>
 						<w2:column id="COMP_ID" name="운수사ID" dataType="text"></w2:column>
 						
 
@@ -88,7 +88,7 @@
 	scwin.onpageload = function() {
 		var codeOptions = [ {code : "AREA", compID : "AREA, SI0200G0:AREA" },
 							{code : "VHC_KIND", compID : "VHC_KIND, SI0200G0:VHC_KIND" },
-							{code : "ROUT_DIV", compID : "ROUT_DIV, SI0200G0:ROUT_DIV" },
+							{code : "ROUT_TYPE", compID : "ROUT_TYPE, SI0200G0:ROUT_TYPE" },
 							{code : "VHC_TYPE", compID : "VHC_TYPE, SI0200G0:VHC_TYPE" },								
 							{code : "VHC_FUEL", compID : "VHC_FUEL, SI0200G0:VHC_FUEL" },								
 							{code : "VHC_STS", compID : "VHC_STS, SI0200G0:VHC_STS" }								
@@ -118,6 +118,7 @@
 	
 	scwin.sub_SI0200G0K0_submitdone = function(e) {
 		com.addGridForm(SI0200G0, SI0200F0, dma_SEQ_BMS_VHC_MST_0, "VHC_ID", "VHC_NO");
+		
 	};
 
 	//찾기 버튼 이벤트
@@ -128,7 +129,7 @@
 		var opt = { id : "SI0200P01", 
 					popupName : "운수사 검색",
 					modal : true,  
-					width : 580, height: 430 };
+					width : 600, height: 500 };
 		com.openPopup("/ui/BMS/SI0200/SI0200P01.xml", opt, data);
 	};
 	
@@ -213,7 +214,7 @@
 					<w2:wframe class="" id="wfm_mainBtn" scope="true" src="/cm/common/wf_mainBtn.xml" style=""></w2:wframe>
 				</xf:group>
 			</xf:group>
-			<xf:group id="pgm_content" class="pgm_content grdc_a_20_700" style="">
+			<xf:group id="pgm_content" class="pgm_content grdc_a_20_900_minmax" style="">
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 					<xf:group class="defaultbox" id="" style="">
 						<w2:textbox class="df_tt fl" id="" label="차량 목록" style=""></w2:textbox>
@@ -233,26 +234,26 @@
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column14" value="차량ID"
+										blockSelect="false" displayMode="label" class="req">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="110" inputType="text" style="height:20px" id="column13" value="차량번호"
+										blockSelect="false" displayMode="label" class="req">
+									</w2:column>
+									<w2:column width="200" id="column6" value="운수사명" class="req">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column11" value="권역"
+										blockSelect="false" displayMode="label" class="req">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="170" inputType="text" style="height:20px" id="column10" value="차대번호"
 										blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px" id="column13" value="차량번호"
+									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column9" value="제조사"
 										blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column width="144" id="column6" value="운수사명">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="133" inputType="text" style="height:20px" id="column11" value="권역"
+									<w2:column removeBorderStyle="false" width="110" inputType="text" style="height:20px" id="column8" value="출고일자"
 										blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="146" inputType="text" style="height:20px" id="column10" value="차대번호"
-										blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="118" inputType="text" style="height:20px" id="column9" value="제조사"
-										blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="114" inputType="text" style="height:20px" id="column8" value="출고일자"
-										blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column width="70" id="column15" value="비고">
+									<w2:column width="380" id="column15" value="비고">
 									</w2:column>
 								</w2:row>
 							</w2:header>
@@ -264,21 +265,21 @@
 									<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px" id="VHC_NO" userData1="M" value=""
 										blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column width="144" id="COMP_NM">
+									<w2:column width="144" id="COMP_NM" textAlign="left" userData1="M" maxByteLength="" maxLength="30">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="133" inputType="select" style="height:20px" id="AREA" userData1="M"
 										eventPriority="oneditend" value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="146" inputType="text" style="height:20px" id="CHAS_NO" value=""
-										blockSelect="false" displayMode="label">
+										blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="118" inputType="text" style="height:20px" id="MAKER" value=""
-										blockSelect="false" displayMode="label">
+										blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="114" inputType="calendar" style="height:20px" id="RELS_DT" value=""
 										blockSelect="false" displayMode="label" dataType="date" displayFormatFunc="" displayFormatter="">
 									</w2:column>
-									<w2:column width="70" id="REMARK">
+									<w2:column width="70" id="REMARK" textAlign="left">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
@@ -321,8 +322,8 @@
 										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input class="" id="VHC_ID" mandatory="" ref="data:dlt_BMS_VHC_MST.VHC_ID" style="width:100%;height:21px;"
-										disabled="true" adjustMaxLength="">
+									<xf:input class="" id="VHC_ID" mandatory="" ref="data:dlt_BMS_VHC_MST.VHC_ID" style="width:100px;height:21px;"
+										disabled="true" adjustMaxLength="" maxlength="">
 									</xf:input>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_th req">
@@ -333,7 +334,7 @@
 									<w2:attributes></w2:attributes>
 									<xf:input adjustMaxLength="" class="req" disabled="" fireEventOnInvalid="" id="VHC_NO" invalidMessageFunc="" mandatory=""
 										readOnly="" ref="data:dlt_BMS_VHC_MST.VHC_NO" style="width:100%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
-										validator="">
+										validator="" maxlength="9">
 									</xf:input>
 								</xf:group>
 							</xf:group>
@@ -357,7 +358,7 @@
 									</w2:attributes>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="" chooseOptionLabel="전체" direction="auto" disabled="false"
 										disabledClass="w2selectbox_disabled" displayMode="label" id="AREA" labelWidthAuto="" mandatory="true" optionOrder=""
-										ref="data:dlt_BMS_VHC_MST.AREA" renderType="component" style="height:24px;" submenuSize="auto">
+										ref="data:dlt_BMS_VHC_MST.AREA" renderType="component" style="height:24px;width: 60%;" submenuSize="auto" class="req">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
@@ -370,7 +371,7 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:input adjustMaxLength="" class="" disabled="" id="CHAS_NO" mandatory="" ref="data:dlt_BMS_VHC_MST.CHAS_NO"
-										style="width:100%;height:21px;" allowChar="" validator="" validateOnInput="false" initValue="">
+										style="width:100%;height:21px;" allowChar="" validator="" validateOnInput="false" initValue="" maxByteLength="" maxlength="17">
 									</xf:input>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_th">
@@ -380,7 +381,7 @@
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes></w2:attributes>
 									<xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="MAKER" initValue="" mandatory=""
-										ref="data:dlt_BMS_VHC_MST.MAKER" style="width:100%;height:21px;" validateOnInput="false" validator="">
+										ref="data:dlt_BMS_VHC_MST.MAKER" style="width:100%;height:21px;" validateOnInput="false" validator="" maxlength="30">
 									</xf:input>
 								</xf:group>
 							</xf:group>
@@ -393,7 +394,7 @@
 									</w2:attributes>
 									<w2:inputCalendar calendarDisplayFormatFunc="" calendarValueType="yearMonthDate" displayFormat="" editType=""
 										focusOnDateSelect="false" footerDiv="false" id="RELS_DT" ioFormat="" ref="data:dlt_BMS_VHC_MST.RELS_DT" renderDiv="true"
-										renderType="component" rightAlign="false" style="height:23px;" autoFocus="" displayFormatFunc="">
+										renderType="component" rightAlign="false" style="height:23px;width: 110px;" autoFocus="" displayFormatFunc="">
 									</w2:inputCalendar>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_th">
@@ -403,17 +404,17 @@
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes></w2:attributes>
 									<xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="MODEL_NM" initValue="" mandatory=""
-										ref="data:dlt_BMS_VHC_MST.MODEL_NM" style="width:100%;height:21px;" validateOnInput="false" validator="">
+										ref="data:dlt_BMS_VHC_MST.MODEL_NM" style="width:100%;height:21px;" validateOnInput="false" validator="" maxlength="30">
 									</xf:input>
 								</xf:group>
 							</xf:group>
 							<xf:group style="" tagname="tr">
-								<xf:group class="w2tb_th" style="" tagname="th">노선구분</xf:group>
+								<xf:group class="w2tb_th" style="" tagname="th">노선유형</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<xf:group id="" style="">
 										<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel=" " direction="auto"
-											disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="ROUT_DIV" labelWidthAuto="" mandatory="true"
-											optionOrder="" ref="data:dlt_BMS_VHC_MST.ROUT_DIV" renderType="component" style="height:24px;" submenuSize="auto">
+											disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="ROUT_TYPE" labelWidthAuto="" mandatory="true"
+											optionOrder="" ref="data:dlt_BMS_VHC_MST.ROUT_TYPE" renderType="component" style="height:24px;width: 150px;" submenuSize="auto">
 											<xf:choices></xf:choices>
 										</xf:select1>
 									</xf:group>
@@ -428,7 +429,7 @@
 									</xf:group>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto" disabled="false"
 										disabledClass="w2selectbox_disabled" displayMode="label" id="VHC_KIND" labelWidthAuto="" mandatory="true" optionOrder=""
-										ref="data:dlt_BMS_VHC_MST.VHC_KIND" renderType="component" style="height:24px;" submenuSize="auto">
+										ref="data:dlt_BMS_VHC_MST.VHC_KIND" renderType="component" style="height:24px;width: 60%;" submenuSize="auto">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
@@ -444,7 +445,7 @@
 									<w2:attributes></w2:attributes>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto" disabled="false"
 										disabledClass="w2selectbox_disabled" displayMode="label" id="VHC_TYPE" labelWidthAuto="" mandatory="true" optionOrder=""
-										ref="data:dlt_BMS_VHC_MST.VHC_TYPE" renderType="component" style="height:24px;" submenuSize="auto">
+										ref="data:dlt_BMS_VHC_MST.VHC_TYPE" renderType="component" style="height:24px;width: 150px;" submenuSize="auto">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
@@ -461,7 +462,7 @@
 									</w2:attributes>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto" disabled="false"
 										disabledClass="w2selectbox_disabled" displayMode="label" id="VHC_FUEL" labelWidthAuto="" mandatory="true" optionOrder=""
-										ref="data:dlt_BMS_VHC_MST.VHC_FUEL" renderType="component" style="height:24px;" submenuSize="auto">
+										ref="data:dlt_BMS_VHC_MST.VHC_FUEL" renderType="component" style="height:24px;width: 60%;" submenuSize="auto">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
@@ -477,7 +478,7 @@
 									<w2:attributes></w2:attributes>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto" disabled="false"
 										disabledClass="w2selectbox_disabled" displayMode="label" id="VHC_STS" labelWidthAuto="" mandatory="true" optionOrder=""
-										ref="data:dlt_BMS_VHC_MST.VHC_STS" renderType="component" style="height:24px;" submenuSize="auto">
+										ref="data:dlt_BMS_VHC_MST.VHC_STS" renderType="component" style="height:24px;width: 150px;" submenuSize="auto">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
@@ -490,7 +491,7 @@
 								<xf:group class="w2tb_td" tagname="td">
 									<w2:attributes></w2:attributes>
 									<w2:spinner buttonSize="30" dataType="number" id="PSG_CNT" inputReadOnly="" min="0" ref="data:dlt_BMS_VHC_MST.PSG_CNT"
-										skin="type1" style="position: relative;width: 100%;height: 21px;" max="9999999">
+										skin="type1" style="position: relative;width: 110px;height: 21px;" max="9999999">
 									</w2:spinner>
 								</xf:group>
 							</xf:group>
@@ -502,9 +503,8 @@
 								</xf:group>
 								<xf:group class="w2tb_td" tagname="td">
 									<w2:attributes></w2:attributes>
-									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto" disabled="false"
-										disabledClass="w2selectbox_disabled" displayMode="label" id="SPARE_YN" labelWidthAuto="" mandatory="true" optionOrder=""
-										ref="data:dlt_BMS_VHC_MST.SPARE_YN" renderType="component" style="height:24px;" submenuSize="auto">
+									<xf:select1 id="" selectedIndex="0" appearance="full" style="width: 100%;height: 21px;margin-left: 20px;" cols="" 
+										rows="1" ref="data:dlt_BMS_VHC_MST.SPARE_YN">
 										<xf:choices>
 											<xf:item>
 												<xf:label><![CDATA[예]]></xf:label>
@@ -525,9 +525,21 @@
 								</xf:group>
 								<xf:group class="w2tb_td" tagname="td">
 									<w2:attributes></w2:attributes>
-									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto" disabled="false"
-										disabledClass="w2selectbox_disabled" displayMode="label" id="SCRAP_YN" labelWidthAuto="" mandatory="true" optionOrder=""
-										ref="data:dlt_BMS_VHC_MST.USE_YN" renderType="component" style="height:24px;" submenuSize="auto">
+									<xf:select1 appearance="full" cols="" id="" ref="data:dlt_BMS_VHC_MST.SCRAP_YN" rows="1"
+										selectedIndex="0" style="width: 100%;height: 21px;display: none;">
+										<xf:choices>
+											<xf:item>
+												<xf:label><![CDATA[예]]></xf:label>
+												<xf:value><![CDATA[Y]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[아니오]]></xf:label>
+												<xf:value><![CDATA[N]]></xf:value>
+											</xf:item>
+										</xf:choices>
+									</xf:select1>
+									<xf:select1 appearance="full" cols="" id="" ref="data:dlt_BMS_VHC_MST.SCRAP_YN" rows="1"
+										selectedIndex="0" style="width: 100%;height: 21px;margin-left: 20px;">
 										<xf:choices>
 											<xf:item>
 												<xf:label><![CDATA[예]]></xf:label>
@@ -553,9 +565,8 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto" disabled="false"
-										disabledClass="w2selectbox_disabled" displayMode="label" id="USE_YN" labelWidthAuto="" mandatory="true" optionOrder=""
-										ref="data:dlt_BMS_VHC_MST.USE_YN" renderType="component" style="height:24px;width: 35%" submenuSize="auto">
+									<xf:select1 id="" selectedIndex="0" appearance="full" style="width: 150px;height: 21px;margin-left: 20px" cols=""
+										rows="1" ref="data:dlt_BMS_VHC_MST.USE_YN">
 										<xf:choices>
 											<xf:item>
 												<xf:label><![CDATA[예]]></xf:label>
@@ -570,7 +581,7 @@
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" class="w2tb_th" style="height: 110px;" id="" tabIndex="">
+								<xf:group tagname="th" class="w2tb_th" style="height: 70px;vertical-align: top;" id="" tabIndex="">
 									비고
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -582,7 +593,7 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:textarea adjustMaxLength="" class="" disabled="" id="REMARK" mandatory="" ref="data:dlt_BMS_VHC_MST.REMARK"
-										style="width:100%;height:110px;">
+										style="width:100%;height:70px;" maxlength="200">
 									</xf:textarea>
 								</xf:group>
 							</xf:group>

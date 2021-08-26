@@ -3,38 +3,42 @@
 
 <mapper namespace="kr.tracom.bms.domain.SI0200.SI0200Mapper">
 	<select id="SI0200G0R0" resultType="Map">
-		select  VHC_ID,
-				b.COMP_NM,
-				a.COMP_ID,
-				a.AREA,
-				VHC_NO,
-				CHAS_NO,
-				MAKER,
-				DATE_FORMAT(RELS_DT,'%Y%m%d') RELS_DT,
-				MODEL_NM,
-				VHC_KIND,
-				ROUT_DIV,
-				VHC_TYPE,
-				VHC_FUEL,
-				VHC_STS,
-				PSG_CNT,
-				SPARE_YN,
-				SCRAP_YN,
-				DATE_FORMAT(APPL_ST_DT, '%Y%m%d') APPL_ST_DT,
-				DATE_FORMAT(APPL_ED_DT, '%Y%m%d') APPL_ED_DT,
-				USE_YN,
-				a.REMARK
-		from BMS_VHC_MST a, BMS_TRANSCOMP_MST b
-		where a.COMP_ID = b.COMP_ID	
-			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-				AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
-			</if>
-			<if test="TYPE == 'VHC_ID'">
-				AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%')
-			</if>
-			<if test="TYPE == 'VHC_NO'">
-				AND VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
-			</if>
+		SELECT 			A.VHC_ID,
+						B.COMP_NM,
+						A.COMP_ID,
+						A.AREA,
+						A.VHC_NO,
+						A.CHAS_NO,
+						A.MAKER,
+						DATE_FORMAT(RELS_DT,'%Y%m%d') RELS_DT,
+						A.MODEL_NM,
+						A.VHC_KIND,
+						A.ROUT_TYPE,
+						A.VHC_TYPE,
+						A.VHC_FUEL,
+						A.VHC_STS,
+						A.PSG_CNT,
+						A.SPARE_YN,
+						A.SCRAP_YN,
+						DATE_FORMAT(APPL_ST_DT, '%Y%m%d') APPL_ST_DT,
+						DATE_FORMAT(APPL_ED_DT, '%Y%m%d') APPL_ED_DT,
+						A.USE_YN,
+						A.REMARK
+		FROM			BMS_VHC_MST A
+		
+		INNER JOIN		BMS_TRANSCOMP_MST B
+			ON A.COMP_ID = B.COMP_ID
+			<where>
+				<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+					VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+				</if>
+				<if test="TYPE == 'VHC_ID'">
+					VHC_ID LIKE CONCAT('%',#{CONTENT},'%')
+				</if>
+				<if test="TYPE == 'VHC_NO'">
+					VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+				</if>			
+			</where>
 		
 	</select>	
 
@@ -52,14 +56,8 @@
 		SELECT COMP_ID, COMP_NM
 		FROM BMS_TRANSCOMP_MST
 		<where>
-			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-				AND COMP_ID LIKE CONCAT('%',#{CONTENT},'%') || COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
-			</if>
-			<if test="TYPE == 'COMP_ID'">
-				AND COMP_ID LIKE CONCAT('%',#{CONTENT},'%')
-			</if>
-			<if test="TYPE == 'COMP_NM'">
-				AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			<if test="CONTENT != ''">
+				COMP_ID LIKE CONCAT('%',#{CONTENT},'%') || COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 		</where>
 	</select>
@@ -76,7 +74,7 @@
 				RELS_DT,
 				MODEL_NM,
 				VHC_KIND,
-				ROUT_DIV,
+				ROUT_TYPE,
 				VHC_TYPE,
 				VHC_FUEL,
 				VHC_STS,
@@ -100,7 +98,7 @@
 				STR_TO_DATE(#{RELS_DT}, '%Y%m%d'),
 				#{MODEL_NM},
 				#{VHC_KIND},
-				#{ROUT_DIV},
+				#{ROUT_TYPE},
 				#{VHC_TYPE},
 				#{VHC_FUEL},
 				#{VHC_STS},
@@ -125,7 +123,7 @@
 				RELS_DT = STR_TO_DATE(#{RELS_DT}, '%Y%m%d'),
 				MODEL_NM = #{MODEL_NM},
 				VHC_KIND = #{VHC_KIND},
-				ROUT_DIV = #{ROUT_DIV},
+				ROUT_TYPE = #{ROUT_TYPE},
 				VHC_TYPE = #{VHC_TYPE},
 				VHC_FUEL = #{VHC_FUEL},
 				VHC_STS = #{VHC_STS},

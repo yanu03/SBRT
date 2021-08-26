@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.util.CommonUtil;
+import kr.tracom.util.Constants;
 import kr.tracom.util.Result;
 
 @Service
@@ -41,8 +42,20 @@ public class PI0202Service extends ServiceSupport{
 						key = pi0202Mapper.PI0202G1K0();
 					}
 					if(key!=null)data.put("NODE_ID",key.get("SEQ"));
+					
+					if(Constants.NODE_TYPE_VERTEX.equals((String) data.get("NODE_TYPE"))==false
+						&&Constants.NODE_TYPE_SOUND.equals((String) data.get("NODE_TYPE"))==false
+					) {
+						data.put("LINK_NODE_YN","Y");
+					}
+					
 					iCnt += pi0202Mapper.PI0202G1I0(data);
 				} else if (rowStatus.equals("U")) {
+					if(Constants.NODE_TYPE_VERTEX.equals((String) data.get("NODE_TYPE"))==false
+						&&Constants.NODE_TYPE_SOUND.equals((String) data.get("NODE_TYPE"))==false
+					) {
+						data.put("LINK_NODE_YN","Y");
+					}
 					uCnt += pi0202Mapper.PI0202G1U0(data);
 					
 				} else if (rowStatus.equals("D")) {

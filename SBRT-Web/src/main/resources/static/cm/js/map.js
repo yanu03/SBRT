@@ -2,11 +2,11 @@
 var routMap = {
 	mapInfo : [],
 	NODE_TYPE : {
-		CROSS : "NT01",
-		BUSSTOP : "NT02",
-		NORMAL : "NT03",
-		VERTEX : "NT05",
-		SOUND : "NT06"
+		CROSS : "NT001",
+		BUSSTOP : "NT002",
+		NORMAL : "NT003",
+		VERTEX : "NT005",
+		SOUND : "NT006"
 	},
 	MAX_NODE_CNT : 800,
 	LIMIT_SPEED : 50
@@ -1295,11 +1295,16 @@ routMap.focusNode = function(mapId, grid,focusIdx){
 	if(routMap.mapInfo[mapId].selectedIndex!=focusIdx){
 		routMap.mapInfo[mapId].selectedIndex = focusIdx;
 		
-		if(routMap.mapInfo[mapId].isSound){
-			routMap.drawSound(mapId, grid, focusIdx);
+		if(mapId == "map_AL0101"){
+			routMap.showNode(mapId, com.getGridDispJsonData(grid), focusIdx);
 		}
 		else {
-			routMap.drawRoute(mapId, grid, focusIdx);
+			if(routMap.mapInfo[mapId].isSound){
+				routMap.drawSound(mapId, grid, focusIdx);
+			}
+			else {
+				routMap.drawRoute(mapId, grid, focusIdx);
+			}
 		}
 	}
 	routMap.mapInfo[mapId].isMove = true;
@@ -1868,9 +1873,6 @@ routMap.showRoute = function(mapId, list, id, type) {
 }
 
 routMap.showRoute2 = function(mapId, list, focusIdx) {
-	
-	
-
 	routMap.initDisplay(mapId);
 	
 	if(list != null && list.length != 0) {
@@ -1935,6 +1937,31 @@ routMap.showRoute2 = function(mapId, list, focusIdx) {
 		}
 	}
 }
+
+routMap.showNode = function(mapId, list, focusIdx) {
+	
+	if(list != null && list.length != 0) {
+		for(var i = 0; i < list.length; i++) {
+			list[i].index = i;
+			
+			/**드래그이벤트**/
+			list[i].draggable = routMap.mapInfo[mapId].draggable;
+			
+			if((list[i].NODE_TYPE != routMap.NODE_TYPE.NORMAL) &&(list[i].NODE_TYPE != routMap.NODE_TYPE.VERTEX))
+				routMap.showMarker(mapId, list[i], i, focusIdx);
+		}
+
+		if(list.length>0){
+			if(focusIdx!=-1){
+				routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+			}
+			else {
+				routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
+			}
+		}
+	}
+}
+
 
 routMap.showVehicle = function(mapId, list, vhc_id, grid) {
 

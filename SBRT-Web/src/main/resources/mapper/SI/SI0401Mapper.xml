@@ -4,13 +4,13 @@
 <mapper namespace="kr.tracom.bms.domain.SI0401.SI0401Mapper">
 
 <select id="SI0401G0R0" resultType="Map">
-	select  ROUT_ID,
+	SELECT  ROUT_ID,
 			REP_ROUT_ID,
 			INT_ROUT_ID,
 			REP_ROUT_NM,
 			ROUT_NM,
 			ROUT_TYPE,
-			ROUT_DIV,
+			DVC_NM,
 			RSV_ROUT_YN,
 			ST_STTN_ID,
 			ST_STTN_NM,
@@ -28,8 +28,8 @@
 			JIT_DSPCH_YN,
 			LIC_VHC_CNT,
 			SPR_VHC_CNT,
-			DATE_FORMAT(APPL_ST_DT, '%Y%m%d') APPL_ST_DT,
-			DATE_FORMAT(APPL_ED_DT, '%Y%m%d') APPL_ED_DT,
+			DATE_FORMAT(APPL_ST_DT, '%Y%M%D') APPL_ST_DT,
+			DATE_FORMAT(APPL_ED_DT, '%Y%M%D') APPL_ED_DT,
 			WAY_DIV,
 			USER_WAY_DIV,
 			WAY_INFO,
@@ -39,7 +39,7 @@
 			USE_YN,
 			REMARK
 			
-	from BMS_ROUT_MST
+	FROM BMS_ROUT_MST
 	<where>
 	<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
 		<if test="TYPE == 'ALL'">
@@ -56,7 +56,7 @@
 		</if>
 	</if>
 	</where>
-	order by REP_ROUT_NM, WAY_DIV
+	ORDER BY REP_ROUT_NM, WAY_DIV
 </select>
 
 <select id="SI0401G0K0" resultType="Map">
@@ -64,20 +64,23 @@
 </select>
 
 <select id="SI0401SHI0" resultType="Map">
-	select ROUT_ID, ROUT_NM, REP_ROUT_NM
-	from BMS_ROUT_MST
-	order by ROUT_ID
+	SELECT ROUT_ID, ROUT_NM, REP_ROUT_NM
+	FROM BMS_ROUT_MST
+	ORDER BY ROUT_ID
 </select>
 
 <insert id="SI0401G0I0" parameterType="Map">
-	insert into BMS_ROUT_MST(
+	INSERT INTO BMS_ROUT_MST(
 			ROUT_ID,
 			REP_ROUT_ID,
+			<if test = "@kr.tracom.util.CommonUtil@notEmpty(INT_ROUT_ID)">
 			INT_ROUT_ID,
+			</if>
 			REP_ROUT_NM,
 			ROUT_NM,
 			ROUT_TYPE,
 			ROUT_DIV,
+			DVC_NM,
 			RSV_ROUT_YN,
 			ST_STTN_ID,
 			ST_STTN_NM,
@@ -109,15 +112,18 @@
 			UPD_ID
 			)
 	
-	values		
+	VALUES		
 			(
 			#{ROUT_ID},
 			#{REP_ROUT_ID},
+			<if test = "@kr.tracom.util.CommonUtil@notEmpty(INT_ROUT_ID)">			
 			#{INT_ROUT_ID},
+			</if>
 			#{REP_ROUT_NM},
 			#{ROUT_NM},
 			#{ROUT_TYPE},
 			#{ROUT_DIV},
+			#{DVC_NM},
 			#{RSV_ROUT_YN},
 			#{ST_STTN_ID},
 			#{ST_STTN_NM},
@@ -151,14 +157,17 @@
 </insert>
 
 <update id="SI0401G0U0" parameterType="Map">
-	update BMS_ROUT_MST
-	set 	ROUT_ID = #{ROUT_ID},
+	UPDATE BMS_ROUT_MST
+	SET 	ROUT_ID = #{ROUT_ID},
 			REP_ROUT_ID = #{REP_ROUT_ID},
+			<if test = "@kr.tracom.util.CommonUtil@notEmpty(INT_ROUT_ID)">
 			INT_ROUT_ID = #{INT_ROUT_ID},
+			</if>
 			REP_ROUT_NM = #{REP_ROUT_NM},
 			ROUT_NM = #{ROUT_NM},
 			ROUT_TYPE = #{ROUT_TYPE},
 			ROUT_DIV = #{ROUT_DIV},
+			DVC_NM = #{DVC_NM},
 			RSV_ROUT_YN = #{RSV_ROUT_YN},
 			ST_STTN_ID = #{ST_STTN_ID},
 			ST_STTN_NM = #{ST_STTN_NM},
@@ -188,41 +197,41 @@
 			REMARK = #{REMARK},
 			UPD_DTM = #{UPD_DTM},
 			UPD_ID  = #{SSN_USER_ID}
-	where ROUT_ID = #{ROUT_ID}
+	WHERE ROUT_ID = #{ROUT_ID}
 </update>
 
 <delete id="SI0401G0D0" parameterType="Map">
-	delete
-	from BMS_ROUT_MST
-	where ROUT_ID = #{ROUT_ID};
+	DELETE
+	FROM BMS_ROUT_MST
+	WHERE ROUT_ID = #{ROUT_ID};
 	
-	delete
-	from BMS_ROUT_COMP_CMPSTN
-	where ROUT_ID = #{ROUT_ID};
+	DELETE
+	FROM BMS_ROUT_COMP_CMPSTN
+	WHERE ROUT_ID = #{ROUT_ID};
 </delete>
 
 <select id="SI0401G1R0" resultType="Map">
- 	select a.COMP_ID, a.AREA, a.COMP_NM, a.REMARK, b.ROUT_ID
-	from BMS_TRANSCOMP_MST a INNER JOIN BMS_ROUT_COMP_CMPSTN b ON a.COMP_ID=b.COMP_ID 
-	WHERE b.ROUT_ID = #{ROUT_ID}
+ 	SELECT A.COMP_ID, A.AREA, A.COMP_NM, A.REMARK, B.ROUT_ID
+	FROM BMS_TRANSCOMP_MST A INNER JOIN BMS_ROUT_COMP_CMPSTN B ON A.COMP_ID=B.COMP_ID 
+	WHERE B.ROUT_ID = #{ROUT_ID}
 </select>
 
 <insert id="SI0401G1I0" parameterType="Map">
-	insert into BMS_ROUT_COMP_CMPSTN
+	INSERT INTO BMS_ROUT_COMP_CMPSTN
 		   (ROUT_ID, COMP_ID)
-	values (#{ROUT_ID}, #{COMP_ID})
+	VALUES (#{ROUT_ID}, #{COMP_ID})
 
 </insert>
 
 <delete id="SI0401G1D0" parameterType="Map">
-	delete from BMS_ROUT_COMP_CMPSTN
-	where ROUT_ID = #{ROUT_ID} 
-	and COMP_ID = #{COMP_ID}
+	DELETE FROM BMS_ROUT_COMP_CMPSTN
+	WHERE ROUT_ID = #{ROUT_ID} 
+	AND COMP_ID = #{COMP_ID}
 </delete>
 
 <select id="SI0401P0R0" resultType="Map">
-	select COMP_ID, COMP_NM
-	from BMS_TRANSCOMP_MST
+	SELECT COMP_ID, COMP_NM
+	FROM BMS_TRANSCOMP_MST
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 				AND COMP_ID LIKE CONCAT('%',#{CONTENT},'%') || COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
@@ -237,7 +246,7 @@
 </select>
 
 <select id="SI0401P1R0" resultType="Map">
-	SELECT REP_ROUT_ID, REP_ROUT_NM, USE_YN, REMARK
+	SELECT REP_ROUT_ID, REP_ROUT_NM, ROUT_TYPE, WAY_YN, HOLI_YN, REMARK
 	FROM BMS_REP_ROUT_MST WHERE USE_YN = 'Y'
 	<if test="CONTENT != null and CONTENT != ''">
 		AND REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
@@ -255,20 +264,26 @@
 </select>
 
 <insert id="SI0401P1I0" parameterType="Map">
-	insert into BMS_REP_ROUT_MST
+	INSERT INTO BMS_REP_ROUT_MST
 			(
 			REP_ROUT_ID,
 			REP_ROUT_NM,
+			ROUT_TYPE,
+			WAY_YN,
+			HOLI_YN,
 			USE_YN,
 			REMARK,
 			UPD_DTM,
 			UPD_ID
 			)
 	
-	values		
+	VALUES		
 			(
 			#{REP_ROUT_ID},
 			#{REP_ROUT_NM},
+			#{ROUT_TYPE},
+			#{WAY_YN},
+			#{HOLI_YN},
 			'Y',
 			#{REMARK},
 			#{UPD_DTM},
@@ -277,13 +292,16 @@
 </insert>
 
 <update id="SI0401P1U0" parameterType="Map">
-	update BMS_REP_ROUT_MST
-	set 	REP_ROUT_NM = #{REP_ROUT_NM},
+	UPDATE BMS_REP_ROUT_MST
+	SET 	REP_ROUT_NM = #{REP_ROUT_NM},
+			ROUT_TYPE = #{ROUT_TYPE},
+			WAY_YN = #{WAY_YN},
+			HOLI_YN = #{HOLI_YN},
 			USE_YN = 'Y',
 			REMARK = #{REMARK},
 			UPD_DTM = #{UPD_DTM},
 			UPD_ID  = #{SSN_USER_ID}
-	where REP_ROUT_ID = #{REP_ROUT_ID}
+	WHERE REP_ROUT_ID = #{REP_ROUT_ID}
 </update>
 
 <delete id="SI0401P1D0" parameterType="Map">
@@ -296,8 +314,8 @@
 </delete>
 
 <select id="SI0401P2R0" resultType="Map">
-	select STTN_ID, STTN_NM, STTN_ENM
-	from BMS_STTN_MST
+	SELECT STTN_ID, STTN_NM, STTN_ENM
+	FROM BMS_STTN_MST
 	<where>
 		<if test="CONTENT != null and CONTENT != ''">
 			AND STTN_ID LIKE CONCAT('%',#{CONTENT},'%') || STTN_NM LIKE CONCAT('%',#{CONTENT},'%') 

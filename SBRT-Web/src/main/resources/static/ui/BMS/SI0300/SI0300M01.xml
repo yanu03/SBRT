@@ -56,6 +56,7 @@
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
 					<w2:columnInfo>
+						<w2:column id="DRV_ID" name="운전자ID" dataType="text"></w2:column>
 						<w2:column id="DRV_NM" name="운전자명" dataType="text"></w2:column>
 						<w2:column id="COMP_NM" name="운수사명" dataType="text"></w2:column>
 					</w2:columnInfo>
@@ -130,8 +131,9 @@
 				   	 
 		var opt = { id : "SI0300P01", 
 					popupName : "운수사 검색",
-					modal : true,  
-					width : 580, height: 430 };
+					width : 600,
+					height : 500,
+					modal : true};
 		com.openPopup("/ui/BMS/SI0300/SI0300P01.xml", opt, data);		
 	};
 	
@@ -237,7 +239,6 @@
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
 							optionOrder="false" ref="data:dma_search.TYPE" style="" class="search_type" submenuSize="auto"
 							textAlign="left">
-
 							<xf:choices>
 								<xf:item>
 									<xf:label><![CDATA[전체]]></xf:label>
@@ -274,7 +275,7 @@
 				</xf:group>
 			</xf:group>
 
-			<xf:group id="pgm_content" class="pgm_content grdc_a_20_700" style="">
+			<xf:group id="pgm_content" class="pgm_content grdc_a_20_900_minmax" style="">
 
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 					<xf:group class="defaultbox" id="" style="">
@@ -295,20 +296,23 @@
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column14"
-										value="사번" blockSelect="false" displayMode="label">
+										value="사번" blockSelect="false" displayMode="label" class="req">
 									</w2:column>
-									<w2:column width="87" id="column6" value="운전자명"></w2:column>
-									<w2:column removeBorderStyle="false" width="154" inputType="text" style="height:20px" id="column13"
-										value="운수사명" blockSelect="false" displayMode="label">
+									<w2:column width="87" id="column6" value="운전자명" class="req"></w2:column>
+									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column13"
+										value="운수사명" blockSelect="false" displayMode="label" class="req">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="146" inputType="text" style="height:20px" id="column10"
-										value="전화번호" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="118" inputType="text" style="height:20px" id="column9"
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column9"
 										value="버스구분" blockSelect="false" displayMode="label" disabled="">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="114" inputType="text" style="height:20px" id="column8"
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column10"
+										value="전화번호" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column8"
 										value="입사일" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column16"
+										value="재직여부" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column width="70" id="column15" value="비고"></w2:column>
 								</w2:row>
@@ -320,18 +324,21 @@
 									</w2:column>
 									<w2:column width="87" id="DRV_NM" userData1="M"></w2:column>
 									<w2:column removeBorderStyle="false" width="154" inputType="text" style="height:20px" id="COMP_NM"
-										userData1="M" value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="146" inputType="text" style="height:20px" id="PHONE"
-										value="" blockSelect="false" displayMode="label">
+										userData1="M" value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="118" inputType="select" style="height:20px" id="BUS_DIV"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="146" inputType="text" style="height:20px" id="PHONE"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="114" inputType="calendar" style="height:20px"
 										id="EPLY_DATE1" value="" blockSelect="false" displayMode="label" dataType="date" displayFormatFunc="" displayFormatter="">
 									</w2:column>
-									<w2:column width="70" id="REMARK"></w2:column>
+									<w2:column removeBorderStyle="false" width="118" inputType="select" style="height:20px" id="EPLY_YN"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column width="70" id="REMARK" textAlign="left"></w2:column>
 								</w2:row>
 							</w2:gBody>
 							<w2:footer style="" id="footer1">
@@ -373,16 +380,16 @@
 										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input class="" id="DRV_ID" mandatory="" ref="data:dlt_BMS_DRV_MST.DRV_ID" style="width:100%;height:21px;"
+									<xf:input class="" id="DRV_ID" mandatory="" ref="data:dlt_BMS_DRV_MST.DRV_ID" style="width:100px;height:21px;"
 										disabled="true" adjustMaxLength="" maxlength="6">
 									</xf:input>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_th req">운전자명<w2:attributes></w2:attributes></xf:group>
-								<xf:group tagname="td" class="w2tb_td">
+								<xf:group tagname="td" class="w2tb_td" style="width:">
 									<w2:attributes></w2:attributes>
 									<xf:input adjustMaxLength="" class="req" disabled="" fireEventOnInvalid="" id="DRV_NM" invalidMessageFunc="" mandatory=""
 										readOnly="" ref="data:dlt_BMS_DRV_MST.DRV_NM" style="width:100%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
-										validator="">
+										validator="" maxlength="30">
 									</xf:input>
 								</xf:group>
 							</xf:group>
@@ -390,7 +397,7 @@
 								<xf:group class="w2tb_th req" style="" tagname="th">운수사</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<xf:input adjustMaxLength="" class="req" disabled="" fireEventOnInvalid="" id="COMP_NM" invalidMessageFunc="" mandatory=""
-										readOnly="" ref="data:dlt_BMS_DRV_MST.COMP_NM" style="width:80%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
+										readOnly="" ref="data:dlt_BMS_DRV_MST.COMP_NM" style="width:85%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
 										validator="" ev:oneditenter="" ev:onfocus="scwin.COMP_NM_onfocus">
 									</xf:input>
 									<xf:image class="btn" ev:onclick="scwin.btn_searchComp_onclick" id="btn_searchComp" longdesc=""
@@ -406,7 +413,7 @@
 									</w2:attributes>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto"
 										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="BUS_DIV" labelWidthAuto="" mandatory="true"
-										optionOrder="" ref="data:dlt_BMS_DRV_MST.BUS_DIV" renderType="component" style="height:24px;" submenuSize="auto">
+										optionOrder="" ref="data:dlt_BMS_DRV_MST.BUS_DIV" renderType="component" style="height:24px;width: 150px;" submenuSize="auto">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
@@ -418,9 +425,9 @@
 										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input allowChar="0-9" customModelFormatter="com.transPhone" customModelUnformatter=""
+									<xf:input allowChar="0-9-" customModelFormatter="com.transPhone" customModelUnformatter=""
 										dataType="text" disabled="" displayFormatter="com.transPhone" id="PHONE" maskFormat="" maxlength="13" minByteLength=""
-										ref="data:dlt_BMS_DRV_MST.PHONE" style="width:100%;height: 21px;" validator="">
+										ref="data:dlt_BMS_DRV_MST.PHONE" style="width:130px;height: 21px;" validator="">
 									</xf:input>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_th">입사일<w2:attributes></w2:attributes></xf:group>
@@ -428,7 +435,7 @@
 									<w2:attributes></w2:attributes>
 									<w2:inputCalendar calendarDisplayFormatFunc="" calendarValueType="yearMonthDate" displayFormat=""
 										editType="" focusOnDateSelect="false" footerDiv="false" id="EPLY_DATE1" ioFormat="" ref="data:dlt_BMS_DRV_MST.EPLY_DATE1" renderDiv="true"
-										renderType="component" rightAlign="false" style="height:23px;" calendarDisplayFormat="">
+										renderType="component" rightAlign="false" style="height:23px;width: 110px;" calendarDisplayFormat="">
 									</w2:inputCalendar>
 								</xf:group>
 							</xf:group>
@@ -439,8 +446,8 @@
 										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="LIC_NO" initValue="" mandatory=""
-										ref="data:dlt_BMS_DRV_MST.LIC_NO" style="width:100%;height:21px;" validateOnInput="false" validator="" maskFormat="" ioFormat="">
+									<xf:input adjustMaxLength="" allowChar="0-9-" class="" disabled="" id="LIC_NO" initValue="" mandatory=""
+										ref="data:dlt_BMS_DRV_MST.LIC_NO" style="width:130px;height:21px;" validateOnInput="false" validator="" maskFormat="" ioFormat="" maxlength="12">
 									</xf:input>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_th">자격취득일<w2:attributes></w2:attributes></xf:group>
@@ -449,7 +456,7 @@
 									<w2:inputCalendar calendarDisplayFormat="" calendarDisplayFormatFunc=""
 										calendarValueType="yearMonthDate" displayFormat="" editType="" focusOnDateSelect="false" footerDiv="false" id="CERTI_DT"
 										ioFormat="" ref="data:dlt_BMS_DRV_MST.CERTI_DT" renderDiv="true" renderType="component" rightAlign="false"
-										style="height:23px;">
+										style="height:23px;width: 110px;">
 									</w2:inputCalendar>
 								</xf:group>
 							</xf:group>
@@ -459,7 +466,7 @@
 									<xf:group id="" style=""></xf:group>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto"
 										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="EPLY_YN" labelWidthAuto="" mandatory="true"
-										optionOrder="" ref="data:dlt_BMS_DRV_MST.EPLY_YN" renderType="component" style="height:24px;" submenuSize="auto">
+										optionOrder="" ref="data:dlt_BMS_DRV_MST.EPLY_YN" renderType="component" style="height:24px;width: 130px;" submenuSize="auto">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
@@ -472,7 +479,7 @@
 									<xf:group id="" style=""></xf:group>
 									<w2:inputCalendar calendarDisplayFormat="" calendarDisplayFormatFunc=""
 										calendarValueType="yearMonthDate" displayFormat="" editType="" focusOnDateSelect="false" footerDiv="false" id="RETIRE_DT"
-										ioFormat="" ref="data:dlt_BMS_DRV_MST.RETIRE_DT" renderDiv="true" renderType="component" rightAlign="false" style="height:23px;">
+										ioFormat="" ref="data:dlt_BMS_DRV_MST.RETIRE_DT" renderDiv="true" renderType="component" rightAlign="false" style="height:23px;width: 110px;">
 									</w2:inputCalendar>
 								</xf:group>
 							</xf:group>
@@ -487,14 +494,14 @@
 										<xf:label><![CDATA[파일 선택]]></xf:label>
 									</w2:anchor>-->
 									<w2:upload imageStyle="position:absolute;vertical-align:middle;word-wrap:break-word"
-										inputStyle="vertical-align:middle;word-wrap:break-word" style="width: 100%;height: 23px;" id="btn_upload" inputClass=""
+										inputStyle="vertical-align:middle;word-wrap:break-word" style="width: 272px;height: 23px;" id="btn_upload" inputClass=""
 										ev:onInputValueChange="scwin.upload0_onInputValueChange" ev:ondone="scwin.upload0_ondone" accept=".png,.jpg" title="" type=""
 										disabled="false" class="">
 									</w2:upload>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" class="w2tb_th" style="height: 70px;" id="" tabIndex="">
+								<xf:group tagname="th" class="w2tb_th" style="height: 70px;vertical-align: top;" id="" tabIndex="">
 									사원이미지
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -511,7 +518,7 @@
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" class="w2tb_th" style="height: 110px;" id="" tabIndex="">
+								<xf:group tagname="th" class="w2tb_th" style="height: 90px;vertical-align: top;" id="" tabIndex="">
 									비고
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -523,7 +530,7 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:textarea adjustMaxLength="" class="" disabled="" id="REMARK" mandatory="" ref="data:dlt_BMS_DRV_MST.REMARK"
-										style="width:100%;height:110px;">
+										style="width:100%;height:90px;" maxlength="200">
 									</xf:textarea>
 								</xf:group>
 							</xf:group>

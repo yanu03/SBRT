@@ -821,7 +821,7 @@ com.resultMsg = function(resultData) {
 	switch (resultData.statusCode) {
 	case msgCode.STATUS_ERROR:
 		if (resultData.errorCode == "E0001") {
-			com.alert(resultData.message + " 로그인 화면으로 이동하겠습니다.", "com.goHome");
+			com.alert(/*resultData.message + */" 로그인 화면으로 이동하겠습니다.", "com.goHome");
 		} else if (resultData.errorCode == "E9998") { // HTTP ERROR ex)404,500,0
 			resultData.message = resultData.message;
 		} else if (resultData.errorCode == "E9999") { // business logic error
@@ -1982,6 +1982,7 @@ com.setEnterKeyEvent = function(grpObj, objFunc) {
  * com.alert("우편번호를 선택하시기 바랍니다.", "scwin.alertCallBack");
  */
 com.alert = function(messageStr, closeCallbackFncName) {
+	
 	com.messagBox("alert", messageStr, closeCallbackFncName);
 };
 
@@ -4104,8 +4105,8 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						mainBtn.addClass(item.class);
 						mainBtn.bind("onclick", eval("usrOpt."+i));
 					}
-					else if((typeof eval(usrOpt[i].cbFnc) === "function")||(typeof eval(usrOpt[i].nm) !== "undefined")
-							||(typeof eval(usrOpt[i].class) !== "undefined")){
+					else if((typeof eval(usrOpt[i].cbFnc) === "function")||(typeof usrOpt[i].nm !== "undefined")
+							||(typeof usrOpt[i].class !== "undefined")){
 						var tmpParentIdx = wfm_mainBtn.getWindow().btn_main_generator.insertChild();
 						var mainBtn = wfm_mainBtn.getWindow().btn_main_generator.getChild(tmpParentIdx, "btn_main");
 						if(typeof eval(usrOpt[i].cbFnc) === "function"){
@@ -5949,23 +5950,58 @@ com.closeTab = function(mainGrid, subGrid, yesno_str){
 	else com.tabClose();
 }
 
+com.recurMatchedIndex = function(data, indexs, column, value){
+
+	var retValue;
+	for (var i = 0; i < indexs.length; i++) {
+		if(eval("data.getRowJSON(index)."+column)==value){
+			retValue.push(data.getMatchedIndex(column, value));
+		}
+	}
+	return retValue;
+}
+
+com.getMatchedIndex = function(data, keyColumn, keyValue){
+	var keyColumnArr = keyColumn.split(',');
+	var keyValueArr = keyValue.split(',');
+	
+	var indexs = data.getMatchedIndex(keyColumnArr[0], keyValueArr[0]);
+
+	for (var i = 1; i < keyColumnArr.length; i++) {
+		indexs = com.recurMatchedIndex(data, indexs, keyColumnArr[i], keyValueArr[i]);
+	}
+	return indexs;
+}
+
 com.setFocusedCell = function(grid, focusColumn) {
 	
 	try{
 		var gridInfo = gcm.GRID_INFO[grid.org_id];
 		if ((typeof gridInfo != "undefined") && (gridInfo!=null)){
-			if(gridInfo.CUR_ROW_INDEX==-1 || (typeof gridInfo.keyValue != "undefined") || (gridInfo.keyColumn == null)){
+			if(gridInfo.CUR_ROW_INDEX==-1 || (typeof gridInfo.keyValue == "undefined") || (gridInfo.keyColumn == null)){
 				grid.setFocusedCell(0, focusColumn);
 			}
 			else {
 				var data = com.getGridViewDataList(grid);
-				var curIndex = data.getMatchedIndex(gridInfo.keyColumn, gridInfo.keyValue);
+				var curIndex = com.getMatchedIndex(data, gridInfo.keyColumn, gridInfo.keyValue);
+				//var curIndex = data.getMatchedIndex(gridInfo.keyColumn, gridInfo.keyValue);
 				grid.setFocusedCell(curIndex, focusColumn);
 			}
 		}
 		else{
 			grid.setFocusedCell(0, focusColumn);
 		}
+	} catch (e) {
+		
+	}
+};
+
+com.setFocusedCell2 = function(grid, searchColumn, searchValue) {
+	
+	try{
+		var data = com.getGridViewDataList(grid);
+		var curIndex = data.getMatchedIndex(searchColumn, searchValue);
+		grid.setFocusedCell(curIndex, searchColumn);
 	} catch (e) {
 		
 	}
@@ -6100,23 +6136,31 @@ com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, f
 	var modifiedMainCnt = mainData.getModifiedIndex().length;
 	var modifiedSubCnt = subData.getModifiedIndex().length;
 	var curKeyValue = "";
+	var curKeyValues = "";
 	var keyColumn = "";
-	try{
-		curKeyValue = mainData.getCellData(row, gcm.GRID_INFO[mainGrid.org_id].keyColumn);
-		
+	try{		
 		if ((typeof focusOption.keyMapColumn !== "undefined") && (focusOption.keyMapColumn!==null)){ //keyMap의 column명이 다를때...
 			keyColumn = focusOption.keyMapColumn;
 		}
 		else{
 			keyColumn = gcm.GRID_INFO[mainGrid.org_id].keyColumn;
 		}
-		focusOption.keyMap.set(keyColumn, curKeyValue);
+		var keyColumnArr = keyColumn.split(',');
+
+		for (var i = 0; i < keyColumnArr.length; i++) {
+			curKeyValue = mainData.getCellData(row, keyColumnArr[i]);
+			focusOption.keyMap.set(keyColumn, curKeyValue);
+			
+			if(i!=0)curKeyValues += ",";
+			curKeyValues += (curKeyValue);
+		}
+
 		subNm = gcm.GRID_INFO[subGrid.org_id].name;
 	} catch (e) {
 		
 	}
 
-	com.setGridInfo(mainGrid, focusOption,row, curKeyValue, oldRow);
+	com.setGridInfo(mainGrid, focusOption,row, curKeyValues, oldRow);
 
 	if (modifiedSubCnt > 0) {
 		if(gcm.GRID_INFO[mainGrid.org_id].dualSaving){ //메인/서브 그리드 저장중에는 저장여부 팝업 출력 되지 않도록 함
@@ -6167,10 +6211,11 @@ com.changeThirdGrid = function(mainGrid, subGrid1, subGrid2, subSaveSbmObj1, sub
 	var modifiedSubCnt1 = subData1.getModifiedIndex().length;
 	var modifiedSubCnt2 = subData2.getModifiedIndex().length;
 	
+	var curKeyValues = "";
 	var curKeyValue = "";
 	var keyColumn = "";
 	try{
-		curKeyValue = mainData.getCellData(row, gcm.GRID_INFO[mainGrid.org_id].keyColumn);
+		//curKeyValue = mainData.getCellData(row, gcm.GRID_INFO[mainGrid.org_id].keyColumn);
 		
 		if ((typeof focusOption.keyMapColumn !== "undefined") && (focusOption.keyMapColumn!==null)){ //keyMap의 column명이 다를때...
 			keyColumn = focusOption.keyMapColumn;
@@ -6178,12 +6223,22 @@ com.changeThirdGrid = function(mainGrid, subGrid1, subGrid2, subSaveSbmObj1, sub
 		else{
 			keyColumn = gcm.GRID_INFO[mainGrid.org_id].keyColumn;
 		}
-		focusOption.keyMap.set(keyColumn, curKeyValue);
+		//focusOption.keyMap.set(keyColumn, curKeyValue);
+		var keyColumnArr = keyColumn.split(',');
+
+		
+		for (var i = 0; i < keyColumnArr.length; i++) {
+			curKeyValue = mainData.getCellData(row, keyColumnArr[i]);
+			focusOption.keyMap.set(keyColumn, curKeyValue);
+			
+			if(i!=0)curKeyValues += ",";
+			curKeyValues += (curKeyValue);
+		}
 	} catch (e) {
 		
 	}
 
-	com.setGridInfo(mainGrid, focusOption,row, curKeyValue, oldRow);
+	com.setGridInfo(mainGrid, focusOption,row, curKeyValues, oldRow);
 
 	if (modifiedSubCnt1 > 0 || modifiedSubCnt2 > 0) {
 		if(gcm.GRID_INFO[mainGrid.org_id].dualSaving){ //메인/서브 그리드 저장중에는 저장여부 팝업 출력 되지 않도록 함
@@ -6241,6 +6296,7 @@ com.changeThirdGrid2 = function(mainGrid, subGrid1, subGrid2, subSrchSbmObj1, su
 	var modifiedSubCnt2 = subData2.getModifiedIndex().length;
 	
 	var curKeyValue = "";
+	var curKeyValues = "";
 	var keyColumn = "";
 	try{
 		curKeyValue = mainData.getCellData(row, gcm.GRID_INFO[mainGrid.org_id].keyColumn);
@@ -6251,12 +6307,21 @@ com.changeThirdGrid2 = function(mainGrid, subGrid1, subGrid2, subSrchSbmObj1, su
 		else{
 			keyColumn = gcm.GRID_INFO[mainGrid.org_id].keyColumn;
 		}
-		focusOption.keyMap.set(keyColumn, curKeyValue);
+		//focusOption.keyMap.set(keyColumn, curKeyValue);
+		var keyColumnArr = keyColumn.split(',');
+
+		for (var i = 0; i < keyColumnArr.length; i++) {
+			curKeyValue = mainData.getCellData(row, keyColumnArr[i]);
+			focusOption.keyMap.set(keyColumn, curKeyValue);
+			
+			if(i!=0)curKeyValues += ",";
+			curKeyValues += (curKeyValue);
+		}
 	} catch (e) {
 		
 	}
 	
-	com.setGridInfo(mainGrid, focusOption,row, curKeyValue, oldRow);
+	com.setGridInfo(mainGrid, focusOption,row, curKeyValues, oldRow);
 	
 	if (modifiedSubCnt1 > 0 || modifiedSubCnt2 > 0) {
 		if(gcm.GRID_INFO[mainGrid.org_id].dualSaving){ //메인/서브 그리드 저장중에는 저장여부 팝업 출력 되지 않도록 함
@@ -6305,10 +6370,20 @@ com.changeThirdGrid2 = function(mainGrid, subGrid1, subGrid2, subSrchSbmObj1, su
 com.changeSingleGrid = function(mainGrid, row, oldRow) {
 	
 	var curKeyValue = "";
+	var curKeyValues = "";
 	try{
 		var mainData = com.getGridViewDataList(mainGrid);
-		curKeyValue = mainData.getCellData(row, gcm.GRID_INFO[mainGrid.org_id].keyColumn);
-		com.setGridInfo(mainGrid, null,row, curKeyValue, oldRow);
+		var keyColumn = mainData.getCellData(row, gcm.GRID_INFO[mainGrid.org_id].keyColumn);
+		var keyColumnArr = keyColumn.split(',');
+
+		for (var i = 0; i < keyColumnArr.length; i++) {
+			curKeyValue = mainData.getCellData(row, keyColumnArr[i]);
+			focusOption.keyMap.set(keyColumn, curKeyValue);
+			
+			if(i!=0)curKeyValues += ",";
+			curKeyValues += (curKeyValue);
+		}
+		com.setGridInfo(mainGrid, null,row, curKeyValues, oldRow);
 	} catch (e) {
 		
 	}

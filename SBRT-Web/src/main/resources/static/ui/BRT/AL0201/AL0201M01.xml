@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head meta_vertical_guides="" meta_horizontal_guides="">
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataList id="dlt_BRT_OPER_PL_MST" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
+					<w2:columnInfo>
+						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
+						<w2:column id="WAY_DIV" name="상하행구분" dataType="text"></w2:column>
+						<w2:column id="DAY_DIV" name="요일구분" dataType="text"></w2:column>
+						<w2:column id="OPER_CNT" name="운행횟수" dataType="text"></w2:column>
+						<w2:column id="ALLOC_CNT" name="배차횟수" dataType="text"></w2:column>
+						<w2:column id="FST_TM" name="첫차시간" dataType="text"></w2:column>
+						<w2:column id="LST_TM" name="막차시간" dataType="text"></w2:column>
+						<w2:column id="AM_PEAK" name="오전첨두시" dataType="text"></w2:column>
+						<w2:column id="PM_PEAK" name="오후첨두시" dataType="text"></w2:column>
+						<w2:column id="NONE_PEAK" name="비첨두시" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataList id="dlt_BRT_OPER_PL_ROUT_INFO" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
+					<w2:columnInfo>
+						<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
+						<w2:column id="WAY_DIV" name="상하행구분" dataType="text"></w2:column>
+						<w2:column id="DAY_DIV" name="요일구분" dataType="text"></w2:column>
+						<w2:column id="OPER_SN" name="운행순번" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
+						<w2:column id="ROUT_ST_TM" name="노선시작시간" dataType="text"></w2:column>
+						<w2:column id="ROUT_ED_TM" name="노선종료시간" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataMap baseNode="map" id="dma_sub_search">
+					<w2:keyInfo>
+						<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
+						<w2:column id="WAY_DIV" name="상하행구분" dataType="text"></w2:column>
+						<w2:column id="DAY_DIV" name="요일구분" dataType="text"></w2:column>
+					</w2:keyInfo>
+				</w2:dataMap>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_AL0201G0R0" ref="data:json,dma_search" target="data:json,dlt_BRT_OPER_PL_MST" action="/al/AL0201G0R0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="sub_AL0201G0R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_AL0201SHI0" ref="" target="data:json,dlt_searchitem" action="/al/AL0201SHI0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_AL0201G0S0" ref='data:json,[{"id":"dlt_BRT_OPER_PL_MST","action":"modified"},"dma_search"]' target="data:json,dlt_BRT_OPER_PL_MST"
+				action="/al/AL0201G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="저장중 입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0201G0S0_submitdone" ev:submiterror="">
+			</xf:submission>
+			<xf:submission id="sub_AL0201G1R0" ref="data:json,dma_sub_search" target='data:json,dlt_BRT_OPER_PL_ROUT_INFO' action="/al/AL0201G1R0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_AL0201G1R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_AL0201G1S0" ref='data:json,[{"id":"dlt_BRT_OPER_PL_ROUT_INFO","action":"modified"},"dma_sub_search"]' target="data:json,dlt_BRT_OPER_PL_ROUT_INFO"
+				action="/al/AL0201G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중 입니다..."
+				ev:submit="" ev:submitdone="scwin.sub_AL0201G1S0_submitdone" ev:submiterror="">
+			</xf:submission>
+		</xf:model>
+	<script type="text/javascript" lazy="false"><![CDATA[
+
+	scwin.onpageload = function() {
+	
+		var autoOptions = {
+			Main : { grid : AL0201G0, srchSbm : sub_AL0201G0R0, savSbm : sub_AL0201G0S0, srchGrp : pgm_header, keyColumn : "REP_ROUT_ID,WAY_DIV,DAY_DIV", 
+					focusColumn : "REP_ROUT_ID", name :  "대표노선 운행계획 목록"},
+			Sub1 : { grid : AL0201G1, srchSbm : sub_AL0201G1R0, savSbm : sub_AL0201G1S0, name :  "대표노선 운행계획 상세"}
+		 };
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);
+		
+		var subOptions = {
+			ADD: {}, DEL:{}, CNL:{}, EXL:{}, SAVE:{}
+		};
+		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);	
+		
+		var codeOptions = [{ code : "WAY_DIV", compID : "AL0201G0:WAY_DIV"},{ code : "DAY_DIV", compID : "AL0201G0:DAY_DIV"}];
+		com.setCommonDtl(codeOptions, function() {
+				com.searchGrid(AL0201G0,sub_AL0201G0R0);
+		});
+	};
+
+	scwin.onpageunload = function() {
+
+	};
+	
+	scwin.sub_AL0201G0R0_submitdone = function(e) {
+	
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+			com.setFocusedCell(AL0201G0, "REP_ROUT_ID");
+		}
+	};
+
+	scwin.AL0201G0_onrowindexchange = function(row, oldRow) {
+		
+		dma_sub_search.set("REP_ROUT_ID", dlt_BRT_OPER_PL_MST.getCellData(row, "REP_ROUT_ID"));
+		dma_sub_search.set("WAY_DIV", dlt_BRT_OPER_PL_MST.getCellData(row, "WAY_DIV"));
+		dma_sub_search.set("DAY_DIV", dlt_BRT_OPER_PL_MST.getCellData(row, "DAY_DIV"));
+	
+		var focusOption = {keyMap : dma_program, keyMapColumn : "REP_ROUT_ID,WAY_DIV,DAY_DIV""};
+		
+		com.changeDualGrid(AL0201G0, AL0201G1, sub_AL0201G1S0,
+					sub_AL0201G1R0, focusOption , row, oldRow, ""대표노선 운행계획 상세");
+	};
+
+	scwin.sub_AL0201G0S0All_submitdone = function(e) {
+		var rsCode = com.getResultCode(e)
+
+		if (rsCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+	
+			com.saveDone(AL0201G0,sub_AL0201G0R0,AL0201G1);
+		}
+	};
+
+	scwin.sub_AL0201G0S0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+			com.saveDone(AL0201G0,sub_AL0201G0R0);
+		}
+	};
+
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {
+		
+		if (info.newValue == "ALL") {
+			acb_autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} else if (info.newValue == "REP_ROUT_ID") {
+			search_input.hide();
+			autoChoiceBox.setNodeSet("data:dlt_searchitem", "REP_ROUT_ID", "REP_ROUT_ID");
+			autoChoiceBox.show("");
+		} else if (info.newValue == "REP_ROUT_NM") {
+			search_input.hide();
+			autoChoiceBox.setNodeSet("data:dlt_searchitem", "REP_ROUT_NM", "REP_ROUT_NM");
+			autoChoiceBox.show("");
+		}
+	};
+	scwin.sub_AL0201G1S0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+			com.saveDone(AL0201G1,sub_AL0201G1R0);
+		}			
+	};
+
+	scwin.AL0201G0_oneditkeyup = function(info) {
+		if ((info.keyCode == 13) && (info.colID == "REP_ROUT_ID")) {
+			scwin.AL0201G0_ontextimageclick(info.rowIndex, info.colIndex);
+		}
+	};
+
+	scwin.AL0201G0_ontextimageclick = function(row,col) {
+		var data = {callbackFn : "scwin.REP_ROUT_NM_SEARCH_callback" };
+		var options = { id : "AL0201G0",
+						popupName : "대표노선 목록", 
+						modal : true};
+		com.openPopup("/cm/common/popUpRepRoutList.xml", options, data);
+	};
+	
+	scwin.REP_ROUT_NM_SEARCH_callback = function(obj) {
+		
+		dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "REP_ROUT_ID", obj[0].REP_ROUT_ID);
+		dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ROUT_TYPE", obj[0].ROUT_TYPE);
+		dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "HOLI_YN", obj[0].HOLI_YN);
+
+		REP_ROUT_NM.setValue(obj[0].REP_ROUT_NM);
+	};	
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
+			<xf:group id="pgm_navi" class="pgm_navi" style="">
+				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
+			</xf:group>
+			
+			<xf:group id="pgm_header" class="pgm_header" style="">
+				<xf:group id="" style="" class="gr_search">
+					<xf:group id="" style="" class="label">
+							<w2:span id="" class="" label="검색 항목"></w2:span>
+					</xf:group>
+					<xf:group id="" style="" class="search">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" style="" submenuSize="auto"
+							textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[대표노선ID]]></xf:label>
+									<xf:value><![CDATA[REP_ROUT_ID]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[대표노선명]]></xf:label>
+									<xf:value><![CDATA[REP_ROUT_NM]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="대표노선 ID 또는 대표노선명"></xf:input>
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
+							id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
+							class="search_auto" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+							<w2:choices>
+								<w2:itemset nodeset="data:dlt_searchitem">
+									<w2:label ref="대표노선ID"></w2:label>
+									<w2:value ref="REP_ROUT_ID"></w2:value>
+								</w2:itemset>
+							</w2:choices>
+						</w2:autoComplete>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group><!-- pgm_header -->
+			<xf:group id="pgm_content" class="pgm_content grdc_4f_20_6f" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
+					<xf:group id="" class="" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="대표노선 운행계획 목록" style=""></w2:textbox>
+						</xf:group>
+					</xf:group>
+					<xf:group></xf:group>
+					<xf:group id="" class="" style="">
+						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.AL0201G0_onrowindexchange" editModeEvent="onclick"
+							groupbyZoneHeight="" showSortableImage="" useShiftKey="true" scrollByColumn="false" sortable="true" rowStatusHeaderValue="상태"
+							rowStatusVisible="false" fixedColumnWithHidden="true" dataList="dlt_BRT_OPER_PL_MST" keyMoveEditMode="true" ev:oneditkeyup="scwin.AL0201G0_oneditkeyup"
+							ev:ontextimageclick="scwin.AL0201G0_ontextimageclick" ignoreCellClick="false" style="" autoFit="lastColumn" visibleRowNum="" id="AL0201G0"
+							ev:onafteredit="" class="cm_grid left" autoFitMinWidth="" rowNumHeaderValue="순서" rowNumVisible="true">
+							<w2:header id="header1" style="">
+								<w2:row id="row2" style="">
+									<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" value=""
+										displayMode="label" fixColumnWidth="true">
+									</w2:column> -->
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:25px;" id="column27"
+										value="대표노선ID" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column id="column16" blockSelect="false" style="height:25px;" width="80" inputType="text" value="프로그램코드"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="column11" blockSelect="false" style="height:25px;" width="120" inputType="text" value="프로그램명"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="column26" blockSelect="false" width="200" inputType="text" value="프로그램소스경로" textAlign="left"
+										style="height:25px;">
+									</w2:column>
+									<w2:column id="column24" blockSelect="false" width="60" inputType="text" value="사용여부" style="height:25px;"></w2:column>
+									<w2:column id="column22" blockSelect="false" width="100%" inputType="text" value="비고" style="height:25px;"></w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody id="gBody4" style="">
+								<w2:row id="row5" style="">
+									<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox"
+										displayMode="label">
+									</w2:column> -->
+									<w2:column id="REP_ROUT_ID" blockSelect="false" width="70" inputType="textImage" textAlign="left"
+										imageSrc="/cm/images/inc/btn_search.png" readOnly="" viewType="" imageHeight="22" imageWidth="22" chooseOptionLabel="" userData1="">
+									</w2:column>
+
+									<w2:column id="REP_ROUT_ID" blockSelect="false" readOnly="false" style="height:25px" hidden="false" width=""
+										inputType="text" customFormatter="" displayMode="label" class="req" userData1="M">
+									</w2:column>
+									<w2:column depthColumn="" id="PROG_NM" blockSelect="false" showDepth="3" style="height:25px;" depthType="div"
+										width="" inputType="text" displayMode="label" textAlign="left" class="req">
+									</w2:column>
+									<w2:column id="PROG_PH" blockSelect="false" width="" inputType="text" textAlign="left"></w2:column>
+									<w2:column id="USE_YN" blockSelect="false" trueValue="Y" falseValue="N" width="" inputType="checkbox"
+										valueType="other" fixColumnWidth="true">
+									</w2:column>
+									<w2:column id="REMARK" blockSelect="false" width="" inputType="text"></w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer style="" id="footer1">
+								<w2:row style="" id="row3">
+									<w2:column removeBorderStyle="false" width="" inputType="expression" style="height:20px;" id="column42" value=""
+										blockSelect="false" displayMode="label" colSpan="15" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')"
+										textAlign="left">
+									</w2:column>
+									<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column51" value=""
+										blockSelect="false" displayMode="label">
+									</w2:column> -->
+								</w2:row>
+							</w2:footer>
+						</w2:gridView>
+					</xf:group>
+				</xf:group><!-- pgm_list -->
+				<xf:group id="" class="vertical_line">
+				</xf:group>
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_a" style="">
+					<xf:group id="" class="gr_sub_header" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="대표노선 운행계획 상세" style=""></w2:textbox>
+						</xf:group>
+						<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
+					</xf:group>
+					<xf:group></xf:group>
+					<xf:group id="" class="" style="">
+						<w2:gridView ignoreCellClick="false" autoFit="lastColumn" rowStatusWidth="40" visibleRowNum="" class="cm_grid right"
+							fixedColumnWithHidden="true" dataList="dlt_BRT_OPER_PL_ROUT_INFO" id="AL0201G1" readOnly="" style=""
+							scrollByColumn="false" useShiftKey="true" rowStatusVisible="false" rowStatusHeaderValue="상태" ev:oncellclick="" 
+							rowNumHeaderValue="순서" rowNumVisible="true" rowNumStatusUniqueId="" rowNumStatusResize="">
+							<w2:header id="header1" style="">
+								<w2:row id="row2" style="">
+									<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="40" inputType="checkbox" value="선택"
+										displayMode="label" fixColumnWidth="true">
+									</w2:column> -->
+									<w2:column id="column1" blockSelect="false" style="height:25px;" width="80" inputType="text" value="권한코드"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="column2" blockSelect="false" style="height:25px;" width="150" inputType="text" value="권한명"
+										displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column3" value="권한체크"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column4" value="조회체크"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column5" value="저장권한"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column7" value="엑셀폼"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column8" value="엑셀입력"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column9" value="엑셀"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<!-- <w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column10" value="삭제"
+										blockSelect="false" displayMode="label">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column11" value="추가"
+										blockSelect="false" displayMode="label">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column12" value="닫기"
+										blockSelect="false" displayMode="label">
+										</w2:column> -->
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column13" value="예약"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column14" value="실행"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column15" value="확정"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column16" value="설정"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column17" value="초기화"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column18" value="기능키8"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:25px;" id="column19" value="도움말"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody id="gBody4" style="">
+								<w2:row id="row5" style="">
+									<!-- <w2:column id="chk" blockSelect="false" style="height:25px;" width="20" inputType="checkbox"
+										displayMode="label">
+									</w2:column> -->
+									<w2:column id="AUTH_CD" blockSelect="false" readOnly="true" style="height:25px;" width="80" inputType="text"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="AUTH_NM" blockSelect="false" readOnly="true" style="height:25px;" width="227" inputType="text"
+										displayMode="label" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="AUTH_CHECK" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="SCH_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="SAV_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="GEX_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="IEX_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="EXL_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<!-- <w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="DEL_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN1_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+										</w2:column> 
+										<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN2_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+										</w2:column>-->
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN3_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN4_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN5_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN6_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN7_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="FN8_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="checkbox" style="" id="HELP_AH" value=""
+										blockSelect="false" displayMode="label" fixColumnWidth="true" valueType="other" trueValue="Y" falseValue="N" readOnly="">
+									</w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer id="footer1" style="">
+								<w2:row id="row3" style="">
+									<w2:column blockSelect="false" colSpan="15" displayMode="label"
+										expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" id="column42" inputType="expression" removeBorderStyle="false"
+										style="height:20px;" textAlign="left" width="1830">
+									</w2:column>
+								</w2:row>
+							</w2:footer>
+						</w2:gridView>
+				</xf:group>
+			</xf:group> <!-- pgm_detail -->
+		</xf:group>
+	</xf:group>
+	</body>
+</html>

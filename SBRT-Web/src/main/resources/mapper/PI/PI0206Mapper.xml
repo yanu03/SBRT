@@ -268,12 +268,12 @@
  	<select id="selectStnAudioList" resultType="Map">
  		SELECT DISTINCT
 			STTN_ID AS NODE_ID
-		    , STTN_NM AS NODE_NM
+		    , REPLACE(STTN_NM, ',', '.') AS NODE_NM
 		    , '1' AS 'NODE_TYPE'
 		    , '30' AS 'RANGE'
 		    , TRUNCATE(GPS_X, 6) AS X
 		    , TRUNCATE(GPS_Y, 6) AS Y
-		    , IFNULL(STTN_ENM, '') AS NODE_ENAME
+		    , IFNULL(REPLACE(STTN_ENM, ',', '.'), '') AS NODE_ENAME
  	<![CDATA[, IF(IFNULL(IF(LINE_CNT >= 3, 2, LINE_CNT -1), 0) < 0, 0, IFNULL(IF(LINE_CNT >= 3, 2, LINE_CNT -1), 0)) AS TRANSIT_CODE]]>
 		FROM
 			BMS_STTN_MST 
@@ -284,7 +284,7 @@
 		
 		SELECT DISTINCT
 			ORGA_ID AS NODE_ID
-		    , ORGA_NM AS NODE_NM
+		    , REPLACE(ORGA_NM, ',', '.') AS NODE_NM
 		    , '898' AS 'NODE_TYPE'
 		    , '30' AS 'RANGE'
 		    , TRUNCATE(GPS_X, 6) AS X
@@ -309,18 +309,18 @@
 	<!-- 노선 정보 리스트  jh -->	
 	<select id="selectRoutInfoList" parameterType="String" resultType="Map">
 		SELECT
-			A.ROUT_ID
-			, A.REP_ROUT_ID
-			, A.INT_ROUT_ID
-			, A.REP_ROUT_NM
-			, A.ROUT_NM
-			, B.DL_CD_NM
+			A.ROUT_ID			AS ROUT_ID
+			, A.REP_ROUT_ID		AS REP_ROUT_ID
+			, A.INT_ROUT_ID		AS INT_ROUT_ID
+			, A.REP_ROUT_NM		AS REP_ROUT_NM
+			, REPLACE(A.ROUT_NM, ',', '.') AS ROUT_NM
+			, B.DL_CD_NM		AS WAY_DIV
 		FROM BMS_ROUT_MST A
 			LEFT JOIN BMS_DL_CD_INFO B ON A.WAY_DIV = B.DL_CD AND B.CO_CD = 'WAY_DIV'
 		WHERE ROUT_ID IN
 			(
 			<foreach collection="routList" item="item" separator=",">
-				#{item.ROUT_ID}
+				#{item}
 			</foreach> 
 			)
 	</select>
@@ -329,7 +329,7 @@
 	<select id="selectRoutLinkList" resultType="Map" parameterType="String">
 		SELECT
 			A.LINK_ID		AS LINK_ID
-		    , B.LINK_NM		AS LINK_NAME
+		    , REPLACE(B.LINK_NM, ',', '.')		AS LINK_NAME
 		    , B.ST_NODE_ID	AS ST_NODE
 		    , B.ED_NODE_ID	AS ED_NODE
 		    , B.LEN			AS LEN
@@ -349,7 +349,7 @@
 	<select id="selectRoutOrgaList" resultType="Map" parameterType="String">
 		SELECT
 			B.ORGA_ID	AS ORGA_ID
-		    , B.ORGA_NM	AS ORGA_NM
+		    , REPLACE(B.ORGA_NM, ',', '.')	AS ORGA_NM
 		    , B.REMARK	AS REMARK
 		FROM
 			BMS_ROUT_NODE_CMPSTN A
@@ -385,7 +385,7 @@
     	SELECT
     		COUNT(*) AS COUNT
     	FROM
-    		BM_INNER_LED
+    		BMS_INNER_LED_INFO
     	WHERE
     		VOC_ID = CONCAT(#{value})
     </select>
@@ -393,14 +393,14 @@
     <select id="selectCourseInfoList" resultType="Map" parameterType="String">
     	SELECT
 			COR_ID
-			, COR_NM
-			, COR_NM AS COR_ENM
+			, REPLACE(COR_NM, ',', '.') AS COR_NM
+			, REPLACE(COR_NM, ',', '.') AS COR_ENM
 		FROM
 			BRT_COR_MST
 		WHERE
 			COR_ID IN (
 			<foreach collection="courseList" item="item" separator=",">
-				#{item.COR_ID}
+				#{item}
 			</foreach> 
 			)
     </select>
@@ -415,5 +415,24 @@
 		WHERE
 			COR_ID = #{courseId}
 		ORDER BY SEQ ASC
+    </select>
+    
+    <select id="makeRoutNewRow" resultType="Map" parameterType="String">
+    	SELECT
+			 CONCAT(ROUT_ID, '.csv') AS FILE_NAME
+			, CONCAT(SUBSTR(DATE_FORMAT(A.UPD_DTM, '%Y%m%d'), 3), "00") AS VERSION
+			, DVC_NM		AS DESTI_NO
+			, IFNULL(C.TXT_VAL1, "")	AS ROUT_SHAPE
+			, (SELECT IFNULL(CONCAT(MIN(ROUT_ST_TM), " ~ ",  MAX(ROUT_ST_TM)), "") FROM BRT_OPER_ALLOC_PL_ROUT_INFO WHERE ROUT_ID = #{routId} AND DAY_DIV = 'DY001') AS DAY1
+			, (SELECT IFNULL(CONCAT('1일 ', CAST(COUNT(*) AS CHAR), '회 운행'), "") FROM BRT_OPER_ALLOC_PL_ROUT_INFO WHERE ROUT_ID = #{routId} AND DAY_DIV = 'DY001') AS DAY2
+			, (SELECT IFNULL(CONCAT(MIN(ROUT_ST_TM), " ~ ",  MAX(ROUT_ST_TM)), "") FROM BRT_OPER_ALLOC_PL_ROUT_INFO WHERE ROUT_ID = #{routId} AND DAY_DIV = 'DY002') AS SATDAY1
+			, (SELECT IFNULL(CONCAT('1일 ', CAST(COUNT(*) AS CHAR), '회 운행'), "") FROM BRT_OPER_ALLOC_PL_ROUT_INFO WHERE ROUT_ID = #{routId} AND DAY_DIV = 'DY002') AS SATDAY2
+			, (SELECT IFNULL(CONCAT(MIN(ROUT_ST_TM), " ~ ",  MAX(ROUT_ST_TM)), "") FROM BRT_OPER_ALLOC_PL_ROUT_INFO WHERE ROUT_ID = #{routId} AND DAY_DIV = 'DY002') AS SUNDAY1
+			, (SELECT IFNULL(CONCAT('1일 ', CAST(COUNT(*) AS CHAR), '회 운행'), "") FROM BRT_OPER_ALLOC_PL_ROUT_INFO WHERE ROUT_ID = #{routId} AND DAY_DIV = 'DY002') AS SUNDAY2
+			, REP_ROUT_NM AS REP_NAME
+		FROM BMS_ROUT_MST A
+			LEFT JOIN BMS_DL_CD_INFO B ON A.WAY_DIV = B.DL_CD AND B.CO_CD = 'WAY_DIV'
+			LEFT JOIN BMS_DL_CD_INFO C ON A.SHAPE_DIV = C.DL_CD AND C.CO_CD = 'SHAPE_DIV'
+		WHERE ROUT_ID = #{routId}
     </select>
 </mapper>

@@ -3,24 +3,19 @@
 
 <mapper namespace="kr.tracom.cm.domain.RepRout.RepRoutMapper">
 	<select id="selectRepRoutList" resultType="Map">
-		SELECT  		REP_ROUT_ID
-					,	REP_ROUT_NM
-					,	USE_YN
-					,	REMARK
-		FROM BMS_REP_ROUT_MST
-		<where>
-			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
-				<if test="TYPE == 'ALL'">
-					AND REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
-				</if>
-				<if test="TYPE == 'REP_ROUT_ID'">
-					AND REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
-				</if>
-				<if test="TYPE == 'REP_ROUT_NM'">
-					AND REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
-				</if>
+		SELECT REP_ROUT_ID, REP_ROUT_NM, ROUT_TYPE, ST_STTN_ID, ST_STTN_NM, ED_STTN_ID, ED_STTN_NM, WAY_YN, HOLI_YN, REMARK
+		FROM BMS_REP_ROUT_MST WHERE USE_YN = 'Y'
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+			<if test="TYPE == 'ALL'">
+				AND REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
-		</where>
+			<if test="TYPE == 'REP_ROUT_ID'">
+				AND REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'REP_ROUT_NM'">
+				AND REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+		</if>
 		ORDER BY REP_ROUT_NM
 	</select>
 	

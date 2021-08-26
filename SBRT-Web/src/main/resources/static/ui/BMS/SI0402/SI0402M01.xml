@@ -217,23 +217,23 @@
 		
 		oldNodeType = info.oldValue;
 		
-		if (info.newValue == "NT05") {
+		if (info.newValue == "NT005") {
 			com.alert("버텍스로 변경 할수 없습니다.");
 			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE", oldNodeType);
 			return;
 		}
 		
-		if (info.newValue == "NT06") {
+		if (info.newValue == "NT006") {
 			com.alert("음성노드는 음성 편성에서만 선택할 수 있습니다.");
 			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE", oldNodeType);
 			return;
 		}
 		
-		if ((info.newValue == "NT01") || (info.newValue == "NT02")) { //교차로, 정류소 선택
-			if(info.newValue == "NT02"){
+		if ((info.newValue == "NT001") || (info.newValue == "NT002")) { //교차로, 정류소 선택
+			if(info.newValue == "NT002"){
 				scwin.select_sttn(false);
 			}
-			else if(info.newValue == "NT01"){
+			else if(info.newValue == "NT001"){
 				scwin.select_cross(false);
 			}
 		}
@@ -491,10 +491,10 @@
 		
 		var nodeType = dlt_BMS_ROUT_NODE_CMPSTN.getCellData(idx,"NODE_TYPE");
 	
-		if(nodeType == "NT02"){
+		if(nodeType == "NT002"){
 			scwin.select_sttn(false);
 		}
-		else if(nodeType == "NT01"){
+		else if(nodeType == "NT001"){
 			scwin.select_cross(false);
 		}
 	}
@@ -583,7 +583,7 @@
 	scwin.refreshGridStatus = function(){
 		var routeData = dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON();
 		for(var i = 0; i < routeData.length; i++) {
-			if(routeData[i].NODE_TYPE == "NT01" || routeData[i].NODE_TYPE == "NT02"){
+			if(routeData[i].NODE_TYPE == "NT001" || routeData[i].NODE_TYPE == "NT002"){
 				SI0402G1.setCellReadOnly(i, "NODE_TYPE", true);
 			}
 		}
@@ -672,7 +672,7 @@
 			<xf:group class="pgm_header" id="pgm_header" style="">
 				<xf:group class="gr_search" id="" style="">
 					<xf:group class="label" id="" style="">
-						<w2:span class="" id="" label="검색 항목"></w2:span>
+						<w2:span class="" id="" label="검색"></w2:span>
 					</xf:group>
 					<xf:group class="search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
@@ -730,25 +730,25 @@
 							ev:onkeyup="" ev:onrowindexchange="scwin.SI0402G0_onrowindexchange" fixedColumnWithHidden="true"
 							ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true" rowStatusVisible="false"
 							rowStatusWidth="40" scrollByColumn="false" style="height:177px" useShiftKey="true" autoFitMinWidth="0"
-							focusMode="row" rowNumStatusResize="" ev:onbeforecolumnmove="" userData1="">
+							focusMode="row" rowNumStatusResize="" ev:onbeforecolumnmove="" userData1="" sortable="false">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
-									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:20px" id="column2"
-										value="대표노선" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column2"
+										value="대표노선명" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column4"
 										value="상하행" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column1"
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column1"
 										value="노선ID" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column3"
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column3"
 										value="노선명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column5"
+									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column5"
 										value="기점명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column6"
+									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column6"
 										value="종점명" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
@@ -765,13 +765,13 @@
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_NM"
-										value="" blockSelect="false" displayMode="label">
+										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ST_STTN_NM"
-										value="" blockSelect="false" displayMode="label">
+										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ED_STTN_NM"
-										value="" blockSelect="false" displayMode="label">
+										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
@@ -811,31 +811,31 @@
 								<w2:header id="header1" style="">
 									<w2:row id="row1" style="">
 										<w2:column blockSelect="false" displayMode="label" id="column1" inputType="text"
-											removeBorderStyle="false" style="height:20px" value="노드ID" width="80">
+											removeBorderStyle="false" style="height:20px" value="노드ID" width="100">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="column2" inputType="text"
-											removeBorderStyle="false" style="height:20px" value="노드명" width="110">
+											removeBorderStyle="false" style="height:20px" value="노드명" width="100">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="column3" inputType="text"
 											removeBorderStyle="false" style="height:20px" value="유형" width="70">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="column4" inputType="text"
-											removeBorderStyle="false" style="height:20px" value="경도" width="70">
+											removeBorderStyle="false" style="height:20px" value="경도" width="100">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="column5" inputType="text"
-											removeBorderStyle="false" style="height:20px" value="위도" width="70">
+											removeBorderStyle="false" style="height:20px" value="위도" width="100">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="column6" inputType="text"
-											removeBorderStyle="false" style="height:20px" value="정류소ID" width="80">
+											removeBorderStyle="false" style="height:20px" value="정류소ID" width="100">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="column7" inputType="text"
 											removeBorderStyle="false" style="height:20px" value="정류소번호" width="70">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="column8" inputType="text"
-											removeBorderStyle="false" style="height:20px" value="교차로ID" width="80">
+											removeBorderStyle="false" style="height:20px" value="교차로ID" width="100">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="column9" inputType="text"
-											removeBorderStyle="false" style="height:20px" value="링크ID" width="80">
+											removeBorderStyle="false" style="height:20px" value="링크ID" width="100">
 										</w2:column>
 									</w2:row>
 								</w2:header>
@@ -845,16 +845,16 @@
 											removeBorderStyle="false" style="height:20px" width="" readonly="true">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="NODE_NM" inputType="text" removeBorderStyle="false"
-											style="height:20px" width="">
+											style="height:20px" width="" textAlign="left">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" eventPriority="oneditend" id="NODE_TYPE"
 											inputType="select" removeBorderStyle="false" style="height:20px" width="">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="GPS_X" inputType="text" removeBorderStyle="false"
-											style="height:20px" width="">
+											style="height:20px" width="" textAlign="right">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="GPS_Y" inputType="text" removeBorderStyle="false"
-											style="height:20px" width="">
+											style="height:20px" width="" textAlign="right">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="STTN_ID" inputType="text" removeBorderStyle="false"
 											style="height:20px" width="" readonly="true">
@@ -894,19 +894,19 @@
 								<xf:choices>
 									<xf:item>	
 										<xf:label><![CDATA[경로]]></xf:label>
-										<xf:value><![CDATA[NT03]]></xf:value>
+										<xf:value><![CDATA[NT003]]></xf:value>
 									</xf:item>
 									<xf:item>
 									<xf:label><![CDATA[버텍스]]></xf:label>
-										<xf:value><![CDATA[NT05]]></xf:value>
+										<xf:value><![CDATA[NT005]]></xf:value>
 									</xf:item>
 									<xf:item>
 										<xf:label><![CDATA[정류소]]></xf:label>
-										<xf:value><![CDATA[NT02]]></xf:value>
+										<xf:value><![CDATA[NT002]]></xf:value>
 									</xf:item>
 									<xf:item>
 										<xf:label><![CDATA[교차로]]></xf:label>
-										<xf:value><![CDATA[NT01]]></xf:value>
+										<xf:value><![CDATA[NT001]]></xf:value>
 									</xf:item>
 								</xf:choices>
 							</xf:select>
