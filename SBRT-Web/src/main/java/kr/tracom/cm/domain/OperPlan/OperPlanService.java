@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
+import kr.tracom.util.CommonUtil;
 import kr.tracom.util.Result;
 
 
@@ -18,13 +19,16 @@ public class OperPlanService extends ServiceSupport {
 	private OperPlanMapper operPlanMapper;
 	
 	public void insertSimpleOperPlan(Map data) throws Exception {
-		if("Y".equals(data.get("WAY_YN"))) {			
+		String wayYn = CommonUtil.notEmpty(data.get("WAY_YN"))?(String)data.get("WAY_YN"):"";
+		String holiYn = CommonUtil.notEmpty(data.get("HOLI_YN"))?(String)data.get("HOLI_YN"):"";
+		
+		if("Y".equals(wayYn)) {			
 			data.put("WAY_DIV", "WYD01"); //상행
 			data.put("DAY_DIV", "DY001"); //평일
 			
 			operPlanMapper.insertSimpleOperPlan(data);
 			
-			if("Y".equals(data.get("HOLI_YN"))) {
+			if("Y".equals(holiYn)) {
 				data.put("DAY_DIV", "DY002"); //휴일
 				operPlanMapper.insertSimpleOperPlan(data);
 			}
@@ -44,16 +48,17 @@ public class OperPlanService extends ServiceSupport {
 			
 			operPlanMapper.insertSimpleOperPlan(data);
 			
-			if("Y".equals(data.get("HOLI_YN"))) {
+			if("Y".equals(holiYn)) {
 				data.put("DAY_DIV", "DY002"); //휴일
 				operPlanMapper.insertSimpleOperPlan(data);
 			}
 		}
 		else {
 			data.put("DAY_DIV", "DY001"); //평일
+			data.put("WAY_DIV", "");
 			operPlanMapper.insertSimpleOperPlan(data);
 			
-			if("Y".equals(data.get("HOLI_YN"))) {
+			if("Y".equals(holiYn)) {
 				data.put("DAY_DIV", "DY002"); //휴일
 				operPlanMapper.insertSimpleOperPlan(data);
 			}

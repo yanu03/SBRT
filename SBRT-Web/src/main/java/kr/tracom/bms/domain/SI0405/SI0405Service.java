@@ -27,6 +27,10 @@ public class SI0405Service extends ServiceSupport {
 		return si0405Mapper.SI0405G0R0(map);
 	}
 	
+	public List SI0405SHI0() throws Exception {
+		return si0405Mapper.SI0405SHI0();
+	}
+	
 	public Map SI0405G0K0() throws Exception {
 		return si0405Mapper.SI0405G0K0(); 
 	}

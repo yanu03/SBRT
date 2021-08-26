@@ -24,6 +24,12 @@ public class SI0405Controller extends ControllerSupport {
 		result.setData("dlt_BMS_REP_ROUT_MST", SI0405Service.SI0405G0R0());
 		return result.getResult();
 	}
+
+	@RequestMapping("/si/SI0405SHI0")
+	public @ResponseBody Map<String, Object> SI0405SHI0() throws Exception {
+		result.setData("dlt_searchitem", SI0405Service.SI0405SHI0());
+		return result.getResult();
+	}	
 	
 	@RequestMapping("/si/SI0405G0K0")
 	public @ResponseBody Map<String, Object> SI0405G0K0() throws Exception {
