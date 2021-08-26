@@ -10,8 +10,7 @@
 			</xf:instance>
 			<w2:dataCollection baseNode="map">
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_TRANSCOMP_MST" saveRemovedData="true"
-					ev:onbeforerowpositionchange="" ev:onbeforecelldatachange="scwin.dlt_BMS_TRANSCOMP_MST_onbeforecelldatachange"
-					ev:onbeforecolumnfilterchange="" ev:onrowpositionchange="">
+				>
 					<w2:columnInfo>
 						<w2:column id="COMP_ID" name="운수사ID" dataType="text"></w2:column>
 						<w2:column id="AREA" name="권역" dataType="text"></w2:column>
@@ -228,7 +227,6 @@
 	};
 	
 	scwin.btn_address_onclick = function() {
-		debugger;
 //		이전 지도검색 주소 찾기 팝업
 //		var row = SI0102G0.getFocusedRowIndex();
 //
@@ -307,7 +305,9 @@
 				if (comp_id != "") {
 					var data = { data : dma_param_COMPID.getJSON(), callbackFn : "scwin.insertGRG" };
 					var options = { id : "SI0102P01",
-									popupName : "차고지 목록", 
+									popupName : "차고지 목록",
+									width : 600,
+									height : 500,
 									modal : true };
 					com.openPopup("/ui/BMS/SI0102/SI0102P01.xml", options, data);
 				}
@@ -564,7 +564,7 @@
 										<w2:colspan>5</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input class="" id="" mandatory="" ref="data:dlt_BMS_TRANSCOMP_MST.COMP_ID" style="width:100%;height:21px;"
+									<xf:input class="" id="" mandatory="" ref="data:dlt_BMS_TRANSCOMP_MST.COMP_ID" style="width:100px;height:21px;"
 										disabled="true" adjustMaxLength="" maxlength="10">
 									</xf:input>
 								</xf:group></xf:group>
@@ -615,7 +615,7 @@
 									<w2:attributes></w2:attributes>
 									<xf:input allowChar="0-9" customModelFormatter="com.transPhone" customModelUnformatter=""
 										dataType="text" disabled="" displayFormatter="com.transPhone" id="" maskFormat="" maxlength="13" minByteLength=""
-										ref="data:dlt_BMS_TRANSCOMP_MST.PHONE" style="width:100%;height: 21px;" validator="">
+										ref="data:dlt_BMS_TRANSCOMP_MST.PHONE" style="width:110px;height: 21px;" validator="">
 									</xf:input>
 								</xf:group></xf:group>
 							<xf:group style="" tagname="tr">
@@ -624,10 +624,10 @@
 									<xf:group id="" style=""></xf:group>
 									<xf:input allowChar="0-9" customModelFormatter="com.transPhone" dataType="text"
 										displayFormatter="com.transPhone" id="OFFICE_PHONE1" maxlength="13" ref="data:dlt_BMS_TRANSCOMP_MST.FAX"
-										style="width:100%;height: 21px;">
+										style="width:110px;height: 21px;">
 									</xf:input>
 								</xf:group>
-								<xf:group class="w2tb_th" style="" tagname="th">이메일</xf:group>
+								<xf:group class="w2tb_th" style="" tagname="th">메일</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<w2:attributes>
 										<w2:colspan>1</w2:colspan>
@@ -645,7 +645,7 @@
 									<xf:input adjustMaxLength="" allowChar="0-9" applyFormat="" class="" customModelFormatter=""
 										dataType="text" disabled="" displayFormat="" displayFormatter="" escape="" euroMask="" id="SI0102F0_COMP_REG_NO" imeMode=""
 										ioFormat="" mandatory="" maskFormat="" maskFormatModelExcludeChar="" maxlength="10" ref="data:dlt_BMS_TRANSCOMP_MST.COMP_REG_NO"
-										style="width:100%;height:21px;" validator="">
+										style="width:110px;height:21px;" validator="">
 									</xf:input>
 								</xf:group></xf:group>
 							<xf:group tagname="tr" style="">
@@ -655,8 +655,12 @@
 								<xf:group class="w2tb_td" tagname="td">
 									<w2:attributes></w2:attributes>
 									<w2:spinner buttonSize="30" dataType="number" id="" inputReadOnly="" max="9999999" min="0"
-										ref="data:dlt_BMS_TRANSCOMP_MST.DRV_CNT" skin="type1" style="position: relative;width: 100%;height: 21px;">
+										ref="data:dlt_BMS_TRANSCOMP_MST.DRV_CNT" skin="type1" style="position: relative;width: 110px;height: 21px;display: none;">
 									</w2:spinner>
+									<xf:input allowChar="0-9" customModelFormatter="" dataType="text"
+										displayFormatter="" id="drv_cnt" maxlength="5" ref="data:dlt_BMS_TRANSCOMP_MST.DRV_CNT"
+										style="width:70px;height: 21px;" minByteLength="">
+									</xf:input>
 								</xf:group>
 								<xf:group class="w2tb_th" tagname="th">운행노선수(개)<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -667,15 +671,22 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<w2:spinner buttonSize="30" dataType="number" id="" inputReadOnly="" max="9999999" min="0"
-										ref="data:dlt_BMS_TRANSCOMP_MST.SVC_ROUT_CNT" skin="type1" style="position: relative;width: 100%;height: 21px;">
+										ref="data:dlt_BMS_TRANSCOMP_MST.SVC_ROUT_CNT" skin="type1" style="position: relative;width: 110px;height: 21px;display: none;">
 									</w2:spinner>
+									<xf:input allowChar="0-9" customModelFormatter="" dataType="text" displayFormatter="" id="SVC_ROUT_CNT"
+										maxlength="5" minByteLength="" ref="data:dlt_BMS_TRANSCOMP_MST.SVC_ROUT_CNT" style="width:70px;height: 21px;">
+									</xf:input>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_th">면허대수(대)<w2:attributes></w2:attributes></xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes></w2:attributes>
 									<w2:spinner buttonSize="30" dataType="number" id="" inputReadOnly="" max="9999999" min="0"
-										ref="data:dlt_BMS_TRANSCOMP_MST.LIC_VHC_CNT" skin="type1" style="position: relative;width: 100%;height: 21px;">
+										ref="data:dlt_BMS_TRANSCOMP_MST.LIC_VHC_CNT" skin="type1" style="position: relative;width: 110px;height: 21px;display: none;">
 									</w2:spinner>
+									<xf:input allowChar="0-9" customModelFormatter="" dataType="text" displayFormatter=""
+										id="LIC_VHC_CNT" maxlength="5" minByteLength="" ref="data:dlt_BMS_TRANSCOMP_MST.LIC_VHC_CNT"
+										style="width:70px;height: 21px;">
+									</xf:input>
 								</xf:group></xf:group>
 							<xf:group tagname="tr" style="">
 								<xf:group class="w2tb_th" tagname="th">예비차대수(대)<w2:attributes>
@@ -684,8 +695,11 @@
 								<xf:group class="w2tb_td" tagname="td">
 									<w2:attributes></w2:attributes>
 									<w2:spinner buttonSize="30" dataType="number" id="" inputReadOnly="" max="9999999" min="0"
-										ref="data:dlt_BMS_TRANSCOMP_MST.SPR_VHC_CNT" skin="type1" style="position: relative;width: 100%;height: 21px;">
+										ref="data:dlt_BMS_TRANSCOMP_MST.SPR_VHC_CNT" skin="type1" style="position: relative;width: 110px;height: 21px;display: none;">
 									</w2:spinner>
+									<xf:input allowChar="0-9" customModelFormatter="" dataType="text" displayFormatter="" id="SPR_VHC_CNT"
+										maxlength="5" minByteLength="" ref="data:dlt_BMS_TRANSCOMP_MST.SPR_VHC_CNT" style="width:70px;height: 21px;" refSync="">
+									</xf:input>
 								</xf:group>
 								<xf:group class="w2tb_th" tagname="th"><w2:attributes>
 										<w2:scope>row</w2:scope>

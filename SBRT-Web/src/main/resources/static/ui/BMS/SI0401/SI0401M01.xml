@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
 	xmlns:xf="http://www.w3.org/2002/xforms">
-	<head>
+	<head meta_vertical_guides="" meta_horizontal_guides="">
 		<w2:type>DEFAULT</w2:type>
 		<w2:buildDate />
 		<xf:model>
@@ -45,14 +45,13 @@
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 						<w2:column id="ROUT_TYPE" name="노선유형" dataType="text"></w2:column>
-						<w2:column id="ROUT_DIV" name="노선구분" dataType="text"></w2:column>
-						<w2:column id="RSV_ROUT_YN" name="예비노선여부" dataType="text"></w2:column>
+						<w2:column id="RSV_ROUT_YN" name="예비노선여부" dataType="text" defaultValue="N"></w2:column>
 						<w2:column id="ST_STTN_ID" name="시작정류소ID" dataType="text"></w2:column>
 						<w2:column id="ST_STTN_NM" name="시작정류소명" dataType="text"></w2:column>
 						<w2:column id="ST_STTN_ENM" name="시작정류소영문명" dataType="text"></w2:column>
-						<w2:column id="ED_STTN_ID" name="종료정류소ID" dataType="text"></w2:column>
-						<w2:column id="ED_STTN_ENM" name="종료정류소영문명" dataType="text"></w2:column>
-						<w2:column id="ED_STTN_NM" name="종료정류소명" dataType="text"></w2:column>
+						<w2:column id="ED_STTN_ID" name="종점명ID" dataType="text"></w2:column>
+						<w2:column id="ED_STTN_ENM" name="종점명영문명" dataType="text"></w2:column>
+						<w2:column id="ED_STTN_NM" name="종점명명" dataType="text"></w2:column>
 						<w2:column id="RET_STTN_ID" name="회차정류소ID" dataType="text"></w2:column>
 						<w2:column id="RET_STTN_NM" name="회차정류소명" dataType="text"></w2:column>
 						<w2:column id="RET_STTN_ENM" name="회차정류소영문명" dataType="text"></w2:column>
@@ -70,8 +69,9 @@
 						<w2:column id="WAY_INFO" name="방면정보" dataType="text"></w2:column>
 						<w2:column id="AREA" name="권역" dataType="text"></w2:column>
 						<w2:column id="SHAPE_DIV" name="노선도모양구분" dataType="text"></w2:column>
-						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
+						<w2:column id="USE_YN" name="사용여부" dataType="text" defaultValue="Y"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+						<w2:column id="HOLI_YN" name="휴일노선유무" dataType="text" defaultValue="N"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_TRANSCOMP_MST" saveRemovedData="true">
@@ -126,7 +126,7 @@
 							{code : "USER_WAY_DIV", compID : "USER_WAY_DIV, SI0401G0:USER_WAY_DIV" },
 							{code : "SHAPE_DIV", compID : "SHAPE_DIV, SI0401G0:SHAPE_DIV" },
 							{code : "AREA", compID : "AREA, SI0401G1:AREA" },
-							{code : "ROUT_DIV", compID : "ROUT_DIV, SI0401G0:ROUT_DIV" }
+							{code : "ROUT_TYPE", compID : "ROUT_TYPE, SI0401G0:ROUT_TYPE" }
 						];		
 	
 		com.setCommonDtl(codeOptions, function() {
@@ -137,7 +137,7 @@
 		
 		var autoOptions = {
 			Main : { grid : SI0401G0, frm : SI0401F0, srchSbm : sub_SI0401G0R0, savSbm : sub_SI0401G0S0
-				, keySbm : sub_SI0401G0K0, srchGrp : pgm_header, keyColumn : "ROUT_ID", focusColumn : "ROUT_NM", name : "노선 기초정보 목록"},
+				, keySbm : sub_SI0401G0K0, srchGrp : pgm_header, keyColumn : "ROUT_ID", focusColumn : "ROUT_NM", name : "노선 목록"},
 			Sub1 : { grid : SI0401G1, srchSbm : sub_SI0401G1R0, savSbm : sub_SI0401G1S0, name :  "관련운수사"}
 		 };
 		 
@@ -370,11 +370,11 @@
 				</xf:group>
 			</xf:group>
 
-			<xf:group id="pgm_content" class="pgm_content grdc_a_20_800" style="">
+			<xf:group id="pgm_content" class="pgm_content grdc_a_20_900_minmax" style="">
 
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 					<xf:group class="defaultbox" id="" style="">
-						<w2:textbox class="df_tt fl" id="" label="노선 기초정보 목록" style=""></w2:textbox>
+						<w2:textbox class="df_tt fl" id="" label="노선 목록" style=""></w2:textbox>
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="" class="" style="">
@@ -390,34 +390,31 @@
 							rowNumStatusResize="" ev:onbeforecolumnmove="" userData1="">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
-									<w2:column removeBorderStyle="false" width="68" inputType="text" style="height:20px" id="column13"
-										value="대표노선명" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column13"
+										value="대표노선명" blockSelect="false" displayMode="label" class="req">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column19"
-										value="상하행" blockSelect="false" displayMode="label">
+										value="상하행" blockSelect="false" displayMode="label" class="req">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column14"
-										value="노선ID" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column14"
+										value="노선ID" blockSelect="false" displayMode="label" class="req">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column10"
-										value="노선명" blockSelect="false" displayMode="label">
+										value="노선명" blockSelect="false" displayMode="label" dataType="" class="req">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="60" inputType="text" style="height:20px" id="column9"
-										value="노선유형" blockSelect="false" displayMode="label" disabled="">
+										value="노선유형" blockSelect="false" displayMode="label" disabled="" class="req">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="0" inputType="text" style="height:20px" id="column9"
-										value="노선구분" blockSelect="false" displayMode="label" disabled="">
+									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column16"
+										value="기점명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="140" inputType="text" style="height:20px" id="column16"
-										value="출발정류소" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column17"
+										value="종점명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="140" inputType="text" style="height:20px" id="column17"
-										value="종료정류소" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="140" inputType="text" style="height:20px" id="column18"
+									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column18"
 										value="회차정류소" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column width="100%" id="column15" value="비고"></w2:column>
+									<w2:column width="380px" id="column15" value="비고"></w2:column>
 								</w2:row>
 							</w2:header>
 							<w2:gBody style="" id="gBody1">
@@ -437,19 +434,16 @@
 									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="ROUT_TYPE"
 										userData1="M" value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="ROUT_DIV"
-										userData1="M" value="" blockSelect="false" displayMode="label">
-									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ST_STTN_NM"
-										value="" blockSelect="false" displayMode="label">
+										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ED_STTN_NM"
-										value="" blockSelect="false" displayMode="label">
+										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="RET_STTN_NM"
-										value="" blockSelect="false" displayMode="label">
+										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
-									<w2:column width="" id="REMARK"></w2:column>
+									<w2:column width="" id="REMARK" textAlign="left"></w2:column>
 								</w2:row>
 							</w2:gBody>
 							<w2:footer style="" id="footer1">
@@ -465,7 +459,7 @@
 
 				</xf:group>
 				<xf:group id="" class="vertical_line"></xf:group>
-				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_350_20_20_2_a" style="">
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_300_20_20_2_a" style="">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="노선 기초 상세정보" style=""></w2:textbox>
@@ -489,7 +483,7 @@
 							<xf:group style="" tagname="tr">
 								<xf:group class="w2tb_th req" style="" tagname="th">노선&amp;nbsp;ID</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
-									<xf:input class="" id="ROUT_ID" mandatory="" ref="data:dlt_BMS_ROUT_MST.ROUT_ID" style="width:100%;height:21px;"
+									<xf:input class="" id="ROUT_ID" mandatory="" ref="data:dlt_BMS_ROUT_MST.ROUT_ID" style="width:100px;height:21px;"
 										disabled="true" adjustMaxLength="">
 									</xf:input>
 								</xf:group>
@@ -498,7 +492,7 @@
 
 									<xf:input allowChar="" customModelFormatter="" customModelUnformatter=""
 										dataType="text" disabled="" displayFormatter="com.transPhone" id="ROUT_NM" maskFormat="" maxlength="30" minByteLength=""
-										ref="data:dlt_BMS_ROUT_MST.ROUT_NM" style="width:100%;height: 21px;" validator="">
+										ref="data:dlt_BMS_ROUT_MST.ROUT_NM" style="width:100%;height: 21px;" validator="" class="req">
 									</xf:input>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_th req">대표노선명<w2:attributes></w2:attributes></xf:group>
@@ -519,7 +513,7 @@
 									<w2:attributes></w2:attributes>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto"
 										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="ROUT_TYPE" labelWidthAuto="" mandatory="true"
-										optionOrder="" ref="data:dlt_BMS_ROUT_MST.ROUT_TYPE" renderType="component" style="height:24px;" submenuSize="auto">
+										optionOrder="" ref="data:dlt_BMS_ROUT_MST.ROUT_TYPE" renderType="component" style="height:24px;width: 120px;" submenuSize="auto" class="req">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
@@ -528,28 +522,20 @@
 									<w2:attributes></w2:attributes>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto"
 										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="WAY_DIV" labelWidthAuto="" mandatory="true"
-										optionOrder="" ref="data:dlt_BMS_ROUT_MST.WAY_DIV" renderType="component" style="height:24px;" submenuSize="auto">
+										optionOrder="" ref="data:dlt_BMS_ROUT_MST.WAY_DIV" renderType="component" style="height:24px;width: 120px;" submenuSize="auto" class="req">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
-								<xf:group tagname="th" class="w2tb_th req">노선구분<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
-								<xf:group tagname="td" class="w2tb_td">
-									<w2:attributes></w2:attributes>
-									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto"
-										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="ROUT_DIV" labelWidthAuto="" mandatory="true"
-										optionOrder="" ref="data:dlt_BMS_ROUT_MST.ROUT_DIV" renderType="component" style="height:24px;" submenuSize="auto">
-										<xf:choices></xf:choices>
-									</xf:select1>
-								</xf:group>
+								<xf:group tagname="th" class="w2tb_th"><w2:attributes><w2:scope>row</w2:scope><w2:colspan>2</w2:colspan><w2:rowspan>1</w2:rowspan></w2:attributes></xf:group>
 							</xf:group>
 							<xf:group style="" tagname="tr">
-								<xf:group class="w2tb_th" style="" tagname="th">출발정류소</xf:group>
+								<xf:group class="w2tb_th" style="" tagname="th">기점명</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<w2:attributes>
 										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input adjustMaxLength="" class="req" disabled="" ev:oneditenter=""
+									<xf:input adjustMaxLength="" class="" disabled="" ev:oneditenter=""
 										ev:onfocus="scwin.ST_STTN_NM_onfocus" fireEventOnInvalid="" id="ST_STTN_NM" invalidMessageFunc="" mandatory="" readOnly=""
 										ref="data:dlt_BMS_ROUT_MST.ST_STTN_NM" style="width:80%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
 										validator="">
@@ -558,10 +544,10 @@
 										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
 									</xf:image>
 								</xf:group>
-								<xf:group tagname="td" class="w2tb_th">종료정류소<w2:attributes></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_th">종점명<w2:attributes></w2:attributes></xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes></w2:attributes>
-									<xf:input adjustMaxLength="" class="req" disabled="" ev:oneditenter=""
+									<xf:input adjustMaxLength="" class="" disabled="" ev:oneditenter=""
 										ev:onfocus="scwin.ED_STTN_NM_onfocus" fireEventOnInvalid="" id="ED_STTN_NM" invalidMessageFunc="" mandatory="" readOnly=""
 										ref="data:dlt_BMS_ROUT_MST.ED_STTN_NM" style="width:80%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
 										validator="">
@@ -573,7 +559,7 @@
 								<xf:group tagname="td" class="w2tb_th">회차정류소<w2:attributes></w2:attributes></xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes></w2:attributes>
-									<xf:input adjustMaxLength="" class="req" disabled="" ev:oneditenter=""
+									<xf:input adjustMaxLength="" class="" disabled="" ev:oneditenter=""
 										ev:onfocus="scwin.RET_STTN_NM_onfocus" fireEventOnInvalid="" id="RET_STTN_NM" invalidMessageFunc="" mandatory="" readOnly=""
 										ref="data:dlt_BMS_ROUT_MST.RET_STTN_NM" style="width:80%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
 										validator="">
@@ -591,23 +577,23 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="STTN_CNT" initValue="" mandatory=""
-										ref="data:dlt_BMS_ROUT_MST.STTN_CNT" style="width:100%;height:21px;" validateOnInput="false" validator="" maskFormat="" ioFormat="">
+										ref="data:dlt_BMS_ROUT_MST.STTN_CNT" style="width:120px;height:21px;" validateOnInput="false" validator="" maskFormat="" ioFormat="" maxlength="3">
 									</xf:input>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_th">&amp;nbsp;노선거리(m)<w2:attributes></w2:attributes></xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes></w2:attributes>
-									<xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="ROUT_LEN" initValue="" ioFormat=""
-										mandatory="" maskFormat="" ref="data:dlt_BMS_ROUT_MST.ROUT_LEN" style="width:100%;height:21px;" validateOnInput="false"
-										validator="">
+									<xf:input adjustMaxLength="" allowChar="0-9." class="" disabled="" id="ROUT_LEN" initValue="" ioFormat=""
+										mandatory="" maskFormat="" ref="data:dlt_BMS_ROUT_MST.ROUT_LEN" style="width:120px;height:21px;" validateOnInput="false"
+										validator="" maxlength="10">
 									</xf:input>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_th">굴곡도<w2:attributes></w2:attributes></xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes></w2:attributes>
-									<xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="CURVATURE" initValue="" ioFormat=""
-										mandatory="" maskFormat="" ref="data:dlt_BMS_ROUT_MST.CURVATURE" style="width:100%;height:21px;" validateOnInput="false"
-										validator="">
+									<xf:input adjustMaxLength="" allowChar="0-9." class="" disabled="" id="CURVATURE" initValue="" ioFormat=""
+										mandatory="" maskFormat="" ref="data:dlt_BMS_ROUT_MST.CURVATURE" style="width:120px;height:21px;" validateOnInput="false"
+										validator="" maxlength="3">
 									</xf:input>
 								</xf:group>
 							</xf:group>
@@ -617,16 +603,16 @@
 									<xf:group id="" style=""></xf:group>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto"
 										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="JIT_DSPCH_YN" labelWidthAuto="" mandatory="true"
-										optionOrder="" ref="data:dlt_BMS_ROUT_MST.JIT_DSPCH_YN" renderType="component" style="height:24px;" submenuSize="auto">
+										optionOrder="" ref="data:dlt_BMS_ROUT_MST.JIT_DSPCH_YN" renderType="component" style="height:24px;width: 120px;" submenuSize="auto">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_th">면허대수(대)<w2:attributes></w2:attributes></xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes></w2:attributes>
-									<xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="LIC_VHC_CNT" initValue="" ioFormat=""
-										mandatory="" maskFormat="" ref="data:dlt_BMS_ROUT_MST.LIC_VHC_CNT" style="width:100%;height:21px;" validateOnInput="false"
-										validator="">
+									<xf:input adjustMaxLength="" allowChar="0-9" class="" disabled="" id="LIC_VHC_CNT" initValue="" ioFormat=""
+										mandatory="" maskFormat="" ref="data:dlt_BMS_ROUT_MST.LIC_VHC_CNT" style="width:120px;height:21px;" validateOnInput="false"
+										validator="" maxlength="3">
 									</xf:input>
 								</xf:group>
 								<xf:group class="w2tb_th" style="" tagname="th">예비차대수(대)</xf:group>
@@ -636,9 +622,9 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:group id="" style=""></xf:group>
-									<xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="SPR_VHC_CNT" initValue="" ioFormat=""
-										mandatory="" maskFormat="" ref="data:dlt_BMS_ROUT_MST.SPR_VHC_CNT" style="width:100%;height:21px;" validateOnInput="false"
-										validator="">
+									<xf:input adjustMaxLength="" allowChar="0-9" class="" disabled="" id="SPR_VHC_CNT" initValue="" ioFormat=""
+										mandatory="" maskFormat="" ref="data:dlt_BMS_ROUT_MST.SPR_VHC_CNT" style="width:120px;height:21px;" validateOnInput="false"
+										validator="" maxlength="3">
 									</xf:input>
 								</xf:group>
 							</xf:group>
@@ -648,7 +634,7 @@
 									<w2:attributes></w2:attributes>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="" chooseOptionLabel="전체" direction="auto" disabled="false"
 										disabledClass="w2selectbox_disabled" displayMode="label" id="AREA" labelWidthAuto="" mandatory="true" optionOrder=""
-										ref="data:dlt_BMS_ROUT_MST.AREA" renderType="component" style="height:24px;" submenuSize="auto">
+										ref="data:dlt_BMS_ROUT_MST.AREA" renderType="component" style="height:24px;width: 120px;" submenuSize="auto">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
@@ -657,7 +643,7 @@
 									<w2:attributes></w2:attributes>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto" disabled="false"
 										disabledClass="w2selectbox_disabled" displayMode="label" id="SHAPE_DIV" labelWidthAuto="" mandatory="true" optionOrder=""
-										ref="data:dlt_BMS_ROUT_MST.SHAPE_DIV" renderType="component" style="height:24px;" submenuSize="auto">
+										ref="data:dlt_BMS_ROUT_MST.SHAPE_DIV" renderType="component" style="height:24px;width: 120px;" submenuSize="auto">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
@@ -667,9 +653,8 @@
 										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto"
-										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="RSV_ROUT_YN" labelWidthAuto="" mandatory="true"
-										optionOrder="" ref="data:dlt_BMS_ROUT_MST.RSV_ROUT_YN" renderType="component" style="height:24px;" submenuSize="auto">
+									<xf:select1 id="" selectedIndex="-1" appearance="full" style="width: 150px;height: 21px;margin-left: 20px;" cols=""
+										rows="1" ref="data:dlt_BMS_ROUT_MST.RSV_ROUT_YN">
 										<xf:choices>
 											<xf:item>
 												<xf:label><![CDATA[예]]></xf:label>
@@ -687,7 +672,7 @@
 								<xf:group class="w2tb_th" style="" tagname="th">연계 노선 ID</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="INT_ROUT_ID" initValue="" mandatory=""
-										ref="data:dlt_BMS_ROUT_MST.INT_ROUT_ID" style="width:100%;height:21px;" validateOnInput="false" validator="" maskFormat="" ioFormat="">
+										ref="data:dlt_BMS_ROUT_MST.INT_ROUT_ID" style="width:100%;height:21px;" validateOnInput="false" validator="" maskFormat="" ioFormat="" maxlength="10">
 									</xf:input>
 								</xf:group>
 								<xf:group tagname="th" class="w2tb_th">휴일노선유무<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
@@ -696,9 +681,8 @@
 										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:select1 allOption="" appearance="minimal" chooseOption="false" chooseOptionLabel="" direction="auto" disabled="false"
-										disabledClass="w2selectbox_disabled" displayMode="label" id="HOLI_YN" labelWidthAuto="" mandatory="true" optionOrder=""
-										ref="data:dlt_BMS_ROUT_MST.HOLI_YN" renderType="component" style="height:24px;width:100%;" submenuSize="auto">
+									<xf:select1 appearance="full" cols="" id="" ref="data:dlt_BMS_ROUT_MST.HOLI_YN" rows="1"
+										selectedIndex="-1" style="width: 150px;height: 21px;margin-left: 20px;">
 										<xf:choices>
 											<xf:item>
 												<xf:label><![CDATA[예]]></xf:label>
@@ -717,9 +701,8 @@
 										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:select1 allOption="" appearance="minimal" chooseOption="false" chooseOptionLabel="" direction="auto" disabled="false"
-										disabledClass="w2selectbox_disabled" displayMode="label" id="USE_YN" labelWidthAuto="" mandatory="true" optionOrder=""
-										ref="data:dlt_BMS_ROUT_MST.USE_YN" renderType="component" style="height:24px;width:100%;" submenuSize="auto">
+									<xf:select1 appearance="full" cols="" id="" ref="data:dlt_BMS_ROUT_MST.USE_YN" rows="1"
+										selectedIndex="-1" style="width: 150px;height: 21px;margin-left: 20px;">
 										<xf:choices>
 											<xf:item>
 												<xf:label><![CDATA[예]]></xf:label>
@@ -734,7 +717,7 @@
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" class="w2tb_th" style="height: 120px;" id="" tabIndex="">
+								<xf:group tagname="th" class="w2tb_th" style="height: 90px;vertical-align: top;" id="" tabIndex="">
 									비고
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -746,7 +729,7 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:textarea adjustMaxLength="" class="" disabled="" id="REMARK" mandatory="" ref="data:dlt_BMS_ROUT_MST.REMARK"
-										style="width:100%;height:120px;">
+										style="width:100%;height:90px;" maxlength="200">
 									</xf:textarea>
 								</xf:group>
 							</xf:group>
