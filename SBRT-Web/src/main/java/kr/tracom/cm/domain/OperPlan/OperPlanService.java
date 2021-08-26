@@ -19,20 +19,20 @@ public class OperPlanService extends ServiceSupport {
 	
 	public void insertSimpleOperPlan(Map data) throws Exception {
 		if("Y".equals(data.get("WAY_YN"))) {			
-			data.put("WAY_DIV", "WYD01"); //»óÇà
-			data.put("DAY_DIV", "DY001"); //ÆòÀÏ
+			data.put("WAY_DIV", "WYD01"); //ìƒí–‰
+			data.put("DAY_DIV", "DY001"); //í‰ì¼
 			
 			operPlanMapper.insertSimpleOperPlan(data);
 			
 			if("Y".equals(data.get("HOLI_YN"))) {
-				data.put("DAY_DIV", "DY002"); //ÈŞÀÏ
+				data.put("DAY_DIV", "DY002"); //íœ´ì¼
 				operPlanMapper.insertSimpleOperPlan(data);
 			}
 			
-			data.put("WAY_DIV", "WYD02"); //ÇÏÇà
-			data.put("DAY_DIV", "DY001"); //ÆòÀÏ
+			data.put("WAY_DIV", "WYD02"); //í•˜í–‰
+			data.put("DAY_DIV", "DY001"); //í‰ì¼
 
-			//ÇÏÇàÀÏ¶§ Á¤·ù¼Ò À§Ä¡ º¯°æ
+			//í•˜í–‰ì¼ë•Œ ì •ë¥˜ì†Œ ìœ„ì¹˜ ë³€ê²½
 			String stSttnId = (String)data.get("ST_STTN_ID");
 			String stSttnNm = (String)data.get("ST_STTN_NM");
 			String edSttnId = (String)data.get("ED_STTN_ID");
@@ -45,16 +45,16 @@ public class OperPlanService extends ServiceSupport {
 			operPlanMapper.insertSimpleOperPlan(data);
 			
 			if("Y".equals(data.get("HOLI_YN"))) {
-				data.put("DAY_DIV", "DY002"); //ÈŞÀÏ
+				data.put("DAY_DIV", "DY002"); //íœ´ì¼
 				operPlanMapper.insertSimpleOperPlan(data);
 			}
 		}
 		else {
-			data.put("DAY_DIV", "DY001"); //ÆòÀÏ
+			data.put("DAY_DIV", "DY001"); //í‰ì¼
 			operPlanMapper.insertSimpleOperPlan(data);
 			
 			if("Y".equals(data.get("HOLI_YN"))) {
-				data.put("DAY_DIV", "DY002"); //ÈŞÀÏ
+				data.put("DAY_DIV", "DY002"); //íœ´ì¼
 				operPlanMapper.insertSimpleOperPlan(data);
 			}
 		}
