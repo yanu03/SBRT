@@ -18,6 +18,11 @@ public class PI0202Service extends ServiceSupport{
 
 	@Autowired
 	private PI0202Mapper pi0202Mapper;
+	
+	public List PI0202SHI0() throws Exception {
+		return pi0202Mapper.PI0202SHI0();
+	}	
+	
 	public Map PI0202G1S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
@@ -49,7 +54,7 @@ public class PI0202Service extends ServiceSupport{
 		} catch(Exception e) {
 			if (e instanceof DuplicateKeyException)
 			{
-				throw new MessageException(Result.ERR_KEY, "Áßº¹µÈ Å°°ªÀÇ µ¥ÀÌÅÍ°¡ Á¸ÀçÇÕ´Ï´Ù.");
+				throw new MessageException(Result.ERR_KEY, "ï¿½ßºï¿½ï¿½ï¿½ Å°ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
 			}
 			else
 			{
