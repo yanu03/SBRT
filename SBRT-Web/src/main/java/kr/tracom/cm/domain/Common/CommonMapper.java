@@ -54,5 +54,8 @@ public interface CommonMapper {
 	 * @author InswaveSystems
 	 */
 	public int deleteCommonDtlAll(Map param);
+	
+	/** 210826 공통코드 컬럼값 얻어오기 COL, CO_CD, DL_CD_NM 필요**/
+	public String selectDlCdCol(Map param);
 
 }

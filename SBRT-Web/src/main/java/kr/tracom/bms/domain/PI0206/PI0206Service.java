@@ -82,27 +82,27 @@ public class PI0206Service extends ServiceSupport {
 					//코스관련 파일 생성
 					List<String> strCourseList = listMapToList(list_param, "COR_ID");
 					if(makeCourseFile(strCourseList)) {
-						//예약 정보, 예약결과 정보 insert
-						Map<String, Object> paramMap = new HashMap<String, Object>();
-						
-						for (int i = 0; i < param.size(); i++) {
-							Map data = (Map) param.get(i);
-							String rowStatus = (String) data.get("rowStatus");
-							if (rowStatus.equals("U")) {
-								
-								data.put("COR_ID",map.get("COR_ID"));
-								iCnt = pi0206Mapper.PI0206G1I0(data);
-													
-							} 
-							else if (rowStatus.equals("D")) {
-								dCnt += pi0206Mapper.PI0206G1D0(data);
-							} 
+						if(ftpHandler.syncRouteMap()) {
+							//예약 정보, 예약결과 정보 insert
+							Map<String, Object> paramMap = new HashMap<String, Object>();
+							
+							for (int i = 0; i < param.size(); i++) {
+								Map data = (Map) param.get(i);
+								String rowStatus = (String) data.get("rowStatus");
+								if (rowStatus.equals("U")) {
+									
+									data.put("COR_ID",map.get("COR_ID"));
+									iCnt = pi0206Mapper.PI0206G1I0(data);
+									
+								} 
+								else if (rowStatus.equals("D")) {
+									dCnt += pi0206Mapper.PI0206G1D0(data);
+								} 
+							}							
 						}
 					}
 				}
-				
 			}
-			
 		} catch(Exception e) {
 			if (e instanceof DuplicateKeyException)
 			{
