@@ -6,6 +6,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,9 @@ public class FileService extends ServiceSupport {
 	
 	@Value("${sftp.windows.local.directory}")
 	private String ROOT_WINDOWS_LOCAL_PATH;
+	
+	@Value("${FILE_ROOT}")
+	protected String fileRoot;	
 	/*
 	private Logger logger = LoggerFactory.getLogger(FileService.class);
 	
@@ -371,4 +375,21 @@ public class FileService extends ServiceSupport {
 			return ROOT_LINUX_LOCAL_PATH;
 		}
 	}
+	
+	public Map doCheckFile() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_fileinfo");
+		String strFilePath = map.get("FILE_URL").toString();
+		
+		String strDestPath = (fileRoot + strFilePath.replace("/fileUpload/", "")).replace("/", File.separator);
+		System.out.println(strDestPath);
+		File fileDestPath = new File(strDestPath);
+		
+		Map result = new HashMap();
+		if(fileDestPath.exists()) {
+			result.put("CHK", "1"); 
+		} else {
+			result.put("CHK", "0");
+		}
+		return result;
+	}	
 }
