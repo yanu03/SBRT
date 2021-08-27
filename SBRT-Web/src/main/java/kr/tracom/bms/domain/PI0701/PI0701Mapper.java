@@ -12,6 +12,8 @@ public interface PI0701Mapper {
 	
 	public List PI0701SHI0();
 	
+	public List PI0701SHI1();
+	
 	/*public List PI0701P0R0(Map param);
 	
 	public int PI0701G0I0(Map param);

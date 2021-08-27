@@ -34,6 +34,10 @@ public class PI0701Service extends ServiceSupport {
 		return pi0701Mapper.PI0701SHI0();
 	}
 	
+	public List PI0701SHI1() throws Exception {
+		return pi0701Mapper.PI0701SHI1();
+	}
+	
 	/*public List PI0701P0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
 		return pi0701Mapper.PI0701P0R0(map);
