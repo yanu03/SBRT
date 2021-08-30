@@ -27,7 +27,7 @@ import kr.tracom.cm.support.ControllerSupport;
 @Scope("request")
 public class FileController extends ControllerSupport {
 	
-	String strUniqErrorMessage = "Áßº¹µÈ ID°ªÀÌ Á¸ÀçÇÕ´Ï´Ù. ´ëÁß¼Òº°·Î 1°³ÀÇ ID¸¦ ÁöÁ¤ÇÏ½Ê½Ã¿À.";
+	String strUniqErrorMessage = "ï¿½ßºï¿½ï¿½ï¿½ IDï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½. ï¿½ï¿½ï¿½ß¼Òºï¿½ï¿½ï¿½ 1ï¿½ï¿½ï¿½ï¿½ IDï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï½Ê½Ã¿ï¿½.";
 	/**
 	 * 
 	 */
@@ -60,10 +60,10 @@ public class FileController extends ControllerSupport {
 	private static final String ROW_STATUS = "rowStatus";
 
 	/**
-	 * ÀÛ¼ºÀÚ: Æ®¶óÄÞ
-	 * ÀÛ¼ºÀÏ: 2017. 2. 23.
-	 * ¼öÁ¤ÀÏ: 2017. 2. 23.
-	 * ¸ñÀû : ÆÄÀÏ¾÷·Îµå °øÅë
+	 * ï¿½Û¼ï¿½ï¿½ï¿½: Æ®ï¿½ï¿½ï¿½ï¿½
+	 * ï¿½Û¼ï¿½ï¿½ï¿½: 2017. 2. 23.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: 2017. 2. 23.
+	 * ï¿½ï¿½ï¿½ï¿½ : ï¿½ï¿½ï¿½Ï¾ï¿½ï¿½Îµï¿½ ï¿½ï¿½ï¿½ï¿½
 	 * 
 	 * @return
 	 * @throws Exception
@@ -100,7 +100,7 @@ public class FileController extends ControllerSupport {
 		for (Map<String, Object> fileUpload : lstUploadFile){
 			if("".equalsIgnoreCase((String)fileUpload.get(STATUS))&&"R".equalsIgnoreCase((String)fileUpload.get(ROW_STATUS))){
 				String orgfileName = (String) fileUpload.get(ORG_FILE_NAME);
-				orgfileName = orgfileName.replace("&#40;", "(").replace("&#41;", ")"); //ÆÄÀÏ¸í "(" => &#40 "(" => &#41 º¯È¯µÇ´Â Çö»ó ¼öÁ¤
+				orgfileName = orgfileName.replace("&#40;", "(").replace("&#41;", ")"); //ï¿½ï¿½ï¿½Ï¸ï¿½ "(" => &#40 "(" => &#41 ï¿½ï¿½È¯ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				fileService.doMoveFile(sourcePath,destPath,orgfileName,destFileName);
 				
 				fileUpload.put(FILE_ID, fileId);
@@ -121,10 +121,10 @@ public class FileController extends ControllerSupport {
 	
 		
 	/**
-	 * ÀÛ¼ºÀÚ: Æ®¶óÄÞ
-	 * ÀÛ¼ºÀÏ: 2017. 2. 23.
-	 * ¼öÁ¤ÀÏ: 2017. 2. 23.
-	 * ¸ñÀû : ÆÄÀÏ°¡Á®¿È °øÅë
+	 * ï¿½Û¼ï¿½ï¿½ï¿½: Æ®ï¿½ï¿½ï¿½ï¿½
+	 * ï¿½Û¼ï¿½ï¿½ï¿½: 2017. 2. 23.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: 2017. 2. 23.
+	 * ï¿½ï¿½ï¿½ï¿½ : ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	 * 
 	 * @return
 	 * @throws Exception
@@ -141,10 +141,10 @@ public class FileController extends ControllerSupport {
 	}
 	
 	/**
-	 * ÀÛ¼ºÀÚ: Æ®¶óÄÞ
-	 * ÀÛ¼ºÀÏ: 2017. 2. 23.
-	 * ¼öÁ¤ÀÏ: 2017. 2. 23.
-	 * ¸ñÀû : ÆÄÀÏ»èÁ¦ °øÅë
+	 * ï¿½Û¼ï¿½ï¿½ï¿½: Æ®ï¿½ï¿½ï¿½ï¿½
+	 * ï¿½Û¼ï¿½ï¿½ï¿½: 2017. 2. 23.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: 2017. 2. 23.
+	 * ï¿½ï¿½ï¿½ï¿½ : ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	 * 
 	 * @return
 	 * @throws Exception
@@ -171,11 +171,11 @@ public class FileController extends ControllerSupport {
 	}
 	
 	/**
-	 * ÀÛ¼ºÀÚ: Æ®¶óÄÞ
+	 * ï¿½Û¼ï¿½ï¿½ï¿½: Æ®ï¿½ï¿½ï¿½ï¿½
 	 *
-	 * ÀÛ¼ºÀÏ: 2017. 2. 19.
-	 * ¼öÁ¤ÀÏ: 2017. 2. 19.
-	 * ¸ñÀû :Ã·ºÎÆÄÀÏ ´Ù¿î·Îµå
+	 * ï¿½Û¼ï¿½ï¿½ï¿½: 2017. 2. 19.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: 2017. 2. 19.
+	 * ï¿½ï¿½ï¿½ï¿½ :Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¿ï¿½Îµï¿½
 	 * @throws Exception
 	 */
 	@RequestMapping("/file/doDownloadFile.do")
@@ -188,4 +188,10 @@ public class FileController extends ControllerSupport {
 			//downLoadFileFromNasRoot( destPath , destFileName, orgFileName);
 		
 	}
+	
+	@RequestMapping("/file/doCheckFile")
+	public @ResponseBody Map<String, Object> doCheckFile() throws Exception {
+		result.setData("dma_filechk", fileService.doCheckFile());
+		return result.getResult();
+	}		
 }

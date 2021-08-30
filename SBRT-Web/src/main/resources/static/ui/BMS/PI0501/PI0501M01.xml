@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
 	xmlns:xf="http://www.w3.org/2002/xforms">
-	<head meta_vertical_guides="149" meta_horizontal_guides="">
+	<head meta_vertical_guides="" meta_horizontal_guides="">
 		<w2:type>DEFAULT</w2:type>
 		<w2:buildDate />
 		<xf:model>
@@ -37,12 +37,12 @@
 						<w2:column id="PLAY_ST_DT" name="재생시작일" dataType="date"></w2:column>
 						<w2:column id="FILE_TYPE" name="파일유형" dataType="text"></w2:column>
 						<w2:column id="IMG_PLAY_TM" name="이미지재생시간" dataType="number" defaultValue="0"></w2:column>
-						<w2:column id="ATTACH_ID" name="첨부ID" dataType="text"></w2:column>
 						<w2:column id="PLAY_TM" name="재생시간" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="PLAY_ED_DT" name="재생종료일" dataType="date"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
 						<w2:column id="FILE_NM" name="파일명" dataType="text"></w2:column>
 						<w2:column id="FILE_PATH" name="파일경로" dataType="text"></w2:column>
+						<w2:column id="FILE_EXTENSION" name="파일확장자" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
@@ -52,27 +52,42 @@
 						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
+				<w2:dataMap baseNode="map" id="dma_fileinfo">
+					<w2:keyInfo>
+						<w2:key id="FILE_URL" name="파일URL" dataType="text"></w2:key>
+						<w2:key id="FILE_EXTENSION" name="파일확장자" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataMap baseNode="list" repeatNode="map" id="dma_filechk" saveRemovedData="true">
+					<w2:keyInfo>
+						<w2:key id="CHK" name="파일체크" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_PI0501G0R0" ref="data:json,dma_search" target="data:json,dlt_VDO_INFO" action='/pi/PI0501G0R0' method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_PI0501G0R0_submitdone"
-				ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_PI0501G0R0" ref="data:json,dma_search" target="data:json,dlt_VDO_INFO" action='/pi/PI0501G0R0'
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_PI0501G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0501G0S0" ref="data:json,dlt_VDO_INFO" target="data:json,dma_result" action="/pi/PI0501G0S0" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장 중입니다..." ev:submit="" ev:submitdone="scwin.sub_PI0501G0S0_submitdone"
-				ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_PI0501G0S0" ref="data:json,dlt_VDO_INFO" target="data:json,dma_result" action="/pi/PI0501G0S0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="저장 중입니다..." ev:submit="" ev:submitdone="scwin.sub_PI0501G0S0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0501G0K0" ref="" target="data:json,dma_SEQ_BMS_VDO_INFO_0" action="/pi/PI0501G0K0" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0501G0K0_submitdone"
-				ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_PI0501G0K0" ref="" target="data:json,dma_SEQ_BMS_VDO_INFO_0" action="/pi/PI0501G0K0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="scwin.sub_PI0501G0K0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0501SHI0" ref="" target="data:json,dlt_searchitem" action="/pi/PI0501SHI0" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
+			<xf:submission id="sub_PI0501SHI0" ref="" target="data:json,dlt_searchitem" action="/pi/PI0501SHI0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_PI0501FCK0" ref="data:json,dma_fileinfo" target="data:json,dma_filechk" action="/file/doCheckFile" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0501FCK0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
-	<script type="text/javascript" lazy="false"><![CDATA[
+		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
 		var autoOptions = {
 			Main : { grid : PI0501G0, frm : PI0501F0, srchSbm : sub_PI0501G0R0, savSbm : sub_PI0501G0S0, keySbm : sub_PI0501G0K0, 
@@ -138,12 +153,18 @@
 	}*/
 	
 	scwin.upload0_onInputValueChange = function(returnValue){
-	
+		// 확장자 추출
+		var lastDot = returnValue.lastIndexOf('.'); 
+		var fileExtension = returnValue.substring(lastDot+1, returnValue.length);
+		
+		//파일명 추출
 		var fileNameIndex = returnValue.lastIndexOf('\\');
-		var real_fileName = returnValue.substring(fileNameIndex+1, returnValue.length);
+		var fileName = returnValue.substring(fileNameIndex+1, returnValue.length);
 		
-		dlt_VDO_INFO.setCellData(PI0501G0.getFocusedRowIndex(), "FILE_NM", real_fileName);
-		
+		dlt_VDO_INFO.setCellData(PI0501G0.getFocusedRowIndex(), "FILE_NM", fileName);
+		dlt_VDO_INFO.setCellData(PI0501G0.getFocusedRowIndex(), "FILE_EXTENSION", fileExtension);
+		dma_fileinfo.set("EXTENSION", fileExtension);
+			
 		btn_upload.submit();
 		
 	}
@@ -167,20 +188,23 @@
 	};
 
 	scwin.PI0501G0_onrowindexchange = function(row,oldRow) {
-				
+		var path = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_PATH");		
+		dma_fileinfo.set("FILE_URL", path);		
+		
+		com.executeSubmission(sub_PI0501FCK0);
+		
+		//파일 유형에 따라 미리보기 처리		
 		var fileType = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_TYPE");
 		if (fileType == "FT001"){
 			IMG_PLAY_TM.setDisabled(true);
 			$p.$("#image1").hide();
 			$p.$("#video1").show();
-			var path = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_PATH");
 			$p.$("#video1").attr("src", path);	
 			
 		} else if (fileType == "FT002") {
 			IMG_PLAY_TM.setDisabled(false);		
 			$p.$("#image1").show();
 			$p.$("#video1").hide();						
-			var path = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_PATH");
 			$p.$("#image1").attr("src", path);				
 		} else {
 			$p.$("#image1").hide();
@@ -226,6 +250,21 @@
 			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "VDO_NM", "VDO_NM");
 			acb_autoChoiceBox.show("");
 		}
+	};
+	
+	scwin.sub_PI0501FCK0_submitdone = function(e) {
+		var fileCheck = dma_filechk.get("CHK");
+		var fileurl = dma_fileinfo.get("FILE_URL");
+		
+		if(fileCheck == "1") {
+			var fileNames = fileurl.split("/");
+			$p.$("#mf_tac_layout_contents_MN00040601_body_btn_upload_inputFile").attr("value", fileNames[fileNames.length-1]);
+		} else if(fileCheck == "0"){
+			$p.$("#mf_tac_layout_contents_MN00040601_body_btn_upload_inputFile").attr("value", null);			
+			$p.$("#mf_tac_layout_contents_MN00040601_body_btn_upload_inputFile").attr("placeholder", "등록된 파일이 없습니다.");		
+		}
+		
+
 	};
 	]]></script>
 	</head>
@@ -432,7 +471,7 @@
 										<xf:label><![CDATA[파일 선택]]></xf:label>
 									</w2:anchor>-->
 									<w2:upload imageStyle="position:absolute;vertical-align:middle;word-wrap:break-word"
-										inputStyle="vertical-align:middle;word-wrap:break-word" style="width: 272px;height: 23px;" id="btn_upload" inputClass=""
+										inputStyle="vertical-align:middle;word-wrap:break-word" style="width: 200px;height: 23px;" id="btn_upload" inputClass=""
 										ev:onInputValueChange="scwin.upload0_onInputValueChange" ev:ondone="scwin.upload0_ondone" accept=".png,.avi,.mp4,jpg" title="" type=""
 										disabled="false" class="">
 									</w2:upload>
