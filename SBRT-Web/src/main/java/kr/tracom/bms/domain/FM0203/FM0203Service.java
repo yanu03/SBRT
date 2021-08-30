@@ -27,7 +27,15 @@ public class FM0203Service extends ServiceSupport {
 
 	public List FM0203G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return FM0203Mapper.FM0203G0R0(map);
+		List returnList = FM0203Mapper.FM0203G0R0(map);
+		
+		for(Object obj:returnList) {
+			Map<String, Object> temp = (Map<String, Object>)obj;
+			temp.put("FILE_PATH", "/fileUpload/firmware/"+temp.get("FILE_NM"));			
+		}
+		
+		return returnList;
+		
 	}
 	
 	public List FM0203G1R0() throws Exception {
@@ -41,16 +49,24 @@ public class FM0203Service extends ServiceSupport {
 		int dCnt = 0;
 
 		List<Map<String, Object>> param = getSimpleList("dlt_BMS_FCLT_INFO");
-		Map<String, Object> fileInfo = getSimpleDataMap("dma_FILE_INFO");
+		//Map<String, Object> fileInfo = getSimpleDataMap("dma_FILE_INFO");
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map<String, Object> data = param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("U")) {
-
+					if((data.get("FILE_NM")!=null)&&(data.get("FILE_NM").toString().isEmpty()==false)
+							&&(data.get("FCLT_ID").equals(data.get("FILE_NM"))==false))
+						{
+							doMoveFile("up/", "firmware/", data.get("FILE_NM").toString(), data.get("FCLT_ID").toString()+ "."+ data.get("FILE_EXTENSION").toString());
+							data.put("FILE_NM", data.get("FCLT_ID").toString()+ "."+ data.get("FILE_EXTENSION").toString());
+						}
+					
 					iCnt += FM0203Mapper.FM0203G0I0(data);
 					iCnt += FM0203Mapper.FM0203G0I1(data);
+					uCnt += FM0203Mapper.FM0203G0U0(data);
 					
+					/*
 					//장치 펌웨어 업데이트
 					String mngId = String.valueOf(data.get("MNG_ID"));
 					String fileExt = String.valueOf(fileInfo.get("FILE_EXTENSION"));
@@ -58,7 +74,7 @@ public class FM0203Service extends ServiceSupport {
 					
 					//TODO: 이재혁
 					//ftpHandler.uploadFM0203(mngId, "/up/", fileName, fileExt);
-					
+					*/
 					
 
 				}
@@ -92,6 +108,7 @@ public class FM0203Service extends ServiceSupport {
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("U")) {
 					iCnt += FM0203Mapper.FM0203G0D0(data);
+					iCnt += FM0203Mapper.FM0203G0D1(data);
 				}
 			}
 		} catch (Exception e) {
@@ -107,12 +124,10 @@ public class FM0203Service extends ServiceSupport {
 		return result;
 
 	}
-	/*
+	
 	public List FM0203SHI0() throws Exception {
 		return FM0203Mapper.FM0203SHI0();
 	}
 	
-	*/
-
 	
 }

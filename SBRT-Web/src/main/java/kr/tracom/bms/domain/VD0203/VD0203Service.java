@@ -27,7 +27,14 @@ public class VD0203Service extends ServiceSupport {
 
 	public List VD0203G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return VD0203Mapper.VD0203G0R0(map);
+		List returnList = VD0203Mapper.VD0203G0R0(map);
+		
+		for(Object obj:returnList) {
+			Map<String, Object> temp = (Map<String, Object>)obj;
+			temp.put("FILE_PATH", "/fileUpload/firmware/"+temp.get("FILE_NM"));			
+		}
+		
+		return returnList;
 	}
 
 	public List VD0203G1R0() throws Exception {
@@ -45,22 +52,29 @@ public class VD0203Service extends ServiceSupport {
 		int dCnt = 0;
 
 		List<Map<String, Object>> param = getSimpleList("dlt_DVC_INFO");
-		Map<String, Object> fileInfo = getSimpleDataMap("dma_FILE_INFO");
+		//Map<String, Object> fileInfo = getSimpleDataMap("dma_FILE_INFO");
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map<String, Object> data = param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("U")) {
-
+					if((data.get("FILE_NM")!=null)&&(data.get("FILE_NM").toString().isEmpty()==false)
+							&&(data.get("DVC_ID").equals(data.get("FILE_NM"))==false))
+						{
+							doMoveFile("up/", "firmware/", data.get("FILE_NM").toString(), data.get("DVC_ID").toString()+ "."+ data.get("FILE_EXTENSION").toString());
+							data.put("FILE_NM", data.get("DVC_ID").toString()+ "."+ data.get("FILE_EXTENSION").toString());
+						}
+					
 					iCnt += VD0203Mapper.VD0203G0I0(data);
 					iCnt += VD0203Mapper.VD0203G0I1(data);
+					uCnt += VD0203Mapper.VD0203G0U0(data);
 					
-					//장치 펌웨어 업데이트
+					/*//장치 펌웨어 업데이트
 					String mngId = String.valueOf(data.get("MNG_ID"));
 					String fileExt = String.valueOf(fileInfo.get("FILE_EXTENSION"));
 					String fileName = String.valueOf(fileInfo.get("FILE_NM"));
 					
-					ftpHandler.uploadVD0203(mngId, "/up/", fileName, fileExt);
+					ftpHandler.uploadVD0203(mngId, "/up/", fileName, fileExt);*/
 					
 					
 
@@ -95,6 +109,7 @@ public class VD0203Service extends ServiceSupport {
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("U")) {
 					iCnt += VD0203Mapper.VD0203G0D0(data);
+					iCnt += VD0203Mapper.VD0203G0D1(data);
 				}
 			}
 		} catch (Exception e) {
@@ -111,12 +126,5 @@ public class VD0203Service extends ServiceSupport {
 
 	}
 
-	/*
-	 * public List<Map> VD0201G0R0() throws Exception{ Map param =
-	 * getSimpleDataMap("dma_search"); return VD0201Mapper.VD0201G0R0(param); }
-	 * 
-	 * public List<Map> VD0201G1R0() throws Exception{ Map param =
-	 * getSimpleDataMap("dma_param_VHC_ID"); return VD0201Mapper.VD0201G1R0(param);
-	 * }
-	 */
+	
 }

@@ -40,6 +40,7 @@
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="STTN_NO" name="정류소번호" dataType="text"></w2:column>
+						<w2:column id="STTN_NM" name="정류소명" dataType="text"></w2:column>
 						<w2:column id="COMPLETE_YN" name="예약상태" dataType="text"></w2:column>
 						<w2:column id="FCLT_KIND" name="시설유형" dataType="text"></w2:column>
 					</w2:columnInfo>
@@ -64,8 +65,9 @@
 						<w2:column id="PROCE_RST" name="처리결과" dataType="text"></w2:column>
 						<w2:column id="RST_CONT" name="결과내용" dataType="text"></w2:column>
 						<w2:column id="SEND_DATE" name="전송일시" dataType="date"></w2:column>
-						<w2:column id="RSV_DT" name="예약일시" dataType="text"></w2:column>
+						<w2:column id="RSV_DT" name="예약일시" dataType="date"></w2:column>
 						<w2:column id="STTN_ID" name="정류소ID" dataType="text"></w2:column>
+						<w2:column id="VER_INFO" name="버전정보" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_FCLT_UPD_LOG" saveRemovedData="true">
@@ -79,6 +81,7 @@
 						<w2:column id="ORG_DIV" name="제조사" dataType="text"></w2:column>
 						<w2:column id="FCLT_KIND" name="시설유형" dataType="text"></w2:column>
 						<w2:column id="INST_LOC" name="설치위치" dataType="text"></w2:column>
+						<w2:column id="FILE_NM" name="파일명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_subsearch">
@@ -86,10 +89,15 @@
 						<w2:key id="STTN_ID" name="정류소ID" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
-				<w2:dataMap baseNode="map" id="dma_FILE_INFO">
+				<w2:dataMap baseNode="map" id="dma_fileinfo">
 					<w2:keyInfo>
-						<w2:key id="FILE_NM" name="파일명" dataType="text"></w2:key>
+						<w2:key id="FILE_PATH" name="파일URL" dataType="text"></w2:key>
 						<w2:key id="FILE_EXTENSION" name="name2" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataMap baseNode="list" repeatNode="map" id="dma_filechk" saveRemovedData="true">
+					<w2:keyInfo>
+						<w2:key id="CHK" name="파일체크" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 			</w2:dataCollection>
@@ -102,7 +110,7 @@
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_FM0203SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_FM0203G0S0" ref='data:json,[{"action":"modified","id":"dlt_BMS_FCLT_INFO"},"dma_FILE_INFO"]' target="data:json,dma_result"
+			<xf:submission id="sub_FM0203G0S0" ref='data:json,{"action":"modified","id":"dlt_BMS_FCLT_INFO"}' target="data:json,dma_result"
 				action="/fm/FM0203G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="저장 중입니다..." ev:submit="" ev:submitdone="scwin.sub_FM0203G0S0_submitdone"
 				ev:submiterror="" abortTrigger="">
@@ -112,9 +120,13 @@
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_FM0203G0D0_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_FM0203G1R0" ref="data:json,dma_subsearch" target="data:json,dlt_BMS_FCLT_UPD_LOG" action="/fm/FM0203G1R0" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_FM0203G1R0_submitdone"
-				ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_FM0203G1R0" ref="data:json,dma_subsearch" target="data:json,dlt_BMS_FCLT_UPD_LOG" action="/fm/FM0203G1R0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_FM0203G1R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_FM0203FCK0" ref="data:json,dma_fileinfo" target="data:json,dma_filechk" action="/file/doCheckFile"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_FM0203FCK0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
@@ -217,7 +229,7 @@
 		
 	}
 
-	/*scwin.sbx_ChoiceBox_onviewchange = function(info) {		
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
 		if (info.newValue == "ALL") {
 			acb_autoChoiceBox.hide();
 			search_input.setValue("");
@@ -226,38 +238,18 @@
 			search_input.hide();
 			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "STTN_NO", "STTN_NO");
 			acb_autoChoiceBox.show("");
-		} else if (info.newValue == "COMPLETE_YN") {
+		} else if (info.newValue == "STTN_NM") {
 			search_input.hide();
-			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "COMPLETE_YN", "COMPLETE_YN");
-			acb_autoChoiceBox.show("");
-		} else if (info.newValue == "FCLT_KIND") {
-			search_input.hide();
-			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "FCLT_KIND", "FCLT_KIND");
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "STTN_NM", "STTN_NM");
 			acb_autoChoiceBox.show("");
 		} 
-	};*/
+	};
 	
 	
 	scwin.sub_FM0203G0R0_submitdone = function(e) {
 		com.setFocusedCell(FM0203G0, "STTN_NO");
 	};
 
-	
-	scwin.upload0_ondone = function(retXml) {
-		
-		/*
-		var form_file = document.getElementById("file");
-		var filePath = WebSquare.xml.getValue(retXml, "ret/storedFileList");
-		// 실서버 도메인 변경 필요
-		var realPath = "/data/fileUpload/up/";
-		form_file.src = realPath + filePath;
-		dlt_BMS_DVC_INFO.setCellData(scwin.idxRowVOC, dlt_BMS_DVC_INFO.getColumnIndex("FILE_PATH"), form_file.src);
-		//doc_audio0.type = "audio/wav";
-		//doc_audio0.pause();
-		// 서버에 저장되도 404 error 발생함 바로 갱신이 안되는 문제
-		// 현재 동일한 파일명으로 업로드 시 (날짜) 형태로 서버에 파일이 생성되는데 괄호가 보안처리에 의해 다른 문자로 치환되서 DB에서 경로 가져올때 문제 있음 
-		*/ 
-	};
 	
 	scwin.FM0203G0_oncellclick = function(row,col,colId) {
 		if (col != "0"){
@@ -277,47 +269,45 @@
 		com.executeSubmission(sub_FM0203G0R0);		
 	};
 	
-	scwin.file_onInputValueChange = function(fileName) {
+	scwin.file_onInputValueChange = function(returnValue) {
+		debugger;
+		// 확장자 추출
+		var lastDot = returnValue.lastIndexOf('.'); 
+		var fileExtension = returnValue.substring(lastDot+1, returnValue.length);
 		
-		var lastDot = fileName.lastIndexOf('.'); 
-		//확장자
-		var fileExtension = fileName.substring(lastDot+1, fileName.length);
+		//파일명 추출
+		var fileNameIndex = returnValue.lastIndexOf('\\');
+		var fileName = returnValue.substring(fileNameIndex+1, returnValue.length);
 		
-		var fileNameIndex = fileName.lastIndexOf('\\');
-		//파일명
-		var real_fileName = fileName.substring(fileNameIndex+1, fileName.length);
-//		if (fileExtension == "wav" || fileExtension == "tts"){
-//		div_file.addParam("id", dlt_BMS_FCLT_INFO.getCellData(FM0203G0.getFocusedRowIndex(), "STTN_ID"));
+		dlt_BMS_FCLT_INFO.setCellData(FM0203G0.getFocusedRowIndex(), "FILE_NM", fileName);
+		dlt_BMS_FCLT_INFO.setCellData(FM0203G0.getFocusedRowIndex(), "FILE_EXTENSION", fileExtension);
+		dma_fileinfo.set("FILE_EXTENSION", fileExtension);
+
 		div_file.submit();
+	};
+	
+	scwin.upload0_ondone = function(retXml) {
 		
-		dma_FILE_INFO.set('FILE_NM', real_fileName);
-		dma_FILE_INFO.set('FILE_EXTENSION', fileExtension);
-		
-		var chkData = FM0203G0.getCheckedIndex("chk");
-		
-		for(i=0; i < chkData.length; i++){
-			dlt_BMS_FCLT_INFO.setCellData(chkData[i], "FILE_NM", real_fileName);
-			dlt_BMS_FCLT_INFO.setCellData(chkData[i], "FILE_EXTENSION", fileExtension);
-		}
-		
+		/*
+		var form_file = document.getElementById("file");
+		var filePath = WebSquare.xml.getValue(retXml, "ret/storedFileList");
 		// 실서버 도메인 변경 필요
-		var realPath = "http://localhost:8081/fileUpload/up/";
-		
-//		var doc_audio0 = document.getElementById("audio0");
-//		if (PLAY_TYPE.getValue() == "WAV"){
-//			doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID") + ".wav";
-//		}else{
-//			doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID") + ".tts";
-//		}
-            
-//        }else{
-//			alert("wav, tts 확장자만 업로드 할 수 있습니다.");
-//			VOC_PATH.reset()
-//		}		
+		var realPath = "/data/fileUpload/up/";
+		form_file.src = realPath + filePath;
+		dlt_BMS_DVC_INFO.setCellData(scwin.idxRowVOC, dlt_BMS_DVC_INFO.getColumnIndex("FILE_PATH"), form_file.src);
+		//doc_audio0.type = "audio/wav";
+		//doc_audio0.pause();
+		// 서버에 저장되도 404 error 발생함 바로 갱신이 안되는 문제
+		// 현재 동일한 파일명으로 업로드 시 (날짜) 형태로 서버에 파일이 생성되는데 괄호가 보안처리에 의해 다른 문자로 치환되서 DB에서 경로 가져올때 문제 있음 
+		*/ 
 	};
 	
 	scwin.FM0203G0_onrowindexchange = function(row,oldRow) {
-		debugger;
+		var path = dlt_BMS_FCLT_INFO.getCellData(FM0203G0.getFocusedRowIndex(), "FILE_PATH");		
+		dma_fileinfo.set("FILE_PATH", path);		
+		
+		com.executeSubmission(sub_FM0203FCK0);
+	
 		var focusOption = {keyMap : dma_subsearch};
 		com.changeDualGrid(FM0203G0, FM0203G1, null, sub_FM0203G1R0, focusOption, row, oldRow);
 	};
@@ -326,6 +316,21 @@
 		com.setFocusedCell(FM0203G1, "STTN_NO");	
 	};
 
+	
+	scwin.sub_FM0203FCK0_submitdone = function(e) {
+		debugger;
+		var fileCheck = dma_filechk.get("CHK");
+		var fileurl = dma_fileinfo.get("FILE_PATH");
+		
+		if(fileCheck == "1") {
+			var fileNames = fileurl.split("/");
+			$p.$("#mf_tac_layout_contents_MN00060203_body_div_file_inputFile").attr("value", fileNames[fileNames.length-1]);
+		} else if(fileCheck == "0"){
+			$p.$("#mf_tac_layout_contents_MN00060203_body_div_file_inputFile").attr("value", null);			
+			$p.$("#mf_tac_layout_contents_MN00060203_body_div_file_inputFile").attr("placeholder", "등록된 파일이 없습니다.");		
+		}
+	};
+	
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -344,22 +349,36 @@
 						<xf:choices></xf:choices>
 					</xf:select1>
 					<xf:group id="" style="" class="label">
-							<w2:span id="" class="" label="정류소번호 "></w2:span>
+							<w2:span id="" class="" label="검색 항목 "></w2:span>
 					</xf:group>
 					<xf:group id="" style="" class="search">
-						<!-- <xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="차량 번호"
-							style="margin-right: 20px;">
-						</xf:input>
-						<xf:group id="">
-						</xf:group> -->
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" style="" submenuSize="auto" textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[-전체-]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[정류장번호]]></xf:label>
+									<xf:value><![CDATA[STTN_NO]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[정류장명]]></xf:label>
+									<xf:value><![CDATA[STTN_NM]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="정류소번호 또는 정류소명"></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
-							chooseOptionValue="" class="search_auto" style="width:120px" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
-							ev:onviewchange="" id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
-							selectedData="" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange"
+							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
+							class="search_auto" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
 							<w2:choices>
-								<w2:itemset nodeset="data:dlt_searchItem">
-									<w2:label ref="STTN_NO"></w2:label>
-									<w2:value ref="STTN_NO"></w2:value>
+								<w2:itemset nodeset="data:dlt_searchitem">
+									<w2:label ref="VDO_ID"></w2:label>
+									<w2:value ref="VDO_ID"></w2:value>
 								</w2:itemset>
 							</w2:choices>
 						</w2:autoComplete>
@@ -495,7 +514,7 @@
 									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:22px;" id="column3"
 										value="처리일시" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column width="160" id="column59" value="관리ID" ></w2:column>
+									<w2:column width="100" id="column59" value="관리ID" ></w2:column>
 									<w2:column width="100" id="column60" value="제조사"></w2:column>
 									<w2:column width="150" id="column61" value="장치종류"></w2:column>
 									<w2:column width="120" id="column86" value="설치위치"></w2:column>
@@ -519,7 +538,7 @@
 									<w2:column headers="FM0203G1_column3" removeBorderStyle="false" width="" inputType="text"
 										style="height:20px" id="SEND_DATE" value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column width="" id="MNG_ID" textAlign="left"></w2:column>
+									<w2:column width="" id="MNG_ID"></w2:column>
 									<w2:column width="" id="ORG_DIV" inputType="select" textAlign="center"></w2:column>
 									<w2:column width="" id="FCLT_KIND" inputType="select" textAlign="center"></w2:column>
 									<w2:column width="" id="INST_LOC" inputType="select" textAlign="center"></w2:column>

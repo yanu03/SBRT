@@ -379,7 +379,7 @@ public class FileService extends ServiceSupport {
 	//파일 경로가 실제 존재하는지 체크
 	public Map doCheckFile() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_fileinfo");
-		String strFilePath = map.get("FILE_URL").toString();
+		String strFilePath = map.get("FILE_PATH").toString();
 		
 		String strDestPath = (fileRoot + strFilePath.replace("/fileUpload/", "")).replace("/", File.separator);
 		File fileDestPath = new File(strDestPath);

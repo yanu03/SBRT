@@ -16,6 +16,7 @@
 			,a.REMARK
 			,b.STTN_ID
 			,c.RSV_ID
+			,a.FILE_NM
 		FROM BMS_FCLT_INFO a
 		LEFT JOIN BMS_STTN_MST b 
 		ON a.NODE_ID = b.STTN_ID
@@ -25,13 +26,13 @@
 		ON a.MAKER = d.ORG_ID
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-				AND USER_ID LIKE CONCAT('%',#{CONTENT},'%') || USER_NM LIKE CONCAT('%',#{CONTENT},'%')
+				AND STTN_NO LIKE CONCAT('%',#{CONTENT},'%') || STTN_NM LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
-			<if test="TYPE == 'VHC_NO'">
-				AND VHC_NO LIKE CONCAT('%',#{CONTENT},'%')
+			<if test="TYPE == 'STTN_NO'">
+				AND STTN_NO LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
-			<if test="TYPE == 'COMPLETE_YN'">
-				AND COMPLETE_YN LIKE CONCAT('%',#{CONTENT},'%')
+			<if test="TYPE == 'STTN_NM'">
+				AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
 			<if test="TYPE == 'DVC_KIND'">
 				AND DVC_KIND LIKE CONCAT('%',#{DVC_KIND},'%')
@@ -42,6 +43,16 @@
 		</where>
 		GROUP BY a.MNG_ID
 		ORDER BY b.STTN_NO ASC
+	</select>
+	
+	<select id="FM0203SHI0" resultType="Map">
+		SELECT 
+			STTN_NO
+			,STTN_NM
+		FROM 
+			BMS_STTN_MST
+		ORDER BY
+			STTN_NO
 	</select>
 	
 	<select id="FM0203G1R0" parameterType="Map"  resultType="Map">
@@ -77,7 +88,7 @@
 	<insert id="FM0203G0I0" parameterType="Map">
 	
 		<selectKey keyProperty="RSV_ID" resultType="String" order="BEFORE">
-    		SELECT CONCAT('UR', LPAD(NEXTVAL(SEQ_BMS_UPD_LOG_0), 8, '0')) AS RSV_ID
+    		SELECT CONCAT('FR', LPAD(NEXTVAL(SEQ_BMS_FCLT_UPD_RSV_INFO_0), 8, '0')) AS RSV_ID
     	</selectKey>	
 		insert into BMS_FCLT_UPD_LOG
 				(
@@ -95,15 +106,19 @@
 					,'N'
 					,#{REMARK}
 				)
+						
 	</insert>
 	
 	<insert id="FM0203G0I1" parameterType="Map">
+		
+		<selectKey keyProperty="RSV_ID" resultType="String" order="BEFORE">
+    		SELECT CONCAT('FR', LPAD(LASTVAL(SEQ_BMS_FCLT_UPD_RSV_INFO_0), 8, '0')) AS RSV_ID
+    	</selectKey>
 		insert into BMS_FCLT_UPD_RSV_INFO
 				(
 					RSV_ID
 					,MNG_ID
 					,RSV_DT
-					,ATTACH_ID
 					,VER_INFO
 					,UPD_DTM
 					,UPD_ID
@@ -112,7 +127,6 @@
 					#{RSV_ID}
 					,#{MNG_ID}
 					,#{RSV_DT}
-					,#{ATTACH_ID}
 					,#{VER_INFO}
 					,#{UPD_DTM}
 					,#{UPD_ID}
@@ -120,34 +134,36 @@
 			
 	</insert>
 	
+	<update id="FM0203G0U0" parameterType="Map">
+		UPDATE 
+			BMS_FCLT_INFO
+		SET
+			FILE_NM = #{FILE_NM}
+		WHERE
+			MNG_ID = #{MNG_ID}
+	</update>
+	
 	<update id="FM0203G0D0" parameterType="Map">
 		UPDATE 
 			BMS_FCLT_UPD_LOG
 		SET	
 			PROCE_RST = 'PR008'
-			,SEND_DTM = NOW()
+			,SEND_DATE = NOW()
 			,COMPLETE_YN = 'Y'
 		WHERE
 			MNG_ID = #{MNG_ID}
 			AND COMPLETE_YN = 'N'
-			
+	</update>
+	
+	<update id="FM0203G0D1">
+		UPDATE
+			BMS_FCLT_INFO
+		SET
+			FILE_NM = NULL
+		WHERE
+			MNG_ID = #{MNG_ID}
 	</update>
 	
 	
-		<!-- RSV_ID = #{RSV_ID} 
-		
-		<select id="FM0203SHI0" resultType="Map">
-		SELECT 
-			VM.VHC_NO
-			,UL.COMPLETE_YN
-			,DI.DVC_KIND
-		FROM 
-			BMS_VHC_MST VM 
-			INNER JOIN BMS_DVC_INFO DI ON VM.VHC_ID = DI.VHC_ID
-			INNER JOIN BMS_UPD_LOG UL ON DI.MNG_ID = UL.MNG_ID
-	</select>
-		
-		
-		-->
 	
 </mapper>

@@ -18,8 +18,10 @@ public interface FM0203Mapper {
 	
 	public int FM0203G0D0(Map param);
 	
+	public int FM0203G0D1(Map param);
+	
 	public int FM0203G0U0(Map param);
-	/*
+	
 	public List FM0203SHI0();
-	*/
+	
 }

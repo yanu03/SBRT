@@ -63,9 +63,8 @@
 						<w2:column id="PROCE_RST" name="처리결과" dataType="text"></w2:column>
 						<w2:column id="RST_CONT" name="결과내용" dataType="text"></w2:column>
 						<w2:column id="SEND_DATE" name="전송일시" dataType="date"></w2:column>
-						<w2:column id="RSV_DT" name="예약일시" dataType="text"></w2:column>
+						<w2:column id="RSV_DT" name="예약일시" dataType="date"></w2:column>
 						<w2:column id="VHC_ID" name="차량ID" dataType="text"></w2:column>
-
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_UPD_RSV_INFO" saveRemovedData="true">
@@ -79,6 +78,7 @@
 						<w2:column id="ORG_DIV" name="제조사" dataType="text"></w2:column>
 						<w2:column id="DVC_KIND" name="장치종류" dataType="text"></w2:column>
 						<w2:column id="INST_LOC" name="설치위치" dataType="text"></w2:column>
+						<w2:column id="FILE_NM" name="파일명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_subsearch">
@@ -86,10 +86,15 @@
 						<w2:key id="VHC_ID" name="차량번호" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
-				<w2:dataMap baseNode="map" id="dma_FILE_INFO">
+				<w2:dataMap baseNode="map" id="dma_fileinfo">
 					<w2:keyInfo>
-						<w2:key id="FILE_NM" name="파일명" dataType="text"></w2:key>
+						<w2:key id="FILE_PATH" name="파일경로" dataType="text"></w2:key>
 						<w2:key id="FILE_EXTENSION" name="name2" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataMap baseNode="list" repeatNode="map" id="dma_filechk" saveRemovedData="true">
+					<w2:keyInfo>
+						<w2:key id="CHK" name="파일체크" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 			</w2:dataCollection>
@@ -102,7 +107,7 @@
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_VD0203SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_VD0203G0S0" ref='data:json,[{"action":"modified","id":"dlt_DVC_INFO"},"dma_FILE_INFO"]' target="data:json,dma_result"
+			<xf:submission id="sub_VD0203G0S0" ref='data:json,{"action":"modified","id":"dlt_DVC_INFO"}' target="data:json,dma_result"
 				action="/vd/VD0203G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="저장 중입니다..." ev:submit="" ev:submitdone="scwin.sub_VD0203G0S0_submitdone"
 				ev:submiterror="" abortTrigger="">
@@ -112,9 +117,13 @@
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_VD0203G0D0_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_VD0203G1R0" ref="data:json,dma_subsearch" target="data:json,dlt_UPD_RSV_INFO" action="/vd/VD0203G1R0" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_VD0203G1R0_submitdone"
-				ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_VD0203G1R0" ref="data:json,dma_subsearch" target="data:json,dlt_UPD_RSV_INFO" action="/vd/VD0203G1R0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_VD0203G1R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_VD0203FCK0" ref="data:json,dma_fileinfo" target="data:json,dma_filechk" action="/file/doCheckFile"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_VD0203FCK0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
@@ -211,7 +220,7 @@
 		
 	}
 
-	/*scwin.sbx_ChoiceBox_onviewchange = function(info) {		
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
 		if (info.newValue == "ALL") {
 			acb_autoChoiceBox.hide();
 			search_input.setValue("");
@@ -224,12 +233,8 @@
 			search_input.hide();
 			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "COMPLETE_YN", "COMPLETE_YN");
 			acb_autoChoiceBox.show("");
-		} else if (info.newValue == "DVC_KIND") {
-			search_input.hide();
-			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "DVC_KIND", "DVC_KIND");
-			acb_autoChoiceBox.show("");
 		} 
-	};*/
+	};
 	
 	
 	scwin.sub_VD0203G0R0_submitdone = function(e) {
@@ -271,46 +276,30 @@
 		com.executeSubmission(sub_VD0203G0R0);		
 	};
 	
-	scwin.file_onInputValueChange = function(fileName) {
+	scwin.file_onInputValueChange = function(returnValue) {
 		
-		var lastDot = fileName.lastIndexOf('.'); 
-		//확장자
-		var fileExtension = fileName.substring(lastDot+1, fileName.length);
+		debugger;
+		// 확장자 추출
+		var lastDot = returnValue.lastIndexOf('.'); 
+		var fileExtension = returnValue.substring(lastDot+1, returnValue.length);
 		
-		var fileNameIndex = fileName.lastIndexOf('\\');
-		//파일명
-		var real_fileName = fileName.substring(fileNameIndex+1, fileName.length);
-//		if (fileExtension == "wav" || fileExtension == "tts"){
-//		div_file.addParam("id", dlt_DVC_INFO.getCellData(VD0203G0.getFocusedRowIndex(), "VHC_ID"));
-		div_file.submit();
+		//파일명 추출
+		var fileNameIndex = returnValue.lastIndexOf('\\');
+		var fileName = returnValue.substring(fileNameIndex+1, returnValue.length);
 		
-		dma_FILE_INFO.set('FILE_NM', real_fileName);
-		dma_FILE_INFO.set('FILE_EXTENSION', fileExtension);
-		
-		var chkData = VD0203G0.getCheckedIndex("chk");
-		
-		for(i=0; i < chkData.length; i++){
-			dlt_DVC_INFO.setCellData(chkData[i], "FILE_NM", real_fileName);
-			dlt_DVC_INFO.setCellData(chkData[i], "FILE_EXTENSION", fileExtension);
-		}
-		
-		// 실서버 도메인 변경 필요
-		var realPath = "http://localhost:8081/fileUpload/up/";
-		
-//		var doc_audio0 = document.getElementById("audio0");
-//		if (PLAY_TYPE.getValue() == "WAV"){
-//			doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID") + ".wav";
-//		}else{
-//			doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID") + ".tts";
-//		}
-            
-//        }else{
-//			alert("wav, tts 확장자만 업로드 할 수 있습니다.");
-//			VOC_PATH.reset()
-//		}		
+		dlt_DVC_INFO.setCellData(VD0203G0.getFocusedRowIndex(), "FILE_NM", fileName);
+		dlt_DVC_INFO.setCellData(VD0203G0.getFocusedRowIndex(), "FILE_EXTENSION", fileExtension);
+		dma_fileinfo.set("FILE_EXTENSION", fileExtension);
+
+		div_file.submit();		
 	};
 	
 	scwin.VD0203G0_onrowindexchange = function(row,oldRow) {
+		var path = dlt_DVC_INFO.getCellData(VD0203G0.getFocusedRowIndex(), "FILE_PATH");		
+		dma_fileinfo.set("FILE_PATH", path);		
+		
+		com.executeSubmission(sub_VD0203FCK0);
+		
 		var focusOption = {keyMap : dma_subsearch};
 		com.changeDualGrid(VD0203G0, VD0203G1, null, sub_VD0203G1R0, focusOption, row, oldRow);
 		
@@ -319,7 +308,21 @@
 	scwin.sub_VD0203G1R0_submitdone = function(e) {
 		com.setFocusedCell(VD0203G1, "VHC_NO");	
 	};
-
+	
+	
+	scwin.sub_VD0203FCK0_submitdone = function(e) {
+		debugger;
+		var fileCheck = dma_filechk.get("CHK");
+		var fileurl = dma_fileinfo.get("FILE_PATH");
+		
+		if(fileCheck == "1") {
+			var fileNames = fileurl.split("/");
+			$p.$("#mf_tac_layout_contents_MN00050201_body_div_file_inputFile").attr("value", fileNames[fileNames.length-1]);
+		} else if(fileCheck == "0"){
+			$p.$("#mf_tac_layout_contents_MN00050201_body_div_file_inputFile").attr("value", null);			
+			$p.$("#mf_tac_layout_contents_MN00050201_body_div_file_inputFile").attr("placeholder", "등록된 파일이 없습니다.");		
+		}
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -338,22 +341,36 @@
 						<xf:choices></xf:choices>
 					</xf:select1>
 					<xf:group id="" style="" class="label">
-							<w2:span id="" class="" label="차량번호 "></w2:span>
+							<w2:span id="" class="" label="검색 항목"></w2:span>
 					</xf:group>
 					<xf:group id="" style="" class="search">
-						<!-- <xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="차량 번호"
-							style="margin-right: 20px;">
-						</xf:input>
-						<xf:group id="">
-						</xf:group> -->
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" style="" submenuSize="auto" textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[-전체-]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[차량번호]]></xf:label>
+									<xf:value><![CDATA[VHC_NO]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[예약상태]]></xf:label>
+									<xf:value><![CDATA[COMPLETE_YN]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="차량번호 또는 예약상태"></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
-							chooseOptionValue="" class="search_auto" style="width:120px" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
-							ev:onviewchange="" id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
-							selectedData="" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange"
+							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
+							class="search_auto" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
 							<w2:choices>
-								<w2:itemset nodeset="data:dlt_searchItem">
-									<w2:label ref="VHC_NO"></w2:label>
-									<w2:value ref="VHC_NO"></w2:value>
+								<w2:itemset nodeset="data:dlt_searchitem">
+									<w2:label ref="VDO_ID"></w2:label>
+									<w2:value ref="VDO_ID"></w2:value>
 								</w2:itemset>
 							</w2:choices>
 						</w2:autoComplete>

@@ -44,14 +44,14 @@ public class FM0203Controller extends ControllerSupport {
 		result.setData("dma_result", map);
 		return result.getResultSave();
 	}
-	/*
+	
 	@RequestMapping("/fm/FM0203SHI0")
 	public @ResponseBody Map<String, Object> FM0203SHI0() throws Exception {
 		result.setData("dlt_searchitem", fm0203Service.FM0203SHI0());
 		return result.getResult();
 	}
 
-	*/
+	
 	
 	
 	
