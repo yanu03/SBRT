@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.bms.domain.FM0300.FM0300Mapper">
+
+<select id="FM0300G0R0" resultType="Map">
+	SELECT 			STTN_ID
+					,STTN_NO
+					,STTN_NM
+					,GPS_X
+					,GPS_Y
+					,REMARK
+					
+	FROM			BMS_STTN_MST
+	<where>	
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			STTN_ID LIKE CONCAT('%',#{CONTENT},'%') || STTN_NO LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'STTN_ID'">
+			STTN_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'STTN_NO'">
+			STTN_NO LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+</select>
+
+<select id="FM0300SHI0" resultType="Map">
+	SELECT			STTN_ID
+					,STTN_NO	
+	FROM			BMS_STTN_MST
+</select>
+
+  
+<select id="FM0300SHI1" resultType="Map">
+	SELECT			ORG_ID
+					,ORG_NM
+	FROM	  		BMS_ORG_MST
+	WHERE			ORG_DIV = 'OGD08'
+</select>	
+
+<select id="FM0300SHI2" resultType="Map">
+	SELECT			CLSFCTN_ID
+					,CLSFCTN_NM
+	FROM	  		BMS_EMER_CLSFCTN_MST
+</select>	
+
+<select id="FM0300G1R0" resultType="Map">
+	SELECT 
+		FCLT_ID
+		,MAKER
+		,FCLT_KIND
+		,MRO_ID
+		,INST_LOC
+		,MODEL_NM
+		,DATE_FORMAT(BUY_DT, '%Y%m%d') BUY_DT
+		,DATE_FORMAT(INST_DT, '%Y%m%d') INST_DT
+		,USE_YN
+		,MNG_ID
+		,REMARK
+		,NODE_ID
+	FROM
+		BMS_FCLT_INFO
+	WHERE
+		NODE_ID = #{STTN_ID}
+</select>
+
+<select id="FM0300G2R0" resultType="Map">
+	SELECT 			FCLT_ID
+					,SN
+					,DATE_FORMAT(APLY_DATE,'%Y-%m-%d') APLY_DATE
+					,WORK_TYPE
+					,WORK_AMT
+					,REMARK
+	FROM			BMS_FCLT_HIS
+	
+	WHERE			FCLT_ID = #{FCLT_ID}
+	ORDER BY		SN					
+</select>
+
+<select id="FM0300G3R0" resultType="Map">
+	SELECT 			DATE_FORMAT(SEND_DATE,'%Y-%m-%d') SEND_DATE
+					,MNG_ID
+					,FCLT_COND
+					,VER_INFO
+					,REMARK
+	FROM			BMS_FCLT_COND_LOG	
+	
+	WHERE			MNG_ID = #{MNG_ID}
+	AND				FCLT_COND = 'DC021'
+</select>
+
+<insert id="FM0300G2I0" parameterType="Map">
+	INSERT INTO		BMS_FCLT_HIS
+					(
+						FCLT_ID
+						,SN
+						,APLY_DATE
+						,WORK_TYPE
+						,WORK_AMT
+						,REMARK
+					)
+	VALUES			(
+						#{FCLT_ID}
+						,NEXTVAL(SEQ_BMS_FCLT_HIS_0)
+						,#{APLY_DATE}
+						,#{WORK_TYPE}
+						,#{WORK_AMT}
+						,#{REMARK}
+					)
+	
+	
+						
+</insert>
+
+<update id="FM0300G2U0" parameterType="Map">
+	UPDATE			BMS_FCLT_HIS
+	SET				APLY_DATE = #{APLY_DATE}
+					,WORK_TYPE = #{WORK_TYPE}
+					,WORK_AMT = #{WORK_AMT}
+					,REMARK = #{REMARK}
+					
+	WHERE			FCLT_ID = #{FCLT_ID}
+	AND				SN = #{SN}							 	
+</update>
+
+<delete id="VD0300G2D0" parameterType="Map">
+	DELETE FROM 	BMS_FCLT_HIS
+	WHERE			FCLT_ID = #{FCLT_ID}
+	AND				SN = #{SN}
+</delete>
+
+</mapper>
