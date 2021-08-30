@@ -34,6 +34,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 		registry.addResourceHandler("/cm/**").addResourceLocations(staticResouceLocation+"/static/cm/");
 		registry.addResourceHandler("/ui/**").addResourceLocations(staticResouceLocation+"/static/ui/");
 		registry.addResourceHandler("/ClipReport/**").addResourceLocations(staticResouceLocation+"/static/ClipReport/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("/webjars/").resourceChain(false);        
 		super.addResourceHandlers(registry);
 	}
 
