@@ -20,6 +20,7 @@ import kr.tracom.cm.domain.Login.LoginService;
 import kr.tracom.cm.support.ControllerSupport;
 import kr.tracom.util.Result;
 import kr.tracom.util.UserInfo;
+import kr.tracom.util.CommonUtil;
 import kr.tracom.util.Constants;
 
 @Controller
@@ -45,7 +46,15 @@ public class LoginController extends ControllerSupport {
 	 */
 	@RequestMapping(value = "/main/logout")
 	public @ResponseBody Map<String, Object> logout() throws Exception {
+		HttpSession session = request.getSession();
 		try {
+			Map param = new HashMap<>();
+			
+			param.put(Constants.SSN_USER_ID, session.getAttribute(Constants.SSN_USER_ID));
+			param.put(Constants.SSN_USER_NM, session.getAttribute(Constants.SSN_USER_NM));
+			param.put("IP", CommonUtil.getIpAddress(request));
+			
+			loginService.insertLogoutHis(param);
 			result.setMsg(Result.STATUS_SUCESS, "정상적으로 로그아웃 되었습니다.");
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -121,6 +130,10 @@ public class LoginController extends ControllerSupport {
 			//session.setAttribute("MENU_LIST", (List) sessionMList);
 
 			user.setUserInfo(session);
+			
+			//로그인 이력 저장.
+			memberMap.put("IP", CommonUtil.getIpAddress(request));
+			loginService.insertLoginHis(memberMap);
 
 			result.setMsg(Result.STATUS_SUCESS, "로그인 성공");
 		} else if (status.equals("error")) {
