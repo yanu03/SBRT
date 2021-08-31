@@ -69,12 +69,12 @@ public class VD0203Service extends ServiceSupport {
 					iCnt += VD0203Mapper.VD0203G0I1(data);
 					uCnt += VD0203Mapper.VD0203G0U0(data);
 					
-					/*//장치 펌웨어 업데이트
+					//장치 펌웨어 업데이트
 					String mngId = String.valueOf(data.get("MNG_ID"));
-					String fileExt = String.valueOf(fileInfo.get("FILE_EXTENSION"));
-					String fileName = String.valueOf(fileInfo.get("FILE_NM"));
+					String fileExt = String.valueOf(data.get("FILE_EXTENSION"));
+					String fileName = data.get("DVC_ID").toString()+ "."+ data.get("FILE_EXTENSION").toString();
 					
-					ftpHandler.uploadVD0203(mngId, "/up/", fileName, fileExt);*/
+					ftpHandler.uploadVD0203(mngId, "/firmware/", fileName, fileExt);
 					
 					
 
