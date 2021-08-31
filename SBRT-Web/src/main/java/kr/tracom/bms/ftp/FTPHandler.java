@@ -255,7 +255,8 @@ public class FTPHandler {
 			
 			
 			try {
-				doMoveFile(srcPath, destPath, srcFileName, destFileName);
+				//doMoveFile(srcPath, destPath, srcFileName, destFileName);
+				doCopyFile(srcPath, destPath, srcFileName, destFileName);
 				
 				processSynchronize(getRootLocalPath() + destPath, getRootServerPath() + destPath);
 			} catch(Exception e){
