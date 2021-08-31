@@ -27,7 +27,7 @@ import kr.tracom.cm.support.ControllerSupport;
 @Scope("request")
 public class FileController extends ControllerSupport {
 	
-	String strUniqErrorMessage = "�ߺ��� ID���� �����մϴ�. ���߼Һ��� 1���� ID�� �����Ͻʽÿ�.";
+	String strUniqErrorMessage = "중복된 ID값이 존재합니다. 대중소별로 1개의 ID를 지정하십시오.";
 	/**
 	 * 
 	 */
@@ -60,10 +60,10 @@ public class FileController extends ControllerSupport {
 	private static final String ROW_STATUS = "rowStatus";
 
 	/**
-	 * �ۼ���: Ʈ����
-	 * �ۼ���: 2017. 2. 23.
-	 * ������: 2017. 2. 23.
-	 * ���� : ���Ͼ��ε� ����
+	 * 작성자: 트라콤
+	 * 작성일: 2017. 2. 23.
+	 * 수정일: 2017. 2. 23.
+	 * 목적 : 파일업로드 공통
 	 * 
 	 * @return
 	 * @throws Exception
@@ -100,7 +100,7 @@ public class FileController extends ControllerSupport {
 		for (Map<String, Object> fileUpload : lstUploadFile){
 			if("".equalsIgnoreCase((String)fileUpload.get(STATUS))&&"R".equalsIgnoreCase((String)fileUpload.get(ROW_STATUS))){
 				String orgfileName = (String) fileUpload.get(ORG_FILE_NAME);
-				orgfileName = orgfileName.replace("&#40;", "(").replace("&#41;", ")"); //���ϸ� "(" => &#40 "(" => &#41 ��ȯ�Ǵ� ���� ����
+				orgfileName = orgfileName.replace("&#40;", "(").replace("&#41;", ")"); //파일명 "(" => &#40 "(" => &#41 변환되는 현상 수정
 				fileService.doMoveFile(sourcePath,destPath,orgfileName,destFileName);
 				
 				fileUpload.put(FILE_ID, fileId);
@@ -121,10 +121,10 @@ public class FileController extends ControllerSupport {
 	
 		
 	/**
-	 * �ۼ���: Ʈ����
-	 * �ۼ���: 2017. 2. 23.
-	 * ������: 2017. 2. 23.
-	 * ���� : ���ϰ����� ����
+	 * 작성자: 트라콤
+	 * 작성일: 2017. 2. 23.
+	 * 수정일: 2017. 2. 23.
+	 * 목적 : 파일가져옴 공통
 	 * 
 	 * @return
 	 * @throws Exception
@@ -141,10 +141,10 @@ public class FileController extends ControllerSupport {
 	}
 	
 	/**
-	 * �ۼ���: Ʈ����
-	 * �ۼ���: 2017. 2. 23.
-	 * ������: 2017. 2. 23.
-	 * ���� : ���ϻ��� ����
+	 * 작성자: 트라콤
+	 * 작성일: 2017. 2. 23.
+	 * 수정일: 2017. 2. 23.
+	 * 목적 : 파일삭제 공통
 	 * 
 	 * @return
 	 * @throws Exception
@@ -171,11 +171,11 @@ public class FileController extends ControllerSupport {
 	}
 	
 	/**
-	 * �ۼ���: Ʈ����
+	 * 작성자: 트라콤
 	 *
-	 * �ۼ���: 2017. 2. 19.
-	 * ������: 2017. 2. 19.
-	 * ���� :÷������ �ٿ�ε�
+	 * 작성일: 2017. 2. 19.
+	 * 수정일: 2017. 2. 19.
+	 * 목적 :첨부파일 다운로드
 	 * @throws Exception
 	 */
 	@RequestMapping("/file/doDownloadFile.do")
