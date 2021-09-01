@@ -1,5 +1,6 @@
 package kr.tracom.ws;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.HtmlUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 public class WsController {
@@ -49,9 +52,20 @@ public class WsController {
     @SendTo("/topic/public")
     public @ResponseBody Map<String, Object> sendMessage(@Payload WsMessage msg) {
 		
-		Map<String, Object> map = new HashMap<>();
+		ObjectMapper mapper = new ObjectMapper(); 
+		Map<String, Object> map = new HashMap();
+		try { 
+			
+			// convert JSON string to Map 
+			map = mapper.readValue(msg.getContent(), Map.class); 
+			// it works //Map<String, String> map = mapper.readValue(json, new TypeReference<Map<String, String>>() {});
+			System.out.println(map);
+		} catch (IOException e) { e.printStackTrace(); }
+					
 		
-		map.put("content", msg.getContent());
+		//map.put("GPS_X", 127.999);
+		//map.put("GPS_Y", 36.999);
+		//map.put("VHC_ID", "VH00000005");
 		
 		return map;
 		//return new WsMessage(HtmlUtils.htmlEscape(msg.getContent()));
