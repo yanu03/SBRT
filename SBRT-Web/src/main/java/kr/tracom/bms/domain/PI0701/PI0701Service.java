@@ -8,6 +8,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import kr.tracom.bms.domain.PI0701.PI0701Mapper;
+import kr.tracom.bms.ftp.FTPHandler;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.util.Result;
@@ -18,16 +19,31 @@ public class PI0701Service extends ServiceSupport {
 	@Autowired
 	private PI0701Mapper pi0701Mapper;
 	
+	@Autowired
+	private FTPHandler ftpHandler;
+	
 	public List PI0701G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
 		List returnList = pi0701Mapper.PI0701G0R0(map);
 		
 		/*for(Object obj:returnList) {
-			Map<String, Object> temp = (Map<String, Object>)obj;
-			temp.put("FILE_PATH", "/fileUpload/PI0701/"+temp.get("VDO_ID"));			
-		}
-		*/
+			Map<String, Object> temp = (Map<String, Object>) obj;
+			temp.put("FILE_PATH", "/fileUpload/destination/"+temp.get("DVC_NM"));			
+		}*/
+		
+		
 		return returnList;
+	}
+	
+	//스케쥴 파일 Read
+	//여기부터 해야함
+	public List PI0701G1R0() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_ROUT_MST");
+		String deviceCd = (String)map.get("DVC_NM");
+		String fileName = (String)map.get("FILE_NM");		
+		//ftpHandler.readSCH(deviceCd, fileName);
+		
+		return null;
 	}
 	
 	public List PI0701SHI0() throws Exception {
@@ -42,34 +58,35 @@ public class PI0701Service extends ServiceSupport {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
 		return pi0701Mapper.PI0701P0R0(map);
 	}
-
+		*/
+	
+	
 	public Map PI0701G0S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;		
 		
-		List<Map<String, Object>> param = getSimpleList("dlt_BIT_VDO_INFO");
+		List<Map<String, Object>> param = getSimpleList("dlt_ROUT_MST");
+		
+		//선택한 노선의 정보, fileNM
+		Map<String, Object> map_param = getSimpleDataMap("dma_ROUT_MST");
+		String path = "temp/destination/"+map_param.get("SELECTED_DL").toString()+"/";
+		String fileNM = map_param.get("FILE_NM").toString();
+		
+		//동작설정 그리드 데이터 리스트
+		List<Map<String, Object>> actionData = getSimpleList("dlt_actionSetting");
+		
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
-				if (rowStatus.equals("C")) {
-					iCnt += pi0701Mapper.PI0701G0I0(data);
-					if((data.get("FILE_NM")!=null)&&(data.get("FILE_NM").toString().isEmpty()==false)
-							&&(data.get("VDO_ID").equals(data.get("FILE_NM"))==false))
+				if (rowStatus.equals("U")) {
+					uCnt += 1;
+					if((data.get("FILE_NM")!=null)&&(data.get("FILE_NM").toString().isEmpty()==false)) 
 						{
-							doMoveFile("up/","PI0701/",data.get("FILE_NM").toString(),data.get("VDO_ID").toString());
+							doMoveFile("up/",path,data.get("FILE_NM").toString(), fileNM);
 						}					
-				} else if (rowStatus.equals("U")) {
-					uCnt += pi0701Mapper.PI0701G0U0(data);
-					if((data.get("FILE_NM")!=null)&&(data.get("FILE_NM").toString().isEmpty()==false)
-							&&(data.get("VDO_ID").equals(data.get("FILE_NM"))==false)) 
-						{
-							doMoveFile("up/","PI0701/",data.get("FILE_NM").toString(),data.get("VDO_ID").toString());
-						}					
-				} else if (rowStatus.equals("D")) {
-					dCnt += pi0701Mapper.PI0701G0D0(data);
-				} 
+				 } 
 			}			
 		} catch(Exception e) {
 			if (e instanceof DuplicateKeyException)
@@ -88,5 +105,5 @@ public class PI0701Service extends ServiceSupport {
 		return result;		
 		
 		
-	}	*/
+	}	
 }
