@@ -353,10 +353,11 @@ public class FTPHandler {
 	//PI0702 행선지안내기 예약(파일이동)
 	public void reserveDst(Map<String, Object> routeInfo, List<Map<String, Object>> dlist) throws Exception {
 		
-		String routeNm = String.valueOf(routeInfo.get("ROUT_NM"));
-		String wayDiv = String.valueOf(routeInfo.get("TXT_VAL1")); //U or D
+		//String routeNm = String.valueOf(routeInfo.get("ROUT_NM"));
+		//String wayDiv = String.valueOf(routeInfo.get("TXT_VAL1")); //U or D
+		//String dvcName =  routeNm + wayDiv; //노선이름+U or D
 		
-		String dvcName =  routeNm + wayDiv; //노선이름+U or D
+		String dvcName = String.valueOf(routeInfo.get("DVC_NM")); 
 		
 		
 		for(Map<String, Object> map : dlist) {
@@ -531,7 +532,7 @@ public class FTPHandler {
 			int seq = i + 1;
 			
 			scheduleRow.put("FRAME_NO", "FRAME" + seq);
-			scheduleRow.put("EFFECT_TYPE", "화면그대로 표출");
+			scheduleRow.put("EFFECT_TYPE", "ET001");
 			scheduleRow.put("EFFECT_SPEED", "05");
 			scheduleRow.put("SHOW_TIME", "0000");
 			
