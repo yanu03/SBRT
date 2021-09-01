@@ -54,7 +54,7 @@
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_fileinfo">
 					<w2:keyInfo>
-						<w2:key id="FILE_URL" name="파일URL" dataType="text"></w2:key>
+						<w2:key id="FILE_PATH" name="파일경로" dataType="text"></w2:key>
 						<w2:key id="FILE_EXTENSION" name="파일확장자" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
@@ -189,7 +189,7 @@
 
 	scwin.PI0501G0_onrowindexchange = function(row,oldRow) {
 		var path = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_PATH");		
-		dma_fileinfo.set("FILE_URL", path);		
+		dma_fileinfo.set("FILE_PATH", path);		
 		
 		com.executeSubmission(sub_PI0501FCK0);
 		
@@ -254,7 +254,7 @@
 	
 	scwin.sub_PI0501FCK0_submitdone = function(e) {
 		var fileCheck = dma_filechk.get("CHK");
-		var fileurl = dma_fileinfo.get("FILE_URL");
+		var fileurl = dma_fileinfo.get("FILE_PATH");
 		
 		if(fileCheck == "1") {
 			var fileNames = fileurl.split("/");
