@@ -40,10 +40,9 @@ public class PI0701Service extends ServiceSupport {
 	public List PI0701G1R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_ROUT_MST");
 		String deviceCd = (String)map.get("DVC_NM");
-		String fileName = (String)map.get("FILE_NM");		
-		//ftpHandler.readSCH(deviceCd, fileName);
+		String fileName = (String)map.get("FILE_NM");
 		
-		return null;
+		return ftpHandler.readSCH(deviceCd, fileName);
 	}
 	
 	public List PI0701SHI0() throws Exception {
