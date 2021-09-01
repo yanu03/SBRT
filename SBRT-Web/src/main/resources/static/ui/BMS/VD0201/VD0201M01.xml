@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
 	xmlns:xf="http://www.w3.org/2002/xforms">
-	<head>
+<head>
+	<script src="/webjars/sockjs-client/sockjs.min.js"></script>
+	<script src="/webjars/stomp-websocket/stomp.min.js"></script>
 		<w2:type>DEFAULT</w2:type>
 		<w2:buildDate />
 		<xf:model>
@@ -145,8 +147,71 @@
 		VD0201G0.mergeCol(2,false);
 		VD0201G0.mergeCells("byrestriccol");
 		
-		com.executeSubmission(sub_VD0201SHI0);		
+		com.executeSubmission(sub_VD0201SHI0);	
+		
+		connect();	
 	};	
+	
+	
+	$(function () {
+		$( "#connect" ).click(function() { connect(); });
+		$( "#disconnect" ).click(function() { disconnect(); });
+		
+		$("form").on('submit', function (e) {
+			e.preventDefault();
+		});
+		$( "#send" ).click(function() { sendMessage(); });
+	
+		connect();
+	
+	});	
+	
+	function connect() {
+		var socket = new SockJS('/websocket');
+		stompClient = Stomp.over(socket);
+		
+		stompClient.connect({}, onConnected, onError);
+	
+	}	
+	
+	
+	function onConnected(frame) {
+		//setConnected(true);
+		
+		console.log('Connected: ' + frame);
+		
+	    // Subscribe to the Public Topic
+	    
+
+	    stompClient.subscribe('/topic/public', scwin.onMessageReceived);
+	
+	}
+	
+	
+	function onError(error) {
+		showMessage('Could not connect to WebSocket server. ' + error);
+	}	
+	
+	scwin.onMessageReceived = function(payload) {
+		debugger;
+		
+		var jsonObj = JSON.parse(payload.body);
+		//var content = jsonObj.content;
+		
+		
+		//console.log('Connected: ' + content);
+		var rowData2 = dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "VHC_ID")
+		var rowData = dlt_BRT_CUR_OPER_INFO.getAllJSON()[VD0201G0.getFocusedRowIndex()];
+		routMap.showVehicle2("map_VD0201", jsonObj, rowData2, VD0201G0, 0);	
+		
+		//showMessage(content);
+	}
+	
+	function showMessage(message) {
+		$("#mf_tac_layout_contents_MN00050202_body_message").append("<tr><td>" + message + "</td></tr>");
+	}	
+	
+	
 	
 	scwin.VD0201G0_onrowindexchange = function(row,oldRow) {
 		var focusOption = {keyMap : dma_sub_search};
@@ -167,7 +232,8 @@
 	};
 	
 	scwin.sub_VD0201G0R0_submitdone = function(e) {
-		com.setFocusedCell(VD0201G0, "REP_ROUT_NM");	
+		debugger;
+		com.setFocusedCell(VD0201G0, "REP_ROUT_NM");
 //		var list = com.getGridDispJsonData(
 //		routMap.showRoute("map_VD0201", dlt_BRT_CUR_OPER_INFO.getAllJSON());		
 //		routMap.drawRoute("map_VD0201", VD0201G0, VD0201G0.getFocusedRowIndex());
@@ -207,8 +273,8 @@
 		routMap.showRoute("map_VD0201", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON());			
 		//routMap.drawRoute2("map_VD0201", dlt_BMS_ROUT_LINK_CMPSTN.getAllJSON());
 
-		routMap.showVehicle("map_VD0201", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
-							 dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "VHC_ID"), VD0201G0);	
+		//routMap.showVehicle("map_VD0201", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
+							 //dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "VHC_ID"), VD0201G0);	
 	};
 	]]></script>
 	</head>
@@ -225,8 +291,7 @@
 					<xf:group class="search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
-							optionOrder="false" ref="data:dma_search.CONTENT1" class="search_type_100" style="" submenuSize="auto"
-							textAlign="left">
+							optionOrder="false" ref="data:dma_search.CONTENT1" class="search_type_100" style="" submenuSize="auto" textAlign="left">
 							<xf:choices>
 								<xf:itemset nodeset="data:dlt_searchitem">
 									<xf:label ref="REP_ROUT_NM"></xf:label>
@@ -235,13 +300,23 @@
 							</xf:choices>
 						</xf:select1>
 						<xf:group class="label" id="" style="">
-							<w2:span class="" id="" label="검색 항목"></w2:span>	
-						</xf:group>						
+							<w2:span class="" id="" label="검색 항목"></w2:span>
+						</xf:group>
 						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT2" placeholder="차번"></xf:input>
-						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-" chooseOptionValue=""
-							class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
-							id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT1" search="start" selectedData="" style="display:none"
-							submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="" nextTabByEnter="" disableEdit="">
+						<table id="conversation" class="table table-striped">
+		        <thead>
+		        <tr>
+		          <th>Message</th>
+		        </tr>
+		        </thead>
+		        <tbody id="message">
+		        </tbody>
+		      </table>
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
+							ev:onviewchange="" id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT1" search="start"
+							selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum=""
+							nextTabByEnter="" disableEdit="">
 							<w2:choices>
 								<w2:itemset nodeset="data:dlt_searchitem">
 									<w2:label ref="GRG_ID"></w2:label>
