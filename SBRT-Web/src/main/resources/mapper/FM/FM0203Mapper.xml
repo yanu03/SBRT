@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.bms.domain.FM0203.FM0203Mapper">
+
+	  <select id="FM0203G0R0" resultType="Map">
+		SELECT
+			b.STTN_NO
+			,b.STTN_NM
+			,MAX(IF(c.COMPLETE_YN IS NULL, '', IF(c.COMPLETE_YN = 'N', '예약중', ''))) AS COMPLETE_YN
+			,a.FCLT_KIND
+			,d.ORG_DIV
+			,a.INST_LOC
+			,a.FCLT_ID
+			,a.FCLT_IP
+			,a.MNG_ID
+			,a.REMARK
+			,b.STTN_ID
+			,c.RSV_ID
+			,a.FILE_NM
+		FROM BMS_FCLT_INFO a
+		LEFT JOIN BMS_STTN_MST b 
+		ON a.NODE_ID = b.STTN_ID
+		LEFT JOIN BMS_FCLT_UPD_LOG c 
+		ON a.MNG_ID = c.MNG_ID
+		LEFT JOIN BMS_ORG_MST d
+		ON a.MAKER = d.ORG_ID
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND STTN_NO LIKE CONCAT('%',#{CONTENT},'%') || STTN_NM LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'STTN_NO'">
+				AND STTN_NO LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'STTN_NM'">
+				AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'DVC_KIND'">
+				AND DVC_KIND LIKE CONCAT('%',#{DVC_KIND},'%')
+			</if>
+			<if test="DVC_KIND != null and DVC_KIND != ''">
+				AND DI.DVC_KIND = #{DVC_KIND}
+			</if>
+		</where>
+		GROUP BY a.MNG_ID
+		ORDER BY b.STTN_NO ASC
+	</select>
+	
+	<select id="FM0203SHI0" resultType="Map">
+		SELECT 
+			STTN_NO
+			,STTN_NM
+		FROM 
+			BMS_STTN_MST
+		ORDER BY
+			STTN_NO
+	</select>
+	
+	<select id="FM0203G1R0" parameterType="Map"  resultType="Map">
+		SELECT
+			b.STTN_NO
+			,(IF(c.COMPLETE_YN IS NULL, '', IF(c.COMPLETE_YN = 'N', '예약중', ''))) AS COMPLETE_YN
+			,date_format(e.RSV_DT, '%Y-%m-%d') as RSV_DT
+			,c.PROCE_RST
+			,date_format(c.SEND_DATE,'%Y-%m-%d') as SEND_DATE
+			,a.MNG_ID
+			,d.ORG_DIV
+			,a.FCLT_KIND
+			,a.INST_LOC
+		FROM
+			BMS_FCLT_INFO a
+			LEFT JOIN BMS_STTN_MST b 
+			ON a.NODE_ID = b.STTN_ID
+			LEFT JOIN BMS_FCLT_UPD_LOG c 
+			ON a.MNG_ID = c.MNG_ID
+			LEFT JOIN BMS_ORG_MST d
+			ON a.MAKER = d.ORG_ID
+			LEFT JOIN BMS_FCLT_UPD_RSV_INFO e
+			ON c.RSV_ID = e.RSV_ID
+		WHERE
+			a.NODE_ID = #{STTN_ID}
+			<if test="DVC_KIND != null and DVC_KIND != ''">
+				AND DI.DVC_KIND = #{DVC_KIND}
+			</if>			
+		ORDER BY 
+			b.STTN_NO	
+	</select>
+
+	<insert id="FM0203G0I0" parameterType="Map">
+	
+		<selectKey keyProperty="RSV_ID" resultType="String" order="BEFORE">
+    		SELECT CONCAT('FR', LPAD(NEXTVAL(SEQ_BMS_FCLT_UPD_RSV_INFO_0), 8, '0')) AS RSV_ID
+    	</selectKey>	
+		insert into BMS_FCLT_UPD_LOG
+				(
+					RSV_ID
+					,MNG_ID
+					,PROCE_RST
+					,COMPLETE_YN
+					,REMARK
+				)	
+				   
+		values (
+					#{RSV_ID}
+					,#{MNG_ID}
+					,#{PROCE_RST}
+					,'N'
+					,#{REMARK}
+				)
+						
+	</insert>
+	
+	<insert id="FM0203G0I1" parameterType="Map">
+		
+		<selectKey keyProperty="RSV_ID" resultType="String" order="BEFORE">
+    		SELECT CONCAT('FR', LPAD(LASTVAL(SEQ_BMS_FCLT_UPD_RSV_INFO_0), 8, '0')) AS RSV_ID
+    	</selectKey>
+		insert into BMS_FCLT_UPD_RSV_INFO
+				(
+					RSV_ID
+					,MNG_ID
+					,RSV_DT
+					,VER_INFO
+					,UPD_DTM
+					,UPD_ID
+				)
+		values	(
+					#{RSV_ID}
+					,#{MNG_ID}
+					,#{RSV_DT}
+					,#{VER_INFO}
+					,#{UPD_DTM}
+					,#{UPD_ID}
+				)
+			
+	</insert>
+	
+	<update id="FM0203G0U0" parameterType="Map">
+		UPDATE 
+			BMS_FCLT_INFO
+		SET
+			FILE_NM = #{FILE_NM}
+		WHERE
+			MNG_ID = #{MNG_ID}
+	</update>
+	
+	<update id="FM0203G0D0" parameterType="Map">
+		UPDATE 
+			BMS_FCLT_UPD_LOG
+		SET	
+			PROCE_RST = 'PR008'
+			,SEND_DATE = NOW()
+			,COMPLETE_YN = 'Y'
+		WHERE
+			MNG_ID = #{MNG_ID}
+			AND COMPLETE_YN = 'N'
+	</update>
+	
+	<update id="FM0203G0D1">
+		UPDATE
+			BMS_FCLT_INFO
+		SET
+			FILE_NM = NULL
+		WHERE
+			MNG_ID = #{MNG_ID}
+	</update>
+	
+	
+	
+</mapper>

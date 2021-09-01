@@ -255,7 +255,8 @@ public class FTPHandler {
 			
 			
 			try {
-				doMoveFile(srcPath, destPath, srcFileName, destFileName);
+				//doMoveFile(srcPath, destPath, srcFileName, destFileName);
+				doCopyFile(srcPath, destPath, srcFileName, destFileName);
 				
 				processSynchronize(getRootLocalPath() + destPath, getRootServerPath() + destPath);
 			} catch(Exception e){
@@ -794,28 +795,62 @@ public class FTPHandler {
 	}
 	
 	
-	/** 210824 노선 파일 삭제 (수정중) jh **/
-	//TODO: 수정 필요함
-	public void deleteRoutemap(String routId) {
-		String routeOriPath = Paths.get(getRootLocalPath(), getRouteOriPath()).toString();
-		String path = Paths.get(getRootLocalPath(), getRouteMapPath()).toString();
+
+	/** 20210830 routelist.csv의 해당 rout_id row 삭제 jh **/
+	public void deleteRoutList(String routIdDel, String maxVer) throws IOException {
+		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		String fileName = "routelist.csv";
+		File file = new File(path + "/" + fileName);
 		
-		File routeCsv = new File(path + "/" + routId + ".csv");
-		File routePlayList = new File(routeOriPath + "/" + routId);
+		List<Map<String, Object>> list = new ArrayList<>();
 		
-		if(routeCsv.exists()) {
-			routeCsv.delete();
+		if(file.exists()) {
+			list = readRoutList("routelist.csv");
 		}
 		
-		if(routePlayList.exists()) {
-			File[] deleteFileList = routePlayList.listFiles();
-			if(deleteFileList != null && deleteFileList.length > 0) {
-				for(File f : deleteFileList) {
-					f.delete();
-				}				
+		for(Map<String, Object> map : list) {
+			if(routIdDel.equals(map.get("FILE_NAME").toString().split(".")[0])) {
+				list.remove(map);
+				break;
 			}
-			routePlayList.delete();
-		}	
+		}
+
+		String txt = "";
+		txt += Constants.CSVForms.ROUTE_VERSION + maxVer + Constants.CSVForms.ROW_SEPARATOR;
+		txt += Constants.CSVForms.ROUTE_LIST;
+		
+		for(Map<String, Object> map : list) {
+			txt += Constants.CSVForms.ROW_SEPARATOR;
+			txt += map.get("FILE_NAME") 
+					+ Constants.CSVForms.COMMA + map.get("VERSION") 
+					+ Constants.CSVForms.COMMA + map.get("DESTI_NO") 
+					+ Constants.CSVForms.COMMA + map.get("ROUT_SHAPE")
+					+ Constants.CSVForms.COMMA + map.get("DAY1")
+					+ Constants.CSVForms.COMMA + map.get("DAY2")
+					+ Constants.CSVForms.COMMA + map.get("SATDAY1")
+					+ Constants.CSVForms.COMMA + map.get("SATDAY2")
+					+ Constants.CSVForms.COMMA + map.get("SUNDAY1")
+					+ Constants.CSVForms.COMMA + map.get("SUNDAY2")
+					+ Constants.CSVForms.COMMA + map.get("REP_NAME");
+		}
+		
+		try {
+			createCSV(file, txt);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+		
+	/** 210824 노선관련 폴더, 파일 삭제 jh **/
+	//TODO: 테스트필요
+	public void deleteRoutemap(String routId) {
+		String path = Paths.get(getRootLocalPath(), getRouteMapPath(), "/routelist", "/" + routId).toString();
+		
+		File routFolder = new File(path);
+		
+		if(routFolder.exists()) {
+			deleteFolder(path);
+		}
 	}
 	
 	/** 210824 노선별 routeinfo.csv jh **/
@@ -1240,7 +1275,27 @@ public class FTPHandler {
 	}
 	
 	
-	
+	/** 210830 특정 폴더 하위에 있는 폴더, 파일 삭제 jh **/
+	public static void deleteFolder(String path) {
+		File folder = new File(path);
+		try {
+			if(folder.exists()){
+				File[] folder_list = folder.listFiles();
+
+				for (int i = 0; i < folder_list.length; i++) {
+					if(folder_list[i].isFile()) {
+						folder_list[i].delete();
+					}else {
+						deleteFolder(folder_list[i].getPath());
+					}
+					folder_list[i].delete();
+				}
+				folder.delete();
+			}
+		} catch (Exception e) {
+			e.getStackTrace();
+		}
+	}
 	
 	
 	

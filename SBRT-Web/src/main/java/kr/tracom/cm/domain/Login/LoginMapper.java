@@ -12,4 +12,10 @@ public interface LoginMapper {
 
 	// 사용자의 비밀번호를 업데이트한다.
 	public int updatePassword(Map param);
+	
+	// 로그인 이력 저장
+	public void insertLoginHis(Map param);
+	
+	// 로그아웃 이력 저장
+	public void insertLogoutHis(Map param);
 }

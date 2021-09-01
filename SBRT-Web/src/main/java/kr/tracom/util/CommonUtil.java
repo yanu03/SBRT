@@ -7,6 +7,8 @@ import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -486,5 +488,32 @@ public class CommonUtil {
 
 	public static double pointRound(double len,int cnt) {
 		return Math.round(len*Math.pow(10, cnt+1))/Math.pow(10, cnt+1);
+	}
+	
+	//ip가져오기.
+	public static String getIpAddress(HttpServletRequest request) {
+		String unkown = "unknown";
+		String ipAddress = request.getHeader("X-Forwarded-For");
+		if (ipAddress == null || ipAddress.length() == 0 || unkown.equalsIgnoreCase(ipAddress))
+		{
+			ipAddress = request.getHeader("Proxy-Client-ipAddress");
+		}
+		if (ipAddress == null || ipAddress.length() == 0 || unkown.equalsIgnoreCase(ipAddress))
+		{
+			ipAddress = request.getHeader("WL-Proxy-Client-ipAddress");
+		}
+		if (ipAddress == null || ipAddress.length() == 0 || unkown.equalsIgnoreCase(ipAddress))
+		{
+			ipAddress = request.getHeader("HTTP_CLIENT_ipAddress");
+		}
+		if (ipAddress == null || ipAddress.length() == 0 || unkown.equalsIgnoreCase(ipAddress))
+		{
+			ipAddress = request.getHeader("HTTP_X_FORWARDED_FOR");
+		}
+		if (ipAddress == null || ipAddress.length() == 0 || unkown.equalsIgnoreCase(ipAddress))
+		{
+			ipAddress = request.getRemoteAddr();
+		}
+		return ipAddress;
 	}
 }
