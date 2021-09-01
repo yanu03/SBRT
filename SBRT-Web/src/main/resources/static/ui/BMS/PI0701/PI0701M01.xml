@@ -63,6 +63,14 @@
 						<w2:column id="EFFECT_SPEED" name="name3" dataType="text"></w2:column>
 						<w2:column id="SHOW_TIME" name="name4" dataType="text"></w2:column>
 					</w2:columnInfo>
+					<w2:data use="false">
+						<w2:row>
+							<FRAME_NO><![CDATA[3333]]></FRAME_NO>
+							<EFFECT_TYPE><![CDATA[3]]></EFFECT_TYPE>
+							<EFFECT_SPEED><![CDATA[333]]></EFFECT_SPEED>
+							<SHOW_TIME><![CDATA[333]]></SHOW_TIME>
+						</w2:row>
+					</w2:data>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_ROUT_MST">
 					<w2:keyInfo>
@@ -78,6 +86,7 @@
 						<w2:key id="FILE_PATH" name="파일경로" dataType="text"></w2:key>
 						<w2:key id="DVC_NM" name="장치노선명" dataType="text"></w2:key>
 						<w2:key id="SELECTED_DL" name="장치유형코드" dataType="text"></w2:key>
+						<w2:key id="SCH_FILE_NM" name="스케줄파일명" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_fileinfo">
@@ -96,7 +105,7 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_PI0701G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0701G0S0" ref='data:json,["dlt_ROUT_MST","dma_ROUT_MST","dlt_actionSetting"]' target="data:json,dma_result" action="/pi/PI0701G0S0"
+			<xf:submission id="sub_PI0701G0S0" ref='data:json,["dma_ROUT_MST","dlt_actionSetting",{"action":"modified","id":"dlt_ROUT_MST"}]' target="data:json,dma_result" action="/pi/PI0701G0S0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="저장 중입니다..." ev:submit="" ev:submitdone="scwin.sub_PI0701G0S0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -112,8 +121,8 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0701FCK0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0701G1R0" ref="data:json,dma_ROUT_MST" target="data:json,dlt_ROUT_MST" action="/pi/PI0701G1R0" method="post" mediatype="application/json"
-				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
+			<xf:submission id="sub_PI0701G1R0" ref="data:json,dma_ROUT_MST" target="data:json,dlt_actionSetting" action="/pi/PI0701G1R0" method="post" mediatype="application/json"
+				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0701G1R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
@@ -134,6 +143,9 @@
 							,{code : "EFFECT_TYPE", compID : "PI0701G1:EFFECT_TYPE" }
 						];		
 		
+		com.executeSubmission(sub_PI0701SHI0);		
+		com.executeSubmission(sub_PI0701SHI1);	
+				
 		var mainOptions = {
 			SETTING : scwin.btn_setting_onclick
 		}
@@ -148,12 +160,11 @@
 				dlt_actionSetting.setCellData(i, "EFFECT_TYPE", "ET001");
 				dlt_actionSetting.setCellData(i, "EFFECT_SPEED", "05");
 				dlt_actionSetting.setCellData(i, "SHOW_TIME", "0000");
+				dlt_actionSetting.modifyRowStatus(i, "R");
 //				var tmpJSON = [{"FRAME_NO":"FRAME"+i, "EFFECT_TYPE":"ET001", "EFFECT_SPEED":"05", "SHOW_TIME":"0000"}];
 			}
 		});
-		
-		com.executeSubmission(sub_PI0701SHI0);		
-		com.executeSubmission(sub_PI0701SHI1);		
+	
 	};
 
 	scwin.onpageunload = function() {
@@ -174,7 +185,7 @@
 		var fileNameIndex = returnValue.lastIndexOf('\\');
 		var fileName = returnValue.substring(fileNameIndex+1, returnValue.length);
 		
-		if (fileExtension == "BMP") {
+		if (fileExtension == "BMP" || fileExtension == "bmp") {
 			
 			dlt_ROUT_MST.setCellData(PI0701G0.getFocusedRowIndex(), "FILE_NM", fileName);
 			btn_upload.submit();
@@ -198,10 +209,9 @@
 			var y = dlt_searchitem2.getCellData(DL_CD.selectedIndex, "NUM_VAL4") * dlt_searchitem2.getCellData(DL_CD.selectedIndex, "NUM_VAL6");		
 			var image_width = $p.$("#image1").width();
 			var image_height = $p.$("#image1").height();
-			
+		$p.$("#image1").attr("src", previewPath);			
 			//이미지 사이즈 체크
 			if ((image_width % x != 0) || (image_height % y != 0)) {
-				debugger;
 				$p.$("#image1").attr("src", preImg);
 				
 				//필요한데 무한 반복 걸림
@@ -217,9 +227,12 @@
 	};
 	
 	
-
+	//파일변경, 동작설정 후 onrowindexchange시 alert창 띄워서 막아야 함
 	scwin.PI0701G0_onrowindexchange = function(row,oldRow) {
-		 
+		var main_idx = PI0701G0.getModifiedIndex().length;
+		var sub_idx = PI0701G1.getModifiedIndex().length;
+		
+			
 		var jsonData = dlt_ROUT_MST.getAllJSON()[row];
 		dma_ROUT_MST.setJSON(jsonData);
 		showImage();
@@ -245,25 +258,39 @@
 	};
 	
 	scwin.btn_setting_onclick = function() {
-		var idx = PI0701G0.getModifiedIndex().length;
+		var main_idx = PI0701G0.getModifiedIndex().length;
+		var sub_idx = PI0701G1.getModifiedIndex().length;
 		
-		if (idx == 0) {
-			com.alert("파일 등록 후 설정 하실 수 있습니다.");	
-			return false;
-		}
-		
-		if (idx > 0) {
+		if (main_idx > 0 || sub_idx > 0 ) {
 			com.confirm("설정 하시겠습니까?", function(rtn) {
 				if (rtn) {
-					$p.executeSubmssion(sub_PI0701G0S0);
+					$p.executeSubmission(sub_PI0701G0S0);
 					com.alert("설정 하였습니다.");
 				}	
 			});
+		} else {
+			com.alert("파일 등록 후 설정 하실 수 있습니다.");	
+			return false;			
 		}
 	}
 	
+	//파일변경, 동작설정 후 onchange시 alert창 띄워서 막아야 함
 	scwin.DL_CD_onchange = function(info) {
+		var main_idx = PI0701G0.getModifiedIndex().length;
+		var sub_idx = PI0701G1.getModifiedIndex().length;		
+		
+//		if (main_idx > 0 || sub_idx > 0) {
+//			com.confirm("저장되지 않은 데이터가 있습니다. 변경하시겠습니까?", function(rtn){
+//				if (rtn) {
+//					return true;
+//				} else {
+//					????
+//				}	
+//			});
+//		} 
+		
 		showImage();
+		$p.executeSubmission(sub_PI0701G1R0);
 	};
 	
 	scwin.sub_PI0701FCK0_submitdone = function(e) {
@@ -280,7 +307,7 @@
 	};
 	
 	scwin.sub_PI0701SHI1_submitdone = function(e) {
-		showImage();		
+		//showImage();		
 	};
 	
 	//파일 읽기
@@ -290,7 +317,9 @@
 		var file_header = dlt_searchitem2.getCellData(DL_CD.selectedIndex, "TXT_VAL2");
 		var dvc_nm = dma_ROUT_MST.get("DVC_NM");
 		var file_nm = file_header + dvc_nm + ".BMP";
+		var sch_file_nm = file_header + dvc_nm + ".SCH";
 		dma_ROUT_MST.set("FILE_NM", file_nm);
+		dma_ROUT_MST.set("SCH_FILE_NM", sch_file_nm);
 		dma_ROUT_MST.set("SELECTED_DL", dl_cd);
 		
 		var path = "/fileUpload/temp/destination/"+dl_cd+"/"+file_nm;
@@ -327,15 +356,25 @@
 		}
 
 		for (i=0; i<activeRowCount; i++) {
-			//안돼!!!!!!!!!!!!! 확인!!!!!!!!!!!!!!!!!!!!!!!!!
 			PI0701G1.setRowReadOnly(i, false);
 			PI0701G1.setRowColor(i, "red");
-//			PI0701G1.setDisabled("row", i, false);
 		}
-		 
+		
+		for (i=activeRowCount; i<10; i++) {
+				PI0701G1.setRowColor(i, "#68717b");
+				PI0701G1.setRowReadOnly(i, true);			
+		} 
 		
 	}
-]]></script>
+
+	scwin.sub_PI0701G0S0_submitdone = function(e) {
+		com.saveDone(PI0701G0, sub_PI0701G0R0);
+	};
+	
+	scwin.sub_PI0701G1R0_submitdone = function(e) {
+		setGridSize()
+	};
+	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
@@ -540,7 +579,7 @@
 												<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px"
 													id="column9" value="효과" blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px"
+												<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px"
 													id="column8" value="효과속도(1=10ms)" blockSelect="false" displayMode="label">
 												</w2:column>
 												<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px"
@@ -557,10 +596,10 @@
 													id="EFFECT_TYPE" value="" blockSelect="false" displayMode="label" textAlign="left">
 												</w2:column>
 												<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
-													id="EFFECT_SPEED" value="" blockSelect="false" displayMode="label" textAlign="right" disabled="false">
+													id="EFFECT_SPEED" value="" blockSelect="false" displayMode="label" textAlign="right" disabled="false" maxLength="2">
 												</w2:column>
 												<w2:column removeBorderStyle="false" width="123" inputType="text" style="height:20px"
-													id="SHOW_TIME" value="" blockSelect="false" displayMode="label" textAlign="right" disabled="false">
+													id="SHOW_TIME" value="" blockSelect="false" displayMode="label" textAlign="right" disabled="false" maxLength="4">
 												</w2:column>
 											</w2:row>
 										</w2:gBody>

@@ -36,14 +36,12 @@ public class PI0701Service extends ServiceSupport {
 	}
 	
 	//스케쥴 파일 Read
-	//여기부터 해야함
 	public List PI0701G1R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_ROUT_MST");
-		String deviceCd = (String)map.get("DVC_NM");
-		String fileName = (String)map.get("FILE_NM");		
-		//ftpHandler.readSCH(deviceCd, fileName);
+		String deviceCd = (String)map.get("SELECTED_DL");
+		String schFileName = (String)map.get("SCH_FILE_NM");
 		
-		return null;
+		return ftpHandler.readSCH(deviceCd, schFileName);
 	}
 	
 	public List PI0701SHI0() throws Exception {
@@ -72,22 +70,37 @@ public class PI0701Service extends ServiceSupport {
 		Map<String, Object> map_param = getSimpleDataMap("dma_ROUT_MST");
 		String path = "temp/destination/"+map_param.get("SELECTED_DL").toString()+"/";
 		String fileNM = map_param.get("FILE_NM").toString();
+		String schFileNM = map_param.get("SCH_FILE_NM").toString();
+		
 		
 		//동작설정 그리드 데이터 리스트
 		List<Map<String, Object>> actionData = getSimpleList("dlt_actionSetting");
 		
 		try {
+			
+			//파일 변경시 저장부분
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("U")) {
+
 					uCnt += 1;
 					if((data.get("FILE_NM")!=null)&&(data.get("FILE_NM").toString().isEmpty()==false)) 
 						{
 							doMoveFile("up/",path,data.get("FILE_NM").toString(), fileNM);
 						}					
 				 } 
-			}			
+			}
+			
+			//동작설정(서브그리드) 변경 시 저장 부분
+			for(int i=0; i<actionData.size(); i++) {
+				Map data = (Map) actionData.get(i);
+				String rowStatus = (String) data.get("rowStatus");
+				if (rowStatus.equals("U")) {
+					ftpHandler.writeSCH(actionData, map_param.get("SELECTED_DL").toString(), schFileNM);
+				}
+			}
+			
 		} catch(Exception e) {
 			if (e instanceof DuplicateKeyException)
 			{
