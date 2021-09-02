@@ -75,9 +75,12 @@ function sendMessage() {
 	
 	var param = {
 		//content : $("#content").val()
-		gpsX : $("#gpsX").val(),
-		gpsY : $("#gpsY").val(),
-		vhcId : $("#vhcId").val()
+			attrId : $("#attrId").val(),
+			gpsX : $("#gpsX").val(),
+			gpsY : $("#gpsY").val(),
+			vhcId : $("#vhcId").val(),
+			dvcId : $("#dvcId").val(),
+			dvcCond : $("#dvcCond").val()
 	}
 	
 	stompClient.send("/app/sendMessage", {}, JSON.stringify(param));

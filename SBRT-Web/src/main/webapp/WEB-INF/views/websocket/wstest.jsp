@@ -39,9 +39,12 @@
 		        <div class="form-group">
 		          <label for="gpsX">Enter message</label>
 		          <!-- <input type="text" id="content" class="form-control" placeholder="Message here..."> -->
-		          <input type="text" id="gpsX" class="form-control" placeholder="Message here...">
-		          <input type="text" id="gpsY" class="form-control" placeholder="Message here...">
-		          <input type="text" id="vhcId" class="form-control" placeholder="Message here...">
+		          <input type="text" id="attrId" class="form-control" placeholder="attrId 1000=map, 2000=dvc">
+		          <input type="text" id="gpsX" class="form-control" placeholder="gpsX">
+		          <input type="text" id="gpsY" class="form-control" placeholder="gpsY">
+		          <input type="text" id="vhcId" class="form-control" placeholder="vhcId">
+		          <input type="text" id="dvcId" class="form-control" placeholder="dvcId">
+		          <input type="text" id="dvcCond" class="form-control" placeholder="dvcCond">
 		        </div>
 		        <button id="send" class="btn btn-default" type="submit">Send</button>
 		      </form>

@@ -182,15 +182,26 @@
 		debugger;
 		var jsonObj = JSON.parse(payload.body);
 		
-		var curIndex = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+		var attrId = jsonObj.ATTR_ID;
+		//var attrId = jsonObj.getData("ATTR_ID");
 		
-		dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndex, jsonObj, true);
-		
-		jsonObj = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndex);
-		
-		var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "VHC_ID")
-		
-		routMap.showVehicle2("map_VD0201", jsonObj, rowData, VD0201G0, curIndex);	
+		if(attrId == 1000){
+			var curIndex = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+			
+			dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndex, jsonObj, true);
+			
+			jsonObj = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndex);
+			
+			var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "VHC_ID")
+			
+			routMap.showVehicle2("map_VD0201", jsonObj, rowData, VD0201G0, curIndex);
+		}else if(attrId == 2000){
+			var index = dlt_BMS_DVC_INFO.getMatchedIndex("DVC_ID", jsonObj.DVC_ID);
+			
+			dlt_BMS_DVC_INFO.setRowJSON(index, jsonObj, true);
+			
+		}
+			
 		
 		//showMessage(jsonObj);
 	}
@@ -250,8 +261,6 @@
 	};
 	
 	scwin.sub_VD0201G1R0_submitdone = function(e) {
-
-		
 		
 //		if(dlt_BMS_DVC_INFO.getTotalRow() == 0	){
 //			routMap.initDisplay("map_VD0201");
@@ -265,6 +274,7 @@
 //			}
 //		}			
 	};
+	
 	
 	scwin.VD0201G1_onrowindexchange = function(row,oldRow) {
 //		routMap.focusNode("map_VD0201",VD0201G1,row);			
@@ -305,15 +315,6 @@
 							<w2:span class="" id="" label="검색 항목"></w2:span>
 						</xf:group>
 						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT2" placeholder="차번"></xf:input>
-						<table id="conversation" class="table table-striped">
-		        <thead>
-		        <tr>
-		          <th>Message</th>
-		        </tr>
-		        </thead>
-		        <tbody id="message">
-		        </tbody>
-		      </table>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
 							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
 							ev:onviewchange="" id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT1" search="start"

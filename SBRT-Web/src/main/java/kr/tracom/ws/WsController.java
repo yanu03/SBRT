@@ -61,10 +61,13 @@ public class WsController {
 			// convert JSON string to Map 
 			//map = mapper.readValue(msg.getContent(), Map.class); 
 			// it works //Map<String, String> map = mapper.readValue(json, new TypeReference<Map<String, String>>() {});
+			
+			map.put("ATTR_ID", msg.getAttrId());
 			map.put("GPS_X", msg.getGpsX());
 			map.put("GPS_Y", msg.getGpsY());
 			map.put("VHC_ID", msg.getVhcId());
-			
+			map.put("DVC_ID", msg.getDvcId());
+			map.put("DVC_COND", msg.getDvcCond());
 			
 			System.out.println(map);
 		} catch (Exception e) { e.printStackTrace(); }
@@ -77,7 +80,6 @@ public class WsController {
 		//return new WsMessage(HtmlUtils.htmlEscape(msg.getContent()));
 		
     }
-	
 	
 	
 }

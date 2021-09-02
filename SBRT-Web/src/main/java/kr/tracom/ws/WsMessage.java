@@ -5,11 +5,39 @@ package kr.tracom.ws;
 public class WsMessage {
 
 	//private String content;
+	private int attrId;
 	private String vhcId;
 	private String gpsX;
 	private String gpsY;
+	private String dvcId;
+	private String dvcCond;
 
 	
+
+	public String getDvcId() {
+		return dvcId;
+	}
+
+	public void setDvcId(String dvcId) {
+		this.dvcId = dvcId;
+	}
+
+	public String getDvcCond() {
+		return dvcCond;
+	}
+
+	public void setDvcCond(String dvcCond) {
+		this.dvcCond = dvcCond;
+	}
+
+	public int getAttrId() {
+		return attrId;
+	}
+
+	public void setAttrId(int attrId) {
+		this.attrId = attrId;
+	}
+
 
 	public WsMessage() {
 		
