@@ -697,7 +697,13 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx, busGrid) {
 
 	//routMap.mapInfo[mapId].infoWindow.setMap(routMap.mapInfo[mapId].map); 
 	routMap.mapInfo[mapId].busOverlay = overlay;
-	routMap.mapInfo[mapId].busOverArr.push(routMap.mapInfo[mapId].busOverlay);
+	routMap.mapInfo[mapId].busOverlay.setMap(routMap.mapInfo[mapId].map);
+	if(idx<routMap.mapInfo[mapId].busOverArr.length){
+		routMap.mapInfo[mapId].busOverArr[idx] = routMap.mapInfo[mapId].busOverlay;
+	}
+	else{
+		routMap.mapInfo[mapId].busOverArr.push(routMap.mapInfo[mapId].busOverlay);
+	}
 	
 	
 	if(idx!=focusIdx) {
@@ -706,7 +712,13 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx, busGrid) {
 	}
 	
 	marker.setMap(routMap.mapInfo[mapId].map); //Marker가 표시될 Map 설정.
-	routMap.mapInfo[mapId].busMarkers.push(marker);
+	
+	if(idx<routMap.mapInfo[mapId].busMarkers.length){
+		routMap.mapInfo[mapId].busMarkers[idx] = marker;
+	}
+	else{
+		routMap.mapInfo[mapId].busMarkers.push(marker);
+	}
 	
 	/*
 	// 마커에 click 이벤트를 등록합니다
@@ -855,6 +867,7 @@ routMap.showMarker = function(mapId, data, idx, focusIdx) {
 	
 	//routMap.mapInfo[mapId].infoWindow.setMap(routMap.mapInfo[mapId].map); 
 	routMap.mapInfo[mapId].overlay = overlay;
+	routMap.mapInfo[mapId].overlay.setMap(routMap.mapInfo[mapId].map);
 	routMap.mapInfo[mapId].overArr.push(routMap.mapInfo[mapId].overlay);
 	
 	
@@ -918,7 +931,7 @@ routMap.removeAllBusOverlay = function(mapId){
 }
 
 routMap.removeIndexBusOverlay = function(mapId,index){
-	if(routMap.mapInfo[mapId].busOverArr != null){
+	if(routMap.mapInfo[mapId].busOverArr != null&&routMap.mapInfo[mapId].busOverArr.length!=0){
 		routMap.mapInfo[mapId].busOverArr[index].setMap(null);
 		routMap.mapInfo[mapId].busOverArr[index] = null;
 	}
@@ -2014,6 +2027,8 @@ routMap.showVehicle = function(mapId, list, vhc_id, grid) {
 routMap.showVehicle2 = function(mapId, json, vhc_id, grid, index) {
 
 	var focusIdx = -1;
+	
+	//주석 빼기
     routMap.initIndexBus(mapId,index);
 
 
@@ -2028,9 +2043,9 @@ routMap.showVehicle2 = function(mapId, json, vhc_id, grid, index) {
 	else {
 		routMap.showBusMarker(mapId, json, index, focusIdx, grid);
 	}
-	if(list.length>0){
+	if(json != null){
 		if(focusIdx!=-1){
-			routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+			routMap.moveMap(mapId, json.GPS_Y, json.GPS_X);
 		}
 	}
 }

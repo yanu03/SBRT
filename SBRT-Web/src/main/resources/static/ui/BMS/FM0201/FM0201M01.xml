@@ -96,62 +96,71 @@
 				</w2:dataList> -->
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_VD0201G0R0" ref="data:json,dma_search" target="data:json,dlt_BRT_CUR_OPER_INFO" action="/vd/VD0201G0R0"
+			<xf:submission id="sub_FM0201G0R0" ref="data:json,dma_search" target="data:json,dlt_BRT_CUR_OPER_INFO" action="/vd/FM0201G0R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="" ev:submitdone="scwin.sub_VD0201G0R0_submitdone" ev:submiterror="" abortTrigger="">
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_FM0201G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_VD0201G1R0" ref="data:json,dma_sub_search" target='data:json,["dlt_BMS_DVC_INFO","dlt_BMS_DVC_INFO2"]'
-				action="/vd/VD0201G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_VD0201G1R0_submitdone" ev:submiterror=""
+			<xf:submission id="sub_FM0201G1R0" ref="data:json,dma_sub_search" target='data:json,["dlt_BMS_DVC_INFO","dlt_BMS_DVC_INFO2"]'
+				action="/vd/FM0201G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_FM0201G1R0_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_VD0201SHI0" ref="" target="data:json,dlt_searchitem" action="/vd/VD0201SHI0" method="post"
+			<xf:submission id="sub_FM0201SHI0" ref="" target="data:json,dlt_searchitem" action="/vd/FM0201SHI0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="scwin.sub_VD0201SHI0_submitdone" ev:submiterror="" abortTrigger="">
+				ev:submit="" ev:submitdone="scwin.sub_FM0201SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_VD0201G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN" action="/rout/selectNodeListByRout" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_VD0201G2R0_submitdone"
+			<xf:submission id="sub_FM0201G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN" action="/rout/selectNodeListByRout" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_FM0201G2R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
 		<style type='text/css'>
-		.VD0201T0 .w2tabcontrol_container{position: absolute; left:0; top:35px; right:0; bottom:0px; border:none; float:none; height:auto !important; border-top:1px solid #c4cad6;}
+		.FM0201T0 .w2tabcontrol_container{position: absolute; left:0; top:35px; right:0; bottom:0px; border:none; float:none; height:auto !important; border-top:1px solid #c4cad6;}
 		</style>
 
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
-		//노선 뿌리는거 수정해야함 이상하게 나옴
-		//SI503M01 showRoute부분 참고하면 될거같음
-		
 		 var autoOptions = {
-			Main : { grid : VD0201G0, srchSbm : sub_VD0201G0R0, keyColumn : "VHC_ID", srchGrp : pgm_header, name : "노선 목록"},
-			Sub1 : { grid : VD0201G1, srchSbm : sub_VD0201G1R0, name : "장치 상태"}
-			
+			Main : { grid : FM0201G0, srchSbm : sub_FM0201G0R0, keyColumn : "FCLT_ID", srchGrp : pgm_header, name : "시설물 목록"},
+			Sub1 : { grid : FM0201G1, srchSbm : sub_FM0201G1R0, name : "장치 상태"}
 		 };
 		 
-		routMap.initMap("map_VD0201", {width:"100%"
+		routMap.initMap("map_FM0201", {width:"100%"
 				, height:"100%"
 				, onClick: scwin.onClickMap				
 		});
 		
-		var codeOptions = [ {code : "DVC_KIND", compID : "VD0201G1:DVC_KIND, VD0201G2:DVC_KIND"},
-							{code : "INST_LOC", compID : "VD0201G1:INST_LOC, VD0201G2:INST_LOC"},
-							{code : "DVC_COND", compID : "VD0201G1:DVC_COND, VD0201G2:DVC_COND"}
+		var codeOptions = [ {code : "DVC_KIND", compID : "FM0201G1:DVC_KIND, FM0201G2:DVC_KIND"},
+							{code : "INST_LOC", compID : "FM0201G1:INST_LOC, FM0201G2:INST_LOC"},
+							{code : "DVC_COND", compID : "FM0201G1:DVC_COND, FM0201G2:DVC_COND"}
 		 ];			
 		 
 		com.setCommonDtl(codeOptions);
 
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);		
 
-		VD0201G0.mergeCol(2,false);
-		VD0201G0.mergeCells("byrestriccol");
+		FM0201G0.mergeCol(2,false);
+		FM0201G0.mergeCells("byrestriccol");
 		
-		com.executeSubmission(sub_VD0201SHI0);	
+		com.executeSubmission(sub_FM0201SHI0);	
 		
-		//connect();	
+		connect();	
 	};	
 	
+	
+	$(function () {
+		$( "#connect" ).click(function() { connect(); });
+		$( "#disconnect" ).click(function() { disconnect(); });
+		
+		$("form").on('submit', function (e) {
+			e.preventDefault();
+		});
+		$( "#send" ).click(function() { sendMessage(); });
+	
+		connect();
+	
+	});	
 	
 	function connect() {
 		var socket = new SockJS('/websocket');
@@ -168,6 +177,7 @@
 		console.log('Connected: ' + frame);
 		
 	    // Subscribe to the Public Topic
+	    
 
 	    stompClient.subscribe('/topic/public', scwin.onMessageReceived);
 	
@@ -180,19 +190,17 @@
 	
 	scwin.onMessageReceived = function(payload) {
 		debugger;
+		
 		var jsonObj = JSON.parse(payload.body);
+		//var content = jsonObj.content;
 		
-		var curIndex = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 		
-		dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndex, jsonObj, true);
+		//console.log('Connected: ' + content);
+		var rowData2 = dlt_BRT_CUR_OPER_INFO.getCellData(FM0201G0.getFocusedRowIndex(), "VHC_ID")
+		var rowData = dlt_BRT_CUR_OPER_INFO.getAllJSON()[FM0201G0.getFocusedRowIndex()];
+		routMap.showVehicle2("map_FM0201", jsonObj, rowData2, FM0201G0, 0);	
 		
-		jsonObj = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndex);
-		
-		var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "VHC_ID")
-		
-		routMap.showVehicle2("map_VD0201", jsonObj, rowData, VD0201G0, curIndex);	
-		
-		//showMessage(jsonObj);
+		//showMessage(content);
 	}
 	
 	function showMessage(message) {
@@ -201,13 +209,13 @@
 	
 	
 	
-	scwin.VD0201G0_onrowindexchange = function(row,oldRow) {
+	scwin.FM0201G0_onrowindexchange = function(row,oldRow) {
 		var focusOption = {keyMap : dma_sub_search};
-		com.changeDualGrid(VD0201G0, VD0201G1, null, sub_VD0201G1R0, focusOption, row, oldRow);	
-		var routID = dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "ROUT_ID");
+		com.changeDualGrid(FM0201G0, FM0201G1, null, sub_FM0201G1R0, focusOption, row, oldRow);	
+		var routID = dlt_BRT_CUR_OPER_INFO.getCellData(FM0201G0.getFocusedRowIndex(), "ROUT_ID");
 		dma_sub_search.set("ROUT_ID", routID);
-		com.executeSubmission(sub_VD0201G2R0);		 
-//		routMap.initMapInfo("map_VD0201"); 
+		com.executeSubmission(sub_FM0201G2R0);		 
+//		routMap.initMapInfo("map_FM0201"); 
 		 			
 	};
 	
@@ -219,64 +227,50 @@
 		
 	};
 	
-	scwin.sub_VD0201G0R0_submitdone = function(e) {
-		com.setFocusedCell(VD0201G0, "REP_ROUT_NM");
-	
-		$(function () {
-			$( "#connect" ).click(function() { connect(); });
-			$( "#disconnect" ).click(function() { disconnect(); });
-			
-			$("form").on('submit', function (e) {
-				e.preventDefault();
-			});
-			$( "#send" ).click(function() { sendMessage(); });
-		
-			connect();
-		
-		});			
-			
+	scwin.sub_FM0201G0R0_submitdone = function(e) {
+		debugger;
+		com.setFocusedCell(FM0201G0, "REP_ROUT_NM");
 //		var list = com.getGridDispJsonData(
-//		routMap.showRoute("map_VD0201", dlt_BRT_CUR_OPER_INFO.getAllJSON());		
-//		routMap.drawRoute("map_VD0201", VD0201G0, VD0201G0.getFocusedRowIndex());
+//		routMap.showRoute("map_FM0201", dlt_BRT_CUR_OPER_INFO.getAllJSON());		
+//		routMap.drawRoute("map_FM0201", FM0201G0, FM0201G0.getFocusedRowIndex());
 
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
-		com.searchGrid(VD0201G0, sub_VD0201G0R0);
+		com.searchGrid(FM0201G0, sub_FM0201G0R0);
 	};
 	
-	scwin.sub_VD0201SHI0_submitdone = function(e) {
-		com.searchGrid(VD0201G0, sub_VD0201G0R0);
+	scwin.sub_FM0201SHI0_submitdone = function(e) {
+		com.searchGrid(FM0201G0, sub_FM0201G0R0);
 	};
 	
-	scwin.sub_VD0201G1R0_submitdone = function(e) {
+	scwin.sub_FM0201G1R0_submitdone = function(e) {
 
 		
 		
 //		if(dlt_BMS_DVC_INFO.getTotalRow() == 0	){
-//			routMap.initDisplay("map_VD0201");
+//			routMap.initDisplay("map_FM0201");
 //		}
 //		else {
-//			if(VD0201G1.getFocusedRowIndex() == -1 ){
-//				VD0201G1.setFocusedCell( 0, "NODE_ID");
+//			if(FM0201G1.getFocusedRowIndex() == -1 ){
+//				FM0201G1.setFocusedCell( 0, "NODE_ID");
 //			}
 //			else {
-//				VD0201G1.setFocusedCell( VD0201G1.getFocusedRowIndex(), "NODE_ID");
+//				FM0201G1.setFocusedCell( FM0201G1.getFocusedRowIndex(), "NODE_ID");
 //			}
 //		}			
 	};
 	
-	scwin.VD0201G1_onrowindexchange = function(row,oldRow) {
-//		routMap.focusNode("map_VD0201",VD0201G1,row);			
+	scwin.FM0201G1_onrowindexchange = function(row,oldRow) {
+//		routMap.focusNode("map_FM0201",FM0201G1,row);			
 	};
 	
-	scwin.sub_VD0201G2R0_submitdone = function(e) {
-		debugger;
-		routMap.showRoute("map_VD0201", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON());			
-		//routMap.drawRoute2("map_VD0201", dlt_BMS_ROUT_LINK_CMPSTN.getAllJSON());
+	scwin.sub_FM0201G2R0_submitdone = function(e) {
+		routMap.showRoute("map_FM0201", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON());			
+		//routMap.drawRoute2("map_FM0201", dlt_BMS_ROUT_LINK_CMPSTN.getAllJSON());
 
-		routMap.showVehicle("map_VD0201", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
-							 dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "VHC_ID"), VD0201G0);	
+		//routMap.showVehicle("map_FM0201", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
+							 //dlt_BRT_CUR_OPER_INFO.getCellData(FM0201G0.getFocusedRowIndex(), "VHC_ID"), FM0201G0);	
 	};
 	]]></script>
 	</head>
@@ -325,14 +319,14 @@
 			<xf:group id="pgm_content" class="pgm_content grdc_600_20_a" style="" >
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_187_20_a" style="">
 					<xf:group class="defaultbox" id="" style="">
-						<w2:textbox class="df_tt fl" id="" label="노선 목록" style=""></w2:textbox>
+						<w2:textbox class="df_tt fl" id="" label="시설물 목록" style=""></w2:textbox>
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="" class="" style="">
-						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.VD0201G0_onrowindexchange" ev:oncellclick=""
+						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.FM0201G0_onrowindexchange" ev:oncellclick=""
 							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서"
 							sortable="true" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true"
-							dataList="data:dlt_BRT_CUR_OPER_INFO" ignoreCellClick="false" style="" autoFit="lastColumn" visibleRowNum="" id="VD0201G0"
+							dataList="data:dlt_BRT_CUR_OPER_INFO" ignoreCellClick="false" style="" autoFit="lastColumn" visibleRowNum="" id="FM0201G0"
 							class="cm_grid left" tooltipPositionY="" focusMode="row">
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
@@ -371,18 +365,18 @@
 						</w2:footer>						
 						</w2:gridView>
 					</xf:group>
-				<xf:group id="" class="horizontal_line">
-				</xf:group>
-				<xf:group id="pgm_subList" class="pgm_subList grdr_20_2_a" style="">
-					<xf:group class="defaultbox" id="" style="">
-						<w2:textbox class="df_tt fl" id="" label="시설물 상태 및 제어" style=""></w2:textbox>
+					<xf:group id="" class="horizontal_line">
 					</xf:group>
-					<xf:group></xf:group>
+					<xf:group id="pgm_subList" class="pgm_subList grdr_20_2_a" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="시설물 상태 및 제어" style=""></w2:textbox>
+						</xf:group>
+						<xf:group></xf:group>
 						<xf:group id="" class="" style="">
-								<w2:gridView id="VD0201G1" style="width:98%;height:98%" defaultCellHeight="20" rowNumVisible="true"
+								<w2:gridView id="FM0201G1" style="width:98%;height:98%" defaultCellHeight="20" rowNumVisible="true"
 								useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태"
 								overflowX="auto" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true" ignoreCellClick="false"
-								dataList="data:dlt_BMS_DVC_INFO" class="cm_grid" autoFit="lastColumn" fixedColumnScrollHidden="">
+								dataList="data:dlt_BMS_DVC_INFO" class="cm_grid left" autoFit="lastColumn" fixedColumnScrollHidden="">
 								<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 								<w2:header style="" id="header1">
 									<w2:row style="" id="row1">
@@ -454,11 +448,13 @@
 										</w2:column>
 									</w2:row>
 								</w2:footer>								
-							</w2:gridView>					
-						</xf:group>						
-					</xf:group>			
-				</xf:group><!-- pgm_sublist end -->
-				<xf:group id="" class="vertical_line"></xf:group>				
+							</w2:gridView>						
+						</xf:group>											
+					</xf:group> <!-- end pgm_subList -->
+				</xf:group><!-- pgm_list end -->
+
+				<xf:group id="" class="vertical_line"></xf:group>
+
 				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_a" style="">
 					<xf:group class="gr_map_header" id="" style="">
 						<xf:group class="defaultbox" id="" style="">
@@ -467,8 +463,8 @@
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="" style="">
-						<div id="map_VD0201" style="overflow:hidden;"></div>
-					</xf:group>					
+						<div id="map_FM0201" style="overflow:hidden;"></div>
+					</xf:group>
 				</xf:group><!-- pgm_detail end -->
 			</xf:group> <!-- end content --> 
 		</xf:group> <!-- end container -->

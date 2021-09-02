@@ -51,24 +51,31 @@ public class WsController {
 	@MessageMapping("/sendMessage")
     @SendTo("/topic/public")
     public @ResponseBody Map<String, Object> sendMessage(@Payload WsMessage msg) {
+	//public @ResponseBody WsMessage sendMessage(@Payload WsMessage msg) {
+		
+		
+		Map<String, Object> map = new HashMap();
 		
 		ObjectMapper mapper = new ObjectMapper(); 
-		Map<String, Object> map = new HashMap();
 		try { 
-			
 			// convert JSON string to Map 
-			map = mapper.readValue(msg.getContent(), Map.class); 
+			//map = mapper.readValue(msg.getContent(), Map.class); 
 			// it works //Map<String, String> map = mapper.readValue(json, new TypeReference<Map<String, String>>() {});
+			map.put("GPS_X", msg.getGpsX());
+			map.put("GPS_Y", msg.getGpsY());
+			map.put("VHC_ID", msg.getVhcId());
+			
+			
 			System.out.println(map);
-		} catch (IOException e) { e.printStackTrace(); }
-					
+		} catch (Exception e) { e.printStackTrace(); }
 		
-		//map.put("GPS_X", 127.999);
-		//map.put("GPS_Y", 36.999);
+		//map.put("GPS_X", 127.270876);
+		//map.put("GPS_Y", 36.470945);
 		//map.put("VHC_ID", "VH00000005");
 		
 		return map;
 		//return new WsMessage(HtmlUtils.htmlEscape(msg.getContent()));
+		
     }
 	
 	
