@@ -1,5 +1,17 @@
 var stompClient = null;
 
+/* var locations = {
+		[
+			{}
+			,{}
+			,{}
+			,{}
+			,{}
+			
+		]
+		 
+ }*/
+
 function setConnected(connected) {
 	$("#connect").prop("disabled", connected);
 	$("#disconnect").prop("disabled", !connected);
@@ -49,17 +61,23 @@ function onError(error) {
 function onMessageReceived(payload) {
 	
 	var jsonObj = JSON.parse(payload.body);
-	var content = jsonObj.content;
+	//var content = jsonObj.content;
+	var content = jsonObj.gpsX + ", " + jsonObj.gpsY + ", " + jsonObj.vhcId;
 	
 	showMessage(content);
 }
 
-
+//setInterval(sendMessage, 1000);
 
 function sendMessage() {
 	
+	//locations[i].x , y
+	
 	var param = {
-		content : $("#content").val()
+		//content : $("#content").val()
+		gpsX : $("#gpsX").val(),
+		gpsY : $("#gpsY").val(),
+		vhcId : $("#vhcId").val()
 	}
 	
 	stompClient.send("/app/sendMessage", {}, JSON.stringify(param));
