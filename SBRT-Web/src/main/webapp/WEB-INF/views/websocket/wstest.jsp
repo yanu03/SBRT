@@ -37,8 +37,11 @@
 		    <div class="col-md-6">
 		      <form class="form-inline">
 		        <div class="form-group">
-		          <label for="content">Enter message</label>
-		          <input type="text" id="content" class="form-control" placeholder="Message here...">
+		          <label for="gpsX">Enter message</label>
+		          <!-- <input type="text" id="content" class="form-control" placeholder="Message here..."> -->
+		          <input type="text" id="gpsX" class="form-control" placeholder="Message here...">
+		          <input type="text" id="gpsY" class="form-control" placeholder="Message here...">
+		          <input type="text" id="vhcId" class="form-control" placeholder="Message here...">
 		        </div>
 		        <button id="send" class="btn btn-default" type="submit">Send</button>
 		      </form>
