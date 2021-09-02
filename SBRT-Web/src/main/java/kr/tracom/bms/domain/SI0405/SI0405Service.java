@@ -47,11 +47,11 @@ public class SI0405Service extends ServiceSupport {
 				Map data = (Map) param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("C")) {
-					operPlanService.insertSimpleOperPlan(data);
 					iCnt += si0405Mapper.SI0405G0I0(data);
-				} else if (rowStatus.equals("U")) {
 					operPlanService.insertSimpleOperPlan(data);
+				} else if (rowStatus.equals("U")) {
 					uCnt += si0405Mapper.SI0405G0U0(data);
+					operPlanService.insertSimpleOperPlan(data);
 				} else if (rowStatus.equals("D")) {
 					dCnt += si0405Mapper.SI0405G0D0(data);
 				} 

@@ -33,15 +33,17 @@ public class FileController extends ControllerSupport {
 	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileController.class);
 
-	
 	@Autowired
 	protected HttpServletRequest request;
 	
 	@Autowired
 	private FileService fileService;
  
-	@Value("${FILE_ROOT}")
+	@Value("${fileupload.location}")
 	protected String fileRoot;
+	
+	@Value("${windows.fileupload.location}")
+	protected String windowsFileRoot;
 	
 	private static final String FILE_LIST_LITERAL = "fileList";
 	private static final String FILE_ID = "fileId";
@@ -83,8 +85,10 @@ public class FileController extends ControllerSupport {
 		}
 
 		String sourcePath = fileRoot+"up/";
-		 
-		 
+		if(SystemUtils.IS_OS_WINDOWS) {
+			sourcePath = windowsFileRoot+"up/";
+		}
+		
 		GregorianCalendar gc = new GregorianCalendar ( );
 		
 		String filePath = '/' + taskName + '/'

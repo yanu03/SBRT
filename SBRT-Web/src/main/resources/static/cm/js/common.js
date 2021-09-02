@@ -1216,6 +1216,18 @@ com.getGridViewDataList = function(gridViewObj) {
 	}
 };
 
+/*삭제된 데이터를 제외한 인덱스 얻기*/
+com.getGridDispIndex = function(grid, index) {
+	var data = com.getGridViewDataList(grid);
+	var dispIndex = 0;
+	for(var i = 0; i < index; i++) { //노선의 노드 순번을 그리드 순서대로 재 할당함.
+		if(data.getRowStatus(i)!="D"){
+			dispIndex++;
+		}
+	}
+	return dispIndex;
+};
+
 /*삭제를 제외한 데이터*/
 com.getGridDispJsonData = function(grid) {
 	var data = com.getGridViewDataList(grid);
@@ -1513,7 +1525,7 @@ com.focusGridFrm = function(grid,frm, index, focusColumn, editMode){
  * @param {String} [options.rowNumSubTotalFontSize]	[defalut: 없음] rowNumVisible 속성이 true인 경우 순서출력 Subtotal 영역의 폰트크기
  * @param {String} [options.rowNumSubTotalFontColo]	 [defalut: 없음] rowNumVisible 속성이 true인 경우 순서출력 Subtotal 영역의 폰트색상
  * @param {String} [options.rowNumHeaderValue]		[defalut: 없음] rowNumVisible 속성이 true인 경우 순서출력 Header 영역의 출력값
- * @param {String} [options.rowNumVisible]			[defalut: false] 순서출력 유무
+ * @param {String} [options.rowNumVisible]			[defalut: false] 순서출력 여부
  * @param {String} [options.showProcess]				[defalut: true] 다운로드 시 프로세스 창을 보여줄지 여부
  * @param {String} [options.massStorage]				[defalut: true] 대용량 다운로드 여부 <br>(default는 true 이 옵션을 true로 하고 showConfirm을 false로 한 경우에 IE에서 신뢰할만한 사이트를 체크하는 옵션이 뜬다.)
  * @param {String} [options.showConfirm]				[defalut: false] 다운로드 확인창을 띄울지 여부 <br>(옵션을 킨 경우 advancedExcelDownload를 호출후 사용자가 window의 버튼을 한번더 클릭해야 한다. massStorage는 자동으로 true가 된다)
@@ -1530,15 +1542,15 @@ com.focusGridFrm = function(grid,frm, index, focusColumn, editMode){
  * @param {String} [options.subTotalRoundingMode]	[defalut: 없음] 다운로드시 subTotal 평균계산시 Round를 지정 한다. <br> "CEILING" => 소수점 올림 <br> "FLOOR" => 소수점 버림 <br>"HALF_UP" => 소수점 반올림
  * @param {String} [options.useStyle]				[defalut: false] 다운로드시 css를 제외한, style을 excel에도 적용할 지 여부 (배경색,폰트)
  * @param {String} [options.freezePane]				[defalut: ""] 틀고정을 위한 좌표값 및 좌표값의 오픈셋 <br>  freezePane="3,4" => X축 3, Y축 4에서 틀고정<br> freezePane="0,1,0,5" => X축 0, Y축 1에서 X축으로 0, Y축으로 5로 틀고정
- * @param {String} [options.autoSizeColumn]			[defalut: false] 너비자동맞춤 설정 유무 - 2016.08.18 옵션 설정을 true로 변경
- * @param {String} [options.displayGridlines]		[defalut: false] 엑셀 전체 셀의 눈금선 제거 유무
+ * @param {String} [options.autoSizeColumn]			[defalut: false] 너비자동맞춤 설정 여부 - 2016.08.18 옵션 설정을 true로 변경
+ * @param {String} [options.displayGridlines]		[defalut: false] 엑셀 전체 셀의 눈금선 제거 여부
  * @param {String} [options.colMerge]				[defalut: false] colMerge된 컬럼을 Merge해서 출력 할 지 여부
- * @param {String} [options.useDataFormat]			[defalut: 없음] 그리드 dataType이 text인 경우, 엑셀의 표시형식 '텍스트' 출력 유무<br> "true" => 표시형식 텍스트<br> "false" => 표시형식 일반 출력)
+ * @param {String} [options.useDataFormat]			[defalut: 없음] 그리드 dataType이 text인 경우, 엑셀의 표시형식 '텍스트' 출력 여부<br> "true" => 표시형식 텍스트<br> "false" => 표시형식 일반 출력)
  * @param {String} [options.indent]					[defalut: 0] 그리드 dataType이 drilldown인 경우, indent 표시를 위한 공백 삽입 개수
- * @param {String} [options.columnMove]				[defalut: false] 그리드 컬럼이동시 이동된 상태로 다운로드 유무 <br> "true" => 컬럼이동 순서대로 출력
+ * @param {String} [options.columnMove]				[defalut: false] 그리드 컬럼이동시 이동된 상태로 다운로드 여부 <br> "true" => 컬럼이동 순서대로 출력
  * @param {String} [options.columnOrder]				[defalut: 없음] 엑셀 다운로드시 다운로드되는 컬럼 순서를 지정 할 수 있는 속성 ( "0,3,2,1"로 지정시 지정한 순서로 다운로드된다 )
- * @param {String} [options.fitToPage]				[defalut: false] 엑셀 프린터 출력시 쪽맞춤 사용 유무
- * @param {String} [options.landScape]				[defalut: false] 엑셀 프린터 출력시 가로 방향 출력 유무
+ * @param {String} [options.fitToPage]				[defalut: false] 엑셀 프린터 출력시 쪽맞춤 사용 여부
+ * @param {String} [options.landScape]				[defalut: false] 엑셀 프린터 출력시 가로 방향 출력 여부
  * @param {String} [options.fitWidth]				[defalut: 1] 엑셀 프린터 출력시 용지너비
  * @param {String} [options.fitHeight]				[defalut: 1] 엑셀 프린터 출력시 용지높이
  * @param {String} [options.scale]					[defalut: 100] 엑셀 프린터 출력시 확대/축소 배율<br> scale을 사용할 경우 fitToPage는 false로 설정 해야 한다.
@@ -1662,7 +1674,7 @@ com.downLoadExcel = function(grdObj, options, infoArr) {
 		rowNumSubTotalFontColor : options.rowNumSubTotalFontColor || "", // String, [defalut: 없음] rowNumVisible 속성이 true인 경우 순서출력
 		// Subtotal 영역의 폰트색상
 		rowNumHeaderValue : options.rowNumHeaderValue || "", // String, [defalut: 없음] rowNumVisible 속성이 true인 경우 순서출력 Header 영역의 출력값
-		rowNumVisible : options.rowNumVisible || "false", // String, [defalut: false] 순서출력 유무
+		rowNumVisible : options.rowNumVisible || "false", // String, [defalut: false] 순서출력 여부
 		showProcess : WebSquare.util.getBoolean(options.showProcess) || true, // Boolean, [defalut: true] 다운로드 시 프로세스 창을 보여줄지 여부
 		massStorage : WebSquare.util.getBoolean(options.massStorage) || true, // Boolean, [defalut: true] 대용량 다운로드 여부 (default는 true 이 옵션을
 		// true로 하고 showConfirm을 false로 한 경우에 IE에서 신뢰할만한 사이트를 체크하는
@@ -1687,17 +1699,17 @@ com.downLoadExcel = function(grdObj, options, infoArr) {
 		useStyle : options.useStyle || "", // String, [defalut: false] 다운로드시 css를 제외한, style을 excel에도 적용할 지 여부 (배경색,폰트)
 		freezePane : options.freezePane || "", // String, [defalut: ""] 틀고정을 위한 좌표값 및 좌표값의 오픈셋 ( ex) freezePane="3,4" X축 3, Y축 4에서 틀고정,
 		// freezePane="0,1,0,5" X축 0, Y축 1에서 X축으로 0, Y축으로 5로 틀공정 )
-		autoSizeColumn : options.autoSizeColumn || "true", // String, [defalut: false] 너비자동맞춤 설정 유무 - 2016.08.18 옵션 설정을 true로 변경
-		displayGridlines : options.displayGridlines || "", // String, [defalut: false] 엑셀 전체 셀의 눈금선 제거 유무
+		autoSizeColumn : options.autoSizeColumn || "true", // String, [defalut: false] 너비자동맞춤 설정 여부 - 2016.08.18 옵션 설정을 true로 변경
+		displayGridlines : options.displayGridlines || "", // String, [defalut: false] 엑셀 전체 셀의 눈금선 제거 여부
 		colMerge : options.colMerge || "", // String, [defalut: false] colMerge된 컬럼을 Merge해서 출력 할 지 여부
-		useDataFormat : options.useDataFormat || "", // String, [defalut: 없음] 그리드 dataType이 text인 경우, 엑셀의 표시형식 '텍스트' 출력 유무( "true"인 경우
+		useDataFormat : options.useDataFormat || "", // String, [defalut: 없음] 그리드 dataType이 text인 경우, 엑셀의 표시형식 '텍스트' 출력 여부( "true"인 경우
 		// 표시형식 텍스트, "false"인 경우 표시형식 일반 출력)
 		indent : options.indent || "", // String, [defalut: 없음] 그리드 dataType이 drilldown인 경우, indent 표시를 위한 공백 삽입 개수, default값은 0
-		columnMove : options.columnMove || "", // String, [defalut: false] 그리드 컬럼이동시 이동된 상태로 다운로드 유무 ( "true"인경우 컬럼이동 순서대로 출력 )
+		columnMove : options.columnMove || "", // String, [defalut: false] 그리드 컬럼이동시 이동된 상태로 다운로드 여부 ( "true"인경우 컬럼이동 순서대로 출력 )
 		columnOrder : options.columnOrder || "", // String, [defalut: 없음] 엑셀 다운로드시 다운로드되는 컬럼 순서를 지정 할 수 있는 속성 ( ex) "0,3,2,1"로 지정시 지정한
 		// 순서로 다운로드된다 )
-		fitToPage : options.fitToPage || "false", // String, [defalut: false] 엑셀 프린터 출력시 쪽맞춤 사용 유무
-		landScape : options.landScape || "false", // String, [defalut: false] 엑셀 프린터 출력시 가로 방향 출력 유무
+		fitToPage : options.fitToPage || "false", // String, [defalut: false] 엑셀 프린터 출력시 쪽맞춤 사용 여부
+		landScape : options.landScape || "false", // String, [defalut: false] 엑셀 프린터 출력시 가로 방향 출력 여부
 		fitWidth : options.fitWidth || "1", // String, [defalut: 1] 엑셀 프린터 출력시 용지너비
 		fitHeight : options.fitHeight || "1", // String, [defalut: 1] 엑셀 프린터 출력시 용지높이
 		scale : options.scale || "100", // String, [defalut: 100] 엑셀 프린터 출력시 확대/축소 배율, scale을 사용할 경우 fitToPage는 false로 설정 해야 한다.
@@ -1871,7 +1883,7 @@ com.uploadExcel = function(grdObj, options) {
  * @param {Object} grdObj GridView Object
  * @param {Object} options JSON형태로 저장된 그리드의 엑셀 업로드 옵션
  * @param {String} [options.type] [default: 1, 0] 데이터 형태 (0이면 실 데이터 형태,1이면 display 표시 방식)
- * @param {String} [options.header] [default: 1, 0] Grid header 존재 유무 (0이면 header row수를 무시하고 전부 업로드하고 1이면 header row수 만큼 skip한다.)
+ * @param {String} [options.header] [default: 1, 0] Grid header 존재 여부 (0이면 header row수를 무시하고 전부 업로드하고 1이면 header row수 만큼 skip한다.)
  * @param {String} [options.delim] [default: ','] CSV 파일에서 데이터를 구분할 구분자
  * @param {String} [options.escapeChar] CSV 데이터에서 제거해야 되는 문자셋 ( ex) '\'' )
  * @param {Number} [options.startRowIndex] [defalut: 0] csv파일에서 그리드의 데이터가 시작되는 행의 번호, startRowIndex가 설정되면, header 설정은 무시된다.
@@ -1892,7 +1904,7 @@ com.uploadExcel = function(grdObj, options) {
 com.uploadCSV = function(grdObj, options) {
 	var options = {
 		type : options.type || "0", // String, [default: 1, 0]데이터 형태 (0이면 실 데이터 형태,1이면 display 표시 방식)
-		header : options.header || "0", // String, [default: 1, 0]Grid header 존재 유무 (0이면 header row수를 무시하고 전부 업로드하고 1이면 header row수 만큼
+		header : options.header || "0", // String, [default: 1, 0]Grid header 존재 여부 (0이면 header row수를 무시하고 전부 업로드하고 1이면 header row수 만큼
 		// skip한다.)
 		delim : options.delim || ",", // String, [default: ',']CSV 파일에서 데이터를 구분할 구분자
 		escapeChar : options.escapeChar || "", // String, CSV 데이터에서 제거해야 되는 문자셋 ( ex) '\'' )
@@ -3128,6 +3140,27 @@ com.transTime = function(value) {
 
 	return output;
 };
+
+/**
+ * 시간 - 입력된 String 또는 Number에 포메터를 적용하여 반환한다.
+ *
+ * @date 2021.08.27
+ * @param {String} value 시간 Formatter를 적용한 값 (String 또는 Number 타입 지원)
+ * @memberOf com
+ * @author InswaveSystems
+ * @return {String} 포멧터가 적용된 문자열
+ * @example
+ * com.transTime("1234");
+ * // return 예시) "12:34"
+ */
+com.transTime2 = function(value) {
+	var minute = String(value).substr(0, 2);
+	var second = String(value).substr(2, 2);
+	var output = minute + ":" + second;
+
+	return output;
+};
+
 
 /**
  * 소수점 2자리에서 반올림 처리를 한다.
@@ -6149,7 +6182,7 @@ com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, f
 
 		for (var i = 0; i < keyColumnArr.length; i++) {
 			curKeyValue = mainData.getCellData(row, keyColumnArr[i]);
-			focusOption.keyMap.set(keyColumn, curKeyValue);
+			focusOption.keyMap.set(keyColumnArr[i], curKeyValue);
 			
 			if(i!=0)curKeyValues += ",";
 			curKeyValues += (curKeyValue);
@@ -6229,7 +6262,7 @@ com.changeThirdGrid = function(mainGrid, subGrid1, subGrid2, subSaveSbmObj1, sub
 		
 		for (var i = 0; i < keyColumnArr.length; i++) {
 			curKeyValue = mainData.getCellData(row, keyColumnArr[i]);
-			focusOption.keyMap.set(keyColumn, curKeyValue);
+			focusOption.keyMap.set(keyColumnArr[i], curKeyValue);
 			
 			if(i!=0)curKeyValues += ",";
 			curKeyValues += (curKeyValue);
@@ -6312,7 +6345,7 @@ com.changeThirdGrid2 = function(mainGrid, subGrid1, subGrid2, subSrchSbmObj1, su
 
 		for (var i = 0; i < keyColumnArr.length; i++) {
 			curKeyValue = mainData.getCellData(row, keyColumnArr[i]);
-			focusOption.keyMap.set(keyColumn, curKeyValue);
+			focusOption.keyMap.set(keyColumnArr[i], curKeyValue);
 			
 			if(i!=0)curKeyValues += ",";
 			curKeyValues += (curKeyValue);
@@ -6378,7 +6411,7 @@ com.changeSingleGrid = function(mainGrid, row, oldRow) {
 
 		for (var i = 0; i < keyColumnArr.length; i++) {
 			curKeyValue = mainData.getCellData(row, keyColumnArr[i]);
-			focusOption.keyMap.set(keyColumn, curKeyValue);
+			focusOption.keyMap.set(keyColumnArr[i], curKeyValue);
 			
 			if(i!=0)curKeyValues += ",";
 			curKeyValues += (curKeyValue);
@@ -6502,18 +6535,20 @@ com.decodeXss = function(str) {
 	return str.replaceAll("&#40;", "(").replaceAll("&#41;", ")");
 }
 
-com.setSerialNumberToData= function(grid, column){
-	   var data = com.getGridViewDataList(grid);
-	   var rowData = data.getAllJSON();
-	   var nodeSn = 0;
-	   for(var i = 0; i < rowData.length; i++) { //노선의 노드 순번을 그리드 순서대로 재 할당함.
-	      if(data.getRowStatus(i)!="D"){
-	         nodeSn ++;
-	         if(data.getCellData(i,column) != nodeSn){
-	        	 data.setCellData(i,column, nodeSn);
-	         }
-	      }
-	   }
+com.setSerialNumberToData= function(grid, column, oldColumn){
+	var data = com.getGridViewDataList(grid);
+	var rowData = data.getAllJSON();
+	var nodeSn = 0;
+	for(var i = 0; i < rowData.length; i++) { //노선의 노드 순번을 그리드 순서대로 재 할당함.
+		if(data.getRowStatus(i)!="D"){
+			nodeSn ++;
+			var oldNodeSn = data.getCellData(i,column);
+			if(oldNodeSn != nodeSn){
+				data.setCellData(i,oldColumn, oldNodeSn);
+				data.setCellData(i,column, nodeSn);
+			}
+		}
+	}
 }
 
 com.isEmpty = function(str){

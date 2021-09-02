@@ -8,12 +8,8 @@
 			A.GPS_X, A.GPS_Y, A.LINK_NODE_YN, B.MORN_STD
 	FROM BMS_ROUT_NODE_CMPSTN A LEFT OUTER JOIN BMS_ROUT_LINK_CMPSTN B ON A.ROUT_ID = B.ROUT_ID AND A.LINK_ID = B.LINK_ID
 	WHERE A.ROUT_ID = #{ROUT_ID}
-	<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
-		<if test="CONTENT != NULL">
-			AND (A.NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || A.NODE_NM LIKE CONCAT('%',#{CONTENT},'%'))
-		</if>
-		<!-- 	
-		<if test="TYPE == 'ALL'">
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">	
+		<if test="TYPE == 'ALL'||TYPE == ''">
 			AND (A.NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || A.NODE_NM LIKE CONCAT('%',#{CONTENT},'%'))
 		</if>
 		<if test="TYPE == 'NODE_ID'">
@@ -21,7 +17,7 @@
 		</if>
 		<if test="TYPE == 'NODE_NM'">
 			A.NODE_NM LIKE CONCAT('%',#{CONTENT},'%') 
-		</if> -->
+		</if>
 	</if>
 	 ORDER BY NODE_SN
 </select>
@@ -71,9 +67,9 @@
 </if>
 	
 	UPDATE BRT_MAIN_ROUT_NODE_INFO
-		SET NODE_SN= #{NODE_SN}, NODE_TYPE= #{NODE_TYPE}
+		SET NODE_TYPE= #{NODE_TYPE}
 			, NODE_NM= #{NODE_NM}, STTN_ID= #{STTN_ID}, STTN_NO= #{STTN_NO}, GPS_X= #{GPS_X}, GPS_Y= #{GPS_Y}, UPD_DTM= #{UPD_DTM}, UPD_ID= #{SSN_USER_ID}
-	WHERE ROUT_ID= #{ROUT_ID} AND NODE_ID= #{NODE_ID};
+	WHERE ROUT_ID= #{ROUT_ID} AND NODE_ID= #{NODE_ID} AND NODE_SN= #{NODE_SN};
 </insert>
 
 <insert id="SI0404G1I1" parameterType="Map">
@@ -83,16 +79,6 @@
 	INSERT INTO BMS_ROUT_LINK_CMPSTN(ROUT_ID,LINK_ID,LINK_SN,MORN_STD,UPD_DTM,UPD_ID)
 	VALUES(#{ROUT_ID},#{LINK_ID},#{LINK_SN},'MS001',#{UPD_DTM},#{SSN_USER_ID});
 </insert>
-
-<delete id="SI0404G1D0" parameterType="Map">
-	UPDATE BMS_NODE_MST
-		SET USE_YN='N'
-	WHERE NODE_ID= #{NODE_ID};
-	
-	delete from BMS_ROUT_NODE_CMPSTN
-	where ROUT_ID = #{ROUT_ID} 
-	and NODE_ID = #{NODE_ID};
-</delete>
 
 <delete id="SI0404G1DA0" parameterType="Map">
 	UPDATE BMS_NODE_MST A

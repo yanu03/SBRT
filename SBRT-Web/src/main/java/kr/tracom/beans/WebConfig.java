@@ -1,5 +1,6 @@
 package kr.tracom.beans;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,20 +22,42 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	@Value("${spring.mvc.view.suffix}")
 	private String viewSuffix;
 
+	@Value("${windows.static.resource.location}")
+	private String windowsStaticResouceLocation;
+	
 	@Value("${static.resource.location}")
 	private String staticResouceLocation;
 
+	@Value("${windows.fileupload.location}")
+	protected String windowsFileuploadLocation;
+	
 	@Value("${fileupload.location}")
 	protected String fileuploadLocation;
+
+	@Value("${static.webapp.location}")
+	private String staticWebappLocation;
+	
+	@Value("${windows.static.webapp.location}")
+	private String windowsStaticWebappLocation;
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/websquare/**").addResourceLocations("/websquare/");
-		registry.addResourceHandler("/fileUpload/**").addResourceLocations(fileuploadLocation);
-		registry.addResourceHandler("/cm/**").addResourceLocations(staticResouceLocation+"/static/cm/");
-		registry.addResourceHandler("/ui/**").addResourceLocations(staticResouceLocation+"/static/ui/");
-		registry.addResourceHandler("/ClipReport/**").addResourceLocations(staticResouceLocation+"/static/ClipReport/");
-        registry.addResourceHandler("/webjars/**").addResourceLocations("/webjars/").resourceChain(false);        
+		if(SystemUtils.IS_OS_WINDOWS) {
+			registry.addResourceHandler("/fileUpload/**").addResourceLocations(windowsFileuploadLocation);
+			registry.addResourceHandler("/cm/**").addResourceLocations(windowsStaticResouceLocation+"/static/cm/");
+			registry.addResourceHandler("/ui/**").addResourceLocations(windowsStaticResouceLocation+"/static/ui/");
+			registry.addResourceHandler("/ClipReport/**").addResourceLocations(windowsStaticResouceLocation+"/static/ClipReport/");
+			registry.addResourceHandler("/websquare/**").addResourceLocations("/websquare/");
+			//registry.addResourceHandler("/WEB-INF/**").addResourceLocations("/WEB-INF/");
+		} else {
+			registry.addResourceHandler("/fileUpload/**").addResourceLocations(fileuploadLocation);
+			registry.addResourceHandler("/cm/**").addResourceLocations(staticResouceLocation+"/static/cm/");
+			registry.addResourceHandler("/ui/**").addResourceLocations(staticResouceLocation+"/static/ui/");
+			registry.addResourceHandler("/ClipReport/**").addResourceLocations(staticResouceLocation+"/static/ClipReport/");
+			registry.addResourceHandler("/websquare/**").addResourceLocations(staticWebappLocation+"/websquare/");
+			//registry.addResourceHandler("/WEB-INF/**").addResourceLocations(staticWebappLocation+"/WEB-INF/");
+		}
 		super.addResourceHandlers(registry);
 	}
 

@@ -1317,8 +1317,9 @@ routMap.addSoundByClick = function(mapId,grid,routeId,e){
 
 routMap.focusNode = function(mapId, grid,focusIdx){
 	
-	routeData = com.getGridDispJsonData(grid);
-	if(routMap.mapInfo[mapId].selectedIndex!=focusIdx){
+	focusIdx = com.getGridDispIndex(grid,focusIdx);
+	//routeData = com.getGridDispJsonData(grid);
+	//if(routMap.mapInfo[mapId].selectedIndex!=focusIdx){
 		routMap.mapInfo[mapId].selectedIndex = focusIdx;
 		
 		if(mapId == "map_AL0101"){
@@ -1332,7 +1333,7 @@ routMap.focusNode = function(mapId, grid,focusIdx){
 				routMap.drawRoute(mapId, grid, focusIdx);
 			}
 		}
-	}
+	//}
 	routMap.mapInfo[mapId].isMove = true;
 	//routMap.moveMap(mapId, routeData[focusIdx].GPS_Y, routeData[focusIdx].GPS_X);
 }
