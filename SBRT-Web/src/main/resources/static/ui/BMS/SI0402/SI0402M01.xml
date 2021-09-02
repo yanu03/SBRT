@@ -64,6 +64,7 @@
 					<w2:columnInfo>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
+						<w2:column id="OLD_NODE_ID" name="이전노드ID" dataType="text"></w2:column>
 						<w2:column id="NODE_SN" name="노드순번" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
 						<w2:column id="NODE_TYPE" name="노드유형" dataType="text"></w2:column>
@@ -287,8 +288,8 @@
 	scwin.select_sttn = function(isAdd) {
 		//oldNodeType = dlt_BMS_ROUT_NODE_CMPSTN.getCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE");
 		
-		var val_STTN_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("STTN_ID");
-		dma_sub_search.set("STTN_IDS", val_STTN_ID);
+		//var val_STTN_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("STTN_ID");
+		//dma_sub_search.set("STTN_IDS", val_STTN_ID);
 		var param = dma_sub_search.get("ROUT_ID");
 		if (param != "") {
 			var data = null;
@@ -333,8 +334,8 @@
 	scwin.select_cross = function(isAdd) {
 		//oldNodeType = dlt_BMS_ROUT_NODE_CMPSTN.getCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE");
 		
-		var val_CRS_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("CRS_ID");
-		dma_sub_search.set("CRS_IDS", val_CRS_ID);
+		//var val_CRS_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("CRS_ID");
+		//dma_sub_search.set("CRS_IDS", val_CRS_ID);
 		var param = dma_sub_search.get("ROUT_ID");
 		if (param != "") {
 			var data = null;
@@ -380,14 +381,17 @@
 		
 		if(data==null)return;
 
+		var nodeId = com.getGridViewDataList(grid).getCellData(index, "NODE_ID");
 		if(com.getGridViewDataList(grid).getCellData(index,"NODE_TYPE")==routMap.NODE_TYPE.BUSSTOP){
 			com.getGridViewDataList(grid).setCellData(index, "STTN_ID",data.STTN_ID);
+			com.getGridViewDataList(grid).setCellData(index, "OLD_NODE_ID",nodeId);
 			com.getGridViewDataList(grid).setCellData(index, "NODE_ID",data.STTN_ID);
 			com.getGridViewDataList(grid).setCellData(index, "NODE_NM",data.STTN_NM);
 			com.getGridViewDataList(grid).setCellData(index, "STTN_NO",data.STTN_NO);
 		}
 		else if(com.getGridViewDataList(grid).getCellData(index,"NODE_TYPE")==routMap.NODE_TYPE.CROSS){
 			com.getGridViewDataList(grid).setCellData(index, "CRS_ID",data.CRS_ID);
+			com.getGridViewDataList(grid).setCellData(index, "OLD_NODE_ID",nodeId);
 			com.getGridViewDataList(grid).setCellData(index, "NODE_ID",data.CRS_ID);
 			com.getGridViewDataList(grid).setCellData(index, "NODE_NM",data.CRS_NM);
 		}
