@@ -26,7 +26,7 @@ public class PI0701Controller extends ControllerSupport{
 	
 	@RequestMapping("/pi/PI0701G1R0")
 	public @ResponseBody Map<String, Object> PI0701G1R0() throws Exception {
-		result.setData("dlt_ROUT_MST", pi0701Service.PI0701G1R0());
+		result.setData("dlt_actionSetting", pi0701Service.PI0701G1R0());
 		return result.getResult();
 	}	
 

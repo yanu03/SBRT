@@ -500,13 +500,13 @@ public class FTPHandler {
         String[] tmp = null;
         
         while((line = br.readLine()) != null){
+        	tmp = line.split("\t");
         	Map<String, Object> map = new HashMap<>();
         	Map<String, Object> param = new HashMap<>();
-        	param.put("COL", "DL_CD_NM");
+        	param.put("COL", "DL_CD");
         	param.put("CO_CD", "EFFECT_TYPE");
-        	param.put("DL_CD_NM", tmp[1]);
-        	
-        	tmp = line.split("\t");
+        	param.put("COL3", "TXT_VAL1");
+        	param.put("COL_VAL3", tmp[1]);
         	
         	map.put("FRAME_NO", tmp[0]);
         	map.put("EFFECT_TYPE", commonMapper.selectDlCdCol(param));
@@ -538,7 +538,9 @@ public class FTPHandler {
 			scheduleRow.put("SHOW_TIME", "0000");
 			
 			scheduleList.add(scheduleRow);
+			
 		}
+		
 		return writeSCH(scheduleList, deviceCd, fileName);
 	}
 	
@@ -551,8 +553,8 @@ public class FTPHandler {
 			Map<String, Object> param = new HashMap<>();
 			param.put("COL", "TXT_VAL1");
 			param.put("CO_CD", "EFFECT_TYPE");
-			param.put("DL_CD_NM", scheduleList.get(i).get("EFFECT_TYPE").toString());
-			
+			param.put("COL3", "DL_CD");
+			param.put("COL_VAL3", scheduleList.get(i).get("EFFECT_TYPE").toString());
 			if(i == 0) {
 				txt += scheduleList.get(i).get("FRAME_NO") + Constants.Schedule.TAB 
 					+ commonMapper.selectDlCdCol(param) + Constants.Schedule.TAB 
