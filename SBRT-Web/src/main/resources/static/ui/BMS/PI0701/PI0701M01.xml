@@ -128,6 +128,7 @@
 		</xf:model>
 
 		<script type="text/javascript" lazy="false"><![CDATA[
+	var isSizeCheck = false;
 	scwin.onpageload = function() {
 		
 		
@@ -194,12 +195,11 @@
 			btn_upload.reset();	
 		}
 				
-		
+		isSizeCheck = true;
 	}
 	
 	scwin.upload0_ondone = function(retXml) {
 		var real_fileName = dlt_ROUT_MST.getCellData(PI0701G0.getFocusedRowIndex(), "FILE_NM");
-		var preImg = $p.$("#image1").attr("src");		
 		var previewPath = "/fileUpload/up/"+real_fileName;
 		$p.$("#image1").attr("src", previewPath);
 		
@@ -209,19 +209,18 @@
 			var y = dlt_searchitem2.getCellData(DL_CD.selectedIndex, "NUM_VAL4") * dlt_searchitem2.getCellData(DL_CD.selectedIndex, "NUM_VAL6");		
 			var image_width = $p.$("#image1").width();
 			var image_height = $p.$("#image1").height();
-		$p.$("#image1").attr("src", previewPath);			
+			
 			//이미지 사이즈 체크
-			if ((image_width % x != 0) || (image_height % y != 0)) {
-				$p.$("#image1").attr("src", preImg);
+			if (isSizeCheck == true &&((image_width % x != 0) || (image_height % y != 0))) {
 				
-				//필요한데 무한 반복 걸림
+				com.alert("이미지의 사이즈가 맞지 않습니다.");
+				btn_upload.reset();
+				dlt_ROUT_MST.undoAll();
+				com.executeSubmission(sub_PI0701G0R0);
+				isSizeCheck = false;
 				
-				setTimeout(function(){
-					//btn_upload.reset();
-					com.alert("이미지의 사이즈가 맞지 않습니다.")
-				}, 200);
-				return false;	
-			}				
+			}
+			return false;				
 		});
 				
 	};
@@ -230,8 +229,15 @@
 	//파일변경, 동작설정 후 onrowindexchange시 alert창 띄워서 막아야 함
 	scwin.PI0701G0_onrowindexchange = function(row,oldRow) {
 		var main_idx = PI0701G0.getModifiedIndex().length;
-		var sub_idx = PI0701G1.getModifiedIndex().length;
+		var sub_idx = PI0701G1.getModifiedIndex().length;		
 		
+//		if (main_idx > 0 || sub_idx > 0) {
+//			com.confirm("저장되지 않은 데이터가 있습니다. 저장하시겠습니까?", function(rtn){
+//				if (rtn) {
+//					$p.executeSubmission(sub_PI0701G0S0);
+//				} 
+//			});
+//		} 
 			
 		var jsonData = dlt_ROUT_MST.getAllJSON()[row];
 		dma_ROUT_MST.setJSON(jsonData);
@@ -265,7 +271,6 @@
 			com.confirm("설정 하시겠습니까?", function(rtn) {
 				if (rtn) {
 					$p.executeSubmission(sub_PI0701G0S0);
-					com.alert("설정 하였습니다.");
 				}	
 			});
 		} else {
@@ -279,18 +284,21 @@
 		var main_idx = PI0701G0.getModifiedIndex().length;
 		var sub_idx = PI0701G1.getModifiedIndex().length;		
 		
-//		if (main_idx > 0 || sub_idx > 0) {
-//			com.confirm("저장되지 않은 데이터가 있습니다. 변경하시겠습니까?", function(rtn){
-//				if (rtn) {
-//					return true;
-//				} else {
-//					????
-//				}	
-//			});
-//		} 
-		
-		showImage();
-		$p.executeSubmission(sub_PI0701G1R0);
+		if (main_idx > 0 || sub_idx > 0) {
+			com.confirm("저장되지 않은 데이터가 있습니다. 저장하시겠습니까?", function(rtn){
+				if (rtn) {
+					$p.executeSubmission(sub_PI0701G0S0);
+				}
+				else {
+					showImage();
+					$p.executeSubmission(sub_PI0701G1R0);
+				}
+			});
+		} 
+		else {
+			showImage();
+			$p.executeSubmission(sub_PI0701G1R0);
+		}
 	};
 	
 	scwin.sub_PI0701FCK0_submitdone = function(e) {
@@ -304,6 +312,7 @@
 			$p.$("#mf_tac_layout_contents_MN00040801_body_btn_upload_inputFile").attr("value", null);			
 			$p.$("#mf_tac_layout_contents_MN00040801_body_btn_upload_inputFile").attr("placeholder", "등록된 파일이 없습니다.");		
 		}		
+		
 	};
 	
 	scwin.sub_PI0701SHI1_submitdone = function(e) {
@@ -332,7 +341,7 @@
 		
 		$p.$("#image1").attr("src", path);
 		$p.$("#image1").on('load', function(e) { 
-		setGridSize();
+			setGridSize();
 		}); 		
 	}
 	
@@ -361,18 +370,21 @@
 		}
 		
 		for (i=activeRowCount; i<10; i++) {
-				PI0701G1.setRowColor(i, "#68717b");
-				PI0701G1.setRowReadOnly(i, true);			
+			PI0701G1.setRowColor(i, "#68717b");
+			PI0701G1.setRowReadOnly(i, true);			
 		} 
 		
 	}
 
 	scwin.sub_PI0701G0S0_submitdone = function(e) {
-		com.saveDone(PI0701G0, sub_PI0701G0R0);
+		//com.saveDone(PI0701G0, sub_PI0701G0R0);
+		showImage();
+		com.executeSubmission(sub_PI0701G0R0);
 	};
 	
 	scwin.sub_PI0701G1R0_submitdone = function(e) {
-		setGridSize()
+		setGridSize();
+		isAlert = false;
 	};
 	]]></script>
 	</head>

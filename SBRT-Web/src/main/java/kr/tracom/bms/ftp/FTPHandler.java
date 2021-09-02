@@ -482,8 +482,7 @@ public class FTPHandler {
 	}
 	
 	/** 210826 행선지안내기 스케쥴 파일 Read jh **/
-	public List<Map<String, Object>> readSCH(String deviceCd, String fileName1) throws IOException {
-		String fileName = fileName1.split(".")[0] + ".SCH";
+	public List<Map<String, Object>> readSCH(String deviceCd, String fileName) throws IOException {
 		String path = Paths.get(getRootLocalPath(), "/temp/destination/", deviceCd).toString();
 		File file = new File(path + "/" + fileName);
 		FileReader fr = null;
@@ -509,16 +508,13 @@ public class FTPHandler {
         	param.put("COL3", "TXT_VAL1");
         	param.put("COL_VAL3", tmp[1]);
         	
-        	tmp = line.split("\t");
-        	
         	map.put("FRAME_NO", tmp[0]);
-        	map.put("EFFECT_TYPE", tmp[1]);
+        	map.put("EFFECT_TYPE", commonMapper.selectDlCdCol(param));
         	map.put("EFFECT_SPEED", tmp[2]);
         	map.put("SHOW_TIME", tmp[3]);
         	
         	scheduleList.add(map);
         }
-        
         br.close();
         return scheduleList;
 	}
@@ -537,7 +533,7 @@ public class FTPHandler {
 			int seq = i + 1;
 			
 			scheduleRow.put("FRAME_NO", "FRAME" + seq);
-			scheduleRow.put("EFFECT_TYPE", "01");
+			scheduleRow.put("EFFECT_TYPE", "ET001");
 			scheduleRow.put("EFFECT_SPEED", "05");
 			scheduleRow.put("SHOW_TIME", "0000");
 			
@@ -553,8 +549,6 @@ public class FTPHandler {
 		String path = Paths.get(getRootLocalPath(), "/temp/destination/", deviceCd).toString();
 		String txt = "";
 
-		System.out.println("11111111111");
-		
 		for(int i = 0; i < scheduleList.size(); i++) {
 			Map<String, Object> param = new HashMap<>();
 			param.put("COL", "TXT_VAL1");
@@ -563,13 +557,13 @@ public class FTPHandler {
 			param.put("COL_VAL3", scheduleList.get(i).get("EFFECT_TYPE").toString());
 			if(i == 0) {
 				txt += scheduleList.get(i).get("FRAME_NO") + Constants.Schedule.TAB 
-					+ scheduleList.get(i).get("EFFECT_TYPE") + Constants.Schedule.TAB 
+					+ commonMapper.selectDlCdCol(param) + Constants.Schedule.TAB 
 					+ String.format("%02d", Integer.valueOf(scheduleList.get(i).get("EFFECT_SPEED").toString())) + Constants.Schedule.TAB 
 					+ String.format("%04d", Integer.valueOf(scheduleList.get(i).get("SHOW_TIME").toString()));
 			}else {
 				txt += Constants.CSVForms.ROW_SEPARATOR
 					+ scheduleList.get(i).get("FRAME_NO") + Constants.Schedule.TAB 
-					+ scheduleList.get(i).get("EFFECT_TYPE") + Constants.Schedule.TAB 
+					+ commonMapper.selectDlCdCol(param) + Constants.Schedule.TAB 
 					+ String.format("%02d", Integer.valueOf(scheduleList.get(i).get("EFFECT_SPEED").toString())) + Constants.Schedule.TAB 
 					+ String.format("%04d", Integer.valueOf(scheduleList.get(i).get("SHOW_TIME").toString()));
 			}
