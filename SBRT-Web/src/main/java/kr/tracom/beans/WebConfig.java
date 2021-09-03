@@ -50,6 +50,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 			registry.addResourceHandler("/ClipReport/**").addResourceLocations(windowsStaticResouceLocation+"/static/ClipReport/");
 			registry.addResourceHandler("/websquare/**").addResourceLocations("/websquare/");
 			//registry.addResourceHandler("/WEB-INF/**").addResourceLocations("/WEB-INF/");
+			registry.addResourceHandler("/webjars/**").addResourceLocations("/webjars/").resourceChain(false);        
 		} else {
 			registry.addResourceHandler("/fileUpload/**").addResourceLocations(fileuploadLocation);
 			registry.addResourceHandler("/cm/**").addResourceLocations(staticResouceLocation+"/static/cm/");
@@ -57,6 +58,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 			registry.addResourceHandler("/ClipReport/**").addResourceLocations(staticResouceLocation+"/static/ClipReport/");
 			registry.addResourceHandler("/websquare/**").addResourceLocations(staticWebappLocation+"/websquare/");
 			//registry.addResourceHandler("/WEB-INF/**").addResourceLocations(staticWebappLocation+"/WEB-INF/");
+			registry.addResourceHandler("/webjars/**").addResourceLocations("/webjars/").resourceChain(false);        
 		}
 		super.addResourceHandlers(registry);
 	}
