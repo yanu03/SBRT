@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
 	xmlns:xf="http://www.w3.org/2002/xforms">
-	<head meta_vertical_guides="149" meta_horizontal_guides="">
+	<head meta_vertical_guides="" meta_horizontal_guides="">
 		<w2:type>DEFAULT</w2:type>
 		<w2:buildDate />
 		<xf:model>
@@ -20,8 +20,8 @@
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="STTN_ID" name="정류장ID" dataType="text"></w2:column>
-						<w2:column id="STTN_NO" name="정류장번호" dataType="text"></w2:column>
+						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
+						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
@@ -31,15 +31,14 @@
 						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_STTN_MST" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_NODE_MST" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="STTN_ID" name="정류장ID" dataType="text"></w2:column>
-						<w2:column id="STTN_NO" name="정류장번호" dataType="text"></w2:column>
-						<w2:column id="STTN_NM" name="정류장명" dataType="text"></w2:column>
+						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
+						<w2:column id="NODE_TYPE" name="노드타입" dataType="text"></w2:column>
+						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
 						<w2:column id="GPS_Y" name="위도" dataType="bigDecimal"></w2:column>
 						<w2:column id="GPS_X" name="경도" dataType="bigDecimal"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
-						<!-- <w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column> -->
 					</w2:columnInfo>
 					<w2:data use="false">
 						<w2:row></w2:row>
@@ -58,6 +57,8 @@
 						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
+						<w2:column id="MNG_ID" name="관리아이디" dataType="text"></w2:column>
+						<w2:column id="FCLT_IP" name="시설IP" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem2" saveRemovedData="true">
@@ -87,7 +88,7 @@
 				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_FM0100G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_STTN_MST" action="/rout/selectSttnList"
+			<xf:submission id="sub_FM0100G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_NODE_MST" action="/node/selectNodeList"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_FM0100G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -95,13 +96,13 @@
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_FM0100G1K0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_FM0100SHI0" ref="" target="data:json,dlt_searchitem" action="/rout/selectSttnItem" method="post"
+			<xf:submission id="sub_FM0100SHI0" ref="" target="data:json,dlt_searchitem" action="/node/selectNodeItem" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_FM0100G1R0" ref="data:json,dma_subsearch" target="data:json,dlt_BMS_FCLT_INFO" action="/fm/FM0100G1R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="" ev:submitdone="scwin.sub_VD0100G1R0_submitdone" ev:submiterror="" abortTrigger="">
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_FM0100G1R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_FM0100G1S0" ref='data:json,{"action":"modified","id":"dlt_BMS_FCLT_INFO"}' target="data:json,dma_result"
 				action="/fm/FM0100G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
@@ -127,8 +128,8 @@
 	<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
 		var autoOptions = {
-			Main : { grid : FM0100G0, frm : FM0100F0, srchSbm : sub_FM0100G0R0, srchGrp : pgm_header, keyColumn : "STTN_ID",
-					 focusColumn : "STTN_NO", name :  "정류장 목록"},
+			Main : { grid : FM0100G0, frm : FM0100F0, srchSbm : sub_FM0100G0R0, srchGrp : pgm_header, keyColumn : "NODE_ID",
+					 focusColumn : "NODE_NM", name :  "노드 목록"},
 			Sub1 : { grid : FM0100G1, srchSbm : sub_FM0100G1R0, savSbm : sub_FM0100G1S0,  keySbm : sub_FM0100G1K0, name :  "시설물 목록"}
 		 };
 		 
@@ -139,7 +140,7 @@
 //		};
 //		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
 		
-		var codeOptions = [ {code : "AREA", compID : "FM0100G0:AREA" }
+		var codeOptions = [ {code : "NODE_TYPE", compID : "FM0100G0:NODE_TYPE" }
 							,{code : "INST_LOC", compID : "INST_LOC, FM0100G1:INST_LOC" }
 							,{code : "FCLT_KIND", compID : "FCLT_KIND, FM0100G1:FCLT_KIND"}	
 							
@@ -160,7 +161,7 @@
 
 	//조회 콜백 메소드
 	scwin.sub_FM0100G0R0_submitdone = function(e) {
-		com.setFocusedCell(FM0100G0, "STTN_ID");
+		com.setFocusedCell(FM0100G0, "NODE_ID");
 	};
 	
 	//그리드 저장 후 조회
@@ -192,15 +193,15 @@
 			autoChoiceBox.hide();
 			search_input.setValue("");
 			search_input.show("");
-		} else if (info.newValue == "STTN_ID") {
+		} else if (info.newValue == "NODE_ID") {
 			search_input.hide();
-			autoChoiceBox.setNodeSet("data:dlt_searchitem", "STTN_ID", "STTN_ID");
+			autoChoiceBox.setNodeSet("data:dlt_searchitem", "NODE_ID", "NODE_ID");
 			autoChoiceBox.show("");
-		} else if (info.newValue == "STTN_NO") {
+		} else if (info.newValue == "NODE_NM") {
 			search_input.hide();
-			autoChoiceBox.setNodeSet("data:dlt_searchitem", "STTN_NO", "STTN_NO");
+			autoChoiceBox.setNodeSet("data:dlt_searchitem", "NODE_NM", "NODE_NM");
 			autoChoiceBox.show("");
-		}
+		}	
 	};
 	
 
@@ -210,7 +211,7 @@
 	};
 	
 	scwin.sub_FM0100G1R0_submitdone = function(e) {
-		com.setFocusedCell(FM0100G1, "STTN_ID");		
+		com.setFocusedCell(FM0100G1, "FCLT_ID");		
 	};
 	
 	scwin.sub_VD0100G1R0_submitdone = function(e) {
@@ -219,7 +220,7 @@
 	
 	//노드ID 넣어주는 스크립트
 	scwin.FM0100G1_onrowindexchange = function(row,oldRow) {
-		dlt_BMS_FCLT_INFO.setCellData(row, "NODE_ID", dma_subsearch.get("STTN_ID"));
+		dlt_BMS_FCLT_INFO.setCellData(row, "NODE_ID", dma_subsearch.get("NODE_ID"));
 	};
 	]]></script>
 	</head>
@@ -236,32 +237,31 @@
 					<xf:group id="" style="" class="search">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE"
-							optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" style="" submenuSize="auto"
-							textAlign="left">
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" style="" submenuSize="auto" textAlign="left">
 							<xf:choices>
 								<xf:item>
 									<xf:label><![CDATA[전체]]></xf:label>
 									<xf:value><![CDATA[ALL]]></xf:value>
 								</xf:item>
 								<xf:item>
-									<xf:label><![CDATA[정류장ID]]></xf:label>
-									<xf:value><![CDATA[STTN_ID]]></xf:value>
+									<xf:label><![CDATA[노드ID]]></xf:label>
+									<xf:value><![CDATA[NODE_ID]]></xf:value>
 								</xf:item>
 								<xf:item>
-									<xf:label><![CDATA[정류장번호]]></xf:label>
-									<xf:value><![CDATA[STTN_NO]]></xf:value>
+									<xf:label><![CDATA[노드명]]></xf:label>
+									<xf:value><![CDATA[NODE_NM]]></xf:value>
 								</xf:item>
 							</xf:choices>
 						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="정류장ID 또는 정류장번호"></xf:input>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="노드ID 또는 노드명"></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
 							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
 							id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
 							class="search_auto" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
 							<w2:choices>
 								<w2:itemset nodeset="data:dlt_searchitem">
-									<w2:label ref="STTN_NO"></w2:label>
-									<w2:value ref="VHC_ID"></w2:value>
+									<w2:label ref="NODE_NM"></w2:label>
+									<w2:value ref="NODE_ID"></w2:value>
 								</w2:itemset>
 							</w2:choices>
 						</w2:autoComplete>
@@ -270,7 +270,7 @@
 				</xf:group>
 			</xf:group><!-- pgm_header -->
 			<xf:group id="pgm_content" class="pgm_content grdc_a_20_900" style="">
-				<xf:group id="pgm_list" class="pgm_list grdr_20_2_187_20_a" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_350_20_a" style="">
 					<xf:group id="" class="" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="정류장 목록" style=""></w2:textbox>
@@ -279,7 +279,7 @@
 					<xf:group></xf:group>
 					<xf:group id="" class="" style="">
 						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid left"
-							dataList="data:dlt_BMS_STTN_MST" enterKeyMove="" ev:onafteredit="" ev:oncellclick="scwin.VD0100G0_oncellclick" ev:oneditkeyup=""
+							dataList="data:dlt_BMS_NODE_MST" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup=""
 							ev:onkeyup="" ev:onrowindexchange="scwin.FM0100G0_onrowindexchange" ev:ontextimageclick="" ev:onviewchange=""
 							fixedColumnWithHidden="true" id="FM0100G0" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true"
 							rowStatusHeaderValue="" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true"
@@ -293,13 +293,13 @@
 							<w2:header style="" id="header2">
 								<w2:row style="" id="row3">
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column61"
-										value="정류장ID" blockSelect="false" displayMode="label">
+										value="노드ID" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column57"
-										value="정류장번호" blockSelect="false" displayMode="label">
+										value="노드타입" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column56"
-										value="정류장명" blockSelect="false" displayMode="label">
+										value="노드명" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column58"
 										value="위도" blockSelect="false" displayMode="label" sortable="false">
@@ -314,13 +314,13 @@
 							</w2:header>
 							<w2:gBody style="" id="gBody2">
 								<w2:row style="" id="row4">
-									<w2:column removeBorderStyle="false" width="94" inputType="text" style="height:20px" id="STTN_ID"
+									<w2:column removeBorderStyle="false" width="94" inputType="text" style="height:20px" id="NODE_ID"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="117" inputType="text" style="height:20px" id="STTN_NO"
+									<w2:column removeBorderStyle="false" width="117" inputType="select" style="height:20px" id="NODE_TYPE"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="161" inputType="text" style="height:20px" id="STTN_NM"
+									<w2:column removeBorderStyle="false" width="161" inputType="text" style="height:20px" id="NODE_NM"
 										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="113" inputType="text" style="height:20px" id="GPS_Y"
@@ -384,6 +384,8 @@
 									<w2:column removeBorderStyle="false" width="200" userData3="" inputType="text" style="height:20px" 
 										id="column6" value="모델명" blockSelect="false" displayMode="label">
 									</w2:column>
+									<w2:column width="150" id="column100" value="관리아이디">
+									</w2:column>
 									<w2:column width="90" id="column55" value="구매일">
 									</w2:column>
 									<w2:column width="90" id="column56" value="설치일">
@@ -427,6 +429,8 @@
 									</w2:column>
 									<w2:column textAlign="left" removeBorderStyle="false" width="86" inputType="text" style="height:20px" 
 										id="MODEL_NM" value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column width="70" id="MNG_ID" textAlign="left">
 									</w2:column>
 									<w2:column width="70" id="BUY_DT">
 									</w2:column>
@@ -558,7 +562,22 @@
 									<xf:input adjustMaxLength="" class="" disabled="false" id="MODEL_NM" mandatory=""
 										ref="data:dlt_BMS_FCLT_INFO.MODEL_NM" style="width:100%;height:21px;" dataType="text" maxlength="20">
 									</xf:input>
-								</xf:group></xf:group><xf:group style="" tagname="tr">
+								</xf:group></xf:group>
+								<xf:group tagname="tr" style=""><xf:group tagname="th" class="w2tb_th">관리아이디<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes></w2:attributes>
+									<xf:input adjustMaxLength="" class="" dataType="text" disabled="false" id="MNG_ID" mandatory=""
+										maxlength="20" ref="data:dlt_BMS_FCLT_INFO.MNG_ID" style="width:100%;height:21px;">
+									</xf:input>
+								</xf:group>
+								<xf:group tagname="th" class="w2tb_th">시설IP<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes></w2:attributes>
+									<xf:input adjustMaxLength="" class="" dataType="text" disabled="false" id="FCLT_IP" mandatory=""
+										maxlength="20" ref="data:dlt_BMS_FCLT_INFO.FCLT_IP" style="width:100%;height:21px;" initValue="">
+									</xf:input>
+								</xf:group></xf:group>
+								<xf:group style="" tagname="tr">
 								<xf:group class="w2tb_th" style="" tagname="th">구매일자</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<xf:group id="" style=""></xf:group>
