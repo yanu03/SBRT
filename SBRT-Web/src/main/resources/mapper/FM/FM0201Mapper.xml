@@ -19,8 +19,10 @@
 					,	A.UPD_ID
 					,	IF(D.CNT > 0 , 'Y','N') COND_ERROR
 		        	 	
-		FROM			BMS_NODE_MST A
+		FROM	  		BMS_ROUT_NODE_CMPSTN E
 		
+		LEFT JOIN	    BMS_NODE_MST A
+			ON E.NODE_ID = A.NODE_ID
 		LEFT JOIN			(SELECT B.NODE_ID, COUNT(B.NODE_ID) CNT
 		            		FROM BMS_FCLT_INFO B
 		         			LEFT JOIN BMS_FCLT_COND_INFO C 
@@ -28,18 +30,13 @@
 		         			WHERE  FCLT_COND  = 'FC021' GROUP BY NODE_ID) D
 		  ON A.NODE_ID = D.NODE_ID		
 		  
-		WHERE			(NODE_TYPE = 'NT001'
-		OR				NODE_TYPE = 'NT002')
-			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
-				<if test="TYPE == 'ALL' || TYPE == ''">
-					AND (NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || NODE_NM LIKE CONCAT('%',#{CONTENT},'%'))
-				</if>
-				<if test="TYPE == 'NODE_ID'">
-					AND NODE_ID LIKE CONCAT('%',#{CONTENT},'%')
-				</if>
-				<if test="TYPE == 'NODE_NM'">
-					AND NODE_NM LIKE CONCAT('%',#{CONTENT},'%') 
-				</if>
+		WHERE			(A.NODE_TYPE = 'NT001'
+		OR				A.NODE_TYPE = 'NT002')
+			<if test="CONTENT1 != null">
+				AND E.ROUT_ID = #{CONTENT1}				
+			</if>
+			<if test="CONTENT2 != null and CONTENT2 != ''">
+				AND (A.NODE_ID LIKE CONCAT('%',#{CONTENT2},'%') || A.NODE_NM LIKE CONCAT('%',#{CONTENT2},'%'))
 			</if>
 	</select>
 
