@@ -31,7 +31,6 @@ public class SI0402Service extends ServiceSupport {
 	}
 
 	public Map SI0402G0K0() throws Exception {
-		
 		return si0402Mapper.SI0402G0K0(); 
 	}
 	
@@ -96,14 +95,11 @@ public class SI0402Service extends ServiceSupport {
 						data.put("LINK_NODE_YN","Y");
 					}
 					
-					uCnt += si0402Mapper.SI0402G1U0(data);
-
-					
 					if(CommonUtil.notEmpty(data.get("STTN_ID"))||CommonUtil.notEmpty(data.get("CRS_ID"))){
+						
 						if(CommonUtil.notEmpty(data.get("STTN_ID"))){
 							data.put("TYPE","STTN_ID");	
 							routMapper.updateSttn(data);
-						
 						}
 						else if(CommonUtil.notEmpty(data.get("CRS_ID"))){
 							data.put("TYPE","CRS_ID");
@@ -112,7 +108,22 @@ public class SI0402Service extends ServiceSupport {
 						
 						routMapper.updateRoutNodeToAnotherRoute(data);
 						routMapper.updateMainRoutNodeToAnotherRoute(data);
+						
+						if(CommonUtil.notEmpty(data.get("OLD_NODE_ID"))){
+							Map delParam = new HashMap();
+							delParam.put("ROUT_ID", data.get("ROUT_ID"));
+							delParam.put("NODE_ID", data.get("OLD_NODE_ID"));
+							si0402Mapper.SI0402G1D0(delParam);
+							uCnt += si0402Mapper.SI0402G1I0(data);
+						}
+						else {
+							uCnt += si0402Mapper.SI0402G1U0(data);
+						}
 					}
+					else {
+						uCnt += si0402Mapper.SI0402G1U0(data);
+					}
+					
 				} else if (rowStatus.equals("D")) {
 					dCnt += si0402Mapper.SI0402G1D0(data);
 					

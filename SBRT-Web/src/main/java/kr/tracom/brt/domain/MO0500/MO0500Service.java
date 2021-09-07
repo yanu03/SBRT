@@ -26,10 +26,6 @@ public class MO0500Service extends ServiceSupport{
 	public List MO0500SHI0() throws Exception {
 		return MO0500Mapper.MO0500SHI0();
 	}	
-	/*
-	public Map MO0500G0K0() throws Exception {
-		return MO0500Mapper.MO0500G0K0();
-	}
 	
 	public Map MO0500G0S0() throws Exception {
 		int iCnt = 0;
@@ -74,7 +70,10 @@ public class MO0500Service extends ServiceSupport{
 		return result;
 
 	}
-	
+	/*
+	public Map MO0500G0K0() throws Exception {
+		return MO0500Mapper.MO0500G0K0();
+	}
 	
 	public List MO0500P0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");

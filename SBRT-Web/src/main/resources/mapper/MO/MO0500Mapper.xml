@@ -5,9 +5,11 @@
 
 	  <select id="MO0500G0R0" resultType="Map">
 		SELECT
-			DATE_FORMAT(OCR_DTM, '%Y-%m-%d') AS OCR_DTM
+			DATE_FORMAT(OCR_DTM, '%Y-%m-%d %H:%i:%s') AS OCR_DTM
+			,a.VHC_ID
+			,a.ROUT_ID
+			,a.OPER_APPR_ID
 			,d.ROUT_NM
-			,a.COMP_NM
 			,a.VHC_NO
 			,a.VHC_TYPE
 			,b.STTN_NM
@@ -16,6 +18,7 @@
 			,a.GPS_Y
 			,a.OPER_APPR_STS
 			,a.OPER_APPR_DIV
+			,e.COMP_NM
 		FROM
 			BRT_OPER_APPR_INFO a
 			LEFT JOIN BMS_STTN_MST b
@@ -24,6 +27,8 @@
 			ON a.ADJ_CRS_ID = c.CRS_ID
 			LEFT JOIN BMS_ROUT_MST d
 			ON a.ROUT_ID = d.ROUT_ID
+			LEFT JOIN BMS_TRANSCOMP_MST e
+			ON a.COMP_NM = e.COMP_ID
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 				AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%') || VHC_TYPE LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
@@ -55,6 +60,15 @@
 			LEFT JOIN BMS_ROUT_MST b
 			ON a.ROUT_ID = b.ROUT_ID
 	</select>
+	
+	<update id="MO0500G0U0" parameterType="Map">
+		UPDATE 
+			BRT_OPER_APPR_INFO
+		SET
+			OPER_APPR_DIV = #{OPER_APPR_DIV}
+		WHERE
+			OPER_APPR_ID = #{OPER_APPR_ID}
+	</update>
 	
 	<!--
 	<select id="MO0500G0K0" resultType="Map">
@@ -101,25 +115,7 @@
 			)
 	</insert>
 	
-	<update id="MO0500G0U0" parameterType="Map">
-		UPDATE 
-			BRT_CPLNT_HIS
-		SET
-			OCR_DTM = STR_TO_DATE(#{OCR_DTM}, '%Y-%m-%d')
-			,ROUT_NM = #{ROUT_NM}
-			,VHC_NO = #{VHC_NO}
-			,CPLNT_TYPE = #{CPLNT_TYPE}
-			,GPS_X = #{GPS_X}
-			,GPS_Y = #{GPS_Y}
-			,CPLNT_CONTS = #{CPLNT_CONTS}
-			,JUDGE = #{JUDGE}
-			,JUDG_ORG = #{JUDG_ORG}
-			,JUDG_TYPE = #{JUDG_TYPE}
-			,JUDG_DESC = #{JUDG_DESC}
-			,UPD_DTM = #{UPD_DTM}
-		WHERE
-			CPLNT_ID = #{CPLNT_ID}
-	</update>
+	
 	
 	<delete id="MO0500G0D0" parameterType="Map">
 		DELETE FROM BRT_CPLNT_HIS WHERE CPLNT_ID = #{CPLNT_ID}

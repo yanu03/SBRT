@@ -28,9 +28,7 @@ public class FileService extends ServiceSupport {
 	
 	@Value("${sftp.windows.local.directory}")
 	private String ROOT_WINDOWS_LOCAL_PATH;
-	
-	@Value("${FILE_ROOT}")
-	protected String fileRoot;	
+
 	/*
 	private Logger logger = LoggerFactory.getLogger(FileService.class);
 	
@@ -381,7 +379,7 @@ public class FileService extends ServiceSupport {
 		Map<String, Object> map = getSimpleDataMap("dma_fileinfo");
 		String strFilePath = map.get("FILE_PATH").toString();
 		
-		String strDestPath = (fileRoot + strFilePath.replace("/fileUpload/", "")).replace("/", File.separator);
+		String strDestPath = (getRootLocalPath() + strFilePath.replace("/fileUpload/", "")).replace("/", File.separator);
 		File fileDestPath = new File(strDestPath);
 		
 		Map result = new HashMap();

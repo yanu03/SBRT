@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.util.CommonUtil;
+import kr.tracom.util.Constants;
 import kr.tracom.util.Result;
 
 
@@ -22,19 +23,19 @@ public class OperPlanService extends ServiceSupport {
 		String wayYn = CommonUtil.notEmpty(data.get("WAY_YN"))?(String)data.get("WAY_YN"):"";
 		String holiYn = CommonUtil.notEmpty(data.get("HOLI_YN"))?(String)data.get("HOLI_YN"):"";
 		
-		if("Y".equals(wayYn)) {			
-			data.put("WAY_DIV", "WYD01"); //상행
-			data.put("DAY_DIV", "DY001"); //평일
+		if("Y".equals(wayYn)) {				
+			data.put("WAY_DIV", Constants.WayDivs.WD001); //상행
+			data.put("DAY_DIV", Constants.DayDivs.DY001); //평일
 			
 			operPlanMapper.insertSimpleOperPlan(data);
 			
 			if("Y".equals(holiYn)) {
-				data.put("DAY_DIV", "DY002"); //휴일
+				data.put("DAY_DIV", Constants.DayDivs.DY002); //휴일
 				operPlanMapper.insertSimpleOperPlan(data);
 			}
 			
-			data.put("WAY_DIV", "WYD02"); //하행
-			data.put("DAY_DIV", "DY001"); //평일
+			data.put("WAY_DIV", Constants.WayDivs.WD002); //하행
+			data.put("DAY_DIV", Constants.DayDivs.DY001); //평일
 
 			//하행일때 정류소 위치 변경
 			String stSttnId = (String)data.get("ST_STTN_ID");
@@ -49,17 +50,18 @@ public class OperPlanService extends ServiceSupport {
 			operPlanMapper.insertSimpleOperPlan(data);
 			
 			if("Y".equals(holiYn)) {
-				data.put("DAY_DIV", "DY002"); //휴일
+				data.put("DAY_DIV", Constants.DayDivs.DY002); //휴일
 				operPlanMapper.insertSimpleOperPlan(data);
 			}
 		}
 		else {
-			data.put("DAY_DIV", "DY001"); //평일
-			data.put("WAY_DIV", "");
+			data.put("DAY_DIV", Constants.DayDivs.DY001); //평일
+			data.put("WAY_DIV", Constants.WayDivs.WD005); //없음
 			operPlanMapper.insertSimpleOperPlan(data);
 			
+			
 			if("Y".equals(holiYn)) {
-				data.put("DAY_DIV", "DY002"); //휴일
+				data.put("DAY_DIV", Constants.DayDivs.DY002); //휴일
 				operPlanMapper.insertSimpleOperPlan(data);
 			}
 		}
