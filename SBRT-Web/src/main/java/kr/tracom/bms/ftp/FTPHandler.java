@@ -649,7 +649,9 @@ public class FTPHandler {
 					checkNull(map.getOrDefault("X",				"")) + Constants.CSVForms.COMMA +
 					checkNull(map.getOrDefault("Y",				"")) + Constants.CSVForms.COMMA +
 					checkNull(map.getOrDefault("NODE_ENAME",	"")) + Constants.CSVForms.COMMA +
-					checkNull(map.getOrDefault("TRANSIT_CODE",	""));
+					checkNull(map.getOrDefault("TRANSIT_CODE",	"")) + Constants.CSVForms.COMMA +
+					checkNull(map.getOrDefault("DOOR",	""));
+				
 		}
 		
 		//sbrt\routemap
@@ -893,7 +895,6 @@ public class FTPHandler {
 		
 		for(Map<String, Object> linkMap : routLinkList) {
 			txt += Constants.CSVForms.ROW_SEPARATOR + linkMap.get("LINK_ID")
-			 	+  Constants.CSVForms.COMMA + linkMap.get("LINK_NAME")
 			 	+  Constants.CSVForms.COMMA + linkMap.get("ST_NODE")
 			 	+  Constants.CSVForms.COMMA + linkMap.get("ED_NODE")
 			 	+  Constants.CSVForms.COMMA + linkMap.get("LEN")
@@ -940,7 +941,7 @@ public class FTPHandler {
 					    			+ Constants.PlayListVoiceTypes.BUS_KR + Constants.CSVForms.COMMA
 					    			+ orgaVoc.get("VOC_ID") + Constants.VoiceTypes.KR + ".wav" + Constants.CSVForms.COMMA 
 					    			+ orgaVoc.get("START_DATE") + Constants.CSVForms.COMMA 
-					    			+ orgaVoc.get("EXPIRED_DATE") + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("EXPIRE_DATE") + Constants.CSVForms.COMMA
 					    			+ orgaVoc.get("TEXT") + Constants.CSVForms.COMMA
 			    					+ setIldID(orgaVoc.get("VOC_ID") + Constants.VoiceTypes.KR)
 			    					+ Constants.CSVForms.ROW_SEPARATOR);
@@ -951,7 +952,7 @@ public class FTPHandler {
 					    			+ Constants.PlayListVoiceTypes.BUS_EN + Constants.CSVForms.COMMA
 					    			+ orgaVoc.get("VOC_ID") + Constants.VoiceTypes.EN + ".wav" + Constants.CSVForms.COMMA 
 					    			+ orgaVoc.get("START_DATE") + Constants.CSVForms.COMMA 
-					    			+ orgaVoc.get("EXPIRED_DATE") + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("EXPIRE_DATE") + Constants.CSVForms.COMMA
 					    			+ orgaVoc.get("TEXT") + Constants.CSVForms.COMMA
 			    					+ setIldID(orgaVoc.get("VOC_ID") + Constants.VoiceTypes.EN));
 			    		} else {
@@ -961,7 +962,7 @@ public class FTPHandler {
 					    			+ orgaVoc.get("VOC_CODE") + Constants.CSVForms.COMMA
 					    			+ orgaVoc.get("VOC_ID") + Constants.VoiceTypes.KR + ".wav" + Constants.CSVForms.COMMA 
 					    			+ orgaVoc.get("START_DATE") + Constants.CSVForms.COMMA 
-					    			+ orgaVoc.get("EXPIRED_DATE") + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("EXPIRE_DATE") + Constants.CSVForms.COMMA
 					    			+ orgaVoc.get("TEXT") + Constants.CSVForms.COMMA
 			    					+ setIldID(orgaVoc.get("VOC_ID") + Constants.VoiceTypes.KR));
 			    		}
@@ -972,7 +973,7 @@ public class FTPHandler {
 				    			+ orgaVoc.get("VOC_CODE") + Constants.CSVForms.COMMA
 				    			+ orgaVoc.get("VOC_ID") + Constants.VoiceTypes.US + ".wav" + Constants.CSVForms.COMMA 
 				    			+ orgaVoc.get("START_DATE") + Constants.CSVForms.COMMA 
-				    			+ orgaVoc.get("EXPIRED_DATE") + Constants.CSVForms.COMMA
+				    			+ orgaVoc.get("EXPIRE_DATE") + Constants.CSVForms.COMMA
 				    			+ orgaVoc.get("TEXT") + Constants.CSVForms.COMMA
 				    			+ setIldID(orgaVoc.get("VOC_ID").toString() + Constants.VoiceTypes.US));
 		    		}
