@@ -5974,7 +5974,7 @@ com.getMatchedIndex = function(data, keyColumn, keyValue){
 }
 
 com.setFocusedCell = function(grid, focusColumn) {
-	
+	debugger;
 	try{
 		var gridInfo = gcm.GRID_INFO[grid.org_id];
 		if ((typeof gridInfo != "undefined") && (gridInfo!=null)){

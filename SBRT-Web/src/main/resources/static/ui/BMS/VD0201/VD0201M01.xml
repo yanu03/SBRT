@@ -201,7 +201,6 @@
 			dlt_BMS_DVC_INFO.setRowJSON(index, jsonObj, true);
 			
 		}
-			
 		
 		//showMessage(jsonObj);
 	}
@@ -288,6 +287,25 @@
 		routMap.showVehicle("map_VD0201", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
 							 dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "VHC_ID"), VD0201G0);	
 	};
+	
+	//전원,리셋 버튼 클릭 이벤트
+	scwin.VD0201G1_oncellclick = function(row, col, colId) {
+		debugger;
+		var gridColumn = VD0201G1.getColumnID(col);
+		
+		if (gridColumn == "DVC_POWER") {
+				var param = VD0201G1.getDataRow(row).DVC_ID;
+				
+				//컨트롤러 api추가 필요. 
+				
+			}else if(gridColumn == "DVC_RESET"){
+				var param = VD0201G1.getDataRow(row).DVC_ID;
+				
+				//컨트롤러 api추가 필요.
+			}
+	};
+	
+	
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -392,33 +410,33 @@
 								<w2:gridView id="VD0201G1" style="width:98%;height:98%" defaultCellHeight="20" rowNumVisible="true"
 								useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태"
 								overflowX="auto" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true" ignoreCellClick="false"
-								dataList="data:dlt_BMS_DVC_INFO" class="cm_grid" autoFit="lastColumn" fixedColumnScrollHidden="">
+								dataList="data:dlt_BMS_DVC_INFO" class="cm_grid" autoFit="lastColumn" fixedColumnScrollHidden="" ev:oncellclick="scwin.VD0201G1_oncellclick">
 								<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 								<w2:header style="" id="header1">
 									<w2:row style="" id="row1">
-										<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:25px"
-											id="column5" value="사용여부" blockSelect="false" displayMode="label">
-										</w2:column>
-										<w2:column removeBorderStyle="false" width="160" inputType="text" style="height:25px"
+										<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:25px"
 											id="column4" value="장치상태" blockSelect="false" displayMode="label">
 										</w2:column>
 										<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:25px"
 											id="column3" value="장치ID" blockSelect="false" displayMode="label">
 										</w2:column>
 										<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:25px"
-											id="column2" value="제조사" blockSelect="false" displayMode="label">
-										</w2:column>
-										<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:25px"
 											id="column1" value="장치종류" blockSelect="false" displayMode="label">
-										</w2:column>
-										<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:25px"
-											id="column9" value="장치위치" blockSelect="false" displayMode="label">
 										</w2:column>
 										<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px"
 											id="column6" value="전원종료" blockSelect="false" displayMode="label">
 										</w2:column>
 										<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px"
 											id="column7" value="리셋" blockSelect="false" displayMode="label">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:25px"
+											id="column9" value="장치위치" blockSelect="false" displayMode="label">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:25px"
+											id="column5" value="사용여부" blockSelect="false" displayMode="label">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:25px"
+											id="column2" value="제조사" blockSelect="false" displayMode="label">
 										</w2:column>
 										<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:25px"
 											id="column8" value="비고" blockSelect="false" displayMode="label">
@@ -427,29 +445,29 @@
 								</w2:header>
 								<w2:gBody style="" id="gBody1">
 									<w2:row style="" id="row2">
-										<w2:column removeBorderStyle="false" width="129" inputType="text" style="height:25px"
-											id="USE_YN" value="" blockSelect="false" displayMode="label">
-										</w2:column>
-										<w2:column removeBorderStyle="false" width="107" inputType="select" style="height:25px" id="DVC_COND"
-											value="" blockSelect="false" displayMode="label">
+										<w2:column removeBorderStyle="false" width="107" inputType="select" style="height:25px" 
+											id="DVC_COND" value="" blockSelect="false" displayMode="label">
 										</w2:column>
 										<w2:column removeBorderStyle="false" width="82" inputType="text" style="height:25px"
 											id="DVC_ID" value="" blockSelect="false" displayMode="label">
 										</w2:column>
-										<w2:column removeBorderStyle="false" width="83" inputType="text" style="height:25px"
-											id="ORG_NM" value="" blockSelect="false" displayMode="label">
+										<w2:column removeBorderStyle="false" width="125" inputType="select" style="height:25px" 
+											id="DVC_KIND" value="" blockSelect="false" displayMode="label">
 										</w2:column>
-										<w2:column removeBorderStyle="false" width="125" inputType="select" style="height:25px" id="DVC_KIND"
-											value="" blockSelect="false" displayMode="label">
+										<w2:column removeBorderStyle="false" width="83" inputType="button" style="height:15px;width: 15px;"
+											id="DVC_POWER" value="종료" blockSelect="false" displayMode="label">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="83" inputType="button" style="height:25px"
+											id="DVC_RESET" value="리셋" blockSelect="false" displayMode="label">
 										</w2:column>
 										<w2:column removeBorderStyle="false" width="145" inputType="select" style="height:25px"
 											id="INST_LOC" value="" blockSelect="false" displayMode="label">
 										</w2:column>
-										<w2:column removeBorderStyle="false" width="83" inputType="text" style="height:25px"
-											id="DVC_POWER" value="" blockSelect="false" displayMode="label">
+										<w2:column removeBorderStyle="false" width="129" inputType="text" style="height:25px"
+											id="USE_YN" value="" blockSelect="false" displayMode="label">
 										</w2:column>
 										<w2:column removeBorderStyle="false" width="83" inputType="text" style="height:25px"
-											id="DVC_RESET" value="" blockSelect="false" displayMode="label">
+											id="ORG_NM" value="" blockSelect="false" displayMode="label">
 										</w2:column>
 										<w2:column removeBorderStyle="false" width="83" inputType="text" style="height:25px"
 											id="REMARK" value="" blockSelect="false" displayMode="label" textAlign="left">

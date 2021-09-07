@@ -682,9 +682,19 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx, busGrid) {
 	}
 
 	marker.normalImage = markerImage;
+	
+	var overlayName = null;
 	var overlay = null;
+	
+	if (typeof data.VHC_NO != "undefined") {
+		overlayName = data.VHC_NO
+	} else if (typeof data.RPC_VHC_NO != "undefined") {
+		overlayName = data.RPC_VHC_NO		
+	}
+	
+	
 	var msg = "<div class = 'busoverlay'>"
-			+ "<span class = 'map_title' style=''>" + data.VHC_NO + "</span>"
+			+ "<span class = 'map_title' style=''>" + overlayName + "</span>"
 			+ "</div>";
 	
 
@@ -901,6 +911,7 @@ routMap.popUp = function(mapId,lat, lng, msg){
 
 /**팝업 전체 삭제**/
 routMap.removeAllInfoWindow = function(mapId){
+	debugger;
 	if(routMap.mapInfo[mapId].infoArr != null){
 		for(var i=0; i<routMap.mapInfo[mapId].infoArr.length; i++){
 			routMap.mapInfo[mapId].infoArr[i].close();
@@ -931,7 +942,7 @@ routMap.removeAllBusOverlay = function(mapId){
 }
 
 routMap.removeIndexBusOverlay = function(mapId,index){
-	if(routMap.mapInfo[mapId].busOverArr != null&&routMap.mapInfo[mapId].busOverArr.length!=0){
+	if(routMap.mapInfo[mapId].busOverArr != null&&routMap.mapInfo[mapId].busOverArr.length!=0&&routMap.mapInfo[mapId].busOverArr[index]!=null){
 		routMap.mapInfo[mapId].busOverArr[index].setMap(null);
 		routMap.mapInfo[mapId].busOverArr[index] = null;
 	}
@@ -2026,6 +2037,7 @@ routMap.showVehicle = function(mapId, list, vhc_id, grid) {
 
 routMap.showVehicle2 = function(mapId, json, vhc_id, grid, index) {
 
+	debugger;
 	var focusIdx = -1;
 	
 	//주석 빼기
@@ -2037,6 +2049,10 @@ routMap.showVehicle2 = function(mapId, json, vhc_id, grid, index) {
 	
 	
 	if(json.VHC_ID == vhc_id){
+		focusIdx = index;
+		routMap.showBusMarker(mapId, json, index, focusIdx, grid);
+	}
+	else if(json.GRP_VHC_ID == vhc_id){
 		focusIdx = index;
 		routMap.showBusMarker(mapId, json, index, focusIdx, grid);
 	}
