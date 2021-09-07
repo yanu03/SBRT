@@ -4,7 +4,7 @@
 <mapper namespace="kr.tracom.bms.domain.SI0503.SI0503Mapper">
 
 <select id="SI0503G0R0" resultType="Map">
-	select  CRS_ID,
+	SELECT  CRS_ID,
 			CRS_NM,
 			CRS_ENM,
 			GPS_X,
@@ -19,9 +19,8 @@
 			IMP_YN,
 			REMARK
 			
-	from BMS_CRS_MST
-	
-	<where>
+	FROM BMS_CRS_MST
+	WHERE DEL_YN = 'N'
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
 			<if test="TYPE == 'ALL'">
 				AND (CRS_ID LIKE CONCAT('%',#{CONTENT},'%') || CRS_NM LIKE CONCAT('%',#{CONTENT},'%'))
@@ -33,7 +32,6 @@
 				AND CRS_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 		</if>
-	</where>
 </select>
 
 <select id="SI0503G0K0" resultType="Map">
@@ -97,7 +95,7 @@
 
 <delete id="SI0503G0D0" parameterType="Map">
 	UPDATE BMS_CRS_MST
-	SET		USE_YN = 'N'
+	SET	DEL_YN = 'Y', USE_YN = 'N'
 	WHERE CRS_ID = #{CRS_ID}
 	
 	UPDATE BMS_ROUT_NODE_CMPSTN

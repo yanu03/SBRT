@@ -1,7 +1,5 @@
 package kr.tracom.bms.domain.SI0402;
 
-import java.time.Clock;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +31,6 @@ public class SI0402Service extends ServiceSupport {
 	}
 
 	public Map SI0402G0K0() throws Exception {
-		
 		return si0402Mapper.SI0402G0K0(); 
 	}
 	

@@ -39,6 +39,18 @@ public class Constants {
 	public static final String UPD_DTM = "UPD_DTM";
 	public static final String SSN_DELETED = "SSN_DELETED"; //세션 초기화중
 	
+	public static class WayDivs {
+		public static final String WD001 = "상행";
+		public static final String WD002 = "하행";
+		public static final String WD003 = "왕복";
+		public static final String WD004 = "순환";
+		public static final String WD005 = "없음";
+	}
+	
+	public static class DayDivs {
+		public static final String DY001 = "평일";
+		public static final String DY002 = "휴일";
+	}
 	
 	public static String INTG_URL = "INTG_URL";
 	public static String API_KEY = "KEY_API";
