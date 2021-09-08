@@ -116,7 +116,7 @@
 		
 		routMap.initMap("map_VI0100", {width:"100%"
 			, height:"100%"
-			, onClick: null
+			, onClick: scwin.onClickMap
 			, nodeChangeCb: null
 			, draggable: false
 		});
@@ -129,20 +129,27 @@
 		
 	};
 	
-	
 	scwin.sub_VI0100G0R0_submitdone = function(e) {
 		com.setFocusedCell(VI0100G0, "VHC_ID");		
 	};
 	
 	scwin.sub_VI0100G1R0_submitdone = function(e) {
 		com.setFocusedCell(VI0100G1, "OCR_DTM");
-		
-		var curIndex = VI0100G1.getFocusedRowIndex();
-		var rowData = dlt_BRT_OPER_VIOLT_HIS.getCellData(curIndex, "VHC_ID");
-		var jsonObj = dlt_BRT_OPER_VIOLT_HIS.getRowJSON(curIndex);
-		
-		routMap.showVehicle2("map_VI0100", jsonObj, rowData, VI0100G1, 0);
 	};
+	
+	scwin.VI0100G1_onrowindexchange = function(row,oldRow) {
+		//var curIndex = VI0100G1.getFocusedRowIndex();
+		//var curVhcId = dlt_BRT_OPER_VIOLT_HIS.getCellData(curIndex, "VHC_ID");
+		var jsonObj = dlt_BRT_OPER_VIOLT_HIS.getRowJSON(row);
+		
+		//차량 단일 마커
+		routMap.showVehicle3("map_VI0100", jsonObj, VI0100G1);
+	};
+	
+	//맵 클릭 이벤트
+	scwin.onClickMap = function(e) {
+		routMap.changeLocVehicleByClick("map_VI0100", VI0100G1, VI0100G1.getFocusedRowIndex(),e);
+	}
 	
 	scwin.VI0100G0_onrowindexchange = function(row,oldRow) {
 		dma_param_VI0100G1.set("OPER_DT", VI0100G0.getCellData(row, "OPER_DT"));
@@ -349,7 +356,7 @@
 					</xf:group>
 					<xf:group></xf:group> <!-- margin-->												
 					<xf:group id="" class="" style="">
-						<w2:gridView ignoreCellClick="false" ev:onrowindexchange="" autoFit="lastColumn" rowNumHeaderValue="순번"
+						<w2:gridView ignoreCellClick="false" ev:onrowindexchange="scwin.VI0100G1_onrowindexchange" autoFit="lastColumn" rowNumHeaderValue="순번"
 							visibleRowNum="8" class="cm_grid right" fixedColumnWithHidden="true" rowNumVisible="true" dataList="data:dlt_BRT_OPER_VIOLT_HIS"
 							id="VI0100G1" readOnly="" style="" useShiftKey="true" scrollByColumn="false" rowStatusVisible="false" rowStatusHeaderValue="상태"
 							ev:oncellclick="" focusMode="row">
@@ -463,7 +470,7 @@
 								<xf:group tagname="td" style="" class="w2tb_td">
 									<xf:input adjustMaxLength="" class="req" disabled="" fireEventOnInvalid="" id="NODE_NM" invalidMessageFunc="" mandatory=""
 										readOnly="" ref="data:dlt_BRT_OPER_VIOLT_HIS.NODE_NM" style="width: 144px;height: 21px;" validateOnCheckMaxByteLength="" validateOnInput=""
-										validator="" ev:oneditenter="" ev:onfocus="scwin.NODE_NM_onfocus">
+										validator="" ev:oneditenter="" ev:onfocus="scwin.NODE_NM_onfocus" maxlength="30">
 									</xf:input>
 									<xf:image class="btn" ev:onclick="scwin.btn_searchNode_onclick" id="btn_searchNode" longdesc=""
 										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
@@ -471,7 +478,7 @@
 									<xf:group style="" class="w2tb_th" tagname="th">조치자</xf:group>
 									<xf:group style="" class="w2tb_td" tagname="td">
 										<xf:input adjustMaxLength="false" id="" style="width: 144px;height: 21px;"
-											ref="data:dlt_BRT_OPER_VIOLT_HIS.JUDGE">
+											ref="data:dlt_BRT_OPER_VIOLT_HIS.JUDGE" maxlength="10">
 										</xf:input>
 									</xf:group>
 								</xf:group>
@@ -480,12 +487,12 @@
 								<xf:group tagname="th" style="" class="w2tb_th">위도</xf:group>
 								<xf:group tagname="td" style="" class="w2tb_td">
 									<xf:input adjustMaxLength="false" id="" style="width: 144px;height: 21px;"
-										ref="data:dlt_BRT_OPER_VIOLT_HIS.GPS_X">
+										ref="data:dlt_BRT_OPER_VIOLT_HIS.GPS_X" maxlength="16" allowChar="0-9">
 									</xf:input>
 									<xf:group style="" class="w2tb_th" tagname="th">경도</xf:group>
 									<xf:group style="" class="w2tb_td" tagname="td">
 										<xf:input adjustMaxLength="false" id="" style="width: 144px;height: 21px;"
-											ref="data:dlt_BRT_OPER_VIOLT_HIS.GPS_Y">
+											ref="data:dlt_BRT_OPER_VIOLT_HIS.GPS_Y" maxlength="16" allowChar="0-9">
 										</xf:input>
 									</xf:group>
 								</xf:group>
@@ -494,7 +501,7 @@
 								<xf:group tagname="th" style="" class="w2tb_th">조치기관</xf:group>
 								<xf:group tagname="td" style="" class="w2tb_td">
 									<xf:input adjustMaxLength="false" id="" style="width: 144px;height: 21px;"
-										ref="data:dlt_BRT_OPER_VIOLT_HIS.JUDG_ORG">
+										ref="data:dlt_BRT_OPER_VIOLT_HIS.JUDG_ORG" maxlength="20">
 									</xf:input>
 									<xf:group style="" class="w2tb_th" tagname="th">조치유형</xf:group>
 									<xf:group style="" class="w2tb_td" tagname="td">
@@ -518,7 +525,7 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:textarea id="DETAILS" style="width: 100%;height: 70px;" ref="data:dlt_BRT_OPER_VIOLT_HIS.JUDG_DESC"></xf:textarea>
+									<xf:textarea id="DETAILS" style="width: 100%;height: 70px;" ref="data:dlt_BRT_OPER_VIOLT_HIS.JUDG_DESC" maxlength="2000"></xf:textarea>
 								</xf:group>
 							</xf:group>
 						</xf:group>

@@ -6,13 +6,16 @@
 	<select id="VI0200G0R0" resultType="Map">
 		SELECT
 			CPLNT_ID
-			,DATE_FORMAT(OCR_DTM, '%Y-%m-%d') AS OCR_DTM
+			,DATE_FORMAT(OCR_DTM, '%Y-%m-%d %H:%i:%s') AS OCR_DTM
 			,ROUT_NM
 			,c.COMP_NM
 			,VHC_NO
 			,CPLNT_TYPE
 			,a.GPS_X
 			,a.GPS_Y
+			,a.VHC_ID
+			,a.NODE_ID
+			,a.ROUT_ID
 			,CPLNT_CONTS
 			,JUDGE
 			,JUDG_ORG
@@ -46,7 +49,7 @@
 			</if>
 		</where>	
 		ORDER BY
-			OCR_DTM
+			CPLNT_ID
 	</select>
 
 	<select id="VI0200SHI0" resultType="Map" parameterType="Map">
@@ -66,6 +69,74 @@
 		SELECT CONCAT('CI', LPAD(NEXTVAL(SEQ_BRT_CPLNT_HIS_0), 8, '0')) AS 'SEQ'
 	</select>
 	
+	<select id="VI0200P1R0" resultType="Map">
+		SELECT 
+			a.COMP_ID
+			,a.COMP_NM
+			,b.ROUT_ID
+		FROM 
+			BMS_TRANSCOMP_MST a
+			LEFT JOIN BMS_ROUT_COMP_CMPSTN b
+			ON a.COMP_ID = b.COMP_ID
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND COMP_ID LIKE CONCAT('%',#{CONTENT},'%') || COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'COMP_ID'">
+				AND COMP_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'COMP_NM'">
+				AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>
+		GROUP BY
+			a.COMP_ID
+		ORDER BY
+			a.COMP_ID
+	</select>
+	
+	<select id="VI0200P2R0" resultType="Map">
+		SELECT
+			ROUT_ID
+			,ROUT_NM
+		FROM
+			BMS_ROUT_MST
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'ROUT_ID'">
+				AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'ROUT_NM'">
+				AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>
+		ORDER BY
+			ROUT_ID
+	</select>
+	
+	<select id="VI0200P3R0" resultType="Map">
+		SELECT
+			VHC_ID
+			,VHC_NO
+		FROM
+			BMS_VHC_MST
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'VHC_ID'">
+				AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'VHC_NO'">
+				AND VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>
+		ORDER BY
+			VHC_ID
+	</select>
+	
 	<insert id="VI0200G0I0" parameterType="Map">
 	
 		<selectKey keyProperty="CPLNT_ID" resultType="String" order="BEFORE">
@@ -75,6 +146,8 @@
 		INSERT INTO BRT_CPLNT_HIS 
 			(
 				CPLNT_ID
+				,ROUT_ID
+				,NODE_ID
 				,OCR_DTM
 				,ROUT_NM
 				,VHC_NO
@@ -91,6 +164,8 @@
 		VALUES
 			(
 				#{CPLNT_ID}
+				,#{ROUT_ID}
+				,#{NODE_ID}
 				,#{OCR_DTM}
 				,#{ROUT_NM}
 				,#{VHC_NO}
@@ -102,7 +177,7 @@
 				,#{JUDG_ORG}
 				,#{JUDG_TYPE}
 				,#{JUDG_DESC}
-				,#{UPD_DTM}
+				,NOW()
 			)
 	</insert>
 	
@@ -110,8 +185,10 @@
 		UPDATE 
 			BRT_CPLNT_HIS
 		SET
-			OCR_DTM = STR_TO_DATE(#{OCR_DTM}, '%Y-%m-%d')
+			OCR_DTM = #{OCR_DTM}
 			,ROUT_NM = #{ROUT_NM}
+			,ROUT_ID = #{ROUT_ID}
+			,NODE_ID = #{NODE_ID}
 			,VHC_NO = #{VHC_NO}
 			,CPLNT_TYPE = #{CPLNT_TYPE}
 			,GPS_X = #{GPS_X}
@@ -121,13 +198,16 @@
 			,JUDG_ORG = #{JUDG_ORG}
 			,JUDG_TYPE = #{JUDG_TYPE}
 			,JUDG_DESC = #{JUDG_DESC}
-			,UPD_DTM = #{UPD_DTM}
+			,UPD_DTM = NOW()
 		WHERE
 			CPLNT_ID = #{CPLNT_ID}
 	</update>
 	
 	<delete id="VI0200G0D0" parameterType="Map">
-		DELETE FROM BRT_CPLNT_HIS WHERE CPLNT_ID = #{CPLNT_ID}
+		DELETE FROM 
+			BRT_CPLNT_HIS
+		WHERE 
+			CPLNT_ID = #{CPLNT_ID}
 	</delete>
 	
 	
