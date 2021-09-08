@@ -2370,12 +2370,9 @@ routMap.showVehicle = function(mapId, list, vhc_id, grid) {
 }
 
 
-<<<<<<< HEAD
-=======
 /*웹소켓 차량 정보 지도에 표시*/
 routMap.showVehicle2 = function(mapId, json, cur_vhc_id, grid, index) {
 
->>>>>>> f277a8ca01b8a3a53a2b60f3f31767c1146e61b2
 	var focusIdx = -1;
 	
 	//주석 빼기
