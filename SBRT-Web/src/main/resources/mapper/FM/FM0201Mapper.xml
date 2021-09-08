@@ -18,9 +18,12 @@
 					,	A.UPD_DTM
 					,	A.UPD_ID
 					,	IF(D.CNT > 0 , 'Y','N') COND_ERROR
+					, 	E.ROUT_ID
+					,	E.NODE_SN
 		        	 	
 		FROM	  		BMS_ROUT_NODE_CMPSTN E
-		
+		LEFT JOIN		BMS_ROUT_LINK_CMPSTN F
+			ON			E.ROUT_ID = F.ROUT_ID AND E.LINK_ID = F.LINK_ID
 		LEFT JOIN	    BMS_NODE_MST A
 			ON E.NODE_ID = A.NODE_ID
 		LEFT JOIN			(SELECT B.NODE_ID, COUNT(B.NODE_ID) CNT
@@ -38,6 +41,8 @@
 			<if test="CONTENT2 != null and CONTENT2 != ''">
 				AND (A.NODE_ID LIKE CONCAT('%',#{CONTENT2},'%') || A.NODE_NM LIKE CONCAT('%',#{CONTENT2},'%'))
 			</if>
+			
+		ORDER BY		E.ROUT_ID, E.NODE_SN					
 	</select>
 
 	<select id="FM0201G1R0" resultType="Map" parameterType="Map">

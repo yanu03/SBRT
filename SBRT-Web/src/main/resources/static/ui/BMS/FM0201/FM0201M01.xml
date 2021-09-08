@@ -62,12 +62,20 @@
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_NODE_MST" saveRemovedData="true">
 					<w2:columnInfo>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
-						<w2:column id="NODE_TYPE" name="노드타입" dataType="text"></w2:column>
+						<w2:column id="NODE_SN" name="노드순번" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
-						<w2:column id="GPS_Y" name="위도" dataType="bigDecimal"></w2:column>
-						<w2:column id="GPS_X" name="경도" dataType="bigDecimal"></w2:column>
-						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+						<w2:column id="NODE_TYPE" name="노드유형" dataType="text"></w2:column>
+						<w2:column id="LINK_ID" name="링크ID" dataType="text"></w2:column>
+						<w2:column id="STTN_ID" name="정류소ID" dataType="text"></w2:column>
+						<w2:column id="STTN_NO" name="정류소번호" dataType="text"></w2:column>
+						<w2:column id="CRS_ID" name="교차로ID" dataType="text"></w2:column>
+						<w2:column id="GPS_X" name="경도" dataType="text"></w2:column>
+						<w2:column id="GPS_Y" name="위도" dataType="text"></w2:column>
+						<w2:column id="ROUT_LEN" name="노선거리" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="AREA" name="권역" dataType="text"></w2:column>
+						<w2:column id="MORN_STD" name="집중모니터링기준" dataType="text"></w2:column>
 						<w2:column id="COND_ERROR" name="비정상여부" dataType="text"></w2:column>
 					</w2:columnInfo>
 					<w2:data use="false">
@@ -188,7 +196,6 @@
 	}	
 	
 	scwin.onMessageReceived = function(payload) {
-		debugger;
 		
 		var jsonObj = JSON.parse(payload.body);
 		//var content = jsonObj.content;
@@ -221,6 +228,7 @@
 	
 	scwin.sub_FM0201G0R0_submitdone = function(e) {
 		com.setFocusedCell(FM0201G0, "NODE_ID");
+		routMap.showCategory("map_FM0201", dlt_BMS_NODE_MST.getAllJSON());		
 //		var list = com.getGridDispJsonData(
 //		routMap.showRoute("map_FM0201", dlt_BRT_CUR_OPER_INFO.getAllJSON());		
 //		routMap.drawRoute("map_FM0201", FM0201G0, FM0201G0.getFocusedRowIndex());
@@ -250,9 +258,7 @@
 		
 //		routMap.showFacility("map_FM0201", dlt_BMS_NODE_MST.getAllJSON(),
 //							 dlt_BMS_NODE_MST.getCellData(FM0201G0.getFocusedRowIndex(), "FCLT_ID"), FM0201G0);			
-		
-		routMap.showRoute("map_FM0201", dlt_BMS_NODE_MST.getAllJSON(), FM0201G0.getFocusedRowIndex(), FM0201G0);
-		
+		routMap.showRoute2("map_FM0201", dlt_BMS_NODE_MST.getAllJSON(), FM0201G0.getFocusedRowIndex(), FM0201G0);
 	};
 	
 	scwin.FM0201G1_onrowindexchange = function(row,oldRow) {
@@ -499,7 +505,34 @@
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="" style="">
-						<div id="map_FM0201" style="overflow:hidden;"></div>
+						<div id="map_FM0201" style="overflow:hidden;">
+							<ul id="category">
+<!-- 						        <li id=""> 
+						            <span class="normal_busimg"></span>
+						            정류장
+						        </li>       
+						        <li id=""> 
+						            <span class="abnormal_busimg"></span>
+						        비정상
+						        </li>  
+						        <li id=""> 
+						            <span class="crossimg"></span>
+						            교차로
+						        </li>  
+						        <li id=""> 
+						            <span class="voiceimg"></span>
+						            음성
+						        </li>  
+						        <li id=""> 
+						            <span class="category_bg cafe"></span>
+						            카페
+						        </li>  
+						        <li id=""> 
+						            <span class="category_bg store"></span>
+						            편의점
+						        </li>     -->  
+					   		 </ul>	
+						</div>
 					</xf:group>
 				</xf:group><!-- pgm_detail end -->
 			</xf:group> <!-- end content --> 
