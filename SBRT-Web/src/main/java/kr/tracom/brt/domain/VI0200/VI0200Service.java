@@ -23,6 +23,21 @@ public class VI0200Service extends ServiceSupport{
 		return vi0200Mapper.VI0200G0R0(map);
 	}
 	
+	public List VI0200P1R0() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return vi0200Mapper.VI0200P1R0(map);
+	}
+	
+	public List VI0200P2R0() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return vi0200Mapper.VI0200P2R0(map);
+	}
+	
+	public List VI0200P3R0() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return vi0200Mapper.VI0200P3R0(map);
+	}
+	
 	public List VI0200SHI0() throws Exception {
 		return vi0200Mapper.VI0200SHI0();
 	}	
@@ -76,7 +91,7 @@ public class VI0200Service extends ServiceSupport{
 	}
 	
 	
-	public List VI0200P0R0() throws Exception {
+	/*public List VI0200P0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
 		return vi0200Mapper.VI0200P0R0(map);
 	}
@@ -110,7 +125,7 @@ public class VI0200Service extends ServiceSupport{
 		
 		return result;		
 		
-	}
+	}*/
 	
 	
 }

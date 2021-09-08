@@ -9,11 +9,11 @@
 				<data xmlns="" />
 			</xf:instance>
 			<w2:dataCollection baseNode="map">
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_NODE_MST" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_MST" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="chk" name="선택" dataType="text"></w2:column>
-						<w2:column id="NODE_ID" name="노드아이디" dataType="text"></w2:column>
-						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
@@ -25,9 +25,9 @@
 				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_VI0200P0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_NODE_MST" action="/vi/VI0100P0R0" method="post"
+			<xf:submission id="sub_VI0200P2R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_MST" action="/vi/VI0200P2R0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="scwin.sub_VI0200P0R0_submitdone" ev:submiterror="" abortTrigger="">
+				ev:submit="" ev:submitdone="scwin.sub_VI0200P2R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
@@ -42,7 +42,7 @@
 			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
 		];
 		com.setMainBtn3(wfm_mainBtn, btnOptions);
-		com.executeSubmission(sub_VI0200P0R0);			
+		com.executeSubmission(sub_VI0200P2R0);			
 	};
 	
 	scwin.onpageunload = function() {
@@ -50,11 +50,11 @@
 	};
 	
 	scwin.btn_search_onclick = function() {
-		com.executeSubmission(sub_VI0200P0R0);
+		com.executeSubmission(sub_VI0200P2R0);
 	};
 	
 	scwin.btn_confirm_onclick = function() {
-		var data = VI0200P0.getCheckedJSON("chk");
+		var data = VI0200P2.getCheckedJSON("chk");
 		com.closePopup(scwin.closeCallbackFncName, data);
 	};
 		
@@ -62,21 +62,21 @@
 		com.closePopup();
 	};
 	
-	scwin.VI0200P0_onrowindexchange = function(row,oldRow) {
-		VI0200P0.setCellChecked(row,"chk",true);
+	scwin.VI0200P2_onrowindexchange = function(row,oldRow) {
+		VI0200P2.setCellChecked(row,"chk",true);
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
 		if (info.newValue == "ALL") {
-			search_input.setPlaceholder("노드ID 또는 인근장소");
-		} else if (info.newValue == "NODE_ID") {
-			search_input.setPlaceholder("노드ID");
-		} else if (info.newValue == "NODE_NM") {
-			search_input.setPlaceholder("인근장소");
+			search_input.setPlaceholder("노선ID 또는 노선명");
+		} else if (info.newValue == "ROUT_ID") {
+			search_input.setPlaceholder("노선ID");
+		} else if (info.newValue == "ROUT_NM") {
+			search_input.setPlaceholder("노선명");
 		}
 	};
 	
-	scwin.sub_VI0200P0R0_submitdone = function(e) {
+	scwin.sub_VI0200P2R0_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
 		
@@ -102,32 +102,32 @@
 									<xf:value><![CDATA[ALL]]></xf:value>
 								</xf:item>
 								<xf:item>
-									<xf:label><![CDATA[노드ID]]></xf:label>
-									<xf:value><![CDATA[NODE_ID]]></xf:value>
+									<xf:label><![CDATA[노선ID]]></xf:label>
+									<xf:value><![CDATA[ROUT_ID]]></xf:value>
 								</xf:item>
 								<xf:item>
-									<xf:label><![CDATA[인근장소]]></xf:label>
-									<xf:value><![CDATA[NODE_NM]]></xf:value>
+									<xf:label><![CDATA[노선명]]></xf:label>
+									<xf:value><![CDATA[ROUT_NM]]></xf:value>
 								</xf:item>
 							</xf:choices>
 						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="노드ID 또는 인근장소"></xf:input>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="노선ID 또는 노선명"></xf:input>
 					</xf:group>
 					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
 			</xf:group>
 			<xf:group style="" id="" class="popup_content">
-				<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BMS_NODE_MST" useShiftKey="false" readOnly="true"
-					style="" scrollByColumn="false" id="VI0200P0" autoFit="" class="cm_grid popup"
-					ev:onrowindexchange="scwin.VI0200P0_onrowindexchange">
+				<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BMS_ROUT_MST" useShiftKey="false" readOnly="true"
+					style="" scrollByColumn="false" id="VI0200P2" autoFit="" class="cm_grid popup"
+					ev:onrowindexchange="scwin.VI0200P2_onrowindexchange">
 					<w2:header style="" id="header1">
 						<w2:row style="" id="row1">
 							<w2:column blockSelect="true" id="chkHeader" inputType="radio" style="height:20px" value="선택" width="39">
 							</w2:column>
-							<w2:column blockSelect="false" id="column7" inputType="text" style="height:20px" value="노드ID"
+							<w2:column blockSelect="false" id="column7" inputType="text" style="height:20px" value="노선ID"
 								width="100">
 							</w2:column>
-							<w2:column blockSelect="false" id="column5" inputType="text" style="height:20px" value="인근장소" width="200"></w2:column>
+							<w2:column blockSelect="false" id="column5" inputType="text" style="height:20px" value="노선명" width="200"></w2:column>
 						</w2:row>
 					</w2:header>
 					<w2:gBody id="gBody1" style="">
@@ -135,8 +135,8 @@
 							<w2:column blockSelect="false" defaultValue="" falseValue="0" id="chk" inputType="radio" readOnly="false"
 								style="height:20px" trueValue="1" width="39" viewType="" typeGetter="">
 							</w2:column>
-							<w2:column blockSelect="false" id="NODE_ID" inputType="text" style="height:20px" width="101"></w2:column>
-							<w2:column blockSelect="false" id="NODE_NM" inputType="text" style="height:20px" width="90" textAlign="left"></w2:column>
+							<w2:column blockSelect="false" id="ROUT_ID" inputType="text" style="height:20px" width="101"></w2:column>
+							<w2:column blockSelect="false" id="ROUT_NM" inputType="text" style="height:20px" width="90" textAlign="left"></w2:column>
 						</w2:row>
 					</w2:gBody>
 				</w2:gridView>

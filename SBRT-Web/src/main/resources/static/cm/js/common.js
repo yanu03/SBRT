@@ -4600,6 +4600,8 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 							item.cbFnc = function(){
 								if ((typeof sub.keySbm !== "undefined")&&(sub.keySbm !== null)){
 									$p.executeSubmission(sub.keySbm);
+								} 	else{
+									com.addGrid2(sub.grid,sub.focusColumn);
 								}
 							}
 						}

@@ -12,7 +12,11 @@ public interface VI0100Mapper {
 	
 	public List VI0100G1R0(Map param);
 	
+	public List VI0100P0R0(Map param);
+	
 	public int VI0100G1I0(Map param);
+	
+	public int VI0100G1U0(Map param);
 	
 	public int VI0100G1D0(Map param);
 	

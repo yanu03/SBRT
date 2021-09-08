@@ -1301,6 +1301,7 @@ routMap.removeAllBusOverlay = function(mapId){
 }
 
 routMap.removeIndexBusOverlay = function(mapId,index){
+	debugger;
 	if(routMap.mapInfo[mapId].busOverArr != null&&routMap.mapInfo[mapId].busOverArr.length!=0&&routMap.mapInfo[mapId].busOverArr[index]!=null){
 		routMap.mapInfo[mapId].busOverArr[index].setMap(null);
 		routMap.mapInfo[mapId].busOverArr[index] = null;
@@ -2334,7 +2335,6 @@ routMap.showNode = function(mapId, list, focusIdx, grid) {
 	}
 }
 
-
 routMap.showVehicle = function(mapId, list, vhc_id, grid) {
 
 	var focusIdx = -1;
@@ -2369,8 +2369,13 @@ routMap.showVehicle = function(mapId, list, vhc_id, grid) {
 	}
 }
 
-routMap.showVehicle2 = function(mapId, json, vhc_id, grid, index) {
 
+<<<<<<< HEAD
+=======
+/*웹소켓 차량 정보 지도에 표시*/
+routMap.showVehicle2 = function(mapId, json, cur_vhc_id, grid, index) {
+
+>>>>>>> f277a8ca01b8a3a53a2b60f3f31767c1146e61b2
 	var focusIdx = -1;
 	
 	//주석 빼기
@@ -2381,11 +2386,11 @@ routMap.showVehicle2 = function(mapId, json, vhc_id, grid, index) {
 	json.draggable = routMap.mapInfo[mapId].draggable;
 	
 	
-	if(json.VHC_ID == vhc_id){
+	if(json.VHC_ID == cur_vhc_id){
 		focusIdx = index;
 		routMap.showBusMarker(mapId, json, index, focusIdx, grid);
 	}
-	else if(json.GRP_VHC_ID == vhc_id){
+	else if(json.GRP_VHC_ID == cur_vhc_id){
 		focusIdx = index;
 		routMap.showBusMarker(mapId, json, index, focusIdx, grid);
 	}
@@ -2396,6 +2401,34 @@ routMap.showVehicle2 = function(mapId, json, vhc_id, grid, index) {
 		if(focusIdx!=-1){
 			routMap.moveMap(mapId, json.GPS_Y, json.GPS_X);
 		}
+	}
+}
+
+
+routMap.changeLocVehicleByClick = function(mapId, grid, curIndex, e){
+	var data = com.getGridViewDataList(grid);
+	var lonlat = e.latLng;
+
+	data.setCellData(curIndex, "GPS_Y", getDispGps(lonlat.Ma,7));
+	data.setCellData(curIndex, "GPS_X", getDispGps(lonlat.La,7));
+	var jsonObj = data.getRowJSON(curIndex);
+	
+	routMap.showVehicle3(mapId, jsonObj, grid, 0);
+}
+
+routMap.showVehicle3 = function(mapId, json, grid) {
+	
+	//주석 빼기
+    routMap.initIndexBus(mapId,0);
+
+
+	/**드래그이벤트**/
+	json.draggable = routMap.mapInfo[mapId].draggable;
+	
+	routMap.showBusMarker(mapId, json, 0, 0, grid);
+
+	if(json != null){
+		routMap.moveMap(mapId, json.GPS_Y, json.GPS_X);
 	}
 }
 

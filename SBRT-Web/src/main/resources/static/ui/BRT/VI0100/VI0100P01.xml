@@ -25,9 +25,9 @@
 				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_VI0200P0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_NODE_MST" action="/vi/VI0100P0R0" method="post"
+			<xf:submission id="sub_VI0100P0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_NODE_MST" action="/vi/VI0100P0R0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="scwin.sub_VI0200P0R0_submitdone" ev:submiterror="" abortTrigger="">
+				ev:submit="" ev:submitdone="scwin.sub_VI0100P0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
@@ -42,7 +42,7 @@
 			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
 		];
 		com.setMainBtn3(wfm_mainBtn, btnOptions);
-		com.executeSubmission(sub_VI0200P0R0);			
+		com.executeSubmission(sub_VI0100P0R0);			
 	};
 	
 	scwin.onpageunload = function() {
@@ -50,11 +50,11 @@
 	};
 	
 	scwin.btn_search_onclick = function() {
-		com.executeSubmission(sub_VI0200P0R0);
+		com.executeSubmission(sub_VI0100P0R0);
 	};
 	
 	scwin.btn_confirm_onclick = function() {
-		var data = VI0200P0.getCheckedJSON("chk");
+		var data = VI0100P0.getCheckedJSON("chk");
 		com.closePopup(scwin.closeCallbackFncName, data);
 	};
 		
@@ -62,8 +62,15 @@
 		com.closePopup();
 	};
 	
-	scwin.VI0200P0_onrowindexchange = function(row,oldRow) {
-		VI0200P0.setCellChecked(row,"chk",true);
+	scwin.VI0100P0_onrowindexchange = function(row,oldRow) {
+		VI0100P0.setCellChecked(row,"chk",true);
+	};
+	
+	scwin.sub_VI0100P0R0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+		
+		}
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
@@ -73,13 +80,6 @@
 			search_input.setPlaceholder("노드ID");
 		} else if (info.newValue == "NODE_NM") {
 			search_input.setPlaceholder("인근장소");
-		}
-	};
-	
-	scwin.sub_VI0200P0R0_submitdone = function(e) {
-		var sCode = com.getResultCode(e);
-		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
-		
 		}
 	};
 	]]></script>
@@ -118,8 +118,8 @@
 			</xf:group>
 			<xf:group style="" id="" class="popup_content">
 				<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BMS_NODE_MST" useShiftKey="false" readOnly="true"
-					style="" scrollByColumn="false" id="VI0200P0" autoFit="" class="cm_grid popup"
-					ev:onrowindexchange="scwin.VI0200P0_onrowindexchange">
+					style="" scrollByColumn="false" id="VI0100P0" autoFit="" class="cm_grid popup"
+					ev:onrowindexchange="scwin.VI0100P0_onrowindexchange">
 					<w2:header style="" id="header1">
 						<w2:row style="" id="row1">
 							<w2:column blockSelect="true" id="chkHeader" inputType="radio" style="height:20px" value="선택" width="39">
