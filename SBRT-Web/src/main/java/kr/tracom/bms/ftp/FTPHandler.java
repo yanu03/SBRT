@@ -650,7 +650,8 @@ public class FTPHandler {
 					checkNull(map.getOrDefault("Y",				"")) + Constants.CSVForms.COMMA +
 					checkNull(map.getOrDefault("NODE_ENAME",	"")) + Constants.CSVForms.COMMA +
 					checkNull(map.getOrDefault("TRANSIT_CODE",	"")) + Constants.CSVForms.COMMA +
-					checkNull(map.getOrDefault("DOOR",	""));
+					checkNull(map.getOrDefault("DOOR",	""))		 + Constants.CSVForms.COMMA +
+					checkNull(map.getOrDefault("LOCATION_INFO",	""));
 				
 		}
 		
@@ -923,7 +924,7 @@ public class FTPHandler {
 			FileUtils.forceMkdir(new File(playListPath));
 			
 			for(Map<String, Object> orgaInfo : orgaList) {
-				String orgaId = orgaInfo.get("ORGA_ID").toString();
+				String orgaId = orgaInfo.getOrDefault("ORGA_ID", "").toString();
 				String fileName = orgaId + ".csv";
 				StringBuilder csvContent = new StringBuilder();
 				csvContent.append(Constants.CSVForms.VOICE_PLAYLIST_TITLE);

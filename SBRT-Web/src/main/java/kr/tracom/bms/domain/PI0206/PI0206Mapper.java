@@ -71,5 +71,6 @@ public interface PI0206Mapper {
 	/** 코스별 노선 리스트 JH **/
 	public List<Map<String, Object>> selectCourseRoutList(String courseId);
 	
-	
+	/** 카카오 API 키 JH **/
+	public String selectAPIKey();
 }

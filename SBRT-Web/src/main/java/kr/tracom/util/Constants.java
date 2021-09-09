@@ -79,7 +79,7 @@ public class Constants {
     	public static final String ROUTE_LIST				= "FILE_NAME,VERSION,DESTI_NO,ROUT_SHAPE,DAY1,DAY2,SATDAY1,SATDAY2,SUNDAY1,SUNDAY2,REP_NAME";
     	public static final String COURSE_LIST				= "COURSE_ID,COURSE_NAME_KO,COURSE_NAME_EN";
     	public static final String COURSE_TITLE				= "COURSE_ID,SEQ,ROUTE_ID";
-    	public static final String ROUTE_BUSSTOP_TITLE		= "NODE_ID,NODE_NAME,TYPE,RANGE,X,Y,NODE_ENAME,TRANSIT_CODE,DOOR_OPEN";
+    	public static final String ROUTE_BUSSTOP_TITLE		= "NODE_ID,NODE_NAME,TYPE,RANGE,X,Y,NODE_ENAME,TRANSIT_CODE,DOOR_OPEN,LOCATION_INFO";
     	public static final String ROUTE_NODELIST_TITLE		= "NODE_ID,NODE_NAME,RANGE,X,Y";
     	public static final String ROUTE_TITLE				= "NODE_ID";
     	public static final String ROUTE_LINK_TITLE			= "LINK_ID,ST_NODE,ED_NODE,LEN,MAX_SPD,EVENT_MS";
