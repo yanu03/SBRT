@@ -1,5 +1,7 @@
 package kr.tracom.tims.handler;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -8,16 +10,15 @@ import kr.tracom.platform.net.protocol.TimsMessage;
 import kr.tracom.platform.net.protocol.attribute.AtData;
 import kr.tracom.platform.net.protocol.attribute.AtMessage;
 import kr.tracom.platform.net.protocol.payload.PlActionResponse;
-import kr.tracom.ws.WsMessage;
 
 @Component
 public class ActionResponse {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public WsMessage handle(TimsMessage timsMessage, String sessionId){
+    public Map<String, Object> handle(TimsMessage timsMessage, String sessionId){
     	
-    	WsMessage wsMsg = null;
+    	Map<String, Object> resultMap = null;
     	
     	PlActionResponse response = (PlActionResponse)timsMessage.getPayload();
         AtMessage atMessage = response.getAtMessage();
@@ -30,7 +31,7 @@ public class ActionResponse {
         
         
         
-        return wsMsg;
+        return resultMap;
         
     }
 }

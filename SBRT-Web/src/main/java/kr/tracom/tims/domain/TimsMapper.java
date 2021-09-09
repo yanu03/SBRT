@@ -10,4 +10,6 @@ public interface TimsMapper {
 	//이벤트 이력 insert
 	int insertEventHistory(Map<String, Object> paramMap);
 	
+	//차량정보 가져오기
+	Map<String, Object> selectVhcInfo(Map<String, Object> paramMap);
 }
