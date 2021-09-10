@@ -83,6 +83,8 @@ public class EventRequest {
                 	
                 	AtBusArrivalInfo busArrivalInfo = (AtBusArrivalInfo)atMessage.getAttrData();            	
                 	
+                	
+                	/*모니터링용 데이터 생성*/
                 	resultMap = new HashMap<>();
                 	resultMap.put("ATTR_ID", attrId);
                 	resultMap.put("STTN_ID", busArrivalInfo.getStopId());
@@ -97,9 +99,12 @@ public class EventRequest {
                 		
                 		String routId = arrivalInfoItem.getRoutId();
                 		int loc = arrivalInfoItem.getLocation();
-                		long remainSec = arrivalInfoItem.getTime();               		
+                		long remainSec = arrivalInfoItem.getTime();
+                		
+                		String routNm = timsMapper.selectRoutName(routId);
                 		
                 		arrivalInfoMap.put("ROUT_ID", routId);
+                		arrivalInfoMap.put("ROUT_NM", routNm);
                 		arrivalInfoMap.put("REMAIN_STTN", loc);
                 		arrivalInfoMap.put("REMAIN_TM", remainSec);
                 		
