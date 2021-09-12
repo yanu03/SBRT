@@ -1,5 +1,7 @@
 package kr.tracom.tims.kafka;
 
+import java.util.Map;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +23,6 @@ import kr.tracom.tims.handler.GetResponse;
 import kr.tracom.tims.handler.SetRequest;
 import kr.tracom.tims.handler.SetResponse;
 import kr.tracom.ws.WsClient;
-import kr.tracom.ws.WsMessage;
 
 
 
@@ -62,9 +63,10 @@ public class KafkaConsumer {
     @KafkaListener(topics = {KafkaTopics.T_BMS, KafkaTopics.T_BRT, KafkaTopics.T_COMMON})
     public void processResult(ConsumerRecord<String, KafkaMessage> record) throws Exception {
     	
-    	//logger.info("================ Received Kafka message");
+    	logger.info("================ Received Kafka message");
     	
-    	WsMessage wsMessage = null;
+    	Map<String, Object> map = null;
+//    	WsMessage wsMessage = null;
     	KafkaMessage kafkaMessage = record.value();
     	
         if(kafkaMessage != null) {
@@ -92,35 +94,36 @@ public class KafkaConsumer {
             
             switch (opCode) {
 			case PlCode.OP_GET_REQ:
-				wsMessage = getRequest.handle(timsMessage, sessionId);
+				map = getRequest.handle(timsMessage, sessionId);
 				break;
 				
 			case PlCode.OP_GET_RES:
-				wsMessage = getResponse.handle(timsMessage, sessionId);
+				map = getResponse.handle(timsMessage, sessionId);
 				break;
 				
 			case PlCode.OP_SET_REQ:
-				wsMessage = setRequest.handle(timsMessage, sessionId);
+				map = setRequest.handle(timsMessage, sessionId);
 				break;
 				
 			case PlCode.OP_SET_RES:
-				wsMessage = setResponse.handle(timsMessage, sessionId);
+				map = setResponse.handle(timsMessage, sessionId);
 				break;
 				
 			case PlCode.OP_ACTION_REQ:
-				wsMessage = actionRequest.handle(timsMessage, sessionId);
+				map = actionRequest.handle(timsMessage, sessionId);
 				break;
 				
 			case PlCode.OP_ACTION_RES:
-				wsMessage = actionResponse.handle(timsMessage, sessionId);
+				map = actionResponse.handle(timsMessage, sessionId);
 				break;
 				
 			case PlCode.OP_EVENT_REQ:
-				wsMessage = eventRequest.handle(timsMessage, sessionId);
+//				wsMessage = eventRequest.handle(timsMessage, sessionId);
+				map = eventRequest.handle(timsMessage, sessionId);
 				break;
 				
 			case PlCode.OP_EVENT_RES:
-				wsMessage = eventResponse.handle(timsMessage, sessionId);
+				map = eventResponse.handle(timsMessage, sessionId);
 				break;
 
 			default:
@@ -132,8 +135,8 @@ public class KafkaConsumer {
         
         
         //웹소켓 전송이 필요한 경우
-        if(wsMessage != null) {    		
-    		webSocketClient.sendMessage(wsMessage);
+        if(map != null) {    		
+    		webSocketClient.sendMessage(map);
         }
         
         

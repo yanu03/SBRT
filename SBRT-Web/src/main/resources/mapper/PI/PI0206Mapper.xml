@@ -336,7 +336,7 @@
 		    , IFNULL(B.ST_NODE_ID, "")	AS ST_NODE
 		    , IFNULL(B.ED_NODE_ID, "")	AS ED_NODE
 		    , IFNULL(B.LEN, "")			AS LEN
-		    , IFNULL(B.MAX_SPD, "")		AS MAX_SPD
+		    , IFNULL(B.MAX_SPD, (SELECT TXT_VAL1 FROM BMS_DL_CD_INFO WHERE CO_CD = 'SYS_INFO' AND DL_CD = 'SY013'))		AS MAX_SPD
 		    , IFNULL(C.TXT_VAL1, "")	AS EVENT_MS
 		FROM
 			BMS_ROUT_LINK_CMPSTN A
@@ -437,5 +437,16 @@
 			LEFT JOIN BMS_DL_CD_INFO B ON A.WAY_DIV = B.DL_CD AND B.CO_CD = 'WAY_DIV'
 			LEFT JOIN BMS_DL_CD_INFO C ON A.SHAPE_DIV = C.DL_CD AND C.CO_CD = 'SHAPE_DIV'
 		WHERE ROUT_ID = #{routId}
+    </select>
+    
+    <!-- 카카오맵 api 키 쿼리 -->
+    <select id="selectAPIKey" resultType="String">
+    	SELECT
+			REMARK
+		FROM
+			BMS_DL_CD_INFO
+		WHERE
+			CO_CD = 'KEY_API'
+		    AND DL_CD = 'KA002'
     </select>
 </mapper>

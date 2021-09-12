@@ -1,11 +1,22 @@
 package kr.tracom.bms.domain.PI0206;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -170,6 +181,10 @@ public class PI0206Service extends ServiceSupport {
 		//노드 리스트
 		List<Map<String, Object>> nodeList = pi0206Mapper.selectAllNodeList();
 			
+		//station맵에 지역정보 추가
+		List<Map<String, Object>> stnAndLocList = stnPlusLocation(stationList);
+		
+		
 		//busstop.csv 파일 생성
 		try {
 			ftpHandler.uploadBusstop(stationList, "busstop.csv", "00000000");
@@ -279,6 +294,90 @@ public class PI0206Service extends ServiceSupport {
 		}
 		
 		return true;
+	}
+	
+	/** 정류장 리스트 + 위치정보 jh **/
+	public List<Map<String, Object>> stnPlusLocation(List<Map<String, Object>> stationList){
+		List<Map<String, Object>> resultList = new ArrayList<>();
+		String authKey = pi0206Mapper.selectAPIKey();
+		
+		for(Map<String, Object> station : stationList) {
+			
+			String x = station.getOrDefault("X", "").toString();
+			String y = station.getOrDefault("Y", "").toString();
+			
+			String loc = "";
+			
+			if(!x.equals("") && !y.equals("")) {
+				loc = getLocation(x, y, authKey);				
+			}
+			
+			station.put("LOCATION_INFO", loc);
+			
+			resultList.add(station);
+		}
+		logger.debug("정류장리스트 사이즈(변경전) : " + stationList.size());
+		logger.debug("정류장리스트 사이즈(변경후) : " + resultList.size());
+		
+		return resultList;
+	}
+	
+	/** rest 요청 jh **/
+	public String getLocation(String x, String y, String authKey) {
+		
+		HttpURLConnection conn = null;
+		JSONObject response = null;
+		String result = "";
+		
+		String api = "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=" + x + "&y=" + y;
+		
+
+		try {
+			URL url = new URL(api);
+			try {
+				conn = (HttpURLConnection)url.openConnection();
+				conn.setRequestMethod("GET");
+				conn.setRequestProperty("Authorization", authKey);
+				conn.setRequestProperty("Content-Type", "application/json");
+				
+				conn.setDoOutput(true);
+				
+				BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
+				
+				bw.write("");
+				bw.flush();
+				bw.close();
+				
+				BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				StringBuilder sb = new StringBuilder();
+				String line = "";
+				while((line = br.readLine()) != null) {
+					sb.append(line);
+				}
+				try {
+					response = new JSONObject(sb.toString());
+				} catch (JSONException e) {
+					logger.error("error");
+				}
+			} catch (IOException e) {
+				logger.error("IOException");
+			}			
+		} catch (MalformedURLException e) {
+			logger.error("MalformedURLException");
+		}
+		
+		
+		try {
+			JSONArray arr = (JSONArray) response.get("documents");
+			result = arr.getJSONObject(0).get("address_name").toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		if(result.length() > 30) {
+			result = result.substring(0, 30);
+		}
+		return result;
 	}
 	
 	/** Map List -> List jh **/
