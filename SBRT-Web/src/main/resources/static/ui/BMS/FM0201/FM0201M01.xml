@@ -240,9 +240,14 @@
 	};
 	
 	scwin.sub_FM0201G0R0_submitdone = function(e) {
-
-		dma_search.set("ROUT_ID",TYPE.getValue());
-		com.setFocusedCell(FM0201G0, "NODE_ID");
+		if (dlt_BMS_NODE_MST.getAllJSON().length > 0) {
+			dma_search.set("ROUT_ID",TYPE.getValue());
+			com.setFocusedCell(FM0201G0, "NODE_ID");
+		} else {
+			dma_sub_search.set("ROUT_ID", null);
+			dma_sub_search.set("NODE_ID", null);
+			$p.executeSubmission(sub_FM0201G1R0);
+		}			
 
 	};
 	
@@ -282,6 +287,21 @@
 		dma_sub_search.set("ROUT_ID",TYPE.getValue());		
 		com.searchGrid(FM0201G0, sub_FM0201G0R0);
 		$p.executeSubmission(sub_FM0201G2R0);	
+	};
+	
+	scwin.FM0201G1_oncellclick = function(row,col,colId) {
+		var gridColumn = FM0201G1.getColumnID(col);
+		
+		if (gridColumn == "FCLT_POWER") {
+				var param = FM0201G1.getDataRow(row).FCLT_ID;
+				
+				//컨트롤러 api추가 필요. 
+				
+			}else if(gridColumn == "FCLT_RESET"){
+				var param = FM0201G1.getDataRow(row).FCLT_ID;
+				
+				//컨트롤러 api추가 필요.
+			}		
 	};
 	]]></script>
 	</head>
@@ -406,7 +426,7 @@
 						<xf:group id="" class="" style="">
 						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" autoFitMinWidth="0" captionTitle=""
 							checkEditableInputClass="" class="cm_grid right" dataList="data:dlt_BMS_FCLT_INFO" disabledScrollHidden="" editModeEvent=""
-							editModeEventIcon="" enterKeyMove="" ev:onafteredit="" ev:onbeforecolumnmove="" ev:oncellclick="" ev:oneditkeyup="" ev:onkeyup=""
+							editModeEventIcon="" enterKeyMove="" ev:onafteredit="" ev:onbeforecolumnmove="" ev:oncellclick="scwin.FM0201G1_oncellclick" ev:oneditkeyup="" ev:onkeyup=""
 							ev:onrowindexchange="" ev:ontextimageclick="" ev:onviewchange="" excludeDeletedRows="" fixedColumnWithHidden="true" focusMode="row"
 							id="FM0201G1" ignoreCellClick="false" ignoreNonEditableCellTabEnter="" keepDefaultColumnWidth="" keyMoveEditMode=""
 							moveKeyEditMode="" moveKeyEditModeAll="" nextTabID="" oddEvenColorDisplay="" readOnly="true" rowNumHeaderValue="순번"
@@ -421,10 +441,16 @@
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column12" 
 										sortable="true" value="시설물ID" blockSelect="false" displayMode="label" class="">
 									</w2:column>
-									<w2:column width="100" id="column3" value="제조사">
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px"
+										id="column6" value="전원종료" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px"
+										id="column7" value="리셋" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column8" 
 										value="시설물유형" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column width="100" id="column3" value="제조사">
 									</w2:column>
 									<w2:column width="150" id="column5" value="유지보수기관" >
 									</w2:column>
@@ -435,12 +461,6 @@
 										id="column15" value="모델명" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column width="150" id="column100" value="관리아이디">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px"
-										id="column6" value="전원종료" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px"
-										id="column7" value="리셋" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column width="70" id="column58" value="사용여부">
 									</w2:column>
@@ -456,6 +476,13 @@
 									<w2:column removeBorderStyle="false" width="115" inputType="text" style="height:20px" id="FCLT_ID" 
 										value="" blockSelect="false" displayMode="label" userData1="M">
 									</w2:column>
+									<w2:column width="70" id="FCLT_POWER" value="종료" inputType="button">
+									</w2:column>
+									<w2:column width="70" id="FCLT_RESET" value="리셋" inputType="button">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="109" inputType="select" style="height:20px" id="FCLT_KIND" 
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
 									<w2:column id="MAKER" blockSelect="false" readOnly="true" style="height:25px;" width="" inputType="select"
 										displayMode="label" textAlign="center" chooseOption="false" chooseOptionLabel="" checkboxLabelFormatter="" allOption=""
 										ref="">
@@ -465,9 +492,6 @@
 												<w2:value ref="ORG_ID"></w2:value>
 											</w2:itemset>
 										</w2:choices>
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="109" inputType="select" style="height:20px" id="FCLT_KIND" 
-										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column id="MRO_ID" blockSelect="false" readOnly="true" style="height:25px;" width="" inputType="select"
 										displayMode="label" textAlign="center" chooseOption="false" chooseOptionLabel="" checkboxLabelFormatter="" allOption=""
@@ -486,10 +510,6 @@
 										id="MODEL_NM" value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column width="70" id="MNG_ID" textAlign="left">
-									</w2:column>
-									<w2:column width="70" id="FCLT_POWER">
-									</w2:column>
-									<w2:column width="70" id="FCLT_RESET">
 									</w2:column>
 									<w2:column width="70" id="USE_YN">
 									</w2:column>
