@@ -213,18 +213,22 @@
 	
 	
 	scwin.MO0203G0_onrowindexchange = function(row,oldRow) {
-		var focusOption = {keyMap : dma_sub_search};
-		routMap.focusNode("map_MO0203",MO0203G0,row);	
+		//var focusOption = {keyMap : dma_sub_search};
+		dma_sub_search.set("NODE_ID", dlt_BMS_NODE_MST.getCellData(row, "NODE_ID"));
+		
+		
+		var allDataList = dlt_BMS_NODE_MST.getAllJSON();
+		var focusIdx = MO0203G0.getFocusedRowIndex();
+		
+		//routMap.focusNode("map_MO0203",MO0203G0,focusIdx);	
 //		routMap.showRoute2("map_MO0203", dlt_BMS_NODE_MST.getAllJSON(), row, MO0203G0);
 
-//
+		//노선만 뿌리기
 		routMap.showRoute("map_MO0203", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), null, "ONLYLINE");
-	//
-	
-		routMap.showMarkerList("map_MO0203", dlt_BMS_NODE_MST.getAllJSON(), row, MO0203G0); 	
-	//
-		
-		routMap.showCategory("map_MO0203", dlt_BMS_NODE_MST.getAllJSON(), row, MO0203G0);
+		//마커 뿌리기
+		routMap.showMarkerList("map_MO0203", allDataList, focusIdx, MO0203G0); 	
+		//카테고리 뿌리기
+		routMap.showCategory("map_MO0203", allDataList, focusIdx, MO0203G0);
 				
 //		var routID = dlt_BRT_CUR_OPER_INFO.getCellData(MO0203G0.getFocusedRowIndex(), "ROUT_ID");
 //		dma_sub_search.set("ROUT_ID", routID);
@@ -248,6 +252,18 @@
 			}
 		}
 		
+		var allDataList = dlt_BMS_NODE_MST.getAllJSON();
+		var focusIdx = MO0203G0.getFocusedRowIndex();
+		
+		//노선만 뿌리기
+		routMap.showRoute("map_MO0203", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), null, "ONLYLINE");
+		//마커 뿌리기
+		routMap.showMarkerList("map_MO0203", allDataList, focusIdx, MO0203G0); 	
+		//카테고리 뿌리기
+		routMap.showCategory("map_MO0203", allDataList, focusIdx, MO0203G0);
+		
+		
+		
 //		var list = com.getGridDispJsonData(
 //		routMap.showRoute("map_MO0203", dlt_BRT_CUR_OPER_INFO.getAllJSON());		
 //		routMap.drawRoute("map_MO0203", MO0203G0, MO0203G0.getFocusedRowIndex());
@@ -255,6 +271,8 @@
 	};
 	
 	scwin.sub_MO0203SHI0_submitdone = function(e) {
+		dma_sub_search.set("ROUT_ID",TYPE.getValue());
+		$p.executeSubmission(sub_MO0203G2R0);
 		com.searchGrid(MO0203G0, sub_MO0203G0R0);
 	};
 	
@@ -282,7 +300,9 @@
 	
 	
 	scwin.TYPE_onviewchange = function(info) {
-		com.searchGrid(MO0203G0, sub_MO0203G0R0);	
+		dma_sub_search.set("ROUT_ID",TYPE.getValue());		
+		$p.executeSubmission(sub_MO0203G2R0);
+		com.searchGrid(MO0203G0, sub_MO0203G0R0);
 	};
 	]]></script>
 	</head>
@@ -469,7 +489,7 @@
 					</xf:group>
 					<xf:group id="" style="">
 						<div id="map_MO0203" style="overflow:hidden;">
-							<ul id="category_MO0203">
+							<ul id="category_map_MO0203" class="category">
 							</ul>
 						</div>
 					</xf:group>
