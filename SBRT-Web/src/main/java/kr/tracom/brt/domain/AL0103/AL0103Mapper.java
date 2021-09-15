@@ -27,10 +27,4 @@ public interface AL0103Mapper {
 	public int AL0103G1I0(Map param);
 	
 	public int AL0103G1D0(Map param);
-	
-	public int AL0103G1U0(Map param);
-	
-	public List AL0103P01R0(Map param);
-	
-	public List AL0103P1SH(Map param);
 }

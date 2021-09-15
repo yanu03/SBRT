@@ -17,7 +17,6 @@
 						<w2:column id="REMAIN_STTN" name="남은정류장수" dataType="text"></w2:column>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
-						<w2:column id="VHC_TYPE" name="차량유형" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
@@ -214,12 +213,16 @@
 	
 	
 	scwin.MO0203G0_onrowindexchange = function(row,oldRow) {
+		//var focusOption = {keyMap : dma_sub_search};
 		dma_sub_search.set("NODE_ID", dlt_BMS_NODE_MST.getCellData(row, "NODE_ID"));
 		
 		
 		var allDataList = dlt_BMS_NODE_MST.getAllJSON();
 		var focusIdx = MO0203G0.getFocusedRowIndex();
 		
+		//routMap.focusNode("map_MO0203",MO0203G0,focusIdx);	
+//		routMap.showRoute2("map_MO0203", dlt_BMS_NODE_MST.getAllJSON(), row, MO0203G0);
+
 		//노선만 뿌리기
 		routMap.showRoute("map_MO0203", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), null, "ONLYLINE");
 		//마커 뿌리기
@@ -227,6 +230,11 @@
 		//카테고리 뿌리기
 		routMap.showCategory("map_MO0203", allDataList, focusIdx, MO0203G0);
 				
+//		var routID = dlt_BRT_CUR_OPER_INFO.getCellData(MO0203G0.getFocusedRowIndex(), "ROUT_ID");
+//		dma_sub_search.set("ROUT_ID", routID);
+//		com.executeSubmission(sub_MO0203G2R0);		 
+//		routMap.initMapInfo("map_MO0203"); 
+		 			
 	};
 	
 	scwin.sub_MO0203G0R0_submitdone = function(e) {
@@ -253,6 +261,13 @@
 		routMap.showMarkerList("map_MO0203", allDataList, focusIdx, MO0203G0); 	
 		//카테고리 뿌리기
 		routMap.showCategory("map_MO0203", allDataList, focusIdx, MO0203G0);
+		
+		
+		
+//		var list = com.getGridDispJsonData(
+//		routMap.showRoute("map_MO0203", dlt_BRT_CUR_OPER_INFO.getAllJSON());		
+//		routMap.drawRoute("map_MO0203", MO0203G0, MO0203G0.getFocusedRowIndex());
+
 	};
 	
 	scwin.sub_MO0203SHI0_submitdone = function(e) {
@@ -261,23 +276,34 @@
 		com.searchGrid(MO0203G0, sub_MO0203G0R0);
 	};
 	
+	/*scwin.sub_MO0203G1R0_submitdone = function(e) {
+		//routMap.addMarkerInter("map_MO0203", dlt_BMS_FCLT_INFO,MO0203G1);
+		
+		
+		//시설물상태에 따라 클래스(백그라운드 색) 설정
+		for (i=0; i<dlt_BMS_FCLT_INFO.getDataLength(); i++) {
+			//비정상
+			if (dlt_BMS_FCLT_INFO.getCellData(i, "FCLT_COND") == "FC021") {
+				MO0203G1.setCellClass(i, "FCLT_COND", "cond_abnormal");
+			}
+			//정상
+			else if (dlt_BMS_FCLT_INFO.getCellData(i, "FCLT_COND") == "FC020") {
+				MO0203G1.setCellClass(i, "FCLT_COND", "cond_normal");
+			}
+		}
+		
+		
+//		routMap.showFacility("map_MO0203", dlt_BMS_NODE_MST.getAllJSON(),
+//							 dlt_BMS_NODE_MST.getCellData(MO0203G0.getFocusedRowIndex(), "FCLT_ID"), MO0203G0);			
+		routMap.showRoute2("map_MO0203", dlt_BMS_NODE_MST.getAllJSON(), MO0203G0.getFocusedRowIndex(), MO0203G0);
+	};*/
+	
+	
 	scwin.TYPE_onviewchange = function(info) {
 		dma_sub_search.set("ROUT_ID",TYPE.getValue());		
 		$p.executeSubmission(sub_MO0203G2R0);
 		com.searchGrid(MO0203G0, sub_MO0203G0R0);
 	};
-
-	
-	/*웹소켓 - *차량타입(VHC_TYPE) 추가(버스 이미지 처리)
-		(attrId == 2022) { //2022: 정류장별 차량 도착 정보
-		
-		payload.body >>>> {"ATTR_ID":2022,"LIST":[{"ROUT_ID":"RT00000080","REMAIN_TM":1364334,"REMAIN_STTN":2}],"STTN_ID":"ND00000017"}
-		
-		jsonObj.STTN_ID => 정류장아이디
-		jsonObj.LIST => 도착정보 리스트
-		 ㄴ ROUT_ID => 노선아이디
-		 ㄴ REMAIN_TM => 남은시간(초)
-		 ㄴ REMAIN_STTN => 몇 정류장 전*/
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -489,37 +515,39 @@
 						</w2:attributes>
 						<xf:group tagname="caption"></xf:group>
 						<xf:group tagname="colgroup">
-							<xf:group tagname="col" style="width:10.00%;"></xf:group>
+							<xf:group tagname="col" style="width:25.00%;"></xf:group>
 							<xf:group tagname="col" style="width:25.00%"></xf:group>
-							<xf:group tagname="col" style="width:45.00%"></xf:group>
-							<xf:group tagname="col" style="width:20.00%"></xf:group>
+							<xf:group tagname="col" style="width:25.00%"></xf:group>
+							<xf:group tagname="col" style="width:25.00%"></xf:group>
 						</xf:group>
 						<xf:group tagname="tr" style="">
-							<xf:group tagname="td" style="border-color: black;text-align: center;" class="w2tb_td">
-								<xf:image src="/cm/images/tmap/bus_purple_selected.png" style="width: 40px;height: 100%;" id=""></xf:image>
-							</xf:group>
 							<xf:group tagname="td" style="border-color: black;" class="w2tb_td">
 								<w2:span label="B0상" style="width: 100px;height: 23px;font-size: 20px;" id=""></w2:span>
 							</xf:group>
 							<xf:group tagname="td" style="border-color: black;" class="w2tb_td">
+								<w2:attributes>
+									<w2:colspan>2</w2:colspan>
+									<w2:rowspan>1</w2:rowspan>
+								</w2:attributes>
 								<w2:span label="야호!!!!!" style="width: 100px;height: 23px;font-size: 20px;" id=""></w2:span>
 							</xf:group>
-							<xf:group tagname="td" style="border-color: black;text-align: right;" class="w2tb_td">
-								<w2:span label="13분" style="width: 100%;height: 23px;font-size: 20px;text-align: right;color: green;" id=""></w2:span>
+							<xf:group tagname="td" style="border-color: black;text-align: right;color: green;" class="w2tb_td">
+								<w2:span label="3분" style="width: 100%;height: 23px;font-size: 20px;text-align: right;" id=""></w2:span>
 							</xf:group>
 						</xf:group>
 						<xf:group tagname="tr">
-							<xf:group tagname="td" style="border-color: black;text-align: center;" class="w2tb_td">
-								<xf:image src="/cm/images/tmap/bus_purple.png" style="width: 40px;height: 100%;" id=""></xf:image>
-							</xf:group>
 							<xf:group tagname="td" style="border-color: black;" class="w2tb_td">
 								<w2:span label="B0하" style="width: 100px;height: 23px;font-size: 20px;" id=""></w2:span>
 							</xf:group>
 							<xf:group tagname="td" style="border-color: black;" class="w2tb_td">
+								<w2:attributes>
+									<w2:colspan>2</w2:colspan>
+									<w2:rowspan>1</w2:rowspan>
+								</w2:attributes>
 								<w2:span label="야호!!!!!" style="width: 100px;height: 23px;font-size: 20px;" id=""></w2:span>
 							</xf:group>
-							<xf:group tagname="td" style="border-color: black;text-align: right;" class="w2tb_td">
-								<w2:span label="2분" style="width: 100px;height: 23px;font-size: 20px;text-align: right;color: green;" id=""></w2:span>
+							<xf:group tagname="td" style="border-color: black;text-align: right;color: green;" class="w2tb_td">
+								<w2:span label="2분" style="width: 100px;height: 23px;font-size: 20px;text-align: right;" id=""></w2:span>
 							</xf:group>
 						</xf:group>
 					</xf:group>

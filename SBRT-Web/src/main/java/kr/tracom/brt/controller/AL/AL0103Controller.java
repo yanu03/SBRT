@@ -61,18 +61,6 @@ public class AL0103Controller extends ControllerSupport{
 		result.setData("dlt_BMS_ROUT_MST", al0103Service.AL0103P0R0());
 		return result.getResult();
 	}
-	
-	@RequestMapping("/al/AL0103P01R0")
-	public @ResponseBody Map<String, Object> AL0103P01R0() throws Exception {
-		result.setData("dlt_BMS_ROUT_MST", al0103Service.AL0103P01R0());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/al/AL0103P1SH")
-	public @ResponseBody Map<String, Object> AL0103P1SH() throws Exception {
-		result.setData("dlt_searchitem", al0103Service.AL0103P1SH());
-		return result.getResult();
-	}
 
 	
 }

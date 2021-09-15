@@ -79,8 +79,6 @@ public class AL0103Service extends ServiceSupport {
 					iCnt += al0103Mapper.AL0103G1I0(data);
 				} else if (rowStatus.equals("D")) {
 					dCnt += al0103Mapper.AL0103G1D0(data);
-				} else if (rowStatus.equals("U")) {
-					dCnt += al0103Mapper.AL0103G1U0(data);
 				} 
 			}			
 		} catch(Exception e) {
@@ -111,15 +109,6 @@ public class AL0103Service extends ServiceSupport {
 		return al0103Mapper.AL0103P0R0(map);
 	}
 	
-	public List AL0103P01R0() throws Exception {
-		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return al0103Mapper.AL0103P01R0(map);
-	}
-	
-	public List AL0103P1SH() throws Exception {
-		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return al0103Mapper.AL0103P1SH(map);
-	}
 		
 	
 }
