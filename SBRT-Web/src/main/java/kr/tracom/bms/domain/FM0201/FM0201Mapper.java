@@ -16,7 +16,9 @@ public interface FM0201Mapper {
 	
 	public List FM0201SHI1();
 	
-	public List FM0201SHI2();	
+	public List FM0201SHI2();
+	
+	public List FM0201SHI3(Map param);	
 	
 	public List FM0201G2R0(Map param);	
 }

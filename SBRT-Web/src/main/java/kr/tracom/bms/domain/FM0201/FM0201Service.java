@@ -34,6 +34,11 @@ public class FM0201Service extends ServiceSupport{
 	
 	public List FM0201SHI2() throws Exception {
 		return fm0201Mapper.FM0201SHI2();
+	}
+	
+	public List FM0201SHI3() throws Exception {
+		Map param = getSimpleDataMap("dma_search");		
+		return fm0201Mapper.FM0201SHI3(param);
 	}	
 	
 	public List FM0201G2R0() throws Exception {

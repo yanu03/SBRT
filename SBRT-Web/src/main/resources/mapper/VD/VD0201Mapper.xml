@@ -21,8 +21,11 @@
 			<if test="CONTENT1 != null">
 				AND A.REP_ROUT_ID = #{CONTENT1}
 			</if>
-			<if test="CONTENT2 != null and CONTENT2 != ''">
-				AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT2}, '%')
+			<if test="CONTENT2 != ''">
+				AND A.ROUT_ID = #{CONTENT2}
+			</if>
+			<if test="CONTENT3 != null and CONTENT3 != ''">
+				AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
 			</if>
 		ORDER BY		A.REP_ROUT_ID, A.ROUT_ID
 	</select>
@@ -52,14 +55,15 @@
 		WHERE			A.VHC_ID = #{VHC_ID}
 	</select>
 	
-	<select id="VD0201SHI0" resultType="Map">
-		SELECT			A.REP_ROUT_ID
-						,B.REP_ROUT_NM	
-		FROM			BRT_CUR_OPER_INFO A
-			LEFT JOIN		BMS_REP_ROUT_MST B
-			ON				A.REP_ROUT_ID = B.REP_ROUT_ID
-		GROUP BY 		REP_ROUT_ID		
-		ORDER BY		B.REP_ROUT_NM		
+	<select id="VD0201SHI1" resultType="Map">
+		SELECT			ROUT_ID, ROUT_NM
+		FROM			BMS_ROUT_MST	
+		<where>
+			<if test="CONTENT1 != null and CONTENT1 != ''">
+				REP_ROUT_ID = #{CONTENT1}	
+			</if>
+		</where>
+
 	</select>		
 	
 	<select id="VD0201G2R0" resultType="Map">

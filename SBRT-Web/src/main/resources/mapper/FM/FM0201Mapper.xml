@@ -23,9 +23,11 @@
 		        	 	
 		FROM	  		BMS_ROUT_NODE_CMPSTN E
 		LEFT JOIN		BMS_ROUT_LINK_CMPSTN F
-			ON			E.ROUT_ID = F.ROUT_ID AND E.LINK_ID = F.LINK_ID
+			ON E.ROUT_ID = F.ROUT_ID AND E.LINK_ID = F.LINK_ID
 		LEFT JOIN	    BMS_NODE_MST A
 			ON E.NODE_ID = A.NODE_ID
+		LEFT JOIN		BMS_ROUT_MST G
+			ON G.ROUT_ID = E.ROUT_ID	
 		LEFT JOIN			(SELECT B.NODE_ID, COUNT(B.NODE_ID) CNT
 		            		FROM BMS_FCLT_INFO B
 		         			LEFT JOIN BMS_FCLT_COND_INFO C 
@@ -36,10 +38,13 @@
 		WHERE			(A.NODE_TYPE = 'NT001'
 		OR				A.NODE_TYPE = 'NT002')
 			<if test="CONTENT1 != null">
-				AND E.ROUT_ID = #{CONTENT1}				
+				AND G.REP_ROUT_ID = #{CONTENT1}			
 			</if>
-			<if test="CONTENT2 != null and CONTENT2 != ''">
-				AND (A.NODE_ID LIKE CONCAT('%',#{CONTENT2},'%') || A.NODE_NM LIKE CONCAT('%',#{CONTENT2},'%'))
+			<if test="CONTENT2 != ''">
+				AND E.ROUT_ID = #{CONTENT2}				
+			</if>
+			<if test="CONTENT3 != null and CONTENT3 != ''">
+				AND (A.NODE_ID LIKE CONCAT('%',#{CONTENT3},'%') || A.NODE_NM LIKE CONCAT('%',#{CONTENT3},'%'))
 			</if>
 			
 		ORDER BY		E.NODE_SN					
@@ -101,6 +106,16 @@
 		SELECT			CLSFCTN_ID
 						,CLSFCTN_NM
 		FROM	  		BMS_EMER_CLSFCTN_MST
+	</select>
+		
+	<select id="FM0201SHI3" resultType="Map">
+		SELECT			ROUT_ID, ROUT_NM
+		FROM			BMS_ROUT_MST	
+		<where>
+			<if test="CONTENT1 != null and CONTENT1 != ''">
+				REP_ROUT_ID = #{CONTENT1}	
+			</if>
+		</where>
 	</select>	
 	
 	<select id="FM0201G2R0" resultType="Map">
