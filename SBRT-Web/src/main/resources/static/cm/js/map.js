@@ -898,7 +898,7 @@ routMap.showCategory = function(mapId, list, focusIdx, grid, etcOnOff) {
 				voiceCheck = 1;
 			}
 			
-			else if(abnormalCheck == 0 && typeof list[i].COND_ERROR != "undefined" && list[i].COND_ERROR == "Y") {
+			else if(abnormalCheck == 0 && typeof list[i].COND_ERROR != "undefined" && (list[i].COND_ERROR == "Y" || list[i].COND_ERROR == "비정상") ) {
 				categoryClass = "abnormal_busimg"
 				categoryName = "고장위치";
 				categoryContentAbnormal =	'<li class="'+ routMap.mapInfo[mapId].isShowAbnormal +'">' ;
@@ -1019,7 +1019,7 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/cross_selected.png", imageSize);
 	}
 	else if(routMap.mapInfo[mapId].isShowNormal == "on" && data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP && 
-			(typeof data.COND_ERROR == "undefined"||data.COND_ERROR == "N") ) {
+			(typeof data.COND_ERROR == "undefined"||data.COND_ERROR == "N"||data.COND_ERROR == "정상") ) {
 		zIndex = 2;
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop.png", imageSize);
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_selected.png", imageSize);
@@ -1034,7 +1034,7 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/road_selected.png", imageSize);
 	}
 	
-	else if(typeof data.COND_ERROR != "undefined" && routMap.mapInfo[mapId].isShowAbnormal == "on" &&data.COND_ERROR == "Y") {
+	else if(typeof data.COND_ERROR != "undefined" && routMap.mapInfo[mapId].isShowAbnormal == "on" &&(data.COND_ERROR == "Y"||data.COND_ERROR == "비정상")) {
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);		
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);
 
