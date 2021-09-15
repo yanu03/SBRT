@@ -490,6 +490,11 @@ public class CommonUtil {
 		return Math.round(len*Math.pow(10, cnt+1))/Math.pow(10, cnt+1);
 	}
 	
+	public static String objectToString(Object object) {
+		String result = CommonUtil.empty(object)?"":(String)object;
+		return result;
+	}
+	
 	//ip가져오기.
 	public static String getIpAddress(HttpServletRequest request) {
 		String unkown = "unknown";

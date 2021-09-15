@@ -40,27 +40,27 @@ public class Constants {
 	public static final String SSN_DELETED = "SSN_DELETED"; //세션 초기화중
 	
 	public static class WayDivs {
-		public static final String WD001 = "상행";
-		public static final String WD002 = "하행";
-		public static final String WD003 = "왕복";
-		public static final String WD004 = "순환";
-		public static final String WD005 = "없음";
+		public static final String WD001 = "WD001"; //상행
+		public static final String WD002 = "WD002"; //하행
+		public static final String WD003 = "WD003"; //왕복
+		public static final String WD004 = "WD004"; //순환
+		public static final String WD005 = "WD005"; //없음
 	}
 	
 	public static class DayDivs {
-		public static final String DY001 = "평일";
-		public static final String DY002 = "휴일";
+		public static final String DY001 = "DY001"; //평일
+		public static final String DY002 = "DY002"; //휴일
 	}
 	
 	public static String INTG_URL = "INTG_URL";
 	public static String API_KEY = "KEY_API";
 	
 	//세종 노선검색 URL
-	public static String URL_CODE_SEJONG_ROUT = "ITU01";
+	public static String URL_CODE_SEJONG_ROUT = "IU001";
 	
 	//공공데이터포털 노선검색 URL
-	public static String URL_CODE_OPENAPI_ROUT = "ITU02";
-	public static String URL_CODE_OPENAPI_ROUT_STA = "ITU03";
+	public static String URL_CODE_OPENAPI_ROUT = "IU002";
+	public static String URL_CODE_OPENAPI_ROUT_STA = "IU003";
 	
 	//공공데이터포털 노선검색 KEY
 	public static String KEY_CODE_OPENAPI_ROUT = "KEY01";
