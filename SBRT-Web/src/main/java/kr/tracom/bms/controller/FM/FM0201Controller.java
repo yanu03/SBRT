@@ -46,12 +46,12 @@ public class FM0201Controller extends ControllerSupport {
 	public @ResponseBody Map<String, Object> FM0201SHI2() throws Exception {
 		result.setData("dlt_searchitem3", fm0201Service.FM0201SHI2());
 		return result.getResult();
-	}	
-	
-	@RequestMapping("/fm/FM0201G2R0")
-	public @ResponseBody Map<String, Object> FM0201G2R0() throws Exception {
-		result.setData("dlt_BMS_ROUT_LINK_CMPSTN", fm0201Service.FM0201G2R0());
-		return result.getResult();
 	}
+	
+	@RequestMapping("/fm/FM0201SHI3")
+	public @ResponseBody Map<String, Object> FM0201SHI3() throws Exception {
+		result.setData("dlt_searchitem4", fm0201Service.FM0201SHI3());
+		return result.getResult();
+	}	
 	
 }
