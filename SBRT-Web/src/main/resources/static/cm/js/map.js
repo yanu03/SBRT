@@ -124,7 +124,6 @@ routMap.initMap2 = function(mapId,options) {
 
 /**맵 이동**/
 routMap.moveMap = function(mapId, lat, lon) {
-	debugger;
 	if(routMap.mapInfo[mapId].isMove){
 		routMap.mapInfo[mapId].map.setCenter(new kakao.maps.LatLng(lat, lon));
 	}
@@ -997,7 +996,6 @@ routMap.showCategory = function(mapId, list, focusIdx, grid, etcOnOff) {
 		    	
 		}	
 		for(var i=0; i<list.length; i++){
-			debugger;
 			routMap.showMarker(mapId, list[i], i, focusIdx, grid);		
 		}
 		
@@ -1106,7 +1104,6 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 	if(idx==focusIdx) {
 		overlay = new kakao.maps.CustomOverlay({
 			content: msg,
-			map: routMap.mapInfo[mapId].map,
 			position: marker.getPosition(),
 			zIndex : zIndex
 		});
@@ -1162,6 +1159,7 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 		
 	});	*/
 	//routMap.mapInfo[mapId].infoWindow.setMap(routMap.mapInfo[mapId].map); 
+	debugger;
 	routMap.mapInfo[mapId].overlay = overlay;
 	routMap.mapInfo[mapId].overArr.push(routMap.mapInfo[mapId].overlay);
 	
@@ -1434,6 +1432,7 @@ routMap.removeAllInfoWindow = function(mapId){
 }
 
 routMap.removeAllOverlay = function(mapId){
+	debugger;
 	if(routMap.mapInfo[mapId].overArr != null){
 		for(var i=0; i<routMap.mapInfo[mapId].overArr.length; i++){
 			routMap.mapInfo[mapId].overArr[i].setMap(null);
@@ -2412,7 +2411,6 @@ routMap.showRoute = function(mapId, list, id, type) {
 			}
 		}
 
-		debugger;
 		if(list.length>0){
 			if(focusIdx!=-1){
 				routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
