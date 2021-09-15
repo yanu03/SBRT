@@ -69,7 +69,17 @@
 			ON				A.REP_ROUT_ID = B.REP_ROUT_ID
 		GROUP BY 		REP_ROUT_ID		
 		ORDER BY		B.REP_ROUT_NM		
-	</select>		
+	</select>	
+	
+	<select id="MO0101SHI1" resultType="Map">
+		SELECT			ROUT_ID, ROUT_NM
+		FROM			BMS_ROUT_MST	
+		<where>
+			<if test="CONTENT1 != null and CONTENT1 != ''">
+				REP_ROUT_ID = #{CONTENT1}	
+			</if>
+		</where>
+	</select>			
 	
 	<select id="MO0101G2R0" resultType="Map">
 	 	SELECT a.ROUT_ID, a.LINK_ID, a.LINK_SN, a.MORN_STD, b.LINK_NM, b.ST_NODE_ID AS NODE_ID, b.ED_NODE_ID, 
