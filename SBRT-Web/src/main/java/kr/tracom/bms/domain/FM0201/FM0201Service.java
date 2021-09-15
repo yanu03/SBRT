@@ -40,11 +40,4 @@ public class FM0201Service extends ServiceSupport{
 		Map param = getSimpleDataMap("dma_search");		
 		return fm0201Mapper.FM0201SHI3(param);
 	}	
-	
-	public List FM0201G2R0() throws Exception {
-		// TODO Auto-generated method stub
-		Map param = getSimpleDataMap("dma_sub_search");
-		return fm0201Mapper.FM0201G2R0(param);
-	}	
-	
 }

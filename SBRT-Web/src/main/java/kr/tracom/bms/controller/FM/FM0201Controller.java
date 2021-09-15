@@ -54,10 +54,4 @@ public class FM0201Controller extends ControllerSupport {
 		return result.getResult();
 	}	
 	
-	@RequestMapping("/fm/FM0201G2R0")
-	public @ResponseBody Map<String, Object> FM0201G2R0() throws Exception {
-		result.setData("dlt_BMS_ROUT_LINK_CMPSTN", fm0201Service.FM0201G2R0());
-		return result.getResult();
-	}
-	
 }

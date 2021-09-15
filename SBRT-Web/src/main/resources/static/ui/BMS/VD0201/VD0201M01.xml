@@ -102,7 +102,7 @@
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_VD0201SHI1" ref="data:json,dma_search" target="data:json,dlt_searchitem2" action="/vd/VD0201SHI1" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_VD0201SHI1_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
@@ -113,8 +113,6 @@
 
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
-		//노선 뿌리는거 수정해야함 이상하게 나옴
-		//SI503M01 showRoute부분 참고하면 될거같음
 		
 		 var autoOptions = {
 			Main : { grid : VD0201G0, srchSbm : sub_VD0201G0R0, keyColumn : "VHC_ID", srchGrp : pgm_header, name : "노선 목록"},
@@ -222,7 +220,16 @@
 	};
 	
 	scwin.sub_VD0201G0R0_submitdone = function(e) {
-		com.setFocusedCell(VD0201G0, "REP_ROUT_NM");
+		//com.setFocusedCell(VD0201G0, "REP_ROUT_NM");
+		if(dlt_BRT_CUR_OPER_INFO.getAllJSON().length > 0) {
+			VD0201G0.setFocusedCell(0, "REP_ROUT_NM");
+		}
+		else {
+			dma_sub_search.set("ROUT_ID", null);
+			dma_sub_search.set("VHC_ID", null);
+			$p.executeSubmission(sub_VD0201G1R0);
+			$p.executeSubmission(sub_VD0201G2R0);				
+		}
 	
 		$(function () {
 			$( "#connect" ).click(function() { connect(); });
@@ -282,11 +289,14 @@
 	};
 	
 	scwin.TYPE1_onviewchange = function(info) {
-		com.searchGrid(VD0201G0, sub_VD0201G0R0);
 		$p.executeSubmission(sub_VD0201SHI1);
 	};
 	
 	scwin.TYPE2_onviewchange = function(info) {
+		com.searchGrid(VD0201G0, sub_VD0201G0R0);		
+	};
+	
+	scwin.sub_VD0201SHI1_submitdone = function(e) {
 		com.searchGrid(VD0201G0, sub_VD0201G0R0);		
 	};
 	]]></script>
