@@ -28,6 +28,7 @@ public class AL0304Controller extends ControllerSupport {
 	@RequestMapping("/AL/AL0304G1R0")
 	public @ResponseBody Map<String, Object> AL0301G1R0() throws Exception {
 		result.setData("dlt_OPER_ALLOC_PL_ROUT_INFO", al0304Service.AL0304G1R0());
+		result.setData("dlt_OPER_ALLOC_PL_ROUT_CNT", al0304Service.AL0304G1CNT());
 		return result.getResult();
 	}
 	
@@ -41,5 +42,12 @@ public class AL0304Controller extends ControllerSupport {
 	public @ResponseBody Map<String, Object> AL0304P0R1() throws Exception {
 		result.setData("dlt_OPER_PL_ROUT_INFO", al0304Service.AL0304P0R1());
 		return result.getResult();
-	}	
+	}
+	
+	/*@RequestMapping("/AL/AL0304G1CNT")
+	public @ResponseBody Map<String, Object> AL0304G1CNT() throws Exception {
+		result.setData("dlt_OPER_ALLOC_PL_ROUT_CNT", al0304Service.AL0304G1CNT());
+		return result.getResult();
+	}*/
+	
 }
