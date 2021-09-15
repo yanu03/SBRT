@@ -42,9 +42,9 @@
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
 					<w2:keyInfo>
-						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
-						<w2:key id="CONTENT1" name="name2" dataType="text"></w2:key>
-						<w2:key id="CONTENT2" name="name3" dataType="text"></w2:key>
+						<w2:key id="CONTENT1" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT2" name="name2" dataType="text"></w2:key>
+						<w2:key id="CONTENT3" name="name3" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_sub_search">
@@ -56,8 +56,7 @@
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
-						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
@@ -113,6 +112,12 @@
 						<w2:column id="MORN_STD" name="집중모니터링기준" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem4" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="ROUT_ID" name="name1" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="name2" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_FM0201G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_NODE_MST" action="/fm/FM0201G0R0"
@@ -123,7 +128,7 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="scwin.sub_FM0201G1R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_FM0201SHI0" ref="" target="data:json,dlt_searchitem" action="/rout/selectRoutItem" method="post"
+			<xf:submission id="sub_FM0201SHI0" ref="" target="data:json,dlt_searchitem" action="/repRout/selectRepRoutItem" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_FM0201SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -135,8 +140,12 @@
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_FM0201G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN" action="/rout/selectNodeListByRout" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone=""
+			<xf:submission id="sub_FM0201G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN"
+				action="/rout/selectNodeListByRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_FM0201G2R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_FM0201SHI3" ref="data:json,dma_search" target="data:json,dlt_searchitem4" action="/fm/FM0201SHI3" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_FM0201SHI3_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
@@ -236,25 +245,34 @@
 	
 	scwin.FM0201G0_onrowindexchange = function(row,oldRow) {
 		var focusOption = {keyMap : dma_sub_search};
+		var routID = dlt_BMS_NODE_MST.getCellData(FM0201G0.getFocusedRowIndex(), "ROUT_ID");
+		dma_sub_search.set("ROUT_ID", routID);
+			$p.executeSubmission(sub_FM0201G2R0);		
 		com.changeDualGrid(FM0201G0, FM0201G1, null, sub_FM0201G1R0, focusOption, row, oldRow);	
 	};
 	
 	scwin.sub_FM0201G0R0_submitdone = function(e) {
 		if (dlt_BMS_NODE_MST.getAllJSON().length > 0) {
-			dma_search.set("ROUT_ID",TYPE.getValue());
-			com.setFocusedCell(FM0201G0, "NODE_ID");
+			FM0201G0.setFocusedCell(0, "NODE_ID");
+			//com.setFocusedCell(FM0201G0, "NODE_ID");
+			var routID = dlt_BMS_NODE_MST.getCellData(FM0201G0.getFocusedRowIndex(), "ROUT_ID");			
+			dma_sub_search.set("ROUT_ID", routID);
+			$p.executeSubmission(sub_FM0201G2R0);			
+			
 		} else {
 			dma_sub_search.set("ROUT_ID", null);
 			dma_sub_search.set("NODE_ID", null);
 			$p.executeSubmission(sub_FM0201G1R0);
+			$p.executeSubmission(sub_FM0201G2R0);
 		}			
 
 	};
 	
 	scwin.sub_FM0201SHI0_submitdone = function(e) {
-		dma_sub_search.set("ROUT_ID",TYPE.getValue());
+		TYPE1.setValue("RR00000001");
+		
+		$p.executeSubmission(sub_FM0201SHI3);		
 		com.searchGrid(FM0201G0, sub_FM0201G0R0);
-		$p.executeSubmission(sub_FM0201G2R0);
 	};
 	
 	scwin.sub_FM0201G1R0_submitdone = function(e) {
@@ -269,24 +287,9 @@
 				FM0201G1.setCellClass(i, "FCLT_COND", "cond_normal");
 			}
 		}
+
 		
-		var allDataList = dlt_BMS_NODE_MST.getAllJSON();
-		var focusIdx = FM0201G0.getFocusedRowIndex();
 		
-		//노선만 뿌리기
-		routMap.showRoute("map_FM0201", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), null, "ONLYLINE");
-		
-		//마커 뿌리기
-		routMap.showMarkerList("map_FM0201", allDataList, focusIdx, FM0201G0); 
-		
-		//카테고리(범례) 뿌리기
-		routMap.showCategory("map_FM0201", allDataList, focusIdx, FM0201G0);		
-	};
-	
-	scwin.TYPE_onviewchange = function(info) {
-		dma_sub_search.set("ROUT_ID",TYPE.getValue());		
-		com.searchGrid(FM0201G0, sub_FM0201G0R0);
-		$p.executeSubmission(sub_FM0201G2R0);	
 	};
 	
 	scwin.FM0201G1_oncellclick = function(row,col,colId) {
@@ -303,6 +306,34 @@
 				//컨트롤러 api추가 필요.
 			}		
 	};
+	
+	scwin.TYPE1_onviewchange = function(info) {
+		$p.executeSubmission(sub_FM0201SHI3);	
+		
+	};
+	
+	scwin.sub_FM0201SHI3_submitdone = function(e) {
+		com.searchGrid(FM0201G0, sub_FM0201G0R0);
+	};
+		
+	scwin.TYPE2_onviewchange = function(info) {
+		com.searchGrid(FM0201G0, sub_FM0201G0R0);
+	};
+	
+	scwin.sub_FM0201G2R0_submitdone = function(e) {
+		
+		var allDataList = dlt_BMS_NODE_MST.getAllJSON();
+		var focusIdx = FM0201G0.getFocusedRowIndex();		
+		//노선만 뿌리기
+		routMap.showRoute("map_FM0201", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), null, "ONLYLINE");
+			
+			//마커 뿌리기
+		routMap.showMarkerList("map_FM0201", allDataList, focusIdx, FM0201G0); 
+		
+		//카테고리(범례) 뿌리기
+		routMap.showCategory("map_FM0201", allDataList, focusIdx, FM0201G0);		
+	};
+
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -313,31 +344,39 @@
 			<xf:group class="pgm_header" id="pgm_header" style="">
 				<xf:group class="gr_search" id="" style="">
 					<xf:group class="label" id="" style="">
-						<w2:span class="" id="" label="선택 노선"></w2:span>
+						<w2:span class="" id="" label="대표 노선"></w2:span>
 					</xf:group>
 					<xf:group class="search" id="" style="">
-						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
-							ev:onviewchange="scwin.TYPE_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE" optionOrder="false"
-							ref="data:dma_search.CONTENT1" class="search_type_100" style="" submenuSize="auto" textAlign="left">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE1_onviewchange" id="TYPE1"
+							optionOrder="false" ref="data:dma_search.CONTENT1" class="search_type_100" style="" submenuSize="auto" textAlign="left"
+							chooseOptionLabel="-선택-">
 							<xf:choices>
 								<xf:itemset nodeset="data:dlt_searchitem">
+									<xf:label ref="REP_ROUT_NM"></xf:label>
+									<xf:value ref="REP_ROUT_ID"></xf:value>
+								</xf:itemset>
+							</xf:choices>
+						</xf:select1>
+						<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="노선"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE2_onviewchange" id="TYPE2" optionOrder="false"
+							ref="data:dma_search.CONTENT2" class="search_type_100" style="" submenuSize="auto" textAlign="left" chooseOptionLabel="-선택-">
+							<xf:choices>
+								<xf:itemset nodeset="data:dlt_searchitem4">
 									<xf:label ref="ROUT_NM"></xf:label>
 									<xf:value ref="ROUT_ID"></xf:value>
 								</xf:itemset>
 							</xf:choices>
 						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT2" placeholder="노드ID 또는 노드명"></xf:input>
-						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
-							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
-							id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT1" search="start" selectedData=""
-							class="search_auto" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
-							<w2:choices>
-								<w2:itemset nodeset="data:dlt_searchitem">
-									<w2:label ref="ROUT_NM"></w2:label>
-									<w2:value ref="ROUT_ID"></w2:value>
-								</w2:itemset>
-							</w2:choices>
-						</w2:autoComplete>
+					</xf:group>
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="검색"></w2:span>
+					</xf:group>
+					<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT3" placeholder="차번"></xf:input>
 					</xf:group>
 					<w2:wframe class="" id="wfm_mainBtn" scope="true" src="/cm/common/wf_mainBtn.xml" style=""></w2:wframe>
 				</xf:group>

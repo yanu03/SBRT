@@ -1,45 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.tracom.brt.domain.AL0103.AL0103Mapper">
+<mapper namespace="kr.tracom.brt.domain.AL0203.AL0203Mapper">
 
-<select id="AL0103G0R0" resultType="Map">
-	SELECT			A.COR_ID
-				,	A.REP_ROUT_ID
-				,	A.COR_NM
-				,	A.COR_TYPE
-				,	A.MOVE_TM
-				,	B.REP_ROUT_NM
-			
-	FROM			BRT_COR_MST A
-	LEFT JOIN	  	BMS_REP_ROUT_MST B
-		ON			A.REP_ROUT_ID = B.REP_ROUT_ID
+<select id="AL0203G0R0" resultType="Map">
+	SELECT			
+		REP_ROUT_ID
+		,REP_ROUT_NM
+		,ROUT_NM
+		,ROUT_TYPE
+		,ST_STTN_NM
+		,ED_STTN_NM
+	FROM			
+		BMS_ROUT_MST
+	<!--  LEFT JOIN	  	
+		BRT_OPER_ALLOC_PL_NODE_INFO B
+	ON			
+		A.REP_ROUT_ID = B.REP_ROUT_ID-->
 	<where>
-		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
-			<if test="TYPE == 'ALL'">
-				AND (COR_ID LIKE CONCAT('%',#{CONTENT},'%') || COR_NM LIKE CONCAT('%',#{CONTENT},'%'))
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND (ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%'))
 			</if>
-			<if test="TYPE == 'COR_ID'">
-				AND COR_ID LIKE CONCAT('%',#{CONTENT},'%')
+			<if test="TYPE == 'ROUT_NM'">
+				AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
-			<if test="TYPE == 'COR_NM'">
-				AND COR_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			<if test="TYPE == 'REP_ROUT_NM'">
+				AND REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
-		</if>
 	</where>
+	ORDER BY
+		REP_ROUT_NM
 </select>
 
-<select id="AL0103G0K0" resultType="Map">
-	SELECT CONCAT('CO', LPAD(NEXTVAL(SEQ_BRT_COR_MST_0), 8, '0')) AS 'SEQ'
+
+<select id="AL0203SHI0" resultType="Map">
+	SELECT			REP_ROUT_NM
+				,	ROUT_NM
+	FROM			BMS_ROUT_MST
 </select>
 
-<select id="AL0103SHI0" resultType="Map">
-	SELECT			COR_ID
-				,	COR_NM
-	FROM			BRT_COR_MST
-	ORDER BY		COR_ID
+<select id="AL0203G1R0" resultType="Map" parameterType="Map">
+	SELECT
+		OPER_SN
+		,ARRV_TM	
+		,DPRT_TM	
+	FROM
+		BRT_OPER_ALLOC_PL_NODE_INFO
+	WHERE
+		REP_ROUT_ID = #{REP_ROUT_ID}
+	ORDER BY
+		NODE_SN
 </select>
 
+<!--  
 <insert id="AL0103G0I0" parameterType="Map">
 	INSERT	INTO	BRT_COR_MST
 					(
@@ -83,31 +96,7 @@
 	WHERE			 COR_ID = #{COR_ID}
 </delete>
 
-<select id="AL0103G1R0" resultType="Map">
-	SELECT			A.COR_ID
-				,	A.MIN_REST_TM
-				,	A.ROUT_SN
-				,	A.COR_COLOR
-				,	B.ROUT_ID
-				,	B.ROUT_NM
-				,	B.ROUT_TYPE
-				,	B.STTN_CNT
-				,	B.ROUT_LEN
-				,	B.CURVATURE
-				,	B.JIT_DSPCH_YN
-				,	B.ST_STTN_NM
-				,	B.ED_STTN_NM
-				,	B.WAY_DIV
-				
-	FROM			BRT_COR_DTL_INFO A
-		LEFT JOIN	BMS_ROUT_MST B
-		ON			A.ROUT_ID = B.ROUT_ID
-			
-	WHERE			A.COR_ID = #{COR_ID}
-	
-	ORDER BY		A.ROUT_SN
-	
-</select>
+
 
 <insert id="AL0103G1I0" parameterType="Map">
 	INSERT INTO		BRT_COR_DTL_INFO
@@ -212,5 +201,5 @@
 			REP_ROUT_NM = #{REP_ROUT_NM}
 		ORDER BY 
 			ROUT_NM
-	</select>
+	</select>-->
 </mapper>

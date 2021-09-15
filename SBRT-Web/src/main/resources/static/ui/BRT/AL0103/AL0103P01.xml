@@ -38,6 +38,7 @@
 					<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
 					<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
 					<w2:key id="key4" name="name4" dataType="text"></w2:key>
+					<w2:key id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:key>
 				</w2:keyInfo>
 			</w2:dataMap>
 			<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
@@ -48,11 +49,11 @@
 			</w2:dataList>
 		</w2:dataCollection>
 		<w2:workflowCollection></w2:workflowCollection>
-		<xf:submission id="sub_routList" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_MST" action="/rout/selectRoutList" method="post"
+		<xf:submission id="sub_routList" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_MST" action="/al/AL0103P01R0" method="post"
 			mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 			ev:submit="" ev:submitdone="scwin.sub_routList_submitdone" ev:submiterror="" abortTrigger="">
 		</xf:submission>
-		<xf:submission id="sub_searchItem" ref="" target="data:json,dlt_searchitem" action="/rout/selectRoutItem" method="post" mediatype="application/json"
+		<xf:submission id="sub_searchItem" ref="data:json,dma_search" target="data:json,dlt_searchitem" action="/al/AL0103P1SH" method="post" mediatype="application/json"
 			encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
 			ev:submiterror="" abortTrigger="">
 		</xf:submission>
@@ -68,6 +69,9 @@
 		[
 			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
 		];
+		
+		dma_search.set("REP_ROUT_NM", scwin.param.data2);
+		
 		com.setMainBtn3(wfm_mainBtn, btnOptions);
 		com.executeSubmission(sub_routList);				
 		com.executeSubmission(sub_searchItem);				

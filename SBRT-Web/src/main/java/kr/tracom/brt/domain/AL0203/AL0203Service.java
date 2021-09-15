@@ -1,4 +1,4 @@
-package kr.tracom.brt.domain.AL0103;
+package kr.tracom.brt.domain.AL0203;
 
 import java.util.List;
 import java.util.Map;
@@ -13,24 +13,28 @@ import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.util.Result;
 
 @Service
-public class AL0103Service extends ServiceSupport {
+public class AL0203Service extends ServiceSupport {
 
 	@Autowired
-	private AL0103Mapper al0103Mapper;
+	private AL0203Mapper al0203Mapper;
 	
-	public List AL0103G0R0() throws Exception {
+	public List AL0203G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return al0103Mapper.AL0103G0R0(map);
-	}
-
-	public Map AL0103G0K0() throws Exception {
-		return al0103Mapper.AL0103G0K0(); 
+		return al0203Mapper.AL0203G0R0(map);
 	}
 	
-	public List AL0103SHI0() throws Exception {
-		return al0103Mapper.AL0103SHI0();
-	}	
 	
+	public List AL0203SHI0() throws Exception {
+		return al0203Mapper.AL0203SHI0();
+	}
+	
+	public List AL0203G1R0() throws Exception {
+		// TODO Auto-generated method stub
+		Map param = getSimpleDataMap("dma_sub_search");
+		return al0203Mapper.AL0203G1R0(param);
+	}
+	
+	/*
 	public Map AL0103G0S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
@@ -100,11 +104,7 @@ public class AL0103Service extends ServiceSupport {
 		return result;	
 	}
 	
-	public List AL0103G1R0() throws Exception {
-		// TODO Auto-generated method stub
-		Map param = getSimpleDataMap("dma_sub_search");
-		return al0103Mapper.AL0103G1R0(param);
-	}
+	
 	
 	public List AL0103P0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_ROUT_MST");
@@ -119,7 +119,7 @@ public class AL0103Service extends ServiceSupport {
 	public List AL0103P1SH() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
 		return al0103Mapper.AL0103P1SH(map);
-	}
+	}*/
 		
 	
 }

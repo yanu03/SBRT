@@ -1,4 +1,4 @@
-package kr.tracom.brt.domain.AL0103;
+package kr.tracom.brt.domain.AL0203;
 
 import java.util.List;
 import java.util.Map;
@@ -6,16 +6,14 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface AL0103Mapper {
+public interface AL0203Mapper {
 	
-	public List AL0103G0R0(Map param);
+	public List AL0203G0R0(Map param);
 	
-	public Map AL0103G0K0();
+	public List AL0203SHI0();
 	
-	public List AL0103SHI0();
-	
-	public List AL0103G1R0(Map param);
-	
+	public List AL0203G1R0(Map param);
+	/*
 	public List AL0103P0R0(Map param);
 	
 	public int AL0103G0I0(Map param);
@@ -32,5 +30,5 @@ public interface AL0103Mapper {
 	
 	public List AL0103P01R0(Map param);
 	
-	public List AL0103P1SH(Map param);
+	public List AL0103P1SH(Map param);*/
 }
