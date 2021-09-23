@@ -5,18 +5,18 @@
 
 <select id="AL0203G0R0" resultType="Map">
 	SELECT			
-		REP_ROUT_ID
-		,REP_ROUT_NM
-		,ROUT_NM
-		,ROUT_TYPE
-		,ST_STTN_NM
-		,ED_STTN_NM
+		A.REP_ROUT_ID
+		,A.DAY_DIV
+		,B.REP_ROUT_NM
+		,B.ROUT_TYPE
+		,(SELECT STTN_NM FROM BMS_STTN_MST WHERE STTN_ID = A.ST_STTN_ID AND DEL_YN!='Y') ST_STTN_NM
+		,(SELECT STTN_NM FROM BMS_STTN_MST WHERE STTN_ID = A.ED_STTN_ID AND DEL_YN!='Y') ED_STTN_NM
+		,C.ROUT_NM
 	FROM			
-		BMS_ROUT_MST
-	<!--  LEFT JOIN	  	
-		BRT_OPER_ALLOC_PL_NODE_INFO B
-	ON			
-		A.REP_ROUT_ID = B.REP_ROUT_ID-->
+		BRT_OPER_PL_MST A INNER JOIN BMS_REP_ROUT_MST B
+		ON A.REP_ROUT_ID = B.REP_ROUT_ID
+		INNER JOIN BMS_ROUT_MST C
+		ON A.REP_ROUT_ID = C.REP_ROUT_ID
 	<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 				AND (ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%'))
@@ -29,7 +29,7 @@
 			</if>
 	</where>
 	ORDER BY
-		REP_ROUT_NM
+		B.REP_ROUT_NM, A.DAY_DIV
 </select>
 
 
@@ -41,165 +41,54 @@
 
 <select id="AL0203G1R0" resultType="Map" parameterType="Map">
 	SELECT
-		OPER_SN
-		,ARRV_TM	
-		,DPRT_TM	
+		A.REP_ROUT_ID
+		,A.DAY_DIV
+		,A.WAY_DIV
+		,A.OPER_SN
+		,A.NODE_ID
+		,A.NODE_SN
+		,A.ALLOC_NO
+		,A.ROUT_ID
+		,A.COR_ID
+		,A.NODE_TYPE
+		,A.ARRV_TM
+		,A.DPRT_TM
+		<!--  ,LEFT(A.ARRV_TM, 5) AS ARRV_TM
+		,LEFT(A.DPRT_TM, 5) AS DPRT_TM-->
+		,A.UPD_DTM
+		,A.UPD_ID
+		,B.REP_ROUT_NM
+		,B.WAY_ASC_NM
+		,B.WAY_DESC_NM
+		,C.NODE_NM	
 	FROM
-		BRT_OPER_ALLOC_PL_NODE_INFO
+		BRT_OPER_ALLOC_PL_NODE_INFO A 
+		INNER JOIN BMS_REP_ROUT_MST B
+		ON	A.REP_ROUT_ID = B.REP_ROUT_ID 
+		INNER JOIN BMS_NODE_MST C
+		ON	A.NODE_ID = C.NODE_ID
 	WHERE
-		REP_ROUT_ID = #{REP_ROUT_ID}
+		A.REP_ROUT_ID = #{REP_ROUT_ID}
+	AND
+		A.DAY_DIV = #{DAY_DIV}
 	ORDER BY
-		NODE_SN
+		OPER_SN, WAY_DIV, ALLOC_NO
 </select>
 
-<!--  
-<insert id="AL0103G0I0" parameterType="Map">
-	INSERT	INTO	BRT_COR_MST
-					(
-					COR_ID
-					,REP_ROUT_ID
-					,COR_NM
-					,COR_TYPE
-					,MOVE_TM
-					,UPD_DTM
-					,UPD_ID				
-					)
-			
-	VALUES			
-					(
-					#{COR_ID}
-					,#{REP_ROUT_ID}
-					,#{COR_NM}
-					,#{COR_TYPE}
-					,#{MOVE_TM}
-					,#{UPD_DTM}
-					,#{SSN_USER_ID}					
-					)				
-
-</insert>
-
-<update id="AL0103G0U0" parameterType="Map">
-	UPDATE			BRT_COR_MST
-	
-	SET				REP_ROUT_ID = #{REP_ROUT_ID}
-					,COR_NM = #{COR_NM}
-					,COR_TYPE = #{COR_TYPE}
-					,MOVE_TM = #{MOVE_TM}
-					,UPD_DTM = #{UPD_DTM}
-					,UPD_ID	= #{SSN_USER_ID}
-					
-	WHERE			 COR_ID = #{COR_ID}
-</update>
-
-<delete id="AL0103G0D0" parameterType="Map">
-	DELETE	FROM	 BRT_COR_MST
-	WHERE			 COR_ID = #{COR_ID}
-</delete>
-
-
-
-<insert id="AL0103G1I0" parameterType="Map">
-	INSERT INTO		BRT_COR_DTL_INFO
-					(
-						COR_ID
-					,	ROUT_ID
-					,	COR_COLOR
-					,	MIN_REST_TM
-					,	ROUT_SN
-					,	UPD_DTM
-					,	UPD_ID	
-					)
-	VALUES
-					(
-						#{COR_ID}
-					,	#{ROUT_ID}
-					,	#{COR_COLOR}
-					,	#{MIN_REST_TM}
-					,	#{ROUT_SN}
-					,	#{UPD_DTM}
-					,	#{SSN_USER_ID}	
-					)			
-
-</insert>
-
-<update id="AL0103G1U0" parameterType="Map">
-	UPDATE			BRT_COR_DTL_INFO
-	
-	SET				COR_COLOR = #{COR_COLOR}
-					,MIN_REST_TM = #{MIN_REST_TM}
-					,UPD_DTM = #{UPD_DTM}
-					,UPD_ID	= #{SSN_USER_ID}
-					
-	WHERE			 COR_ID = #{COR_ID}
-</update>
-
-<delete id="AL0103G1D0" parameterType="Map">
-	DELETE FROM		BRT_COR_DTL_INFO
-	WHERE			COR_ID = #{COR_ID}
-	AND				ROUT_ID = #{ROUT_ID}
-
-</delete>
-
-<select id="AL0103P0R0" resultType="Map">
-	
-	select ROUT_ID, ROUT_NM, ROUT_TYPE, STTN_CNT, ROUT_LEN, CURVATURE, REMARK
-	from BMS_ROUT_MST
-	<where>
-		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-			AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
-		</if>
-		<if test="TYPE == 'ROUT_ID'">
-			AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
-		<if test="TYPE == 'ROUT_NM'">
-			AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
-		</if>
-	</where>	
-</select>
-
-	<select id="AL0103P01R0" resultType="Map">
-		SELECT  ROUT_ID,
-				REP_ROUT_ID,
-				REP_ROUT_NM,
-				INT_ROUT_ID,
-				ROUT_NM,
-				ROUT_TYPE,
-				ST_STTN_ID,
-				ST_STTN_NM,
-				ED_STTN_ID,
-				ED_STTN_NM,
-				RET_STTN_ID,
-				RET_STTN_NM,
-				ROUT_LEN,
-				WAY_DIV,
-				USER_WAY_DIV
-		FROM BMS_ROUT_MST
-		<where>
-			REP_ROUT_NM = #{REP_ROUT_NM}
-			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
-				<if test="TYPE == 'ALL'">
-					AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
-				</if>
-				<if test="TYPE == 'ROUT_ID'">
-					AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
-				</if>
-				<if test="TYPE == 'ROUT_NM'">
-					AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
-				</if>
-			</if>
-		</where>
-		order by 
-			REP_ROUT_NM, WAY_DIV
-	</select>
-
-	<select id="AL0103P1SH" resultType="Map">
+<select id="AL0203G1CNT" resultType="Map" parameterType="Map">
 		SELECT 
-			ROUT_ID, ROUT_NM, REP_ROUT_NM
+			COUNT(*) CNT
 		FROM 
-			BMS_ROUT_MST
-		WHERE
-			REP_ROUT_NM = #{REP_ROUT_NM}
+			BRT_OPER_ALLOC_PL_NODE_INFO
+		WHERE 
+			REP_ROUT_ID = #{REP_ROUT_ID} 
+		AND 
+			DAY_DIV = #{DAY_DIV}
+		GROUP BY 
+			REP_ROUT_ID, DAY_DIV, WAY_DIV, ALLOC_NO, OPER_SN
 		ORDER BY 
-			ROUT_NM
-	</select>-->
+			OPER_SN, REP_ROUT_ID, DAY_DIV, WAY_DIV, ALLOC_NO
+
+</select>
+
 </mapper>

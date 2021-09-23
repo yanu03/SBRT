@@ -34,6 +34,11 @@ public class AL0203Service extends ServiceSupport {
 		return al0203Mapper.AL0203G1R0(param);
 	}
 	
+	public List AL0203G1CNT() throws Exception {
+		Map param = getSimpleDataMap("dma_sub_search");
+		return al0203Mapper.AL0203G1CNT(param);
+	}
+	
 	/*
 	public Map AL0103G0S0() throws Exception {
 		int iCnt = 0;

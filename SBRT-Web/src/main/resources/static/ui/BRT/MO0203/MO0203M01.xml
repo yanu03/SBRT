@@ -97,7 +97,7 @@
 				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_MO0203G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_NODE_MST" action="/mo/MO0203G0R0"
+			<xf:submission id="sub_MO0203G0R0" ref='data:json,dma_search' target='data:json,dlt_BMS_NODE_MST' action="/mo/MO0203G0R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_MO0203G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -113,9 +113,13 @@
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0203G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN" action="/rout/selectNodeListByRout" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone=""
-				ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_MO0203G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN"
+				action="/rout/selectNodeListByRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_MO0203SCK" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ETA_INFO" action="/mo/MO0203SCK" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
@@ -153,20 +157,26 @@
 		
 	};	
 	
+	function MO0203SCK() {
+		$p.executeSubmission(sub_MO0203SCK);
+	}
 	
-//	$(function () {
-//		$( "#connect" ).click(function() { connect(); });
-//		$( "#disconnect" ).click(function() { disconnect(); });
-//		
-//		$("form").on('submit', function (e) {
-//			e.preventDefault();
-//		});
-//		$( "#send" ).click(function() { sendMessage(); });
-//	
-//		connect();
-//	
-//	});	
-//	
+	//10초 간격으로 MO0203SCK 실행
+	//setInterval(MO0203SCK, 5000);
+	
+	/*$(function () {
+		$( "#connect" ).click(function() { connect(); });
+		$( "#disconnect" ).click(function() { disconnect(); });
+		
+		$("form").on('submit', function (e) {
+			e.preventDefault();
+		});
+		$( "#send" ).click(function() { sendMessage(); });
+	
+		connect();
+	
+	});	*/
+	
 	function connect() {
 		var socket = new SockJS('/websocket');
 		stompClient = Stomp.over(socket);
@@ -211,11 +221,8 @@
 		$("#mf_tac_layout_contents_MN00050202_body_message").append("<tr><td>" + message + "</td></tr>");
 	}	
 	
-	
-	
 	scwin.MO0203G0_onrowindexchange = function(row,oldRow) {
 		dma_sub_search.set("NODE_ID", dlt_BMS_NODE_MST.getCellData(row, "NODE_ID"));
-		
 		
 		var allDataList = dlt_BMS_NODE_MST.getAllJSON();
 		var focusIdx = MO0203G0.getFocusedRowIndex();
@@ -227,6 +234,7 @@
 		//카테고리 뿌리기
 		routMap.showCategory("map_MO0203", allDataList, focusIdx, MO0203G0);
 				
+		$p.executeSubmission(sub_MO0203SCK);		
 	};
 	
 	scwin.sub_MO0203G0R0_submitdone = function(e) {
@@ -278,6 +286,7 @@
 		 ㄴ ROUT_ID => 노선아이디
 		 ㄴ REMAIN_TM => 남은시간(초)
 		 ㄴ REMAIN_STTN => 몇 정류장 전*/
+	
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
