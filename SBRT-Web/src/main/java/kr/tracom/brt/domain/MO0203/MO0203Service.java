@@ -37,4 +37,9 @@ public class MO0203Service extends ServiceSupport{
 		return mo0203Mapper.MO0203G2R0(param);
 	}	
 	
+	/*public List<Map> MO0203SCK() throws Exception{
+		Map param = getSimpleDataMap("dma_sub_search");
+		return mo0203Mapper.MO0203SCK(param);
+	}*/
+	
 }

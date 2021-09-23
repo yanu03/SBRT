@@ -49,4 +49,10 @@ public class MO0203Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	/*@RequestMapping("/mo/MO0203SCK")
+	public @ResponseBody Map<String, Object> MO0203SCK() throws Exception {
+		result.setData("dlt_BMS_ETA_INFO", mo0203Service.MO0203SCK());
+		return result.getResult();
+	}*/
+	
 }

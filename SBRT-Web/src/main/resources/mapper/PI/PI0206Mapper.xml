@@ -255,11 +255,14 @@
  		SELECT DISTINCT
 			NODE_ID
 		    , NODE_NM
+		    , IFNULL(B.TXT_VAL1, (SELECT TXT_VAL1 FROM BMS_DL_CD_INFO WHERE DL_CD = 'NT003')) AS NODE_TYPE
 		    , '30' AS 'RANGE'
 		    , TRUNCATE(GPS_X, 6) AS X
 		    , TRUNCATE(GPS_Y, 6) AS Y
 		FROM
-			BMS_ROUT_NODE_CMPSTN
+			BMS_ROUT_NODE_CMPSTN A
+			LEFT JOIN BMS_DL_CD_INFO B
+			ON A.NODE_TYPE = B.DL_CD
 		WHERE
 			NODE_TYPE IN ('NT001', 'NT003', 'NT004', 'NT005', 'NT007');
  	</select>
@@ -422,7 +425,9 @@
     
     <select id="makeRoutNewRow" resultType="Map" parameterType="String">
     	SELECT
-			 CONCAT(ROUT_ID, '.csv') AS FILE_NAME
+			ROUT_ID AS FILE_NAME
+		    , REPLACE(ROUT_NM, ',', '.') AS ROUT_NM
+		    , REPLACE(ROUT_NM, ',', '.') AS ROUT_ENM
 			, CONCAT(SUBSTR(DATE_FORMAT(A.UPD_DTM, '%Y%m%d'), 3), "00") AS VERSION
 			, IFNULL(DVC_NM, "")		AS DESTI_NO
 			, IFNULL(C.TXT_VAL1, "")	AS ROUT_SHAPE
