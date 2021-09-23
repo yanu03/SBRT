@@ -676,6 +676,7 @@ public class FTPHandler {
 				txt += Constants.CSVForms.ROW_SEPARATOR +
 					checkNull(map.getOrDefault("NODE_ID", 	"")) 	+ Constants.CSVForms.COMMA +
 					checkNull(map.getOrDefault("NODE_NM",	"")) 	+ Constants.CSVForms.COMMA +
+					checkNull(map.getOrDefault("NODE_TYPE",	"")) 	+ Constants.CSVForms.COMMA +
 					checkNull(map.getOrDefault("RANGE", 	""))	+ Constants.CSVForms.COMMA +
 					checkNull(map.getOrDefault("X", 		""))	+ Constants.CSVForms.COMMA +
 					checkNull(map.getOrDefault("Y", 		""));
@@ -716,16 +717,18 @@ public class FTPHandler {
         	tmp = line.split(",");
         	
     		map.put("FILE_NAME",	tmp[0]);
-    		map.put("VERSION",		tmp[1]);
-    		map.put("DESTI_NO",		tmp[2]);
-    		map.put("ROUT_SHAPE",	tmp[3]);
-    		map.put("DAY1",			tmp[4]);
-    		map.put("DAY2",			tmp[5]);
-    		map.put("SATDAY1",		tmp[6]);
-    		map.put("SATDAY2",		tmp[7]);
-    		map.put("SUNDAY1",		tmp[8]);
-    		map.put("SUNDAY2",		tmp[9]);
-    		map.put("REP_NAME",		tmp[10]);
+    		map.put("ROUT_NM",		tmp[1]);
+    		map.put("ROUT_ENM",		tmp[2]);
+    		map.put("VERSION",		tmp[3]);
+    		map.put("DESTI_NO",		tmp[4]);
+    		map.put("ROUT_SHAPE",	tmp[5]);
+    		map.put("DAY1",			tmp[6]);
+    		map.put("DAY2",			tmp[7]);
+    		map.put("SATDAY1",		tmp[8]);
+    		map.put("SATDAY2",		tmp[9]);
+    		map.put("SUNDAY1",		tmp[10]);
+    		map.put("SUNDAY2",		tmp[11]);
+    		map.put("REP_NAME",		tmp[12]);
         		
         	list.add(map);
         	}
@@ -780,16 +783,18 @@ public class FTPHandler {
 		for(Map<String, Object> map : list) {
 			txt += Constants.CSVForms.ROW_SEPARATOR;
 			txt += map.get("FILE_NAME")
-				+  Constants.CSVForms.COMMA + map.get("VERSION")
-				+  Constants.CSVForms.COMMA + map.get("DESTI_NO")
-				+  Constants.CSVForms.COMMA + map.get("ROUT_SHAPE")
-				+  Constants.CSVForms.COMMA + map.get("DAY1")
-				+  Constants.CSVForms.COMMA + map.get("DAY2")
-				+  Constants.CSVForms.COMMA + map.get("SATDAY1")
-				+  Constants.CSVForms.COMMA + map.get("SATDAY2")
-				+  Constants.CSVForms.COMMA + map.get("SUNDAY1")
-				+  Constants.CSVForms.COMMA + map.get("SUNDAY2")
-				+  Constants.CSVForms.COMMA + map.get("REP_NAME");
+				+  Constants.CSVForms.COMMA + map.getOrDefault("ROUT_NM", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("ROUT_ENM", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("VERSION", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("DESTI_NO", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("ROUT_SHAPE", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("DAY1", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("DAY2", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("SATDAY1", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("SATDAY2", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("SUNDAY1", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("SUNDAY2", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("REP_NAME", "");
 		}
 		
 		try {
@@ -814,7 +819,7 @@ public class FTPHandler {
 		}
 		
 		for(Map<String, Object> map : list) {
-			if(routIdDel.equals(map.get("FILE_NAME").toString().split(".")[0])) {
+			if(routIdDel.equals(map.get("FILE_NAME").toString())) {
 				list.remove(map);
 				break;
 			}
@@ -827,6 +832,8 @@ public class FTPHandler {
 		for(Map<String, Object> map : list) {
 			txt += Constants.CSVForms.ROW_SEPARATOR;
 			txt += map.get("FILE_NAME") 
+					+ Constants.CSVForms.COMMA + map.get("ROUT_NM")
+					+ Constants.CSVForms.COMMA + map.get("ROUT_ENM")
 					+ Constants.CSVForms.COMMA + map.get("VERSION") 
 					+ Constants.CSVForms.COMMA + map.get("DESTI_NO") 
 					+ Constants.CSVForms.COMMA + map.get("ROUT_SHAPE")
@@ -1010,7 +1017,7 @@ public class FTPHandler {
 		String txt = Constants.CSVForms.ROUTE_VERSION + courseVer 
 				   + Constants.CSVForms.ROW_SEPARATOR;		
 		
-		txt += Constants.CSVForms.ROUTE_TITLE;
+		txt += Constants.CSVForms.COURSE_TITLE;
 		
 		for(Map<String, Object> routMap : courseRoutList) {
 			txt += Constants.CSVForms.ROW_SEPARATOR + courseId
