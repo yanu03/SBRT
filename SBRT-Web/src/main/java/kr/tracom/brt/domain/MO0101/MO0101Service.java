@@ -29,7 +29,7 @@ public class MO0101Service extends ServiceSupport{
 	}
 	
 	public List MO0101SHI1() throws Exception{
-		Map param = getSimpleDataMap("dma_sub_search");		
+		Map param = getSimpleDataMap("dma_search");		
 		return mo0101Mapper.MO0101SHI1(param);
 	}
 	
@@ -37,6 +37,12 @@ public class MO0101Service extends ServiceSupport{
 		// TODO Auto-generated method stub
 		Map param = getSimpleDataMap("dma_sub_search");
 		return mo0101Mapper.MO0101G2R0(param);
+	}
+	
+	public List MO0101G4R0() throws Exception {
+		// TODO Auto-generated method stub
+		Map param = getSimpleDataMap("dma_search");
+		return mo0101Mapper.MO0101G4R0(param);
 	}	
 	
 }

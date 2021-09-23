@@ -1159,7 +1159,6 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 		
 	});	*/
 	//routMap.mapInfo[mapId].infoWindow.setMap(routMap.mapInfo[mapId].map); 
-	debugger;
 	routMap.mapInfo[mapId].overlay = overlay;
 	routMap.mapInfo[mapId].overArr.push(routMap.mapInfo[mapId].overlay);
 	
@@ -1432,7 +1431,6 @@ routMap.removeAllInfoWindow = function(mapId){
 }
 
 routMap.removeAllOverlay = function(mapId){
-	debugger;
 	if(routMap.mapInfo[mapId].overArr != null){
 		for(var i=0; i<routMap.mapInfo[mapId].overArr.length; i++){
 			routMap.mapInfo[mapId].overArr[i].setMap(null);
