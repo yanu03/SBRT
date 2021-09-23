@@ -105,7 +105,7 @@ public class PI0206Service extends ServiceSupport {
 									data.put("COR_ID",map.get("COR_ID"));
 									iCnt = pi0206Mapper.PI0206G1I0(data);
 									
-								} 
+								}
 								else if (rowStatus.equals("D")) {
 									dCnt += pi0206Mapper.PI0206G1D0(data);
 								} 
@@ -212,6 +212,8 @@ public class PI0206Service extends ServiceSupport {
 		//노선 정보
 		List<Map<String, Object>> routInfoList = pi0206Mapper.selectRoutInfoList(paramMap);
 		
+		System.out.println("0----------------");
+		System.out.println(routInfoList);
 		//routelist 하위
 		for(Map<String, Object> routInfo : routInfoList) {
 			String routId = routInfo.get("ROUT_ID").toString();
