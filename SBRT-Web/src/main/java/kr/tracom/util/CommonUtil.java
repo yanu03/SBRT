@@ -442,7 +442,7 @@ public class CommonUtil {
 		try {
 			result = (object==null||((String)object).isEmpty())?0:Double.parseDouble((String)object);
 		}catch (Exception e) {
-			result = (object==null)?0:Double.parseDouble(String.valueOf(object));
+			result = 0;
 		}
 		return result;
 	}
@@ -452,7 +452,17 @@ public class CommonUtil {
 		try {
 			result = (object==null)?0:Double.parseDouble(String.valueOf(object));
 		}catch (Exception e) {
-			result = (double)object;
+			result = 0;
+		}
+		return result;
+	}
+	
+	public static int decimalToInt(Object object) {
+		int result = 0;
+		try {
+			result = (object==null)?0:Integer.parseInt(String.valueOf(object));
+		}catch (Exception e) {
+			result = 0;
 		}
 		return result;
 	}

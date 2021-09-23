@@ -23,6 +23,7 @@
 						<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
 						<w2:key id="AREA" name="권역" dataType="text"></w2:key>
 						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_result">
@@ -97,7 +98,7 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0404G1R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_SI0404G1S0" ref='data:json,{"action":"modified","id":"dlt_BMS_ROUT_NODE_CMPSTN"}' target="data:json,dma_result"
+			<xf:submission id="sub_SI0404G1S0" ref='data:json,[{"id":"dlt_BMS_ROUT_NODE_CMPSTN","action":"modified"},"dma_sub_search"]' target="data:json,dma_result"
 				action="/si/SI0404G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="저장 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0404G1S0_submitdone"
 				ev:submiterror="" abortTrigger="">
@@ -190,6 +191,8 @@
 	
 	scwin.SI0404G0_onrowindexchange = function(row,oldRow) {
 		routMap.initMapInfo("map_SI0404");
+		dma_sub_search.set("ROUT_ID", dlt_BMS_ROUT_MST.getCellData(row,"ROUT_ID"));
+		dma_sub_search.set("WAY_DIV", dlt_BMS_ROUT_MST.getCellData(row,"WAY_DIV"));
 		var focusOption = {keyMap : dma_sub_search};
 		com.changeDualGrid(SI0404G0, SI0404G1, sub_SI0404G1S0, sub_SI0404G1R0, focusOption, row, oldRow);
 	};

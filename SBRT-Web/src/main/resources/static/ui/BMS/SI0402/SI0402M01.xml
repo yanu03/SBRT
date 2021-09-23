@@ -21,7 +21,9 @@
 						<w2:key id="STTN_IDS" name="정류소IDS" dataType="text"></w2:key>
 						<w2:key id="CRS_IDS" name="교차로IDS" dataType="text"></w2:key>
 						<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
+						<w2:key id="WAY_DIV" name="상하행구분" dataType="text"></w2:key>
 						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_result">
@@ -102,13 +104,13 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0402G1R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_SI0402G1S0" ref='data:json,{"action":"modified","id":"dlt_BMS_ROUT_NODE_CMPSTN"}' target="data:json,dma_result"
+			<xf:submission id="sub_SI0402G1S0" ref='data:json,[{"id":"dlt_BMS_ROUT_NODE_CMPSTN","action":"modified"},"dma_sub_search"]' target="data:json,dma_result"
 				action="/si/SI0402G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="저장 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0402G1S0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
-
+		
 		<script type="text/javascript" lazy="false"><![CDATA[
 
 	var isSttnAdd;
@@ -117,10 +119,7 @@
 	var isCrossAdd;
 	var oldNodeType;
 	var curRoutId;
-
-	var curPoint;
-	
-
+	var curRoutId;
 
 	scwin.onpageload = function() {
 
@@ -211,6 +210,8 @@
 		
 		routMap.initMapInfo("map_SI0402");
 		curRoutId = dlt_BMS_ROUT_MST.getCellData(row,"ROUT_ID");
+		dma_sub_search.set("ROUT_ID", dlt_BMS_ROUT_MST.getCellData(row,"ROUT_ID"));
+		dma_sub_search.set("WAY_DIV", dlt_BMS_ROUT_MST.getCellData(row,"WAY_DIV"));
 		var focusOption = {keyMap : dma_sub_search};
 		com.changeDualGrid(SI0402G0, SI0402G1, sub_SI0402G1S0, sub_SI0402G1R0, focusOption, row, oldRow);
 	};
@@ -291,8 +292,8 @@
 		
 		//var val_STTN_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("STTN_ID");
 		//dma_sub_search.set("STTN_IDS", val_STTN_ID);
-		var param = dma_sub_search.get("ROUT_ID");
-		if (param != "") {
+
+		if (curRoutId != "") {
 			var data = null;
 			if(isAdd){
 				data = { data : dma_sub_search.getJSON(), callbackFn : "scwin.add_sttn_done" };
@@ -337,8 +338,8 @@
 		
 		//var val_CRS_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("CRS_ID");
 		//dma_sub_search.set("CRS_IDS", val_CRS_ID);
-		var param = dma_sub_search.get("ROUT_ID");
-		if (param != "") {
+
+		if (curRoutId != "") {
 			var data = null;
 			if(isAdd){
 				data = { data : dma_sub_search.getJSON(), callbackFn : "scwin.add_cross_done" };
@@ -383,7 +384,9 @@
 		if(data==null)return;
 
 		var nodeId = com.getGridViewDataList(grid).getCellData(index, "NODE_ID");
+		//var routId = dlt_BMS_ROUT_MST.getCellData(SI0402G1.getFocusedRowIndex(),"ROUT_ID");
 		if(com.getGridViewDataList(grid).getCellData(index,"NODE_TYPE")==routMap.NODE_TYPE.BUSSTOP){
+			com.getGridViewDataList(grid).setCellData(index, "ROUT_ID",curRoutId);
 			com.getGridViewDataList(grid).setCellData(index, "STTN_ID",data.STTN_ID);
 			com.getGridViewDataList(grid).setCellData(index, "OLD_NODE_ID",nodeId);
 			com.getGridViewDataList(grid).setCellData(index, "NODE_ID",data.STTN_ID);
@@ -391,6 +394,7 @@
 			com.getGridViewDataList(grid).setCellData(index, "STTN_NO",data.STTN_NO);
 		}
 		else if(com.getGridViewDataList(grid).getCellData(index,"NODE_TYPE")==routMap.NODE_TYPE.CROSS){
+			com.getGridViewDataList(grid).setCellData(index, "ROUT_ID",curRoutId);
 			com.getGridViewDataList(grid).setCellData(index, "CRS_ID",data.CRS_ID);
 			com.getGridViewDataList(grid).setCellData(index, "OLD_NODE_ID",nodeId);
 			com.getGridViewDataList(grid).setCellData(index, "NODE_ID",data.CRS_ID);
@@ -402,8 +406,8 @@
 	/*scwin.select_oldNode = function() {
 		var val_NODE_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("NODE_ID");
 		dma_sub_search.set("NODE_IDS", val_NODE_ID);
-		var param = dma_sub_search.get("ROUT_ID");
-		if (param != "") {
+
+		if (curRoutId != "") {
 			var data = { data : dma_sub_search.getJSON(), callbackFn : "scwin.insertNode" };
 			var options = { id : "SI0402P01",
 							popupName : "노드선택", 
@@ -415,8 +419,8 @@
 	scwin.select_stdNode = function() {
 		var val_MOCK_NODE_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("MOCK_NODE_ID");
 		dma_sub_search.set("MOCK_NODE_IDS", val_MOCK_NODE_ID);
-		var param = dma_sub_search.get("ROUT_ID");
-		if (param != "") {
+
+		if (curRoutId != "") {
 			var data = { data : dma_sub_search.getJSON(), callbackFn : "scwin.insertStdNode" };
 			var options = { id : "SI0402P01",
 							popupName : "표준노드선택", 

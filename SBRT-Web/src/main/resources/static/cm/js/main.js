@@ -44,9 +44,9 @@ scwin.getLayoutId = function() {
 };
 
 scwin.setResultMessage = function(resultData) {
-
 	if (typeof wfm_footer !== "undefined") {
 		if(resultData.statusCode=='SAVE')com.alert(resultData.message);
+		else if(resultData.statusCode=='E')com.alert(resultData.message);
 		/*
 		var messageObj = wfm_footer.getWindow().spn_message;
 		var curCode = messageObj.getUserData("tmpStatusCode");

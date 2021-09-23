@@ -53,9 +53,12 @@ public class SI0401Service extends ServiceSupport {
 				} else if (rowStatus.equals("U")) {
 					uCnt += si0401Mapper.SI0401G0U0(data);
 				} else if (rowStatus.equals("D")) {
-					ftpHandler.deleteRoutList(data.get("ROUT_ID").toString(), "00000000");
-					ftpHandler.deleteRoutemap(data.get("ROUT_ID").toString());
 					dCnt += si0401Mapper.SI0401G0D0(data);
+					try {
+						ftpHandler.deleteRoutList(data.get("ROUT_ID").toString(), "00000000");
+						ftpHandler.deleteRoutemap(data.get("ROUT_ID").toString());
+					} catch(Exception e) {	
+					}
 				} 
 			}			
 		} catch(Exception e) {

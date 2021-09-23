@@ -46,6 +46,8 @@
 						<w2:column id="ED_STTN_ID" name="종점ID" dataType="text"></w2:column>
 						<w2:column id="ED_STTN_NM" name="종점명" dataType="text"></w2:column>
 						<w2:column id="WAY_YN" name="상하행여부" dataType="text"></w2:column>
+						<w2:column id="WAY_ASC_NM" name="상행명" dataType="text"></w2:column>
+						<w2:column id="WAY_DESC_NM" name="하행명" dataType="text"></w2:column>
 						<w2:column id="HOLI_YN" name="휴일여부" dataType="text"></w2:column>
 						<w2:column id="USE_YN" name="사용여부" dataType="text" defaultValue="Y"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
@@ -73,7 +75,7 @@
 		</xf:model>
 	<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
-		
+		debugger;
 		var autoOptions = {
 			Main : { grid : SI0405G0, frm : SI0405F0, srchSbm : sub_SI0405G0R0, savSbm : sub_SI0405G0S0
 				, keySbm : sub_SI0405G0K0, srchGrp : pgm_header, keyColumn : "REP_ROUT_ID", focusColumn : "ROUT_NM", name : "대표노선 목록"}
@@ -82,15 +84,14 @@
 		var codeOptions = [ {code : "ROUT_TYPE", compID : "ROUT_TYPE, SI0405G0:ROUT_TYPE" },
 							{code : "AREA", compID : "AREA, SI0405G1:AREA" },
 						];		
-	
-		com.setCommonDtl(codeOptions, function() {
-			com.searchGrid(SI0405G0, sub_SI0405G0R0);
-		});	
+
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);	
 		
 		com.executeSubmission(sub_SI0405SHI0);
 
-		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
+		com.setCommonDtl(codeOptions, function() {
+			com.searchGrid(SI0405G0, sub_SI0405G0R0);
+		});	
 		
 	};
 	
@@ -100,6 +101,17 @@
 	
 	scwin.sub_SI0405G0R0_submitdone = function(e) {
 		com.setFocusedCell(SI0405G0, "REP_ROUT_ID");	
+
+		var wayYn = dlt_BMS_REP_ROUT_MST.getCellData(SI0405G0.getFocusedRowIndex(), "WAY_YN");
+		if(wayYn = "Y"){
+			var disabled = true;
+			if(wayYn == "Y"){
+				disabled = false;
+			}
+			WAY_ASC_NM.setDisabled(disabled);
+			WAY_DESC_NM.setDisabled(disabled);
+		}
+		
 	};
 	
 	scwin.sub_SI0405G0K0_submitdone = function(e) {
@@ -173,7 +185,17 @@
 	
 	scwin.ED_STTN_NM_onfocus = function(e) {
 		scwin.ED_STTN_SEARCH_onclick();
-	};	
+	};
+	
+	scwin.WAY_YN_onradioclick = function(index,value){
+		debugger;
+		var disabled = true;
+		if(value == "Y"){
+			disabled = false;
+		}
+		WAY_ASC_NM.setDisabled(disabled);
+		WAY_DESC_NM.setDisabled(disabled);
+	};
 		
 	]]></script>
 	</head>
@@ -430,31 +452,11 @@
 								<xf:group class="w2tb_th" style="" tagname="th">상하행여부</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<w2:attributes>
-										<w2:colspan>1</w2:colspan>
+										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:select1 id="" selectedIndex="-1" appearance="full" style="width: 150px;height: 21px;margin-left: 20px;" cols=""
-										rows="1" ref="data:dlt_BMS_REP_ROUT_MST.WAY_YN">
-										<xf:choices>
-											<xf:item>
-												<xf:label><![CDATA[예]]></xf:label>
-												<xf:value><![CDATA[Y]]></xf:value>
-											</xf:item>
-											<xf:item>
-												<xf:label><![CDATA[아니오]]></xf:label>
-												<xf:value><![CDATA[N]]></xf:value>
-											</xf:item>
-										</xf:choices>
-									</xf:select1>
-								</xf:group>
-								<xf:group class="w2tb_th" style="" tagname="th">휴일여부</xf:group>
-								<xf:group class="w2tb_td" style="" tagname="td">
-									<w2:attributes>
-										<w2:colspan>1</w2:colspan>
-										<w2:rowspan>1</w2:rowspan>
-									</w2:attributes>
-									<xf:select1 appearance="full" cols="" id="" ref="data:dlt_BMS_REP_ROUT_MST.HOLI_YN" rows="1"
-										selectedIndex="-1" style="width: 150px;height: 21px;">
+										rows="1" ref="data:dlt_BMS_REP_ROUT_MST.WAY_YN" ev:onradioclick="scwin.WAY_YN_onradioclick">
 										<xf:choices>
 											<xf:item>
 												<xf:label><![CDATA[예]]></xf:label>
@@ -468,7 +470,42 @@
 									</xf:select1>
 								</xf:group>
 							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group class="w2tb_th" style="" tagname="th">상행명</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<xf:input class="" id="WAY_ASC_NM" mandatory="" ref="data:dlt_BMS_REP_ROUT_MST.WAY_ASC_NM"
+										style="width:100%;height:21px;" adjustMaxLength="">
+									</xf:input>
+								</xf:group>
+								<xf:group tagname="td" class="w2tb_th">하행명</xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<xf:input adjustMaxLength="" disabled="" fireEventOnInvalid="" id="WAY_DESC_NM"
+										invalidMessageFunc="" mandatory="" readOnly="" ref="data:dlt_BMS_REP_ROUT_MST.WAY_DESC_NM" style="width:100%;height:21px;"
+										validateOnCheckMaxByteLength="" validateOnInput="" validator="" maxlength="5">
+									</xf:input>
+								</xf:group>
+							</xf:group>
 							<xf:group tagname="tr" style="">
+								<xf:group class="w2tb_th" style="" tagname="th">휴일여부</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<w2:attributes>
+										<w2:colspan>1</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:select1 appearance="full" cols="" id="" ref="data:dlt_BMS_REP_ROUT_MST.HOLI_YN" rows="1"
+										selectedIndex="-1" style="width: 150px;height: 21px;margin-left: 20px;">
+										<xf:choices>
+											<xf:item>
+												<xf:label><![CDATA[예]]></xf:label>
+												<xf:value><![CDATA[Y]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[아니오]]></xf:label>
+												<xf:value><![CDATA[N]]></xf:value>
+											</xf:item>
+										</xf:choices>
+									</xf:select1>
+								</xf:group>
 								<xf:group tagname="th" class="w2tb_th">
 									사용여부
 									<w2:attributes>
@@ -477,7 +514,7 @@
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes>
-										<w2:colspan>3</w2:colspan>
+										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:select1 appearance="full" cols="" id="" ref="data:dlt_BMS_REP_ROUT_MST.USE_YN" rows="1"

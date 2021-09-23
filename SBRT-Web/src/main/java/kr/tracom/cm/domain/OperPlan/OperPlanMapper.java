@@ -9,5 +9,6 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface OperPlanMapper {
 	public int insertSimpleOperPlan(Map param);
-
+	public List<Map<String, Object>> selectSttnPeakInfoOfOperPlan(Map param);
+	public Map<String, Object> selectOperPlanMst(Map param);
 }

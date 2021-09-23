@@ -5,12 +5,14 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
 
 import kr.tracom.brt.domain.AL0201.AL0201Mapper;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.util.Result;
 
+@Service
 public class AL0201Service extends ServiceSupport {
 
 
@@ -67,7 +69,7 @@ public class AL0201Service extends ServiceSupport {
 		int uCnt = 0;
 		int dCnt = 0;		
 		
-		List<Map<String, Object>> param = getSimpleList("dlt_BRT_OPER_PL_ROUT_INFO");
+		List<Map<String, Object>> param = getSimpleList("dlt_BRT_OPER_ALLOC_PL_ROUT_INFO");
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);

@@ -2595,6 +2595,82 @@ com.validateGridView = function(gridViewObj, tacObj, tabId) {
 	}
 };
 
+com.validateGridView2 = function(gridViewObj, valInfoArr, focusIndex, tacObj, tabId) {
+
+	if (gridViewObj === null) {
+		return false;
+	}
+
+	var dataList = com.getGridViewDataList(gridViewObj);
+	if (dataList === null) {
+		$p.log("Can not find the datalist of '" + gridViewObjId + "' object.");
+		return false;
+	}
+
+	var valStatus = {
+		isValid : true,
+		message : "",
+		error : []
+	// { columnId: "", columnName: "", rowIndex: 0, message: "" }
+	};
+
+	try {
+		var modifiedData = dataList.getRowJSON(focusIndex);
+
+		for ( var valIdx in valInfoArr) {
+			var valInfo = valInfoArr[valIdx];
+			if ((typeof valInfo.id !== "undefined") && (typeof modifiedData[valInfo.id] !== "undefined")) {
+				var value = modifiedData[valInfo.id].trim();
+				if ((typeof valInfo.mandatory !== "undefined") && (valInfo.mandatory === true) && (value.length === 0)) {
+					_setResult(modifiedIdx[dataIdx], dataList, gridViewObj.getID(), valInfo.id, "필수 입력 항목 입니다.");
+				}
+			}
+
+			if (valStatus.error.length > 0) {
+				break;
+			}
+		}
+			
+		if (valStatus.error.length > 0) {
+			valStatus.isValid = false;
+			valStatus.message = "유효하지 않은 값이 입력 되었습니다";
+
+			if ((typeof tacObj !== "undefined") && (typeof tabId !== "undefined") && (tabId !== "")) {
+				var tabIndex = tacObj.getTabIndex(tabId);
+				tacObj.setSelectedTabIndex(tabIndex);
+			}
+
+			gcm.valStatus.isValid = false;
+			gcm.valStatus.objectType = "gridView";
+			gcm.valStatus.objectName = valStatus.error[0].comObjId;
+			gcm.valStatus.columnId = valStatus.error[0].columnId;
+			gcm.valStatus.rowIndex = valStatus.error[0].rowIndex;
+
+			com.alert(valStatus.error[0].message, "gcm._groupValidationCallback");
+
+		}
+
+		return valStatus.isValid;
+
+		function _setResult(rowIndex, dataList, gridViewObjId, columnId, message) {
+			var errIdx = valStatus.error.length;
+			valStatus.error[errIdx] = {};
+			valStatus.error[errIdx].columnId = columnId;
+			valStatus.error[errIdx].comObjId = gridViewObjId;
+			valStatus.error[errIdx].columnName = dataList.getColumnName(columnId);
+			valStatus.error[errIdx].rowIndex = rowIndex;
+			valStatus.error[errIdx].message = com.attachPostposition(valStatus.error[errIdx].columnName) + " " + message;
+		}
+	} catch (e) {
+		$p.log("[com.validateGridView] Exception :: " + e.message);
+	} finally {
+		modifiedData = null;
+		modifiedIdx = null;
+		dataList = null;
+		gridViewObj = null;
+	}
+};
+
 /**
 * Grid를 Validation Check하여 해당 Table에 Focus를 주는 함수
  * @param {Object} gridViewObj GridView 객체
@@ -3154,10 +3230,12 @@ com.transTime = function(value) {
  * // return 예시) "12:34"
  */
 com.transTime2 = function(value) {
-	var minute = String(value).substr(0, 2);
-	var second = String(value).substr(2, 2);
-	var output = minute + ":" + second;
-
+	var output = value;
+	if(value.length==4){
+		var minute = String(value).substr(0, 2);
+		var second = String(value).substr(2, 2);
+		output = minute + ":" + second;
+	}
 	return output;
 };
 
@@ -5515,6 +5593,10 @@ com.delUndoGrid = function(grid){
 }
 
 com.clearGrid = function(grid){
+	
+	 if(com.isEmpty(gcm.GRID_INFO[grid.org_id])==false && com.isEmpty(gcm.GRID_INFO[grid.org_id].undo)==false
+			 && gcm.GRID_INFO[grid.org_id].undo == false)return;
+	 
 	var data = com.getGridViewDataList(grid);
 
 	com.delUndoGrid(grid);
@@ -6009,7 +6091,7 @@ com.getMatchedIndex = function(data, keyColumn, keyValue){
 }
 
 com.setFocusedCell = function(grid, focusColumn) {
-	debugger;
+	
 	try{
 		var gridInfo = gcm.GRID_INFO[grid.org_id];
 		if ((typeof gridInfo != "undefined") && (gridInfo!=null)){
@@ -6051,7 +6133,7 @@ com.initGridInfo = function(options){
 			if ((typeof options.Main !== "undefined") && (options.Main!==null)){ //메인 그리드 세팅
 				
 				var gridInfo = {CUR_ROW_INDEX:-1, OLD_ROW_INDEX:-1, ERR_ROW_INDEX:-1, keyColumn:null, focusColumn:null
-						, name:null, keyValue:null, dualSaving:false};
+						, name:null, keyValue:null, dualSaving:false, undo:true};
 				
 				var main = options.Main;
 				if ((typeof main.keyColumn !== "undefined") && (main.keyColumn!==null)){
@@ -6063,11 +6145,15 @@ com.initGridInfo = function(options){
 				if ((typeof main.name !== "undefined") && (main.name!==null)){
 					gridInfo.name = main.name;
 				}
+				if ((typeof main.undo !== "undefined") && (main.undo!==null)){
+					gridInfo.undo = main.undo;
+				}
+				
 				gcm.GRID_INFO[main.grid.org_id] = gridInfo;	
 			}
 			if ((typeof options.Sub1 !== "undefined") && (options.Sub1!==null)){ //서브 그리드1 세팅
 				var gridInfo = {CUR_ROW_INDEX:-1, OLD_ROW_INDEX:-1, ERR_ROW_INDEX:-1, keyColumn:null, focusColumn:null
-						, name:null, keyValue:null, dualSaving:false};
+						, name:null, keyValue:null, dualSaving:false, undo:true};
 				var sub1 = options.Sub1;
 				if ((typeof sub1.keyColumn !== "undefined") && (sub1.keyColumn!==null)){
 					gridInfo.keyColumn = sub1.keyColumn;
@@ -6078,11 +6164,14 @@ com.initGridInfo = function(options){
 				if ((typeof sub1.name !== "undefined") && (sub1.name!==null)){
 					gridInfo.name = sub1.name;
 				}
+				if ((typeof sub1.undo !== "undefined") && (sub1.undo!==null)){
+					gridInfo.undo = sub1.undo;
+				}
 				gcm.GRID_INFO[sub1.grid.org_id] = gridInfo;	
 			}
 			if ((typeof options.Sub2 !== "undefined") && (options.Sub2!==null)){ //서브 그리드1 세팅
 				var gridInfo = {CUR_ROW_INDEX:-1, OLD_ROW_INDEX:-1, ERR_ROW_INDEX:-1, keyColumn:null, focusColumn:null
-						, name:null, keyValue:null, dualSaving:false};
+						, name:null, keyValue:null, dualSaving:false, undo:true};
 				var sub2 = options.Sub2;
 				if ((typeof sub2.keyColumn !== "undefined") && (sub2.keyColumn!==null)){
 					gridInfo.keyColumn = sub2.keyColumn;
@@ -6092,6 +6181,9 @@ com.initGridInfo = function(options){
 				}
 				if ((typeof sub2.name !== "undefined") && (sub2.name!==null)){
 					gridInfo.name = sub2.name;
+				}
+				if ((typeof sub2.undo !== "undefined") && (sub2.undo!==null)){
+					gridInfo.undo = sub2.undo;
 				}
 				gcm.GRID_INFO[sub2.grid.org_id] = gridInfo;	
 			}
@@ -6158,7 +6250,6 @@ com.setKeyGridInfo = function(grid){
   부모 그리드의 row 인덱스 위치가 바뀔때 마다 실행되며 프로그램코드에 해당하는 자식 그리드를 가져온다.
  */
 com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, focusOption, row, oldRow, subNm) {	
-	
 	var mainData = com.getGridViewDataList(mainGrid);
 	var subData = com.getGridViewDataList(subGrid);
 	
@@ -6211,11 +6302,13 @@ com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, f
 					if (modifiedSubCnt > 0) {
 						com.saveData(subGrid,null,subSaveSbmObj);
 					} else {
+						
 						com.searchGrid(subGrid,subSrchSbmObj);
 					}
 				} else {
-					var subFocusedValue = mainData.getCellData(mainGrid.getFocusedRowIndex(), keyColumn);
-					if (subFocusedValue) {
+					//var subFocusedValue = mainData.getCellData(mainGrid.getFocusedRowIndex(), keyColumn);
+					if (curKeyValue) {
+						
 						com.searchGrid(subGrid,subSrchSbmObj);
 					}
 				}
@@ -6295,8 +6388,8 @@ com.changeThirdGrid = function(mainGrid, subGrid1, subGrid2, subSaveSbmObj1, sub
 						com.saveData(subGrid2,null,subSaveSbmObj2);
 					}
 				} else {
-					var subFocusedValue = mainData.getCellData(mainGrid.getFocusedRowIndex(), keyColumn);
-					if (subFocusedValue) {
+					//var subFocusedValue = mainData.getCellData(mainGrid.getFocusedRowIndex(), keyColumn);
+					if (curKeyValue) {
 						com.searchGrid(subGrid1,subSrchSbmObj1);
 						com.searchGrid(subGrid2,subSrchSbmObj2);
 					}
@@ -6378,8 +6471,8 @@ com.changeThirdGrid2 = function(mainGrid, subGrid1, subGrid2, subSrchSbmObj1, su
 						com.saveData(subGrid2,null,subSaveSbmObj2);
 					}
 				} else {
-					var subFocusedValue = mainData.getCellData(mainGrid.getFocusedRowIndex(), keyColumn);
-					if (subFocusedValue) {
+					//var subFocusedValue = mainData.getCellData(mainGrid.getFocusedRowIndex(), keyColumn);
+					if (curKeyValue) {
 						com.searchGrid(subGrid1,subSrchSbmObj1);
 						com.searchGrid(subGrid2,subSrchSbmObj2);
 					}
@@ -6537,7 +6630,7 @@ com.decodeXss = function(str) {
 	return str.replaceAll("&#40;", "(").replaceAll("&#41;", ")");
 }
 
-com.setSerialNumberToData= function(grid, column, oldColumn){
+com.setSerialNumberToData= function(grid, column){
 	var data = com.getGridViewDataList(grid);
 	var rowData = data.getAllJSON();
 	var nodeSn = 0;
@@ -6546,7 +6639,7 @@ com.setSerialNumberToData= function(grid, column, oldColumn){
 			nodeSn ++;
 			var oldNodeSn = data.getCellData(i,column);
 			if(oldNodeSn != nodeSn){
-				data.setCellData(i,oldColumn, oldNodeSn);
+				//data.setCellData(i,oldColumn, oldNodeSn);
 				data.setCellData(i,column, nodeSn);
 			}
 		}
@@ -6555,4 +6648,37 @@ com.setSerialNumberToData= function(grid, column, oldColumn){
 
 com.isEmpty = function(str){
 	return str == ''||str == null||typeof str == "undefined";
+}
+
+com.loadingBar = function(isShowLoadinBar){
+	if(com.isEmpty(isShowLoadinBar))
+	{
+		isShowLoadinBar = false;
+	}
+	if(isShowLoadinBar)
+	{
+		try
+		{
+			$.blockUI({
+		    	message : "<img src='"+ "/cm/images/inc/progressingbar.gif'/>"
+			   	,css:
+			   	{ 
+					 top:  ($(window).height() - 100) / 2 + 'px' 
+					,left: ($(window).width()  - 100) / 2 + 'px' 
+					,width: '100px'
+		        }
+			   ,overlayCSS:
+			   {
+				   backgroundColor: 'transparent'
+			   }
+			});
+		}
+		catch(e)
+		{
+			$p.log(e);
+		}
+	}
+	else{
+		$.unblockUI();
+	}
 }

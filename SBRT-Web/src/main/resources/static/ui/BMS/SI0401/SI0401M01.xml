@@ -150,7 +150,7 @@
       
       com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
       
-      SI0401G0.mergeCells("byrestriccol");
+      //SI0401G0.mergeCells("byrestriccol");
    };
    
    scwin.onpageunload = function() {
@@ -248,13 +248,60 @@
       com.openPopup("/cm/common/popUpRepRoutList.xml", options, data);
    };
    
-   scwin.REP_ROUT_NM_SEARCH_callback = function(obj) {
-      dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "REP_ROUT_ID", obj[0].REP_ROUT_ID);
-      dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ROUT_TYPE", obj[0].ROUT_TYPE);
-      dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "HOLI_YN", obj[0].HOLI_YN);
 
-      REP_ROUT_NM.setValue(obj[0].REP_ROUT_NM);
-   };   
+
+	scwin.WAY_DIV_onviewchange = function(info) {
+		debugger;
+		if ((info.oldValue == "WD002") && (info.newValue == "WD001") || (info.oldValue == "WD001") && (info.newValue == "WD002")) {
+			var stSttnId = dlt_BMS_ROUT_MST.getCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_ID");
+			var stSttnNm = dlt_BMS_ROUT_MST.getCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_NM");
+			var stSttnEnm = dlt_BMS_ROUT_MST.getCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_ENM");
+			var edSttnId = dlt_BMS_ROUT_MST.getCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_ID");
+			var edSttnNm = dlt_BMS_ROUT_MST.getCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_NM");
+			var edSttnEnm = dlt_BMS_ROUT_MST.getCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_ENM");
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_ID", edSttnId);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_NM", edSttnNm);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_ENM", edSttnEnm);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_ID", stSttnId);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_NM", stSttnNm);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_ENM", stSttnEnm);
+		}
+	}
+	
+	scwin.REP_ROUT_NM_SEARCH_callback = function(obj) {
+
+		var wayDiv = dlt_BMS_ROUT_MST.getCellData(SI0401G0.getFocusedRowIndex(), "WAY_DIV");
+		var stSttnId =obj[0].ST_STTN_ID;
+		var stSttnNm =obj[0].ST_STTN_NM;
+		var stSttnEnm =obj[0].ST_STTN_ENM;
+		var edSttnId =obj[0].ED_STTN_ID;
+		var edSttnNm =obj[0].ED_STTN_NM;
+		var edSttnEnm =obj[0].ED_STTN_ENM;
+		
+		if(wayDiv == "WD001"){
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_ID", stSttnId);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_NM", stSttnNm);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_ENM", stSttnEnm);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_ID", edSttnId);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_NM", edSttnNm);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_ENM", edSttnEnm);
+		}
+		else {
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_ID", edSttnId);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_NM", edSttnNm);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_ENM", edSttnEnm);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_ID", stSttnId);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_NM", stSttnNm);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_ENM", stSttnEnm);
+		}
+		
+		dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "REP_ROUT_ID", obj[0].REP_ROUT_ID);
+		dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "REP_ROUT_NM", obj[0].REP_ROUT_NM);
+		dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ROUT_TYPE", obj[0].ROUT_TYPE);
+		dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "HOLI_YN", obj[0].HOLI_YN);
+
+		//REP_ROUT_NM.setValue(obj[0].REP_ROUT_NM);
+	};
    
    scwin.REP_ROUT_NM_onfocus = function(e) {
       scwin.REP_ROUT_NM_SEARCH_onclick();
@@ -274,10 +321,15 @@
    };
    
    scwin.ST_STTN_SEARCH_callback = function(obj) {
-      dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_ID", obj[0].STTN_ID);
-      dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_NM", obj[0].STTN_NM);
-      //ST_STTN_NM.setValue(obj[0].STTN_NM);
-   };
+		if(obj[0].STTN_ID == '-'){
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_ID", "");
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_NM", "");
+		}
+		else {
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_ID", obj[0].STTN_ID);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ST_STTN_NM", obj[0].STTN_NM);
+		}
+	};
    
    
    scwin.ST_STTN_NM_onfocus = function(e) {
@@ -292,11 +344,16 @@
       com.openPopup("/cm/common/popupSttnList.xml", options, data);     
    };
    
-   scwin.ED_STTN_SEARCH_callback = function(obj) {
-      dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_ID", obj[0].STTN_ID);
-      dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_NM", obj[0].STTN_NM);
-      //ED_STTN_NM.setValue(obj[0].STTN_NM);
-   };
+	scwin.ED_STTN_SEARCH_callback = function(obj) {
+		if(obj[0].STTN_ID == '-'){
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_ID", "");
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_NM", "");
+		}
+		else {
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_ID", obj[0].STTN_ID);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "ED_STTN_NM", obj[0].STTN_NM);
+		}
+	};
    
    scwin.ED_STTN_NM_onfocus = function(e) {
       scwin.ED_STTN_SEARCH_onclick();
@@ -307,14 +364,19 @@
       var options = { id : "SI0401P03",
                   popupName : "회차 정류소 목록", 
                   modal : true};
-      com.openPopup("/ui/BMS/SI0401/SI0401P03.xml", options, data);         
+      com.openPopup("/cm/common/popupSttnList.xml", options, data);
    };
-   
-   scwin.RET_STTN_SEARCH_callback = function(obj) {
-      dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "RET_STTN_ID", obj[0].STTN_ID);
-      dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "RET_STTN_ENM", obj[0].STTN_ENM);
-      RET_STTN_NM.setValue(obj[0].STTN_NM);
-   };
+
+	scwin.RET_STTN_SEARCH_callback = function(obj) {
+		if(obj[0].STTN_ID == '-'){
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "RET_STTN_ID", "");
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "RET_STTN_NM", "");
+		}
+		else {
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "RET_STTN_ID", obj[0].STTN_ID);
+			dlt_BMS_ROUT_MST.setCellData(SI0401G0.getFocusedRowIndex(), "RET_STTN_NM", obj[0].STTN_NM);
+		}
+	};
 
    scwin.RET_STTN_NM_onfocus = function(e) {
       scwin.RET_STTN_SEARCH_onclick();
@@ -397,7 +459,7 @@
 										blockSelect="false" displayMode="label" class="req">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column19" value="상하행"
-										blockSelect="false" displayMode="label" class="req">
+										blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column14" value="노선ID"
 										blockSelect="false" displayMode="label" class="req">
@@ -425,7 +487,7 @@
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="REP_ROUT_NM" userData1="M"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="WAY_DIV" userData1="M" value=""
+									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="WAY_DIV" value=""
 										blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_ID" userData1="M" value=""
@@ -525,7 +587,7 @@
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
-								<xf:group tagname="th" class="w2tb_th req">
+								<xf:group tagname="th" class="w2tb_th">
 									상하행
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -535,11 +597,11 @@
 									<w2:attributes></w2:attributes>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto" disabled="false"
 										disabledClass="w2selectbox_disabled" displayMode="label" id="WAY_DIV" labelWidthAuto="" mandatory="true" optionOrder=""
-										ref="data:dlt_BMS_ROUT_MST.WAY_DIV" renderType="component" style="height:24px;" submenuSize="auto">
+										ref="data:dlt_BMS_ROUT_MST.WAY_DIV" renderType="component" style="height:24px;" submenuSize="auto" ev:onviewchange="scwin.WAY_DIV_onviewchange">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
-								<xf:group tagname="th" class="w2tb_th req">
+								<xf:group tagname="th" class="w2tb_th">
 									사용자 상하행
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -555,7 +617,7 @@
 								</xf:group>
 							</xf:group>
 							<xf:group style="" tagname="tr">
-								<xf:group tagname="th" class="w2tb_th req">
+								<xf:group tagname="th" class="w2tb_th">
 									노선구분
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
