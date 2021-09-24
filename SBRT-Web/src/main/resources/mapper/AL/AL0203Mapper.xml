@@ -28,6 +28,8 @@
 				AND REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 	</where>
+	GROUP BY
+		C.ROUT_NM, A.DAY_DIV
 	ORDER BY
 		B.REP_ROUT_NM, A.DAY_DIV
 </select>
@@ -72,7 +74,8 @@
 	AND
 		A.DAY_DIV = #{DAY_DIV}
 	ORDER BY
-		OPER_SN, WAY_DIV, ALLOC_NO
+		OPER_SN, WAY_DIV, ALLOC_NO, ARRV_TM
+	LIMIT 2000
 </select>
 
 <select id="AL0203G1CNT" resultType="Map" parameterType="Map">
@@ -88,7 +91,6 @@
 			REP_ROUT_ID, DAY_DIV, WAY_DIV, ALLOC_NO, OPER_SN
 		ORDER BY 
 			OPER_SN, REP_ROUT_ID, DAY_DIV, WAY_DIV, ALLOC_NO
-
 </select>
 
 </mapper>
