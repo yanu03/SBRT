@@ -21,7 +21,14 @@ import kr.tracom.util.UserInfo;
 public class OperPlanController extends ControllerSupport {
 
 	@Autowired
-	private OperPlanService operAllocPlanService;
+	private OperPlanService operPlanService;
+	
+	
+	@RequestMapping("/operPlan/selectOperPlanRoutList")
+	public @ResponseBody Map<String, Object> selectSttnList() throws Exception {
+		result.setData("dlt_BRT_OPER_ALLOC_PL_ROUT_INFO", operPlanService.selectOperPlanRoutList());
+		return result.getResult();
+	}
 
 	
 }

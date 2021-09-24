@@ -42,6 +42,7 @@
 						<w2:column id="CENTER_YN" name="중앙차로여부" dataType="text"></w2:column>
 						<w2:column id="STTN_FCLT_TYPE" name="정류소시설유형" dataType="text"></w2:column>
 						<w2:column id="VHC_DOOR_DIR_TYPE" name="버스문열림방향유형" dataType="text"></w2:column>
+						<w2:column id="WAY_DIV" name="상하행구분" dataType="text"></w2:column>
 						<w2:column id="GPS_X" name="GPS_X좌표" dataType="number"></w2:column>
 						<w2:column id="GPS_Y" name="GPS_Y좌표" dataType="number"></w2:column>
 						<w2:column id="APPL_RDS" name="적용반경" dataType="number" defaultValue="0"></w2:column>
@@ -49,8 +50,10 @@
 						<w2:column id="BAY_LEN" name="베이길이" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="LINE_CNT" name="차선수" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
-						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
 						<w2:column id="ROUTE__ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="STOP_TM_PEAK" name="첨두시 정차시간" dataType="text"></w2:column>
+						<w2:column id="STOP_TM_NONE_PEAK" name="비첨두시 정차시간" dataType="text"></w2:column>
+						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_STTN_MST_0">
@@ -133,9 +136,10 @@
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions);
 		
 		var codeOptions = [ {code : "AREA", compID : "AREA, SI0501G0:AREA" },
-							{code : "VHC_DOOR_DIR_TYPE", compID : "VHC_DOOR_DIR_TYPE, SI0501G0:VHC_DOOR_DIR_TYPE" },						
-							{code : "STTN_FCLT_TYPE", compID : "STTN_FCLT_TYPE, SI0501G0:STTN_FCLT_TYPE" },						
+							{code : "VHC_DOOR_DIR_TYPE", compID : "VHC_DOOR_DIR_TYPE, SI0501G0:VHC_DOOR_DIR_TYPE" },
+							{code : "STTN_FCLT_TYPE", compID : "STTN_FCLT_TYPE, SI0501G0:STTN_FCLT_TYPE" },
 							{code : "BAY_TYPE", compID : "BAY_TYPE, SI0501G0:BAY_TYPE" },
+							{code : "WAY_DIV", compID : "WAY_DIV, SI0501G0:WAY_DIV" },
 							{code : "ROUT_TYPE", compID : "SI0501G1:ROUT_TYPE" }
 													
 						];		
@@ -537,6 +541,56 @@
 										validator="" maxlength="5">
 									</xf:input>
 								</xf:group>
+								<xf:group tagname="td" class="w2tb_th">적용반경<w2:attributes></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes></w2:attributes>
+									<xf:input allowChar="" customModelFormatter="" customModelUnformatter="" dataType="text" disabled=""
+										displayFormatter="com.transPhone" id="APPL_RDS" maskFormat="" maxlength="4" minByteLength=""
+										ref="data:dlt_BMS_STTN_MST.APPL_RDS" style="width:100%;height: 21px;" validator="">
+									</xf:input>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group tagname="td" class="w2tb_th">차선수<w2:attributes></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes></w2:attributes>
+									<xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="LINE_CNT" initValue="" ioFormat=""
+										mandatory="" maskFormat="" ref="data:dlt_BMS_STTN_MST.LINE_CNT" style="width:100%;height:21px;" validateOnInput="false"
+										validator="" maxlength="1">
+									</xf:input>
+								</xf:group>
+								<xf:group tagname="td" class="w2tb_th">첨두시 정차시간<w2:attributes></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes></w2:attributes>
+									<xf:input allowChar="" customModelFormatter="" customModelUnformatter="" dataType="text" disabled=""
+										displayFormatter="" id="STOP_TM_PEAK" maskFormat="" maxlength="4" minByteLength=""
+										ref="data:dlt_BMS_STTN_MST.STOP_TM_PEAK" style="width:100%;height: 21px;" validator="">
+									</xf:input>
+								</xf:group>
+								<xf:group tagname="td" class="w2tb_th">비첨두시 정차시간<w2:attributes></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes></w2:attributes>
+									<xf:input allowChar="" customModelFormatter="" customModelUnformatter="" dataType="text" disabled=""
+										displayFormatter="" id="STOP_TM_NONE_PEAK" maskFormat="" maxlength="4" minByteLength=""
+										ref="data:dlt_BMS_STTN_MST.STOP_TM_NONE_PEAK" style="width:100%;height: 21px;" validator="">
+									</xf:input>
+								</xf:group>
+							</xf:group>
+							<xf:group tagname="tr" style="">
+								<xf:group tagname="th" class="w2tb_th" style="height: 24px;vertical-align: top;" id="" tabIndex="">
+									상하행
+									<w2:attributes>
+										<w2:scope>row</w2:scope>
+									</w2:attributes>
+								</xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes></w2:attributes>
+									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto"
+										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="WAY_DIV" labelWidthAuto="" mandatory="true"
+										optionOrder="" ref="data:dlt_BMS_STTN_MST.WAY_DIV" renderType="component" style="height:24px;" submenuSize="auto">
+										<xf:choices></xf:choices>
+									</xf:select1>
+								</xf:group>
 								<xf:group class="w2tb_th" style="" tagname="th">중앙차로여부</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<w2:attributes>
@@ -557,27 +611,10 @@
 										</xf:choices>
 									</xf:select1>
 								</xf:group>
-							</xf:group>
-							<xf:group style="" tagname="tr">
-								<xf:group tagname="td" class="w2tb_th">적용반경<w2:attributes></w2:attributes></xf:group>
-								<xf:group tagname="td" class="w2tb_td">
-									<w2:attributes></w2:attributes>
-									<xf:input allowChar="" customModelFormatter="" customModelUnformatter="" dataType="text" disabled=""
-										displayFormatter="com.transPhone" id="APPL_RDS" maskFormat="" maxlength="4" minByteLength=""
-										ref="data:dlt_BMS_STTN_MST.APPL_RDS" style="width:100%;height: 21px;" validator="">
-									</xf:input>
-								</xf:group>
-								<xf:group tagname="td" class="w2tb_th">차선수<w2:attributes></w2:attributes></xf:group>
-								<xf:group tagname="td" class="w2tb_td">
-									<w2:attributes></w2:attributes>
-									<xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="LINE_CNT" initValue="" ioFormat=""
-										mandatory="" maskFormat="" ref="data:dlt_BMS_STTN_MST.LINE_CNT" style="width:100%;height:21px;" validateOnInput="false"
-										validator="" maxlength="1">
-									</xf:input>
-								</xf:group>
 								<xf:group tagname="th" class="w2tb_th">사용여부<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
 								<xf:group tagname="td" class="w2tb_td">
-									<w2:attributes></w2:attributes>
+										<w2:colspan>1</w2:colspan>
+										<w2:rowspan>3</w2:rowspan>
 									<xf:select1 appearance="full" cols="" id="" ref="data:dlt_BMS_STTN_MST.USE_YN" rows="1"
 										selectedIndex="-1" style="width: 150px;height: 21px;margin-left: 20px;">
 										<xf:choices>
@@ -606,7 +643,7 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:textarea adjustMaxLength="" class="" disabled="" id="REMARK" mandatory="" ref="data:dlt_BMS_STTN_MST.REMARK"
-										style="width:100%;height: 70px;" maxlength="200">
+										style="width:100%;height: 50px;" maxlength="200">
 									</xf:textarea>
 								</xf:group>
 							</xf:group>

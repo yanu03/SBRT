@@ -54,6 +54,8 @@ public class Constants {
 	
 	public static String INTG_URL = "INTG_URL";
 	public static String API_KEY = "KEY_API";
+	public static String SYS_INFO = "SYS_INFO";
+	public static String SY012 = "SY012"; //정류소 평균 정차시간
 	
 	//세종 노선검색 URL
 	public static String URL_CODE_SEJONG_ROUT = "IU001";
@@ -106,4 +108,6 @@ public class Constants {
     	public static final String ROW_SEPARATOR			= "\r\n";
     	public static final String TAB						= "\t";
     }
+    
+    public static int VHC_MAX_SPEED = 50; //차량 최대 속도
 }

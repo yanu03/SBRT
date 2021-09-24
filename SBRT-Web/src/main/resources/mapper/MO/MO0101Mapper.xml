@@ -28,37 +28,41 @@
 			ON				C.COMP_ID = E.COMP_ID	
 		WHERE			A.OPER_DT = DATE_FORMAT(NOW(), '%Y/%m/%d')
 			<if test="CONTENT1 != null">
-				AND	A.ROUT_ID = #{CONTENT1}
+				AND A.REP_ROUT_ID = #{CONTENT1}
 			</if>
-			<if test="CONTENT2 != null and CONTENT2 != ''">
-				AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT2}, '%')
+			<if test="CONTENT2 != ''">
+				AND A.ROUT_ID = #{CONTENT2}
+			</if>
+			<if test="CONTENT3 != null and CONTENT3 != ''">
+				AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
 			</if>
 		ORDER BY		A.REP_ROUT_ID, A.ROUT_ID	
 	</select>
 	
 	<select id="MO0101G1R0" resultType="Map" parameterType="Map">
-		SELECT 			A.VHC_ID
-						,A.DVC_ID
-						,A.ORG_ID
-						,A.DVC_KIND
-						,A.INST_LOC
-						,A.DVC_IP
-						,A.MNG_ID	
-						,A.DVC_TYPE
-						,A.DEV_SERIAL_NO
-						,A.MODEL_NM
-						,A.USE_YN						
-						,A.REMARK
-						,B.ORG_NM
-						,C.DVC_COND
-						
-		FROM			BMS_DVC_INFO A	
-			LEFT JOIN	  	BMS_ORG_MST	B
-			ON				A.ORG_ID = B.ORG_ID
-			LEFT JOIN	  	BMS_DVC_COND_INFO C
-			ON				A.MNG_ID = C.MNG_ID	
-		
-		WHERE			A.VHC_ID = #{VHC_ID}
+		SELECT 			A.ROUT_ID
+					,	A.NODE_ID
+					, 	A.NODE_SN
+					, 	A.NODE_NM
+					,	A.NODE_TYPE
+					,	A.LINK_ID
+					, 	A.STTN_ID
+					, 	A.STTN_NO
+					, 	A.CRS_ID
+					, 	A.ORGA_ID
+					,	A.GPS_X
+					, 	A.GPS_Y
+					,	A.LINK_NODE_YN
+					,	B.MORN_STD
+
+		FROM 		  	BMS_ROUT_NODE_CMPSTN A 
+		LEFT OUTER JOIN BMS_ROUT_LINK_CMPSTN B
+			ON A.ROUT_ID = B.ROUT_ID AND A.LINK_ID = B.LINK_ID
+		LEFT OUTER JOIN	BMS_STTN_MST C
+			ON A.NODE_ID = C.STTN_ID		
+		WHERE 			A.ROUT_ID  = #{ROUT_ID}
+		AND				A.NODE_TYPE = 'NT002'
+		ORDER BY 		NODE_SN
 	</select>
 	
 	<select id="MO0101SHI0" resultType="Map">
@@ -69,17 +73,93 @@
 			ON				A.REP_ROUT_ID = B.REP_ROUT_ID
 		GROUP BY 		REP_ROUT_ID		
 		ORDER BY		B.REP_ROUT_NM		
-	</select>		
+	</select>	
+	
+	<select id="MO0101SHI1" resultType="Map">
+		SELECT			ROUT_ID, ROUT_NM
+		FROM			BMS_ROUT_MST	
+		<where>
+			<if test="CONTENT1 != null">
+				REP_ROUT_ID = #{CONTENT1}	
+			</if>
+		</where>
+	</select>			
 	
 	<select id="MO0101G2R0" resultType="Map">
-	 	SELECT a.ROUT_ID, a.LINK_ID, a.LINK_SN, a.MORN_STD, b.LINK_NM, b.ST_NODE_ID AS NODE_ID, b.ED_NODE_ID, 
-	 		c.NODE_TYPE, c.NODE_NM, c.GPS_X, c.GPS_Y, d.GPS_X AS ED_GPS_X, d.GPS_Y AS ED_GPS_Y, d.NODE_TYPE AS ED_NODE_TYPE, d.NODE_NM AS ED_NODE_NM
-		FROM BMS_ROUT_LINK_CMPSTN a 
-			LEFT OUTER JOIN BMS_LINK_MST b ON a.LINK_ID=b.LINK_ID
-			LEFT OUTER JOIN BMS_NODE_MST c ON b.ST_NODE_ID = c.NODE_ID
-			LEFT OUTER JOIN BMS_NODE_MST d ON b.ED_NODE_ID = d.NODE_ID
-		WHERE a.ROUT_ID = #{ROUT_ID}
-		ORDER BY a.LINK_SN
+		SELECT 			A.ROUT_ID
+					,	A.NODE_ID
+					, 	A.NODE_SN
+					, 	A.NODE_NM
+					,	A.NODE_TYPE
+					,	A.LINK_ID
+					, 	A.STTN_ID
+					, 	A.STTN_NO
+					, 	A.CRS_ID
+					, 	A.ORGA_ID
+					,	A.GPS_X
+					, 	A.GPS_Y
+					,	A.LINK_NODE_YN
+					,	B.MORN_STD
+					,	C.CRS_KIND
+					,	C.PHASE_CNT
+					,	C.REMARK
+					
+		FROM 		  	BMS_ROUT_NODE_CMPSTN A 
+		LEFT OUTER JOIN BMS_ROUT_LINK_CMPSTN B
+			ON A.ROUT_ID = B.ROUT_ID AND A.LINK_ID = B.LINK_ID
+		LEFT OUTER JOIN	BMS_CRS_MST C
+			ON A.NODE_ID = C.CRS_ID			
+		WHERE 			A.ROUT_ID  = #{ROUT_ID}
+		AND				A.NODE_TYPE = 'NT001'
+		ORDER BY 		NODE_SN
+	</select>	
+	
+	<select id="MO0101G4R0" resultType="Map">
+		SELECT 			A.NODE_ID
+					,	A.MOCK_NODE_ID
+					,	A.NODE_NM
+					,	A.NODE_ENM
+					,	A.NODE_TYPE
+					,	A.GPS_X
+					,	A.GPS_Y
+					,	A.TM_X
+					,	A.TM_Y
+					,	A.ENTRY_RECOG_RADS
+					,	A.ADVNC_RECOG_RADS
+					,	A.USE_YN
+					,	A.UPD_DTM
+					,	A.UPD_ID
+					,	IF(D.CNT > 0 , 'Y','N') COND_ERROR
+					, 	E.ROUT_ID
+					,	E.NODE_SN
+		        	 	
+		FROM	  		BMS_ROUT_NODE_CMPSTN E
+		LEFT JOIN		BMS_ROUT_LINK_CMPSTN F
+			ON E.ROUT_ID = F.ROUT_ID AND E.LINK_ID = F.LINK_ID
+		LEFT JOIN	    BMS_NODE_MST A
+			ON E.NODE_ID = A.NODE_ID
+		LEFT JOIN		BMS_ROUT_MST G
+			ON G.ROUT_ID = E.ROUT_ID	
+		LEFT JOIN			(SELECT B.NODE_ID, COUNT(B.NODE_ID) CNT
+		            		FROM BMS_FCLT_INFO B
+		         			LEFT JOIN BMS_FCLT_COND_INFO C 
+		         				ON B.MNG_ID = C.MNG_ID 
+		         			WHERE  FCLT_COND  = 'FC021' GROUP BY NODE_ID) D
+		  ON A.NODE_ID = D.NODE_ID		
+		  
+		WHERE			(A.NODE_TYPE = 'NT001'
+		OR				A.NODE_TYPE = 'NT002')
+			<if test="CONTENT1 != null">
+				AND G.REP_ROUT_ID = #{CONTENT1}			
+			</if>
+			<if test="CONTENT2 != ''">
+				AND E.ROUT_ID = #{CONTENT2}				
+			</if>
+			<if test="CONTENT3 != null and CONTENT3 != ''">
+				AND (A.NODE_ID LIKE CONCAT('%',#{CONTENT3},'%') || A.NODE_NM LIKE CONCAT('%',#{CONTENT3},'%'))
+			</if>
+			
+		ORDER BY		E.NODE_SN					
 	</select>	
 	
 </mapper>

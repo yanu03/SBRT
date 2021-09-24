@@ -41,7 +41,9 @@ public class SI0402Service extends ServiceSupport {
 	public Map SI0402G1S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
-		int dCnt = 0;		
+		int dCnt = 0;
+		
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
 		
 		List<Map<String, Object>> param = getSimpleList("dlt_BMS_ROUT_NODE_CMPSTN");
 		try {
@@ -72,6 +74,7 @@ public class SI0402Service extends ServiceSupport {
 					if(CommonUtil.notEmpty(data.get("STTN_ID"))||CommonUtil.notEmpty(data.get("CRS_ID"))){
 						if(CommonUtil.notEmpty(data.get("STTN_ID"))){
 							data.put("TYPE","STTN_ID");	
+							//data.put("WAY_DIV",map.get("WAY_DIV"));	
 							routMapper.updateSttn(data);
 						
 						}
@@ -98,7 +101,8 @@ public class SI0402Service extends ServiceSupport {
 					if(CommonUtil.notEmpty(data.get("STTN_ID"))||CommonUtil.notEmpty(data.get("CRS_ID"))){
 						
 						if(CommonUtil.notEmpty(data.get("STTN_ID"))){
-							data.put("TYPE","STTN_ID");	
+							data.put("TYPE","STTN_ID");
+							//data.put("WAY_DIV",map.get("WAY_DIV"));	
 							routMapper.updateSttn(data);
 						}
 						else if(CommonUtil.notEmpty(data.get("CRS_ID"))){
@@ -137,8 +141,8 @@ public class SI0402Service extends ServiceSupport {
 			if(param.size()>0) {
 				int sttnCnt = 0;
 				double routLen = 0;
-				si0402Mapper.SI0402G1DA1(param.get(0));
-				List<Map<String, Object>> routNodeList = si0402Mapper.SI0402G1R1(param.get(0));
+				si0402Mapper.SI0402G1DA1(map);
+				List<Map<String, Object>> routNodeList = si0402Mapper.SI0402G1R1(map);
 				if(routNodeList.size()>0) {
 					for (int i = 0; i < routNodeList.size()-1; i++) {
 						Map data = routNodeList.get(i);
