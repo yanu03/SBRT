@@ -131,7 +131,7 @@
 			</xf:submission>
 			<xf:submission id="sub_AL0203G1R0" ref="data:json,dma_sub_search" target='data:json,["dlt_BRT_OPER_ALLOC_PL_NODE_INFO","dlt_BRT_OPER_ALLOC_PL_NODE_CNT"]'
 				action="/al/AL0203G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0203G1R0_submitdone" ev:submiterror=""
+				customHandler="" mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0203G1R0_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_AL0203G1S0" ref="data:json,dlt_BRT_COR_DTL_INFO" target="data:json,dma_result" action="/al/AL0203G1S0" method="post" mediatype="application/json" encoding="UTF-8"
@@ -140,7 +140,6 @@
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
-      
     //dataList 에 넣을 json
 	scwin.setColumnID = function() {
 	
@@ -174,7 +173,7 @@
 		if(rowData.length == 0 ) {
 			gridHeader +='<w2:column blockSelect="false" id="" style="height:25px; padding-left:350px" textAlign="left" inputType="text" width="100" colSpan="'+1+'" value="운행경로 및 운행시간"></w2:column>';
 			var gridStr = '<w2:gridView xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" dataList="dlt_VIEW_OPER_PL_NODE_INFO" '
-							+ 'scrollByColumn="true" id="AL0203G1" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" mergeCol="OPER_SN,WAY_DIV">'
+							+ 'scrollByColumn="true" id="AL0203G1" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" mergeCol="OPER_SN, WAY_DIV">'
 			+ '<w2:header id="header1" style="">'
 			+ '<w2:row id="row1" style="">'
 			+ gridHeader
@@ -214,7 +213,7 @@
 				dlt_VIEW_OPER_PL_NODE_INFO.setCellData(idx, ""+j, nodeNm);
 			}
 		
-		var rowCnt = 0;
+		rowCnt = 0;
 		for(var i = 0; i < rowCntArr.length; i++) {
 			rowIndex += rowCnt;
 			rowCnt =  rowCntArr[i].CNT;
@@ -270,7 +269,7 @@
 		//gridView 정보 정의 
 		//xml 형식을 정의 하면 <w2:gridView 에 xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" 포함 합니다.
 		var gridStr = '<w2:gridView xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" dataList="dlt_VIEW_OPER_PL_NODE_INFO" '
-						+ 'scrollByColumn="true" fixedRow = "1" fixedColumn = "1" id="AL0203G1" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" mergeCol="OPER_SN, WAY_DIV" >'
+						+ 'scrollByColumn="true" fixedRow = "1" id="AL0203G1" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" mergeCol="OPER_SN, WAY_DIV" >'
 		+ '<w2:header id="header1" style="text-align:left">'
 		+ '<w2:row id="row1" style="">'
 		+ gridHeader
@@ -365,7 +364,6 @@
 	
 	scwin.sub_AL0203G1R0_submitdone = function(e) {
 		scwin.setColumnID();
-	
 		//var val_ROUT_ID = dlt_BRT_COR_DTL_INFO.getColData("ROUT_ID");
 //		dma_sub_search.set("ROUT_IDS", val_ROUT_ID);
 //		dma_sub_search.set("TYPE", "DISP_NODE");
@@ -378,6 +376,7 @@
 	};
 	
 	]]></script>
+	
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
