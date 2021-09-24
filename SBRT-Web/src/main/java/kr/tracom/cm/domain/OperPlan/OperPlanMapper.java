@@ -12,41 +12,41 @@ public interface OperPlanMapper {
 	public List<Map<String, Object>> selectSttnPeakInfoOfOperPlan(Map param);
 	public Map<String, Object> selectOperPlanMst(Map param);
 	
-	/** ¿îÇà°èÈ¹ »ı¼º **/
-	//´ëÇ¥³ë¼±ÀÇ ¿îÇà°èÈ¹ ¸®½ºÆ®
+	/** ìš´í–‰ê³„íš ìƒì„± **/
+	//ëŒ€í‘œë…¸ì„ ì˜ ìš´í–‰ê³„íš ë¦¬ìŠ¤íŠ¸
 	public List<Map<String, Object>> selectPlList(Map<String, Object> params);
 	
-    //³ë¼±ÀÇ ³ëµå¸ñ·Ï
+    //ë…¸ì„ ì˜ ë…¸ë“œëª©ë¡
 	public List<Map<String, Object>> selectNodeList(Map<String, Object> params);
 
-    //¿îÇà¼ø¹ø¿¡ µû¸¥ ±âÁ¡ Ãâ¹ß½Ã°¢, Á¾Á¡ µµÂø ½Ã°¢
+    //ìš´í–‰ìˆœë²ˆì— ë”°ë¥¸ ê¸°ì  ì¶œë°œì‹œê°, ì¢…ì  ë„ì°© ì‹œê°
 	public Map<String, Object> selectRoutStEdTm(Map<String, Object> params);
 
-    //ÃÖ¼Ò Á¤Â÷½Ã°£ °¡Á®¿À±â
+    //ìµœì†Œ ì •ì°¨ì‹œê°„ ê°€ì ¸ì˜¤ê¸°
 	public String selectMinStopTm();
 
-    //ÃÖ´ë Á¤Â÷½Ã°£ °¡Á®¿À±â
+    //ìµœëŒ€ ì •ì°¨ì‹œê°„ ê°€ì ¸ì˜¤ê¸°
 	public String selectMaxStopTm();
 
-    //³ë¼±ÀÇ Ã·µÎ½Ã °¡Á®¿À±â
+    //ë…¸ì„ ì˜ ì²¨ë‘ì‹œ ê°€ì ¸ì˜¤ê¸°
 	public Map<String, Object> selectPeakTm(Map<String, Object> params);
 
-    //´ëÇ¥³ë¼± °¡Á®¿À±â
+    //ëŒ€í‘œë…¸ì„  ê°€ì ¸ì˜¤ê¸°
 	public String selectRepRout(String routId);
 
-    //´ÙÀ½³ëµå ¾ÆÀÌµğ
+    //ë‹¤ìŒë…¸ë“œ ì•„ì´ë””
 	public List<Map<String, Object>> selectAllNextNodeInfo(String routId);
 
-    //ÁøÀÔÇö½Ã Á¤º¸
+    //ì§„ì…í˜„ì‹œ ì •ë³´
 	public List<Map<String, Object>> selectAllCrsInfo(String routId);
 
-    //Á¤·ùÀåº° ÇÊ¿ä Á¤Â÷½Ã°£ °¡Á®¿À±â
+    //ì •ë¥˜ì¥ë³„ í•„ìš” ì •ì°¨ì‹œê°„ ê°€ì ¸ì˜¤ê¸°
 	public List<Map<String, Object>> selectAllStopTm(String routId);
 
-    //³²Àº Çö½Ã ½Ã°£ °¡Á®¿À±â
+    //ë‚¨ì€ í˜„ì‹œ ì‹œê°„ ê°€ì ¸ì˜¤ê¸°
 	public int selectPhaseRemainTm(Map<String, Object> params);
 
-    //¿îÇà¹èÂ÷°èÈ¹ »ı¼º
+    //ìš´í–‰ë°°ì°¨ê³„íš ìƒì„±
 	public int insertOperAllocPlNodeInfo(Map<String, Object> params);
 	public int insertOperAllocPlNodeInfoList(Map<String, Object> params);
 	public void deleteOperPl(Map<String, Object> params);
