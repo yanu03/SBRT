@@ -58,10 +58,14 @@ public class EventRequest {
                 	// OPER_LEN, REP_ROUT_NM, NODE_SN, NODE_TYPE, ARRV_TM, DPRT_TM, LINK_ID, LINK_SN, LINK_SPD, GET_OFF_CNT
                 	// PSG_CNT, NEXT_STTN_ID, NEXT_STTN_ARRV_TM, NEXT_CRS_ID, NEXT_CRS_ARRV_TM, DOOR_CD, DOOR_TM, UPD_DTM
                 	
+                	try {
+                		timsMapper.insertCurOperInfo(busInfoMap);
+                	} catch (Exception e) {
+						// TODO: handle exception
+					}
                 	
-                	//to do
-                	//timsMapper.insertCurOperInfo(busInfoMap);
                 	
+                	//모니터링용 웹소켓 데이터
                 	Map<String, Object> paramMap = new HashMap<>();
                 	paramMap.put("MNG_ID", sessionId);
 
@@ -124,9 +128,13 @@ public class EventRequest {
                 	 AtBusOperEvent busEvent = (AtBusOperEvent)atMessage.getAttrData();            	
                 	 
                 	 byte eventCode = busEvent.getEventCode();
+                	 Map<String, Object> busEventMap = busEvent.toMap();                     
 
-                     Map<String, Object> busEventMap = busEvent.toMap();
-                     timsMapper.insertEventHistory(busEventMap); //이력 insert
+                	 try {
+                		 timsMapper.insertEventHistory(busEventMap); //이력 insert
+                	 } catch (Exception e) {
+                		 // TODO: handle exception
+                	 }
 
                      switch(eventCode){
                          //운행 이벤트
