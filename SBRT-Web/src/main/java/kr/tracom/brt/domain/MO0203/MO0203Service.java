@@ -53,7 +53,7 @@ public class MO0203Service extends ServiceSupport{
 		
 		String sttnId = String.valueOf(param.get("NODE_ID"));
 		
-		//Á¤·ùÀåÁ¤º¸ ¿äÃ» µ¥ÀÌÅÍ »ı¼º
+		//ì •ë¥˜ì¥ì •ë³´ ìš”ì²­ ë°ì´í„° ìƒì„±
 		AtBrtAction brtRequest = new AtBrtAction();
 
 		brtRequest.setActionCode((byte)1);
@@ -64,7 +64,7 @@ public class MO0203Service extends ServiceSupport{
         TimsMessageBuilder builder = new TimsMessageBuilder(timsConfig);
         TimsMessage timsMessage = builder.actionRequest(brtRequest);
         
-        //Á¤·ùÀåÁ¤º¸ ¿äÃ» Àü¼Û
+        //ì •ë¥˜ì¥ì •ë³´ ìš”ì²­ ì „ì†¡
         kafkaProducer.sendKafka(KafkaTopics.T_BRT, timsMessage, sttnId);	
 		
 		return null;
