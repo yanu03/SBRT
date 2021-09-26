@@ -143,30 +143,34 @@ public class OperPlanService extends ServiceSupport {
 		String amPeakEdTm = CommonUtil.empty(operPlanMst.get("AM_PEAK_ED_TM"))?"00:00:00":(String)operPlanMst.get("AM_PEAK_ED_TM")+":00";
 		String pmPeakStTm = CommonUtil.empty(operPlanMst.get("PM_PEAK_ST_TM"))?"00:00:00":(String)operPlanMst.get("PM_PEAK_ST_TM")+":00";
 		String pmPeakEdTm = CommonUtil.empty(operPlanMst.get("PM_PEAK_ED_TM"))?"00:00:00":(String)operPlanMst.get("PM_PEAK_ED_TM")+":00";
-		int amPeak = (int) (CommonUtil.empty(operPlanMst.get("AM_PEAK"))?0:DateUtil.timeToSecond((String)operPlanMst.get("AM_PEAK")));
-		int pmPeak = (int) (CommonUtil.empty(operPlanMst.get("PM_PEAK"))?0:DateUtil.timeToSecond((String)operPlanMst.get("PM_PEAK")));
-		int nonePeak = (int) (CommonUtil.empty(operPlanMst.get("NONE_PEAK"))?0:DateUtil.timeToSecond((String)operPlanMst.get("NONE_PEAK")));
+		int amPeak = (int) (CommonUtil.empty(operPlanMst.get("AM_PEAK"))?0:DateUtil.minuteToSecond((String)operPlanMst.get("AM_PEAK")));
+		int pmPeak = (int) (CommonUtil.empty(operPlanMst.get("PM_PEAK"))?0:DateUtil.minuteToSecond((String)operPlanMst.get("PM_PEAK")));
+		int nonePeak = (int) (CommonUtil.empty(operPlanMst.get("NONE_PEAK"))?0:DateUtil.minuteToSecond((String)operPlanMst.get("NONE_PEAK")));
 		
-		int minStopSec = 0; //최소정차시간
+		int operIntvSec = 0; //운행간격시간(초)
+		int minStopSec = 0; //최소정차시간(초)
 		String routEdTm = "00:00:00";
-
+		
 		while(operSn<1000) {
 			
 			if(operSn==1) {
 				minStopSec = (int) (DateUtil.timeToSecond(totalStopTmPeak));
 			}
 			else if(DateUtil.diffSeconds(routStTm, amPeakStTm,"HH:mm:ss")>=0 && DateUtil.diffSeconds(routStTm, amPeakEdTm,"HH:mm:ss")<=0) {
-				routStTm = DateUtil.addSeconds2(routStTm, "HH:mm:ss", amPeak); 
+				operIntvSec = amPeak; 
 				minStopSec = (int) (DateUtil.timeToSecond(totalStopTmPeak));
 			}
 			else if(DateUtil.diffSeconds(routStTm, pmPeakStTm,"HH:mm:ss")>=0 && DateUtil.diffSeconds(routStTm, pmPeakEdTm,"HH:mm:ss")<=0) {
-				routStTm = DateUtil.addSeconds2(routStTm, "HH:mm:ss", pmPeak); 
+				operIntvSec = pmPeak; 
 				minStopSec = (int) (DateUtil.timeToSecond(totalStopTmNonePeak));
 			}
 			else {
-				routStTm = DateUtil.addSeconds2(routStTm, "HH:mm:ss", nonePeak); 
+				operIntvSec = nonePeak; 
 				minStopSec = (int) (DateUtil.timeToSecond(totalStopTmPeak));
 			}
+			
+			routStTm = DateUtil.addSeconds2(routStTm, "HH:mm:ss", operIntvSec); 
+			
 			int routOperSec = routRunSec + minStopSec;
 			routEdTm = DateUtil.addSeconds2(routStTm, "HH:mm:ss", routOperSec); 
 			
@@ -178,8 +182,10 @@ public class OperPlanService extends ServiceSupport {
 			reuturnMap.put("DAY_DIV", param.get("DAY_DIV"));
 			reuturnMap.put("WAY_DIV", param.get("WAY_DIV"));
 			reuturnMap.put("OPER_SN",operSn);
-			reuturnMap.put("ROUT_ST_TM",routStTm);
-			reuturnMap.put("ROUT_ED_TM",routEdTm);
+			reuturnMap.put("ROUT_ST_TM",routStTm.substring(0, 5));
+			reuturnMap.put("ROUT_ED_TM",routEdTm.substring(0, 5));
+			//reuturnMap.put("OPER_INTV", DateUtil.secondToTime(operIntvSec).substring(0, 5));
+			//reuturnMap.put("OPER_TM", DateUtil.secondToTime(routOperSec).substring(0, 5)); 
 			returnList.add(reuturnMap);
 			operSn ++;
 			

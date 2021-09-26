@@ -204,7 +204,8 @@
 <delete id="SI0401G0D0" parameterType="Map">
 	UPDATE BMS_ROUT_MST
 	SET	DEL_YN = 'Y', USE_YN = 'N'
-	WHERE ROUT_ID = #{ROUT_ID}
+	WHERE ROUT_ID = #{ROUT_ID};
+	
 	<!-- DELETE
 	FROM BMS_ROUT_MST
 	WHERE ROUT_ID = #{ROUT_ID}; -->
@@ -320,17 +321,16 @@
 <select id="SI0401P2R0" resultType="Map">
 	SELECT STTN_ID, STTN_NM, STTN_ENM
 	FROM BMS_STTN_MST
-	<where>
-		<if test="CONTENT != null and CONTENT != ''">
-			AND STTN_ID LIKE CONCAT('%',#{CONTENT},'%') || STTN_NM LIKE CONCAT('%',#{CONTENT},'%') 
-		</if>
-		<if test="TYPE == 'STTN_ID'">
-			AND STTN_ID LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
-		<if test="TYPE == 'STTN_NM'">
-			AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%') 
-		</if>
-	</where>
+	WHERE DEL_YN!='Y'
+	<if test="CONTENT != null and CONTENT != ''">
+		AND STTN_ID LIKE CONCAT('%',#{CONTENT},'%') || STTN_NM LIKE CONCAT('%',#{CONTENT},'%') 
+	</if>
+	<if test="TYPE == 'STTN_ID'">
+		AND STTN_ID LIKE CONCAT('%',#{CONTENT},'%')
+	</if>
+	<if test="TYPE == 'STTN_NM'">
+		AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%') 
+	</if>
 </select>
 
 </mapper>

@@ -1593,10 +1593,10 @@ routMap.addPathByClick = function(mapId,grid,routeId,e){
 	
 			ROUT_ID: routeId,
 			NODE_SN: idx,
-			NODE_NM: /*routNm + */"노드_" + getCurrentDate().substring(4),
+			NODE_NM: /*routNm + */"노드_" + util.getCurrentDate().substring(4),
 			NODE_TYPE: routMap.NODE_TYPE.NORMAL,
-			GPS_Y: getDispGps(lonlat.Ma,7),
-			GPS_X: getDispGps(lonlat.La,7),
+			GPS_Y: util.getDispGps(lonlat.Ma,7),
+			GPS_X: util.getDispGps(lonlat.La,7),
 			draggable:routMap.mapInfo[mapId].draggable
 			};
 
@@ -1648,10 +1648,10 @@ routMap.addVertexByClick = function(mapId,grid,routeId,e){
 		
 				ROUT_ID: routeId,
 				NODE_SN: idx,
-				NODE_NM: /*routNm + */"버텍스_" + getCurrentDate().substring(4),
+				NODE_NM: /*routNm + */"버텍스_" + util.getCurrentDate().substring(4),
 				NODE_TYPE: routMap.NODE_TYPE.VERTEX,
-				GPS_Y: getDispGps(lonlat.Ma,7),
-				GPS_X: getDispGps(lonlat.La,7),
+				GPS_Y: util.getDispGps(lonlat.Ma,7),
+				GPS_X: util.getDispGps(lonlat.La,7),
 				draggable:routMap.mapInfo[mapId].draggable
 				};
 	
@@ -1705,10 +1705,10 @@ routMap.addSttnByClick = function(mapId,grid,routeId,e){
 		
 				ROUT_ID: routeId,
 				NODE_SN: idx,
-				NODE_NM: /*routNm + */"정류소_" + getCurrentDate().substring(4),
+				NODE_NM: /*routNm + */"정류소_" + util.getCurrentDate().substring(4),
 				NODE_TYPE: routMap.NODE_TYPE.BUSSTOP,
-				GPS_Y: getDispGps(lonlat.Ma,7),
-				GPS_X: getDispGps(lonlat.La,7),
+				GPS_Y: util.getDispGps(lonlat.Ma,7),
+				GPS_X: util.getDispGps(lonlat.La,7),
 				draggable:routMap.mapInfo[mapId].draggable
 				};
 	
@@ -1762,10 +1762,10 @@ routMap.addCrossByClick = function(mapId,grid,routeId,e){
 		
 				ROUT_ID: routeId,
 				NODE_SN: idx,
-				NODE_NM: /*routNm + */"교차로_" + getCurrentDate().substring(4),
+				NODE_NM: /*routNm + */"교차로_" + util.getCurrentDate().substring(4),
 				NODE_TYPE: routMap.NODE_TYPE.CROSS,
-				GPS_Y: getDispGps(lonlat.Ma,7),
-				GPS_X: getDispGps(lonlat.La,7),
+				GPS_Y: util.getDispGps(lonlat.Ma,7),
+				GPS_X: util.getDispGps(lonlat.La,7),
 				draggable:routMap.mapInfo[mapId].draggable
 				};
 	
@@ -1820,10 +1820,10 @@ routMap.addSoundByClick = function(mapId,grid,routeId,e){
 		
 				ROUT_ID: routeId,
 				NODE_SN: idx,
-				NODE_NM: /*routNm + */"사운드_" + getCurrentDate().substring(4),
+				NODE_NM: /*routNm + */"사운드_" + util.getCurrentDate().substring(4),
 				NODE_TYPE: routMap.NODE_TYPE.SOUND,
-				GPS_Y: getDispGps(lonlat.Ma,7),
-				GPS_X: getDispGps(lonlat.La,7),
+				GPS_Y: util.getDispGps(lonlat.Ma,7),
+				GPS_X: util.getDispGps(lonlat.La,7),
 				draggable:routMap.mapInfo[mapId].draggable
 				};
 	
@@ -2079,8 +2079,8 @@ routMap.moveRoute = function(mapId, grid, e){
 	if(val) {
 		var temp = {
 			NODE_ID: e.nodeId,
-			GPS_Y: getDispGps(point.Ma,7),
-			GPS_X: getDispGps(point.La,7),
+			GPS_Y: util.getDispGps(point.Ma,7),
+			GPS_X: util.getDispGps(point.La,7),
 		};
 		
 		temp = $.extend(true, node, temp);
@@ -2576,8 +2576,8 @@ routMap.changeLocVehicleByClick = function(mapId, grid, curIndex, e){
 	var data = com.getGridViewDataList(grid);
 	var lonlat = e.latLng;
 
-	data.setCellData(curIndex, "GPS_Y", getDispGps(lonlat.Ma,7));
-	data.setCellData(curIndex, "GPS_X", getDispGps(lonlat.La,7));
+	data.setCellData(curIndex, "GPS_Y", util.getDispGps(lonlat.Ma,7));
+	data.setCellData(curIndex, "GPS_X", util.getDispGps(lonlat.La,7));
 	var jsonObj = data.getRowJSON(curIndex);
 	
 	routMap.showVehicle3(mapId, jsonObj, grid, 0);
@@ -2642,8 +2642,8 @@ routMap.addPolygonByClick = function(mapId, data, grgId, grgNm, e){
 	var tmp = {
 			GRG_ID: grgId,
 			SN: idx,
-			GPS_Y: getDispGps(lonlat.Ma,7),
-			GPS_X: getDispGps(lonlat.La,7)
+			GPS_Y: util.getDispGps(lonlat.Ma,7),
+			GPS_X: util.getDispGps(lonlat.La,7)
 			};
 
 	data.setRowJSON(idx, tmp, true);

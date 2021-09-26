@@ -4,28 +4,28 @@
 
 	  <select id="FM0203G0R0" resultType="Map">
 		SELECT
-			b.STTN_NO
-			,b.STTN_NM
-			,MAX(IF(c.COMPLETE_YN IS NULL, '', IF(c.COMPLETE_YN = 'N', '예약중', ''))) AS COMPLETE_YN
-			,a.FCLT_KIND
-			,d.ORG_DIV
-			,a.INST_LOC
-			,a.FCLT_ID
-			,a.FCLT_IP
-			,a.MNG_ID
-			,a.REMARK
-			,b.STTN_ID
-			,c.RSV_ID
-			,a.FILE_NM
-		FROM BMS_FCLT_INFO a
-		LEFT JOIN BMS_STTN_MST b 
-		ON a.NODE_ID = b.STTN_ID
-		LEFT JOIN BMS_FCLT_UPD_LOG c 
-		ON a.MNG_ID = c.MNG_ID
-		LEFT JOIN BMS_ORG_MST d
-		ON a.MAKER = d.ORG_ID
+			B.STTN_NO
+			,B.STTN_NM
+			,MAX(IF(C.COMPLETE_YN IS NULL, '', IF(C.COMPLETE_YN = 'N', '예약중', ''))) AS COMPLETE_YN
+			,A.FCLT_KIND
+			,D.ORG_DIV
+			,A.INST_LOC
+			,A.FCLT_ID
+			,A.FCLT_IP
+			,A.MNG_ID
+			,A.REMARK
+			,B.STTN_ID
+			,C.RSV_ID
+			,A.FILE_NM
+		FROM BMS_FCLT_INFO A
+		LEFT JOIN BMS_STTN_MST B 
+		ON A.NODE_ID = B.STTN_ID AND AND B.DEL_YN!='Y'
+		LEFT JOIN BMS_FCLT_UPD_LOG C 
+		ON A.MNG_ID = C.MNG_ID
+		LEFT JOIN BMS_ORG_MST D
+		ON A.MAKER = D.ORG_ID
 		<where>
-			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			<if test="TYPE == 'ALL' AND CONTENT != NULL AND CONTENT != ''">
 				AND STTN_NO LIKE CONCAT('%',#{CONTENT},'%') || STTN_NM LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
 			<if test="TYPE == 'STTN_NO'">
@@ -37,12 +37,12 @@
 			<if test="TYPE == 'DVC_KIND'">
 				AND DVC_KIND LIKE CONCAT('%',#{DVC_KIND},'%')
 			</if>
-			<if test="DVC_KIND != null and DVC_KIND != ''">
+			<if test="DVC_KIND != NULL AND DVC_KIND != ''">
 				AND DI.DVC_KIND = #{DVC_KIND}
 			</if>
 		</where>
-		GROUP BY a.MNG_ID
-		ORDER BY b.STTN_NO ASC
+		GROUP BY A.MNG_ID
+		ORDER BY B.STTN_NO ASC
 	</select>
 	
 	<select id="FM0203SHI0" resultType="Map">
@@ -50,39 +50,39 @@
 			STTN_NO
 			,STTN_NM
 		FROM 
-			BMS_STTN_MST
+			BMS_STTN_MST WHERE DEL_YN!='Y'
 		ORDER BY
 			STTN_NO
 	</select>
 	
 	<select id="FM0203G1R0" parameterType="Map"  resultType="Map">
 		SELECT
-			b.STTN_NO
-			,(IF(c.COMPLETE_YN IS NULL, '', IF(c.COMPLETE_YN = 'N', '예약중', ''))) AS COMPLETE_YN
+			B.STTN_NO
+			,(IF(C.COMPLETE_YN IS NULL, '', IF(C.COMPLETE_YN = 'N', '예약중', ''))) AS COMPLETE_YN
 			,date_format(e.RSV_DT, '%Y-%m-%d') as RSV_DT
-			,c.PROCE_RST
+			,C.PROCE_RST
 			,date_format(c.SEND_DATE,'%Y-%m-%d') as SEND_DATE
-			,a.MNG_ID
-			,d.ORG_DIV
-			,a.FCLT_KIND
-			,a.INST_LOC
+			,A.MNG_ID
+			,D.ORG_DIV
+			,A.FCLT_KIND
+			,A.INST_LOC
 		FROM
-			BMS_FCLT_INFO a
-			LEFT JOIN BMS_STTN_MST b 
-			ON a.NODE_ID = b.STTN_ID
-			LEFT JOIN BMS_FCLT_UPD_LOG c 
-			ON a.MNG_ID = c.MNG_ID
-			LEFT JOIN BMS_ORG_MST d
-			ON a.MAKER = d.ORG_ID
-			LEFT JOIN BMS_FCLT_UPD_RSV_INFO e
-			ON c.RSV_ID = e.RSV_ID
+			BMS_FCLT_INFO A
+			LEFT JOIN BMS_STTN_MST B AND B.DEL_YN!='Y'
+			ON A.NODE_ID = B.STTN_ID
+			LEFT JOIN BMS_FCLT_UPD_LOG C 
+			ON A.MNG_ID = C.MNG_ID
+			LEFT JOIN BMS_ORG_MST D
+			ON A.MAKER = D.ORG_ID
+			LEFT JOIN BMS_FCLT_UPD_RSV_INFO E
+			ON C.RSV_ID = E.RSV_ID
 		WHERE
-			a.NODE_ID = #{STTN_ID}
-			<if test="DVC_KIND != null and DVC_KIND != ''">
+			A.NODE_ID = #{STTN_ID}
+			<if test="DVC_KIND != NULL AND DVC_KIND != ''">
 				AND DI.DVC_KIND = #{DVC_KIND}
 			</if>			
 		ORDER BY 
-			b.STTN_NO	
+			B.STTN_NO	
 	</select>
 
 	<insert id="FM0203G0I0" parameterType="Map">

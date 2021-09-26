@@ -4,7 +4,7 @@
 <mapper namespace="kr.tracom.bms.domain.SI0502.SI0502Mapper">
 
 <select id="SI0502G0R0" resultType="Map">
-	select  A.STTN_ID,
+	SELECT  A.STTN_ID,
 			A.NODE_ID,
 			A.STTN_NM,
 			A.STTN_ENM,
@@ -22,9 +22,9 @@
 			A.USE_YN,
 			A.REMARK
 			
-	from BMS_STTN_MST A <!-- LEFT OUTER JOIN BMS_NODE_MST B ON A.NODE_ID = B.NODE_ID -->
+	FROM BMS_STTN_MST A <!-- LEFT OUTER JOIN BMS_NODE_MST B ON A.NODE_ID = B.NODE_ID -->
 	<where>
-		A.USE_YN = 'Y'
+		A.USE_YN = 'Y' AND A.DEL_YN!='Y'
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
 			<if test="TYPE == 'ALL'">
 				AND (A.STTN_ID LIKE CONCAT('%',#{CONTENT},'%') || A.STTN_NM LIKE CONCAT('%',#{CONTENT},'%') || A.STTN_NO LIKE CONCAT('%',#{CONTENT},'%'))
@@ -44,9 +44,9 @@
 </select>
 
 <select id="SI0502SHI0" resultType="Map">
-	select STTN_ID, STTN_NM, STTN_NO
-	from BMS_STTN_MST
-	order by STTN_ID
+	SELECT STTN_ID, STTN_NM, STTN_NO
+	FROM BMS_STTN_MST WHERE DEL_YN!='Y'
+	ORDER BY STTN_ID
 </select>
 	
 <select id="SI0502G1R0" resultType="Map">
