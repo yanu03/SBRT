@@ -36,9 +36,9 @@
 						<w2:key id="SEQ" name="SEQ" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
-				<w2:dataMap baseNode="map" id="dma_subsearch">
+				<w2:dataMap baseNode="map" id="dma_sub_search">
 					<w2:keyInfo>
-						<w2:key id="ORGA_ID" name="편성ID" dataType="text"></w2:key>
+						<w2:key id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_REP_ROUT_MST" saveRemovedData="true">
@@ -74,11 +74,11 @@
 				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_AL0104G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_REP_ROUT_MST" action="/reprout/selectRoutList" method="post" mediatype="application/json" encoding="UTF-8"
+			<xf:submission id="sub_AL0104G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_REP_ROUT_MST" action="/repRout/selectRepRoutList" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0104G0R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_AL0104SHI0" ref="" target="data:json,dlt_searchitem" action="/reprout/selectRoutItem" method="post" mediatype="application/json" encoding="UTF-8"
+			<xf:submission id="sub_AL0104SHI0" ref="" target="data:json,dlt_searchitem" action="/repRout/selectRepRoutItem" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -86,11 +86,11 @@
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0104G1R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_AL0104G2R0" ref="" target="data:json,dlt_BRT_REP_ROUT_VHC_CMPSTN" action="/al/AL0104G2R0" method="post" mediatype="application/json" encoding="UTF-8"
+			<xf:submission id="sub_AL0104G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_REP_ROUT_VHC_CMPSTN" action="/al/AL0104G2R0" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0104G2R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_AL0104G2S0" ref='data:json,{"action":"modified","id":"dlt_VDO_ORGA_LIST"}' target="data:json,dma_result" action="/pi/AL0104G2S0" method="post" mediatype="application/json" encoding="UTF-8"
+			<xf:submission id="sub_AL0104G2S0" ref='data:json,{"action":"modified","id":"dlt_BRT_REP_ROUT_VHC_CMPSTN"}' target="data:json,dma_result" action="/pi/AL0104G2S0" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0104G2S0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -101,11 +101,11 @@
 		var autoOptions = {
 			Main : { grid : AL0104G0, srchSbm : sub_AL0104G0R0, srchGrp : pgm_header, keyColumn : "REP_ROUT_ID", 
 					 focusColumn : "REP_ROUT_NM", name :  "대표노선 목록"},
-			Sub1 : { grid : AL0104G1, srchSbm : sub_AL0104G1R0, name :  "배정 안된 차량 목록"},
-			Sub2 : { grid : AL0104G2, srchSbm : sub_AL0104G2R0, savSbm : sub_AL0104G2S0, name :  "배정 된 차량 목록"}
+			/*Sub1 : { grid : AL0104G1, srchSbm : sub_AL0104G1R0, name :  "배정 안된 차량 목록"},*/
+			Sub1 : { grid : AL0104G2, srchSbm : sub_AL0104G2R0, savSbm : sub_AL0104G2S0, name :  "배정 된 차량 목록"}
 		 };		
 		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions);		 
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions);		 
 
 		var codeOptions = [ {code : "VHC_FUEL", compID : "AL0104G1:VHC_FUEL, AL0104G2:VHC_FUEL" } ];	
 			 
@@ -126,32 +126,51 @@
 		com.setFocusedCell(AL0104G0, "REP_ROUT_ID");		
 	};
 	
+	scwin.AL0104G0_onrowindexchange = function(row, oldRow) {
+		var focusOption = {keyMap : dma_sub_search, keyMapColumn : "REP_ROUT_ID"};
+		
+		com.changeDualGrid(AL0104G0, AL0104G2, sub_AL0104G2S0,
+					sub_AL0104G2R0, focusOption , row, oldRow, "배정 된 차량 목록");
+	};
+	
 	// -> 버튼
 	scwin.btn_grid_add_onclick = function() {
 		var focusIdxs = AL0104G1.getAllFocusedRowIndex();
 		var count = focusIdxs.length;
-		
+		debugger;
 		if (count > 0) {
 			for(i = 0 ; i<count; i++){
-				var data = dlt_VDO_INFO.getAllJSON()[focusIdxs[i]];
-				var insertIndex = dlt_VDO_ORGA_LIST.insertRow();
-				dlt_VDO_ORGA_LIST.setCellData(insertIndex, "VDO_ID", data.VDO_ID);
-				dlt_VDO_ORGA_LIST.setCellData(insertIndex, "VDO_NM", data.VDO_NM);
-				dlt_VDO_ORGA_LIST.setCellData(insertIndex, "FILE_TYPE", data.FILE_TYPE);
-				dlt_VDO_ORGA_LIST.setCellData(insertIndex, "PLAY_TM", data.PLAY_TM);
-				dlt_VDO_ORGA_LIST.setCellData(insertIndex, "PLAY_ST_DT", data.PLAY_ST_DT);
-				dlt_VDO_ORGA_LIST.setCellData(insertIndex, "PLAY_ED_DT", data.PLAY_ED_DT);
-				dlt_VDO_ORGA_LIST.setCellData(insertIndex, "SN", insertIndex);
-				dlt_VDO_ORGA_LIST.setCellData(insertIndex, "ORGA_ID", dma_subsearch.get("ORGA_ID"));
+				var data = dlt_BMS_VHC_MST.getAllJSON()[focusIdxs[i]];
+				var index = com.getMatchedIndex(dlt_BRT_REP_ROUT_VHC_CMPSTN, "VHC_ID", data.VHC_ID); //동일한 index 찾기
+				if(index.length == 0){
+					index = com.indexGridNear(dlt_BRT_REP_ROUT_VHC_CMPSTN, "VHC_ID", data.VHC_ID);
+					var insertIndex = dlt_BRT_REP_ROUT_VHC_CMPSTN.insertRow(index);
+					dlt_BRT_REP_ROUT_VHC_CMPSTN.setRowJSON(insertIndex,data, true)
+					dlt_BRT_REP_ROUT_VHC_CMPSTN.setCellData(insertIndex, "REP_ROUT_ID", dma_sub_search.get("REP_ROUT_ID"));
+				}
+				else {
+					AL0104G2.setRowVisible(index[0], true);
+					dlt_BRT_REP_ROUT_VHC_CMPSTN.undoRow(index[0]);
+				}
 			}
+			dlt_BMS_VHC_MST.removeRows(focusIdxs);
 		}
-		
-		
 	};
 	
 	// <- 버튼
 	scwin.btn_grid_del_onclick = function() {
-		com.delGrid(AL0104G2);
+		var focusIdxs = AL0104G2.getAllFocusedRowIndex();
+		var count = focusIdxs.length;
+		if (count > 0) {
+			for(i = 0 ; i<count; i++){
+				var data = dlt_BRT_REP_ROUT_VHC_CMPSTN.getAllJSON()[focusIdxs[i]];
+				index = com.indexGridNear(dlt_BMS_VHC_MST, "VHC_ID", data.VHC_ID);
+				var insertIndex = dlt_BMS_VHC_MST.insertRow(index);
+				dlt_BMS_VHC_MST.setRowJSON(insertIndex,data, true)
+				dlt_BMS_VHC_MST.setCellData(insertIndex, "REP_ROUT_ID", dma_sub_search.get("REP_ROUT_ID"));
+			}
+		}
+		com.delGrid2(AL0104G2);
 	};
 
 	scwin.sub_AL0104G2S0_submitdone = function(e) {
@@ -176,7 +195,8 @@
 	};
 	
 	scwin.sub_AL0104G1R0_submitdone = function(e) {
-		com.excludeItemsByGrid(AL0104G1, scwin.param.data, "VHC_ID");		
+		var vhc_ids = dlt_BRT_REP_ROUT_VHC_CMPSTN.getColData("VHC_ID");
+		com.excludeItemsByGrid(AL0104G1, vhc_ids, "VHC_ID");		
 	};
 	
 	scwin.sub_AL0104G2R0_submitdone = function(e) {
@@ -258,9 +278,9 @@
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column4"
 										value="대표노선명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="162" inputType="text" style="height:20px" id="column3"
+									<!-- <w2:column removeBorderStyle="false" width="162" inputType="text" style="height:20px" id="column3"
 										value="노선명" blockSelect="false" displayMode="label">
-									</w2:column>
+									</w2:column> -->
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column2"
 										value="비고" blockSelect="false" displayMode="label">
 									</w2:column>
@@ -274,9 +294,9 @@
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="REP_ROUT_NM"
 										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="162" inputType="text" style="height:20px" id="ROUT_NMS"
+									<!-- <w2:column removeBorderStyle="false" width="162" inputType="text" style="height:20px" id="ROUT_NMS"
 										value="" blockSelect="false" displayMode="label" textAlign="left">
-									</w2:column>
+									</w2:column> -->
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="REMARK"
 										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>

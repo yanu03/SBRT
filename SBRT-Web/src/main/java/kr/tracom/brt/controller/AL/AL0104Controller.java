@@ -28,5 +28,13 @@ public class AL0104Controller extends ControllerSupport{
 	public @ResponseBody Map<String, Object> AL0104G2R0() throws Exception {
 		result.setData("dlt_BRT_REP_ROUT_VHC_CMPSTN", al0104service.AL0104G2R0());
 		return result.getResult();
-	}	
+	}
+	
+	@RequestMapping("/pi/AL0104G2S0")
+	public @ResponseBody Map<String, Object> AL0104G2S0() throws Exception {
+		Map map = al0104service.AL0104G2S0();
+		result.setData("dma_result", map);
+		return result.getResultSave();
+	}
+	
 }

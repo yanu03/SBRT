@@ -4429,7 +4429,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 							}
 						}
 					}
-					else if( type == gcm.DISP_TYPE.DUAL_GRID2){ //듀얼 그리드
+					else if( type == gcm.DISP_TYPE.DUAL_GRID2){ //듀얼 그리드 서브그리드만 저장
 						if(i == gcm.BTN.SEARCH.nm){
 							item.cbFnc = function(){
 								var sub = autoOpt.Sub1;
@@ -5683,6 +5683,41 @@ com.delGrid = function(grid,str,afterCb){
 	}
 }
 
+com.delGrid2 = function(grid){
+	var data = com.getGridViewDataList(grid);
+	var focusIdxs = grid.getAllFocusedRowIndex();
+	var count = focusIdxs.length;
+	if (count > 0) {
+		for(var i=count-1; i>=0; i--){
+			var isCreate = false;
+			try {
+				var modifiedIdx = data.getModifiedIndex();
+
+				for (var j = 0; j < modifiedIdx.length; j++) {
+					var index = modifiedIdx[j];
+					if(index==focusIdxs[i]){
+						var modifiedData = data.getRowJSON(index);
+						if (modifiedData.rowStatus === "C") { //생성된 경우 visible 하지 않고 삭제함 //getInsertedIndex 로 대신 구현해도 됨
+							isCreate = true;
+						}
+						break;
+					}
+				}
+			} catch (e) {
+				$p.log("[com.delGrid] Exception :: " + e.message);
+			}	
+		
+			if(isCreate==true){ //생성된 경우 데이터에서 삭제함
+				data.removeRow(focusIdxs[i]);
+			}
+			else {
+				grid.setRowVisible(focusIdxs[i], false);
+				data.deleteRow(focusIdxs[i]);
+			}
+		}
+	}
+}
+
 com.delAllGrid = function(grid){
 	var data = com.getGridViewDataList(grid);
 	var count = getTotalRow();
@@ -6760,4 +6795,16 @@ com.loadingBar = function(isShowLoadinBar){
 	else{
 		$.unblockUI();
 	}
+}
+
+com.indexGridNear = function(data, column, value){
+	var i = 0;
+	for(i = 0; i < data.getRowCount(); i++) { //노선의 노드 순번을 그리드 순서대로 재 할당함.
+		if(data.getRowStatus(i)!="D"){
+			if(data.getCellData(i,column) > value){
+				return i;
+			}
+		}
+	}
+	return i;
 }

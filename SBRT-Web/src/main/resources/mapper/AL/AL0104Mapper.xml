@@ -17,8 +17,7 @@
 					
 </select>
 
-<select id="AL0104G2R0" resultType="Map">
-
+<select id="AL0104G2R0" resultType="Map" parameterType="Map">
 	SELECT			A.REP_ROUT_ID
 				,	A.VHC_ID
 				,	B.VHC_NO
@@ -31,9 +30,18 @@
 	LEFT JOIN	  	BMS_VHC_MST B
 		ON			A.VHC_ID = B.VHC_ID
 	LEFT JOIN	  	BMS_TRANSCOMP_MST C
-		ON			B.COMP_ID = C.COMP_ID	
-
+		ON			B.COMP_ID = C.COMP_ID
+	WHERE A.REP_ROUT_ID = #{REP_ROUT_ID}
 </select>
+<insert id="AL0104G2I0" parameterType="Map">
+	insert into BRT_REP_ROUT_VHC_CMPSTN( REP_ROUT_ID,VHC_ID )
+	values (#{REP_ROUT_ID},#{VHC_ID})
+</insert>
 
+<delete id="AL0104G2D0" parameterType="Map">
+	DELETE FROM BRT_REP_ROUT_VHC_CMPSTN 
+	WHERE REP_ROUT_ID = #{REP_ROUT_ID}
+	AND VHC_ID = #{VHC_ID}
+</delete>
 
 </mapper>
