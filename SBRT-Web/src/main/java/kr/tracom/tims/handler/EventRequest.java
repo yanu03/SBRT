@@ -109,6 +109,7 @@ public class EventRequest {
                 		
                 		arrivalInfoMap.put("ROUT_ID", routId);
                 		arrivalInfoMap.put("ROUT_NM", routNm);
+                		arrivalInfoMap.put("VHC_TYPE", "VT" + arrivalInfoItem.getBusType());                		
                 		arrivalInfoMap.put("REMAIN_STTN", loc);
                 		arrivalInfoMap.put("REMAIN_TM", remainSec);
                 		
