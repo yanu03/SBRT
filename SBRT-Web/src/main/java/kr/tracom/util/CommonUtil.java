@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -466,6 +467,22 @@ public class CommonUtil {
 		}
 		return result;
 	}
+	
+	
+	public static int bigDecimalToInt(Object object) {
+		int result = 0;
+		try {
+			result = (object==null)?0:Integer.parseInt(String.valueOf(object));
+		}catch (Exception e) {
+			try {
+				result = (int) object;
+			} catch (Exception e2) {
+				result = ((BigDecimal)object).intValue();
+			}
+		}
+		return result;
+	}
+	
 	
 	/**
 	 * Object type 변수가 비어있는지 체크

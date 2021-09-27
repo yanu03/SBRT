@@ -26,6 +26,9 @@
 			<if test="@kr.tracom.util.CommonUtil@notEmpty(GPS_Y)">
 			GPS_Y =#{GPS_Y},
 			</if>
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(WAY_DIV)">
+			WAY_DIV =#{WAY_DIV},
+			</if>
 			<if test="@kr.tracom.util.CommonUtil@notEmpty(CENTER_YN)">
 			CENTER_YN =#{CENTER_YN},
 			</if>
@@ -176,28 +179,27 @@
 				WAY_DIV,
 				USER_WAY_DIV
 		FROM BMS_ROUT_MST
-		<where>
-			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
-				<if test="TYPE == 'ALL'">
-					AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
-				</if>
-				<if test="TYPE == 'ROUT_ID'">
-					AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
-				</if>
-				<if test="TYPE == 'ROUT_NM'">
-					AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
-				</if>
-				<if test="TYPE == 'REP_ROUT_NM'">
-					AND REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
-				</if>
+		WHERE DEL_YN != 'Y'
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+			<if test="TYPE == 'ALL'">
+				AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
-		</where>
+			<if test="TYPE == 'ROUT_ID'">
+				AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'ROUT_NM'">
+				AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'REP_ROUT_NM'">
+				AND REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</if>
 		order by REP_ROUT_NM, WAY_DIV
 	</select>
 	
 	<select id="selectRoutItem" resultType="Map">
 		SELECT ROUT_ID, ROUT_NM, REP_ROUT_NM
-		FROM BMS_ROUT_MST
+		FROM BMS_ROUT_MST WHERE DEL_YN != 'Y'
 		ORDER BY ROUT_NM
 	</select>
 	
@@ -316,8 +318,11 @@
 	<select id="selectNodeListByRouts" resultType="Map" parameterType="Map">
 		SELECT A.ROUT_ID, A.NODE_ID, A.NODE_SN, A.NODE_NM, A.NODE_TYPE, A.LINK_ID, A.STTN_ID, A.STTN_NO, A.CRS_ID, A.ORGA_ID
 				,A.GPS_X, A.GPS_Y, A.LINK_NODE_YN, B.MORN_STD
-		FROM BMS_ROUT_NODE_CMPSTN A LEFT OUTER JOIN BMS_ROUT_LINK_CMPSTN B
-			ON A.ROUT_ID = B.ROUT_ID AND A.LINK_ID = B.LINK_ID
+		FROM BMS_ROUT_NODE_CMPSTN A
+			INNER JOIN BMS_ROUT_MST R
+				ON A.ROUT_ID = R.ROUT_ID AND R.DEL_YN !='Y'
+			LEFT OUTER JOIN BMS_ROUT_LINK_CMPSTN B
+				ON A.ROUT_ID = B.ROUT_ID AND A.LINK_ID = B.LINK_ID
 		WHERE A.ROUT_ID IN
 		<foreach collection="ROUT_IDS" item="item" index="index"  open="(" close=")" separator=",">
 			#{item}
@@ -344,9 +349,12 @@
 	<select id="selectNodeListByRout" resultType="Map" parameterType="Map">
 		SELECT A.ROUT_ID, A.NODE_ID, A.NODE_SN, A.NODE_NM, A.NODE_TYPE, A.LINK_ID, A.STTN_ID, A.STTN_NO, A.CRS_ID, A.ORGA_ID
 				,A.GPS_X, A.GPS_Y, A.LINK_NODE_YN, B.MORN_STD
-		FROM BMS_ROUT_NODE_CMPSTN A LEFT OUTER JOIN BMS_ROUT_LINK_CMPSTN B
-			ON A.ROUT_ID = B.ROUT_ID AND A.LINK_ID = B.LINK_ID
-		WHERE A.ROUT_ID  = #{ROUT_ID}
+		FROM BMS_ROUT_NODE_CMPSTN A
+			INNER JOIN BMS_ROUT_MST R
+				ON A.ROUT_ID = R.ROUT_ID AND R.DEL_YN !='Y'
+			LEFT OUTER JOIN BMS_ROUT_LINK_CMPSTN B
+				ON A.ROUT_ID = B.ROUT_ID AND A.LINK_ID = B.LINK_ID
+			WHERE A.ROUT_ID  = #{ROUT_ID}
 			<choose>
 				<when test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">
 					AND A.NODE_TYPE = #{NODE_TYPE}
@@ -375,6 +383,7 @@
 				A.CENTER_YN,
 				A.STTN_FCLT_TYPE,
 				A.VHC_DOOR_DIR_TYPE,
+				A.WAY_DIV,
 				A.GPS_X,
 				A.GPS_Y,
 				A.APPL_RDS,
@@ -386,7 +395,7 @@
 				
 		FROM BMS_STTN_MST A <!-- LEFT OUTER JOIN BMS_NODE_MST B ON A.NODE_ID = B.NODE_ID -->
 		<where>
-			A.USE_YN = 'Y'
+			A.USE_YN = 'Y'AND A.DEL_YN!='Y'
 			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
 				<if test="TYPE == 'ALL' || TYPE == ''">
 					AND (A.STTN_ID LIKE CONCAT('%',#{CONTENT},'%') || A.STTN_NM LIKE CONCAT('%',#{CONTENT},'%') || A.STTN_NO LIKE CONCAT('%',#{CONTENT},'%'))
@@ -406,7 +415,7 @@
 
 <select id="selectSttnItem" resultType="Map">
 	SELECT STTN_ID, STTN_NM, STTN_NO
-	FROM BMS_STTN_MST
+	FROM BMS_STTN_MST WHERE DEL_YN!='Y'
 	ORDER BY STTN_ID
 </select>
 </mapper>

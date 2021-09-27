@@ -212,8 +212,6 @@ public class PI0206Service extends ServiceSupport {
 		//노선 정보
 		List<Map<String, Object>> routInfoList = pi0206Mapper.selectRoutInfoList(paramMap);
 		
-		System.out.println("0----------------");
-		System.out.println(routInfoList);
 		//routelist 하위
 		for(Map<String, Object> routInfo : routInfoList) {
 			String routId = routInfo.get("ROUT_ID").toString();

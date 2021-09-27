@@ -11,24 +11,23 @@
 					,GPS_Y
 					,REMARK
 					
-	FROM			BMS_STTN_MST
-	<where>	
+	FROM			BMS_STTN_MST 
+	WHERE DEL_YN!='Y'
 		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-			STTN_ID LIKE CONCAT('%',#{CONTENT},'%') || STTN_NO LIKE CONCAT('%',#{CONTENT},'%') 
+			AND STTN_ID LIKE CONCAT('%',#{CONTENT},'%') || STTN_NO LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
 		<if test="TYPE == 'STTN_ID'">
-			STTN_ID LIKE CONCAT('%',#{CONTENT},'%')
+			AND STTN_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
 		<if test="TYPE == 'STTN_NO'">
-			STTN_NO LIKE CONCAT('%',#{CONTENT},'%') 
+			AND STTN_NO LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
-	</where>
 </select>
 
 <select id="FM0300SHI0" resultType="Map">
 	SELECT			STTN_ID
 					,STTN_NO	
-	FROM			BMS_STTN_MST
+	FROM			BMS_STTN_MST WHERE DEL_YN!='Y'
 </select>
 
   

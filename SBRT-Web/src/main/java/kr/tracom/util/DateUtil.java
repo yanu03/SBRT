@@ -505,6 +505,17 @@ public class DateUtil {
 
 	}
 	
+	public static int minuteToSecond(String minute) {
+		int second = 0;
+		try {
+			second = Integer.parseInt(minute)*60;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return second;
+	}
+	
+	
 	public static int timeToSecond(String time) {
 		int second = 0;
 		try {
@@ -521,6 +532,20 @@ public class DateUtil {
 
 		return second;
 
+	}
+	
+	public static String secondToTime(int second) {
+		String time = "00:00:00";
+		try {
+			int hour = (int)(second/3600);
+			int min = (int)(second%3600/60);
+			int sec = (int)(second%3600%60);
+			time = String.format("%02d:%02d:%02d",hour,min,sec);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return time;
 	}
 	
 	public static Date getDate(String time, String pattern) {
