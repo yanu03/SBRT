@@ -19,25 +19,25 @@
 			,A.FILE_NM
 		FROM BMS_FCLT_INFO A
 		LEFT JOIN BMS_STTN_MST B 
-		ON A.NODE_ID = B.STTN_ID AND AND B.DEL_YN!='Y'
+		ON A.NODE_ID = B.STTN_ID AND B.DEL_YN!='Y'
 		LEFT JOIN BMS_FCLT_UPD_LOG C 
 		ON A.MNG_ID = C.MNG_ID
 		LEFT JOIN BMS_ORG_MST D
 		ON A.MAKER = D.ORG_ID
 		<where>
-			<if test="TYPE == 'ALL' AND CONTENT != NULL AND CONTENT != ''">
-				AND STTN_NO LIKE CONCAT('%',#{CONTENT},'%') || STTN_NM LIKE CONCAT('%',#{CONTENT},'%')
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND B.STTN_NO LIKE CONCAT('%',#{CONTENT},'%') || B.STTN_NM LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
 			<if test="TYPE == 'STTN_NO'">
-				AND STTN_NO LIKE CONCAT('%',#{CONTENT},'%')
+				AND B.STTN_NO LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
 			<if test="TYPE == 'STTN_NM'">
-				AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%')
+				AND B.STTN_NM LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
-			<if test="TYPE == 'DVC_KIND'">
+			<!-- <if test="TYPE == 'DVC_KIND'">
 				AND DVC_KIND LIKE CONCAT('%',#{DVC_KIND},'%')
-			</if>
-			<if test="DVC_KIND != NULL AND DVC_KIND != ''">
+			</if> -->
+			<if test="DVC_KIND != null and DVC_KIND != ''">
 				AND DI.DVC_KIND = #{DVC_KIND}
 			</if>
 		</where>
@@ -59,17 +59,17 @@
 		SELECT
 			B.STTN_NO
 			,(IF(C.COMPLETE_YN IS NULL, '', IF(C.COMPLETE_YN = 'N', '예약중', ''))) AS COMPLETE_YN
-			,date_format(e.RSV_DT, '%Y-%m-%d') as RSV_DT
+			,date_format(E.RSV_DT, '%Y-%m-%d') as RSV_DT
 			,C.PROCE_RST
-			,date_format(c.SEND_DATE,'%Y-%m-%d') as SEND_DATE
+			,date_format(C.SEND_DATE,'%Y-%m-%d') as SEND_DATE
 			,A.MNG_ID
 			,D.ORG_DIV
 			,A.FCLT_KIND
 			,A.INST_LOC
 		FROM
 			BMS_FCLT_INFO A
-			LEFT JOIN BMS_STTN_MST B AND B.DEL_YN!='Y'
-			ON A.NODE_ID = B.STTN_ID
+			LEFT JOIN BMS_STTN_MST B 
+			ON A.NODE_ID = B.STTN_ID AND B.DEL_YN!='Y'
 			LEFT JOIN BMS_FCLT_UPD_LOG C 
 			ON A.MNG_ID = C.MNG_ID
 			LEFT JOIN BMS_ORG_MST D
@@ -78,7 +78,7 @@
 			ON C.RSV_ID = E.RSV_ID
 		WHERE
 			A.NODE_ID = #{STTN_ID}
-			<if test="DVC_KIND != NULL AND DVC_KIND != ''">
+			<if test="DVC_KIND != null and DVC_KIND != ''">
 				AND DI.DVC_KIND = #{DVC_KIND}
 			</if>			
 		ORDER BY 
