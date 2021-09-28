@@ -87,6 +87,40 @@ routMap.initMap = function(mapId,options) {
 	return map;
 }
 
+routMap.cronMap = function(mapId,options, map) {
+	
+//	var mapContainer = document.getElementById(mapId);
+//	var mapOptions = {
+//		center : new kakao.maps.LatLng(36.502212, 127.256300),
+//		disableDoubleClickZoom: true,
+//		level : 5
+//	};
+//	
+//    mapContainer.style.width = options.width;
+//    mapContainer.style.height = options.height; 
+	
+
+	if(options.onClick) {
+		kakao.maps.event.addListener(map, 'click', function(e) {
+			
+			options.onClick(e);
+		});
+	} else {
+		//map.addListener("click", onClick);
+	}
+
+	routMap.mapInfo[mapId] = new RoutMAP();
+	routMap.mapInfo[mapId].map=map;
+	routMap.mapInfo[mapId].nodeChangeCb = options.nodeChangeCb;
+	routMap.mapInfo[mapId].draggable=options.draggable;
+	routMap.mapInfo[mapId].linkMode=options.linkMode;
+	routMap.mapInfo[mapId].isSound=options.isSound;
+	
+	//routMap.initDisplay(mapId);
+
+	return map;
+}
+
 routMap.initMap2 = function(mapId,options) {
 	
 	var mapContainer = document.getElementById(mapId);
@@ -1001,6 +1035,127 @@ routMap.showCategory = function(mapId, list, focusIdx, grid, etcOnOff) {
 		
 	}); //end click
 } //showCategory
+
+
+// MO0101M01 전용입니다
+routMap.showCategory2 = function(mapId, sttnMapId, crsMapId, list, sttnList, crsList, focusIdx, grid) {
+	$("#"+mapId).find("#category_"+ mapId).empty();
+	
+	// 좌상단 카테고리 관련
+	//var categoryContent = null;
+	var categoryClass = null;
+	var categoryName = null;
+	
+	var categoryContentCross = null;
+	var categoryContentNormal = null;
+	var categoryContentAbnormal = null;
+	
+	var crossCheck = 0;
+	var normalCheck = 0;
+	var abnormalCheck = 0; 
+	
+	var classOnOff = null;
+	categoryClass = "crossimg";
+	categoryName = "교차로";	
+	categoryContentCross =	'<li class="'+ routMap.mapInfo[mapId].isShowCrs +'">' ;
+	categoryContentCross +=	'<span class="' +categoryClass +'"></span>';
+	categoryContentCross +=	categoryName;
+	categoryContentCross +=	'</li>';   
+	crossCheck = 1;
+	
+	categoryClass = "normal_busimg";
+	categoryName = "정류장";
+	categoryContentNormal =	'<li class="'+ routMap.mapInfo[mapId].isShowNormal +'">' ;
+	categoryContentNormal +=	'<span class="' +categoryClass +'"></span>';
+	categoryContentNormal +=	categoryName;
+	categoryContentNormal +=	'</li>';
+	normalCheck = 1;
+	
+	categoryClass = "abnormal_busimg"
+	categoryName = "고장위치";
+	categoryContentAbnormal =	'<li class="'+ routMap.mapInfo[mapId].isShowAbnormal +'">' ;
+	categoryContentAbnormal +=	'<span class="' +categoryClass +'"></span>';
+	categoryContentAbnormal +=	categoryName;
+	categoryContentAbnormal +=	'</li>';
+	abnormalCheck = 1;
+	
+	$("#"+mapId).find("#category_"+ mapId).append(categoryContentNormal);
+	$("#"+mapId).find("#category_"+ mapId).append(categoryContentAbnormal);	
+	$("#"+mapId).find("#category_"+ mapId).append(categoryContentCross);
+	
+	//클릭 이벤트
+	$("#"+mapId).find("li").click( function() {
+		
+		var className = this.className;
+		var category = $("#"+mapId).find("#category_"+ mapId);
+		var spanId = $(this).find("span");
+		var spanClassName = spanId.attr("class");
+		
+		var categoryMapId = null;
+		
+		//활성화 되어있을 때
+		if (className === 'on') {
+			currCategory = '';
+			this.className = '';
+			
+			if (spanClassName == "crossimg") {
+				routMap.initNode(crsMapId);
+				routMap.mapInfo[crsMapId].isShowCrs = "";
+				for(var i=0; i<crsList.length; i++){
+					routMap.showMarker(crsMapId, crsList[i], i, focusIdx, grid);		
+				}				
+			}
+			//정상 정류장
+			else if(spanClassName == "normal_busimg") {
+				routMap.initNode(sttnMapId);
+				routMap.mapInfo[sttnMapId].isShowNormal = "";
+				for(var i=0; i<sttnList.length; i++){
+					routMap.showMarker(sttnMapId, sttnList[i], i, focusIdx, grid);		
+				}						
+			}
+			//비정상 정류장
+			else if(spanClassName == "abnormal_busimg") {
+				routMap.initNode(sttnMapId);
+				routMap.mapInfo[sttnMapId].isShowAbnormal = "";
+				for(var i=0; i<sttnList.length; i++){
+					routMap.showMarker(sttnMapId, sttnList[i], i, focusIdx, grid);		
+				}						
+			}
+			
+			
+			//routMap.initNode(mapId);
+			//routMap.removeMarkers2(mapId);
+			
+			//removeMarker();
+			
+		} else {
+			this.className = 'on';
+			if (spanClassName == "crossimg") {
+				routMap.initNode(crsMapId);
+				routMap.mapInfo[crsMapId].isShowCrs = "on";
+				for(var i=0; i<crsList.length; i++){
+					routMap.showMarker(crsMapId, crsList[i], i, focusIdx, grid);		
+				}					
+			}
+			else if(spanClassName == "normal_busimg") {
+				routMap.initNode(sttnMapId);
+				routMap.mapInfo[sttnMapId].isShowNormal = "on";	
+				for(var i=0; i<sttnList.length; i++){
+					routMap.showMarker(sttnMapId, sttnList[i], i, focusIdx, grid);		
+				}					
+			}
+			else if(spanClassName == "abnormal_busimg") {
+				routMap.initNode(sttnMapId);
+				routMap.mapInfo[sttnMapId].isShowAbnormal = "on";
+				for(var i=0; i<sttnList.length; i++){
+					routMap.showMarker(sttnMapId, sttnList[i], i, focusIdx, grid);		
+				}					
+			}
+			
+		}	
+		
+	}); //end click
+} //showCategory2
 
 routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 	// 마커 이미지의 이미지 크기 입니다
@@ -2787,6 +2942,10 @@ routMap.initMapInfo = function(mapId){
 	routMap.mapInfo[mapId].dragging = false; //드래그 중인지
 	routMap.mapInfo[mapId].selectedMarker = null;
 	routMap.mapInfo[mapId].selectedIndex = -1;
+}
+
+routMap.initOverlay = function(mapId) {
+	routMap.removeAllOverlay(mapId);	
 }
 
 routMap.setDispCheck = function(mapId, dispCheck) {
