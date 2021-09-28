@@ -202,7 +202,6 @@ routMap.removeBusMarkers = function(mapId) {
 }
 
 routMap.removeIndexBusMarker = function(mapId,index) {
-	debugger;
 	if(routMap.mapInfo[mapId].busMarkers != null && routMap.mapInfo[mapId].busMarkers.length != 0) {
 		routMap.mapInfo[mapId].busMarkers[index].setMap(null);
 	}
@@ -816,7 +815,6 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx, busGrid) {
 	}
 	
 	marker.setMap(routMap.mapInfo[mapId].map); //Marker가 표시될 Map 설정.
-	debugger;
 	if(idx<routMap.mapInfo[mapId].busMarkers.length){
 		routMap.mapInfo[mapId].busMarkers[idx] = marker;
 	}
@@ -2887,10 +2885,7 @@ routMap.showVehicle = function(mapId, list, vhc_id, grid) {
 
 
 /*웹소켓 차량 정보 지도에 표시*/
-routMap.showVehicle2 = function(mapId, json, cur_vhc_id, grid, index) {
-
-	var focusIdx = -1;
-	
+routMap.showVehicle2 = function(mapId, json, cur_vhc_id, grid, index, focusIdx) {
 	//주석 빼기
     routMap.initIndexBus(mapId,index);
 
@@ -2900,18 +2895,16 @@ routMap.showVehicle2 = function(mapId, json, cur_vhc_id, grid, index) {
 	
 	
 	if(json.VHC_ID == cur_vhc_id){
-		focusIdx = index;
 		routMap.showBusMarker(mapId, json, index, focusIdx, grid);
 	}
 	else if(json.GRP_VHC_ID == cur_vhc_id){
-		focusIdx = index;
 		routMap.showBusMarker(mapId, json, index, focusIdx, grid);
 	}
 	else {
 		routMap.showBusMarker(mapId, json, index, focusIdx, grid);
 	}
 	if(json != null){
-		if(focusIdx!=-1){
+		if(focusIdx!=-1 && focusIdx == index){
 			routMap.moveMap(mapId, json.GPS_Y, json.GPS_X);
 		}
 	}

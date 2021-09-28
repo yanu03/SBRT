@@ -191,8 +191,7 @@
 
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
-		
-		// ROUT_ID가 grid focus로 되어 있어서 Read하는데 버그있음 이거먼저 고치자
+		scwin.connect();
 		
 		 var autoOptions = {
 			Main : { grid : MO0101G0, srchSbm : sub_MO0101G0R0, keyColumn : "VHC_ID", srchGrp : pgm_header, name : "노선 목록"}
@@ -226,8 +225,6 @@
 		MO0101G0.mergeCells("byrestriccol");
 		
 		com.executeSubmission(sub_MO0101SHI0);	
-		
-		//connect();	
 		
 		//탭 목록 클릭 이벤트
 		$(".moni_img").find("li").click( function() {
@@ -291,63 +288,76 @@
 	var sttnActive = 0;
 	var crossActive = 0;
 		
-	function connect() {
+	scwin.connect = function() {
 		var socket = new SockJS('/websocket');
 		stompClient = Stomp.over(socket);
 		
-		stompClient.connect({}, onConnected, onError);
+		stompClient.connect({}, scwin.onConnected, scwin.onError);
 	
 	}	
 	
-	
-	function onConnected(frame) {
+	scwin.onConnected = function (frame) {
 		//setConnected(true);
 		
 		console.log('Connected: ' + frame);
 		
 	    // Subscribe to the Public Topic
+	    
 
 	    stompClient.subscribe('/topic/public', scwin.onMessageReceived);
 	
 	}
-	
-	
-	function onError(error) {
+		
+	scwin.onError = function (error) {
 		showMessage('Could not connect to WebSocket server. ' + error);
-	}	
+	}			
 	
+
 	scwin.onMessageReceived = function(payload) {
 		var jsonObj = JSON.parse(payload.body);
 		
 		var attrId = jsonObj.ATTR_ID;
-		//var attrId = jsonObj.getData("ATTR_ID");
+		var dataList = jsonObj.LIST;
 		
-		if(attrId == 1000){
-			var curIndex = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
-			
-			dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndex, jsonObj, true);
-			
-			jsonObj = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndex);
-			
-			var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID")
-			
-			routMap.showVehicle2("map_MO0101", jsonObj, rowData, MO0101G0, curIndex);
-		}else if(attrId == 2000){
-			var index = dlt_BMS_DVC_INFO.getMatchedIndex("DVC_ID", jsonObj.DVC_ID);
-			
-			dlt_BMS_DVC_INFO.setRowJSON(index, jsonObj, true);
+		
+		//attrId = 2022 : 정류장별 차량 도착 정보
+		if(attrId == 2022){
 			
 		}
 		
-		//showMessage(jsonObj);
-	}
-	
-	function showMessage(message) {
-		$("#mf_tac_layout_contents_MN00050202_body_message").append("<tr><td>" + message + "</td></tr>");
-	}	
-	 
-	
-	
+		//attrId = 4014 : 실시간 차량 위치 정보
+		else if(attrId == 4014){
+			try {
+				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+//				dlt_BRT_CUR_OPER_INFO.setCellData(curIndex[0], "GPS_X", jsonObj.GPS_X);
+//				dlt_BRT_CUR_OPER_INFO.setCellData(curIndex[0], "GPS_Y", jsonObj.GPS_Y);
+				dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
+				
+				dataRowJson = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndexArr[0]);
+				var rowData = dlt_BRT_CUR_OPER_INFO.getMatchedColumnData("VHC_ID", dataRowJson.VHC_ID, "VHC_ID");
+				//var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID");
+				
+				routMap.showVehicle2("map_MO0101_vehicle", dataRowJson, rowData, MO0101G0, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
+//				if(dataList != null && dataList.length != 0){
+//							
+//					for(var i=0; i<dataList.length; i++) {
+//						var curIndex = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj[i].VHC_ID);
+//						dlt_BRT_CUR_OPER_INFO.setRowJson(curIndex, jsonObj, true);
+//						jsonObj = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndex);
+//						var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID");
+//						
+//						routMap.showVehicle2("map_MO0101_vehicle", jsonObj, rowData, MO0101G0, curIndex);													
+//						}
+//						
+//					}
+					
+			} catch (e) {
+				console.log("[scwin.onMessageReceived] Exception :: " + e.message);			
+			}	
+			
+		}
+	};
+			
 	scwin.MO0101G0_onrowindexchange = function(row,oldRow) {
 		busFocus = row;		 
 		com.executeSubmission(sub_MO0101G3R0);		 
@@ -681,7 +691,7 @@
 							<xf:group id="MO0101T0">
 								<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.MO0101G0_onrowindexchange" ev:oncellclick=""
 									showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서"
-									sortable="true" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
+									sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 									fixedColumnWithHidden="true" dataList="data:dlt_BRT_CUR_OPER_INFO" ignoreCellClick="false" style="height:350px;"
 									autoFit="lastColumn" visibleRowNum="" id="MO0101G0" class="cm_grid left" tooltipPositionY="" focusMode="row">
 									<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
