@@ -306,7 +306,7 @@
  	<!-- 노선별 노드 리스트 오름차순 JH -->
  	<select id="selectRoutNodeList" resultType="Map" parameterType="String">
  		SELECT
-			A.NODE_ID AS NODE_ID
+			IF(A.NODE_TYPE = 'NT006', A.ORGA_ID, A.NODE_ID) AS NODE_ID
 		FROM BMS_ROUT_NODE_CMPSTN A
 			INNER JOIN BMS_ROUT_MST R ON A.ROUT_ID = R.ROUT_ID AND R.DEL_YN !='Y' 
 		WHERE

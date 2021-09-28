@@ -176,15 +176,22 @@
 		//var attrId = jsonObj.getData("ATTR_ID");
 		
 		if(attrId == 1000){
-			var curIndex = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+			try{
+				var curIndex = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+				
+				dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndex, jsonObj, true);
+				
+				jsonObj = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndex);
+				
+				var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "VHC_ID")
+				
+				setTimeout(function() {
+					routMap.showVehicle2("map_VD0201", jsonObj, rowData, VD0201G0, curIndex);	
+				},100);			
+			} catch (e) {
+				console.log("[scwin.onMessageReceived] Exception :: " + e.message);
+			}
 			
-			dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndex, jsonObj, true);
-			
-			jsonObj = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndex);
-			
-			var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "VHC_ID")
-			
-			routMap.showVehicle2("map_VD0201", jsonObj, rowData, VD0201G0, curIndex);
 		}else if(attrId == 2000){
 			var index = dlt_BMS_DVC_INFO.getMatchedIndex("DVC_ID", jsonObj.DVC_ID);
 			
