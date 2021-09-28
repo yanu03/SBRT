@@ -26,7 +26,7 @@ public class OperPlanController extends ControllerSupport {
 	
 	@RequestMapping("/operPlan/selectOperPlanRoutList")
 	public @ResponseBody Map<String, Object> selectSttnList() throws Exception {
-		result.setData("dlt_BRT_OPER_ALLOC_PL_ROUT_INFO", operPlanService.selectOperPlanRoutList());
+		result.setData("dlt_BRT_OPER_PL_ROUT_INFO", operPlanService.selectOperPlanRoutList());
 		return result.getResult();
 	}
 

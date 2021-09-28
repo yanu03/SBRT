@@ -69,7 +69,7 @@ public class AL0201Service extends ServiceSupport {
 		int uCnt = 0;
 		int dCnt = 0;		
 		
-		List<Map<String, Object>> param = getSimpleList("dlt_BRT_OPER_ALLOC_PL_ROUT_INFO");
+		List<Map<String, Object>> param = getSimpleList("dlt_BRT_OPER_PL_ROUT_INFO");
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
