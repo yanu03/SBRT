@@ -374,6 +374,44 @@
 		ORDER BY NODE_SN
 	</select>
 	
+	<select id="selectNodeListByRepRout" resultType="Map" parameterType="Map">
+		SELECT A.ROUT_ID, A.NODE_ID, A.NODE_SN, A.NODE_NM, A.NODE_TYPE, A.LINK_ID, A.STTN_ID, A.STTN_NO, A.CRS_ID, A.ORGA_ID
+				,A.GPS_X, A.GPS_Y, A.LINK_NODE_YN, B.MORN_STD
+		FROM BMS_ROUT_NODE_CMPSTN A 
+		LEFT OUTER JOIN BMS_ROUT_LINK_CMPSTN B
+			ON A.ROUT_ID = B.ROUT_ID AND A.LINK_ID = B.LINK_ID
+		LEFT OUTER JOIN BMS_ROUT_MST C
+			ON A.ROUT_ID = C.ROUT_ID	
+		<where>	
+			<if test="CONTENT1 != null">
+				AND C.REP_ROUT_ID = #{CONTENT1}			
+			</if>
+			<if test="CONTENT2 != ''">
+				AND A.ROUT_ID = #{CONTENT2}				
+			</if>
+			<if test="CONTENT3 != null and CONTENT3 != ''">
+				AND (A.NODE_ID LIKE CONCAT('%',#{CONTENT3},'%') || A.NODE_NM LIKE CONCAT('%',#{CONTENT3},'%'))
+			</if>			
+			<choose>
+				<when test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">
+					AND A.NODE_TYPE = #{NODE_TYPE}
+				</when>  
+				<otherwise>
+					<if test="TYPE == 'DISP_NODE'">
+					AND A.NODE_TYPE != 'NT006'
+					</if>
+					<if test="TYPE == 'LINK_NODE'">
+					AND A.LINK_NODE_YN = 'Y'
+					</if>
+					<if test="TYPE == 'SOUND_NODE'">
+					AND A.NODE_TYPE != 'NT005'
+					</if>
+				</otherwise>
+			</choose>
+		</where>	
+		ORDER BY ROUT_ID, NODE_SN
+	</select>
+	
 	<select id="selectSttnList" resultType="Map">
 		SELECT  A.STTN_ID,
 				A.STTN_NM,
