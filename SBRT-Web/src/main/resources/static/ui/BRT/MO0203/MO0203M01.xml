@@ -99,7 +99,7 @@
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_MO0203G0R0" ref='data:json,dma_search' target='data:json,dlt_BMS_NODE_MST' action="/mo/MO0203G0R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_MO0203G0R0_submitdone" ev:submiterror="" abortTrigger="">
+				processMsg="조회 중입니다.." ev:submit="scwin.sub_MO0203G0R0_submit" ev:submitdone="scwin.sub_MO0203G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_MO0203SHI0" ref="" target="data:json,dlt_searchitem" action="/rout/selectRoutItem" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
@@ -161,21 +161,56 @@
 		$p.executeSubmission(sub_MO0203SCK);
 	}
 	
-	//10초 간격으로 MO0203SCK 실행
+	//5초 간격으로 MO0203SCK 실행
 	//setInterval(MO0203SCK, 5000);
 	
-	/*$(function () {
-		$( "#connect" ).click(function() { connect(); });
-		$( "#disconnect" ).click(function() { disconnect(); });
+	//정류장별 차량 도착 정보 테이블 생성
+	scwin.setTable = function(dataList){
+		var tableStr = '';
+		var tableBody = '';
 		
-		$("form").on('submit', function (e) {
-			e.preventDefault();
-		});
-		$( "#send" ).click(function() { sendMessage(); });
+		tableStr = '<table id="mf_tac_layout_contents_MN00090201_body_test123123" style="margin-right: 80px;margin-left: 80px;background-color: black;color: white;border-color: black;height: 180px;" class="w2group w2tb">'
+					+'<caption id="mf_tac_layout_contents_MN00090201_body_wq_uuid_505" class="w2group "></caption>'
+					+'<colgroup id="mf_tac_layout_contents_MN00090201_body_wq_uuid_506" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_507" style="width:10.00%;" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_508" style="width:25.00%" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_509" style="width:45.00%" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_510" style="width:20.00%" class="w2group ">'
+					+'</colgroup>'
+					+'<tbody>';
+		
+		if(dataList != null && dataList.length != 0){
+			for(var i = 0; i < dataList.length; i++){
+				tableBody += '<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
+							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_512" style="border-color: black;text-align: center;" class="w2group w2tb_td w2tb_noTH">'
+							+'<img id="mf_tac_layout_contents_MN00090201_body_wq_uuid_513" src="/cm/images/tmap/bus_purple_selected.png" style="width: 40px;height: 100%;" class="w2image " onerror="(this.src="/cm/images/notice/noimg.jpg").call(this,event);">'
+							+'</td>'
+							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black;" class="w2group w2tb_td w2tb_noTH">'
+							+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
+							+dataList[i].ROUT_NM
+							+'</span>'
+							+'</td>'
+							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_516" style="border-color: black;" class="w2group w2tb_td w2tb_noTH">'
+							+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_517" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
+							+dataList[i].REMAIN_STTN + '정거장 전'
+							+'</span>'
+							+'</td>'
+							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black;text-align: right;" class="w2group w2tb_td w2tb_noTH">'
+							+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
+							+dataList[i].REMAIN_TM + '초'
+							+'</span>'
+							+'</td>'
+							+'</tr>';
+			}
+		
+		}
+		
+		tableStr += tableBody + '</tbody></table>';
+		
+		//test123123.setGridStyle(WebSquare.xml.parse( tableStr , true ));
+		$("#mf_tac_layout_contents_MN00090201_body_test123123").html(tableStr);
+	}
 	
-		connect();
-	
-	});	*/
 	
 	function connect() {
 		var socket = new SockJS('/websocket');
@@ -204,15 +239,47 @@
 	}	
 	
 	scwin.onMessageReceived = function(payload) {
-		
+		debugger;
 		var jsonObj = JSON.parse(payload.body);
-		//var content = jsonObj.content;
 		
+		var attrId = jsonObj.ATTR_ID;
+		var dataList = jsonObj.LIST;
+		
+		scwin.setTable(dataList);
+		
+		//attrId = 2022 : 정류장별 차량 도착 정보
+		if(attrId == 2022){
+			/*for(i=0; i<dataList.length; i++){
+				dlt_BMS_ETA_INFO.insertRow(i);
+				dlt_BMS_ETA_INFO.setCellData(i, "ROUT_ID", dataList[i].ROUT_ID);
+				dlt_BMS_ETA_INFO.setCellData(i, "ROUT_NM", dataList[i].ROUT_NM);
+				dlt_BMS_ETA_INFO.setCellData(i, "REMAIN_TM", dataList[i].REMAIN_TM);
+				dlt_BMS_ETA_INFO.setCellData(i, "REMAIN_STTN", dataList[i].REMAIN_STTN);
+				
+				//임시
+				if(i==0){
+					dma_VHC_ETA_INFO.set("REMAIN_TM", dlt_BMS_ETA_INFO.getCellData(0, "REMAIN_TM")+"분");
+					dma_VHC_ETA_INFO.set("ROUT_ID", dlt_BMS_ETA_INFO.getCellData(0, "ROUT_ID"));
+					dma_VHC_ETA_INFO.set("ROUT_NM", dlt_BMS_ETA_INFO.getCellData(0, "ROUT_NM"));
+					dma_VHC_ETA_INFO.set("REMAIN_STTN", dlt_BMS_ETA_INFO.getCellData(0, "REMAIN_STTN")+"정거장 전");
+				}else if(i==1){
+					dma_VHC_ETA_INFO2.set("REMAIN_TM", dlt_BMS_ETA_INFO.getCellData(1, "REMAIN_TM")+"분");
+					dma_VHC_ETA_INFO2.set("ROUT_ID", dlt_BMS_ETA_INFO.getCellData(1, "ROUT_ID"));
+					dma_VHC_ETA_INFO2.set("ROUT_NM", dlt_BMS_ETA_INFO.getCellData(1, "ROUT_NM"));
+					dma_VHC_ETA_INFO2.set("REMAIN_STTN", dlt_BMS_ETA_INFO.getCellData(1, "REMAIN_STTN")+"정거장 전");
+				}
+			}*/
+			
+		}
+		//attrId = 4044 : 실시간 차량 위치 정보
+		else if(attrId == 4014){
+			
+		}
 		
 		//console.log('Connected: ' + content);
-		var rowData2 = dlt_BRT_CUR_OPER_INFO.getCellData(MO0203G0.getFocusedRowIndex(), "VHC_ID")
+		/*var rowData2 = dlt_BRT_CUR_OPER_INFO.getCellData(MO0203G0.getFocusedRowIndex(), "VHC_ID")
 		var rowData = dlt_BRT_CUR_OPER_INFO.getAllJSON()[MO0203G0.getFocusedRowIndex()];
-		routMap.showVehicle2("map_MO0203", jsonObj, rowData2, MO0203G0, 0);	
+		routMap.showVehicle2("map_MO0203", jsonObj, rowData2, MO0203G0, 0);	*/
 		
 		//showMessage(content);
 	}
@@ -238,6 +305,19 @@
 	};
 	
 	scwin.sub_MO0203G0R0_submitdone = function(e) {
+		$(function () {
+			$( "#connect" ).click(function() { connect(); });
+			$( "#disconnect" ).click(function() { disconnect(); });
+			
+			$("form").on('submit', function (e) {
+				e.preventDefault();
+			});
+			$( "#send" ).click(function() { sendMessage(); });
+		
+			connect();
+		
+		});	
+		
 		com.setFocusedCell(MO0203G0, "NODE_ID");
 		
 		//시설물상태에 따라 클래스(백그라운드 색) 설정
@@ -274,20 +354,7 @@
 		$p.executeSubmission(sub_MO0203G2R0);
 		com.searchGrid(MO0203G0, sub_MO0203G0R0);
 	};
-
-	
-	/*웹소켓 - *차량타입(VHC_TYPE) 추가(버스 이미지 처리)
-		(attrId == 2022) { //2022: 정류장별 차량 도착 정보
-		
-		payload.body >>>> {"ATTR_ID":2022,"LIST":[{"ROUT_ID":"RT00000080","REMAIN_TM":1364334,"REMAIN_STTN":2}],"STTN_ID":"ND00000017"}
-		
-		jsonObj.STTN_ID => 정류장아이디
-		jsonObj.LIST => 도착정보 리스트
-		 ㄴ ROUT_ID => 노선아이디
-		 ㄴ REMAIN_TM => 남은시간(초)
-		 ㄴ REMAIN_STTN => 몇 정류장 전*/
-	
-	]]></script>
+]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
@@ -491,49 +558,13 @@
 					</w2:span>
 					<w2:span label="STTN_EN_NM" style="color: white;font-size: 15px;text-align: center;" id="" ref=""></w2:span>
 					<xf:group style="" id=""></xf:group>
-					<xf:group tagname="table"
-						style="margin-right: 80px;margin-left: 80px;background-color: black;color: white;border-color: black;" id="" class="w2tb">
-						<w2:attributes>
-							<w2:summary></w2:summary>
-						</w2:attributes>
-						<xf:group tagname="caption"></xf:group>
-						<xf:group tagname="colgroup">
-							<xf:group tagname="col" style="width:10.00%;"></xf:group>
-							<xf:group tagname="col" style="width:25.00%"></xf:group>
-							<xf:group tagname="col" style="width:45.00%"></xf:group>
-							<xf:group tagname="col" style="width:20.00%"></xf:group>
-						</xf:group>
-						<xf:group tagname="tr" style="">
-							<xf:group tagname="td" style="border-color: black;text-align: center;" class="w2tb_td">
-								<xf:image src="/cm/images/tmap/bus_purple_selected.png" style="width: 40px;height: 100%;" id=""></xf:image>
-							</xf:group>
-							<xf:group tagname="td" style="border-color: black;" class="w2tb_td">
-								<w2:span label="B0상" style="width: 100px;height: 23px;font-size: 20px;" id=""></w2:span>
-							</xf:group>
-							<xf:group tagname="td" style="border-color: black;" class="w2tb_td">
-								<w2:span label="야호!!!!!" style="width: 100px;height: 23px;font-size: 20px;" id=""></w2:span>
-							</xf:group>
-							<xf:group tagname="td" style="border-color: black;text-align: right;" class="w2tb_td">
-								<w2:span label="13분" style="width: 100%;height: 23px;font-size: 20px;text-align: right;color: green;" id=""></w2:span>
-							</xf:group>
-						</xf:group>
-						<xf:group tagname="tr">
-							<xf:group tagname="td" style="border-color: black;text-align: center;" class="w2tb_td">
-								<xf:image src="/cm/images/tmap/bus_purple.png" style="width: 40px;height: 100%;" id=""></xf:image>
-							</xf:group>
-							<xf:group tagname="td" style="border-color: black;" class="w2tb_td">
-								<w2:span label="B0하" style="width: 100px;height: 23px;font-size: 20px;" id=""></w2:span>
-							</xf:group>
-							<xf:group tagname="td" style="border-color: black;" class="w2tb_td">
-								<w2:span label="야호!!!!!" style="width: 100px;height: 23px;font-size: 20px;" id=""></w2:span>
-							</xf:group>
-							<xf:group tagname="td" style="border-color: black;text-align: right;" class="w2tb_td">
-								<w2:span label="2분" style="width: 100px;height: 23px;font-size: 20px;text-align: right;color: green;" id=""></w2:span>
-							</xf:group>
-						</xf:group>
+				<xf:group tagname="table"
+						style="margin-right: 80px;margin-left: 80px;background-color: black;color: white;border-color: black;height: 180px;" id="test123123" class="w2tb">
 					</xf:group>
 				</xf:group><!-- pgm_detail end -->
 			</xf:group><!-- end content -->
 		</xf:group><!-- end container -->
 	</body>
 </html>
+
+
