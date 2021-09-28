@@ -162,6 +162,7 @@ routMap.removeBusMarkers = function(mapId) {
 }
 
 routMap.removeIndexBusMarker = function(mapId,index) {
+	debugger;
 	if(routMap.mapInfo[mapId].busMarkers != null && routMap.mapInfo[mapId].busMarkers.length != 0) {
 		routMap.mapInfo[mapId].busMarkers[index].setMap(null);
 	}
@@ -775,7 +776,7 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx, busGrid) {
 	}
 	
 	marker.setMap(routMap.mapInfo[mapId].map); //Marker가 표시될 Map 설정.
-	
+	debugger;
 	if(idx<routMap.mapInfo[mapId].busMarkers.length){
 		routMap.mapInfo[mapId].busMarkers[idx] = marker;
 	}

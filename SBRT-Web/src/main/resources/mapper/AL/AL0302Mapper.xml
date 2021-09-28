@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.brt.domain.AL0302.AL0302Mapper">
+
+<select id="AL0302G0R0" resultType="Map">
+	SELECT
+		A.REP_ROUT_ID
+		,A.DAY_DIV
+		,(SELECT STTN_NM FROM BMS_STTN_MST WHERE STTN_ID = A.ST_STTN_ID AND DEL_YN!='Y') ST_STTN_NM
+		,(SELECT STTN_NM FROM BMS_STTN_MST WHERE STTN_ID = A.ED_STTN_ID AND DEL_YN!='Y') ED_STTN_NM
+		,B.REP_ROUT_NM
+	FROM
+		BRT_OPER_PL_MST A
+		LEFT JOIN BMS_REP_ROUT_MST B
+		ON A.REP_ROUT_ID = B.REP_ROUT_ID
+	<where>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+			<if test="TYPE == 'ALL'">
+				AND (A.STTN_ID LIKE CONCAT('%',#{CONTENT},'%') || A.STTN_NM LIKE CONCAT('%',#{CONTENT},'%') || A.STTN_NO LIKE CONCAT('%',#{CONTENT},'%'))
+			</if>
+			<if test="TYPE == 'STTN_ID'">
+				AND A.STTN_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'STTN_NM'">
+				AND A.STTN_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'STTN_NO'">
+				AND A.STTN_NO LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</if>
+	</where>
+</select>
+
+<select id="AL0302G1R0" resultType="Map">
+	SELECT
+		A.ALLOC_NO
+		,A.REP_ROUT_ID
+		,A.VHC_ID
+		,B.VHC_NO
+		,C.COMP_NM
+		,E.DRV_SN
+		,D.DRV_NM
+	FROM
+		BRT_ALLOC_PL_MST A
+		LEFT JOIN BMS_VHC_MST B
+		ON A.VHC_ID = B.VHC_ID
+		LEFT JOIN BMS_TRANSCOMP_MST C
+		ON B.COMP_ID = C.COMP_ID
+		LEFT JOIN BRT_DRV_ALLOC_INFO E
+		ON A.REP_ROUT_ID = E.REP_ROUT_ID AND A.ALLOC_NO = E.ALLOC_NO 
+		LEFT JOIN BMS_DRV_MST D
+		ON E.DRV_ID = D.DRV_ID
+	WHERE
+		A.REP_ROUT_ID = #{REP_ROUT_ID}
+	ORDER BY
+		A.ALLOC_NO
+</select>
+
+<select id="AL0302P0R0" resultType="Map">
+	SELECT
+		A.VHC_ID
+		,A.VHC_NO
+		,B.COMP_NM
+	FROM
+		BMS_VHC_MST A
+		INNER JOIN BRT_REP_ROUT_VHC_CMPSTN C
+		ON A.VHC_ID = C.VHC_ID
+		LEFT JOIN BMS_TRANSCOMP_MST B
+		ON A.COMP_ID = B.COMP_ID
+</select>
+
+<select id="AL0302P1R0" resultType="Map">
+	SELECT
+		A.DRV_ID
+		,A.DRV_NM
+	FROM
+		BMS_DRV_MST A
+		INNER JOIN BRT_REP_ROUT_DRV_CMPSTN B
+		ON A.DRV_ID = B.DRV_ID
+</select>
+
+<!--  
+
+<select id="SI0502SHI0" resultType="Map">
+	SELECT STTN_ID, STTN_NM, STTN_NO
+	FROM BMS_STTN_MST WHERE DEL_YN!='Y'
+	ORDER BY STTN_ID
+</select>
+
+<select id="SI0502G1K0" resultType="Map">
+	SELECT CONCAT('TR', LPAD(NEXTVAL(SEQ_BMS_STTN_MST_0), 8, '0')) AS 'SEQ'
+</select>
+
+<insert id="SI0502G1I0" parameterType="Map">
+	insert into BMS_TRANSFER_INFO
+			(STTN_ID,
+			TRNS_ID,
+			TRNS_DIV,
+			TRNS_NM,
+			GPS_X,
+			GPS_Y,
+			TM_Y,
+			TM_X,
+			USE_YN,
+			REMARK,
+			UPD_DTM,
+			UPD_ID
+			)
+	values (#{STTN_ID},
+			#{TRNS_ID},
+			#{TRNS_DIV},
+			#{TRNS_NM},
+			#{GPS_X},
+			#{GPS_Y},
+			0,
+			0,
+			#{USE_YN},
+			#{REMARK},
+			#{UPD_DTM},
+			#{SSN_USER_ID}
+			)		
+
+</insert>
+
+<update id="SI0502G1U0" parameterType="Map">
+	update BMS_TRANSFER_INFO
+	set		STTN_ID = #{STTN_ID},
+			TRNS_DIV = #{TRNS_DIV},
+			TRNS_NM = #{TRNS_NM},
+			GPS_X = #{GPS_X},
+			GPS_Y = #{GPS_Y},
+			USE_YN = #{USE_YN},
+			REMARK = #{REMARK}
+	where	TRNS_ID = #{TRNS_ID}		
+</update>
+
+<delete id="SI0502G1D0" parameterType="Map">
+	delete from BMS_TRANSFER_INFO
+	where TRNS_ID = #{TRNS_ID}
+</delete>-->
+
+</mapper>
