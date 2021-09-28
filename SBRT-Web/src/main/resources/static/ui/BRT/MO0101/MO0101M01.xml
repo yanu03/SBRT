@@ -65,7 +65,7 @@
 						<w2:column id="MORN_STD" name="집중모니터링기준" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN2" saveRemovedData="true"> <!-- 정류장 그리드용 -->
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN2" saveRemovedData="true"><!-- 정류장 그리드용 -->
 					<w2:columnInfo>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
@@ -81,6 +81,7 @@
 						<w2:column id="ROUT_LEN" name="노선거리" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="AREA" name="권역" dataType="text"></w2:column>
 						<w2:column id="MORN_STD" name="집중모니터링기준" dataType="text"></w2:column>
+						<w2:column id="COND_ERROR" name="비정상여부" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN3" saveRemovedData="true"> <!-- 교차로 그리드용 -->
@@ -202,17 +203,16 @@
 				, height:"100%"
 				, onClick: scwin.onClickMap				
 		});
-		
 		routMap.cronMap("map_MO0101_vehicle", {
-				onClick: scwin.onClickMap				
+				onMarkerClick: scwin.onClickMapVehicle				
 		},map);
 		
 		routMap.cronMap("map_MO0101_sttn", {
-				onClick: scwin.onClickMap				
+				onMarkerClick: scwin.onClickMapSttn				
 		},map);
 		
 		routMap.cronMap("map_MO0101_crs", {
-				onClick: scwin.onClickMap				
+				onMarkerClick: scwin.onClickMapCrs				
 		},map);
 		
 		var codeOptions = [ {code : "CRS_KIND", compID : "CRS_KIND"},
@@ -229,8 +229,8 @@
 		
 		//connect();	
 		
+		//탭 목록 클릭 이벤트
 		$(".moni_img").find("li").click( function() {
-			
 			var li_id = this.id;
 			$(".moni_img").find("li").removeClass("on");
 			$(".moni_img").find("#"+li_id).addClass("on");
@@ -317,7 +317,6 @@
 	}	
 	
 	scwin.onMessageReceived = function(payload) {
-		debugger;
 		var jsonObj = JSON.parse(payload.body);
 		
 		var attrId = jsonObj.ATTR_ID;
@@ -350,14 +349,6 @@
 	
 	
 	scwin.MO0101G0_onrowindexchange = function(row,oldRow) {
-//		var focusOption = {keyMap : dma_sub_search};
-//		com.changeDualGrid(MO0101G0, MO0101G1, null, sub_MO0101G1R0, focusOption, row, oldRow);	
-//		var routID = dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "ROUT_ID");
-//		dma_sub_search.set("ROUT_ID", routID);
-	
-//		com.executeSubmission(sub_MO0101G1R0);		 
-//		com.executeSubmission(sub_MO0101G4R0);		 
-//		com.executeSubmission(sub_MO0101G2R0);
 		busFocus = row;		 
 		com.executeSubmission(sub_MO0101G3R0);		 
 		 			
@@ -365,6 +356,7 @@
 	
 	scwin.sub_MO0101G0R0_submitdone = function(e) {
 		com.setFocusedCell(MO0101G0, "VHC_ID");
+		
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
@@ -386,26 +378,22 @@
 	scwin.sub_MO0101G3R0_submitdone = function(e) {
 		
 		com.executeSubmission(sub_MO0101G4R0);
-	//	routMap.showRoute2("map_MO0101", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), -1);
 		routMap.showRoute("map_MO0101", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), null, "ONLYLINE");			
 		
 		if ($(".moni_img").find("#li_sttnimg").hasClass("on") || startMarker == 1) {
 			routMap.initOverlay("map_MO0101_crs");
-			routMap.showMarkerList("map_MO0101_sttn", dlt_BMS_ROUT_NODE_CMPSTN2.getAllJSON(), MO0101G1.getFocusedRowIndex(), MO0101G1);
+			routMap.showMarkerListTab("map_MO0101_sttn", dlt_BMS_ROUT_NODE_CMPSTN2.getAllJSON(), MO0101G1.getFocusedRowIndex(), MO0101G1, MO0101T0, MO0101T1, MO0101T2);
 		}
 		
 		if ($(".moni_img").find("#li_crossimg").hasClass("on") || startMarker == 1) {
 			routMap.initOverlay("map_MO0101_sttn");
-			routMap.showMarkerList("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON(), MO0101G2.getFocusedRowIndex(), MO0101G2);			
+			routMap.showMarkerListTab("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON(), MO0101G2.getFocusedRowIndex(), MO0101G2, MO0101T0, MO0101T1, MO0101T2);			
 		}
 		
 		if ($(".moni_img").find("#li_busimg").hasClass("on") || startMarker == 1) {
 			routMap.showVehicle("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
 					dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0);
 		}			 					 
-							 
-		//routMap.showCategory("map_MO0101", dlt_BMS_NODE_MST.getAllJSON(), null, MO0101G0);									 	
-		//routMap.showCategory("map_MO0101", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON());
 		startMarker = 0;					 
 	};
 	
@@ -431,7 +419,6 @@
 	};
 	
 	scwin.sub_MO0101G4R0_submitdone = function(e) {
-		debugger;
 		var focusGrid = "";
 		var focusIdx = 0;
 		
@@ -439,19 +426,141 @@
 			focusGrid = MO0101G0;
 			focusIdx = MO0101G0.getFocusedRowIndex();
 		} else if (sttnActive == 1) {
-			focusGrid = MO0101G0;
-			focusIdx = MO0101G0.getFocusedRowIndex();
+			focusGrid = MO0101G1;
+			focusIdx = MO0101G1.getFocusedRowIndex();
 		} else if (crossActive == 1) {
-			focusGrid = MO0101G0;
-			focusIdx = MO0101G0.getFocusedRowIndex();
+			focusGrid = MO0101G2;
+			focusIdx = MO0101G2.getFocusedRowIndex();
 		}
 		
-		routMap.showCategory2("map_MO0101", "map_MO0101_sttn", "map_MO0101_crs", dlt_BMS_NODE_MST.getAllJSON(), dlt_BMS_ROUT_NODE_CMPSTN2.getAllJSON(),
-								 dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON(), focusIdx, focusGrid);
-	};
+		//카테고리
+//		routMap.showCategory2("map_MO0101", "map_MO0101_sttn", "map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN2.getAllJSON(),
+//								 dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON(), focusIdx, focusGrid);
+		$("#map_MO0101").find("#category_map_MO0101").empty();
+		var categoryClass = null;
+		var categoryName = null;
+		
+		var categoryContentCross = null;
+		var categoryContentNormal = null;
+		var categoryContentAbnormal = null;
+		
+		var isShowCrs = routMap.mapInfo["map_MO0101_crs"].isShowCrs; 
+		var isShowNormal = routMap.mapInfo["map_MO0101_sttn"].isShowNormal;
+		var isShowAbnormal = routMap.mapInfo["map_MO0101_sttn"].isShowAbnormal;
+		
+		var classOnOff = null;
+		categoryClass = "crossimg";
+		categoryName = "교차로";	
+		categoryContentCross =	'<li class="'+ isShowCrs +'">' ;
+		categoryContentCross +=	'<span class="' +categoryClass +'"></span>';
+		categoryContentCross +=	categoryName;
+		categoryContentCross +=	'</li>';   
+		
+		categoryClass = "normal_busimg";
+		categoryName = "정류장";
+		categoryContentNormal =	'<li class="'+ isShowNormal +'">' ;
+		categoryContentNormal +=	'<span class="' +categoryClass +'"></span>';
+		categoryContentNormal +=	categoryName;
+		categoryContentNormal +=	'</li>';
+		
+		categoryClass = "abnormal_busimg"
+		categoryName = "고장위치";
+		categoryContentAbnormal =	'<li class="'+ isShowAbnormal +'">' ;
+		categoryContentAbnormal +=	'<span class="' +categoryClass +'"></span>';
+		categoryContentAbnormal +=	categoryName;
+		categoryContentAbnormal +=	'</li>';
+		
+		$("#map_MO0101").find("#category_map_MO0101").append(categoryContentNormal);
+		$("#map_MO0101").find("#category_map_MO0101").append(categoryContentAbnormal);	
+		$("#map_MO0101").find("#category_map_MO0101").append(categoryContentCross);
+		//클릭 이벤트
+		$("#map_MO0101").find("li").click( function() {
+			var className = this.className;
+			var category = $("#map_MO0101").find("#category_map_MO0101");
+			var spanId = $(this).find("span");
+			var spanClassName = spanId.attr("class");
+			
+			var categoryMapId = null;
+			
+			//활성화 되어있을 때
+			if (className === 'on') {
+				currCategory = '';
+				this.className = '';
+				
+				if (spanClassName == "crossimg") {
+					routMap.initNode("map_MO0101_crs");
+					routMap.mapInfo["map_MO0101_crs"].isShowCrs = "";
+					for(var i=0; i<dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON().length; i++){
+						routMap.showMarkerTab("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON()[i], i, focusIdx, focusGrid, MO0101T0, MO0101T1, MO0101T2);		
+					}				
+				}
+				//정상 정류장
+				else if(spanClassName == "normal_busimg") {
+					routMap.initNode("map_MO0101_sttn");
+					routMap.mapInfo["map_MO0101_sttn"].isShowNormal = "";
+					for(var i=0; i<dlt_BMS_ROUT_NODE_CMPSTN2.getAllJSON().length; i++){
+						routMap.showMarkerTab("map_MO0101_sttn", dlt_BMS_ROUT_NODE_CMPSTN2.getAllJSON()[i], i, focusIdx, focusGrid, MO0101T0, MO0101T1, MO0101T2);		
+					}						
+				}
+				//비정상 정류장
+				else if(spanClassName == "abnormal_busimg") {
+					routMap.initNode("map_MO0101_sttn");
+					routMap.mapInfo["map_MO0101_sttn"].isShowAbnormal = "";
+					for(var i=0; i<dlt_BMS_ROUT_NODE_CMPSTN2.getAllJSON().length; i++){
+						routMap.showMarkerTab("map_MO0101_sttn", dlt_BMS_ROUT_NODE_CMPSTN2.getAllJSON()[i], i, focusIdx, focusGrid, MO0101T0, MO0101T1, MO0101T2);		
+					}						
+				}
+				
+				
+				//routMap.initNode(mapId);
+				//routMap.removeMarkers2(mapId);
+				
+				//removeMarker();
+				
+			} else {
+				this.className = 'on';
+				if (spanClassName == "crossimg") {
+					routMap.initNode("map_MO0101_crs");
+					routMap.mapInfo["map_MO0101_crs"].isShowCrs = "on";
+					for(var i=0; i<dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON().length; i++){
+						routMap.showMarkerTab("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON()[i], i, focusIdx, focusGrid, MO0101T0, MO0101T1, MO0101T2);		
+					}					
+				}
+				else if(spanClassName == "normal_busimg") {
+					routMap.initNode("map_MO0101_sttn");
+					routMap.mapInfo["map_MO0101_sttn"].isShowNormal = "on";	
+					for(var i=0; i<dlt_BMS_ROUT_NODE_CMPSTN2.getAllJSON().length; i++){
+						routMap.showMarkerTab("map_MO0101_sttn", dlt_BMS_ROUT_NODE_CMPSTN2.getAllJSON()[i], i, focusIdx, focusGrid, MO0101T0, MO0101T1, MO0101T2);		
+					}					
+				}
+				else if(spanClassName == "abnormal_busimg") {
+					routMap.initNode("map_MO0101_sttn");
+					routMap.mapInfo["map_MO0101_sttn"].isShowAbnormal = "on";
+					for(var i=0; i<dlt_BMS_ROUT_NODE_CMPSTN2.getAllJSON().length; i++){
+						routMap.showMarkerTab("map_MO0101_sttn", dlt_BMS_ROUT_NODE_CMPSTN2.getAllJSON()[i], i, focusIdx, focusGrid, MO0101T0, MO0101T1, MO0101T2);		
+					}					
+				}
+				
+			}	
+			
+		}); //end click
+								 
+	}; //end scwin.sub_MO0101G4R0_submitdone
 	
 	scwin.sub_MO0101G1R0_submitdone = function(e) {
 		com.setFocusedCell(MO0101G1, "NODE_ID");		
+		
+		//정류장 상태
+		for (i=0; i<dlt_BMS_ROUT_NODE_CMPSTN2.getDataLength(); i++) {
+			//비정상
+			if (dlt_BMS_ROUT_NODE_CMPSTN2.getCellData(i, "COND_ERROR") == "비정상") {
+				MO0101G1.setCellClass(i, "COND_ERROR", "cond_abnormal");
+			}
+			//정상
+			else if (dlt_BMS_ROUT_NODE_CMPSTN2.getCellData(i, "COND_ERROR") == "정상") {
+				MO0101G1.setCellClass(i, "COND_ERROR", "cond_normal");
+			}
+		}			
 	};
 	
 	scwin.sub_MO0101G2R0_submitdone = function(e) {
@@ -462,7 +571,46 @@
 		crossFocus = row;
 		com.executeSubmission(sub_MO0101G3R0);		
 	};
-	]]></script>
+	
+	scwin.onClickMapSttn = function(index, mapId) {
+		$(".moni_img").find("li").removeClass("on");
+		
+		if (mapId == "map_MO0101_sttn") {
+			
+			if(sttnActive != 1) {
+				MO0101G1.setFocusedCell(index, "NODE_ID");
+				scwin.MO0101G1_onrowindexchange();					
+			}
+			
+			$(".moni_img").find("#li_sttnimg").addClass("on");
+			busActive = 0;
+			sttnActive = 1;
+			crossActive = 0;
+			MO0101T0.hide();
+			MO0101T1.show();
+			MO0101T2.hide();	
+		}
+	};
+	
+	scwin.onClickMapCrs = function(index, mapId) {
+		$(".moni_img").find("li").removeClass("on");
+				
+		if (mapId == "map_MO0101_crs") {
+			
+			if(crossActive != 1) {
+				MO0101G2.setFocusedCell(index, "NODE_ID");
+				scwin.MO0101G2_onrowindexchange();					
+			}			
+			
+			$(".moni_img").find("#li_crossimg").addClass("on");
+			busActive = 0;
+			sttnActive = 0;
+			crossActive = 1;
+			MO0101T0.hide();
+			MO0101T1.hide();
+			MO0101T2.show();			
+		}			
+	};]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
@@ -680,8 +828,8 @@
 											<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column8"
 												value="경도" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column9"
-												value="" blockSelect="false" displayMode="label">
+											<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column1"
+												value="정류장상태" blockSelect="false" displayMode="label">
 											</w2:column>
 										</w2:row>
 									</w2:header>
@@ -699,8 +847,8 @@
 											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="GPS_X"
 												value="" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="" value=""
-												blockSelect="false" displayMode="label">
+											<w2:column removeBorderStyle="false" width="161" inputType="text" style="height:20px" id="COND_ERROR"
+												value="" blockSelect="false" displayMode="label" textAlign="">
 											</w2:column>
 										</w2:row>
 									</w2:gBody>
