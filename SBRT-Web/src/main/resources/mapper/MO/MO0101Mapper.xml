@@ -27,6 +27,7 @@
 		LEFT JOIN	  	BMS_TRANSCOMP_MST E
 			ON				C.COMP_ID = E.COMP_ID	
 		WHERE			A.OPER_DT = DATE_FORMAT(NOW(), '%Y/%m/%d')
+		AND				B.DEL_YN != 'Y'
 			<if test="CONTENT1 != null">
 				AND A.REP_ROUT_ID = #{CONTENT1}
 			</if>
@@ -56,12 +57,25 @@
 					,	B.MORN_STD
 
 		FROM 		  	BMS_ROUT_NODE_CMPSTN A 
-		LEFT OUTER JOIN BMS_ROUT_LINK_CMPSTN B
+		LEFT JOIN 		BMS_ROUT_LINK_CMPSTN B
 			ON A.ROUT_ID = B.ROUT_ID AND A.LINK_ID = B.LINK_ID
-		LEFT OUTER JOIN	BMS_STTN_MST C
-			ON A.NODE_ID = C.STTN_ID		
-		WHERE 			A.ROUT_ID  = #{ROUT_ID}
-		AND				A.NODE_TYPE = 'NT002'
+		LEFT JOIN		BMS_STTN_MST C
+			ON A.NODE_ID = C.STTN_ID
+		LEFT JOIN		BMS_ROUT_MST D
+			ON A.ROUT_ID = D.ROUT_ID
+							
+		WHERE 			A.NODE_TYPE = 'NT002'
+		AND				C.DEL_YN != 'Y'
+		<if test="CONTENT1 != null">
+			AND D.REP_ROUT_ID = #{CONTENT1}			
+		</if>
+		<if test="CONTENT2 != ''">
+			AND A.ROUT_ID = #{CONTENT2}				
+		</if>
+		<if test="CONTENT3 != null and CONTENT3 != ''">
+			AND (A.NODE_ID LIKE CONCAT('%',#{CONTENT3},'%') || A.NODE_NM LIKE CONCAT('%',#{CONTENT3},'%'))
+		</if>		
+		
 		ORDER BY 		NODE_SN
 	</select>
 	
@@ -105,12 +119,25 @@
 					,	C.REMARK
 					
 		FROM 		  	BMS_ROUT_NODE_CMPSTN A 
-		LEFT OUTER JOIN BMS_ROUT_LINK_CMPSTN B
+		LEFT JOIN		BMS_ROUT_LINK_CMPSTN B
 			ON A.ROUT_ID = B.ROUT_ID AND A.LINK_ID = B.LINK_ID
-		LEFT OUTER JOIN	BMS_CRS_MST C
-			ON A.NODE_ID = C.CRS_ID			
-		WHERE 			A.ROUT_ID  = #{ROUT_ID}
-		AND				A.NODE_TYPE = 'NT001'
+		LEFT JOIN		BMS_CRS_MST C
+			ON A.NODE_ID = C.CRS_ID
+		LEFT JOIN		BMS_ROUT_MST D	
+			ON A.ROUT_ID = D.ROUT_ID
+						
+		WHERE			A.NODE_TYPE = 'NT001'
+		AND				C.DEL_YN != 'Y'
+		<if test="CONTENT1 != null">
+			AND D.REP_ROUT_ID = #{CONTENT1}			
+		</if>
+		<if test="CONTENT2 != ''">
+			AND A.ROUT_ID = #{CONTENT2}				
+		</if>
+		<if test="CONTENT3 != null and CONTENT3 != ''">
+			AND (A.NODE_ID LIKE CONCAT('%',#{CONTENT3},'%') || A.NODE_NM LIKE CONCAT('%',#{CONTENT3},'%'))
+		</if>			
+		
 		ORDER BY 		NODE_SN
 	</select>	
 	
@@ -148,7 +175,7 @@
 		  ON A.NODE_ID = D.NODE_ID		
 		  
 		WHERE			(A.NODE_TYPE = 'NT001'
-		OR				A.NODE_TYPE = 'NT002')
+			OR				A.NODE_TYPE = 'NT002')
 			<if test="CONTENT1 != null">
 				AND G.REP_ROUT_ID = #{CONTENT1}			
 			</if>

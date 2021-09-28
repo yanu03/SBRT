@@ -32,6 +32,7 @@
 					<w2:keyInfo>
 						<w2:key id="CONTENT1" name="name1" dataType="text"></w2:key>
 						<w2:key id="CONTENT2" name="name2" dataType="text"></w2:key>
+						<w2:key id="CONTENT3" name="name3" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_sub_search">
@@ -155,7 +156,7 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0101G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0101G1R0" ref="data:json,dma_sub_search" target='data:json,dlt_BMS_ROUT_NODE_CMPSTN2'
+			<xf:submission id="sub_MO0101G1R0" ref="data:json,dma_search" target='data:json,dlt_BMS_ROUT_NODE_CMPSTN2'
 				action="/mo/MO0101G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0101G1R0_submitdone" ev:submiterror=""
 				abortTrigger="">
@@ -164,8 +165,8 @@
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_MO0101SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0101G3R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN"
-				action="/rout/selectNodeListByRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+			<xf:submission id="sub_MO0101G3R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN"
+				action="/rout/selectNodeListByRepRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_MO0101G3R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -177,7 +178,7 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0101G4R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0101G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN3" action="/mo/MO0101G2R0" method="post" mediatype="application/json" encoding="UTF-8"
+			<xf:submission id="sub_MO0101G2R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN3" action="/mo/MO0101G2R0" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0101G2R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -197,17 +198,27 @@
 			
 		 };
 		 
-		routMap.initMap("map_MO0101", {width:"100%"
+		var map = routMap.initMap("map_MO0101", {width:"100%"
 				, height:"100%"
 				, onClick: scwin.onClickMap				
 		});
 		
-//		var codeOptions = [ {code : "DVC_KIND", compID : "MO0101G1:DVC_KIND, MO0101G2:DVC_KIND"},
-//							{code : "INST_LOC", compID : "MO0101G1:INST_LOC, MO0101G2:INST_LOC"},
-//							{code : "DVC_COND", compID : "MO0101G1:DVC_COND, MO0101G2:DVC_COND"}
-//		 ];			
-//		 
-//		com.setCommonDtl(codeOptions);
+		routMap.cronMap("map_MO0101_vehicle", {
+				onClick: scwin.onClickMap				
+		},map);
+		
+		routMap.cronMap("map_MO0101_sttn", {
+				onClick: scwin.onClickMap				
+		},map);
+		
+		routMap.cronMap("map_MO0101_crs", {
+				onClick: scwin.onClickMap				
+		},map);
+		
+		var codeOptions = [ {code : "CRS_KIND", compID : "CRS_KIND"},
+		 ];			
+		 
+		com.setCommonDtl(codeOptions);
 
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);		
 
@@ -219,32 +230,67 @@
 		//connect();	
 		
 		$(".moni_img").find("li").click( function() {
+			
 			var li_id = this.id;
 			$(".moni_img").find("li").removeClass("on");
 			$(".moni_img").find("#"+li_id).addClass("on");
-			
 			if(li_id == "li_busimg") {
+				busActive = 1;
+				sttnActive = 0;
+				crossActive = 0;
+								
 				MO0101T0.show();
 				MO0101T1.hide();
 				MO0101T2.hide();
-				com.setFocusedCell(MO0101G0, "VHC_ID");				
+				if(busFocus != 0){
+					MO0101G0.setFocusedCell(busFocus, "VHC_ID");
+				} else if (busFocus == 0) {
+					com.setFocusedCell(MO0101G0, "VHC_ID");	
+				}
+				scwin.MO0101G0_onrowindexchange();			
 			}
 			else if(li_id == "li_sttnimg") {
+				busActive = 0;
+				sttnActive = 1;
+				crossActive = 0;
+				
 				MO0101T0.hide();
 				MO0101T1.show();
 				MO0101T2.hide();
-				com.setFocusedCell(MO0101G1, "NODE_ID");
+				if(sttnFocus != 0){
+					MO0101G1.setFocusedCell(sttnFocus, "NODE_ID");
+				} else if (sttnFocus == 0) {
+					com.setFocusedCell(MO0101G1, "NODE_ID");	
+				}				
+				scwin.MO0101G1_onrowindexchange();	
 			}
 			else if(li_id == "li_crossimg") {
+				busActive = 0;
+				sttnActive = 0;
+				crossActive = 1;
+								
 				MO0101T0.hide();
 				MO0101T1.hide();
 				MO0101T2.show();
-				com.setFocusedCell(MO0101G2, "NODE_ID");
+				if(crossFocus != 0){
+					MO0101G2.setFocusedCell(crossFocus, "NODE_ID");
+				} else if (crossFocus == 0) {
+					com.setFocusedCell(MO0101G2, "NODE_ID");	
+				}				
+				scwin.MO0101G2_onrowindexchange();	
 			}
-		});			
+		});
+		
 	};	
 	
-	
+	var startMarker = 1;
+	var busFocus = 0;
+	var sttnFocus = 0;
+	var crossFocus = 0;
+	var busActive = 0;
+	var sttnActive = 0;
+	var crossActive = 0;
+		
 	function connect() {
 		var socket = new SockJS('/websocket');
 		stompClient = Stomp.over(socket);
@@ -304,14 +350,15 @@
 	
 	
 	scwin.MO0101G0_onrowindexchange = function(row,oldRow) {
-		var focusOption = {keyMap : dma_sub_search};
-		//com.changeDualGrid(MO0101G0, MO0101G1, null, sub_MO0101G1R0, focusOption, row, oldRow);	
-		var routID = dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "ROUT_ID");
-		dma_sub_search.set("ROUT_ID", routID);
+//		var focusOption = {keyMap : dma_sub_search};
+//		com.changeDualGrid(MO0101G0, MO0101G1, null, sub_MO0101G1R0, focusOption, row, oldRow);	
+//		var routID = dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "ROUT_ID");
+//		dma_sub_search.set("ROUT_ID", routID);
 	
-		com.executeSubmission(sub_MO0101G1R0);		 
-		com.executeSubmission(sub_MO0101G4R0);		 
-		com.executeSubmission(sub_MO0101G2R0);		 
+//		com.executeSubmission(sub_MO0101G1R0);		 
+//		com.executeSubmission(sub_MO0101G4R0);		 
+//		com.executeSubmission(sub_MO0101G2R0);
+		busFocus = row;		 
 		com.executeSubmission(sub_MO0101G3R0);		 
 		 			
 	};
@@ -332,41 +379,75 @@
 	};
 		
 	scwin.TYPE1_onviewchange = function(info) {
+		startMarker = 1;		
 		$p.executeSubmission(sub_MO0101SHI1);
 	};
 	
 	scwin.sub_MO0101G3R0_submitdone = function(e) {
-		routMap.showRoute2("map_MO0101", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), -1);
-				
-	//	routMap.showRoute("map_MO0101", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), null, "ONLYLINE");			
-
-		routMap.showVehicle("map_MO0101", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
-							 dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0);
+		
+		com.executeSubmission(sub_MO0101G4R0);
+	//	routMap.showRoute2("map_MO0101", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), -1);
+		routMap.showRoute("map_MO0101", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), null, "ONLYLINE");			
+		
+		if ($(".moni_img").find("#li_sttnimg").hasClass("on") || startMarker == 1) {
+			routMap.initOverlay("map_MO0101_crs");
+			routMap.showMarkerList("map_MO0101_sttn", dlt_BMS_ROUT_NODE_CMPSTN2.getAllJSON(), MO0101G1.getFocusedRowIndex(), MO0101G1);
+		}
+		
+		if ($(".moni_img").find("#li_crossimg").hasClass("on") || startMarker == 1) {
+			routMap.initOverlay("map_MO0101_sttn");
+			routMap.showMarkerList("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON(), MO0101G2.getFocusedRowIndex(), MO0101G2);			
+		}
+		
+		if ($(".moni_img").find("#li_busimg").hasClass("on") || startMarker == 1) {
+			routMap.showVehicle("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
+					dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0);
+		}			 					 
 							 
-		routMap.showCategory("map_MO0101", dlt_BMS_NODE_MST.getAllJSON(), null, MO0101G0);									 	
-		//routMap.showCategory("map_MO0101", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON());					 
+		//routMap.showCategory("map_MO0101", dlt_BMS_NODE_MST.getAllJSON(), null, MO0101G0);									 	
+		//routMap.showCategory("map_MO0101", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON());
+		startMarker = 0;					 
 	};
 	
 	scwin.sub_MO0101SHI1_submitdone = function(e) {
-//		com.searchGrid(MO0101G0, sub_MO0101G0R0);
-//		com.searchGrid(MO0101G1, sub_MO0101G1R0);
-//		com.searchGrid(MO0101G2, sub_MO0101G2R0);
-		$p.executeSubmission(sub_MO0101G0R0);
-		$p.executeSubmission(sub_MO0101G1R0);
-		$p.executeSubmission(sub_MO0101G2R0);
+		com.searchGrid(MO0101G0, sub_MO0101G0R0);
+		com.searchGrid(MO0101G1, sub_MO0101G1R0);
+		com.searchGrid(MO0101G2, sub_MO0101G2R0);
+		$p.executeSubmission(sub_MO0101G3R0);			
 	};
 	
 	scwin.TYPE2_onviewchange = function(info) {
+		startMarker = 1;
 		com.searchGrid(MO0101G0, sub_MO0101G0R0);
+		com.searchGrid(MO0101G1, sub_MO0101G1R0);
+		com.searchGrid(MO0101G2, sub_MO0101G2R0);
+		$p.executeSubmission(sub_MO0101G3R0);			
 	};
 	
 	
 	scwin.MO0101G1_onrowindexchange = function(row,oldRow) {
-		
+		sttnFocus = row;
+		com.executeSubmission(sub_MO0101G3R0);			
 	};
 	
 	scwin.sub_MO0101G4R0_submitdone = function(e) {
-		//routMap.showCategory("map_MO0101", dlt_BMS_NODE_MST.getAllJSON(), focusIdx, FM0201G0);		
+		debugger;
+		var focusGrid = "";
+		var focusIdx = 0;
+		
+		if(busActive == 1){
+			focusGrid = MO0101G0;
+			focusIdx = MO0101G0.getFocusedRowIndex();
+		} else if (sttnActive == 1) {
+			focusGrid = MO0101G0;
+			focusIdx = MO0101G0.getFocusedRowIndex();
+		} else if (crossActive == 1) {
+			focusGrid = MO0101G0;
+			focusIdx = MO0101G0.getFocusedRowIndex();
+		}
+		
+		routMap.showCategory2("map_MO0101", "map_MO0101_sttn", "map_MO0101_crs", dlt_BMS_NODE_MST.getAllJSON(), dlt_BMS_ROUT_NODE_CMPSTN2.getAllJSON(),
+								 dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON(), focusIdx, focusGrid);
 	};
 	
 	scwin.sub_MO0101G1R0_submitdone = function(e) {
@@ -375,6 +456,11 @@
 	
 	scwin.sub_MO0101G2R0_submitdone = function(e) {
 		com.setFocusedCell(MO0101G2, "NODE_ID");		
+	};
+	
+	scwin.MO0101G2_onrowindexchange = function(row,oldRow) {
+		crossFocus = row;
+		com.executeSubmission(sub_MO0101G3R0);		
 	};
 	]]></script>
 	</head>
@@ -432,15 +518,15 @@
 						<xf:group id="" style="">
 							<ul id="" class="moni_img">
 								<li id="li_busimg" class="on">
-									<span class="busimg"></span>
+									<!-- <span class="busimg"></span> -->
 									버스
 								</li>
 								<li id="li_sttnimg" class="">
-									<span class="sttnimg"></span>
+									<!-- <span class="sttnimg"></span> -->
 									정류장
 								</li>
 								<li id="li_crossimg" class="">
-									<span class="crossimg"></span>
+									<!-- <span class="crossimg"></span> -->
 									교차로
 								</li>
 							</ul>
