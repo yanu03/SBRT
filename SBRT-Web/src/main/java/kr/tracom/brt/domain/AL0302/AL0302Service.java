@@ -22,6 +22,11 @@ public class AL0302Service extends ServiceSupport {
 		return al0302Mapper.AL0302G0R0(map);
 	}
 	
+	public List AL0302SHI1() throws Exception{
+		Map param = getSimpleDataMap("dma_search");		
+		return al0302Mapper.AL0302SHI1(param);
+	}
+	
 	public List AL0302G1R0() throws Exception {
 		// TODO Auto-generated method stub
 		Map param = getSimpleDataMap("dma_param_AL0302G1");
@@ -38,25 +43,18 @@ public class AL0302Service extends ServiceSupport {
 		return al0302Mapper.AL0302P1R0(map);
 	}
 	
-	/*
-	public List SI0502SHI0() throws Exception {
-		return si0502Mapper.SI0502SHI0();
-	}	
-	
-	public Map SI0502G1S0() throws Exception {
+	public Map AL0302G1S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;		
 		
-		List<Map<String, Object>> param = getSimpleList("dlt_TRANSFER_INFO");
+		List<Map<String, Object>> param = getSimpleList("dlt_BRT_ALLOC_PL_MST");
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
-				if (rowStatus.equals("C")) {
-					iCnt += si0502Mapper.SI0502G1I0(data);
-				} else if (rowStatus.equals("D")) {
-					dCnt += si0502Mapper.SI0502G1D0(data);
+				if (rowStatus.equals("U")) {
+					uCnt += al0302Mapper.AL0302G1U0(data);
 				} 
 			}			
 		} catch(Exception e) {
@@ -75,6 +73,13 @@ public class AL0302Service extends ServiceSupport {
 		
 		return result;	
 	}
+	
+	/*
+	public List SI0502SHI0() throws Exception {
+		return si0502Mapper.SI0502SHI0();
+	}	
+	
+	
 	
 	
 	

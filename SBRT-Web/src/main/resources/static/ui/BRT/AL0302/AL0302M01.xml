@@ -12,9 +12,9 @@
 			<w2:dataCollection baseNode="map">
 				<w2:dataMap baseNode="map" id="dma_search">
 					<w2:keyInfo>
-						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
-						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
-						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+						<w2:key id="CONTENT1" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT2" name="name2" dataType="text"></w2:key>
+						<w2:key id="CONTENT3" name="name3" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_result">
@@ -28,9 +28,14 @@
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="STTN_ID" name="정류소ID" dataType="text"></w2:column>
-						<w2:column id="STTN_NM" name="정류소명" dataType="text"></w2:column>
-						<w2:column id="STTN_NO" name="정류소번호" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem2" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="DAY_DIV" name="name1" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="name2" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_OPER_PL_MST" saveRemovedData="true">
@@ -45,6 +50,7 @@
 				<w2:dataMap baseNode="map" id="dma_param_AL0302G1">
 					<w2:keyInfo>
         				<w2:key id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:key>
+        				<w2:key id="DAY_DIV" name="요일구분" dataType="text"></w2:key>
         			</w2:keyInfo>
         		</w2:dataMap>
         		<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_ALLOC_PL_MST" saveRemovedData="true">
@@ -55,10 +61,14 @@
         				<w2:column id="VHC_ID" name="차량ID" dataType="text"></w2:column>
         				<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
         				<w2:column id="COMP_NM" name="운수사명" dataType="text"></w2:column>
-        				<w2:column id="DRV_SN" name="운전자순번" dataType="text"></w2:column>
         				<w2:column id="DRV_NM" name="운전자명" dataType="text"></w2:column>
+        				<w2:column id="SEC_DRV_NM" name="2교대운전자명" dataType="text"></w2:column>
+        				<w2:column id="THR_DRV_NM" name="3교대운전자명" dataType="text"></w2:column>
         				<w2:column id="DRV_ID" name="운전자ID" dataType="text"></w2:column>
-        				<w2:column id="TRAN_TM" name="교대시각" dataType="text"></w2:column>
+        				<w2:column id="SEC_DRV_ID" name="2교대운전자ID" dataType="text"></w2:column>
+        				<w2:column id="THR_DRV_ID" name="3교대운전자ID" dataType="text"></w2:column>
+        				<w2:column id="SEC_TRAN_TM" name="2교대시각" dataType="text"></w2:column>
+        				<w2:column id="THR_TRAN_TM" name="3교대시각" dataType="text"></w2:column>
         			</w2:columnInfo>
         		</w2:dataList>
         	</w2:dataCollection>
@@ -68,45 +78,47 @@
         		mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0302G0R0_submitdone" ev:submiterror=""
         		abortTrigger="">
         	</xf:submission>
-			<xf:submission id="sub_AL0302SHI0" ref="" target="data:json,dlt_searchitem" action="/rout/selectSttnItem" method="post"
+			<xf:submission id="sub_AL0302SHI0" ref="" target="data:json,dlt_searchitem" action="/repRout/selectRepRoutItem" method="post"
 			mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-			ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			ev:submit="" ev:submitdone="scwin.sub_AL0302SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
         	<xf:submission id="sub_AL0302G1R0" ref="data:json,dma_param_AL0302G1" target='data:json,dlt_BRT_ALLOC_PL_MST'
         		action="/al/AL0302G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
         		customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0302G1R0_submitdone" ev:submiterror="" abortTrigger="">
         	</xf:submission>
-        	<xf:submission id="sub_AL0302G1S0" ref="data:json,dlt_TRANSFER_INFO" target="data:json,dma_result" action="/al/AL0302G1S0"
+        	<xf:submission id="sub_AL0302G1S0" ref="data:json,dlt_BRT_ALLOC_PL_MST" target="data:json,dma_result" action="/al/AL0302G1S0"
         		method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
         		mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0302G1S0_submitdone" ev:submiterror="" abortTrigger="">
         	</xf:submission>
+        	<xf:submission id="sub_AL0302SHI1" ref="data:json,dma_search" target="data:json,dlt_searchitem2" action="/al/AL0302SHI1"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0302SHI1_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
         </xf:model>
         <script type="text/javascript" lazy="false"><![CDATA[
         
 	scwin.onpageload = function() {
 		var autoOptions = {
 			Main : { grid : AL0302G0, srchSbm : sub_AL0302G0R0, srchGrp : pgm_header , keyColumn : "REP_ROUT_ID", focusColumn : "REP_ROUT_NM", name : "운행계획 목록"},
-			Sub1 : { grid : AL0302G1, srchSbm : sub_AL0302G1R0, keyColumn : "TRNS_ID",savSbm : sub_AL0302G1S0, name : "차량 배차" }	
+			Sub1 : { grid : AL0302G1, srchSbm : sub_AL0302G1R0, keyColumn : "ALLOC_NO", savSbm : sub_AL0302G1S0, name : "차량 배차" }	
 		 };
 		 		
 		 var mainOptions = {
 			ADD: {disp:"hide"},
 			DEL: {disp:"hide"},
-			CNL: {disp:"hide"},
-			SAVE: {disp:"hide"}
+			//CNL: {disp:"hide"},
+			//SAVE: {disp:"hide"}
 		}
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions, mainOptions);		
 
-		var subOptions = {
+		/*var subOptions = {
 			SAVE: {mode:"auto"},
 			CNL: {mode:"auto"}
 		};
 		
-		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
+		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);*/
 
-		var codeOptions = [ {code : "DAY_DIV", compID : "AL0302G0:DAY_DIV" },
-							 {code : "TRNS_DIV", compID : "AL0302G1:TRNS_DIV" }
-						];		
+		var codeOptions = [ {code : "DAY_DIV", compID : "AL0302G0:DAY_DIV" }];		
 	
 		com.setCommonDtl(codeOptions, function() {
 			com.searchGrid(AL0302G0, sub_AL0302G0R0);
@@ -131,6 +143,7 @@
 	
 	scwin.AL0302G0_onrowindexchange = function(row,oldRow) {
 		dma_param_AL0302G1.set("REP_ROUT_ID", dlt_BRT_OPER_PL_MST.getCellData(row, "REP_ROUT_ID"));
+		dma_param_AL0302G1.set("DAY_DIV", dlt_BRT_OPER_PL_MST.getCellData(row, "DAY_DIV"));
 		var focusOption = {keyMap : dma_param_AL0302G1};
 		com.changeDualGrid(AL0302G0, AL0302G1, sub_AL0302G1S0, sub_AL0302G1R0, focusOption, row, oldRow, "차량 배차");
 	};
@@ -139,29 +152,8 @@
 		com.saveDone(AL0302G1, sub_AL0302G1R0);		
 	};
 	
-	scwin.sbx_ChoiceBox_onviewchange = function(info) {
-		if (info.newValue == "ALL") {
-			autoChoiceBox.hide();
-			search_input.setValue("");
-			search_input.show("");
-		} else if (info.newValue == "STTN_ID") {
-			search_input.hide();
-			autoChoiceBox.setNodeSet("data:dlt_searchitem", "STTN_ID", "STTN_ID");
-			autoChoiceBox.show("");
-		} else if (info.newValue == "STTN_NM") {
-			search_input.hide();
-			autoChoiceBox.setNodeSet("data:dlt_searchitem", "STTN_NM", "STTN_NM");
-			autoChoiceBox.show("");
-		} else if (info.newValue == "STTN_NO") {
-			search_input.hide();
-			autoChoiceBox.setNodeSet("data:dlt_searchitem", "STTN_NO", "STTN_NO");	
-			autoChoiceBox.show("");
-		}
-	};
-	
-	scwin.AL0302G1_oncelldblclick = function(row,col,colId) {
-	
-		if(colId == "VHC_NO"){
+	scwin.AL0302G1_ontextimageclick = function(row,col) {
+		if(col == 1){
 			var data = { callbackFn : "scwin.searchVhcCallback" };
 					   	 
 			var opt = { id : "AL0302P01", 
@@ -169,10 +161,10 @@
 						width : 600,
 						height : 500,
 						modal : true};
-			com.openPopup("/ui/BRT/AL0302/AL0302P01.xml", opt, data);
+			com.openPopup("/cm//common/popUpVhcList.xml", opt, data);
 				
 		}
-		else if(colId == "DRV_NM"){
+		else if(col == 3){
 			var data = { callbackFn : "scwin.searchDrvCallback" };
 					   	 
 			var opt = { id : "AL0302P02", 
@@ -182,7 +174,7 @@
 						modal : true};
 			com.openPopup("/ui/BRT/AL0302/AL0302P02.xml", opt, data);
 		}
-		else if(colId == "DRV_NM2"){
+		else if(col == 5){
 			var data = { callbackFn : "scwin.searchDrv2Callback" };
 					   	 
 			var opt = { id : "AL0302P02", 
@@ -192,7 +184,7 @@
 						modal : true};
 			com.openPopup("/ui/BRT/AL0302/AL0302P02.xml", opt, data);
 		}
-		else if(colId == "DRV_NM3"){
+		else if(col == 7){
 			var data = { callbackFn : "scwin.searchDrv3Callback" };
 					   	 
 			var opt = { id : "AL0302P02", 
@@ -206,12 +198,12 @@
 	
 	//찾기 버튼 콜백함수
 	scwin.searchVhcCallback = function(obj) {
-		var dayDiv = dlt_BRT_OPER_PL_MST.getCellData(AL0302G0.getFocusedRowIndex(), "DAY_DIV");
+		//var dayDiv = dlt_BRT_OPER_PL_MST.getCellData(AL0302G0.getFocusedRowIndex(), "DAY_DIV");
 		var vhcId =obj[0].VHC_ID;
 		var vhcNo =obj[0].VHC_NO;
 		var compNm =obj[0].COMP_NM;
 		
-		dlt_BRT_ALLOC_PL_MST.setCellData(AL0302G1.getFocusedRowIndex(), "DAY_DIV", dayDiv);
+		//dlt_BRT_ALLOC_PL_MST.setCellData(AL0302G1.getFocusedRowIndex(), "DAY_DIV", dayDiv);
 		dlt_BRT_ALLOC_PL_MST.setCellData(AL0302G1.getFocusedRowIndex(), "VHC_ID", vhcId);
 		dlt_BRT_ALLOC_PL_MST.setCellData(AL0302G1.getFocusedRowIndex(), "VHC_NO", vhcNo);
 		dlt_BRT_ALLOC_PL_MST.setCellData(AL0302G1.getFocusedRowIndex(), "COMP_NM", compNm);
@@ -233,8 +225,8 @@
 		var drvId =obj[0].DRV_ID;
 		var drvNm =obj[0].DRV_NM;
 		
-		dlt_BRT_ALLOC_PL_MST.setCellData(AL0302G1.getFocusedRowIndex(), "DRV_ID", drvId);
-		dlt_BRT_ALLOC_PL_MST.setCellData(AL0302G1.getFocusedRowIndex(), "DRV_NM", drvNm);
+		dlt_BRT_ALLOC_PL_MST.setCellData(AL0302G1.getFocusedRowIndex(), "SEC_DRV_ID", drvId);
+		dlt_BRT_ALLOC_PL_MST.setCellData(AL0302G1.getFocusedRowIndex(), "SEC_DRV_NM", drvNm);
 	};
 	
 	//찾기 버튼 콜백함수
@@ -243,10 +235,33 @@
 		var drvId =obj[0].DRV_ID;
 		var drvNm =obj[0].DRV_NM;
 		
-		dlt_BRT_ALLOC_PL_MST.setCellData(AL0302G1.getFocusedRowIndex(), "DRV_ID", drvId);
-		dlt_BRT_ALLOC_PL_MST.setCellData(AL0302G1.getFocusedRowIndex(), "DRV_NM", drvNm);
+		dlt_BRT_ALLOC_PL_MST.setCellData(AL0302G1.getFocusedRowIndex(), "THR_DRV_ID", drvId);
+		dlt_BRT_ALLOC_PL_MST.setCellData(AL0302G1.getFocusedRowIndex(), "THR_DRV_NM", drvNm);
 	};
 	
+	scwin.sub_AL0302SHI0_submitdone = function(e) {
+		TYPE1.setValue("RR00000002");		
+		$p.executeSubmission(sub_AL0302SHI1);
+		//com.searchGrid(AL0302G0, sub_AL0302G0R0);
+	};
+	
+	scwin.TYPE1_onviewchange = function(info) {
+		startMarker = 1;		
+		$p.executeSubmission(sub_AL0302SHI1);
+	};
+	
+	scwin.sub_AL0302SHI1_submitdone = function(e) {
+		com.searchGrid(AL0302G0, sub_AL0302G0R0);
+		com.searchGrid(AL0302G1, sub_AL0302G1R0);
+		//$p.executeSubmission(sub_AL0302G1R0);
+	};
+	
+	scwin.TYPE2_onviewchange = function(info) {
+		startMarker = 1;
+		com.searchGrid(AL0302G0, sub_AL0302G0R0);
+		com.searchGrid(AL0302G1, sub_AL0302G1R0);
+		//$p.executeSubmission(sub_AL0302G1R0);			
+	};
 	]]></script>
     </head>
     <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -256,49 +271,45 @@
 			</xf:group>
 			<xf:group id="pgm_header" class="pgm_header" style="">
 				<xf:group id="" style="" class="gr_search">
-					<xf:group id="" style="" class="label">
-							<w2:span id="" class="" label="검색 항목"></w2:span>
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="대표 노선"></w2:span>
 					</xf:group>
-					<xf:group id="" style="" class="search">
-						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
-							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
-							optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" style="" submenuSize="auto"
-							textAlign="left">
-
+					<xf:group class="search" id="" style="">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE1_onviewchange" id="TYPE1" optionOrder="false"
+							ref="data:dma_search.CONTENT1" class="search_type_100" style="" submenuSize="auto" textAlign="left" chooseOptionLabel="전체">
+							<xf:choices>
+								<xf:itemset nodeset="data:dlt_searchitem">
+									<xf:label ref="REP_ROUT_NM"></xf:label>
+									<xf:value ref="REP_ROUT_ID"></xf:value>
+								</xf:itemset>
+							</xf:choices>
+						</xf:select1>
+						<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="요일 구분"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE2_onviewchange" id="TYPE2" optionOrder="false"
+							ref="data:dma_search.CONTENT2" class="search_type_100" style="" submenuSize="auto" textAlign="left" chooseOptionLabel="전체">
 							<xf:choices>
 								<xf:item>
-									<xf:label><![CDATA[전체]]></xf:label>
-									<xf:value><![CDATA[ALL]]></xf:value>
+									<xf:label><![CDATA[평일]]></xf:label>
+									<xf:value><![CDATA[DY001]]></xf:value>
 								</xf:item>
 								<xf:item>
-									<xf:label><![CDATA[정류소ID]]></xf:label>
-									<xf:value><![CDATA[STTN_ID]]></xf:value>
-								</xf:item>
-								<xf:item>
-									<xf:label><![CDATA[정류소명]]></xf:label>
-									<xf:value><![CDATA[STTN_NM]]></xf:value>
-								</xf:item>
-								<xf:item>
-									<xf:label><![CDATA[정류소번호]]></xf:label>
-									<xf:value><![CDATA[STTN_NO]]></xf:value>
+									<xf:label><![CDATA[휴일]]></xf:label>
+									<xf:value><![CDATA[DY002]]></xf:value>
 								</xf:item>
 							</xf:choices>
 						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="대표노선명 또는 요일구분"></xf:input>
-						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
-							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
-							ev:onviewchange="" id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
-							selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="" nextTabByEnter=""
-							disableEdit="">
-							<w2:choices>
-								<w2:itemset nodeset="data:dlt_searchitem">
-									<w2:label ref="STTN_ID"></w2:label>
-									<w2:value ref="STTN_ID"></w2:value>
-								</w2:itemset>
-							</w2:choices>
-						</w2:autoComplete>
+						<!--  <xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="검색"></w2:span>
 					</xf:group>
-					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+					<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT3" placeholder="차번"></xf:input>-->
+					</xf:group>
+						<w2:wframe class="" id="wfm_mainBtn" scope="true" src="/cm/common/wf_mainBtn.xml" style=""></w2:wframe>
+					</xf:group>
 				</xf:group>
 			</xf:group> <!-- pgm_header -->
 			<xf:group id="pgm_content" class="pgm_content grdc_a_20_900_minmax" style="">
@@ -383,61 +394,77 @@
 						<w2:gridView ignoreCellClick="false" ev:onrowindexchange="" autoFit="lastColumn" rowNumHeaderValue="순번"
 							visibleRowNum="" class="cm_grid right" fixedColumnWithHidden="true" rowNumVisible="true" dataList="data:dlt_BRT_ALLOC_PL_MST"
 							id="AL0302G1" readOnly="false" style="" useShiftKey="true" scrollByColumn="false" rowStatusVisible="false" rowStatusHeaderValue="상태"
-							ev:oncellclick="" ev:oncelldblclick="scwin.AL0302G1_oncelldblclick" focusMode="row">
+							ev:oncellclick="" focusMode="row" ev:ontextimageclick="scwin.AL0302G1_ontextimageclick">
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
-								<w2:row style="" id="row1">
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column11"
-										value="배차번호" blockSelect="false" displayMode="label">
+								<w2:row style="" id="row3">
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:40px;" id="column19"
+										value="배차번호" blockSelect="false" displayMode="label" colSpan="" rowSpan="2">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column9"
-										value="차량번호" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:40px;" id="column18"
+										value="차량번호" blockSelect="false" displayMode="label" colSpan="" rowSpan="2">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column7"
-										value="운수사" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:40px;" id="column17"
+										value="운수사" blockSelect="false" displayMode="label" colSpan="" rowSpan="2">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column8"
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px;" id="column16"
 										value="1교대운전자" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column6"
-										value="2교대시각" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px;" id="column15"
+										value="2교대운전자" blockSelect="false" displayMode="label" colSpan="2" rowSpan="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px;" id="column13"
+										value="3교대운전자" blockSelect="false" displayMode="label" colSpan="2" rowSpan="">
+									</w2:column>
+								</w2:row>
+								<w2:row style="" id="row1">
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column8"
+										value="운전자명" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column5"
-										value="2교대운전자" blockSelect="false" displayMode="label">
+										value="운전자명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column2"
-										value="3교대시각" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column6"
+										value="교대시각" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column1"
-										value="3교대운전자" blockSelect="false" displayMode="label">
+										value="운전자명" blockSelect="false" displayMode="label">
 									</w2:column>
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column2"
+										value="교대시각" blockSelect="false" displayMode="label">
+									</w2:column>
+									
 								</w2:row>
 							</w2:header>
 							<w2:gBody style="" id="gBody1">
 								<w2:row style="" id="row2">
-									<w2:column removeBorderStyle="false" width="106" inputType="text" style="height:20px" id="ALLOC_NO"
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="ALLOC_NO"
 										value="" blockSelect="false" displayMode="label" readOnly="" disabled="true">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="106" inputType="text" style="height:20px" id="VHC_NO"
-										value="" blockSelect="false" displayMode="label" readOnly="">
+									<w2:column removeBorderStyle="false" width="100" inputType="textImage" style="height:20px" id="VHC_NO"
+										value="" blockSelect="false" displayMode="label" readOnly="" imageSrc="/cm/images/inc/btn_search.png" imageHeight="20"
+										imageWidth="20">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="104" inputType="text" style="height:20px" id="COMP_NM"
+									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="COMP_NM"
 										value="" blockSelect="false" displayMode="label" readOnly="" textAlign="left" disabled="true">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="DRV_NM"
-										value="" blockSelect="false" displayMode="label" readOnly="">
+									<w2:column removeBorderStyle="false" width="100" inputType="textImage" style="height:20px" id="DRV_NM"
+										value="" blockSelect="false" displayMode="label" readOnly="" imageSrc="/cm/images/inc/btn_search.png" imageHeight="20"
+										imageWidth="20">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="TRAN_TM2" value=""
-										blockSelect="false" displayMode="label" readOnly="" textAlign="">
+									<w2:column removeBorderStyle="false" width="100" inputType="textImage" style="height:20px"
+										id="SEC_DRV_NM" value="" blockSelect="false" displayMode="label" readOnly="" textAlign="" imageSrc="/cm/images/inc/btn_search.png"
+										imageHeight="20" imageWidth="20">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="DRV_NM2" value=""
-										blockSelect="false" displayMode="label" readOnly="" textAlign="">
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="SEC_TRAN_TM"
+										value="" blockSelect="false" displayMode="label" readOnly="" textAlign="" maxLength="5">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="TRAN_TM3"
-										value="" blockSelect="false" displayMode="label" readOnly="">
+									<w2:column removeBorderStyle="false" width="100" inputType="textImage" style="height:20px"
+										id="THR_DRV_NM" value="" blockSelect="false" displayMode="label" readOnly="" textAlign="" imageSrc="/cm/images/inc/btn_search.png"
+										imageHeight="20" imageWidth="20">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="DRV_NM3"
-										value="" blockSelect="false" displayMode="label" readOnly="" textAlign="">
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="THR_TRAN_TM"
+										value="" blockSelect="false" displayMode="label" readOnly="" maxLength="5">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>

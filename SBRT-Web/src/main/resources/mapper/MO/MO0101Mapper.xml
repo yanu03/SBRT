@@ -3,19 +3,52 @@
 
 <mapper namespace="kr.tracom.brt.domain.MO0101.MO0101Mapper">
 	<select id="MO0101G0R0" resultType="Map" parameterType="Map">
-		SELECT 			 A.OPER_DT 
-				  		, A.REP_ROUT_ID
-						, A.VHC_ID
-						, A.ROUT_ID
-						, A.VHC_NO
-						, A.GPS_X
-						, A.GPS_Y
-						, B.REP_ROUT_NM
-						, B.ROUT_NM
-						, C.CHAS_NO
-						, C.MAKER
-						, D.DRV_NM
-						, E.COMP_NM
+		SELECT 				A.OPER_DT
+						,	A.REP_ROUT_ID
+						,	A.VHC_ID
+						,	A.ROUT_ID
+						,	A.ALLOC_NO
+						,	A.OPER_SN
+						,	A.NODE_ID
+						,	A.COR_ID
+						,	A.VHC_NO
+						,	A.DRV_ID
+						,	A.GPS_X
+						,	A.GPS_Y
+						,	A.TM_X
+						,	A.TM_Y
+						,	A.OPER_STS
+						,	A.BUS_STS
+						,	A.OBE_STS
+						,	A.SNSTVTY
+						,	A.DRV_ANGLE
+						,	A.CUR_SPD
+						,	A.ACLRTN_YN
+						,	A.DCLRTN_YN
+						,	A.CUR_STOP_TM
+						,	A.OPER_LEN
+						,	A.REP_ROUT_NM
+						,	A.NODE_SN
+						,	A.NODE_TYPE
+						,	A.ARRV_TM
+						,	A.DPRT_TM
+						,	A.LINK_ID
+						,	A.LINK_SN
+						,	A.LINK_SPD
+						,	A.GET_OFF_CNT
+						,	A.PSG_CNT
+						,	A.NEXT_STTN_ID
+						,	A.NEXT_STTN_ARRV_TM
+						,	A.NEXT_CRS_ID
+						,	A.NEXT_CRS_ARRV_TM
+						,	A.DOOR_CD
+						,	A.DOOR_TM					
+						,	B.REP_ROUT_NM
+						,   B.ROUT_NM
+						,   C.CHAS_NO
+						,   C.MAKER
+						,   D.DRV_NM
+						,   E.COMP_NM
 						
 		FROM  			BRT_CUR_OPER_INFO A
 		LEFT JOIN   	BMS_ROUT_MST	B
@@ -56,7 +89,7 @@
 					, 	A.GPS_Y
 					,	A.LINK_NODE_YN
 					,	B.MORN_STD
-					,	IF(H.CNT > 0 , '비정상','정상') COND_ERROR
+					,	IF(H.CNT > 0 , '고장','정상') COND_ERROR
 					
 		FROM 		  	BMS_ROUT_NODE_CMPSTN A 
 		LEFT JOIN 		BMS_ROUT_LINK_CMPSTN B
@@ -124,6 +157,7 @@
 					,	A.LINK_NODE_YN
 					,	B.MORN_STD
 					,	C.CRS_KIND
+					,	C.CRS_STS
 					,	C.PHASE_CNT
 					,	C.REMARK
 					
