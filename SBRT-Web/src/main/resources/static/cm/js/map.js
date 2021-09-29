@@ -1197,7 +1197,7 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/road_selected.png", imageSize);
 	}
 	
-	else if(typeof data.COND_ERROR != "undefined" && routMap.mapInfo[mapId].isShowAbnormal == "on" &&(data.COND_ERROR == "Y"||data.COND_ERROR == "비정상")) {
+	else if(typeof data.COND_ERROR != "undefined" && routMap.mapInfo[mapId].isShowAbnormal == "on" &&(data.COND_ERROR == "Y"||data.COND_ERROR == "비정상"
 		|| data.COND_ERROR == "고장")) {
 		imageSize = new kakao.maps.Size(25, 24);
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);		
