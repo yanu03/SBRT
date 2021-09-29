@@ -329,8 +329,6 @@
 		else if(attrId == 4014){
 			try {
 				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
-//				dlt_BRT_CUR_OPER_INFO.setCellData(curIndex[0], "GPS_X", jsonObj.GPS_X);
-//				dlt_BRT_CUR_OPER_INFO.setCellData(curIndex[0], "GPS_Y", jsonObj.GPS_Y);
 				dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
 				
 				dataRowJson = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndexArr[0]);
@@ -338,18 +336,6 @@
 				//var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID");
 				
 				routMap.showVehicle2("map_MO0101_vehicle", dataRowJson, rowData, MO0101G0, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
-//				if(dataList != null && dataList.length != 0){
-//							
-//					for(var i=0; i<dataList.length; i++) {
-//						var curIndex = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj[i].VHC_ID);
-//						dlt_BRT_CUR_OPER_INFO.setRowJson(curIndex, jsonObj, true);
-//						jsonObj = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndex);
-//						var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID");
-//						
-//						routMap.showVehicle2("map_MO0101_vehicle", jsonObj, rowData, MO0101G0, curIndex);													
-//						}
-//						
-//					}
 					
 			} catch (e) {
 				console.log("[scwin.onMessageReceived] Exception :: " + e.message);			
@@ -581,6 +567,26 @@
 		crossFocus = row;
 		com.executeSubmission(sub_MO0101G3R0);		
 	};
+	
+	scwin.onClickMapVehicle = function(index, mapId) {
+		$(".moni_img").find("li").removeClass("on");
+		
+		if (mapId == "map_MO0101_vehicle") {
+			
+			if(busActive != 1) {
+				MO0101G0.setFocusedCell(index, "NODE_ID");
+				scwin.MO0101G1_onrowindexchange();					
+			}
+			
+			$(".moni_img").find("#li_busimg").addClass("on");
+			busActive = 1;
+			sttnActive = 0;
+			crossActive = 0;
+			MO0101T0.show();
+			MO0101T1.hide();
+			MO0101T2.hide();	
+		}		
+	}
 	
 	scwin.onClickMapSttn = function(index, mapId) {
 		$(".moni_img").find("li").removeClass("on");

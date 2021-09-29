@@ -793,21 +793,22 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx, busGrid) {
 
 	overlay = new kakao.maps.CustomOverlay({
 		content: msg,
-		map: routMap.mapInfo[mapId].map,
 		position: marker.getPosition(),
 		zIndex : zIndex
 	});
-
 	//routMap.mapInfo[mapId].infoWindow.setMap(routMap.mapInfo[mapId].map); 
 	routMap.mapInfo[mapId].busOverlay = overlay;
-	routMap.mapInfo[mapId].busOverlay.setMap(routMap.mapInfo[mapId].map);
+
+	
 	if(idx<routMap.mapInfo[mapId].busOverArr.length){
 		routMap.mapInfo[mapId].busOverArr[idx] = routMap.mapInfo[mapId].busOverlay;
 	}
 	else{
 		routMap.mapInfo[mapId].busOverArr.push(routMap.mapInfo[mapId].busOverlay);
 	}
-	
+	if(idx == focusIdx) {
+		routMap.mapInfo[mapId].busOverArr[focusIdx].setMap(routMap.mapInfo[mapId].map);
+	}
 	
 	if(idx!=focusIdx) {
 		kakao.maps.event.addListener(marker, 'mouseover', routMap.makeOverListener(routMap.mapInfo[mapId].map, marker, overlay));
@@ -822,24 +823,11 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx, busGrid) {
 		routMap.mapInfo[mapId].busMarkers.push(marker);
 	}
 	
-	/*
+	
 	// 마커에 click 이벤트를 등록합니다
 	// 여기부터 클릭 이벤트 수정해야함
-	// grid도 나중에 추가한거임 필요없으면 빼야됨
 	kakao.maps.event.addListener(marker, 'click', function() {
 		
-		busGrid.setFocusedCell(idx,"VHC_ID");		
-		if(routMap.mapInfo[mapId].dragging){
-			data.click({
-				marker: marker,
-				nodeId: data.NODE_ID,
-				index: data.index
-			});
-			routMap.mapInfo[mapId].isMove = false;
-			routMap.mapInfo[mapId].selectedIndex = idx;
-			busGrid.setFocusedCell(idx,"VHC_ID");
-			return;
-		}
 		// 클릭된 마커가 없고, click 마커가 클릭된 마커가 아니면
 		// 마커의 이미지를 클릭 이미지로 변경합니다
 		if (!routMap.mapInfo[mapId].selectedMarker
@@ -855,19 +843,20 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx, busGrid) {
 			marker.setImage(markerSelImage);
 		}
 		
-		
-		//routMap.mapInfo[mapId].markers[routMap.mapInfo[mapId].selectedIndex].setImage(routMap.mapInfo[mapId].selectedMarker.normalImage);
-		
 		// 클릭된 마커를 현재 클릭된 마커 객체로 설정합니다
 		routMap.mapInfo[mapId].selectedMarker = marker;
-
 		marker.setZIndex(3);
-		routMap.mapInfo[mapId].isMove = false;
+		//routMap.mapInfo[mapId].isMove = false;
 		routMap.mapInfo[mapId].selectedIndex = idx;
-		busGrid.setFocusedCell(idx,"VHC_ID");
+		
+		if(typeof busGrid != "undefined") {
+			busGrid.setFocusedCell(idx,"VHC_ID");
+		}
+		
+		routMap.mapInfo[mapId].onMarkerClick(idx, mapId);		
 	});			
 	
-	*/
+	
 }
 
 //범례 SHOW 메소드
