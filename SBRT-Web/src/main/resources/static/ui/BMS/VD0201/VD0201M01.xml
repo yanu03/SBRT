@@ -176,16 +176,16 @@
 		
 		if(attrId == 1000){
 			try{
-				var curIndex = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 				
-				dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndex, jsonObj, true);
+				dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
 				
-				jsonObj = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndex);
+				jsonObj = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndexArr[0]);
 				
 				var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "VHC_ID")
 				
 				setTimeout(function() {
-					routMap.showVehicle2("map_VD0201", jsonObj, rowData, VD0201G0, curIndex);	
+					routMap.showVehicle2("map_VD0201", jsonObj, rowData, VD0201G0, curIndexArr[0], MO0101G0.getFocusedRowIndex());	
 				},100);			
 			} catch (e) {
 				console.log("[scwin.onMessageReceived] Exception :: " + e.message);
