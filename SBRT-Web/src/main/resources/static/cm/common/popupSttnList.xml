@@ -62,7 +62,7 @@
 		com.executeSubmission(sub_sttnList);
 	};
 	
-	scwin.sub_sttnListGrid_submitdone = function(e) {
+	/*scwin.sub_sttnListGrid_submitdone = function(e) {
 		var idx = dlt_BMS_STTN_MST.insertRow();
 		var data = {
 			STTN_ID: "-",
@@ -71,11 +71,23 @@
 		};
 		
 		dlt_BMS_STTN_MST.setRowJSON(idx, data, true);
-	};
+	};*/
 	
+	//데이터 없음 체크시 공백
 	scwin.btn_confirm_onclick = function() {
 		var data = sttnListGrid.getCheckedJSON("chk");
-		com.closePopup(scwin.closeCallbackFncName, data);		
+		
+		if(data == null || data == ''){
+			var nullData = [{"STTN_ID" : '', "STTN_ENM" : ''}];
+			
+			com.closePopup(scwin.closeCallbackFncName, nullData);
+		}
+		else{
+			com.closePopup(scwin.closeCallbackFncName, data);
+		}
+	
+		/*var data = sttnListGrid.getCheckedJSON("chk");
+		com.closePopup(scwin.closeCallbackFncName, data);*/		
 	};
 	
 	scwin.btn_cancel_onclick = function() {
@@ -91,6 +103,18 @@
 			sttnListGrid.setCellChecked(row,"chk",true)
 		}
 	}
+	
+	//데이터 없음 - 그리드 disabled 처리
+	scwin.NullData_onviewchange = function(info) {
+	
+		if(info.checked == true){
+			sttnListGrid.setDisabled("grid", true);
+		}
+		else{
+			sttnListGrid.setDisabled("grid", false);
+		}
+		
+	};
 
 	/*scwin.sbx_ChoiceBox_onviewchange = function(info) {		
 		if (info.newValue == "ALL") {
@@ -133,6 +157,15 @@
 	    						</xf:choices>
 	    					</xf:select1> -->
 						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="정류소ID 또는 정류소명"></xf:input>
+						<xf:select id="NullData" selectedIndex="-1" appearance="full" style="margin-left: 10px;float: left;margin-top: 2px;"
+							ev:onviewchange="scwin.NullData_onviewchange" cols="" rows="" ref="">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[데이터없음]]></xf:label>
+									<xf:value><![CDATA[Y]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select>
 					</xf:group>
 					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
