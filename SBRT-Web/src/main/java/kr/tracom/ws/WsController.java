@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import kr.tracom.platform.attribute.BrtAtCode;
 import kr.tracom.platform.attribute.common.AtBrtAction;
 import kr.tracom.platform.net.config.TimsConfig;
 import kr.tracom.platform.net.protocol.TimsMessage;
@@ -34,6 +35,9 @@ public class WsController {
 	
 	@Autowired
 	KafkaProducer kafkaProducer;
+	
+	@Autowired
+	WsClient wsClient;
 	
 
 	public WsController() {
@@ -111,5 +115,60 @@ public class WsController {
 		
     }
 	
-	
+	/*
+	    * test
+	    */
+	   @RequestMapping(value = "/gpsTest", method = RequestMethod.GET)
+	   public String makeOperPl(HttpServletRequest request, Model model) throws Exception {
+	      
+	      String locArry[][] = {
+	            {"127.261780", "36.481083"}
+	            ,{"127.262083", "36.480707"}
+	            ,{"127.263062", "36.479225"}
+	            ,{"127.264267", "36.477531"}
+	            ,{"127.267860", "36.472557"}
+	            ,{"127.268585", "36.471756"}
+	            ,{"127.269432", "36.471264"}
+	            ,{"127.270325", "36.471035"}
+	            ,{"127.271027", "36.470894"}
+	            ,{"127.272049", "36.470665"}
+	            ,{"127.273186", "36.470642"}
+	            ,{"127.273491", "36.470776"}
+	            ,{"127.274635", "36.471157"}
+	            ,{"127.275734", "36.472096"}
+	            ,{"127.276443", "36.472149"}
+	            
+	      };
+	      
+	      
+	      for(int i=0; i<15; i++) {
+
+	         //모니터링용 웹소켓 데이터
+	           
+	         /*
+	         Map<String, Object> paramMap = new HashMap<>();
+	           paramMap.put("MNG_ID", sessionId);
+
+	           Map<String, Object> vhcInfoMap = timsMapper.selectVhcInfo(paramMap);
+	           Map<String, Object> dataMap =busInfo.toMap();
+	           */
+	           
+	           Map<String, Object> resultMap = new HashMap<>();
+	           resultMap.put("ATTR_ID", BrtAtCode.BUS_INFO);
+	           resultMap.put("VHC_ID", "VH00000005");
+	           //resultMap.put("DVC_ID", vhcInfoMap.get("DVC_ID"));
+	           resultMap.put("GPS_X", locArry[i][0]);
+	           resultMap.put("GPS_Y", locArry[i][1]);
+	           
+	           wsClient.sendMessage(resultMap);
+	         
+	           logger.info(resultMap.toString());
+	           
+	         Thread.sleep(1000);
+	      }
+	      
+	            
+	      
+	      return "success";
+	   }	
 }
