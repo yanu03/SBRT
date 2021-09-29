@@ -313,7 +313,7 @@ routMap.setMapCursor = function(mapId, cursor){
 /**노드마커 추가**/
 routMap.addMarkerInter = function(mapId, data, grid, idx, focusIdx, isOverLayHidden) {
 	// 마커 이미지의 이미지 크기 입니다
-	var imageSize = new kakao.maps.Size(26, 34); 
+	var imageSize = new kakao.maps.Size(19, 28);  
 	var markerImage = null;
 	var markerOverImage = null;
 	var markerSelImage = null;
@@ -1583,17 +1583,20 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid, tab1, tab2, t
 	var zIndex= -1;
 	if(routMap.mapInfo[mapId].isShowCrs == "on" && data.NODE_TYPE == routMap.NODE_TYPE.CROSS){
 		zIndex = 1;
+		imageSize = new kakao.maps.Size(19, 19);
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/cross.png", imageSize);
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/cross_selected.png", imageSize);
 	}
 	else if(routMap.mapInfo[mapId].isShowNormal == "on" && data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP && 
 			(typeof data.COND_ERROR == "undefined"||data.COND_ERROR == "N"||data.COND_ERROR == "정상") ) {
 		zIndex = 2;
+		imageSize = new kakao.maps.Size(25, 24);
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop.png", imageSize);
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_selected.png", imageSize);
 	}
 	else if(typeof data.COND_ERROR != "undefined" && routMap.mapInfo[mapId].isShowAbnormal == "on" &&(data.COND_ERROR == "Y"||data.COND_ERROR == "비정상"
 		|| data.COND_ERROR == "고장")) {
+		imageSize = new kakao.maps.Size(25, 24);
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);		
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);
 
