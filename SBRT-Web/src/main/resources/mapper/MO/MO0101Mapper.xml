@@ -16,7 +16,7 @@
 						, C.MAKER
 						, D.DRV_NM
 						, E.COMP_NM
-		
+						
 		FROM  			BRT_CUR_OPER_INFO A
 		LEFT JOIN   	BMS_ROUT_MST	B
 			ON				A.ROUT_ID = B.ROUT_ID
@@ -25,7 +25,8 @@
 		LEFT JOIN	  	BMS_DRV_MST D
 			ON				A.DRV_ID = D.DRV_ID		
 		LEFT JOIN	  	BMS_TRANSCOMP_MST E
-			ON				C.COMP_ID = E.COMP_ID	
+			ON				C.COMP_ID = E.COMP_ID
+			
 		WHERE			A.OPER_DT = DATE_FORMAT(NOW(), '%Y/%m/%d')
 		AND				B.DEL_YN != 'Y'
 			<if test="CONTENT1 != null">
@@ -55,7 +56,8 @@
 					, 	A.GPS_Y
 					,	A.LINK_NODE_YN
 					,	B.MORN_STD
-
+					,	IF(H.CNT > 0 , '비정상','정상') COND_ERROR
+					
 		FROM 		  	BMS_ROUT_NODE_CMPSTN A 
 		LEFT JOIN 		BMS_ROUT_LINK_CMPSTN B
 			ON A.ROUT_ID = B.ROUT_ID AND A.LINK_ID = B.LINK_ID
@@ -63,7 +65,14 @@
 			ON A.NODE_ID = C.STTN_ID
 		LEFT JOIN		BMS_ROUT_MST D
 			ON A.ROUT_ID = D.ROUT_ID
-							
+		LEFT JOIN		BMS_NODE_MST E
+			ON A.NODE_ID = E.NODE_ID	
+		LEFT JOIN		(SELECT F.NODE_ID, COUNT(F.NODE_ID) CNT
+	            		FROM BMS_FCLT_INFO F
+	         			LEFT JOIN BMS_FCLT_COND_INFO G 
+	         				ON F.MNG_ID = G.MNG_ID 
+	         			WHERE  FCLT_COND  = 'FC021' GROUP BY NODE_ID) H	
+	  		ON E.NODE_ID = H.NODE_ID								
 		WHERE 			A.NODE_TYPE = 'NT002'
 		AND				C.DEL_YN != 'Y'
 		<if test="CONTENT1 != null">

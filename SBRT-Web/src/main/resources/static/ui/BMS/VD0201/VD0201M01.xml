@@ -169,22 +169,28 @@
 	}	
 	
 	scwin.onMessageReceived = function(payload) {
-		debugger;
 		var jsonObj = JSON.parse(payload.body);
 		
 		var attrId = jsonObj.ATTR_ID;
 		//var attrId = jsonObj.getData("ATTR_ID");
 		
 		if(attrId == 1000){
-			var curIndex = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+			try{
+				var curIndex = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+				
+				dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndex, jsonObj, true);
+				
+				jsonObj = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndex);
+				
+				var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "VHC_ID")
+				
+				setTimeout(function() {
+					routMap.showVehicle2("map_VD0201", jsonObj, rowData, VD0201G0, curIndex);	
+				},100);			
+			} catch (e) {
+				console.log("[scwin.onMessageReceived] Exception :: " + e.message);
+			}
 			
-			dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndex, jsonObj, true);
-			
-			jsonObj = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndex);
-			
-			var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(VD0201G0.getFocusedRowIndex(), "VHC_ID")
-			
-			routMap.showVehicle2("map_VD0201", jsonObj, rowData, VD0201G0, curIndex);
 		}else if(attrId == 2000){
 			var index = dlt_BMS_DVC_INFO.getMatchedIndex("DVC_ID", jsonObj.DVC_ID);
 			
@@ -425,13 +431,13 @@
 								<w2:header style="" id="header1">
 									<w2:row style="" id="row1">
 										<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:25px"
-											id="column4" value="장치상태" blockSelect="false" displayMode="label">
-										</w2:column>
-										<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:25px"
 											id="column3" value="장치ID" blockSelect="false" displayMode="label">
 										</w2:column>
 										<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:25px"
 											id="column1" value="장치종류" blockSelect="false" displayMode="label">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:25px"
+											id="column4" value="장치상태" blockSelect="false" displayMode="label">
 										</w2:column>
 										<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px"
 											id="column6" value="전원종료" blockSelect="false" displayMode="label">
@@ -442,10 +448,10 @@
 										<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:25px"
 											id="column9" value="장치위치" blockSelect="false" displayMode="label">
 										</w2:column>
-										<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:25px"
+										<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px"
 											id="column5" value="사용여부" blockSelect="false" displayMode="label">
 										</w2:column>
-										<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:25px"
+										<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:25px"
 											id="column2" value="제조사" blockSelect="false" displayMode="label">
 										</w2:column>
 										<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:25px"
@@ -455,14 +461,14 @@
 								</w2:header>
 								<w2:gBody style="" id="gBody1">
 									<w2:row style="" id="row2">
-										<w2:column removeBorderStyle="false" width="107" inputType="select" style="height:25px" 
-											id="DVC_COND" value="" blockSelect="false" displayMode="label">
-										</w2:column>
 										<w2:column removeBorderStyle="false" width="82" inputType="text" style="height:25px"
 											id="DVC_ID" value="" blockSelect="false" displayMode="label">
 										</w2:column>
 										<w2:column removeBorderStyle="false" width="125" inputType="select" style="height:25px" 
 											id="DVC_KIND" value="" blockSelect="false" displayMode="label">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="107" inputType="select" style="height:25px" 
+											id="DVC_COND" value="" blockSelect="false" displayMode="label">
 										</w2:column>
 										<w2:column removeBorderStyle="false" width="83" inputType="button" style="height:15px;width: 15px;"
 											id="DVC_POWER" value="종료" blockSelect="false" displayMode="label">
