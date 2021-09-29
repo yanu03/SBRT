@@ -30,6 +30,19 @@ public class AL0302Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/al/AL0302G1S0")
+	public @ResponseBody Map<String, Object> AL0302G1S0() throws Exception {
+		Map map = al0302Service.AL0302G1S0();
+		result.setData("dma_result", map);
+		return result.getResultSave();
+	}
+	
+	@RequestMapping("/al/AL0302SHI1")
+	public @ResponseBody Map<String, Object> AL0302SHI1() throws Exception {
+		result.setData("dlt_searchitem2", al0302Service.AL0302SHI1());
+		return result.getResult();
+	}
+	
 	/*
 	@RequestMapping("/al/AL0302SHI0")
 	public @ResponseBody Map<String, Object> SI0502G0R2() throws Exception {
@@ -43,12 +56,7 @@ public class AL0302Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
-	@RequestMapping("/al/AL0302G1S0")
-	public @ResponseBody Map<String, Object> SI0502G1S0() throws Exception {
-		Map map = al0302Service.SI0502G1S0();
-		result.setData("dma_result", map);
-		return result.getResultSave();
-	}	*/
+		*/
 	
 	@RequestMapping("/al/AL0302P0R0")
 	public @ResponseBody Map<String, Object> AL0302P0R0() throws Exception {
