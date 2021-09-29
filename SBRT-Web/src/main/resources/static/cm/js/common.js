@@ -4443,7 +4443,8 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						}
 						else if(i == gcm.BTN.ADD.nm){
 							item.cbFnc = function(){
-								if ((typeof main.keySbm !== "undefined")&&(main.keySbm !== null)){
+								var sub = autoOpt.Sub1;
+								if ((typeof sub.keySbm !== "undefined")&&(sub.keySbm !== null)){
 									$p.executeSubmission(sub.keySbm);
 								}
 								else{
