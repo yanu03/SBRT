@@ -67,13 +67,6 @@ public class EventRequest {
                 	//insert to BRT_CUR_OPER_INFO
                 	Map<String, Object> busInfoMap = busInfo.toMap();               	
                
-
-					//TODO
-                	// OPER_DT, REP_ROUT_ID, VHC_ID, ROUT_ID, ALLOC_NO, OPER_SN, NODE_ID, COR_ID, VHC_NO, DRV_ID
-                	// GPS_X, GPS_Y, TM_X, TM_Y, OPER_STS, BUS_STS, OBE_STS, SNSTVTY, DRV_ANGLE, CUR_SPD, ACLRTN_YN, CUR_STOP_TM
-                	// OPER_LEN, REP_ROUT_NM, NODE_SN, NODE_TYPE, ARRV_TM, DPRT_TM, LINK_ID, LINK_SN, LINK_SPD, GET_OFF_CNT
-                	// PSG_CNT, NEXT_STTN_ID, NEXT_STTN_ARRV_TM, NEXT_CRS_ID, NEXT_CRS_ARRV_TM, DOOR_CD, DOOR_TM, UPD_DTM
-                	
                 	try {
                 		curInfoMapper.insertCurOperInfo(busInfoMap);
                 	} catch (Exception e) {
@@ -145,10 +138,16 @@ public class EventRequest {
                 	 AtBusOperEvent busEvent = (AtBusOperEvent)atMessage.getAttrData();            	
                 	 
                 	 byte eventCode = busEvent.getEventCode();
-                	 Map<String, Object> busEventMap = busEvent.toMap();                     
+                	 Map<String, Object> busEventMap = busEvent.toMap();        
+                	 
+                 		
 
                 	 try {
                 		 historyMapper.insertEventHistory(busEventMap); //이력 insert
+                		 
+                		 //현재운행정보도 업데이트
+                		 //curInfoMapper.insertCurOperInfo(busEventMap);
+                		 
                 	 } catch (Exception e) {
                 		 // TODO: handle exception
                 	 }

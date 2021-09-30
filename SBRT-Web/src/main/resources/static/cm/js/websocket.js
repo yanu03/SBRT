@@ -87,6 +87,16 @@ function onMessageReceived(payload) {
 
 		
 		
+	} else if(attrId == 4020) { //4020: 디스패치
+		
+		//payload.body >>>> {MESSAGE=천천히가세요, DSPTCH_DIV=DP001, ATTR_ID=4020, DSPTCH_KIND=DK002, VHC_ID=VH00000002}
+		
+		//jsonObj.DSPTCH_DIV => 디스패치 구분코드 : DP001(일반메시지), DP002(운행중디스패치), DP003(정차중디스패치)
+		//jsonObj.DSPTCH_KIND => 디스패치 종류(레벨)코드 : DK001(1단계), DK002(2단계), DK003(3단계)
+		//jsonObj.MESSAGE => 디스패치 메시지
+
+		
+		
 	}
 	
 	
