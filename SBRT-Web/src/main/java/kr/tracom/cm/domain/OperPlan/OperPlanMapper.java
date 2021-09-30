@@ -45,6 +45,12 @@ public interface OperPlanMapper {
 
     //남은 현시 시간 가져오기
 	public int selectPhaseRemainTm(Map<String, Object> params);
+	
+	//요일구분 가져오기
+	String selectDayDiv(String operDt);
+	
+	//노선 출도착 시간 가져오기
+	Map<String, Object> selectArrvDprtTm(Map<String, Object> params);
 
     //운행배차계획 생성
 	public int insertOperAllocPlNodeInfo(Map<String, Object> params);
