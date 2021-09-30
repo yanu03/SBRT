@@ -929,7 +929,7 @@ routMap.showCategory = function(mapId, list, focusIdx, grid, etcOnOff) {
 			
 			else if(abnormalCheck == 0 && typeof list[i].COND_ERROR != "undefined" && (list[i].COND_ERROR == "CE001") ) {
 				categoryClass = "abnormal_busimg"
-				categoryName = "고장위치";
+				categoryName = "고장";
 				categoryContentAbnormal =	'<li class="'+ routMap.mapInfo[mapId].isShowAbnormal +'">' ;
 				categoryContentAbnormal +=	'<span class="' +categoryClass +'"></span>';
 				categoryContentAbnormal +=	categoryName;
@@ -1633,11 +1633,11 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid, tab1, tab2, t
 	var msg = "";
 	
 	//테스트 해볼것
-	var clickMsg = "";
+/*	var clickMsg = "";
 	
 	
-	clickMsg += '<div class="ol-overlay-container ol-selectable" style="position: absolute;left: 696px;top: 328px;"><div id="popup" class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
-	clickMsg += '<a href="javascript:void(0)" id="popup-refresh" class="close" style="right: 40px; background: url(&quot;/common/img/map/layer_refresh.png&quot;) center center no-repeat;"><span class="blind">새로고침</span></a>'
+	clickMsg += '<div class="clickoverlay" style="position: absolute;"><div id="popup" class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
+	clickMsg += '<a href="javascript:void(0)" id="popup-refresh" class="close" style="right: 40px; background: url("/common/img/map/layer_refresh.png") center center no-repeat;"><span class="blind">새로고침</span></a>'
 	clickMsg += '<a href="javascript:void(0)" id="popup-closer" class="close"><span class="blind">닫기</span></a>'
 	clickMsg += '<div id="popup-content">'
 	clickMsg += '<div class="tit"><strong>남부지방법원등기국.구로세무서(에이스하이테크시티)(19004)</strong></div>' 
@@ -1675,8 +1675,7 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid, tab1, tab2, t
 	clickMsg += '</table>' 
 	clickMsg += '</div>' 
 	clickMsg += '</div> </div>'
-	clickMsg += '</div></div>'	
-	
+	clickMsg += '</div></div>'	*/
 	
 	
 	if(data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP){
@@ -1702,6 +1701,7 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid, tab1, tab2, t
 	
 	if(idx==focusIdx) {
 		overlay = new kakao.maps.CustomOverlay({
+			//content: clickMsg,
 			content: msg,
 			position: marker.getPosition(),
 			zIndex : zIndex
@@ -1709,6 +1709,7 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid, tab1, tab2, t
 	}
 	else {
 		overlay = new kakao.maps.CustomOverlay({
+			//content: clickMsg,
 			content: msg,
 			position: marker.getPosition(),
 			zIndex : 4
