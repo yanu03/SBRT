@@ -283,6 +283,14 @@
 			}
 		});
 		
+		//지도 종류 클릭 이벤트
+		$(".map-type").find("a").click( function() {
+			$(".map-type").find("a").removeClass("active");
+			$(".map-type").find("span").removeClass("active");
+			$(this).addClass("active");
+			$(this).find("span").addClass("active");
+		});
+		
 	};	
 	
 	var startMarker = 1;
@@ -372,7 +380,7 @@
 	};
 	
 	scwin.sub_MO0101SHI0_submitdone = function(e) {
-		TYPE1.setValue("RR00000001");		
+		TYPE1.setValue("RR00000002");		
 		$p.executeSubmission(sub_MO0101SHI1);
 		com.searchGrid(MO0101G0, sub_MO0101G0R0);
 	};
@@ -693,7 +701,9 @@
 		$busStatus.find("#notOperBus").html(notOperBus);
 		$busStatus.find("#cancelOperBus").html(cancelOperBus);
 		
-	}]]></script>
+	}
+	
+]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
@@ -1166,44 +1176,21 @@
 						   		 		<td class="status_kinds">운행중단</td>
 						   		 		<td class="status_count" id="cancelOperBus">0</td>					   		 	
 						   		 	</tr>						   		 	
-<!-- 						   		 	<tr>
-						   		 		<td class="status_kinds">운행등록</td>
-						   		 		<td class="status_count">0</td>						   		 	
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds">예비등록</td>
-						   		 		<td class="status_count">0</td>					   		 	
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds">당일운행</td>
-						   		 		<td class="status_count">0</td>					   		 	
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds">운행안함</td>
-						   		 		<td class="status_count">0</td>					   		 	
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds">정상운행</td>
-						   		 		<td class="status_count">0</td>						   		 	
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds">운행종료</td>
-						   		 		<td class="status_count">0</td>					   		 	
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds">운행중단</td>
-						   		 		<td class="status_count">0</td>				   		 	
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds">공차운행</td>
-						   		 		<td class="status_count">0</td>				   		 	
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds">버스지연</td>
-						   		 		<td class="status_count">0</td>				   		 	
-						   		 	</tr> -->
 						   		 </tbody>
-						   	 </table>	 											
+						   	 </table>
+						   	 <div class="map-type" style="z-index: 10000;">
+						   	 	<div>
+									<a href="javascript:void(0)" class="map-type-01 active" onclick="routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.ROADMAP);" title="일반지도">
+										<span class="maptype1-text active">일반지도</span>
+									</a>
+									<a href="javascript:void(0)" class="map-type-02" onclick="routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.SKYVIEW);" title="위성지도">
+										<span class="maptype2-text">위성지도</span>
+									</a>
+									<a href="javascript:void(0)" class="map-type-03" onclick="routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.TRAFFIC);" title="소통지도">
+										<span class="maptype3-text">소통지도</span>
+									</a>
+								</div>		
+						   	 </div>	 											
 						</div>
 					</xf:group>					
 				</xf:group><!-- pgm_detail end -->

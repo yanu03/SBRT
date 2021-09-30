@@ -3179,6 +3179,11 @@ routMap.setDispCheck = function(mapId, dispCheck) {
 	routMap.mapInfo[mapId].dispCheck = dispCheck;
 }
 
+//맵 타입 지정
+routMap.addOverMapType = function(mapId, type) {
+   routMap.mapInfo[mapId].map.addOverlayMapTypeId(type);  
+}
+
 /**두 지점간의 거리 계산 **/
 function getDistanceBetween(x1, y1, x2, y2) {
 	let kEarthRadiusKms = 6376.5;
