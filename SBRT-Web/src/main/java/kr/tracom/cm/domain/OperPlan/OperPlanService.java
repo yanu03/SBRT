@@ -19,6 +19,7 @@ import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.util.CommonUtil;
 import kr.tracom.util.Constants;
+import kr.tracom.util.Constants.OperPlanCalc;
 import kr.tracom.util.DateUtil;
 import kr.tracom.util.Result;
 
@@ -201,579 +202,757 @@ public class OperPlanService extends ServiceSupport {
 	 * @param data
 	 * @throws Exception
 	 */
-	public List makeOperAllocPlNodeInfo(String routId, String dayDiv, int operSn, int bSave) throws Exception {
+	private List makeOperAllocPlNodeInfo(String routId, String dayDiv, int operSn, boolean bSave
+										,int stNodeSn //첫 노드 순번
+										,int edNodeSn //마지막 노드 순번
+										,int offsetTm //도착 예정시간과의 차이(초)
+										,String stNodeArrvTm
+										,String stNodeDprtTm
+										,String edNodeArrvTm
+										,String edNodeDprtTm
+										,int chgType //변경타입 //0:없음, 1:변경운행, 2:단순 수정
+	) throws Exception {
 
 		final String TIME_PATTERN = "HH:mm:ss";
-		
-        final int MAX_SPEED_LIMIT = 59;
-        final int MIN_SPEED_LIMIT = 35;
-        final int LIMIT_DIFF_SEC = 35;
-
-        //정류장 정보
-        List<Map<String, Object>> sttnList = null;
-        Map<String, Object> sttnMap = null;
-
-        //교차로 정보
-        List<Map<String, Object>> crsList = null;
-        Map<String, Object> crsMap = null;
-
-        // 노드별 정보 가져오기
-        List<Map<String, Object>> nextNodeList = null;
-        Map<String, Object> nextNodeMap = null;
-
-        //첨두시
-        Map<String, Object> peakTmMap = null;
-
-        //대표노선
-        String repRoutId = "";
-
-        //최소/최대 정차시간
-        String minStopSec = null;
-        String maxStopSec = null;
-
-
-        Map<String, Object> resultMap = null;
-
-        //insert용
-        String rep_route_id = ""; //대표노선아이디
-        String route_id;
-        String day_div;
-        String way_div;
-        int alloc_no;
-        int oper_sn;
-        String node_id;
-        String course_id;
-        int node_sn;
-        String node_type;
-        String arrv_tm = "00:00:00";
-        String dprt_tm = "00:00:00";
-        String prev_dprt_tm = "00:00:00"; //이전 노드 출발 시각
 
-        String link_id;
-        int link_len = 0;
-        int prev_diff_sec = 0; //이전 노드에서부터 걸리는 시간(초)
-        int next_diff_sec = 0; //다음 노드까지 걸리는 시간(초)
-        int add_arrv_sec = 0; //다음 노드의 도착시간 연장 시간(초)
+		//정류장 정보
+		List<Map<String, Object>> sttnList = null;
+		Map<String, Object> sttnMap = null;
+
+		//교차로 정보
+		List<Map<String, Object>> crsList = null;
+		Map<String, Object> crsMap = null;
+
+		// 노드별 정보 가져오기
+		List<Map<String, Object>> nextNodeList = null;
+		Map<String, Object> nextNodeMap = null;
+
+		//첨두시
+		Map<String, Object> peakTmMap = null;
+
+		//대표노선
+		String repRoutId = "";
+
+		//최소/최대 정차시간
+		String minStopSec = null;
+		String maxStopSec = null;
 
-        String next_node_id;
-        int next_node_sn;
-        String next_node_type = "";
-        String next_cross_id = "";
-        int phase_remain_sec = 0;
-        int phase_remain_sec_tmp = 0;
-        int enter_phase_no1 = 0;
-        int enter_phase_no2 = 0;
-        int enter_phase_no3 = 0;
-        String sig_ctr_type;
 
+		Map<String, Object> resultMap = null;
+
+		//insert용
+		String rep_route_id = ""; //대표노선아이디
+		String route_id;
+		String day_div;
+		String way_div;
+		int alloc_no;
+		int oper_sn;
+		String node_id;
+		String course_id;
+		int node_sn;
+		String node_type;
+		String arrv_tm = "00:00:00";
+		String dprt_tm = "00:00:00";
+		String prev_dprt_tm = "00:00:00"; //이전 노드 출발 시각
 
-        int first_node_sn;
-        int last_node_sn;
-        String route_st_tm;
-        String route_ed_tm;
+		String link_id;
+		int link_len = 0;
+		int prev_diff_sec = 0; //이전 노드에서부터 걸리는 시간(초)
+		int next_diff_sec = 0; //다음 노드까지 걸리는 시간(초)
+		int add_arrv_sec = 0; //다음 노드의 도착시간 연장 시간(초)
 
-        int min_stop_sec = 0;	 //최소 정차시간(sec)
-        int max_stop_sec = 0;	 //최대 정차시간(sec)
-        int stop_sec_peak = 0;	 //정류장 필요 정차시간(첨두시)
-        int stop_sec_none_peak = 0;	 //정류장 필요 정차시간(비첨두시)
-        float max_speed = 50.0f;	 //최고 속도(km/h)
-        float max_speed_per_sec= 0;	 //최고 속도(m/s)
-        int max_delay_sec = 20;	 //연장 최대 시간(초)
+		String next_node_id;
+		int next_node_sn;
+		String next_node_type = "";
+		String next_cross_id = "";
+		int phase_remain_sec = 0;
+		int phase_remain_sec_tmp = 0;
+		int enter_phase_no1 = 0;
+		int enter_phase_no2 = 0;
+		int enter_phase_no3 = 0;
+		String sig_ctr_type;
 
-        float acc_avg;	 //출발 시 평균 가속도(m/s2)
-        float dec_avg;	 //정차 시 평균 감속도(m/s2)
-        int acc_avg_tm;	 //출발 시 평균 가속 시간(sec)
-        int dec_avg_tm;	 //정차 시 평균 감속 시간(sec)
-        int drv_avg_tm;	 //최고속도 주행 시간(sec)
 
-        int acc_len;	 //출발 시 가속 거리(m)
-        int dec_len;	 //도착 시 감속 거리(m)
-        int drv_len;	 //최고속도 주행 거리(m)
+		int route_first_node_sn;
+		int route_last_node_sn;
+		String route_st_tm;
+		String route_ed_tm;
 
+		int min_stop_sec = 0;	 //최소 정차시간(sec)
+		int max_stop_sec = 0;	 //최대 정차시간(sec)
+		int stop_sec_peak = 0;	 //정류장 필요 정차시간(첨두시)
+		int stop_sec_none_peak = 0;	 //정류장 필요 정차시간(비첨두시)
+		float max_speed = OperPlanCalc.MAX_SPEED_DEFAULT;	 //최고 속도(km/h)
+		float max_speed_per_sec= 0;	 //최고 속도(m/s)
+		int max_delay_sec = OperPlanCalc.MAX_DELAY_SEC;	 //연장 최대 시간(초)
 
-        //리스트에 담아서 한 번에 insert
-        List<Map<String, Object>> operNodeList = new ArrayList<>();
+		float acc_avg;	 //출발 시 평균 가속도(m/s2)
+		float dec_avg;	 //정차 시 평균 감속도(m/s2)
+		int acc_avg_tm;	 //출발 시 평균 가속 시간(sec)
+		int dec_avg_tm;	 //정차 시 평균 감속 시간(sec)
+		int drv_avg_tm;	 //최고속도 주행 시간(sec)
 
+		int acc_len;	 //출발 시 가속 거리(m)
+		int dec_len;	 //도착 시 감속 거리(m)
+		int drv_len;	 //최고속도 주행 거리(m)
 
-        //오전 첨두시 시작/종료
-        String am_peak_st_tm = "00:00:00";
-        String am_peak_ed_tm = "00:00:00";
-        //오후 첨두시 시작/종료
-        String pm_peak_st_tm = "00:00:00";
-        String pm_peak_ed_tm = "00:00:00";
 
+		//리스트에 담아서 한 번에 insert
+		List<Map<String, Object>> operNodeList = new ArrayList<>();
 
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("ROUT_ID", routId);
-        paramMap.put("DAY_DIV", dayDiv);
-        paramMap.put("OPER_SN", operSn);
 
-        List<Map<String, Object>> nodeList = operPlanMapper.selectNodeList(paramMap);
+		//오전 첨두시 시작/종료
+		String am_peak_st_tm = "00:00:00";
+		String am_peak_ed_tm = "00:00:00";
+		//오후 첨두시 시작/종료
+		String pm_peak_st_tm = "00:00:00";
+		String pm_peak_ed_tm = "00:00:00";
 
 
-        //운행순번에 따른 기점 출발시각, 종점 도착 시각
-        Map<String, Object> routStEdTmInfo = operPlanMapper.selectRoutStEdTm(paramMap);
-        first_node_sn = Integer.valueOf(routStEdTmInfo.get("FIRST_NODE_SN").toString());
-        last_node_sn = Integer.valueOf(routStEdTmInfo.get("LAST_NODE_SN").toString());
-        route_st_tm = String.valueOf(routStEdTmInfo.get("ROUT_ST_TM")) + ":00";
-        route_ed_tm = String.valueOf(routStEdTmInfo.get("ROUT_ED_TM")) + ":00";;
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("ROUT_ID", routId);
+		paramMap.put("DAY_DIV", dayDiv);
+		paramMap.put("OPER_SN", operSn);
 
 
-        //대표노선 가져오기
-        repRoutId = operPlanMapper.selectRepRout(routId);
+		//지정된 범위의 노드간 운행계획 //운행계획을 수정하는 경우
+		if(stNodeSn > 0) { //특정 순번부터의 노드 가져오기 위함
+			paramMap.put("ST_NODE_SN", stNodeSn);
+		}
 
-        //최소 정차시간 가져오기
-        minStopSec = operPlanMapper.selectMinStopTm();
+		if(edNodeSn > 0) { //특정 순번까지의 노드 가져오기 위함
+			paramMap.put("ED_NODE_SN", edNodeSn);
+		}
 
-        //최대 정차시간 가져오기
-        maxStopSec = operPlanMapper.selectMaxStopTm();
+		List<Map<String, Object>> nodeList = operPlanMapper.selectNodeList(paramMap);
 
-        //노선의 첨두시 가져오기
-        peakTmMap = operPlanMapper.selectPeakTm(paramMap);
 
-        rep_route_id = repRoutId;
+		//운행순번에 따른 기점 출발시각, 종점 도착 시각
+		Map<String, Object> routStEdTmInfo = operPlanMapper.selectRoutStEdTm(paramMap);
+		route_first_node_sn = Integer.valueOf(routStEdTmInfo.get("FIRST_NODE_SN").toString());
+		route_last_node_sn = Integer.valueOf(routStEdTmInfo.get("LAST_NODE_SN").toString());
+		route_st_tm = String.valueOf(routStEdTmInfo.get("ROUT_ST_TM")) + ":00";
+		route_ed_tm = String.valueOf(routStEdTmInfo.get("ROUT_ED_TM")) + ":00";;
 
-        min_stop_sec = Integer.valueOf(minStopSec);
-        max_stop_sec = Integer.valueOf(maxStopSec);
 
-        am_peak_st_tm = String.valueOf(peakTmMap.get("AM_PEAK_ST_TM")) + ":00";
-        am_peak_ed_tm = String.valueOf(peakTmMap.get("AM_PEAK_ED_TM")) + ":00";
 
-        pm_peak_st_tm = String.valueOf(peakTmMap.get("PM_PEAK_ST_TM")) + ":00";
+		//변경운행
+		if(chgType == OperPlanCalc.CHG_TYPE_CHG_OPER) {
+			if (offsetTm > 0) {
+				route_ed_tm = DateUtil.addSeconds2(route_ed_tm, TIME_PATTERN, offsetTm); //변경운행인 경우 기준도착시간도 변경
+			}
+		}
 
-        pm_peak_ed_tm = String.valueOf(peakTmMap.get("PM_PEAK_ED_TM")) + ":00";
 
+		//대표노선 가져오기
+		repRoutId = operPlanMapper.selectRepRout(routId);
 
-        //변수 초기화
-        max_speed = 50; //59; //60;
-        max_delay_sec = 20;
-        //SET acc_avg = (1.67*0.8); #1.4;  -- 기준가속(1.67) 의 80%
-        //SET dec_avg = (-2.5*0.8); #-2.1; -- 기준감속(-2.5) 의 80%
-        acc_avg = 1.4f;  //기준가속(1.67) 의 80%
-        dec_avg = -2.1f; //기준감속(-2.5) 의 80%
+		//최소 정차시간 가져오기
+		minStopSec = operPlanMapper.selectMinStopTm();
 
+		//최대 정차시간 가져오기
+		maxStopSec = operPlanMapper.selectMaxStopTm();
 
+		//노선의 첨두시 가져오기
+		peakTmMap = operPlanMapper.selectPeakTm(paramMap);
 
-        //정류장별 정차시간 가져오기
-        sttnList = operPlanMapper.selectAllStopTm(routId);
-        sttnMap = new HashMap<>();
-        for (Map<String, Object> sttn : sttnList) {
-            String sttnId = String.valueOf(sttn.get("STTN_ID"));
+		rep_route_id = repRoutId;
 
-            sttnMap.put(sttnId, sttn);
-        }
+		min_stop_sec = Integer.valueOf(minStopSec);
+		max_stop_sec = Integer.valueOf(maxStopSec);
 
-        //교차로 정보 가져오기
-        crsList = operPlanMapper.selectAllCrsInfo(routId);
-        crsMap = new HashMap<>();
-        for (Map<String, Object> crs : crsList) {
-            String crsId = String.valueOf(crs.get("CRS_ID"));
+		am_peak_st_tm = String.valueOf(peakTmMap.get("AM_PEAK_ST_TM")) + ":00";
+		am_peak_ed_tm = String.valueOf(peakTmMap.get("AM_PEAK_ED_TM")) + ":00";
 
-            crsMap.put(crsId, crs);
-        }
+		pm_peak_st_tm = String.valueOf(peakTmMap.get("PM_PEAK_ST_TM")) + ":00";
+		pm_peak_ed_tm = String.valueOf(peakTmMap.get("PM_PEAK_ED_TM")) + ":00";
 
-        // 정보 가져오기
-        nextNodeList = operPlanMapper.selectAllNextNodeInfo(routId);
-        nextNodeMap = new HashMap<>();
-        for (Map<String, Object> nextNode : nextNodeList) {
-            String nodeSn = String.valueOf(nextNode.get("NODE_SN"));
 
-            nextNodeMap.put(nodeSn, nextNode);
-        }
+		//변수 초기화
+		acc_avg = (OperPlanCalc.STD_AAC * 0.8f);//기준가속(1.67) 의 80%
+		dec_avg = (OperPlanCalc.STD_DEC * 0.8f); //기준감속(-2.5) 의 80%
+		//acc_avg = 1.4f;  //기준가속(1.67) 의 80%
+		//dec_avg = -2.1f; //기준감속(-2.5) 의 80%
 
 
-        boolean isDone = false; //계획생성 완료여부
-        while(!isDone) {
 
-            operNodeList.clear();
+		//정류장별 정차시간 가져오기
+		sttnList = operPlanMapper.selectAllStopTm(routId);
+		sttnMap = new HashMap<>();
+		for (Map<String, Object> sttn : sttnList) {
+			String sttnId = String.valueOf(sttn.get("STTN_ID"));
 
-            max_speed_per_sec = (max_speed*1000/3600); //m/s 로 변경
+			sttnMap.put(sttnId, sttn);
+		}
 
+		//교차로 정보 가져오기
+		crsList = operPlanMapper.selectAllCrsInfo(routId);
+		crsMap = new HashMap<>();
+		for (Map<String, Object> crs : crsList) {
+			String crsId = String.valueOf(crs.get("CRS_ID"));
 
-            //노드별 도착출발시각 계산
-            for(Map<String, Object> nodeInfo : nodeList) {
+			crsMap.put(crsId, crs);
+		}
 
-                rep_route_id = String.valueOf(nodeInfo.get("REP_ROUT_ID"));
-                route_id = String.valueOf(nodeInfo.get("ROUT_ID"));
-                day_div = String.valueOf(nodeInfo.get("DAY_DIV"));
-                way_div = String.valueOf(nodeInfo.get("WAY_DIV"));
-                course_id = String.valueOf(nodeInfo.get("COR_ID"));
-                node_id  = String.valueOf(nodeInfo.get("NODE_ID"));
-                node_sn = Integer.valueOf(nodeInfo.get("NODE_SN").toString());
-                node_type = String.valueOf(nodeInfo.get("NODE_TYPE"));
-                alloc_no = Integer.valueOf(nodeInfo.get("ALLOC_NO").toString());
-                link_id = String.valueOf(nodeInfo.get("LINK_ID"));
-                link_len = CommonUtil.bigDecimalToInt(nodeInfo.get("LEN"));
+		// 정보 가져오기
+		nextNodeList = operPlanMapper.selectAllNextNodeInfo(routId);
+		nextNodeMap = new HashMap<>();
+		for (Map<String, Object> nextNode : nextNodeList) {
+			String nodeSn = String.valueOf(nextNode.get("NODE_SN"));
 
-                acc_avg_tm = (int)((max_speed_per_sec-0) / acc_avg); //평균 가속 시간
-                dec_avg_tm = (int)((0 - max_speed_per_sec) / dec_avg); //평균 감속 시간
+			nextNodeMap.put(nodeSn, nextNode);
+		}
 
-                //다음노드정보 확인
-                paramMap.put("ROUT_ID", route_id);
-                paramMap.put("NODE_ID", node_id);
-                paramMap.put("NODE_SN", node_sn);
 
-                next_node_id = String.valueOf(nodeInfo.get("ED_NODE_ID"));
-                next_node_sn = node_sn + 1;
+		boolean isDone = false; //계획생성 완료여부
+		int tryCount = 0;
 
+		while(!isDone) {
 
-                Map<String, Object> nextNodePhaseInfo = null;
-                if(node_sn < last_node_sn) { //마지막 노드가 아닌경우
+			operNodeList.clear();
 
+			max_speed_per_sec = (max_speed*1000/3600); //m/s 로 변경
 
-                    paramMap.put("ROUT_ID", route_id);
-                    paramMap.put("NODE_ID", next_node_id);
-                    paramMap.put("NODE_SN", next_node_sn);
-                    nextNodePhaseInfo = (Map<String, Object>) nextNodeMap.get(String.valueOf(next_node_sn));
 
-                    //다음노드 진입현시 정보 확인
-                    next_node_type = String.valueOf(nextNodePhaseInfo.get("NODE_TYPE"));
-                    next_cross_id = String.valueOf(nextNodePhaseInfo.get("CRS_ID"));
+			//노드별 도착출발시각 계산
+			for(Map<String, Object> nodeInfo : nodeList) {
 
+				rep_route_id = String.valueOf(nodeInfo.get("REP_ROUT_ID"));
+				route_id = String.valueOf(nodeInfo.get("ROUT_ID"));
+				day_div = String.valueOf(nodeInfo.get("DAY_DIV"));
+				way_div = String.valueOf(nodeInfo.get("WAY_DIV"));
+				course_id = String.valueOf(nodeInfo.get("COR_ID"));
+				node_id  = String.valueOf(nodeInfo.get("NODE_ID"));
+				node_sn = Integer.valueOf(nodeInfo.get("NODE_SN").toString());
+				node_type = String.valueOf(nodeInfo.get("NODE_TYPE"));
+				alloc_no = Integer.valueOf(nodeInfo.get("ALLOC_NO").toString());
+				link_id = String.valueOf(nodeInfo.get("LINK_ID"));
+				link_len = CommonUtil.bigDecimalToInt(nodeInfo.get("LEN"));
 
-                    acc_len = 0;
-                    dec_len = 0;
+				acc_avg_tm = (int)((max_speed_per_sec-0) / acc_avg); //평균 가속 시간
+				dec_avg_tm = (int)((0 - max_speed_per_sec) / dec_avg); //평균 감속 시간
 
+				//다음노드정보 확인
+				paramMap.put("ROUT_ID", route_id);
+				paramMap.put("NODE_ID", node_id);
+				paramMap.put("NODE_SN", node_sn);
 
-                    if (node_type.equals("NT002") || node_sn == first_node_sn) {  //정류장에서 출발하는 경우 or 첫번째 노드에서 출발
-                        //가속구간
-                        acc_len = (int) (0 + (acc_avg * Math.pow(acc_avg_tm, 2)) / 2);
+				next_node_id = String.valueOf(nodeInfo.get("ED_NODE_ID"));
 
-                        //가속구간이 링크길이보다 긴 경우
-                        if (acc_len >= link_len) {
-                            acc_len = link_len;
-                            acc_avg_tm = (int) Math.sqrt(2 * acc_len / acc_avg);
-                        }
-                    }
+				//다음노드 순번 가져오기
+				next_node_sn = node_sn + 1;
+				for(int i = node_sn; i<nextNodeList.size(); i++) {
 
+					Map<String, Object> nextNode = nextNodeList.get(i);
+					String ndId = String.valueOf(nextNode.get("NODE_ID"));
 
-                    if (next_node_type.equals("NT002")) {  //다음노드가 정류장인 경우
-                        //감속구간
-                        dec_len = (int) ((max_speed_per_sec * dec_avg_tm) + (dec_avg * Math.pow(dec_avg_tm, 2)) / 2);
+					if(next_node_id.equals(ndId)) {
+						next_node_sn = Integer.valueOf(nextNode.get("NODE_SN").toString());
+					}
 
-                        //감속구간이 링크길이보다 긴 경우
-                        if (dec_len >= link_len) {
-                            dec_len = link_len;
-                            //ET dec_len = 0;
+				}
 
-                            //SET dec_avg = (0 - POW(max_speed_per_sec, 2)) / (2*dec_len);
-                            //SET dec_avg_tm = SQRT(2*dec_len/dec_avg);
-                            dec_avg_tm = dec_avg_tm / 2;
 
-                        }
-                    }
 
+				Map<String, Object> nextNodePhaseInfo = null;
 
-                    //위 경우를 제외한 나머지 구간은 최고속도로 달린다고 가정
-                    //최고속도로 달리는 시간
-                    drv_avg_tm = (int) ((link_len - acc_len - dec_len) / max_speed_per_sec);
+				if(node_sn < route_last_node_sn) { //마지막 노드가 아닌경우 //다음노드까지 걸리는 시간 계산
 
-                    if (acc_len == 0) {
-                        acc_avg_tm = 0;
-                    }
+					paramMap.put("ROUT_ID", route_id);
+					paramMap.put("NODE_ID", next_node_id);
+					paramMap.put("NODE_SN", next_node_sn);
+					nextNodePhaseInfo = (Map<String, Object>) nextNodeMap.get(String.valueOf(next_node_sn));
 
-                    if (dec_len == 0) {
-                        dec_avg_tm = 0;
-                    }
+					//다음노드 진입현시 정보 확인
+					next_node_type = String.valueOf(nextNodePhaseInfo.get("NODE_TYPE"));
+					next_cross_id = String.valueOf(nextNodePhaseInfo.get("CRS_ID"));
 
+					acc_len = 0;
+					dec_len = 0;
 
-                    //다음노드까지 걸리는 시간
-                    //가속시간 + 감속시간 + 등속주행시간
-                    next_diff_sec = acc_avg_tm + dec_avg_tm + drv_avg_tm;
+					if (node_type.equals("NT002") || node_sn == route_first_node_sn) {  //정류장에서 출발하는 경우 or 첫번째 노드에서 출발
 
-                } //if(node_sn < last_node_sn)
+						//가속구간
+						acc_len = (int) (0 + (acc_avg * Math.pow(acc_avg_tm, 2)) / 2);
 
+						//가속구간이 링크길이보다 긴 경우
+						if (acc_len >= link_len) {
+							acc_len = link_len;
+							acc_avg_tm = (int) Math.sqrt(2 * acc_len / acc_avg);
+						}
+					}
 
-                //도착시각/출발시각 계산
-                if(node_sn == first_node_sn) {      //노선의 첫번째 노드이면
 
-                    dprt_tm = route_st_tm;
-                    arrv_tm = dprt_tm; //도착시각=출발시각
+					if (next_node_type.equals("NT002")) {  //다음노드가 정류장인 경우
+						//감속구간
+						dec_len = (int) ((max_speed_per_sec * dec_avg_tm) + (dec_avg * Math.pow(dec_avg_tm, 2)) / 2);
 
-                    //첫 번째 노드가 정류장이 아닌경우 첫번째 정류장의 출발시각 설정
-                    if(!node_type.equals("NT002") && next_node_type.equals("NT002")) {
-                        next_diff_sec = 0;
-                        prev_diff_sec = 0;
-                        prev_dprt_tm = dprt_tm;
-                    } else {
-                        prev_diff_sec = next_diff_sec;
-                        prev_dprt_tm = dprt_tm;
-                    }
+						//감속구간이 링크길이보다 긴 경우
+						if (dec_len >= link_len) {
+							dec_len = link_len;
+							//ET dec_len = 0;
 
+							//SET dec_avg = (0 - POW(max_speed_per_sec, 2)) / (2*dec_len);
+							//SET dec_avg_tm = SQRT(2*dec_len/dec_avg);
+							dec_avg_tm = dec_avg_tm / 2;
 
-                } else if(node_sn == last_node_sn && !node_type.equals("NT002")) {  //노선의 마지막 노드이고 정류장아 아니면
+						}
+					}
 
-                    //마지막 노드가 정류장이 아니면 이전 노드(정류장)의 시간을 그대로 사용
-                    arrv_tm = prev_dprt_tm;
-                    dprt_tm = arrv_tm; //출발시각=도착시각
 
-                } else {
+					//위 경우를 제외한 나머지 구간은 최고속도로 달린다고 가정
+					//최고속도로 달리는 시간
+					drv_avg_tm = (int) ((link_len - acc_len - dec_len) / max_speed_per_sec);
 
-                    arrv_tm = DateUtil.addSeconds2(prev_dprt_tm, TIME_PATTERN, prev_diff_sec); //이전 노드 출발시각 + 현재노드까지 걸리는 시간
-                    arrv_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, add_arrv_sec); //신호가 걸려 추가된 시간
+					if (acc_len == 0) {
+						acc_avg_tm = 0;
+					}
 
-                    add_arrv_sec = 0; //초기화
-                    stop_sec_peak = 0;
-                    stop_sec_none_peak = 0;
+					if (dec_len == 0) {
+						dec_avg_tm = 0;
+					}
 
 
-                    //노드타입에 따라 최소정차시간 추가
-                    if(node_type.equals("NT002")) { //정류장
+					//다음노드까지 걸리는 시간
+					//가속시간 + 감속시간 + 등속주행시간
+					next_diff_sec = acc_avg_tm + dec_avg_tm + drv_avg_tm;
 
-                        //정류장별 필요정차시간 가져오기
-                        paramMap.put("NODE_ID", node_id);
-                        resultMap = (Map<String, Object>) sttnMap.get(node_id);
+				} //if(node_sn < route_last_node_sn)
 
 
-                        stop_sec_peak = CommonUtil.bigDecimalToInt(resultMap.get("STOP_TM_PEAK"));
-                        stop_sec_none_peak =  CommonUtil.bigDecimalToInt(resultMap.get("STOP_TM_NONE_PEAK"));
+				//도착시각/출발시각 계산
+				if(node_sn == route_first_node_sn) {      //노선의 첫번째 노드이면
+					dprt_tm = route_st_tm;
+					arrv_tm = dprt_tm; //도착시각=출발시각
 
+					//첫 번째 노드가 정류장이 아닌경우 첫번째 정류장의 출발시각 설정
+					if(!node_type.equals("NT002") && next_node_type.equals("NT002")) {
+						next_diff_sec = 0;
+						prev_diff_sec = 0;
+						prev_dprt_tm = dprt_tm;
+					} else {
+						prev_diff_sec = next_diff_sec;
+						prev_dprt_tm = dprt_tm;
+					}
 
-                        if(stop_sec_peak == 0 || stop_sec_none_peak == 0){ //데이터가 없는 경우
-                            dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN,min_stop_sec); //최소정차시간 추가
+				} else if(node_sn == route_last_node_sn && !node_type.equals("NT002")) {  //노선의 마지막 노드이고 정류장아 아니면
 
-                        } else { //정류장별 필요정차시간 확인
+					//마지막 노드가 정류장이 아니면 이전 노드(정류장)의 시간을 그대로 사용
+					arrv_tm = prev_dprt_tm;
+					dprt_tm = arrv_tm; //출발시각=도착시각
 
-                            //################정차시간 조정
-                            //#SET stop_sec_peak = stop_sec_peak * 1.2;
-                            //#SET stop_sec_none_peak = stop_sec_none_peak * 1.2;
+				} else {
 
+					//변경운행
+					if(chgType == OperPlanCalc.CHG_TYPE_CHG_OPER) {
+						if(offsetTm > 0) { //변경운행인 경우
+							if (node_sn == stNodeSn) { //변경운행 시작노드
 
-                            if ( DateUtil.diffTime(arrv_tm, am_peak_st_tm, TIME_PATTERN) >= 0
-                                    && DateUtil.diffTime(arrv_tm, am_peak_ed_tm, TIME_PATTERN) <=0 ) { //오전첨두시
+								paramMap = new HashMap<>();
+								paramMap.put("ROUT_ID", routId);
+								paramMap.put("NODE_SN", node_sn);
+								paramMap.put("OPER_SN", operSn);
 
-                                dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, stop_sec_peak);
+								resultMap = operPlanMapper.selectArrvDprtTm(paramMap);
 
-                            } else if (DateUtil.diffTime(arrv_tm, pm_peak_st_tm, TIME_PATTERN) >= 0
-                                    && DateUtil.diffTime(arrv_tm, pm_peak_ed_tm, TIME_PATTERN) <=0 ) { //오후첨두시
+								String nodeArrvTm = String.valueOf(resultMap.get("ARRV_TM"));
+								String nodeDprtTm = String.valueOf(resultMap.get("DPRT_TM"));
 
-                                dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, stop_sec_peak);
+								arrv_tm = DateUtil.addSeconds2(nodeArrvTm, TIME_PATTERN, offsetTm);
 
-                            } else { //비첨두시
-                                //dprt_tm = DATE_ADD(arrv_tm, INTERVAL stop_sec_none_peak SECOND);
-                                dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, stop_sec_none_peak);
-                            }
+							} else { //이후 노드들
+								arrv_tm = DateUtil.addSeconds2(prev_dprt_tm, TIME_PATTERN, prev_diff_sec); //이전 노드 출발시각 + 현재노드까지 걸리는 시간
+								arrv_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, add_arrv_sec); //신호가 걸려 추가된 시간
+							}
+						}
 
-                        } /*else //필요정차시간이 없는 경우
-                            dprt_tm = DATE_ADD(arrv_tm, INTERVAL min_stop_sec SECOND); --최소정차시간 추가
-                        }*/
+					} else if(chgType == OperPlanCalc.CHG_TYPE_MODIFY) { //변경운행은 아니고, 수정인 경우
 
-                    } else {
-                        dprt_tm = arrv_tm;
-                    }
+						if(node_sn == stNodeSn) {
+							arrv_tm = stNodeArrvTm;
+							dprt_tm = stNodeDprtTm;
+						} else if(node_sn == edNodeSn) {
+							arrv_tm = prev_dprt_tm;
+							dprt_tm = arrv_tm; //출발시각=도착시각
+						} else {
+							arrv_tm = DateUtil.addSeconds2(prev_dprt_tm, TIME_PATTERN, prev_diff_sec); //이전 노드 출발시각 + 현재노드까지 걸리는 시간
+							arrv_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, add_arrv_sec); //신호가 걸려 추가된 시간
+						}
 
+					} else {
+						arrv_tm = DateUtil.addSeconds2(prev_dprt_tm, TIME_PATTERN, prev_diff_sec); //이전 노드 출발시각 + 현재노드까지 걸리는 시간
+						arrv_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, add_arrv_sec); //신호가 걸려 추가된 시간
+					}
 
-                    prev_diff_sec = next_diff_sec;
-                    prev_dprt_tm = dprt_tm;
 
 
-                    //마지막 정류장 처리
-                    if(next_node_sn == last_node_sn) { // 다음노드가 노선의 마지막 노드이면
+					add_arrv_sec = 0; //초기화
+					stop_sec_peak = 0;
+					stop_sec_none_peak = 0;
 
-                        if(node_type.equals("NT002") && !next_node_type.equals("NT002")){ //다음 노드가 정류장이 아니면
+					//노드타입에 따라 최소정차시간 추가
+					if(node_type.equals("NT002")) { //정류장
 
-                            //출발시각 = 도착시각
-                            dprt_tm = arrv_tm; //출발시각=도착시각
-                            prev_dprt_tm = dprt_tm;
-                        }
+						if(chgType != OperPlanCalc.CHG_TYPE_MODIFY) { //수정인 경우에는 정류장 출도착 시각을 전달받음
 
-                    }
+							//정류장별 필요정차시간 가져오기
+							paramMap.put("NODE_ID", node_id);
+							resultMap = (Map<String, Object>) sttnMap.get(node_id);
 
-                }
 
+							stop_sec_peak = CommonUtil.bigDecimalToInt(resultMap.get("STOP_TM_PEAK"));
+							stop_sec_none_peak =  CommonUtil.bigDecimalToInt(resultMap.get("STOP_TM_NONE_PEAK"));
 
-                if(node_sn != last_node_sn) {
 
+							//20210927 최소정차시간 설정
+							/*
+							if(stop_sec_peak <= min_stop_sec) {
+							    stop_sec_peak = min_stop_sec;
+							}
+							
+							if(stop_sec_none_peak <= min_stop_sec) {
+							    stop_sec_none_peak = min_stop_sec;
+							}
+							 */
 
-                    if(next_node_type.equals("NT001") && !StringUtils.isEmpty(next_cross_id)){ //다음 노드가 교차로이면
 
-                        //현시정보 확인가능여부
-                        paramMap.put("NODE_ID", next_cross_id);
 
-                        resultMap = (Map<String, Object>) crsMap.get(next_cross_id);
-                        sig_ctr_type = String.valueOf(resultMap.get("SIG_CTR_TYPE"));
+							if(stop_sec_peak == 0 || stop_sec_none_peak == 0){ //데이터가 없는 경우
+								dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, min_stop_sec); //최소정차시간 추가
 
+							} else { //정류장별 필요정차시간 확인
 
-                        //현시정보 확인이 가능한 경우 [[
-                        if(!StringUtils.isEmpty(sig_ctr_type)){
+								//################정차시간 조정
+								//#SET stop_sec_peak = stop_sec_peak * 1.2;
+								//#SET stop_sec_none_peak = stop_sec_none_peak * 1.2;
 
-                            enter_phase_no1 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_1"));
-                            enter_phase_no2 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_2"));
-                            enter_phase_no3 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_3"));
 
-                            if(enter_phase_no1 != 0) {
-                                //교차로 도착예정 시각의 진입현시 확인
-                                paramMap.put("NODE_ID", next_cross_id);
-                                paramMap.put("DPRT_TM", DateUtil.addSeconds2(dprt_tm, TIME_PATTERN, next_diff_sec));
-                                //paramMap.put("DIFF_TM", next_diff_sec);
-                                paramMap.put("PHASE_NUM", enter_phase_no1);
-                                paramMap.put("DAY_DIV", day_div);
+								if ( DateUtil.diffTime(arrv_tm, am_peak_st_tm, "HH:mm:ss") >= 0
+										&& DateUtil.diffTime(arrv_tm, am_peak_ed_tm, "HH:mm:ss") <=0 ) { //오전첨두시
 
-                                phase_remain_sec = operPlanMapper.selectPhaseRemainTm(paramMap);
+									dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, stop_sec_peak);
 
+								} else if (DateUtil.diffTime(arrv_tm, pm_peak_st_tm, "HH:mm:ss") >= 0
+										&& DateUtil.diffTime(arrv_tm, pm_peak_ed_tm, "HH:mm:ss") <=0 ) { //오후첨두시
 
-                                if(enter_phase_no2 != 0) {
+									dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, stop_sec_peak);
 
-                                    // 다음 교차로 도착예정 시각에 enter_phase_no1 현시가 아닌경우
-                                    // enter_phase_no2 가 있는지 확인
-                                    if (phase_remain_sec <= 0) {
-                                        phase_remain_sec_tmp = 0;
+								} else { //비첨두시
+									//dprt_tm = DATE_ADD(arrv_tm, INTERVAL stop_sec_none_peak SECOND);
+									dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, stop_sec_none_peak);
+								}
 
-                                        paramMap.put("PHASE_NUM", enter_phase_no2);
-                                        phase_remain_sec_tmp = operPlanMapper.selectPhaseRemainTm(paramMap);
+							} /*else //필요정차시간이 없는 경우
+							    dprt_tm = DATE_ADD(arrv_tm, INTERVAL min_stop_sec SECOND); --최소정차시간 추가
+							}*/
 
-                                        if (phase_remain_sec_tmp > 0) {
-                                            phase_remain_sec = phase_remain_sec_tmp;
-                                        }
-                                    }
+						} //if(chgType != CHG_TYPE_MODIFY)
 
+					} else {
+						dprt_tm = arrv_tm;
+					}
 
-                                    //다음 교차로 도착예정 시각에 enter_phase_no2 현시가 아닌경우
-                                    //enter_phase_no3 가 있는지 확인
-                                    if(enter_phase_no3 != 0) {
-                                        if (phase_remain_sec <= 0) {
-                                            phase_remain_sec_tmp = 0;
 
-                                            paramMap.put("PHASE_NUM", enter_phase_no3);
-                                            phase_remain_sec_tmp = operPlanMapper.selectPhaseRemainTm(paramMap);
+					prev_diff_sec = next_diff_sec;
+					prev_dprt_tm = dprt_tm;
 
-                                            if (phase_remain_sec_tmp > 0) {
-                                                phase_remain_sec = phase_remain_sec_tmp;
-                                            }
 
-                                        }
-                                    } //if(enter_phase_no3 != 0) {
+					//마지막 정류장 처리
+					if(next_node_sn == route_last_node_sn) { // 다음노드가 노선의 마지막 노드이면
 
-                                } //if(enter_phase_no2 != 0)
+						if(node_type.equals("NT002") && !next_node_type.equals("NT002")){ //다음 노드가 정류장이 아니면
 
-                            } //if(enter_phase_no1 != 0) {
+							//출발시각 = 도착시각
+							dprt_tm = arrv_tm; //출발시각=도착시각
+							prev_dprt_tm = dprt_tm;
+						}
 
-                        }
-                        //현시정보 확인이 가능한 경우 ]]
+					}
 
+				}
 
-                        //다음 교차로 도착예정 시각에 원하는 현시가 아닌 경우(다음 초록불까지 남은 시간..)
-                        if(phase_remain_sec < 0) {
 
-                            //다음 초록불까지 남은 시간에 따라
-                            //현재 노드가 정류장이면 출발시각을 늦춘다(20초 정도까지..)
-                            if(node_type.equals("NT002")) { //정류장
-                                if(Math.abs(phase_remain_sec) > max_delay_sec) {
-                                    dprt_tm = DateUtil.addSeconds2(dprt_tm, TIME_PATTERN, max_delay_sec);
-                                } else {
-                                    dprt_tm = DateUtil.addSeconds2(dprt_tm, TIME_PATTERN, Math.abs(phase_remain_sec));
-                                }
-                            } else {
-                                //현재 노드가 정류장이 아닌 경우 다음 노드의 도착시각을 늦춘다??
-                                if(Math.abs(phase_remain_sec) > max_delay_sec) {
-                                    add_arrv_sec = max_delay_sec;
-                                } else {
-                                    add_arrv_sec = Math.abs(phase_remain_sec);
-                                }
-                            }
+				if(node_sn != route_last_node_sn) {
 
-                        }
 
+					if(next_node_type.equals("NT001") && !StringUtils.isEmpty(next_cross_id)){ //다음 노드가 교차로이면
 
-                    } else { //다음노드가 교차로가 아니면
-                        phase_remain_sec = 0;
-                    }
+						//현시정보 확인가능여부
+						paramMap.put("NODE_ID", next_cross_id);
 
-                    prev_diff_sec = next_diff_sec;
-                    prev_dprt_tm = dprt_tm;
+						resultMap = (Map<String, Object>) crsMap.get(next_cross_id);
+						sig_ctr_type = String.valueOf(resultMap.get("SIG_CTR_TYPE"));
 
-                }
 
-                Map<String, Object> insertParamMap = new HashMap<>();
+						//현시정보 확인이 가능한 경우 [[
+						if(!StringUtils.isEmpty(sig_ctr_type)){
 
-                insertParamMap.put("REP_ROUT_ID", rep_route_id);
-                insertParamMap.put("DAY_DIV", day_div);
-                insertParamMap.put("WAY_DIV", way_div);
-                insertParamMap.put("ALLOC_NO", alloc_no);
-                insertParamMap.put("OPER_SN", operSn);
-                insertParamMap.put("ROUT_ID", route_id);
-                insertParamMap.put("NODE_ID", node_id);
-                insertParamMap.put("NODE_SN", node_sn);
-                insertParamMap.put("COR_ID", course_id);
-                insertParamMap.put("NODE_TYPE", node_type);
-                insertParamMap.put("ARRV_TM", arrv_tm);
-                insertParamMap.put("DPRT_TM", dprt_tm);
-                insertParamMap.put("TEST", link_len);
-                insertParamMap.put("TEST2", phase_remain_sec);
-                insertParamMap.put("TEST3", next_cross_id);
+							enter_phase_no1 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_1"));
+							enter_phase_no2 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_2"));
+							enter_phase_no3 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_3"));
 
-                operNodeList.add(insertParamMap);
+							if(enter_phase_no1 != 0) {
+								//교차로 도착예정 시각의 진입현시 확인
+								paramMap.put("NODE_ID", next_cross_id);
+								paramMap.put("DPRT_TM", DateUtil.addSeconds2(dprt_tm, TIME_PATTERN, next_diff_sec));
+								//paramMap.put("DIFF_TM", next_diff_sec);
+								paramMap.put("PHASE_NUM", enter_phase_no1);
+								paramMap.put("DAY_DIV", day_div);
 
-            } //for(Map<String, Object> nodeInfo : nodeList)
+								phase_remain_sec = operPlanMapper.selectPhaseRemainTm(paramMap);
 
 
-            //#계산 해보니 최종 도착시간이 맞지 않다.
-            //시간 비교
-            int diffSec = DateUtil.diffSeconds(dprt_tm, route_ed_tm, TIME_PATTERN);
+								if(enter_phase_no2 != 0) {
 
-            logger.info("도착시각:{}, 기준도착시각:{}, 차이:{}초", arrv_tm, route_ed_tm, diffSec);
+									// 다음 교차로 도착예정 시각에 enter_phase_no1 현시가 아닌경우
+									// enter_phase_no2 가 있는지 확인
+									if (phase_remain_sec <= 0) {
+										phase_remain_sec_tmp = 0;
 
-            if(Math.abs(diffSec) >= LIMIT_DIFF_SEC) {
+										paramMap.put("PHASE_NUM", enter_phase_no2);
+										phase_remain_sec_tmp = operPlanMapper.selectPhaseRemainTm(paramMap);
 
-                //#도착시간이 빠른 경우
-                if(diffSec < 0) {
+										if (phase_remain_sec_tmp > 0) {
+											phase_remain_sec = phase_remain_sec_tmp;
+										}
+									}
 
-                    if(max_speed > MIN_SPEED_LIMIT) {
 
-                    	if(Math.abs(Math.abs(diffSec) - LIMIT_DIFF_SEC) <= 5) {
-                            max_speed -= 0.2;
-                        } else if(Math.abs(Math.abs(diffSec) - LIMIT_DIFF_SEC) <= 10) {
-                            max_speed -= 0.5;
-                        } else {
-                            max_speed -= 1.0;
-                        }
+									//다음 교차로 도착예정 시각에 enter_phase_no2 현시가 아닌경우
+									//enter_phase_no3 가 있는지 확인
+									if(enter_phase_no3 != 0) {
+										if (phase_remain_sec <= 0) {
+											phase_remain_sec_tmp = 0;
 
-                        logger.info("최대속도 변경:{}", max_speed);
-                    } else {
+											paramMap.put("PHASE_NUM", enter_phase_no3);
+											phase_remain_sec_tmp = operPlanMapper.selectPhaseRemainTm(paramMap);
 
-                    }
-                    isDone = false;
+											if (phase_remain_sec_tmp > 0) {
+												phase_remain_sec = phase_remain_sec_tmp;
+											}
 
-                } else { //#도착시간이 늦는 경우
+										}
+									} //if(enter_phase_no3 != 0) {
 
-                    if(max_speed < MAX_SPEED_LIMIT) {
-                    	if(Math.abs(Math.abs(diffSec) - LIMIT_DIFF_SEC) <= 5) {
-                            max_speed += 0.2;
-                        } else if(Math.abs(Math.abs(diffSec) - LIMIT_DIFF_SEC) <= 10) {
-                            max_speed += 0.5;
-                        } else {
-                            max_speed += 1.0;
-                        }
+								} //if(enter_phase_no2 != 0)
 
-                        logger.info("최대속도 변경:{}", max_speed);
-                    } else {
+							} //if(enter_phase_no1 != 0) {
 
-                    }
-                    isDone = false;
-                }
+						}
+						//현시정보 확인이 가능한 경우 ]]
 
-            } else {
-                isDone = true;
-            }
 
+						//다음 교차로 도착예정 시각에 원하는 현시가 아닌 경우(다음 초록불까지 남은 시간..)
+						if(phase_remain_sec < 0) {
 
-        } //while(!isDone)
+							//다음 초록불까지 남은 시간에 따라
+							//현재 노드가 정류장이면 출발시각을 늦춘다(20초 정도까지..)
+							if(node_type.equals("NT002")) { //정류장
+								if(Math.abs(phase_remain_sec) > max_delay_sec) {
+									dprt_tm = DateUtil.addSeconds2(dprt_tm, TIME_PATTERN, max_delay_sec);
+								} else {
+									dprt_tm = DateUtil.addSeconds2(dprt_tm, TIME_PATTERN, Math.abs(phase_remain_sec));
+								}
+							} else {
+								//현재 노드가 정류장이 아닌 경우 다음 노드의 도착시각을 늦춘다??
+								if(Math.abs(phase_remain_sec) > max_delay_sec) {
+									add_arrv_sec = max_delay_sec;
+								} else {
+									add_arrv_sec = Math.abs(phase_remain_sec);
+								}
+							}
 
+						}
 
-        if(bSave==1) {
-            //insert 전 delete
-            paramMap.put("REP_ROUT_ID", rep_route_id);
-            operPlanMapper.deleteOperPl(paramMap);
 
-            //리스트 한 번에 insert
-            Map<String, Object> insertMap = new HashMap<>();
-            insertMap.put("ITEM_LIST", operNodeList);
-            operPlanMapper.insertOperAllocPlNodeInfoList(insertMap);
-        }
+					} else { //다음노드가 교차로가 아니면
+						phase_remain_sec = 0;
+					}
 
+					prev_diff_sec = next_diff_sec;
+					prev_dprt_tm = dprt_tm;
 
-        return operNodeList;
+				}
 
-    }
+				/*
+				if(chgType == CHG_TYPE_MODIFY) { //변경운행은 아니고, 수정인 경우
+					if(node_sn == edNodeSn) {
+						arrv_tm = edNodeArrvTm;
+						dprt_tm = edNodeDprtTm;
+					}
+				}
+				 */
+
+
+				Map<String, Object> insertParamMap = new HashMap<>();
+
+				insertParamMap.put("REP_ROUT_ID", rep_route_id);
+				insertParamMap.put("DAY_DIV", day_div);
+				insertParamMap.put("WAY_DIV", way_div);
+				insertParamMap.put("ALLOC_NO", alloc_no);
+				insertParamMap.put("OPER_SN", operSn);
+				insertParamMap.put("ROUT_ID", route_id);
+				insertParamMap.put("NODE_ID", node_id);
+				insertParamMap.put("NODE_SN", node_sn);
+				insertParamMap.put("COR_ID", course_id);
+				insertParamMap.put("NODE_TYPE", node_type);
+				insertParamMap.put("ARRV_TM", arrv_tm);
+				insertParamMap.put("DPRT_TM", dprt_tm);
+				insertParamMap.put("TEST", link_len);
+				insertParamMap.put("TEST2", phase_remain_sec);
+				insertParamMap.put("TEST3", next_cross_id);
+
+				operNodeList.add(insertParamMap);
+
+
+
+				//logger.info("DAY_DIV:{}, WAY_DIV:{}, ALLOC_NO:{}, OPER_SN:{}, ROUT_ID:{}, NODE_ID:{}, NODE_SN:{}, NODE_TYPE:{}, ARRV_TM:{}, DPRT_TM:{}, TEST:{}, TEST2:{}, TEST3:{}"
+				//        , day_div, way_div, alloc_no, operSn, route_id, node_id, node_sn, node_type, arrv_tm, dprt_tm, link_len, phase_remain_sec, next_cross_id);
+
+			} //for(Map<String, Object> nodeInfo : nodeList)
+
+
+			//#계산 해보니 최종 도착시간이 맞지 않다.
+			//시간 비교
+
+			int diffSec = DateUtil.diffSeconds(arrv_tm, route_ed_tm, "HH:mm:ss");
+
+			if(chgType == OperPlanCalc.CHG_TYPE_MODIFY) {
+				// TODO: 2021-09-29 0029 화면에서 특정 정류장 출도착 시간만 변경 시 처리
+
+			} else {
+				logger.info("도착시각:{}, 기준도착시각:{}, 차이:{}초", arrv_tm, route_ed_tm, diffSec);
+
+				if (Math.abs(diffSec) > OperPlanCalc.LIMIT_DIFF_SEC) {
+
+					//#도착시간이 빠른 경우
+					if (diffSec < 0) {
+
+						if (max_speed > OperPlanCalc.MIN_SPEED_LIMIT) {
+
+							if (Math.abs(Math.abs(diffSec) - OperPlanCalc.LIMIT_DIFF_SEC) <= 5) {
+								max_speed -= 0.2;
+								//max_speed--;
+							} else if (Math.abs(Math.abs(diffSec) - OperPlanCalc.LIMIT_DIFF_SEC) <= 10) {
+								max_speed -= 0.5;
+								//max_speed--;
+							} else {
+								//max_speed--;
+								max_speed -= 1.0;
+							}
+
+							logger.info("최대속도 변경:{}", max_speed);
+						} else {
+
+						}
+						isDone = false;
+
+						tryCount++;
+
+						if (tryCount >= OperPlanCalc.MAX_TRY_COUNT) {
+							tryCount = 0;
+
+							//최대속도변경으로 안되는 경우
+							max_speed = OperPlanCalc.MAX_SPEED_DEFAULT; //최대속도 초기화
+
+							//가속도 변경
+
+
+						}
+
+
+					} else { //#도착시간이 늦는 경우
+
+						if (max_speed < OperPlanCalc.MAX_SPEED_LIMIT) {
+							if (Math.abs(Math.abs(diffSec) - OperPlanCalc.LIMIT_DIFF_SEC) <= 5) {
+								max_speed += 0.2;
+								//max_speed++;
+							} else if (Math.abs(Math.abs(diffSec) - OperPlanCalc.LIMIT_DIFF_SEC) <= 10) {
+								max_speed += 0.5;
+								//max_speed++;
+							} else {
+								//max_speed++;
+								max_speed += 1.0;
+							}
+
+							logger.info("최대속도 변경:{}", max_speed);
+						} else {
+
+						}
+
+						isDone = false;
+						tryCount++;
+					}
+
+				} else {
+					isDone = true;
+					tryCount = 0;
+				}
+
+			}
+
+		} //while(!isDone)
+
+
+		if(bSave) {
+			//insert 전 delete
+			paramMap.put("REP_ROUT_ID", rep_route_id);
+			operPlanMapper.deleteOperPl(paramMap);
+
+			//리스트 한 번에 insert
+			Map<String, Object> insertMap = new HashMap<>();
+			insertMap.put("ITEM_LIST", operNodeList);
+			operPlanMapper.insertOperAllocPlNodeInfoList(insertMap);
+		}
+
+
+		return operNodeList;
+
+	}
+
 	
+	
+	/**
+	 * 운행계획 생성 
+	 */
+	public List makeOperAllocPlNodeInfo(String routId, String dayDiv, int operSn, boolean bSave) {
+		
+		List operPlList = null;
+		
+		try {
+			operPlList = makeOperAllocPlNodeInfo(routId, dayDiv, operSn, bSave, 0, 0, 0, null, null, null, null, OperPlanCalc.CHG_TYPE_NONE);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return operPlList;		
+		
+	}
+	
+	
+	
+	/**
+	 * 변경운행계획 생성
+	 */
+	public List makeChgOperAllocPlNodeInfo(String routId, String operDt, int operSn 
+			,int stNodeSn //변경운행 //변경운행 시작 노드
+			,int offsetTm //변경운행 //도착 예정시간과의 차이(초))
+			,boolean bSave
+	) {
+		List operPlList = null;
+		
+		try {
+			String dayDiv = operPlanMapper.selectDayDiv(operDt);
+			
+			operPlList = makeOperAllocPlNodeInfo(routId, dayDiv, operSn, bSave, stNodeSn, 0, offsetTm, null, null, null, null, OperPlanCalc.CHG_TYPE_CHG_OPER);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return operPlList;
+		
+	}
+
 }

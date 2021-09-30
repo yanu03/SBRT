@@ -165,15 +165,18 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
     <!--진입현시정보-->
     <select id="selectAllNextNodeInfo" resultType="hashmap">
         SELECT
-            A.NODE_TYPE
+	    A.NODE_ID
+            ,A.NODE_TYPE
             ,A.NODE_SN
+            ,A.LINK_NODE_YN            
             ,IFNULL(A.CRS_ID, "") AS CRS_ID
             ,B.ENT_PHASE_NO_1
             ,B.ENT_PHASE_NO_2
             ,B.ENT_PHASE_NO_3
         FROM BMS_ROUT_NODE_CMPSTN A
             LEFT JOIN BMS_ROUT_CRS_CMPSTN B ON A.ROUT_ID = B.ROUT_ID AND A.NODE_ID = B.CRS_ID AND A.NODE_SN = B.NODE_SN
-        WHERE A.ROUT_ID = #{ROUT_ID};
+        WHERE A.ROUT_ID = #{ROUT_ID}
+        ORDER BY A.NODE_SN ASC;
 
     </select>
 
@@ -195,6 +198,24 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,#{PHASE_NUM}
             ,IF(#{DAY_DIV} = 'DY001', 2, 1)
         );
+    </select>
+
+
+	<!--요일구분 가져오기-->
+    <select id="selectDayDiv" resultType="string">
+        SELECT FN_GET_DAY_DIV(#{OPER_DT});
+    </select>
+
+
+	<!-- 노선 출도착 시간 가져오기 -->
+    <select id="selectArrvDprtTm" resultType="hashmap">
+        SELECT
+            ARRV_TM, DPRT_TM
+        FROM
+            BRT_CUR_OPER_ALLOC_PL_NODE_INFO
+        WHERE ROUT_ID = #{ROUT_ID}
+            AND OPER_SN = #{OPER_SN}
+            AND NODE_SN  = #{NODE_SN}
     </select>
 
 

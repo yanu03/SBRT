@@ -110,4 +110,29 @@ public class Constants {
     }
     
     public static int VHC_MAX_SPEED = 50; //차량 최대 속도
+    
+    
+
+    public static class OperPlanCalc {
+
+    	//변경타입 //0:없음, 1:변경운행, 2:단순 수정
+    	public static final int CHG_TYPE_NONE = 0;
+    	public static final int CHG_TYPE_CHG_OPER = 1;
+    	public static final int CHG_TYPE_MODIFY = 2;
+
+    	public static final float MAX_SPEED_DEFAULT = 50.0f;
+    	public static final float MAX_SPEED_LIMIT = 59.0f;
+    	public static final float MIN_SPEED_LIMIT = 35.0f;
+    	public static final int LIMIT_DIFF_SEC = 35;
+    	public static final int MAX_DELAY_SEC = 20;
+
+    	public static final float STD_AAC = 1.67f; //기준가속(1.67)
+    	public static final float STD_DEC = -2.5f; //기준감속(-2.5)
+
+    	public static final int MAX_TRY_COUNT = 50;
+    	
+    }
+    
+    
+    
 }

@@ -56,7 +56,7 @@ public class MO0203Service extends ServiceSupport{
 		//정류장정보 요청 데이터 생성
 		AtBrtAction brtRequest = new AtBrtAction();
 
-		brtRequest.setActionCode((byte)1);
+		brtRequest.setActionCode((byte)AtBrtAction.bitInfoRequest);
 		brtRequest.setData(sttnId);
 
         
