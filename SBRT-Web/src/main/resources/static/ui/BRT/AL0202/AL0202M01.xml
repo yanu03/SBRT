@@ -117,34 +117,34 @@
 						<w2:key id="DAY_DIV" name="요일구분" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
-				<w2:dataMap baseNode="map" id="dma_param_AL0304P0">
+				<w2:dataMap baseNode="map" id="dma_param_AL0202P0">
 					<w2:keyInfo></w2:keyInfo>
 				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_AL0304G0R0" ref="data:json,dma_search" target="data:json,dlt_OPER_PL_ROUT_INFO"
-				action="/AL/AL0304G0R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0304G0R0_submitdone"
+			<xf:submission id="sub_AL0202G0R0" ref="data:json,dma_search" target="data:json,dlt_OPER_PL_ROUT_INFO"
+				action="/AL/AL0202G0R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0202G0R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_AL0304G1R0" ref="data:json,dma_sub_param" target='data:json,[{"id":"dlt_OPER_ALLOC_PL_ROUT_CNT"},{"id":"dlt_OPER_ALLOC_PL_ROUT_INFO"}]'
-				action="/AL/AL0304G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0304G1R0_submitdone" ev:submiterror=""
+			<xf:submission id="sub_AL0202G1R0" ref="data:json,dma_sub_param" target='data:json,[{"id":"dlt_OPER_ALLOC_PL_ROUT_CNT"},{"id":"dlt_OPER_ALLOC_PL_ROUT_INFO"}]'
+				action="/AL/AL0202G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0202G1R0_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission>
-			<!-- <xf:submission id="sub_AL0304G1CNT" ref="data:json,dma_sub_param" target="data:json,dlt_OPER_ALLOC_PL_ROUT_CNT"
-				action="/AL/AL0304G1CNT" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0304G1CNT_submitdone" ev:submiterror=""
+			<!-- <xf:submission id="sub_AL0202G1CNT" ref="data:json,dma_sub_param" target="data:json,dlt_OPER_ALLOC_PL_ROUT_CNT"
+				action="/AL/AL0202G1CNT" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0202G1CNT_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission> -->
-			<xf:submission id="sub_AL0304G1S0" ref='data:json,[{"id":"dlt_BRT_OPER_PL_ROUT_INFO","action":"modified"},"dma_sub_search"]' target="data:json,dlt_BRT_OPER_PL_ROUT_INFO"
-				action="/al/AL0304G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중 입니다..."
-				ev:submit="" ev:submitdone="scwin.sub_AL0304G1S0_submitdone" ev:submiterror="">
+			<xf:submission id="sub_AL0202G1S0" ref='data:json,[{"id":"dlt_BRT_OPER_PL_ROUT_INFO","action":"modified"},"dma_sub_search"]' target="data:json,dlt_BRT_OPER_PL_ROUT_INFO"
+				action="/al/AL0202G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중 입니다..."
+				ev:submit="" ev:submitdone="scwin.sub_AL0202G1S0_submitdone" ev:submiterror="">
 			</xf:submission>
 		</xf:model>
 
 	<style>
-		.AL0304G0 tbody tr td nobr {
+		.AL0202G0 tbody tr td nobr {
 			word-wrap: break-word;
 			white-space : normal;
 			padding: 0px 5px 0px 5px;
@@ -154,6 +154,7 @@
 	<script type="text/javascript" lazy="false"><![CDATA[
 
 	var GRID_MAX = 30;
+	var autoOptions = [];
 	
 	//동적으로 datList 생성
 	scwin.makeDataList = function(id, obj) {
@@ -201,9 +202,9 @@
 		}
 		
 		if(rowData.length == 0 ) {
-			gridHeader +='<w2:column blockSelect="false" id="" style="height:25px; padding-left:350px" textAlign="left" inputType="text" width="100" colSpan="'+1+'" value="운행경로 및 운행시간"></w2:column>';
+			gridHeader +='<w2:column blockSelect="false" id="h_OPER_INFO" style="height:25px; padding-left:350px" textAlign="left" inputType="text" width="100" colSpan="'+1+'" value="운행경로 및 운행시간"></w2:column>';
 			var gridStr = '<w2:gridView xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" dataList="dlt_VIEW_OPER_PL_ROUT_INFO" '
-							+ 'scrollByColumn="true" id="AL0304G1" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" mergeCol="ALLOC_NO,WAY_DIV">'
+							+ 'scrollByColumn="true" id="AL0202G1" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" mergeCol="ALLOC_NO,WAY_DIV">'
 			+ '<w2:header id="header1" style="">'
 			+ '<w2:row id="row1" style="">'
 			+ gridHeader
@@ -216,7 +217,7 @@
 			+'</w2:gBody>'
 			+'</w2:gridView>' ;
 			
-			AL0304G1.setGridStyle(WebSquare.xml.parse( gridStr , true ));
+			AL0202G1.setGridStyle(WebSquare.xml.parse( gridStr , true ));
 			dlt_VIEW_OPER_PL_ROUT_INFO.removeAll();
 			return;
 		}
@@ -290,7 +291,8 @@
 		//gridView 정보 정의 
 		//xml 형식을 정의 하면 <w2:gridView 에 xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" 포함 합니다.
 		var gridStr = '<w2:gridView xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" dataList="dlt_VIEW_OPER_PL_ROUT_INFO" '
-						+ 'scrollByColumn="true" id="AL0304G1" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" mergeCol="ALLOC_NO,WAY_DIV" >'
+						+ 'scrollByColumn="true" id="AL0202G1" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" '
+						+ 'mergeCol="ALLOC_NO,WAY_DIV" fixedColumn="2"  mergeCellsFixedCols="bycol" mergeCellsFixedRows="never">'
 		+ '<w2:header id="header1" style="text-align:left">'
 		+ '<w2:row id="row1" style="">'
 		+ gridHeader
@@ -303,36 +305,43 @@
 		+'</w2:gBody>'
 		+'</w2:gridView>' ;
 		
-		AL0304G1.setGridStyle(WebSquare.xml.parse( gridStr , true ));
-		//AL0304G1.mergeCells("byrestriccol");
-		//AL0304G1.mergeCol("ALLOC_NO,WAY_DIV");
-		//AL0304G1.setFixedColumn(2);
+		AL0202G1.setGridStyle(WebSquare.xml.parse( gridStr , true ));
+		
+		autoOptions.Sub1.grid = AL0202G1;
+		
+		//AL0202G1.mergeCells("byrestriccol");
+		//AL0202G1.setFixedColumn(2);
+		//AL0202G1.mergeCellsFixedCols("bycol");
+		
+		//AL0202G1.mergeCells("byrestriccol");
+		//AL0202G1.mergeCol("ALLOC_NO,WAY_DIV");
+		//AL0202G1.setFixedColumn(2);
 
 		dlt_VIEW_OPER_PL_ROUT_INFO.modifyAllStatus("R")
 	}
 		
 	scwin.onpageload = function() {		
-		var autoOptions = {
+		autoOptions = {
 			Main : {
-				grid : AL0304G0,
-				srchSbm : sub_AL0304G0R0,
+				grid : AL0202G0,
+				srchSbm : sub_AL0202G0R0,
 				srchGrp : pgm_header,
 				keyColumn : "REP_ROUT_ID, DAY_DIV",
 				name : "배차편성 목록",
 				undo : false //검색시 undo 동작 하지 않게 함 undo시 머지가 깨져서 undo 동작하면 안됨
 			},
-			Sub1 : { grid : AL0304G1, 
-				srchSbm : sub_AL0304G1R0, 
+			Sub1 : { grid : AL0202G1, 
+				srchSbm : sub_AL0202G1R0, 
 				/*srchGrp : pgm_subList,*/ 
-				savSbm : sub_AL0304G1S0, 
-				name :  "배차순위 상세",
+				savSbm : sub_AL0202G1S0, 
+				name :  "배차편성 상세",
 				undo : false //검색시 undo 동작 하지 않게 함 undo시 머지가 깨져서 undo 동작하면 안됨
 			}
 		};
 		
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions);
 
-		var codeOptions = [{code : "DAY_DIV",compID : "AL0304G0:DAY_DIV"},{code : "WAY_DIV",compID : "AL0304G1:WAY_DIV"}];
+		var codeOptions = [{code : "DAY_DIV",compID : "AL0202G0:DAY_DIV"},{code : "WAY_DIV",compID : "AL0202G1:WAY_DIV"}];
 
 		var subOptions = {
 			APPLY : scwin.btn_apply_onclick
@@ -340,60 +349,60 @@
 		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
 
 		com.setCommonDtl(codeOptions, function() {
-			com.searchGrid(AL0304G0, sub_AL0304G0R0);
+			com.searchGrid(AL0202G0, sub_AL0202G0R0);
 		});
 
-		AL0304G0.mergeCells("byrestriccol");
+		AL0202G0.mergeCells("byrestriccol");
 	};
 
 	scwin.onpageunload = function() {
 
 	};
 	
-	scwin.sub_AL0304G0R0_submitdone = function(e) {
-		com.setFocusedCell(AL0304G0, "REP_ROUT_NM");			
+	scwin.sub_AL0202G0R0_submitdone = function(e) {
+		com.setFocusedCell(AL0202G0, "REP_ROUT_NM");			
 	};
 	
-	scwin.sub_AL0304G1S0_submitdone = function(e) {
+	scwin.sub_AL0202G1S0_submitdone = function(e) {
 			
 	};
 	
-	scwin.AL0304G0_onrowindexchange = function(row, oldRow) {
+	scwin.AL0202G0_onrowindexchange = function(row, oldRow) {
 		
 		var focusOption = {keyMap : dma_sub_param, keyMapColumn : "REP_ROUT_ID,DAY_DIV"};
-		com.changeDualGrid(AL0304G0, AL0304G1, sub_AL0304G1S0,
-					sub_AL0304G1R0, focusOption , row, oldRow, "배차순위 상세");
+		com.changeDualGrid(AL0202G0, AL0202G1, sub_AL0202G1S0,
+					sub_AL0202G1R0, focusOption , row, oldRow, "배차순위 상세");
 	};
 	
-	scwin.sub_AL0304G1R0_submitdone = function(e) {
+	scwin.sub_AL0202G1R0_submitdone = function(e) {
 		scwin.setColumnID();
 	};
 
-	scwin.AL0304G1_oncelldblclick = function(row,col,colId) {
+	scwin.AL0202G1_oncelldblclick = function(row,col,colId) {
 			var data = {
-				REP_ROUT_ID : dlt_OPER_PL_ROUT_INFO.getCellData(AL0304G1.getFocusedRowIndex(), "REP_ROUT_ID"),
-				callbackFn : "scwin.AL0304G1Callback"
+				REP_ROUT_ID : dlt_OPER_PL_ROUT_INFO.getCellData(AL0202G1.getFocusedRowIndex(), "REP_ROUT_ID"),
+				callbackFn : "scwin.AL0202G1Callback"
 			};
 
 			var opt = {
-				id : "AL0304P01",
+				id : "AL0202P01",
 				popupName : "배차순위"+(row+1)+"번",
 				modal : true,
 				width : 1000,
 				height : 800
 			};
-			com.openPopup("/ui/BRT/AL0304/AL0304P01.xml", opt, data);		
+			com.openPopup("/ui/BRT/AL0202/AL0202P01.xml", opt, data);		
 	};
 	
 	
-	scwin.AL0304G1Callback = function(returnValue) {
+	scwin.AL0202G1Callback = function(returnValue) {
 			COMP_NM.setValue(returnValue[0].COMP_NM);
 			dlt_BMS_DRV_MST.setCellData(SI0304G1.getFocusedRowIndex(),
 					"COMP_ID", returnValue[0].COMP_ID);
 		};
 
 	
-	scwin.AL0304G1_onrowindexchange = function(row,oldRow) {
+	scwin.AL0202G1_onrowindexchange = function(row,oldRow) {
 		
 	};
 	]]></script>
@@ -461,8 +470,8 @@
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="" class="" style="">
-						<w2:gridView alwaysTriggerScrollStart="" captionTitle="" id="AL0304G0" class="cm_grid left AL0304G0"
-							dataList="data:dlt_OPER_PL_ROUT_INFO" ev:onrowindexchange="scwin.AL0304G0_onrowindexchange" fixedColumnWithHidden="true"
+						<w2:gridView alwaysTriggerScrollStart="" captionTitle="" id="AL0202G0" class="cm_grid left AL0202G0"
+							dataList="data:dlt_OPER_PL_ROUT_INFO" ev:onrowindexchange="scwin.AL0202G0_onrowindexchange" fixedColumnWithHidden="true"
 							autoFit="lastColumn" ignoreCellClick="false" rowNumHeaderValue="순번" rowNumVisible="true"
 							rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="true" style="" useShiftKey="true"
 							autoFitMinWidth="0" focusMode="row">
@@ -526,10 +535,10 @@
 					<xf:group class="" id="" style="">
 					</xf:group>
 					<xf:group class="" id="" style="">
-						<w2:gridView id="AL0304G1" autoFit="" captionTitle="" class="cm_grid right" dataList="data:dlt_OPER_ALLOC_PL_ROUT_INFO"
-							ev:onrowindexchange="scwin.AL0304G1_onrowindexchange" fixedColumnWithHidden="true" ignoreCellClick="false" rowNumHeaderValue="순번"
+						<w2:gridView id="AL0202G1" autoFit="" captionTitle="" class="cm_grid right" dataList="data:dlt_OPER_ALLOC_PL_ROUT_INFO"
+							ev:onrowindexchange="scwin.AL0202G1_onrowindexchange" fixedColumnWithHidden="true" ignoreCellClick="false" rowNumHeaderValue="순번"
 							rowNumVisible="false" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="true" style="" useShiftKey="true"
-							autoFitMinWidth="0" focusMode="cell" ev:oncelldblclick="scwin.AL0304G1_oncelldblclick" mergeCells="byrestriccol" mergeCol="ALLOC_NO,WAY_DIV">
+							autoFitMinWidth="0" focusMode="cell" ev:oncelldblclick="scwin.AL0202G1_oncelldblclick" mergeCells="byrestriccol" mergeCol="ALLOC_NO,WAY_DIV">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:25px"

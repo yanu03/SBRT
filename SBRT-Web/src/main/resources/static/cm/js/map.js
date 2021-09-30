@@ -1764,6 +1764,136 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid, tab1, tab2, t
 	routMap.mapInfo[mapId].markers.push(marker);
 }
 
+//이벤트 없음.. 해당 함수에 click이나 이벤트 처리하면 안됨
+routMap.showOnlyMarker = function(mapId, data, idx, focusIdx, grid) {
+	// 마커 이미지의 이미지 크기 입니다
+	var imageSize = new kakao.maps.Size(19, 28); 
+	var markerImage = null;
+	var markerOverImage = null;
+	var markerSelImage = null;
+
+	
+	var zIndex= -1;
+	if(routMap.mapInfo[mapId].isShowCrs == "on" && data.NODE_TYPE == routMap.NODE_TYPE.CROSS){
+		zIndex = 1;
+		imageSize = new kakao.maps.Size(19, 19);
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/cross.png", imageSize);
+		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/cross_selected.png", imageSize);
+	}
+	else if(routMap.mapInfo[mapId].isShowNormal == "on" && data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP && 
+			(typeof data.COND_ERROR == "undefined"||data.COND_ERROR == "CE002") ) {
+		zIndex = 2;
+		imageSize = new kakao.maps.Size(25, 24);
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop.png", imageSize);
+		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_selected.png", imageSize);
+	}
+	else if(routMap.mapInfo[mapId].isShowVertex == "on" &&data.NODE_TYPE == routMap.NODE_TYPE.VERTEX){
+		imageSize = new kakao.maps.Size(12, 12);
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/vertex.png", imageSize);
+		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/vertex_selected.png", imageSize);
+	}
+	else if (routMap.mapInfo[mapId].isShowNode == "on" && data.Node_TYPE == routMap.NODE_TYPE.NORMAL){
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/road_trans.png", imageSize);
+		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/road_selected.png", imageSize);
+	}
+	
+	else if(typeof data.COND_ERROR != "undefined" && routMap.mapInfo[mapId].isShowAbnormal == "on" &&(data.COND_ERROR == "CE001")) {
+		imageSize = new kakao.maps.Size(25, 24);
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);		
+		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);
+
+	}
+	
+		
+	var marker = null;
+	
+	if(idx==focusIdx) {
+		zIndex = 3;
+		// 마커 이미지를 생성합니다    
+		marker = new kakao.maps.Marker({
+			position : new kakao.maps.LatLng(data.GPS_Y, data.GPS_X), // Marker의 중심좌표 // 설정.
+			//title : data.label, // Marker의 라벨.
+			image : markerSelImage,
+			draggable : data.draggable,
+			zIndex: zIndex
+		});
+		routMap.mapInfo[mapId].selectedMarker = marker;
+	}
+	else {
+		// 마커 이미지를 생성합니다    
+		marker = new kakao.maps.Marker({
+			position : new kakao.maps.LatLng(data.GPS_Y, data.GPS_X), // Marker의 중심좌표 // 설정.
+			//title : data.label, // Marker의 라벨.
+			image : markerImage,
+			draggable : data.draggable,
+			zIndex: zIndex
+		});
+	}
+
+	marker.normalImage = markerImage;
+
+
+	var infoWindow = null;
+
+	var overlay = null;
+	var msg = "";
+	if(data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP){
+		 msg = "<div class = 'customoverlay busstop'>";
+		 
+		 //장치상태 에러일때
+		 if(data.COND_ERROR == 'CE001') {
+			 msg = "";
+			 msg = "<div class = 'customoverlay conderror busstop'>";
+		 }
+	}
+	else if(data.NODE_TYPE == routMap.NODE_TYPE.CROSS){
+		msg = "<div class = 'customoverlay cross'>";
+		
+		 if(data.COND_ERROR == 'CE001') {
+			 msg = "";
+			 msg = "<div class = 'customoverlay conderror busstop'>";
+		 }		
+	}
+	msg += "<span class = 'map_title' style=''>" + data.NODE_NM + "</span>" + "</div>";
+
+	if(idx==focusIdx) {
+		overlay = new kakao.maps.CustomOverlay({
+			content: msg,
+			position: marker.getPosition(),
+			zIndex : zIndex
+		});
+	}
+	else {
+		overlay = new kakao.maps.CustomOverlay({
+			content: msg,
+			position: marker.getPosition(),
+			zIndex : 4
+		});
+		
+	}
+	
+	routMap.mapInfo[mapId].overlay = overlay;
+	routMap.mapInfo[mapId].overArr.push(routMap.mapInfo[mapId].overlay);
+	
+	if(idx==focusIdx) {
+		if(markerImage != null){
+			//routMap.mapInfo[mapId].overArr[focusIdx].setMap(routMap.mapInfo[mapId].map);
+			overlay.setMap(routMap.mapInfo[mapId].map);
+		}
+	}
+	else {
+		// 마커에 click 이벤트를 등록합니다
+		kakao.maps.event.addListener(marker, 'click',routMap.makeOutListener(routMap.mapInfo[mapId],marker,overlay,markerImage));
+		kakao.maps.event.addListener(marker, 'mouseover', routMap.makeOverListener(routMap.mapInfo[mapId].map, marker, overlay));
+		kakao.maps.event.addListener(marker, 'mouseout', routMap.makeOutListener(routMap.mapInfo[mapId],marker,overlay,markerImage));
+	}
+	
+	if(markerImage != null)
+		marker.setMap(routMap.mapInfo[mapId].map); //Marker가 표시될 Map 설정.
+	
+	routMap.mapInfo[mapId].markers.push(marker);
+}
+
 /**지도위 팝업 생성**/
 routMap.popUp = function(mapId,lat, lng, msg){
 
@@ -2749,16 +2879,16 @@ routMap.showRoute = function(mapId, list, id, type) {
 			if(type == "BUSSTOP" && list[i].STTN_ID == id){
 				focusIdx = i;
 				if((list[i].NODE_TYPE != routMap.NODE_TYPE.NORMAL) &&(list[i].NODE_TYPE != routMap.NODE_TYPE.VERTEX))
-					routMap.showMarker(mapId, list[i], i, focusIdx);
+					routMap.showOnlyMarker(mapId, list[i], i, focusIdx);
 			}
 			else if(type == "CROSS" && list[i].CRS_ID == id){
 				focusIdx = i;
 				if((list[i].NODE_TYPE != routMap.NODE_TYPE.NORMAL) &&(list[i].NODE_TYPE != routMap.NODE_TYPE.VERTEX))
-					routMap.showMarker(mapId, list[i], i, focusIdx);
+					routMap.showOnlyMarker(mapId, list[i], i, focusIdx);
 			}
 			else if(type != "ONLYLINE"){
 				if((list[i].NODE_TYPE != routMap.NODE_TYPE.NORMAL) &&(list[i].NODE_TYPE != routMap.NODE_TYPE.VERTEX))
-					routMap.showMarker(mapId, list[i], i, focusIdx);
+					routMap.showOnlyMarker(mapId, list[i], i, focusIdx);
 			}
 			
 			if(i < list.length -1){
@@ -2785,6 +2915,7 @@ routMap.showRoute = function(mapId, list, id, type) {
 	}
 }
 
+//화면만 그림. 이벤트 없어야 함
 routMap.showRoute2 = function(mapId, list, focusIdx, grid) {
 	routMap.initDisplay(mapId);
 	if(list != null && list.length != 0) {
@@ -2799,7 +2930,7 @@ routMap.showRoute2 = function(mapId, list, focusIdx, grid) {
 			}*/
 			
 			if((list[i].NODE_TYPE != routMap.NODE_TYPE.NORMAL) &&(list[i].NODE_TYPE != routMap.NODE_TYPE.VERTEX))
-				routMap.showMarker(mapId, list[i], i, focusIdx, grid);
+				routMap.showOnlyMarker(mapId, list[i], i, focusIdx, grid);
 			
 			if(i < list.length -1){
 				var color = "#3396ff";
