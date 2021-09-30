@@ -927,8 +927,7 @@ routMap.showCategory = function(mapId, list, focusIdx, grid, etcOnOff) {
 				voiceCheck = 1;
 			}
 			
-			else if(abnormalCheck == 0 && typeof list[i].COND_ERROR != "undefined" && (list[i].COND_ERROR == "Y" || list[i].COND_ERROR == "비정상"
-				|| list[i].COND_ERROR == "고장") ) {
+			else if(abnormalCheck == 0 && typeof list[i].COND_ERROR != "undefined" && (list[i].COND_ERROR == "CE001") ) {
 				categoryClass = "abnormal_busimg"
 				categoryName = "고장위치";
 				categoryContentAbnormal =	'<li class="'+ routMap.mapInfo[mapId].isShowAbnormal +'">' ;
@@ -1181,7 +1180,7 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/cross_selected.png", imageSize);
 	}
 	else if(routMap.mapInfo[mapId].isShowNormal == "on" && data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP && 
-			(typeof data.COND_ERROR == "undefined"||data.COND_ERROR == "N"||data.COND_ERROR == "정상") ) {
+			(typeof data.COND_ERROR == "undefined"||data.COND_ERROR == "CE002") ) {
 		zIndex = 2;
 		imageSize = new kakao.maps.Size(25, 24);
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop.png", imageSize);
@@ -1197,8 +1196,7 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/road_selected.png", imageSize);
 	}
 	
-	else if(typeof data.COND_ERROR != "undefined" && routMap.mapInfo[mapId].isShowAbnormal == "on" &&(data.COND_ERROR == "Y"||data.COND_ERROR == "비정상"
-		|| data.COND_ERROR == "고장")) {
+	else if(typeof data.COND_ERROR != "undefined" && routMap.mapInfo[mapId].isShowAbnormal == "on" &&(data.COND_ERROR == "CE001")) {
 		imageSize = new kakao.maps.Size(25, 24);
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);		
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);
@@ -1242,7 +1240,7 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 		 msg = "<div class = 'customoverlay busstop'>";
 		 
 		 //장치상태 에러일때
-		 if(data.COND_ERROR == 'Y') {
+		 if(data.COND_ERROR == 'CE001') {
 			 msg = "";
 			 msg = "<div class = 'customoverlay conderror busstop'>";
 		 }
@@ -1250,7 +1248,7 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 	else if(data.NODE_TYPE == routMap.NODE_TYPE.CROSS){
 		msg = "<div class = 'customoverlay cross'>";
 		
-		 if(data.COND_ERROR == 'Y') {
+		 if(data.COND_ERROR == 'CE001') {
 			 msg = "";
 			 msg = "<div class = 'customoverlay conderror busstop'>";
 		 }		
@@ -1364,7 +1362,7 @@ routMap.showMarker2 = function(mapId, data, idx) {
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/cross_selected.png", imageSize);
 	}
 	else if(routMap.mapInfo[mapId].isShowNormal == "on" && data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP && 
-			(typeof data.COND_ERROR == "undefined"||data.COND_ERROR == "N") ) {
+			(typeof data.COND_ERROR == "undefined"||data.COND_ERROR == "CE002") ) {
 		zIndex = 2;
 		imageSize = new kakao.maps.Size(25, 24);
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop.png", imageSize);
@@ -1380,7 +1378,7 @@ routMap.showMarker2 = function(mapId, data, idx) {
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/road_selected.png", imageSize);
 	}
 	
-	else if(typeof data.COND_ERROR != "undefined" && routMap.mapInfo[mapId].isShowAbnormal == "on" &&data.COND_ERROR == "Y") {
+	else if(typeof data.COND_ERROR != "undefined" && routMap.mapInfo[mapId].isShowAbnormal == "on" &&data.COND_ERROR == "CE001") {
 		imageSize = new kakao.maps.Size(25, 24);
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);		
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);
@@ -1413,7 +1411,7 @@ routMap.showMarker2 = function(mapId, data, idx) {
 		 msg = "<div class = 'customoverlay busstop'>";
 		 
 		 //장치상태 에러일때
-		 if(data.COND_ERROR == 'Y') {
+		 if(data.COND_ERROR == 'CE001') {
 			 msg = "";
 			 msg = "<div class = 'customoverlay conderror busstop'>";
 		 }
@@ -1421,7 +1419,7 @@ routMap.showMarker2 = function(mapId, data, idx) {
 	else if(data.NODE_TYPE == routMap.NODE_TYPE.CROSS){
 		msg = "<div class = 'customoverlay cross'>";
 		
-		 if(data.COND_ERROR == 'Y') {
+		 if(data.COND_ERROR == 'CE001') {
 			 msg = "";
 			 msg = "<div class = 'customoverlay conderror busstop'>";
 		 }		
@@ -1588,14 +1586,13 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid, tab1, tab2, t
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/cross_selected.png", imageSize);
 	}
 	else if(routMap.mapInfo[mapId].isShowNormal == "on" && data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP && 
-			(typeof data.COND_ERROR == "undefined"||data.COND_ERROR == "N"||data.COND_ERROR == "정상") ) {
+			(typeof data.COND_ERROR == "undefined"||data.COND_ERROR == "CE002") ) {
 		zIndex = 2;
 		imageSize = new kakao.maps.Size(25, 24);
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop.png", imageSize);
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_selected.png", imageSize);
 	}
-	else if(typeof data.COND_ERROR != "undefined" && routMap.mapInfo[mapId].isShowAbnormal == "on" &&(data.COND_ERROR == "Y"||data.COND_ERROR == "비정상"
-		|| data.COND_ERROR == "고장")) {
+	else if(typeof data.COND_ERROR != "undefined" && routMap.mapInfo[mapId].isShowAbnormal == "on" &&(data.COND_ERROR == "CE001")) {
 		imageSize = new kakao.maps.Size(25, 24);
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);		
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);
@@ -1634,11 +1631,59 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid, tab1, tab2, t
 
 	var overlay = null;
 	var msg = "";
+	
+	//테스트 해볼것
+	var clickMsg = "";
+	
+	
+	clickMsg += '<div class="ol-overlay-container ol-selectable" style="position: absolute;left: 696px;top: 328px;"><div id="popup" class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
+	clickMsg += '<a href="javascript:void(0)" id="popup-refresh" class="close" style="right: 40px; background: url(&quot;/common/img/map/layer_refresh.png&quot;) center center no-repeat;"><span class="blind">새로고침</span></a>'
+	clickMsg += '<a href="javascript:void(0)" id="popup-closer" class="close"><span class="blind">닫기</span></a>'
+	clickMsg += '<div id="popup-content">'
+	clickMsg += '<div class="tit"><strong>남부지방법원등기국.구로세무서(에이스하이테크시티)(19004)</strong></div>' 
+	clickMsg += '<div class="content">' 
+	clickMsg += '<div class="trafficInfor">' 
+	clickMsg += '<table class="tby03">' 
+	clickMsg += '<caption>버스운행정보</caption>' 
+	clickMsg += '<colgroup>' 
+	clickMsg += '<col style="width:*">' 
+	clickMsg += '<col style="width:19%">' 
+	clickMsg += '<col style="width:13%">' 
+	clickMsg += '<col style="width:19%">' 
+	clickMsg += '<col style="width:13%">' 
+	clickMsg += '</colgroup>' 
+	clickMsg += '<tbody>' 
+	clickMsg += '<tr> '
+	clickMsg += '<th style="border-bottom: none; font-size: 16px;">곧도착</th>' 
+	clickMsg += '<td style="border-bottom: none; font-size: 16px; padding: 5px;" colspan="4" id="bus_soon">5615, 6513, 6515, 83부천</td>' 
+	clickMsg += '</tr>' 
+	clickMsg += '<tr>' 
+	clickMsg += '<td style="font-size: 16px; text-align: left; padding: 5px;">' 
+	clickMsg += '<a href="javascript:void(0)" onclick="fn_showBusLine(&quot;118900006&quot;);"><span class="i_bus r5">마을</span>'
+	clickMsg += '<strong>영등포05'
+	clickMsg += '</strong>' 
+	clickMsg += '<br>' 
+	clickMsg += '<p style="font-size: 12px; margin: 0px;">(당산역 방향)</p>' 
+	clickMsg += '</a>' 
+	clickMsg += '</td>' 
+	clickMsg += '<td style="font-size: 16px; text-align: center; padding: 5px;">9분</td>' 
+	clickMsg += '<td style="font-size: 14px; text-align: center; padding: 5px;">[일반]</td>' 
+	clickMsg += '<td style="font-size: 16px; text-align: center; padding: 5px;">15분</td>' 
+	clickMsg += '<td style="font-size: 14px; text-align: center; padding: 5px;">[일반]</td> '
+	clickMsg += '</tr>' 
+	clickMsg += '</tbody>' 
+	clickMsg += '</table>' 
+	clickMsg += '</div>' 
+	clickMsg += '</div> </div>'
+	clickMsg += '</div></div>'	
+	
+	
+	
 	if(data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP){
 		 msg = "<div class = 'customoverlay busstop'>";
 		 
 		 //장치상태 에러일때
-		 if(data.COND_ERROR == 'Y') {
+		 if(data.COND_ERROR == 'CE001') {
 			 msg = "";
 			 msg = "<div class = 'customoverlay conderror busstop'>";
 		 }
@@ -1646,23 +1691,14 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid, tab1, tab2, t
 	else if(data.NODE_TYPE == routMap.NODE_TYPE.CROSS){
 		msg = "<div class = 'customoverlay cross'>";
 		
-		 if(data.COND_ERROR == 'Y') {
+		 if(data.COND_ERROR == 'CE001') {
 			 msg = "";
 			 msg = "<div class = 'customoverlay conderror busstop'>";
 		 }		
 	}
-	if(data.draggable){
-		
-		msg += "<span class = 'map_title' style=''>" + data.NODE_NM
-			+ "&nbsp;<a href='javascript:void(0);' onclick='routMap.nodeChange(\"" + mapId+"\","+ idx + ");' style='color:blue' target='_self'>변경</a> </span>"
-			+ "</div>";	
-			//+ "<span class = '' style='font-size: 12px; margin-left:2px; margin-bottom:2px; display:block;'>"+ data.GPS_Y + "," + data.GPS_X +"</span>"
-	}
-	else {
-		msg += "<span class = 'map_title' style=''>" + data.NODE_NM + "</span>"
-			+ "</div>";
-			//+ "<span class = '' style='font-size: 12px; margin-left:2px; margin-bottom:2px; display:block;'>"+ data.GPS_Y + "," + data.GPS_X +"</span>"
-	 }
+	msg += "<span class = 'map_title' style=''>" + data.NODE_NM + "</span>"
+		+ "</div>";
+		//+ "<span class = '' style='font-size: 12px; margin-left:2px; margin-bottom:2px; display:block;'>"+ data.GPS_Y + "," + data.GPS_X +"</span>"
 	
 	if(idx==focusIdx) {
 		overlay = new kakao.maps.CustomOverlay({

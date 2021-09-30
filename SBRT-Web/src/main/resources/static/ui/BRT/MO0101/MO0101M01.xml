@@ -218,7 +218,8 @@
 		},map);
 		
 		var codeOptions = [ {code : "CRS_KIND", compID : "CRS_KIND"},
-							{code : "BUS_STS", compID : "MO0101G0:BUS_STS"}
+							{code : "BUS_STS", compID : "MO0101G0:BUS_STS"},
+							{code : "COND_ERROR", compID : "MO0101G1:COND_ERROR"}
 		 ];			
 		 
 		com.setCommonDtl(codeOptions);
@@ -301,13 +302,8 @@
 	}	
 	
 	scwin.onConnected = function (frame) {
-		//setConnected(true);
-		
 		console.log('Connected: ' + frame);
 		
-	    // Subscribe to the Public Topic
-	    
-
 	    stompClient.subscribe('/topic/public', scwin.onMessageReceived);
 	
 	}
@@ -484,6 +480,7 @@
 		$("#map_MO0101").find("#category_map_MO0101").append(categoryContentNormal);
 		$("#map_MO0101").find("#category_map_MO0101").append(categoryContentAbnormal);	
 		$("#map_MO0101").find("#category_map_MO0101").append(categoryContentCross);
+		
 		//클릭 이벤트
 		$("#map_MO0101").find("li").click( function() {
 			var className = this.className;
@@ -522,12 +519,6 @@
 					}						
 				}
 				
-				
-				//routMap.initNode(mapId);
-				//routMap.removeMarkers2(mapId);
-				
-				//removeMarker();
-				
 			} else {
 				this.className = 'on';
 				if (spanClassName == "crossimg") {
@@ -564,11 +555,11 @@
 		//정류장 상태
 		for (i=0; i<dlt_BMS_ROUT_NODE_CMPSTN2.getDataLength(); i++) {
 			//고장
-			if (dlt_BMS_ROUT_NODE_CMPSTN2.getCellData(i, "COND_ERROR") == "고장") {
+			if (dlt_BMS_ROUT_NODE_CMPSTN2.getCellData(i, "COND_ERROR") == "CE001") {
 				MO0101G1.setCellClass(i, "COND_ERROR", "cond_abnormal");
 			}
 			//정상
-			else if (dlt_BMS_ROUT_NODE_CMPSTN2.getCellData(i, "COND_ERROR") == "정상") {
+			else if (dlt_BMS_ROUT_NODE_CMPSTN2.getCellData(i, "COND_ERROR") == "CE002") {
 				MO0101G1.setCellClass(i, "COND_ERROR", "cond_normal");
 			}
 		}			
@@ -717,7 +708,7 @@
 					<xf:group class="search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE1_onviewchange" id="TYPE1"
-							optionOrder="false" ref="data:dma_search.CONTENT1" class="search_type_100" style="" submenuSize="auto" textAlign="left"
+							optionOrder="false" ref="data:dma_search.CONTENT1" class="search_type_100" style="" submenuSize="auto" textAlign="center"
 							chooseOptionLabel="-선택-">
 							<xf:choices>
 								<xf:itemset nodeset="data:dlt_searchitem">
@@ -732,7 +723,7 @@
 					<xf:group class="search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE2_onviewchange" id="TYPE2" optionOrder="false"
-							ref="data:dma_search.CONTENT2" class="search_type_100" style="" submenuSize="auto" textAlign="left" chooseOptionLabel="-선택-">
+							ref="data:dma_search.CONTENT2" class="search_type_100" style="" submenuSize="auto" textAlign="center" chooseOptionLabel="-전체-">
 							<xf:choices>
 								<xf:itemset nodeset="data:dlt_searchitem2">
 									<xf:label ref="ROUT_NM"></xf:label>
@@ -935,7 +926,7 @@
 											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="GPS_X"
 												value="" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="161" inputType="text" style="height:20px" id="COND_ERROR"
+											<w2:column removeBorderStyle="false" width="161" inputType="select" style="height:20px" id="COND_ERROR"
 												value="" blockSelect="false" displayMode="label" textAlign="">
 											</w2:column>
 										</w2:row>
