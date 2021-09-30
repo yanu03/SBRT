@@ -59,7 +59,7 @@
 						<w2:column id="ROUT_LEN" name="노선거리" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="AREA" name="권역" dataType="text"></w2:column>
 						<w2:column id="MORN_STD" name="집중모니터링기준" dataType="text"></w2:column>
-						<w2:column id="COND_ERROR" name="비정상여부" dataType="text"></w2:column>
+						<w2:column id="COND_ERROR" name="정류소고장여부" dataType="text"></w2:column>
 					</w2:columnInfo>
 					<w2:data use="false">
 						<w2:row></w2:row>
@@ -143,6 +143,7 @@
 		});
 		
 		var codeOptions = [ {code : "NODE_TYPE", compID : "MO0203G0:NODE_TYPE" }
+							,{code : "COND_ERROR", compID : "MO0203G0:COND_ERROR" }
 						
 		 ];			
 		 
@@ -338,11 +339,11 @@
 		//시설물상태에 따라 클래스(백그라운드 색) 설정
 		for (i=0; i<dlt_BMS_NODE_MST.getDataLength(); i++) {
 			//비정상
-			if (dlt_BMS_NODE_MST.getCellData(i, "COND_ERROR") == "비정상") {
+			if (dlt_BMS_NODE_MST.getCellData(i, "COND_ERROR") == "CE001") {
 				MO0203G0.setCellClass(i, "COND_ERROR", "cond_abnormal");
 			}
 			//정상
-			else if (dlt_BMS_NODE_MST.getCellData(i, "COND_ERROR") == "정상") {
+			else if (dlt_BMS_NODE_MST.getCellData(i, "COND_ERROR") == "CE002") {
 				MO0203G0.setCellClass(i, "COND_ERROR", "cond_normal");
 			}
 		}
@@ -453,7 +454,7 @@
 									<w2:column removeBorderStyle="false" width="161" inputType="text" style="height:20px" id="NODE_NM"
 										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="161" inputType="text" style="height:20px" id="COND_ERROR"
+									<w2:column removeBorderStyle="false" width="161" inputType="select" style="height:20px" id="COND_ERROR"
 										value="" blockSelect="false" displayMode="label" textAlign="">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="REMARK"
@@ -569,7 +570,7 @@
 					</xf:group>
 					<xf:group id="" class="brt_bit" style=""></xf:group>
 					<xf:group style="" id=""></xf:group>
-					<w2:span label="정류소명" style="color: white;font-size: 25px;text-align: center;" id=""
+					<w2:span label="정류소명" style="color: white;font-size: 20px;text-align: center;" id=""
 						ref="data:dlt_BMS_NODE_MST.NODE_NM">
 					</w2:span>
 					<w2:span label="STTN_EN_NM" style="color: white;font-size: 15px;text-align: center;" id="" ref=""></w2:span>
