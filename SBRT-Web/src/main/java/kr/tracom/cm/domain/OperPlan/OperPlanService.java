@@ -940,18 +940,49 @@ public class OperPlanService extends ServiceSupport {
 			,int offsetTm //변경운행 //도착 예정시간과의 차이(초))
 			,boolean bSave
 	) {
-		List operPlList = null;
+		List chgPlList = null;
 		
 		try {
+			
+			logger.info("변경운행 생성 시작 >> routId:{}, operDt:{}, operSn:{}, stNodeSn:{}, diffTm:{}", routId, operDt, operSn, stNodeSn, offsetTm);
+			
 			String dayDiv = operPlanMapper.selectDayDiv(operDt);
 			
-			operPlList = makeOperAllocPlNodeInfo(routId, dayDiv, operSn, bSave, stNodeSn, 0, offsetTm, null, null, null, null, OperPlanCalc.CHG_TYPE_CHG_OPER);
+			chgPlList = makeOperAllocPlNodeInfo(routId, dayDiv, operSn, false, stNodeSn, 0, offsetTm, null, null, null, null, OperPlanCalc.CHG_TYPE_CHG_OPER);
+			
+			if(bSave) {
+				
+				if(chgPlList != null && chgPlList.size() > 0) {
+				
+					Map<String, Object> chgInfo = (Map<String, Object>)chgPlList.get(0);
+					
+		            Map<String, Object> insertMap = new HashMap<>();
+		            insertMap.put("OPER_DT", operDt);
+		            insertMap.put("REP_ROUT_ID", chgInfo.get("REP_ROUT_ID"));
+		            insertMap.put("ROUT_ID", routId);
+		            insertMap.put("ALLOC_NO", chgInfo.get("ALLOC_NO"));
+		            insertMap.put("OPER_SN", operSn);
+		            operPlanMapper.insertChgOperInfo(insertMap);
+	
+		            //리스트 한 번에 insert
+		            insertMap.put("OPER_DT", operDt);
+		            insertMap.put("ITEM_LIST", chgPlList);
+		            operPlanMapper.insertChgOperDtlInfo(insertMap);
+		            
+		            logger.info("변경운행 생성 완료!!");
+		            
+		            
+				} else {
+					logger.info("변경운행 생성 실패!!");
+				}
+			}
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return operPlList;
+		return chgPlList;
 		
 	}
 

@@ -150,7 +150,7 @@ public class KafkaConsumer {
     
     	/* Communication 으로 가는것도 필요에 따라 처리해야함 */
     	
-    	logger.info("================ Received Kafka message :: KafkaTopics.T_COMMUNICATION");
+    	//logger.info("================ Received Kafka message :: KafkaTopics.T_COMMUNICATION");
     	
     	Map<String, Object> map = null;
 //    	WsMessage wsMessage = null;

@@ -69,7 +69,12 @@ public class SI0402Service extends ServiceSupport {
 					}
 					
 					if(key!=null)data.put("NODE_ID",key.get("SEQ"));
-					iCnt += si0402Mapper.SI0402G1I0(data);
+					if(CommonUtil.empty(data.get("OLD_NODE_SN"))){
+						iCnt += si0402Mapper.SI0402G1I0(data);
+					}
+					else {
+						 iCnt += si0402Mapper.SI0402G1U0(data);
+					}
 					
 					if(CommonUtil.notEmpty(data.get("STTN_ID"))||CommonUtil.notEmpty(data.get("CRS_ID"))){
 						if(CommonUtil.notEmpty(data.get("STTN_ID"))){
@@ -113,7 +118,7 @@ public class SI0402Service extends ServiceSupport {
 						routMapper.updateRoutNodeToAnotherRoute(data);
 						routMapper.updateMainRoutNodeToAnotherRoute(data);
 						
-						if(CommonUtil.notEmpty(data.get("OLD_NODE_ID"))){
+						if(CommonUtil.notEmpty(data.get("OLD_NODE_ID"))){ //일반노드에서 정류소/교차로 노드로 변경시 NODE_ID를 변경해야함
 							Map delParam = new HashMap();
 							delParam.put("ROUT_ID", data.get("ROUT_ID"));
 							delParam.put("NODE_ID", data.get("OLD_NODE_ID"));
