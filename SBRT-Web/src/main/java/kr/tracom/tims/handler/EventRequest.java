@@ -146,7 +146,7 @@ public class EventRequest {
                 		 historyMapper.insertEventHistory(busEventMap); //이력 insert
                 		 
                 		 //현재운행정보도 업데이트
-                		 //curInfoMapper.insertCurOperInfo(busEventMap);
+                		 curInfoMapper.insertCurOperInfo(busEventMap);
                 		 
                 	 } catch (Exception e) {
                 		 // TODO: handle exception
