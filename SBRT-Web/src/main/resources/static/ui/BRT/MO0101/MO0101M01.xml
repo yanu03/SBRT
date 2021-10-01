@@ -41,6 +41,7 @@
 					<w2:keyInfo>
 						<w2:key id="VHC_ID" name="차량ID" dataType="text"></w2:key>
 						<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
+						<w2:key id="NODE_ID" name="노드ID" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
@@ -49,7 +50,7 @@
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN" saveRemovedData="true"> <!-- 맵 노선 그리기용 -->
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN" saveRemovedData="true"><!-- 맵 노선 그리기용 -->
 					<w2:columnInfo>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
@@ -170,8 +171,8 @@
 				ev:submit="" ev:submitdone="scwin.sub_MO0101SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_MO0101G3R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN"
-				action="/rout/selectNodeListByRepRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_MO0101G3R0_submitdone"
+				action="/rout/selectNodeListByRepRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
+				errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_MO0101G3R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_MO0101SHI1" ref="data:json,dma_search" target="data:json,dlt_searchitem2" action="/mo/MO0101SHI1"
@@ -182,9 +183,14 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0101G4R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0101G2R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN3" action="/mo/MO0101G2R0" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0101G2R0_submitdone"
-				ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_MO0101G2R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN3"
+				action="/mo/MO0101G2R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0101G2R0_submitdone" ev:submiterror=""
+				abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_MO0101SCK" ref="data:json,dma_sub_search" target="" action="/mo/MO0101SCK" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
@@ -284,14 +290,66 @@
 		});
 		
 		//지도 종류 클릭 이벤트
-		$(".map-type").find("a").click( function() {
-			$(".map-type").find("a").removeClass("active");
-			$(".map-type").find("span").removeClass("active");
+		
+//		$(".map-type").find("a").click( function() {
+//			$(".map-type").find("a").removeClass("active");
+//			$(".map-type").find("span").removeClass("active");
+//			$(this).addClass("active");
+//			$(this).find("span").addClass("active");
+//		});
+
+		$(".map-type").find(".map-type-01").click( function() {
+			$(".map-type").find(".map-type-02").removeClass("active");
+			$(".map-type").find(".maptype2-text").removeClass("active");
+			
+			if($(".map-type").find(".map-type-03").hasClass("active")) {
+				routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.TRAFFIC);
+			}
+			
 			$(this).addClass("active");
 			$(this).find("span").addClass("active");
 		});
 		
-	};	
+		$(".map-type").find(".map-type-02").click( function() {
+			$(".map-type").find(".map-type-01").removeClass("active");
+			$(".map-type").find(".maptype1-text").removeClass("active");
+			
+			if($(".map-type").find(".map-type-03").hasClass("active")) {
+				routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.TRAFFIC);
+			}
+			
+			$(this).addClass("active");
+			$(this).find("span").addClass("active");
+		});
+		
+		$(".map-type").find(".map-type-03").click( function() {
+			if( $(this).hasClass("active")) {
+				$(this).removeClass("active");	
+				routMap.removeOverMapType('map_MO0101',kakao.maps.MapTypeId.TRAFFIC);
+			} else {
+				$(this).addClass("active");			
+				routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.TRAFFIC);
+			}
+			
+			if ( $(this).find("span").hasClass("active")) {
+				$(this).find("span").removeClass("active");
+			} else {
+				$(this).find("span").addClass("active");
+			}
+			
+		});
+			
+		//정류소 클릭 오버레이 새로고침 클릭 이벤트
+		$("#map_MO0101").on("click", "#popup-refresh", function() {
+			
+		});
+			
+		//정류소 클릭 오버레이 닫기 클릭 이벤트
+		$("#map_MO0101").on("click", "#popup-closer", function() {
+			$(".clickoverlay").remove();
+		});	
+		
+	};	//end onpageload
 	
 	var startMarker = 1;
 	var busFocus = 0;
@@ -330,7 +388,14 @@
 		
 		//attrId = 2022 : 정류장별 차량 도착 정보
 		if(attrId == 2022){
-			
+		//payload.body >>>> {"ATTR_ID":2022,"LIST":[{"ROUT_ID":"RT00000080","REMAIN_TM":1364334,"REMAIN_STTN":2}],"STTN_ID":"ND00000017"}
+		
+		//jsonObj.STTN_ID => 정류장아이디
+		//jsonObj.LIST => 도착정보 리스트
+		// ㄴ ROUT_ID => 노선아이디
+		// ㄴ REMAIN_TM => 남은시간(초)
+		// ㄴ REMAIN_STTN => 몇 정류장 전	
+			scwin.vhcArriInfo(dataList);		
 		}
 		
 		//attrId = 4014 : 실시간 차량 위치 정보
@@ -429,6 +494,12 @@
 	
 	
 	scwin.MO0101G1_onrowindexchange = function(row,oldRow) {
+		dma_sub_search.set("NODE_ID", dlt_BMS_ROUT_NODE_CMPSTN2.getCellData(row, "NODE_ID"));
+		
+		setTimeout(function() {
+			com.executeSubmission(sub_MO0101SCK);	
+		},100);	
+				
 		sttnFocus = row;
 		com.executeSubmission(sub_MO0101G3R0);			
 	};
@@ -479,7 +550,7 @@
 		categoryContentNormal +=	'</li>';
 		
 		categoryClass = "abnormal_busimg"
-		categoryName = "고장위치";
+		categoryName = "고장정류장";
 		categoryContentAbnormal =	'<li class="'+ isShowAbnormal +'">' ;
 		categoryContentAbnormal +=	'<span class="' +categoryClass +'"></span>';
 		categoryContentAbnormal +=	categoryName;
@@ -702,7 +773,36 @@
 		$busStatus.find("#cancelOperBus").html(cancelOperBus);
 		
 	}
+
+	//정류장별 차량 도착 정보
+	scwin.vhcArriInfo = function(dataList) {
+		var remainTmMin = "";	
+		var str = "";
 	
+		if(dataList != null && dataList.length != 0){		
+			for(var i = 0; i < dataList.length; i++) {
+				//초 -> 분으로 변경. 0분 이하면 잠시후 도착
+				remainTmMin = parseInt((dataList[i].REMAIN_TM%3600)/60) + '분';
+				
+				if(remainTmMin == '0분'){
+					remainTmMin = '곧도착';
+				}
+								
+				str += '<tr>' 
+				str += '<th style="font-size: 12px; text-align: center; padding: 5px;">' 
+				str += '<a href="javascript:void(0)" onclick="fn_showBusLine(&quot;118900006&quot;);" style="color: black">'
+				str += '<strong>' + dataList[i].ROUT_NM
+				str += '</strong>' 
+				str += '<br>' 
+				str += '</a>' 
+				str += '</th>' 
+				str += '<td style="font-size: 12px; text-align: left; padding: 5px;" colspan="4" id="remain_time"">'+remainTmMin+'</td>' 
+				str += '</tr>'					
+			}
+			
+			$("#map_MO0101").find(".clickoverlay").find("#overlay_tbody").append(str);
+		}//end if
+	}
 ]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -1186,7 +1286,7 @@
 									<a href="javascript:void(0)" class="map-type-02" onclick="routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.SKYVIEW);" title="위성지도">
 										<span class="maptype2-text">위성지도</span>
 									</a>
-									<a href="javascript:void(0)" class="map-type-03" onclick="routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.TRAFFIC);" title="소통지도">
+									<a href="javascript:void(0)" class="map-type-03" title="소통지도">
 										<span class="maptype3-text">소통지도</span>
 									</a>
 								</div>		
