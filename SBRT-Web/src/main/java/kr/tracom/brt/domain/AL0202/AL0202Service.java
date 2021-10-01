@@ -1,4 +1,4 @@
-package kr.tracom.brt.domain.AL0304;
+package kr.tracom.brt.domain.AL0202;
 
 import java.util.List;
 import java.util.Map;
@@ -11,15 +11,15 @@ import kr.tracom.util.CommonUtil;
 
 
 @Service
-public class AL0304Service extends ServiceSupport {
+public class AL0202Service extends ServiceSupport {
 
 	@Autowired
-	private AL0304Mapper al0304Mapper;
+	private AL0202Mapper al0304Mapper;
 	
 	
-	public List AL0304G0R0() throws Exception {
+	public List AL0202G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
-		List list = al0304Mapper.AL0304G0R0(map);
+		List list = al0304Mapper.AL0202G0R0(map);
 		
 		for (int i = 0; i < list.size(); i++) {
 			Map<String, Object> data = (Map<String, Object>)list.get(i);
@@ -46,23 +46,23 @@ public class AL0304Service extends ServiceSupport {
 		 return list;
 	}
 	
-	public List AL0304G1R0() throws Exception {
+	public List AL0202G1R0() throws Exception {
 		Map param = getSimpleDataMap("dma_sub_param");
-		return al0304Mapper.AL0304G1R0(param);
+		return al0304Mapper.AL0202G1R0(param);
 	}
 	
-	public List AL0304G1CNT() throws Exception {
+	public List AL0202G1CNT() throws Exception {
 		Map param = getSimpleDataMap("dma_sub_param");
-		return al0304Mapper.AL0304G1CNT(param);
+		return al0304Mapper.AL0202G1CNT(param);
 	}
 	
-	public List AL0304P0R0() throws Exception {
+	public List AL0202P0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return al0304Mapper.AL0304P0R0(map);
+		return al0304Mapper.AL0202P0R0(map);
 	}
 	
-	public List AL0304P0R1() throws Exception {
-		Map<String, Object> map = getSimpleDataMap("dma_param_AL0304P0R1");
-		return al0304Mapper.AL0304P1R0(map);
+	public List AL0202P0R1() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_param_AL0202P0R1");
+		return al0304Mapper.AL0202P1R0(map);
 	}		
 }

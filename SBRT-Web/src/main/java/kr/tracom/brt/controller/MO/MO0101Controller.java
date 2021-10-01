@@ -54,4 +54,10 @@ public class MO0101Controller extends ControllerSupport {
 		return result.getResult();
 	}	
 	
+	@RequestMapping("/mo/MO0101SCK")
+	public @ResponseBody Map<String, Object> MO0101SCK() throws Exception {		
+		
+		result.setData("", mo0101Service.MO0101SCK());
+		return result.getResult();
+	}	
 }

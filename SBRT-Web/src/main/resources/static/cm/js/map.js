@@ -792,7 +792,13 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx, busGrid) {
 			+ "<span class = 'map_title' style=''>" + overlayName + "</span>"
 			+ "</div>";
 	
-
+	if(typeof data.BUS_STS != "undefined" && data.BUS_STS == "BS002") {
+		msg = "<div class = 'busoverlay conderror'>"
+			+ "<span class = 'map_title' style=''>" + overlayName + "</span>"
+			+ "</div>";			
+	}
+	
+	
 	overlay = new kakao.maps.CustomOverlay({
 		content: msg,
 		position: marker.getPosition(),
@@ -929,7 +935,7 @@ routMap.showCategory = function(mapId, list, focusIdx, grid, etcOnOff) {
 			
 			else if(abnormalCheck == 0 && typeof list[i].COND_ERROR != "undefined" && (list[i].COND_ERROR == "CE001") ) {
 				categoryClass = "abnormal_busimg"
-				categoryName = "고장위치";
+				categoryName = "고장";
 				categoryContentAbnormal =	'<li class="'+ routMap.mapInfo[mapId].isShowAbnormal +'">' ;
 				categoryContentAbnormal +=	'<span class="' +categoryClass +'"></span>';
 				categoryContentAbnormal +=	categoryName;
@@ -1068,7 +1074,7 @@ routMap.showCategory2 = function(mapId, sttnMapId, crsMapId, sttnList, crsList, 
 	normalCheck = 1;
 	
 	categoryClass = "abnormal_busimg"
-	categoryName = "고장위치";
+	categoryName = "고장정류장";
 	categoryContentAbnormal =	'<li class="'+ routMap.mapInfo[sttnMapId].isShowAbnormal +'">' ;
 	categoryContentAbnormal +=	'<span class="' +categoryClass +'"></span>';
 	categoryContentAbnormal +=	categoryName;
@@ -1632,15 +1638,13 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid, tab1, tab2, t
 	var overlay = null;
 	var msg = "";
 	
-	//테스트 해볼것
 	var clickMsg = "";
 	
-	
-	clickMsg += '<div class="ol-overlay-container ol-selectable" style="position: absolute;left: 696px;top: 328px;"><div id="popup" class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
-	clickMsg += '<a href="javascript:void(0)" id="popup-refresh" class="close" style="right: 40px; background: url(&quot;/common/img/map/layer_refresh.png&quot;) center center no-repeat;"><span class="blind">새로고침</span></a>'
+	clickMsg += '<div class="clickoverlay" style="position: absolute;"><div id="popup" class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
+	/*clickMsg += '<a href="javascript:void(0)" id="popup-refresh" class="close"><span class="blind">새로고침</span></a>'*/
 	clickMsg += '<a href="javascript:void(0)" id="popup-closer" class="close"><span class="blind">닫기</span></a>'
 	clickMsg += '<div id="popup-content">'
-	clickMsg += '<div class="tit"><strong>남부지방법원등기국.구로세무서(에이스하이테크시티)(19004)</strong></div>' 
+	clickMsg += '<div class="tit"><span style="margin-right: 40px; word-wrap:break-word; white-space: normal;"><strong>'+data.NODE_NM+'</strong></span></div>' 
 	clickMsg += '<div class="content">' 
 	clickMsg += '<div class="trafficInfor">' 
 	clickMsg += '<table class="tby03">' 
@@ -1652,31 +1656,28 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid, tab1, tab2, t
 	clickMsg += '<col style="width:19%">' 
 	clickMsg += '<col style="width:13%">' 
 	clickMsg += '</colgroup>' 
-	clickMsg += '<tbody>' 
-	clickMsg += '<tr> '
-	clickMsg += '<th style="border-bottom: none; font-size: 16px;">곧도착</th>' 
-	clickMsg += '<td style="border-bottom: none; font-size: 16px; padding: 5px;" colspan="4" id="bus_soon">5615, 6513, 6515, 83부천</td>' 
-	clickMsg += '</tr>' 
-	clickMsg += '<tr>' 
-	clickMsg += '<td style="font-size: 16px; text-align: left; padding: 5px;">' 
-	clickMsg += '<a href="javascript:void(0)" onclick="fn_showBusLine(&quot;118900006&quot;);"><span class="i_bus r5">마을</span>'
+	clickMsg += '<tbody id="overlay_tbody">' 
+/*	clickMsg += '<tr> '
+	clickMsg += '<th style="font-size: 16px;">곧도착</th>' 
+	clickMsg += '<td style="font-size: 16px; padding: 5px;" colspan="4" id="bus_soon">5615, 6513, 6515, 83부천</td>' 
+	clickMsg += '</tr>' */
+/*	clickMsg += '<tr>' 
+	clickMsg += '<td style="font-size: 16px; text-align: center; padding: 5px;">' 
+	clickMsg += '<a href="javascript:void(0)" onclick="fn_showBusLine(&quot;118900006&quot;);" style="color: black">'
+	// clickMsg += '<span class="i_bus r5">마을</span>'
 	clickMsg += '<strong>영등포05'
 	clickMsg += '</strong>' 
 	clickMsg += '<br>' 
 	clickMsg += '<p style="font-size: 12px; margin: 0px;">(당산역 방향)</p>' 
 	clickMsg += '</a>' 
 	clickMsg += '</td>' 
-	clickMsg += '<td style="font-size: 16px; text-align: center; padding: 5px;">9분</td>' 
-	clickMsg += '<td style="font-size: 14px; text-align: center; padding: 5px;">[일반]</td>' 
-	clickMsg += '<td style="font-size: 16px; text-align: center; padding: 5px;">15분</td>' 
-	clickMsg += '<td style="font-size: 14px; text-align: center; padding: 5px;">[일반]</td> '
-	clickMsg += '</tr>' 
+	clickMsg += '<td style="font-size: 16px; text-align: left; padding: 5px;" colspan="4" id="remain_time"">9분</td>' 
+	clickMsg += '</tr>' */
 	clickMsg += '</tbody>' 
 	clickMsg += '</table>' 
 	clickMsg += '</div>' 
 	clickMsg += '</div> </div>'
 	clickMsg += '</div></div>'	
-	
 	
 	
 	if(data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP){
@@ -1706,12 +1707,24 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid, tab1, tab2, t
 			position: marker.getPosition(),
 			zIndex : zIndex
 		});
+		
+		clickOverlay = new kakao.maps.CustomOverlay({
+			content: clickMsg,
+			position: marker.getPosition(),
+			zIndex : 100000
+		});
 	}
 	else {
 		overlay = new kakao.maps.CustomOverlay({
 			content: msg,
 			position: marker.getPosition(),
 			zIndex : 4
+		});
+		
+		clickOverlay = new kakao.maps.CustomOverlay({
+			content: clickMsg,
+			position: marker.getPosition(),
+			zIndex : 100000
 		});
 		
 	}
@@ -1743,6 +1756,134 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid, tab1, tab2, t
 		routMap.mapInfo[mapId].onMarkerClick(idx, mapId);
 	});
 	
+	routMap.mapInfo[mapId].overlay = clickOverlay;
+	routMap.mapInfo[mapId].overArr.push(routMap.mapInfo[mapId].overlay);
+	
+	if(idx==focusIdx) {
+		if(markerImage != null){
+			//routMap.mapInfo[mapId].overArr[focusIdx].setMap(routMap.mapInfo[mapId].map);
+			clickOverlay.setMap(routMap.mapInfo[mapId].map);
+		}
+	}
+	else {
+		kakao.maps.event.addListener(marker, 'mouseover', routMap.makeOverListener(routMap.mapInfo[mapId].map, marker, overlay));
+		kakao.maps.event.addListener(marker, 'mouseout', routMap.makeOutListener(routMap.mapInfo[mapId],marker,overlay,markerImage));
+	}
+	
+	if(markerImage != null)
+		marker.setMap(routMap.mapInfo[mapId].map); //Marker가 표시될 Map 설정.
+	
+	routMap.mapInfo[mapId].markers.push(marker);
+}
+
+//이벤트 없음.. 해당 함수에 click이나 이벤트 처리하면 안됨
+routMap.showOnlyMarker = function(mapId, data, idx, focusIdx, grid) {
+	// 마커 이미지의 이미지 크기 입니다
+	var imageSize = new kakao.maps.Size(19, 28); 
+	var markerImage = null;
+	var markerOverImage = null;
+	var markerSelImage = null;
+
+	
+	var zIndex= -1;
+	if(routMap.mapInfo[mapId].isShowCrs == "on" && data.NODE_TYPE == routMap.NODE_TYPE.CROSS){
+		zIndex = 1;
+		imageSize = new kakao.maps.Size(19, 19);
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/cross.png", imageSize);
+		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/cross_selected.png", imageSize);
+	}
+	else if(routMap.mapInfo[mapId].isShowNormal == "on" && data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP && 
+			(typeof data.COND_ERROR == "undefined"||data.COND_ERROR == "CE002") ) {
+		zIndex = 2;
+		imageSize = new kakao.maps.Size(25, 24);
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop.png", imageSize);
+		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_selected.png", imageSize);
+	}
+	else if(routMap.mapInfo[mapId].isShowVertex == "on" &&data.NODE_TYPE == routMap.NODE_TYPE.VERTEX){
+		imageSize = new kakao.maps.Size(12, 12);
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/vertex.png", imageSize);
+		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/vertex_selected.png", imageSize);
+	}
+	else if (routMap.mapInfo[mapId].isShowNode == "on" && data.Node_TYPE == routMap.NODE_TYPE.NORMAL){
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/road_trans.png", imageSize);
+		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/road_selected.png", imageSize);
+	}
+	
+	else if(typeof data.COND_ERROR != "undefined" && routMap.mapInfo[mapId].isShowAbnormal == "on" &&(data.COND_ERROR == "CE001")) {
+		imageSize = new kakao.maps.Size(25, 24);
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);		
+		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);
+
+	}
+	
+		
+	var marker = null;
+	
+	if(idx==focusIdx) {
+		zIndex = 3;
+		// 마커 이미지를 생성합니다    
+		marker = new kakao.maps.Marker({
+			position : new kakao.maps.LatLng(data.GPS_Y, data.GPS_X), // Marker의 중심좌표 // 설정.
+			//title : data.label, // Marker의 라벨.
+			image : markerSelImage,
+			draggable : data.draggable,
+			zIndex: zIndex
+		});
+		routMap.mapInfo[mapId].selectedMarker = marker;
+	}
+	else {
+		// 마커 이미지를 생성합니다    
+		marker = new kakao.maps.Marker({
+			position : new kakao.maps.LatLng(data.GPS_Y, data.GPS_X), // Marker의 중심좌표 // 설정.
+			//title : data.label, // Marker의 라벨.
+			image : markerImage,
+			draggable : data.draggable,
+			zIndex: zIndex
+		});
+	}
+
+	marker.normalImage = markerImage;
+
+
+	var infoWindow = null;
+
+	var overlay = null;
+	var msg = "";
+	if(data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP){
+		 msg = "<div class = 'customoverlay busstop'>";
+		 
+		 //장치상태 에러일때
+		 if(data.COND_ERROR == 'CE001') {
+			 msg = "";
+			 msg = "<div class = 'customoverlay conderror busstop'>";
+		 }
+	}
+	else if(data.NODE_TYPE == routMap.NODE_TYPE.CROSS){
+		msg = "<div class = 'customoverlay cross'>";
+		
+		 if(data.COND_ERROR == 'CE001') {
+			 msg = "";
+			 msg = "<div class = 'customoverlay conderror busstop'>";
+		 }		
+	}
+	msg += "<span class = 'map_title' style=''>" + data.NODE_NM + "</span>" + "</div>";
+
+	if(idx==focusIdx) {
+		overlay = new kakao.maps.CustomOverlay({
+			content: msg,
+			position: marker.getPosition(),
+			zIndex : zIndex
+		});
+	}
+	else {
+		overlay = new kakao.maps.CustomOverlay({
+			content: msg,
+			position: marker.getPosition(),
+			zIndex : 4
+		});
+		
+	}
+	
 	routMap.mapInfo[mapId].overlay = overlay;
 	routMap.mapInfo[mapId].overArr.push(routMap.mapInfo[mapId].overlay);
 	
@@ -1753,6 +1894,8 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid, tab1, tab2, t
 		}
 	}
 	else {
+		// 마커에 click 이벤트를 등록합니다
+		kakao.maps.event.addListener(marker, 'click',routMap.makeOutListener(routMap.mapInfo[mapId],marker,overlay,markerImage));
 		kakao.maps.event.addListener(marker, 'mouseover', routMap.makeOverListener(routMap.mapInfo[mapId].map, marker, overlay));
 		kakao.maps.event.addListener(marker, 'mouseout', routMap.makeOutListener(routMap.mapInfo[mapId],marker,overlay,markerImage));
 	}
@@ -2748,16 +2891,16 @@ routMap.showRoute = function(mapId, list, id, type) {
 			if(type == "BUSSTOP" && list[i].STTN_ID == id){
 				focusIdx = i;
 				if((list[i].NODE_TYPE != routMap.NODE_TYPE.NORMAL) &&(list[i].NODE_TYPE != routMap.NODE_TYPE.VERTEX))
-					routMap.showMarker(mapId, list[i], i, focusIdx);
+					routMap.showOnlyMarker(mapId, list[i], i, focusIdx);
 			}
 			else if(type == "CROSS" && list[i].CRS_ID == id){
 				focusIdx = i;
 				if((list[i].NODE_TYPE != routMap.NODE_TYPE.NORMAL) &&(list[i].NODE_TYPE != routMap.NODE_TYPE.VERTEX))
-					routMap.showMarker(mapId, list[i], i, focusIdx);
+					routMap.showOnlyMarker(mapId, list[i], i, focusIdx);
 			}
 			else if(type != "ONLYLINE"){
 				if((list[i].NODE_TYPE != routMap.NODE_TYPE.NORMAL) &&(list[i].NODE_TYPE != routMap.NODE_TYPE.VERTEX))
-					routMap.showMarker(mapId, list[i], i, focusIdx);
+					routMap.showOnlyMarker(mapId, list[i], i, focusIdx);
 			}
 			
 			if(i < list.length -1){
@@ -2784,6 +2927,7 @@ routMap.showRoute = function(mapId, list, id, type) {
 	}
 }
 
+//화면만 그림. 이벤트 없어야 함
 routMap.showRoute2 = function(mapId, list, focusIdx, grid) {
 	routMap.initDisplay(mapId);
 	if(list != null && list.length != 0) {
@@ -2798,7 +2942,7 @@ routMap.showRoute2 = function(mapId, list, focusIdx, grid) {
 			}*/
 			
 			if((list[i].NODE_TYPE != routMap.NODE_TYPE.NORMAL) &&(list[i].NODE_TYPE != routMap.NODE_TYPE.VERTEX))
-				routMap.showMarker(mapId, list[i], i, focusIdx, grid);
+				routMap.showOnlyMarker(mapId, list[i], i, focusIdx, grid);
 			
 			if(i < list.length -1){
 				var color = "#3396ff";
@@ -3178,6 +3322,14 @@ routMap.setDispCheck = function(mapId, dispCheck) {
 	routMap.mapInfo[mapId].dispCheck = dispCheck;
 }
 
+//맵 타입 지정
+routMap.addOverMapType = function(mapId, type) {
+   routMap.mapInfo[mapId].map.addOverlayMapTypeId(type);  
+}
+
+routMap.removeOverMapType = function(mapId, type) {
+	routMap.mapInfo[mapId].map.removeOverlayMapTypeId(type);
+}
 /**두 지점간의 거리 계산 **/
 function getDistanceBetween(x1, y1, x2, y2) {
 	let kEarthRadiusKms = 6376.5;

@@ -173,6 +173,7 @@
 		<script type="text/javascript" lazy="false"><![CDATA[
 		
     //dataList 에 넣을 json
+    var autoOptions = {};
 	scwin.setColumnID = function() {
 		
 		var gridHeader ="", gridBody="";
@@ -223,7 +224,7 @@
 		gridHeader +='<w2:column blockSelect="false" id="'+'h'+'OPER_SN'+'" style="height:20px" inputType="text" width="70" value="'+'운행회차'+'" rowSpan="2"></w2:column>';
 		for(var i = 0; i < maxCnt; i++) {
 			var nodeNm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(i, "NODE_NM");
-			gridHeader +='<w2:column blockSelect="false" id="" style="height:20px;" textAlign="center" inputType="text" width="140" colSpan="2" value="'+nodeNm+'"></w2:column>';
+			gridHeader +='<w2:column blockSelect="false" id="'+'h'+'NODE_NM_'+i+'" style="height:20px;" textAlign="center" inputType="text" width="140" colSpan="2" value="'+nodeNm+'"></w2:column>';
 		}
 		gridHeader +='</w2:row>';
 		
@@ -232,8 +233,8 @@
 		gridHeader +='<w2:row style="" id="second_row">';
 		//maxCnt만큼 body 생성  
 		for(var i = 0; i < maxCnt; i++) {
-			gridHeader +='<w2:column blockSelect="false" id="" style="height:20px;" textAlign="center" inputType="text" width="70" colSpan="'+1+'" value="도착시간"></w2:column>';
-			gridHeader +='<w2:column blockSelect="false" id="" style="height:20px;" textAlign="center" inputType="text" width="70" colSpan="'+1+'" value="출발시간"></w2:column>';
+			gridHeader +='<w2:column blockSelect="false" id="'+'h'+'ARRV_TM_'+i+'" style="height:20px;" textAlign="center" inputType="text" width="70" colSpan="'+1+'" value="도착시간"></w2:column>';
+			gridHeader +='<w2:column blockSelect="false" id="'+'h'+'DPRT_TM_'+i+'" style="height:20px;" textAlign="center" inputType="text" width="70" colSpan="'+1+'" value="출발시간"></w2:column>';
 			gridBody += '<w2:column blockSelect="false" id="'+'ARRV_TM_'+i+'" style="height:20px" inputType="text" width=""></w2:column>'
 			gridBody += '<w2:column blockSelect="false" id="'+'DPRT_TM_'+i+'" style="height:20px" inputType="text" width=""></w2:column>'
 		}
@@ -276,22 +277,22 @@
 		+'</w2:gridView>' ;
 		
 		AL0203G1.setGridStyle(WebSquare.xml.parse( gridStr , true ));
-		//AL0203G1.mergeCells("byrestriccol");
-		//AL0203G1.mergeCol("ALLOC_NO,WAY_DIV");
-		//AL0203G1.setFixedColumn(2);
+		autoOptions.Sub1.grid = AL0203G1;
+		AL0203G1.setFixedColumn(1);
+		
 
 		dlt_VIEW_OPER_PL_NODE_INFO.modifyAllStatus("R")
 	}        
         
         
 	scwin.onpageload = function() {
-		var autoOptions = {
+		autoOptions = {
 			Main : { grid : AL0203G0, srchSbm : sub_AL0203G0R0, savSbm : sub_AL0203G0S0, 
 					 srchGrp : pgm_header , keyColumn : "DAY_DIV,ROUT_ID", focusColumn : "ROUT_ID", name : "운행계획 목록"},
 			Sub1 : { grid : AL0203G1, srchSbm : sub_AL0203G1R0, keyColumn : "OPER_SN", savSbm : sub_AL0203G1S0, name : "운행계획 상세" }	
 		 };
 		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions);
 		
 		var subOptions2 = {
 			SEARCH:[{cbFnc:scwin.openPopUpChart,nm:"시공도 보기"}

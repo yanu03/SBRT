@@ -144,6 +144,87 @@ public class KafkaConsumer {
     } //processResult()
     
     
+    
+    @KafkaListener(topics = {KafkaTopics.T_COMMUNICATION})
+    public void processCommuicationMsg(ConsumerRecord<String, KafkaMessage> record) throws Exception {
+    
+    	/* Communication 으로 가는것도 필요에 따라 처리해야함 */
+    	
+    	//logger.info("================ Received Kafka message :: KafkaTopics.T_COMMUNICATION");
+    	
+    	Map<String, Object> map = null;
+//    	WsMessage wsMessage = null;
+    	KafkaMessage kafkaMessage = record.value();
+    	
+    	
+        if(kafkaMessage != null) {
+        	
+        	String sessionId = kafkaMessage.getSessionId();
+        	TimsMessage timsMessage = kafkaMessage.getTimsMessage();
+        	
+        	//logger.info("tims message: {}", timsMessage);    	
+            
+        	if(timsMessage == null) {
+            	//logger.info("TimsMessage is NULL!!");        
+            	return;
+            }
+        	
+            String impId = kafkaMessage.getSessionId();
+            TimsPayload timsPayload = timsMessage.getPayload();
+            
+            if(timsPayload == null) {
+            	//logger.info("TimsMessage Payload is NULL!!");        
+            	return;
+            }
+            
+            byte opCode = timsPayload.OpCode;
+
+            
+            //디스패치 처리
+            
+            switch (opCode) {
+			case PlCode.OP_GET_REQ:
+				break;
+				
+			case PlCode.OP_GET_RES:
+				break;
+				
+			case PlCode.OP_SET_REQ:
+				break;
+				
+			case PlCode.OP_SET_RES:
+				break;
+				
+			case PlCode.OP_ACTION_REQ:
+				break;
+				
+			case PlCode.OP_ACTION_RES:
+				break;
+				
+			case PlCode.OP_EVENT_REQ:
+				map = eventRequest.handle(timsMessage, sessionId);
+				break;
+				
+			case PlCode.OP_EVENT_RES:
+				break;
+
+			default:
+				break;
+			}
+            
+
+        } //if(kafkaMessage != null)
+        
+        
+        //웹소켓 전송이 필요한 경우
+        if(map != null) {    		
+    		webSocketClient.sendMessage(map);
+        }
+        
+        
+        
+    } //processResult()
+    
 	
     
     

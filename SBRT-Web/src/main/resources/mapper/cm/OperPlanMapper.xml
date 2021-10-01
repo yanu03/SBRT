@@ -327,4 +327,80 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
 	<!-- 운행계획 생성 끝 -->
 
 
+
+ 	<!--변경운행계획 생성-->
+    <insert id="insertChgOperInfo" parameterType="hashmap">
+        INSERT INTO BRT_CHG_OPER_INFO
+        (
+            OCR_DTM
+            ,OPER_DT
+            ,REP_ROUT_ID
+            ,ROUT_ID
+            ,ALLOC_NO
+            ,OPER_SN
+            <!--,VHC_ID
+            ,VHC_NO
+            ,OCR_LINK_ID
+            ,OCR_NODE_ID
+            ,OCR_NODE_TYPE
+            ,GPS_X
+            ,GPS_Y
+            ,TM_X
+            ,TM_Y
+            ,CHG_OPER_DIV
+            ,CHG_APPR_DIV-->
+            ,UPD_DTM
+        )
+        VALUES
+        (
+            NOW()
+            ,#{OPER_DT}
+            ,#{REP_ROUT_ID}
+            ,#{ROUT_ID}
+            ,#{ALLOC_NO}
+            ,#{OPER_SN}
+            ,NOW()
+        );
+    </insert>
+
+
+
+    <insert id="insertChgOperDtlInfo" parameterType="hashmap">
+        INSERT INTO BRT_CHG_OPER_DTL_INFO
+        (
+            OCR_DTM
+            ,OPER_DT
+            ,REP_ROUT_ID
+            ,ROUT_ID
+            ,COR_ID
+            ,ALLOC_NO
+            ,OPER_SN
+            ,NODE_ID
+            ,NODE_SN
+            ,NODE_TYPE
+            ,DPRT_TM
+            ,ARRV_TM
+            ,UPD_DTM
+        )
+        VALUES
+        <foreach collection="ITEM_LIST" item="item" separator=",">
+            (
+            NOW()
+            ,#{OPER_DT}
+            ,#{item.REP_ROUT_ID}
+            ,#{item.ROUT_ID}
+            ,#{item.COR_ID}
+            ,#{item.ALLOC_NO}
+            ,#{item.OPER_SN}
+            ,#{item.NODE_ID}
+            ,#{item.NODE_SN}
+            ,#{item.NODE_TYPE}
+            ,#{item.ARRV_TM}
+            ,#{item.DPRT_TM}
+            ,NOW()
+            )
+        </foreach>
+    </insert>
+
+
 </mapper>

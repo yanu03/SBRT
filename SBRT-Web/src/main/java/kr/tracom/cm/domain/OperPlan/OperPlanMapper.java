@@ -56,6 +56,10 @@ public interface OperPlanMapper {
 	public int insertOperAllocPlNodeInfo(Map<String, Object> params);
 	public int insertOperAllocPlNodeInfoList(Map<String, Object> params);
 	public void deleteOperPl(Map<String, Object> params);
+	
+    //변경운행계획 생성
+    int insertChgOperInfo(Map<String, Object> params);
+    int insertChgOperDtlInfo(Map<String, Object> params);
     
     
 

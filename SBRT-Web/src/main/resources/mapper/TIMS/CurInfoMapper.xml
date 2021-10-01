@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.tims.domain.CurInfoMapper">
+	
+	
+	
+	<!-- 현재운행정보 insert  -->
+	<insert id="insertCurOperInfo" parameterType="Map">
+		INSERT INTO BRT_CUR_OPER_INFO (
+			OPER_DT
+			,REP_ROUT_ID
+			,VHC_ID
+			,ROUT_ID				
+			,ALLOC_NO
+			,OPER_SN							
+			,NODE_ID
+			,COR_ID
+			,VHC_NO
+			,DRV_ID
+			,GPS_X
+			,GPS_Y
+			,OPER_STS
+			,DRV_ANGLE
+			,CUR_SPD
+			,LINK_ID
+			,NODE_SN
+			,UPD_DTM
+		) 
+		VALUES (
+			DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')
+			,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})			
+			,(SELECT VHC_ID FROM BMS_VHC_MST WHERE VHC_NO = #{BUS_NO})
+			,#{ROUT_ID}											
+			,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')))  <!--alloc no 찾기 -->
+			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, TIME_FORMAT(#{UPD_DTM}, '%H:%i:%S'))) <!--oper sn 찾기 -->
+			,#{NODE_ID}
+			,#{COURSE_ID}
+			,#{BUS_NO}
+			,#{DRV_ID}
+			,#{LONGITUDE}
+			,#{LATITUDE}
+			,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'VHC_OPER_TYPE' AND NUM_VAL4 = #{RUN_TYPE}) <!-- 운행 유형  -->
+			,#{HEADING}
+			,#{SPEED}
+			,#{LINK_ID}
+			,#{NODE_SN}
+			,#{UPD_DTM}
+		)
+		ON DUPLICATE KEY UPDATE
+			ROUT_ID = VALUES(ROUT_ID)
+			,ALLOC_NO = VALUES(ALLOC_NO)
+			,OPER_SN = VALUES(OPER_SN)	
+			,NODE_ID = VALUES(NODE_ID)
+			,COR_ID = VALUES(COR_ID)
+			,VHC_NO = VALUES(VHC_NO)
+			,DRV_ID = VALUES(DRV_ID)
+			,GPS_X = VALUES(GPS_X)
+			,GPS_Y = VALUES(GPS_Y)
+			,OPER_STS = VALUES(OPER_STS)
+			,DRV_ANGLE = VALUES(DRV_ANGLE)
+			,CUR_SPD = VALUES(CUR_SPD)
+			,LINK_ID = VALUES(LINK_ID)
+			,NODE_SN = VALUES(NODE_SN)
+			,UPD_DTM = VALUES(UPD_DTM);
+	</insert>
+	
+	
+	<!-- 차량의 현재운행정보 가져오기  -->
+	<select id="selectCurOperInfo" resultType="Map" parameterType="Map">
+		SELECT  
+			OPER_DT
+			,REP_ROUT_ID
+			,VHC_ID
+			,ROUT_ID				
+			,ALLOC_NO
+			,OPER_SN							
+			,NODE_ID
+			,COR_ID
+			,VHC_NO
+			,DRV_ID
+			,GPS_X
+			,GPS_Y
+			,OPER_STS
+			,DRV_ANGLE
+			,CUR_SPD
+			,LINK_ID
+			,NODE_SN
+		FROM 	
+			BRT_CUR_OPER_INFO
+		WHERE OPER_DT = DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')
+			AND VHC_ID = #{VHC_ID}
+		LIMIT 1
+	</select>
+	
+	
+		
+
+
+	
+</mapper>

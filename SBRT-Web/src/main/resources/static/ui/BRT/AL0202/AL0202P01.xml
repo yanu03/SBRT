@@ -39,7 +39,7 @@
 						<w2:column id="REST_DIV" name="휴게구분" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataMap baseNode="map" id="dma_param_AL0304P0R1">
+				<w2:dataMap baseNode="map" id="dma_param_AL0202P0R1">
 					<w2:keyInfo>
 						<w2:key id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:key>
 					</w2:keyInfo>
@@ -58,12 +58,12 @@
 				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_AL0304P0R0" ref="data:json,dma_search" target="data:json,dlt_COR_MST" action="/AL/AL0304P0R0"
+			<xf:submission id="sub_AL0202P0R0" ref="data:json,dma_search" target="data:json,dlt_COR_MST" action="/AL/AL0202P0R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_AL0304P1R0" ref="data:json,dma_param_AL0304P0R1" target="data:json,dlt_OPER_PL_ROUT_INFO"
-				action="/AL/AL0304P0R1" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+			<xf:submission id="sub_AL0202P1R0" ref="data:json,dma_param_AL0202P0R1" target="data:json,dlt_OPER_PL_ROUT_INFO"
+				action="/AL/AL0202P0R1" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
@@ -73,7 +73,7 @@
 		scwin.param = com.getParameter();
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
 		com.setEnterKeyEvent(tbl_search, scwin.btn_search_onclick);
-		$p.executeSubmission(sub_AL0304P0R0);			
+		$p.executeSubmission(sub_AL0202P0R0);			
 	};
 	
 	scwin.onpageunload = function() {
@@ -81,7 +81,7 @@
 	};
 	
 	scwin.btn_search_onclick = function() {
-		$p.executeSubmission(sub_AL0304P0R0);
+		$p.executeSubmission(sub_AL0202P0R0);
 	};
 	
 	scwin.btn_confirm_onclick = function() {
@@ -93,15 +93,15 @@
 		com.closePopup();
 	};
 	
-	scwin.AL0304P0_onrowindexchange = function(row,oldRow) {
+	scwin.AL0202P0_onrowindexchange = function(row,oldRow) {
 		var val_reproutID = dlt_COR_MST.getCellData(row,"REP_ROUT_ID");
-		dma_param_AL0304P0R1.set("REP_ROUT_ID", val_reproutID);
-		var focusOption = {keyMap : dma_param_AL0304P0R1};
-		com.changeDualGrid(AL0304P0, AL0304P1, "", sub_AL0304P1R0, focusOption, row, oldRow);
-		com.executeSubmission(sub_AL0304P1R0);
+		dma_param_AL0202P0R1.set("REP_ROUT_ID", val_reproutID);
+		var focusOption = {keyMap : dma_param_AL0202P0R1};
+		com.changeDualGrid(AL0202P0, AL0202P1, "", sub_AL0202P1R0, focusOption, row, oldRow);
+		com.executeSubmission(sub_AL0202P1R0);
 	};
 	
-	scwin.AL0304P1_oncelldblclick = function(row,col,colId) {
+	scwin.AL0202P1_oncelldblclick = function(row,col,colId) {
 //		var jsonObj = JSON.parse(e.responseText);
 //		
 //		         var info = '<w2:dataList id="'+currentId+'" baseNode="vector" repeatNode="item" valueNode="">';
@@ -166,8 +166,8 @@
 		<xf:group id="pgm_content" class="pgm_content grdc_a_20_700" style="">
 			<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 				<w2:gridView fixedColumnWithHidden="true" dataList="data:dlt_COR_MST" useShiftKey="false" readOnly="true"
-					style="height:240px;" scrollByColumn="false" id="AL0304P0" autoFit="allColumn" class="cm_grid"
-					ev:onrowindexchange="scwin.AL0304P0_onrowindexchange">
+					style="height:240px;" scrollByColumn="false" id="AL0202P0" autoFit="allColumn" class="cm_grid"
+					ev:onrowindexchange="scwin.AL0202P0_onrowindexchange">
 					<w2:header id="header1" style="">
 						<w2:row id="row1" style="">
 							<w2:column width="39" inputType="checkbox" style="height:20px" id="chkHeader" value="선택" blockSelect="false"></w2:column>
@@ -184,8 +184,8 @@
 					</w2:gBody>
 				</w2:gridView>
 				<w2:gridView fixedColumnWithHidden="true" dataList="data:dlt_OPER_PL_ROUT_INFO" useShiftKey="false" readOnly="true"
-					style="height:240px;" scrollByColumn="false" id="AL0304P1" autoFit="allColumn" class="cm_grid" ev:onrowindexchange=""
-					ev:oncelldblclick="scwin.AL0304P1_oncelldblclick">
+					style="height:240px;" scrollByColumn="false" id="AL0202P1" autoFit="allColumn" class="cm_grid" ev:onrowindexchange=""
+					ev:oncelldblclick="scwin.AL0202P1_oncelldblclick">
 					<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 					<w2:header style="" id="header1">
 						<w2:row style="" id="row1">

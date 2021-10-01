@@ -4478,17 +4478,26 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						}
 						else if(i==gcm.BTN.EXL_I.nm){
 							item.cbFnc = function(){
-								com.exlUploadGrid(sub.grid);
+								var sub = autoOpt.Sub1;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.exlUploadGrid(sub.grid);
+								}
 							}
 						}
 						else if(i==gcm.BTN.EXL.nm){
 							item.cbFnc = function(){
-								com.exlGrid(sub.grid);
+								var sub = autoOpt.Sub1;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.exlGrid(sub.grid);
+								}
 							}
 						}
 						else if(i==gcm.BTN.EXL_F.nm){
 							item.cbFnc = function(){
-								com.exlFrmGrid(sub.grid);
+								var sub = autoOpt.Sub1;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.exlFrmGrid(sub.grid);
+								}
 							}
 						}
 						else if(i==gcm.BTN.CLOSE.nm){
