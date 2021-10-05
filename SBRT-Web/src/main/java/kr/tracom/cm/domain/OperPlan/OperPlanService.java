@@ -845,8 +845,8 @@ public class OperPlanService extends ServiceSupport {
 						} else {
 
 						}
+						
 						isDone = false;
-
 						tryCount++;
 
 						if (tryCount >= OperPlanCalc.MAX_TRY_COUNT) {
@@ -856,7 +856,9 @@ public class OperPlanService extends ServiceSupport {
 							max_speed = OperPlanCalc.MAX_SPEED_DEFAULT; //최대속도 초기화
 
 							//가속도 변경
-
+							
+							
+							return null; //bhmin tmp //변경운행 생성 실패
 
 						}
 
@@ -882,6 +884,22 @@ public class OperPlanService extends ServiceSupport {
 
 						isDone = false;
 						tryCount++;
+						
+						if (tryCount >= OperPlanCalc.MAX_TRY_COUNT) {
+							tryCount = 0;
+
+							//최대속도변경으로 안되는 경우
+							max_speed = OperPlanCalc.MAX_SPEED_DEFAULT; //최대속도 초기화
+
+							//가속도 변경
+							
+							
+							return null; //bhmin tmp //변경운행 생성 실패
+
+
+
+						}						
+						
 					}
 
 				} else {

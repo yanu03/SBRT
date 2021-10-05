@@ -4208,6 +4208,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 				
 				if ((typeof usrOpt !== "undefined")&&(usrOpt !== null)&&
 						((typeof eval("usrOpt."+i) === "function")||(typeof usrOpt[i] !== "undefined"))) {
+					var main = autoOpt.Main;
 					if (typeof eval("usrOpt."+i) === "function") {
 						var tmpParentIdx = wfm_mainBtn.getWindow().btn_main_generator.insertChild();
 						var mainBtn = wfm_mainBtn.getWindow().btn_main_generator.getChild(tmpParentIdx, "btn_main");
@@ -4215,6 +4216,9 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						mainBtn.setValue(str);
 						mainBtn.addClass(item.class);
 						mainBtn.bind("onclick", eval("usrOpt."+i));
+						if ((i == gcm.BTN.SEARCH.nm)&&(typeof main.srchGrp !== "undefined")&&(main.srchGrp !== null)){
+							com.setEnterKeyEvent(main.srchGrp, eval("usrOpt."+i));
+						}
 					}
 					else if((typeof eval(usrOpt[i].cbFnc) === "function")||(typeof usrOpt[i].nm !== "undefined")
 							||(typeof usrOpt[i].class !== "undefined")){
@@ -4222,6 +4226,9 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						var mainBtn = wfm_mainBtn.getWindow().btn_main_generator.getChild(tmpParentIdx, "btn_main");
 						if(typeof eval(usrOpt[i].cbFnc) === "function"){
 							mainBtn.bind("onclick", eval(usrOpt[i].cbFnc));
+							if ((i == gcm.BTN.SEARCH.nm)&&(typeof main.srchGrp !== "undefined")&&(main.srchGrp !== null)){
+								com.setEnterKeyEvent(main.srchGrp, eval(usrOpt[i].cbFnc));
+							}
 						}
 						if(usrOpt[i].nm !== "undefined"){
 							mainBtn.setValue(usrOpt[i].nm);
@@ -4768,6 +4775,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 								else{
 									com.searchGrid(main.grid, main.srchSbm , main.savSbm);
 								}
+								
 							}
 						}
 						else if(i == gcm.BTN.ADD.nm){
@@ -5070,6 +5078,7 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 			var item = gcm.BTN[i];
 			if(eval("programAuthority."+item.value) == "Y"){
 				if ((typeof eval("subOpt."+i) === "function")||(subOpt[i].length>0)||(typeof eval(subOpt[i].cbFnc) === "function")) {
+					var sub = autoOpt.Sub1;
 					if (typeof eval("subOpt."+i) === "function") {
 						var tmpParentIdx = wfm_subBtn.getWindow().btn_sub_generator.insertChild();
 						var subBtn = wfm_subBtn.getWindow().btn_sub_generator.getChild(tmpParentIdx, "btn_sub");
@@ -5077,6 +5086,10 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 						subBtn.setValue(str);
 						subBtn.addClass(item.class);
 						subBtn.bind("onclick", eval("subOpt."+i));
+						
+						if ((i == gcm.BTN.SEARCH.nm)&&(typeof sub.srchGrp !== "undefined")&&(sub.srchGrp !== null)){
+							com.setEnterKeyEvent(sub.srchGrp, eval("subOpt."+i));
+						}
 					}
 					else if(subOpt[i].length>0){
 						for(var j=0; j<subOpt[i].length; j++){
@@ -5085,6 +5098,9 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 							var optArr = subOpt[i];
 							if(typeof eval(optArr[j].cbFnc) === "function"){
 								subBtn.bind("onclick", eval(optArr[j].cbFnc));
+								if ((i == gcm.BTN.SEARCH.nm)&&(typeof sub.srchGrp !== "undefined")&&(sub.srchGrp !== null)){
+									com.setEnterKeyEvent(sub.srchGrp, eval(optArr[j].cbFnc));
+								}
 							}
 							if(optArr[j].nm !== "undefined"){
 								subBtn.setValue(optArr[j].nm);
@@ -5099,6 +5115,9 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 						var subBtn = wfm_subBtn.getWindow().btn_sub_generator.getChild(tmpParentIdx, "btn_sub");
 						if(typeof eval(subOpt[i].cbFnc) === "function"){
 							subBtn.bind("onclick", eval(subOpt[i].cbFnc));
+							if ((i == gcm.BTN.SEARCH.nm)&&(typeof sub.srchGrp !== "undefined")&&(sub.srchGrp !== null)){
+								com.setEnterKeyEvent(sub.srchGrp, eval(subOpt[i].cbFnc));
+							}
 						}
 						if(subOpt[i].nm !== "undefined"){
 							subBtn.setValue(subOpt[i].nm);
@@ -6817,4 +6836,38 @@ com.indexGridNear = function(data, column, value){
 		}
 	}
 	return i;
+}
+
+//grid 이동
+com.gridMove = function(grid,searchColumn, content, index){
+	var data = com.getGridViewDataList(grid);
+	var rowData = data.getAllJSON();
+	var startIndex = 0;
+	var keyColumnArr = searchColumn.split(',');
+	
+	if(index<rowData.length-1){ //현재 포커스 다음 index 부터 검색
+		startIndex = index+1;
+	}
+	var nodeSn = 0;
+	for(var i = startIndex; i < rowData.length; i++) { //현재 포커스 다음 index 부터 마지막까지 검색
+		if(data.getRowStatus(i)!="D"){
+			for(var j = 0; j < keyColumnArr.length; j++){
+				if(data.getCellData(i,keyColumnArr[j]).indexOf(content)>=0){
+					grid.setFocusedCell(i, keyColumnArr[j]);
+					return;
+				}
+			}
+		}
+	}
+	
+	for(var i = 0; i < startIndex; i++) { //0 부터 현재 포커스 index 까지 검색
+		if(data.getRowStatus(i)!="D"){
+			for(var j = 0; j < keyColumnArr.length; j++){
+				if(data.getCellData(i,keyColumnArr[j]).indexOf(content)>=0){
+					grid.setFocusedCell(i, keyColumnArr[j]);
+					return;
+				}
+			}
+		}
+	}
 }

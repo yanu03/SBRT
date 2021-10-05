@@ -66,6 +66,16 @@
 						<w2:column id="WAY_DESC_NM" name="하행명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_CHART_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="INDEX" name="순서" dataType="text"></w2:column>
+						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
+						<w2:column id="ARRV_TM" name="도착시간" dataType="text"></w2:column>
+						<w2:column id="DPRT_TM" name="출발시간" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_VIEW_OPER_PL_NODE_INFO" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
@@ -161,6 +171,7 @@
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
+		
     //dataList 에 넣을 json
     var autoOptions = {};
 	scwin.setColumnID = function() {
@@ -254,7 +265,7 @@
 		//gridView 정보 정의 
 		//xml 형식을 정의 하면 <w2:gridView 에 xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" 포함 합니다.
 		var gridStr = '<w2:gridView xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" dataList="dlt_VIEW_OPER_PL_NODE_INFO" '
-						+ 'scrollByColumn="true" id="AL0203G1" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" mergeCol="OPER_SN, WAY_DIV" >'
+						+ 'scrollByColumn="true" id="AL0203G1" ev:onrowindexchange="scwin.AL0203G1_onrowindexchange" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" mergeCol="OPER_SN, WAY_DIV" >'
 		+ '<w2:header id="header1" style="text-align:left">'
 		+ gridHeader
 		+'</w2:header>'
@@ -283,6 +294,13 @@
 		 
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions);
 		
+		var subOptions2 = {
+			SEARCH:[{cbFnc:scwin.openPopUpChart,nm:"시공도 보기"}
+			]
+		};
+
+		com.setSubBtn2(wfm_subBtn2, autoOptions, subOptions2);
+		
 		var codeOptions = [ 
 							{code : "WAY_DIV", compID : "AL0203G0:WAY_DIV" },
 							{code : "DAY_DIV", compID : "AL0203G0:DAY_DIV" },
@@ -310,6 +328,16 @@
 		
 	};
 	
+	scwin.openPopUpChart = function(){
+	
+		 var data = { data : "", callbackFn : "scwin.insertSubGrid" };
+         var options = { id : "AL0203P0",
+                         popupName : "시공도", 
+                         modal : true};
+		
+		com.openPopup("/cm/common/popUpChart", options, data);
+	};
+	
 	scwin.sub_AL0203G0R0_submitdone = function(e) {
 		com.setFocusedCell(AL0203G0, "REP_ROUT_NM");
 	};
@@ -321,7 +349,6 @@
 			com.saveDone(AL0203G0,sub_AL0203G0R0);
 		}
 	};
-	
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
 		if (info.newValue == "ALL") {
@@ -348,19 +375,114 @@
 	
 	scwin.sub_AL0203G1R0_submitdone = function(e) {
 		scwin.setColumnID();
-		//var val_ROUT_ID = dlt_BRT_COR_DTL_INFO.getColData("ROUT_ID");
+		scwin.fusionChart(AL0203G1.getFocusedRowIndex());
+		com.setFocusedCell(AL0203G1, "OPER_SN");
+		AL0203CHT0.configure({"ChartNoDataText" :"데이터가 없음."});
+//		var val_ROUT_ID = dlt_BRT_COR_DTL_INFO.getColData("ROUT_ID");
 //		dma_sub_search.set("ROUT_IDS", val_ROUT_ID);
 //		dma_sub_search.set("TYPE", "DISP_NODE");
 //		com.executeSubmission(sub_AL0203G2R0);
 	};
 	
+	scwin.AL0203G1_onrowindexchange = function(row,oldRow) {
+		//scwin.fusionChart(row);
+	};
 	
 	scwin.sub_AL0203G1S0_submitdone = function(e) {
 		com.saveDone(AL0203G1, sub_AL0203G1R0);		
 	};
 	
-	]]></script>
+	scwin.fusionChart = function(row){
+	debugger;
+		dlt_BRT_CHART_INFO.removeAll();
+		var sttnNm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(row, "NODE_NM");
+		
+		/*var rowData = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getDataRow(row);
+		
+		var rowData = dlt_VIEW_OPER_PL_NODE_INFO.getDataRow(row);
+		
+		var arrvTm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(row, "ARRV_TM");
+		var nodeSn = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(row, "NODE_SN");
+		
+		dlt_CHART_INFO.setCellData(row, "NODE_NM", sttnNm);
+		dlt_CHART_INFO.setCellData(row, "ARRV_TM", arrvTm);
+		dlt_CHART_INFO.setCellData(row, "NODE_SN", nodeSn);*/
+		
+
+		
+		var old_open_sn = -1;
+
+		var chartindex = 0;
+		var rowCntArr = dlt_BRT_OPER_ALLOC_PL_NODE_CNT.getAllJSON();
+		var allData = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
+		var rowIndex = 0;
+		var rowCnt = 0;
+		var maxCnt = 0;
+		//var j = 0;
+		var rowCntLength = rowCntArr.length;
+		debugger;
+		for(var i = 0; i < 50; i++) {
+			if(maxCnt < rowCntArr[i].CNT)maxCnt = rowCntArr[i].CNT;
+			rowCnt =  rowCntArr[i].CNT;
+			debugger;
+			for(var j = 0; j < rowCnt; j++) {
+				if(j==0||j==rowCnt-1){
+					if(j==0)chartindex= 0;
+				 	var arrvTm = allData[rowIndex+j].ARRV_TM.substring(0,5);
+					var dprtTm = allData[rowIndex+j].DPRT_TM.substring(0,5);
+					var nodeNm = allData[rowIndex+j].NODE_NM + "(" + allData[rowIndex+j].OPER_SN + "회)";
+					var index = dlt_BRT_CHART_INFO.insertRow(rowIndex+j);
+					dlt_BRT_CHART_INFO.setCellData(index, "INDEX", chartindex);
+					dlt_BRT_CHART_INFO.setCellData(index, "ARRV_TM", arrvTm);
+					//dlt_BRT_CHART_INFO.setCellData(index, "DPRT_TM", dprtTm);
+					dlt_BRT_CHART_INFO.setCellData(index, "NODE_NM", nodeNm);
+					chartindex++;
+				}
+				else{
+					var arrvTm = allData[rowIndex+j].ARRV_TM.substring(0,5);
+					var dprtTm = allData[rowIndex+j].DPRT_TM.substring(0,5);
+					var nodeNm = allData[rowIndex+j].NODE_NM + "(" + allData[rowIndex+j].OPER_SN + "회)";
+					var index = dlt_BRT_CHART_INFO.insertRow(rowIndex+j);
+					dlt_BRT_CHART_INFO.setCellData(index, "INDEX", chartindex);
+					dlt_BRT_CHART_INFO.setCellData(index, "ARRV_TM", arrvTm);
+					//dlt_BRT_CHART_INFO.setCellData(index, "DPRT_TM", dprtTm);
+					dlt_BRT_CHART_INFO.setCellData(index, "NODE_NM", nodeNm);
+					chartindex++;
+				}
+			}
+			rowIndex += rowCnt;
+			if(i>=rowCntArr.length-1)break;
+		}
+		
+		var options = { 
+			labelStep:"50"		
+		    ,xAxisName:"시간"
+		    ,yAxisName:"노선"
+		    //,rotateLabels: "0"
+      		,labelDisplay: "wrap"
+      		,canvasPadding: "30"
+      		,xAxisValueDecimals: "5"
+      		//,numberSuffix: "/"+sttnNm
+      		,lineColor: "#f56363"
+      		,valuePadding: "50"
+      		,labelPadding: "20"
+      		//,showLegend: "1"
+		}
+		
+		debugger;
+		AL0203CHT0.setChartColumnSimpleRef("data:dlt_BRT_CHART_INFO", "ARRV_TM", null, "INDEX");
+		AL0203CHT0.setChartAttribute(options);		
+		
+		//AL0203CHT0.setChartColumnSimpleRef("data:dlt_BRT_OPER_ALLOC_PL_NODE_INFO", "ARRV_TM", null, "NODE_SN");
+		
+		
+		//AL0203CHT0.setChartColumnRef("data:dlt_BRT_OPER_ALLOC_PL_NODE_INFO", "ARRV_TM");
+		//AL0203CHT0.setJSONData();
+        //AL0203CHT0.draw();
 	
+	}
+	
+	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
@@ -438,7 +560,7 @@
 									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:20px" id="column2"
 										value="요일구분" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column2"
+									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column9"
 										value="상하행" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column8"
@@ -469,8 +591,8 @@
 									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="WAY_DIV"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_NM"
-										value="" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_NM" value=""
+										blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="ROUT_TYPE"
 										value="" blockSelect="false" displayMode="label">
@@ -501,13 +623,14 @@
 							<w2:textbox class="df_tt fl" id="" label="운행계획 상세" style=""></w2:textbox>
 						</xf:group>
 						<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
+						<w2:wframe id="wfm_subBtn2" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
 					</xf:group>
 					<xf:group class="" id="" style=""></xf:group>
 					<xf:group id="" class="" style="">
 						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" autoFitMinWidth="0" captionTitle=""
 							checkEditableInputClass="" class="cm_grid right" dataList="data:dlt_BRT_OPER_ALLOC_PL_NODE_INFO" fixedColumnWithHidden="true"
-							focusMode="row" id="AL0203G1" ignoreCellClick="false" rowNumHeaderValue="순번" rowNumVisible="false" rowStatusVisible="false" rowStatusWidth="40"
-							scrollByColumn="false" useShiftKey="true" fixedRow="0" fixedColumn="0" >
+							focusMode="row" id="AL0203G1" ignoreCellClick="false" rowNumHeaderValue="순번" rowNumVisible="false" rowStatusVisible="false"
+							rowStatusWidth="40" scrollByColumn="false" useShiftKey="true" fixedRow="0" fixedColumn="0" ev:onrowindexchange="scwin.AL0203G1_onrowindexchange">
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row3">
@@ -529,25 +652,28 @@
 							</w2:header>
 							<w2:gBody style="" id="gBody1">
 								<w2:row style="" id="row2">
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="OPER_SN"
-										value="" blockSelect="false" displayMode="label" readOnly="true">
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="OPER_SN" value=""
+										blockSelect="false" displayMode="label" readOnly="true">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ARRV_TM"
-										value="" blockSelect="false" displayMode="label" readOnly="true">
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ARRV_TM" value=""
+										blockSelect="false" displayMode="label" readOnly="true">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="DPRT_TM"
-										value="" blockSelect="false" displayMode="label" textAlign="" readOnly="true">
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="DPRT_TM" value=""
+										blockSelect="false" displayMode="label" textAlign="" readOnly="true">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
 						</w2:gridView>
 					</xf:group>
-
 					<xf:group id="" class="horizontal_line"></xf:group>
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="시공도" style=""></w2:textbox>
 						</xf:group>
+						<w2:fusionchart accessibility="false" drawType="javascript" runflashAt="IE6,IE7,IE8" seriesType="simple"
+							chartType="MSLine" style="width: auto; height: 290px;" id="AL0203CHT0" ref="" 
+							labelNode="" valueNode="" seriesNode="">
+						</w2:fusionchart>
 					</xf:group>
 					<xf:group id="" class="" style=""></xf:group>
 				</xf:group><!--end pgm_detail-->

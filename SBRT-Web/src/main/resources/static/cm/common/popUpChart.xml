@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+	 <head>
+	<w2:type>DEFAULT</w2:type>
+	<w2:buildDate/>
+	<xf:model>
+		<xf:instance>
+			<data xmlns="" />
+		</xf:instance>
+		<w2:dataCollection baseNode="map">
+			<w2:dataMap baseNode="map" id="dma_GRG_MST">
+				<w2:keyInfo>
+					<w2:key id="GRG_ECPT_ID" name="차고지ID" dataType="text"></w2:key>
+					<w2:key id="TYPE" name="name2" dataType="text"></w2:key>
+					<w2:key id="CONTENT" name="name3" dataType="text"></w2:key>
+				</w2:keyInfo>
+			</w2:dataMap>
+			<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_REP_ROUT_MST" saveRemovedData="true">
+				<w2:columnInfo>
+					<w2:column id="chk" name="선택" dataType="text"></w2:column>
+        				<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
+        				<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+        				<w2:column id="ROUT_TYPE" name="노선유형" dataType="text"></w2:column>
+        				<w2:column id="ST_STTN_ID" name="기점ID" dataType="text"></w2:column>
+        				<w2:column id="ST_STTN_NM" name="기점명" dataType="text"></w2:column>
+        				<w2:column id="ED_STTN_ID" name="종점ID" dataType="text"></w2:column>
+        				<w2:column id="ED_STTN_NM" name="종점명" dataType="text"></w2:column>
+        				<w2:column id="WAY_YN" name="상하행여부" dataType="text"></w2:column>
+        				<w2:column id="HOLI_YN" name="휴일여부" dataType="text"></w2:column>
+        				<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+				</w2:columnInfo>
+			</w2:dataList>
+			<w2:dataMap baseNode="map" id="dma_search">
+				<w2:keyInfo>
+					<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+					<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+					<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+					<w2:key id="key4" name="name4" dataType="text"></w2:key>
+				</w2:keyInfo>
+			</w2:dataMap>
+			<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
+				<w2:columnInfo>
+					<w2:column id="STTN_ID" name="정류장ID" dataType="text"></w2:column>
+					<w2:column id="STTN_NM" name="정류장명" dataType="text"></w2:column>
+				</w2:columnInfo>
+			</w2:dataList>
+		</w2:dataCollection>
+		<w2:workflowCollection></w2:workflowCollection>
+		<xf:submission id="sub_reproutList" ref="data:json,dma_search" target="data:json,dlt_BMS_REP_ROUT_MST" action="/repRout/selectRepRoutList" method="post"
+			mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+			ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+		</xf:submission>
+			<xf:submission id="sub_searchItem" ref="" target="data:json,dlt_searchitem" action="/rout/selectSttnItem" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+
+	</xf:model>
+	<script type="text/javascript" lazy="false"><![CDATA[
+
+	scwin.onpageload = function() {
+		var codeOptions = [ {code : "ROUT_TYPE", compID : "routListGrid:ROUT_TYPE" }];
+	
+		com.setCommonDtl(codeOptions, function() {
+			com.executeSubmission(sub_reproutList);	
+		});
+		
+		scwin.param = com.getParameter();
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		
+		var btnOptions = 
+		[
+			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
+		];
+		com.setMainBtn3(wfm_mainBtn, btnOptions);
+			
+		com.executeSubmission(sub_searchItem);				
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	scwin.fusionChart = function(row){
+	debugger;
+		dlt_BRT_CHART_INFO.removeAll();
+		var sttnNm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(row, "NODE_NM");
+		
+		/*var rowData = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getDataRow(row);
+		
+		var rowData = dlt_VIEW_OPER_PL_NODE_INFO.getDataRow(row);
+		
+		var arrvTm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(row, "ARRV_TM");
+		var nodeSn = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(row, "NODE_SN");
+		
+		dlt_CHART_INFO.setCellData(row, "NODE_NM", sttnNm);
+		dlt_CHART_INFO.setCellData(row, "ARRV_TM", arrvTm);
+		dlt_CHART_INFO.setCellData(row, "NODE_SN", nodeSn);*/
+		
+
+		
+		var old_open_sn = -1;
+
+		var chartindex = 0;
+		var rowCntArr = dlt_BRT_OPER_ALLOC_PL_NODE_CNT.getAllJSON();
+		var allData = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
+		var rowIndex = 0;
+		var rowCnt = 0;
+		var maxCnt = 0;
+		//var j = 0;
+		var rowCntLength = rowCntArr.length;
+		debugger;
+		for(var i = 0; i < 50; i++) {
+			if(maxCnt < rowCntArr[i].CNT)maxCnt = rowCntArr[i].CNT;
+			rowCnt =  rowCntArr[i].CNT;
+			debugger;
+			for(var j = 0; j < rowCnt; j++) {
+				if(j==0||j==rowCnt-1){
+					if(j==0)chartindex= 0;
+				 	var arrvTm = allData[rowIndex+j].ARRV_TM.substring(0,5);
+					var dprtTm = allData[rowIndex+j].DPRT_TM.substring(0,5);
+					var nodeNm = allData[rowIndex+j].NODE_NM + "(" + allData[rowIndex+j].OPER_SN + "회)";
+					var index = dlt_BRT_CHART_INFO.insertRow(rowIndex+j);
+					dlt_BRT_CHART_INFO.setCellData(index, "INDEX", chartindex);
+					dlt_BRT_CHART_INFO.setCellData(index, "ARRV_TM", arrvTm);
+					//dlt_BRT_CHART_INFO.setCellData(index, "DPRT_TM", dprtTm);
+					dlt_BRT_CHART_INFO.setCellData(index, "NODE_NM", nodeNm);
+					chartindex++;
+				}
+				else{
+					var arrvTm = allData[rowIndex+j].ARRV_TM.substring(0,5);
+					var dprtTm = allData[rowIndex+j].DPRT_TM.substring(0,5);
+					var nodeNm = allData[rowIndex+j].NODE_NM + "(" + allData[rowIndex+j].OPER_SN + "회)";
+					var index = dlt_BRT_CHART_INFO.insertRow(rowIndex+j);
+					dlt_BRT_CHART_INFO.setCellData(index, "INDEX", chartindex);
+					dlt_BRT_CHART_INFO.setCellData(index, "ARRV_TM", arrvTm);
+					//dlt_BRT_CHART_INFO.setCellData(index, "DPRT_TM", dprtTm);
+					dlt_BRT_CHART_INFO.setCellData(index, "NODE_NM", nodeNm);
+					chartindex++;
+				}
+			}
+			rowIndex += rowCnt;
+			if(i>=rowCntArr.length-1)break;
+		}
+		
+		var options = { 
+			labelStep:"50"		
+		    ,xAxisName:"시간"
+		    ,yAxisName:"노선"
+		    //,rotateLabels: "0"
+      		,labelDisplay: "wrap"
+      		,canvasPadding: "30"
+      		,xAxisValueDecimals: "5"
+      		//,numberSuffix: "/"+sttnNm
+      		,lineColor: "#f56363"
+      		,valuePadding: "50"
+      		,labelPadding: "20"
+      		//,showLegend: "1"
+		}
+		
+		debugger;
+		CHART.setChartColumnSimpleRef("data:dlt_BRT_CHART_INFO", "ARRV_TM", null, "INDEX");
+		CHART.setChartAttribute(options);		
+		
+		//AL0203CHT0.setChartColumnSimpleRef("data:dlt_BRT_OPER_ALLOC_PL_NODE_INFO", "ARRV_TM", null, "NODE_SN");
+		
+		
+		//AL0203CHT0.setChartColumnRef("data:dlt_BRT_OPER_ALLOC_PL_NODE_INFO", "ARRV_TM");
+		//AL0203CHT0.setJSONData();
+        //AL0203CHT0.draw();
+	
+	}
+	
+	
+	scwin.sub_routList_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+			com.excludeItemsByGrid(routListGrid, scwin.param.data, "ROUT_ID");
+		}		
+	};
+	
+	
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+				<xf:group class="gr_search" id="" style="">
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="검색항목"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="대표노선ID 또는 대표노선명"></xf:input>
+						<xf:select id="NullData" selectedIndex="-1" appearance="full" style="margin-left: 10px;float: left;margin-top: 2px;"
+							ev:onviewchange="scwin.NullData_onviewchange" cols="" rows="" ref="">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[데이터없음]]></xf:label>
+									<xf:value><![CDATA[Y]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select>					
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group>
+			<xf:group style="" id="" class="popup_content">
+				<w2:fusionchart accessibility="false" drawType="javascript" runflashAt="IE6,IE7,IE8" seriesType="simple"
+						chartType="MSLine" style="width: auto; height: 290px;" id="CHART" ref="" 
+						labelNode="" valueNode="" seriesNode="">
+				</w2:fusionchart>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

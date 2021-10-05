@@ -42,13 +42,21 @@ public class SI0402Service extends ServiceSupport {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;
+		boolean isLinkChange = false; //링크가 추가되거나, 변경되었는지 체크
 		
 		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
 		
 		List<Map<String, Object>> param = getSimpleList("dlt_BMS_ROUT_NODE_CMPSTN");
+		
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
+				
+				//링크가 추가되거나, 변경되었는지 체크
+				if(CommonUtil.notEmpty(data.get("NODE_SN"))&&CommonUtil.notEmpty(data.get("OLD_NODE_SN"))&&
+						(data.get("NODE_SN").equals(data.get("OLD_NODE_SN"))==false)) {
+					isLinkChange = true;
+				}
 				
 				String rowStatus = (String) data.get("rowStatus");
 				
@@ -143,7 +151,8 @@ public class SI0402Service extends ServiceSupport {
 				}
 			}
 			
-			if(param.size()>0) {
+			//링크가 변경되었을때 링크를 재 구성함
+			if((isLinkChange==true)&&(param.size()>0)) {
 				int sttnCnt = 0;
 				double routLen = 0;
 				si0402Mapper.SI0402G1DA1(map);
