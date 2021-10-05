@@ -147,7 +147,7 @@
 		var subOptions = {
 			SAVE:[{cbFnc:scwin.subGridUp, nm:"상",class:"up"},{cbFnc:scwin.subGridDown,nm:"하",class:"down"}]
 			, DEL:scwin.btn_sub_del
-			, SEARCH: {mode:"auto"}
+			, SEARCH: scwin.btn_sub_move
 		};
 		
 		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
@@ -217,34 +217,36 @@
 	};
 	
 	scwin.SI0402G1_onviewchange = function(info) {
-		
-		oldNodeType = info.oldValue;
-		
-		if (info.newValue == "NT005") {
-			com.alert("버텍스로 변경 할수 없습니다.");
-			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE", oldNodeType);
-			return;
-		}
-		
-		if (info.newValue == "NT006") {
-			com.alert("음성노드는 음성 편성에서만 선택할 수 있습니다.");
-			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE", oldNodeType);
-			return;
-		}
-		
-		if ((info.newValue == "NT001") || (info.newValue == "NT002")) { //교차로, 정류소 선택
-			if(info.newValue == "NT002"){
-				scwin.select_sttn(false);
+
+		if(info.colIndex == 2){
+			oldNodeType = info.oldValue;
+			
+			if (info.newValue == "NT005") {
+				com.alert("버텍스로 변경 할수 없습니다.");
+				dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE", oldNodeType);
+				return;
 			}
-			else if(info.newValue == "NT001"){
-				scwin.select_cross(false);
+			
+			if (info.newValue == "NT006") {
+				com.alert("음성노드는 음성 편성에서만 선택할 수 있습니다.");
+				dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE", oldNodeType);
+				return;
 			}
-		}
-		else { //정류소가 아니면 정류소 정보 초기화, 교차로가 아니면 교차로 정보 초기화
-			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(), "NODE_NM", "노드_" + util.getCurrentDate().substring(4));
-			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(), "CRS_ID", "");
-			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(), "STTN_ID", "");
-			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(), "STTN_NO", "");
+			
+			if ((info.newValue == "NT001") || (info.newValue == "NT002")) { //교차로, 정류소 선택
+				if(info.newValue == "NT002"){
+					scwin.select_sttn(false);
+				}
+				else if(info.newValue == "NT001"){
+					scwin.select_cross(false);
+				}
+			}
+			else { //정류소가 아니면 정류소 정보 초기화, 교차로가 아니면 교차로 정보 초기화
+				dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(), "NODE_NM", "노드_" + util.getCurrentDate().substring(4));
+				dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(), "CRS_ID", "");
+				dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(), "STTN_ID", "");
+				dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(), "STTN_NO", "");
+			}
 		}
 	}
 
@@ -517,6 +519,11 @@
 		
 		com.delGrid(SI0402G1);
 	};
+	
+	scwin.btn_sub_move = function() {
+		com.gridMove(SI0402G1, "NODE_ID,NODE_NM", dma_sub_search.get("CONTENT"), SI0402G1.getFocusedRowIndex());
+	};
+	
 	
 	/*scwin.insertNode = function(obj){
 		disp_check_all();
