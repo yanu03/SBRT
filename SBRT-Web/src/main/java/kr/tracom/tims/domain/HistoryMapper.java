@@ -13,4 +13,7 @@ public interface HistoryMapper {
 	//이벤트 이력 insert
 	int insertEventHistory(Map<String, Object> paramMap);
 	
+	//운행위반이력 insert
+	int insertOperVioltHistory(Map<String, Object> paramMap);
+
 }

@@ -51,6 +51,8 @@ public class EventRequest {
     	//쿼리용 파라미터 맵
     	Map<String, Object> paramMap = null;
     	
+    	Map<String, Object> vhcInfo = null;
+    	
         PlEventRequest request = (PlEventRequest) timsMessage.getPayload();
         
         //logger.info("================ handle Tims Message");
@@ -65,12 +67,12 @@ public class EventRequest {
                 	AtBusInfo busInfo = (AtBusInfo)atMessage.getAttrData();
                 	
                 	//insert to BRT_CUR_OPER_INFO
-                	Map<String, Object> busInfoMap = busInfo.toMap();               	
-               
+                	Map<String, Object> busInfoMap = busInfo.toMap();
+
                 	try {
-                		curInfoMapper.insertCurOperInfo(busInfoMap);
+                		insertCurOperInfo(busInfoMap);
                 	} catch (Exception e) {
-						// TODO: handle exception
+						//e.printStackTrace();
 					}
                 	
                 	
@@ -78,15 +80,19 @@ public class EventRequest {
                 	paramMap = new HashMap<>();
                 	paramMap.put("MNG_ID", sessionId);
 
-                	Map<String, Object> vhcInfoMap = timsMapper.selectVhcInfo(paramMap);
-                	Map<String, Object> dataMap =busInfo.toMap();
+                	vhcInfo = timsMapper.selectVhcInfo(paramMap);
+                	//Map<String, Object> dataMap =busInfo.toMap();
                 	
                 	wsDataMap = new HashMap<>();
                 	wsDataMap.put("ATTR_ID", attrId);
-                	wsDataMap.put("VHC_ID", vhcInfoMap.get("VHC_ID"));
-                	wsDataMap.put("DVC_ID", vhcInfoMap.get("DVC_ID"));
-                	wsDataMap.put("GPS_X", dataMap.get("LONGITUDE"));
-                	wsDataMap.put("GPS_Y", dataMap.get("LATITUDE"));
+                	wsDataMap.put("VHC_ID", vhcInfo.get("VHC_ID"));
+                	wsDataMap.put("DVC_ID", vhcInfo.get("DVC_ID"));
+                	wsDataMap.put("GPS_X", busInfoMap.get("LONGITUDE"));
+                	wsDataMap.put("GPS_Y", busInfoMap.get("LATITUDE"));
+                	wsDataMap.put("NEXT_NODE_ID", busInfoMap.get("NEXT_NODE_ID"));
+                	wsDataMap.put("NEXT_NODE_NM", busInfoMap.get("NEXT_NODE_NM"));
+                	wsDataMap.put("NEXT_NODE_TYPE", busInfoMap.get("NEXT_NODE_TYPE"));
+                	
                 	
                 	
                     break;
@@ -135,107 +141,132 @@ public class EventRequest {
                 case BrtAtCode.BUS_OPER_EVENT: //운행 이벤트 정보
                 	//이벤트 이력정보에 insert
                 	
+                	 String eventNm = "";
+                	 String eventData = "";
                 	 AtBusOperEvent busEvent = (AtBusOperEvent)atMessage.getAttrData();            	
                 	 
                 	 byte eventCode = busEvent.getEventCode();
-                	 Map<String, Object> busEventMap = busEvent.toMap();        
-                	 
+                	 Map<String, Object> busEventMap = busEvent.toMap();                        	 
                  		
 
                 	 try {
-                		 historyMapper.insertEventHistory(busEventMap); //이력 insert
-                		 
                 		 //현재운행정보도 업데이트
-                		 curInfoMapper.insertCurOperInfo(busEventMap);
+                		 insertCurOperInfo(busEventMap);
+                		 
+                		 historyMapper.insertEventHistory(busEventMap); //이력 insert                		 
                 		 
                 	 } catch (Exception e) {
-                		 // TODO: handle exception
+                		 //e.printStackTrace();
                 	 }
 
                      switch(eventCode){
-                         //운행 이벤트
-                         case 0x01: //정류장 도착
-                             //TODO:정류장정차시간 Dispatch
-                             break;
+                     /** 운행 이벤트 **/
+                     case 0x01: //정류장 도착
+                     case 0x03: //기점 도착
+                     case 0x05: //종점 도착
+                     case 0x02: //정류장 출발
+                     case 0x04: //기점 출발
+                     case 0x06: //종점 출발
+                     case 0x07: //노드 통과
+                         //통플에서 정류장통과시에도 노드 통과 이벤트를 준다?
+                         //brtMapper.insertLinkSpeed(busEventMap);
+                     case 0x08: //음성 출력
+                     /**특정 이벤트 **/
+                     case 0x11: //문 열림
+                     case 0x12: //문 닫힘
+                    	 
+                    	 paramMap = new HashMap<>();
+                    	 paramMap.put("COL", "DL_CD_NM");
+                    	 paramMap.put("CO_CD", "OPER_EVT_TYPE");
+                    	 paramMap.put("COL3", "NUM_VAL4");
+                    	 paramMap.put("COL_VAL3", (int)eventCode);
+                    	 
+                    	 eventNm = commonMapper.selectDlCdCol(paramMap);
+                    	 
+                    	 //eventDesc = timsMapper.selectNodeInfo(paramMap);
+                    	 
+                         break;
 
-                         case 0x02: //정류장 출발
+                     /** 운행위반 이벤트 **/
+                     case 0x21: //무정차 주행
+                     case 0x22: //과속 주행
+                     case 0x23: //급가속
+                     case 0x24: //급감속
+                     case 0x25: //급출발
+                     case 0x26: //급정지
+                     case 0x27: //개문주행
+                     case 0x28: //노선이탈
+                         logger.info("운행위반 발생!! [IMP ID : " + busEvent.getImpId() + "]");
+                         
+                         eventNm = "운행위반";
+                         
+                         paramMap = new HashMap<>();
+                    	 paramMap.put("COL", "DL_CD_NM");
+                    	 paramMap.put("CO_CD", "VIOLT_TYPE");
+                    	 paramMap.put("COL3", "NUM_VAL4");
+                    	 paramMap.put("COL_VAL3", (int)eventCode);
+                    	 
+                         try {
+                        	 eventData = commonMapper.selectDlCdCol(paramMap);
+                        	 
+                    		 historyMapper.insertOperVioltHistory(busEventMap); //운행위반이력 insert                    		 
+                    	 } catch (Exception e) {
+                    		 e.printStackTrace();
+                    	 }
+                         
+                         
+                         break;
 
-                             break;
-
-                         case 0x03: //기점 도착
-                             break;
-
-                         case 0x04: //기점 출발
-                             break;
-
-                         case 0x05: //종점 도착
-                             break;
-
-                         case 0x06: //종점 출발
-                             break;
-
-                         case 0x07: //노드 통과
-                             //TODO: 링크속도 계산
-
-                             break;
-
-                         case 0x08: //가상지점 통과
-                             break;
-
-                         /**특정 이벤트 **/
-                         case 0x11: //단말기 시동
-                             break;
-
-                         case 0x12: //단말기 종료
-                             break;
-
-                         case 0x13: //문 열림
-                             break;
-
-                         case 0x14: //문 닫힘
-                             break;
-
-                         /** 운행위반 이벤트 **/
-                         case 0x21: //무정차 주행
-                             break;
-
-                         case 0x22: //과속 주행
-                             break;
-
-                         case 0x23: //장기과속 주행
-                             break;
-
-                         case 0x24: //회차 위반
-                             break;
-
-                         case 0x25: //급가속
-                             break;
-
-                         case 0x26: //급감속
-                             break;
-
-                         case 0x27: //급출발
-                             break;
-
-                         case 0x28: //급정지
-                             break;
-
-                         case 0x29: //개문주행
-                             break;
-
-                         /** 돌발 **/
-
-                         case 0x31: //차량 고장
-                         case 0x32: //차량 사고
-                         case 0x33: //차내 폭력 사고
-                         case 0x34: //강도
-                         case 0x35: //테러
-
-                             break;
+                     /** 돌발 **/
+                     case 0x31: //차량 고장
+                     case 0x32: //차량 사고
+                     case 0x33: //차내 폭력 사고
+                     case 0x34: //강도
+                     case 0x35: //테러
+                         logger.info("돌발 발생!! [IMP ID : " + busEvent.getImpId() + "]");
+                         
+                         eventNm = "돌발";
+                         
+                         
+                         paramMap = new HashMap<>();
+                    	 paramMap.put("COL", "DL_CD_NM");
+                    	 paramMap.put("CO_CD", "INCDNT_TYPE");
+                    	 paramMap.put("COL3", "NUM_VAL4");
+                    	 paramMap.put("COL_VAL3", (int)eventCode);
+                         
+                         try {
+                        	 eventData = commonMapper.selectDlCdCol(paramMap);
+                        	 
+                    		 curInfoMapper.insertIncidentInfo(busEventMap); //돌발정보 insert                    		 
+                    	 } catch (Exception e) {
+                    		 e.printStackTrace();
+                    	 }
+                         
+                         break;
 
 
                      }
 
+                     
+                     
+                 	//모니터링용 웹소켓 데이터
+                 	paramMap = new HashMap<>();
+                 	paramMap.put("MNG_ID", sessionId);
+
+                 	vhcInfo = timsMapper.selectVhcInfo(paramMap);
+                 	//Map<String, Object> dataMap =busInfo.toMap();
+                 	
+                 	wsDataMap = new HashMap<>();
+                 	wsDataMap.put("ATTR_ID", attrId);
+                 	wsDataMap.put("VHC_ID", vhcInfo.get("VHC_ID"));
+                 	wsDataMap.put("DVC_ID", vhcInfo.get("DVC_ID"));
+                 	wsDataMap.put("GPS_X", busEventMap.get("LONGITUDE"));
+                 	wsDataMap.put("GPS_Y", busEventMap.get("LATITUDE"));
+                 	wsDataMap.put("NEXT_NODE_ID", busEventMap.get("NEXT_NODE_ID"));
+                 	wsDataMap.put("NEXT_NODE_NM", busEventMap.get("NEXT_NODE_NM"));
+                 	wsDataMap.put("NEXT_NODE_TYPE", busEventMap.get("NEXT_NODE_TYPE"));
+                 	wsDataMap.put("EVT_NM", eventNm);
+                 	wsDataMap.put("EVT_DATA", eventData);
                 	
                     
                     break;                    
@@ -254,7 +285,7 @@ public class EventRequest {
                 		paramMap = new HashMap<>();
                 		paramMap.put("MNG_ID", sessionId);
                 		
-                		Map<String, Object> vhcInfo = timsMapper.selectVhcInfo(paramMap);
+                		vhcInfo = timsMapper.selectVhcInfo(paramMap);
                 		String vhcId = String.valueOf(vhcInfo.get("VHC_ID"));
                 		
                 		
@@ -316,6 +347,33 @@ public class EventRequest {
         
         
         return wsDataMap;
+    }
+    
+    
+    Map<String, Object> getNextNodeInfo(Map<String, Object> curOperInfo) {
+    	
+    	//다음노드(교차로 or 정류소)
+    	Map<String, Object> nextNodeInfo = timsMapper.selectNextSttnCrsInfo(curOperInfo);
+    	
+		
+		return nextNodeInfo;
+    	
+    }
+    
+    private int insertCurOperInfo(Map<String, Object> curOperInfo) throws Exception {
+    	
+    	//다음노드(교차로 or 정류소)
+    	Map<String, Object> nextNodeInfo = timsMapper.selectNextSttnCrsInfo(curOperInfo);
+    	
+		String nextNodeId = nextNodeInfo.get("NODE_ID").toString();
+		String nextNodeNm = nextNodeInfo.get("NODE_NM").toString();
+		String nextNodeType = nextNodeInfo.get("NODE_TYPE").toString();
+		
+		curOperInfo.put("NEXT_NODE_ID", nextNodeId);
+		curOperInfo.put("NEXT_NODE_NM", nextNodeNm); 
+		curOperInfo.put("NEXT_NODE_TYPE", nextNodeType);
+    	
+    	return curInfoMapper.insertCurOperInfo(curOperInfo);
     }
     
     
