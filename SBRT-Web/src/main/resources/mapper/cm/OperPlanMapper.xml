@@ -360,7 +360,10 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,#{OPER_SN}
             ,#{OCR_DTM}
             ,#{UPD_DTM}
-        );
+        )
+   		ON DUPLICATE KEY UPDATE
+			OCR_DTM = VALUES(OCR_DTM)	
+			,UPD_DTM = VALUES(UPD_DTM);
     </insert>
 
 
