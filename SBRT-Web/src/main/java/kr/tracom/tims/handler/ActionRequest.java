@@ -92,8 +92,6 @@ public class ActionRequest {
             		
             		//변경운행 생성 후 완료 전송
             		//logger.info("======== 변경운행 생성완료 : {}", operPlanList);
-            		
-            		//정류장정보 요청 데이터 생성
             		AtBrtAction brtRequest = new AtBrtAction();
 
             		brtRequest.setActionCode(AtBrtAction.changeOperResponse);
@@ -104,9 +102,7 @@ public class ActionRequest {
                     TimsMessageBuilder builder = new TimsMessageBuilder(timsConfig);
                     TimsMessage tMessage = builder.actionRequest(brtRequest);
                     
-                    //정류장정보 요청 전송
                     kafkaProducer.sendKafka(KafkaTopics.T_BRT, tMessage, "");	
-            		
             		
 
             	} else {
