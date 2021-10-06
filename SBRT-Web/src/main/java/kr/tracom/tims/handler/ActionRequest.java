@@ -95,6 +95,7 @@ public class ActionRequest {
             		AtBrtAction brtRequest = new AtBrtAction();
 
             		brtRequest.setActionCode(AtBrtAction.changeOperResponse);
+            		brtRequest.setReserved(actionData);
             		//brtRequest.setData();
 
                     
