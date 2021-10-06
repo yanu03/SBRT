@@ -1007,5 +1007,9 @@ public class OperPlanService extends ServiceSupport {
 		return chgPlList;
 		
 	}
+	public List<Map<String, Object>> selectOperPlanRout() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return operPlanMapper.selectOperPlanRout(map);
+	}
 
 }

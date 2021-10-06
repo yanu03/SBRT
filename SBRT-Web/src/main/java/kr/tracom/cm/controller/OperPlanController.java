@@ -23,12 +23,15 @@ public class OperPlanController extends ControllerSupport {
 	@Autowired
 	private OperPlanService operPlanService;
 	
-	
 	@RequestMapping("/operPlan/selectOperPlanRoutList")
-	public @ResponseBody Map<String, Object> selectSttnList() throws Exception {
+	public @ResponseBody Map<String, Object> selectOperPlanRoutList() throws Exception {
 		result.setData("dlt_BRT_OPER_PL_ROUT_INFO", operPlanService.selectOperPlanRoutList());
 		return result.getResult();
 	}
 
-	
+	@RequestMapping("/operPlan/selectOperPlanRout")
+	public @ResponseBody Map<String, Object> selectOperPlanRout() throws Exception {
+		result.setData("dlt_BRT_OPER_PL_ROUT_INFO", operPlanService.selectOperPlanRout());
+		return result.getResult();
+	}
 }

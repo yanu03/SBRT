@@ -66,6 +66,7 @@
 						<w2:column id="DAY_DIV" name="요일구분" dataType="text"></w2:column>
 						<w2:column id="WAY_DIV" name="상하행구분" dataType="text"></w2:column>
 						<w2:column id="OPER_SN" name="운행순번" dataType="text"></w2:column>
+						<w2:column id="OLD_OPER_SN" name="이전운행순번" dataType="text"></w2:column>
 						<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
 						<w2:column id="ROUT_ST_TM" name="노선시작시간" dataType="text"></w2:column>
 						<w2:column id="ROUT_ED_TM" name="노선종료시간" dataType="text"></w2:column>
@@ -87,13 +88,19 @@
 						<w2:key id="DAY_DIV" name="요일구분" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_AL0201G0R0" ref="data:json,dma_search" target="data:json,dlt_BRT_OPER_PL_MST" action="/al/AL0201G0R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_AL0201G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_AL0201SHI0" ref="" target="data:json,dlt_searchitem" action="/al/AL0201SHI0" method="post"
+			<xf:submission id="sub_AL0201SHI0" ref="" target="data:json,dlt_searchitem" action="/repRout/selectRepRoutItem" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -139,13 +146,13 @@
 		};
 	
 		var mainOptions = {
-			PLAY:{cbFnc:scwin.btn_auto_onclick, nm:"자동",class:"play"},
+			PLAY:{cbFnc:scwin.btn_auto_onclick, nm:"자동",class:"autoApply"}
 		};
 		
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions, mainOptions);
 
 		var subOptions = {
-			ADD: [{cbFnc:scwin.btn_sub_add_onclick,nm:"추가",class:"add"}], DEL:{}, CNL:{}, EXL:{}, PLAY:{cbFnc:scwin.btn_sub_auto_onclick,nm:"자동",class:"auto"}
+			ADD: [{cbFnc:scwin.btn_sub_add_onclick,nm:"추가",class:"add"}], DEL:[{cbFnc:scwin.btn_sub_del_onclick,nm:"삭제",class:"add"}], CNL:{}, EXL:{} //, PLAY:{cbFnc:scwin.btn_sub_auto_onclick,nm:"자동",class:"autoApply"}
 		};
 		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);	
 		
@@ -156,6 +163,7 @@
 				com.searchGrid(AL0201G0,sub_AL0201G0R0);
 		});
 		
+		com.executeSubmission(sub_AL0201SHI0);
 		//AL0201G0.mergeCells("byrestriccol");
 	};
 
@@ -203,6 +211,8 @@
 				oldRoutStTm = routStTm;
 				
 			}
+			
+			dlt_BRT_OPER_PL_MST.setCellData(AL0201G0.getFocusedRowIndex(), "OPER_CNT", dlt_BRT_OPER_PL_ROUT_INFO.getRowCount());
 		}
 	}
 
@@ -319,7 +329,7 @@
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
 		
 		if (info.newValue == "ALL") {
-			acb_autoChoiceBox.hide();
+			autoChoiceBox.hide();
 			search_input.setValue("");
 			search_input.show("");
 		} else if (info.newValue == "REP_ROUT_ID") {
@@ -333,12 +343,34 @@
 		}
 	};
 	
-	scwin.btn_sub_add_onclick = function() {
-		var rowCnt = dlt_BRT_OPER_PL_ROUT_INFO.getRowCount();
-		dlt_BRT_OPER_PL_MST.setCellData(AL0201G0.getFocusedRowIndex(), "OPER_CNT", rowCnt+1);
+	
+	scwin.btn_sub_del_onclick = function() {
+		com.delGrid(AL0201G1,null,scwin.btn_sub_del_cb);
+	}
+	
+	scwin.btn_sub_del_cb = function() {
+		var operCnt = com.setSerialNumberToData(AL0201G1,"OPER_SN");
+		dlt_BRT_OPER_PL_MST.setCellData(AL0201G0.getFocusedRowIndex(), "OPER_CNT", operCnt);
 		
+		var fstTm = dlt_BRT_OPER_PL_ROUT_INFO.getCellData(0, "ROUT_ST_TM");
+		var lstTm = dlt_BRT_OPER_PL_ROUT_INFO.getCellData(operCnt-1, "ROUT_ST_TM");
+		
+		dlt_BRT_OPER_PL_MST.setCellData(AL0201G0.getFocusedRowIndex(), "FST_TM", fstTm);
+		dlt_BRT_OPER_PL_MST.setCellData(AL0201G0.getFocusedRowIndex(), "LST_TM", lstTm);
+	}
+	
+	scwin.btn_sub_add_onclick = function() {
 		var insertIndex = dlt_BRT_OPER_PL_ROUT_INFO.insertRow();
-		dlt_BRT_OPER_PL_ROUT_INFO.setCellData(insertIndex, "OPER_SN", operCnt+1);
+		var brtOperPlMst = dlt_BRT_OPER_PL_MST.getAllJSON()[AL0201G0.getFocusedRowIndex()];
+		var operCnt = com.setSerialNumberToData(AL0201G1,"OPER_SN");
+		
+		dlt_BRT_OPER_PL_ROUT_INFO.setCellData(insertIndex, "REP_ROUT_ID", brtOperPlMst.REP_ROUT_ID);
+		dlt_BRT_OPER_PL_ROUT_INFO.setCellData(insertIndex, "WAY_DIV", brtOperPlMst.WAY_DIV);
+		dlt_BRT_OPER_PL_ROUT_INFO.setCellData(insertIndex, "DAY_DIV", brtOperPlMst.DAY_DIV);
+		dlt_BRT_OPER_PL_ROUT_INFO.setCellData(insertIndex, "OPER_CNT", operCnt);
+
+		dlt_BRT_OPER_PL_MST.setCellData(AL0201G0.getFocusedRowIndex(), "REP_ROUT_ID", operCnt);
+		
 		AL0201G1.setFocusedCell(insertIndex, "OPER_SN", true);
 	}	
 	
@@ -435,7 +467,6 @@
 		}
 		
 		if (info.colID == "OPER_INTV") {
-			debugger;
 			var operIntv = "";
 			var routStTm = "";
 			var routStTm2 = "";
@@ -508,7 +539,7 @@
 							class="search_auto" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
 							<w2:choices>
 								<w2:itemset nodeset="data:dlt_searchitem">
-									<w2:label ref="대표노선ID"></w2:label>
+									<w2:label ref="REP_ROUT_NM"></w2:label>
 									<w2:value ref="REP_ROUT_ID"></w2:value>
 								</w2:itemset>
 							</w2:choices>
@@ -682,36 +713,36 @@
 						<w2:gridView ignoreCellClick="false" autoFit="allColumn" rowStatusWidth="40" visibleRowNum="" class="cm_grid right AL0201G1"
 							fixedColumnWithHidden="true" dataList="dlt_BRT_OPER_PL_ROUT_INFO" id="AL0201G1" readOnly="" style=""
 							scrollByColumn="false" useShiftKey="true" rowStatusVisible="false" rowStatusHeaderValue="상태" 
-							rowNumHeaderValue="운행 순번" rowNumVisible="true" rowNumStatusUniqueId="" rowNumStatusResize="" ev:oneditkeyup="scwin.AL0201G1_oneditkeyup" >
+							rowNumHeaderValue="순번" rowNumVisible="true" rowNumStatusUniqueId="" rowNumStatusResize="" ev:oneditkeyup="scwin.AL0201G1_oneditkeyup" >
 							<w2:header id="header1" style="">
 								<w2:row id="row2" style="">
-									<!-- <w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column21"
+									<w2:column removeBorderStyle="false" width="40" inputType="text" style="height:20px" id="column21"
 										value="운행순번" blockSelect="false" displayMode="label">
-									</w2:column> -->
+									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column21"
 										value="노선시작(시분)" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column22"
 										value="노선종료(시분)" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column23"
+									<w2:column removeBorderStyle="false" width="65" inputType="text" style="height:20px" id="column23"
 										value="운행간격(분)" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column24"
+									<w2:column removeBorderStyle="false" width="65" inputType="text" style="height:20px" id="column24"
 										value="운행시간(시분)" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
 							</w2:header>
 							<w2:gBody id="gBody4" style="">
 								<w2:row id="row5" style="">
-									<!-- <w2:column id="OPER_SN" blockSelect="false" style="height:20px;" width="" inputType="text"
+									<w2:column id="OPER_SN" blockSelect="false" style="height:20px;" width="" inputType="text"
 										displayMode="label">
-									</w2:column> -->
+									</w2:column>
 									<w2:column id="ROUT_ST_TM" blockSelect="false" style="height:20px" width="" inputType="text"
-										displayMode="label" allowChar="0-9 :" customFormatter="com.transTime2">
+										displayMode="label" allowChar="0-9 :" customFormatter="com.transTime2" userData1="M">
 									</w2:column>
 									<w2:column id="ROUT_ED_TM" blockSelect="false" style="height:20px" width="" inputType="text"
-										displayMode="label" allowChar="0-9 :" customFormatter="com.transTime2">
+										displayMode="label" allowChar="0-9 :" customFormatter="com.transTime2" userData1="M">
 									</w2:column>
 									<w2:column id="OPER_INTV" blockSelect="false" style="height:20px;" width="" inputType="text"
 										displayMode="label">
