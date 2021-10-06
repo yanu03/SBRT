@@ -11,21 +11,312 @@
 				<data xmlns=""/>
 			</xf:instance>
 			<w2:dataCollection baseNode="map">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_CUR_OPER_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
+						<w2:column id="BUS_STS" name="차량상태" dataType="text"></w2:column>
+						<w2:column id="PRV_PLCE_NM" name="이전장소명" dataType="text"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="date"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_NEWS_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="PROV_NM" name="제공처명" dataType="text"></w2:column>
+						<w2:column id="NEWS_TITLE" name="뉴스제목" dataType="text"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="date"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="list" repeatNode="map" id="dma_BMS_WEAT_INFO" saveRemovedData="true">
+					<w2:keyInfo>
+						<w2:key id="SKY_COND" name="하늘상태" dataType="text"></w2:key>
+						<w2:key id="TEMPC" name="온도" dataType="text"></w2:key>
+						<w2:key id="HUMI" name="습도" dataType="text"></w2:key>
+						<w2:key id="DUSTC" name="미세먼지농도" dataType="text"></w2:key>
+						<w2:key id="OZONEC" name="오존농도" dataType="text"></w2:key>
+						<w2:key id="NDC" name="이산화질소농도" dataType="text"></w2:key>
+						<w2:key id="CMC" name="일산화탄소농도" dataType="text"></w2:key>
+						<w2:key id="SDC" name="아황산가스농도" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
 			</w2:dataCollection>
-			<w2:workflowCollection>
-			</w2:workflowCollection>->
+			<w2:workflowCollection></w2:workflowCollection>
+			->
+			<xf:submission id="sub_bmsMainG0R0" ref="" target="data:json,dlt_BRT_CUR_OPER_INFO" action="/bm/bmsMainG0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="scwin.sub_bmsMainG0R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_bmsMainG1R0" ref="" target="data:json,dlt_BMS_NEWS_INFO" action="/bm/bmsMainG1" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="scwin.sub_bmsMainG1R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_bmsMainF0R0" ref="" target="data:json,dma_BMS_WEAT_INFO" action="/bm/bmsMainF0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="scwin.sub_bmsMainF0R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_bmsMainF1R0" ref="" target="data:json,dma_BMS_WEAT_INFO" action="/bm/bmsMainF1" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="scwin.sub_bmsMainF1R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
 		</xf:model>
+		<style>
+		.bmsMainG1 tbody tr td nobr {
+			word-wrap: break-word;
+			white-space : normal;
+			margin-left: 5px;
+		}
+		
+	</style>
 		<script type="text/javascript" lazy="false"><![CDATA[
 
 	scwin.onpageload = function() {
+			
+			
+		var codeOptions = [ {code : "BUS_STS", compID : "bmsMainG0:BUS_STS" }
+		 ];
+		 
+		com.setCommonDtl(codeOptions, function() {
+			com.searchGrid(bmsMainG0, sub_bmsMainG0R0);
+		});
+		
+		$p.executeSubmission(sub_bmsMainG1R0);
+		$p.executeSubmission(sub_bmsMainF0R0);
+		$p.executeSubmission(sub_bmsMainF1R0);
+	
+	};
+	
+	scwin.transcompInfo = function(){
+		scwin.openMenu("운수사 정보 관리","/ui/BMS/SI0102/SI0102M01.xml", "MN00010102");
+	};
+	
+	scwin.vhcInfo = function(){
+		scwin.openMenu("차량관리","/ui/BMS/SI0200/SI0200M01.xml", "MN00010201");
+	};
+	
+	scwin.drvInfo = function(){
+		scwin.openMenu("운전자 관리","/ui/BMS/SI0300/SI0300M01.xml", "MN00010202");
+	};
+	
+	scwin.routInfo = function(){
+		scwin.openMenu("노선 경로정보 관리","/ui/BMS/SI0402/SI0402M01.xml", "MN00010604");
+	};
+	
+	//오픈메뉴
+	scwin.openMenu = function(menuNm, url, menuCode, paramObj, menuType) {
 
+		// client에서 url 숨기기 메뉴일 경우에는 새 창으로 띄우기 적용 
+		if (url == "/") {
+			var url = document.location.href + "/";
+			window.open(url, "", "width=1200, height=700, left=450, top=100");
+		} else {
+			menuCode = menuCode || "";
+			var layout = $p.top().scwin.getLayoutId();
+			var tmpUrl;
+			var menuCodeParm = menuCode;
+			var frameMode;	// "wframe", "iframe"
+			var favStatus;
+			var data;
+
+			if (url.indexOf("/") !== 0) {
+				url = "/" + url;
+			}
+			url = gcm.CONTEXT_PATH + url;
+			
+			if ((typeof paramObj !== "undefined") && (paramObj !== null)) {
+				data = paramObj;
+			} else {
+				data = {};
+			}
+			
+			data.menuNm = menuNm;
+			data.menuCode = menuCode;
+			data.favStatus = favStatus;
+			data.menuType = menuType;
+			
+			var _closable = true;
+			
+			var frameMode = "";
+			if (layout == "T") {
+				var tabObj = { closable : _closable, //main 페이지를 제외하고 탭 닫기 기능 제공
+							   openAction : "select", // exist 는 기존 탭을 갱신, new 는 항상 새로, select는 동일 id 가 존재하면 선택, last: 기존 tab을 마지막 tab으로 이동후 선택
+							   label : menuNm };
+				
+				if (com.getFrameMode()  === "wframe") {
+					frameMode = "wframePreload";
+				} else {
+					frameMode = "iframe";
+				}
+				
+				var contObj = {
+					frameMode : frameMode,
+					scope : true,
+					src : url,
+					alwaysDraw : false,
+					title : menuNm,
+					dataObject : {
+						type : "json", 
+						name : "param", 
+						data : data
+					}
+				};
+				var tabComp = $w.getComponentById("mf_tac_layout");
+				tabComp.addTab(menuCode, tabObj, contObj);
+
+				// tabObj의 openAction의 last값의 동작 특이 사항으로 선택이 되지 않은 경우 선택하는 로직 추가
+				if (tabComp.getSelectedTabID() !== menuCode) {
+					var tabIndex = tabComp.getTabIndex(menuCode);
+					if (tabIndex) {
+						tabComp.setSelectedTabIndex(tabIndex);
+					}
+				}
+			} else if (layout == "M") {
+				if (com.getFrameMode() === "wframe") {
+					frameMode = "wframe";
+				} else {
+					frameMode = "iframe";
+				}
+				
+				var options = {
+					title : menuNm,
+					src : url,
+					windowTitle : menuNm,
+					windowId : menuCode,
+					openAction : "existWindow",
+					frameMode : frameMode,
+					dataObject : { 
+						type : "json", 
+						name : "param", 
+						data : data
+					}
+				}
+				var wdcComp = $w.getComponentById("mf_wdc_main");
+				wdcComp.createWindow(options);
+			}
+		}
 	};
 	
 	scwin.onpageunload = function() {
 	
 	};
 	
-		]]></script>
+	
+	scwin.sub_bmsMainG0R0_submitdone = function(e) {
+		com.setFocusedCell(bmsMainG0, "VHC_NO");
+	};
+	
+	scwin.sub_bmsMainG1R0_submitdone = function(e) {
+		com.setFocusedCell(bmsMainG1, "PROV_NM");
+	};
+	
+	scwin.sub_bmsMainF0R0_submitdone = function(e) {
+		
+		var tPath = "/cm/images/bms/"
+		var fData = dma_BMS_WEAT_INFO.get("SKY_COND");
+		if (fData == "SC001"){
+			sunny_blur.setValue("맑음");
+			skyCond.setSrc(tPath + "SC001.png");
+		}else if(fData == "SC002"){
+			sunny_blur.setValue("구름조금");
+			skyCond.setSrc(tPath + "SC002.png");
+		}else if(fData == "SC003"){
+			sunny_blur.setValue("구름많음");
+			skyCond.setSrc(tPath + "SC003.png");
+		}else if(fData == "SC004"){
+			sunny_blur.setValue("흐림");
+			skyCond.setSrc(tPath + "SC004.png");
+		}else if(fData == "SC005"){
+			sunny_blur.setValue("비");
+			skyCond.setSrc(tPath + "SC005.png");
+		}else if(fData == "SC006"){
+			sunny_blur.setValue("눈/비");
+			skyCond.setSrc(tPath + "SC006.png");
+		}else if(fData == "SC007"){
+			sunny_blur.setValue("비/눈");
+			skyCond.setSrc(tPath + "SC007.png");
+		}else if(fData == "SC008"){
+			sunny_blur.setValue("눈");
+			skyCond.setSrc(tPath + "SC008.png");
+		}
+	};
+	
+	scwin.sub_bmsMainF1R0_submitdone = function(e) {
+		var dustc = dma_BMS_WEAT_INFO.get("DUSTC");
+		var ozon = dma_BMS_WEAT_INFO.get("OZONEC");
+		var ndc = dma_BMS_WEAT_INFO.get("NDC");
+		var cmc = dma_BMS_WEAT_INFO.get("CMC");
+		var sdc = dma_BMS_WEAT_INFO.get("SDC");
+		
+		if(dustc >= 0 && dustc < 31){
+			fine_dust_status.setValue("좋음");
+			dustIcon.setSrc("/cm/images/bms/good_icon.PNG");
+		}else if(dustc >= 31 && dustc < 81){
+			fine_dust_status.setValue("보통");
+			dustIcon.setSrc("/cm/images/bms/normal_icon.PNG");
+		}else if(dustc >= 81 && dustc < 151){
+			fine_dust_status.setValue("나쁨");
+			dustIcon.setSrc("/cm/images/bms/bad_icon.PNG");
+		}else if(dustc > 150){
+			fine_dust_status.setValue("매우나쁨");
+			dustIcon.setSrc("/cm/images/bms/bad_icon.PNG");
+		}
+		
+		if(ozon >= 0 && ozon < 0.030){
+			ozone_status.setValue("좋음");
+			ozoneIcon.setSrc("/cm/images/bms/good_icon.PNG");
+		}else if(ozon >= 0.030 && ozon < 0.090){
+			ozone_status.setValue("보통");
+			ozoneIcon.setSrc("/cm/images/bms/normal_icon.PNG");
+		}else if(ozon >= 0.090 && ozon < 0.150){
+			ozone_status.setValue("나쁨");
+			ozoneIcon.setSrc("/cm/images/bms/bad_icon.PNG");
+		}else if(ozon > 0.150){
+			ozone_status.setValue("매우나쁨");
+			ozoneIcon.setSrc("/cm/images/bms/bad_icon.PNG");
+		}
+		
+		if(ndc >= 0 && ndc < 0.03){
+			nitrogen_dioxide_status.setValue("좋음");
+			ndcIcon.setSrc("/cm/images/bms/good_icon.PNG");
+		}else if(ndc >= 0.03 && ndc < 0.06){
+			nitrogen_dioxide_status.setValue("보통");
+			ndcIcon.setSrc("/cm/images/bms/normal_icon.PNG");
+		}else if(ndc >= 0.061 && ndc < 0.2){
+			nitrogen_dioxide_status.setValue("나쁨");
+			ndcIcon.setSrc("/cm/images/bms/bad_icon.PNG");
+		}else if(ndc > 0.201){
+			nitrogen_dioxide_status.setValue("매우나쁨");
+			ndcIcon.setSrc("/cm/images/bms/bad_icon.PNG");
+		}
+		
+		if(cmc >= 0 && cmc < 2){
+			carbon_monoxide_status.setValue("좋음");
+			cmcIcon.setSrc("/cm/images/bms/good_icon.PNG");
+		}else if(cmc >= 2.01 && cmc < 9){
+			carbon_monoxide_status.setValue("보통");
+			cmcIcon.setSrc("/cm/images/bms/normal_icon.PNG");
+		}else if(cmc >= 9.01 && cmc < 15){
+			carbon_monoxide_status.setValue("나쁨");
+			cmcIcon.setSrc("/cm/images/bms/bad_icon.PNG");
+		}else if(cmc > 15.01){
+			carbon_monoxide_status.setValue("매우나쁨");
+			cmcIcon.setSrc("/cm/images/bms/bad_icon.PNG");
+		}
+		
+		if(sdc >= 0 && sdc < 0.02){
+			sulfur_dioxide_status.setValue("좋음");
+			sdcIcon.setSrc("/cm/images/bms/good_icon.PNG");
+		}else if(sdc >= 0.021 && sdc < 0.05){
+			sulfur_dioxide_status.setValue("보통");
+			sdcIcon.setSrc("/cm/images/bms/normal_icon.PNG");
+		}else if(sdc >= 0.051 && sdc < 0.15){
+			sulfur_dioxide_status.setValue("나쁨");
+			sdcIcon.setSrc("/cm/images/bms/bad_icon.PNG");
+		}else if(sdc > 0.151){
+			sulfur_dioxide_status.setValue("매우나쁨");
+			sdcIcon.setSrc("/cm/images/bms/bad_icon.PNG");
+		}
+	};
+	
+	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdc_main_container" style="">
@@ -38,21 +329,15 @@
 							<xf:group id="" class="bms_main_link" style="">
 								<xf:group class="" id="31" style="" tagname="ul">
 									<xf:group class="bms_transcomp" id="" style="" tagname="li">
-										<xf:group class="" id="" style="" tagname="a">
-											<w2:attributes>
-												<w2:href>#</w2:href>
-											</w2:attributes>
-											<xf:image class="main_icon" alt="운수사관리" id="" src="/cm/images/bms/transcomp_icon.PNG"></xf:image>
+										<xf:group class="" id="transcompInfo" style="" tagname="a" ev:onclick="scwin.transcompInfo">
+											<xf:image class="main_icon" alt="운수사 정보 관리" id="image1" src="/cm/images/bms/transcomp_icon.PNG"></xf:image>
 											<xf:group class="" id="" style="" tagname="">
-												<w2:textbox label="운수사관리" style="" id="" tagname="strong"></w2:textbox>
+												<w2:textbox label="운수사 정보 관리" style="" id="" tagname="strong"></w2:textbox>
 											</xf:group>
 										</xf:group>
 									</xf:group>
 									<xf:group class="bms_vehicle" id="" style="" tagname="li">
-										<xf:group class="" id="" style="" tagname="a">
-											<w2:attributes>
-												<w2:href>#</w2:href>
-											</w2:attributes>
+										<xf:group class="" id="vhcInfo" style="" tagname="a" ev:onclick="scwin.vhcInfo">
 											<xf:image class="main_icon" alt="차량관리" id="" src="/cm/images/bms/vehicle_icon.PNG"></xf:image>
 											<xf:group class="" id="" style="" tagname="">
 												<w2:textbox label="차량관리" style="" id="" tagname="strong"></w2:textbox>
@@ -60,24 +345,18 @@
 										</xf:group>
 									</xf:group>
 									<xf:group class="bms_driver" id="" style="" tagname="li">
-										<xf:group class="" id="" style="" tagname="a">
-											<w2:attributes>
-												<w2:href>#</w2:href>
-											</w2:attributes>
-											<xf:image class="main_icon" alt="운수사원관리" id="" src="/cm/images/bms/driver_icon.PNG"></xf:image>
+										<xf:group class="" id="drvInfo" style="" tagname="a" ev:onclick="scwin.drvInfo">
+											<xf:image class="main_icon" alt="운전자 관리" id="" src="/cm/images/bms/driver_icon.PNG"></xf:image>
 											<xf:group class="" id="" style="" tagname="">
-												<w2:textbox label="운수사원관리" style="" id="" tagname="strong"></w2:textbox>
+												<w2:textbox label="운전자 관리" style="" id="" tagname="strong"></w2:textbox>
 											</xf:group>
 										</xf:group>
 									</xf:group>
 									<xf:group class="bms_route" id="" style="" tagname="li">
-										<xf:group class="" id="" style="" tagname="a">
-											<w2:attributes>
-												<w2:href>#</w2:href>
-											</w2:attributes>
-											<xf:image class="main_icon" alt="노선관리" id="" src="/cm/images/bms/route_icon.PNG"></xf:image>
+										<xf:group class="" id="routInfo" style="" tagname="a" ev:onclick="scwin.routInfo">
+											<xf:image class="main_icon" alt="노선 경로정보 관리" id="" src="/cm/images/bms/route_icon.PNG"></xf:image>
 											<xf:group class="" id="" style="" tagname="">
-												<w2:textbox label="노선관리" style="" id="" tagname="strong"></w2:textbox>
+												<w2:textbox label="노선 경로정보 관리" style="" id="" tagname="strong"></w2:textbox>
 											</xf:group>
 										</xf:group>
 									</xf:group>
@@ -93,22 +372,22 @@
 									<w2:textbox class="df_tt fl" id="" label="오늘의 날씨" style=""></w2:textbox>
 								</xf:group>
 								<xf:group></xf:group>
-								
 								<xf:group id="" class="grdc_1f_25_1f" style="">
 									<xf:group style="" id="" class="bms_cont_left">
 										<xf:group style="" id="" class="bms_cont_lst" tagname="ul">
-											<xf:group style="" id="" class="weather_temp" tagname="li">
+											<xf:group style="" id="" class="" tagname="li">
 												<xf:group tagname="ul">
-													<xf:group tagname="li"></xf:group>
 													<xf:group class="repeat" tagname="li">
-														<w2:textbox label="맑음" style="" id="sunny_blur" tagname="strong"></w2:textbox>
+														<w2:textbox label="맑음" style="" id="sunny_blur" tagname="strong" ref="data:dma_BMS_WEAT_INFO.SKY_COND"></w2:textbox>
 													</xf:group>
 													<xf:group tagname="li">
-														<w2:anchor outerDiv="false" class="count" style="" id="temperature">
+														<w2:anchor outerDiv="false" class="count" style="" id="temperature"
+															ref="data:dma_BMS_WEAT_INFO.TEMPC" disabled="true">
 															<xf:label><![CDATA[31]]></xf:label>
 														</w2:anchor>
 														<w2:textbox label="℃" style="" id="" tagname="strong"></w2:textbox>
 													</xf:group>
+													<xf:image src="" style="width: 100px;height: 100px;" id="skyCond"></xf:image>
 												</xf:group>
 											</xf:group>
 											<xf:group style="" id="" class="weather_humid" tagname="li">
@@ -118,7 +397,7 @@
 														<w2:textbox label="습도" style="" id="" tagname="strong"></w2:textbox>
 													</xf:group>
 													<xf:group tagname="li">
-														<w2:anchor outerDiv="false" class="count" style="" id="humidity">
+														<w2:anchor outerDiv="false" class="count" style="" id="humidity" ref="data:dma_BMS_WEAT_INFO.HUMI" disabled="true">
 															<xf:label><![CDATA[31]]></xf:label>
 														</w2:anchor>
 														<w2:textbox label="%" style="" id="" tagname="strong"></w2:textbox>
@@ -136,15 +415,16 @@
 														<w2:textbox label="미세먼지" style="" id="" tagname="strong"></w2:textbox>
 													</xf:group>
 													<xf:group tagname="li">
-														<w2:anchor outerDiv="false" class="count" style="" id="fine_dust_val">
+														<w2:anchor outerDiv="false" class="count" style="" id="fine_dust_val" ref="data:dma_BMS_WEAT_INFO.DUSTC" disabled="true">
 															<xf:label><![CDATA[77]]></xf:label>
 														</w2:anchor>
 														<w2:textbox label="㎍/m³" style="" id="" tagname="strong"></w2:textbox>
 													</xf:group>
 													<xf:group class="air_status"  tagname="li">
-														<w2:textbox label="보통" style="" id="fine_dust_status" tagname="strong"></w2:textbox>
+														<w2:textbox label="보통" style="" id="fine_dust_status" tagname="strong" ref=""></w2:textbox>
 													</xf:group>
 													<xf:group class="air_icon" tagname="li">
+														<xf:image src="" style="width: 30px;height: 30px;" id="dustIcon"></xf:image>
 													</xf:group>
 												</xf:group>
 											</xf:group>
@@ -154,7 +434,7 @@
 														<w2:textbox label="오존 " style="" id="" tagname="strong"></w2:textbox>
 													</xf:group>
 													<xf:group tagname="li">
-														<w2:anchor outerDiv="false" class="count" style="" id="ozone_val">
+														<w2:anchor outerDiv="false" class="count" style="" id="ozone_val" ref="data:dma_BMS_WEAT_INFO.OZONEC" disabled="true">
 															<xf:label><![CDATA[77]]></xf:label>
 														</w2:anchor>
 														<w2:textbox label="㎍/m³" style="" id="" tagname="strong"></w2:textbox>
@@ -163,6 +443,7 @@
 														<w2:textbox label="보통" style="" id="ozone_status" tagname="strong"></w2:textbox>
 													</xf:group>
 													<xf:group class="air_icon" tagname="li">
+														<xf:image src="" style="width: 30px;height: 30px;" id="ozoneIcon"></xf:image>
 													</xf:group>
 												</xf:group>
 											</xf:group>
@@ -172,7 +453,7 @@
 														<w2:textbox label="이산화질소" style="" id="" tagname="strong"></w2:textbox>
 													</xf:group>
 													<xf:group tagname="li">
-														<w2:anchor outerDiv="false" class="count" style="" id="nitrogen_dioxide_val">
+														<w2:anchor outerDiv="false" class="count" style="" id="nitrogen_dioxide_val" ref="data:dma_BMS_WEAT_INFO.NDC" disabled="true">
 															<xf:label><![CDATA[77]]></xf:label>
 														</w2:anchor>
 														<w2:textbox label="ppm" style="" id="" tagname="strong"></w2:textbox>
@@ -181,6 +462,7 @@
 														<w2:textbox label="나쁨" style="" id="nitrogen_dioxide_status" tagname="strong"></w2:textbox>
 													</xf:group>
 													<xf:group class="air_icon" tagname="li">
+														<xf:image src="" style="width: 30px;height: 30px;" id="ndcIcon"></xf:image>
 													</xf:group>
 												</xf:group>
 											</xf:group>
@@ -190,7 +472,7 @@
 														<w2:textbox label="일산화탄소" style="" id="" tagname="strong"></w2:textbox>
 													</xf:group>
 													<xf:group tagname="li">
-														<w2:anchor outerDiv="false" class="count" style="" id="carbon_monoxide_val">
+														<w2:anchor outerDiv="false" class="count" style="" id="carbon_monoxide_val" ref="data:dma_BMS_WEAT_INFO.CMC" disabled="true">
 															<xf:label><![CDATA[77]]></xf:label>
 														</w2:anchor>
 														<w2:textbox label="ppm" style="" id="" tagname="strong"></w2:textbox>
@@ -199,6 +481,7 @@
 														<w2:textbox label="좋음" style="" id="carbon_monoxide_status" tagname="strong"></w2:textbox>
 													</xf:group>
 													<xf:group class="air_icon" tagname="li">
+														<xf:image src="" style="width: 30px;height: 30px;" id="cmcIcon"></xf:image>
 													</xf:group>
 												</xf:group>
 											</xf:group>
@@ -208,7 +491,7 @@
 														<w2:textbox label="아황산가스" style="" id="" tagname="strong"></w2:textbox>
 													</xf:group>
 													<xf:group tagname="li">
-														<w2:anchor outerDiv="false" class="count" style="" id="sulfur_dioxide_val">
+														<w2:anchor outerDiv="false" class="count" style="" id="sulfur_dioxide_val" ref="data:dma_BMS_WEAT_INFO.SDC" disabled="true">
 															<xf:label><![CDATA[77]]></xf:label>
 														</w2:anchor>
 														<w2:textbox label="ppm" style="" id="" tagname="strong"></w2:textbox>
@@ -217,6 +500,7 @@
 														<w2:textbox label="좋음" style="" id="sulfur_dioxide_status" tagname="strong"></w2:textbox>
 													</xf:group>
 													<xf:group class="air_icon" tagname="li">
+														<xf:image src="" style="width: 30px;height: 30px;" id="sdcIcon"></xf:image>
 													</xf:group>
 												</xf:group>
 											</xf:group>
@@ -229,49 +513,48 @@
 						<xf:group id="" class="grdc_bms_main_right_content" style="">
 							<xf:group id="" class="grdr_20_5_350" style="">
 								<xf:group class="defaultbox" id="" style="">
-									<w2:textbox class="df_tt fl" id="" label="Dispatch" style=""></w2:textbox>
+									<w2:textbox class="df_tt fl" id="" label="운행차량" style=""></w2:textbox>
 								</xf:group>
 								<xf:group></xf:group>
 								<xf:group id="" class="" style="">
-									<w2:gridView  alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle=""
-										class="cm_grid right" dataList="data:dlt_BRT_DSPTCH_LOG" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup=""
+									<w2:gridView  alwaysTriggerScrollStart="" autoFit="allColumn" captionTitle=""
+										class="cm_grid right" dataList="data:dlt_BRT_CUR_OPER_INFO" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup=""
 										ev:onkeyup="" ev:onrowindexchange="" ev:ontextimageclick="" ev:onviewchange=""
-										fixedColumnWithHidden="true" id="dispatch_grid" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true"
+										fixedColumnWithHidden="true" id="bmsMainG0" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true"
 										rowStatusHeaderValue="" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true"
 										visibleRowNum="" wheelRows="" autoFitMinWidth="0" disabledScrollHidden="" editModeEvent="" editModeEventIcon=""
 										checkEditableInputClass="" keyMoveEditMode="" moveKeyEditMode="" moveKeyEditModeAll="" ignoreNonEditableCellTabEnter=""
 										readOnly="true" keepDefaultColumnWidth="" oddEvenColorDisplay="" rowNumWidth=""  summaryAuto=""
 										excludeDeletedRows="" useCtrlOnMultisort="" useFilterList="" useFilterListSync="" sortedIconPosition="" sortable=""
-										sortOrderReverse="" showSortableUseFilter="" focusMode="row" rowNumStatusUniqueId="" rowNumStatusResize="" ev:onbeforecolumnmove=""
-										userData1="">
+										sortOrderReverse="" showSortableUseFilter="" focusMode="row" userData1="">
 										<w2:header style="" id="header1">
 											<w2:row style="" id="row1">
 												<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column14"
 													value="차량번호" blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="98" inputType="text" style="height:20px" id="column10"
+												<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column10"
 													value="차량상태" blockSelect="false" displayMode="label">
 												</w2:column>
 												<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column16"
 													value="현재위치" blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="91" inputType="text" style="height:20px" id="column17"
+												<w2:column removeBorderStyle="false" width="130" inputType="text" style="height:20px" id="column17"
 													value="수신시간" blockSelect="false" displayMode="label">
 												</w2:column>
 											</w2:row>
 										</w2:header>
 										<w2:gBody style="" id="gBody1">
 											<w2:row style="" id="row2">
-												<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="VHC_ID"
+												<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="VHC_NO"
 													value="" blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="98" inputType="text" style="height:20px" id="VHC_STATUS"
+												<w2:column removeBorderStyle="false" width="98" inputType="select" style="height:20px" id="BUS_STS"
 													value="" blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="154" inputType="select" style="height:20px" id="NODE_NM" value=""
+												<w2:column removeBorderStyle="false" width="154" inputType="text" style="height:20px" id="PRV_PLCE_NM" value=""
 													blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="95" inputType="text" style="height:20px" id="SEND_DATE"
+												<w2:column removeBorderStyle="false" width="95" inputType="text" style="height:20px" id="UPD_DTM"
 													value="" blockSelect="false" displayMode="label">
 												</w2:column>
 											</w2:row>
@@ -282,14 +565,14 @@
 							<xf:group></xf:group>
 							<xf:group id="" class="grdr_20_5_350" style="">
 								<xf:group class="defaultbox" id="" style="">
-									<w2:textbox class="df_tt fl" id="" label="배차" style=""></w2:textbox>
+									<w2:textbox class="df_tt fl" id="" label="뉴스" style=""></w2:textbox>
 								</xf:group>
 								<xf:group></xf:group>
 								<xf:group id="" class="" style="">
-									<w2:gridView  alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle=""
-										class="cm_grid right" dataList="data:dlt_VHC_OPER_HIS" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup=""
+									<w2:gridView  alwaysTriggerScrollStart="" autoFit="allColumn" captionTitle=""
+										class="cm_grid right bmsMainG1" dataList="data:dlt_BMS_NEWS_INFO" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup=""
 										ev:onkeyup="" ev:onrowindexchange="" ev:ontextimageclick="" ev:onviewchange=""
-										fixedColumnWithHidden="true" id="cur_vhc_grid" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true"
+										fixedColumnWithHidden="true" id="bmsMainG1" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true"
 										rowStatusHeaderValue="" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true"
 										visibleRowNum="" wheelRows="" autoFitMinWidth="0" disabledScrollHidden="" editModeEvent="" editModeEventIcon=""
 										checkEditableInputClass="" keyMoveEditMode="" moveKeyEditMode="" moveKeyEditModeAll="" ignoreNonEditableCellTabEnter=""
@@ -299,33 +582,27 @@
 										userData1="">
 										<w2:header style="" id="header1">
 											<w2:row style="" id="row1">
-												<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column14"
-													value="차량번호" blockSelect="false" displayMode="label">
+												<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column14"
+													value="출처" blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="98" inputType="text" style="height:20px" id="column10"
-													value="차량상태" blockSelect="false" displayMode="label">
+												<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column10"
+													value="뉴스제목" blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column16"
-													value="현재위치" blockSelect="false" displayMode="label">
-												</w2:column>
-												<w2:column removeBorderStyle="false" width="91" inputType="text" style="height:20px" id="column17"
+												<w2:column removeBorderStyle="false" width="130" inputType="text" style="height:20px" id="column16"
 													value="수신시간" blockSelect="false" displayMode="label">
 												</w2:column>
 											</w2:row>
 										</w2:header>
 										<w2:gBody style="" id="gBody1">
 											<w2:row style="" id="row2">
-												<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="VHC_ID"
+												<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="PROV_NM"
 													value="" blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="98" inputType="text" style="height:20px" id="VHC_STATUS"
-													value="" blockSelect="false" displayMode="label">
+												<w2:column removeBorderStyle="false" width="98" inputType="text" style="height:20px" id="NEWS_TITLE"
+													value="" blockSelect="false" displayMode="label" textAlign="left" left="2px">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="154" inputType="select" style="height:20px" id="NODE_NM" value=""
+												<w2:column removeBorderStyle="false" width="154" inputType="text" style="height:20px" id="UPD_DTM" value=""
 													blockSelect="false" displayMode="label">
-												</w2:column>
-												<w2:column removeBorderStyle="false" width="95" inputType="text" style="height:20px" id="SEND_DATE"
-													value="" blockSelect="false" displayMode="label">
 												</w2:column>
 											</w2:row>
 										</w2:gBody>

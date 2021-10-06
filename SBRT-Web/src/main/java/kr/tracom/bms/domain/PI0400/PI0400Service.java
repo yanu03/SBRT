@@ -25,6 +25,7 @@ public class PI0400Service extends ServiceSupport{
 		return PI0400Mapper.PI0400G1R0(param);
 	}
 	public List<Map> PI0400G2R0() throws Exception{
-		return PI0400Mapper.PI0400G2R0();
+		Map param = getSimpleDataMap("dma_search");
+		return PI0400Mapper.PI0400G2R0(param);
 	}
 }
