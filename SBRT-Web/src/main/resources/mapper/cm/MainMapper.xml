@@ -5,15 +5,19 @@
 
 <select id="bmsMainG0" resultType="Map">
 	SELECT
-		VHC_NO
-		,BUS_STS
-		,PRV_PLCE_NM
-		,DATE_FORMAT(UPD_DTM, '%Y-%m-%d %H:%i') UPD_DTM
-		,VHC_ID
-		,GPS_X
-		,GPS_Y
+		A.VHC_NO
+		,A.BUS_STS
+		,A.PRV_PLCE_NM
+		,DATE_FORMAT(A.UPD_DTM, '%Y-%m-%d %H:%i') UPD_DTM
+		,A.VHC_ID
+		,A.GPS_X
+		,A.GPS_Y
+		,A.OPER_STS
+		,B.NODE_NM
 	FROM
-		BRT_CUR_OPER_INFO
+		BRT_CUR_OPER_INFO A
+		LEFT JOIN BMS_NODE_MST B
+		ON A.NEXT_NODE_ID = B.NODE_ID
 	<!--  WHERE
 		DATE_FORMAT(UPD_DTM, '%Y-%m-%d') = CURDATE() -->
 	ORDER BY

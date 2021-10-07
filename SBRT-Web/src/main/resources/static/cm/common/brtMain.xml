@@ -14,8 +14,11 @@
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_CUR_OPER_INFO" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
+						<w2:column id="OPER_STS" name="운행상태" dataType="text"></w2:column>
+						<w2:column id="NODE_NM" name="다음노드명" dataType="text"></w2:column>
 						<w2:column id="BUS_STS" name="차량상태" dataType="text"></w2:column>
 						<w2:column id="PRV_PLCE_NM" name="이전장소명" dataType="text"></w2:column>
+						<w2:column id="CUR_PLCE_NM" name="현재위치" dataType="text"></w2:column>
 						<w2:column id="UPD_DTM" name="갱신일시" dataType="date"></w2:column>
 						<w2:column id="VHC_ID" name="차량ID" dataType="text"></w2:column>
 						<w2:column id="GPS_X" name="현재GPS_X좌표" dataType="text"></w2:column>
@@ -81,6 +84,7 @@
 		map.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);  
 		
 		var codeOptions = [ {code : "BUS_STS", compID : "brtMainG0:BUS_STS" }
+							,{code : "OPER_STS", compID : "brtMainG0:OPER_STS" }
 		 ];
 		 
 		com.setCommonDtl(codeOptions, function() {
@@ -97,6 +101,24 @@
 	
 		
 	scwin.sub_brtMainG0R0_submitdone = function(e) {
+		var rowCnt = dlt_BRT_CUR_OPER_INFO.getRowCount();
+		
+		for(var i=0; i<rowCnt; i++){
+			var prvPlceNm = dlt_BRT_CUR_OPER_INFO.getCellData(i, "PRV_PLCE_NM");
+			var nodeNm = dlt_BRT_CUR_OPER_INFO.getCellData(i, "NODE_NM");
+			var operSts = dlt_BRT_CUR_OPER_INFO.getCellData(i, "OPER_STS");
+			
+			if(prvPlceNm != null && prvPlceNm != "" && nodeNm != null && nodeNm != "" && 
+					operSts == "OS001" && operSts == "OS002" && operSts == "OS003"){
+				dlt_BRT_CUR_OPER_INFO.setCellData(i, "CUR_PLCE_NM", prvPlceNm+"에서 "+nodeNm+"으로 운행중입니다.");
+			}else if(operSts == "OS005"){
+				dlt_BRT_CUR_OPER_INFO.setCellData(i, "CUR_PLCE_NM", "운행 종료되었습니다.");
+			}else if(operSts == "OS004"){
+				dlt_BRT_CUR_OPER_INFO.setCellData(i, "CUR_PLCE_NM", "차량 정비중입니다.");
+			}else if(operSts == "OS006" || operSts == "OS007" || operSts == "OS008"){
+				dlt_BRT_CUR_OPER_INFO.setCellData(i, "CUR_PLCE_NM", "운행 중단되었습니다.");
+			}
+	}
 		com.setFocusedCell(brtMainG0, "VHC_NO");
 	};
 	
@@ -160,13 +182,16 @@
 												<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column14"
 													value="차량번호" blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="98" inputType="text" style="height:20px" id="column10"
+												<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column10"
 													value="차량상태" blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column16"
+												<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column1"
+													value="운행상태" blockSelect="false" displayMode="label">
+												</w2:column>
+												<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column16"
 													value="현재위치" blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="91" inputType="text" style="height:20px" id="column17"
+												<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px" id="column17"
 													value="수신시간" blockSelect="false" displayMode="label">
 												</w2:column>
 											</w2:row>
@@ -179,7 +204,10 @@
 												<w2:column removeBorderStyle="false" width="98" inputType="select" style="height:20px" id="BUS_STS"
 													value="" blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="154" inputType="text" style="height:20px" id="PRV_PLCE_NM" value=""
+												<w2:column removeBorderStyle="false" width="98" inputType="select" style="height:20px" id="OPER_STS"
+													value="" blockSelect="false" displayMode="label">
+												</w2:column>
+												<w2:column removeBorderStyle="false" width="154" inputType="text" style="height:20px" id="CUR_PLCE_NM" value=""
 													blockSelect="false" displayMode="label"  textAlign="left">
 												</w2:column>
 												<w2:column removeBorderStyle="false" width="95" inputType="text" style="height:20px" id="UPD_DTM"
