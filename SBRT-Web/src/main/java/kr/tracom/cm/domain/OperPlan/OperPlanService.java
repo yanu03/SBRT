@@ -208,6 +208,8 @@ public class OperPlanService extends ServiceSupport {
 										,int stNodeSn //첫 노드 순번
 										,int edNodeSn //마지막 노드 순번
 										,int offsetTm //도착 예정시간과의 차이(초)
+										,String timeMin
+										,String timeMax
 										,String stNodeArrvTm
 										,String stNodeDprtTm
 										,String edNodeArrvTm
@@ -336,14 +338,6 @@ public class OperPlanService extends ServiceSupport {
 		route_st_tm = String.valueOf(routStEdTmInfo.get("ROUT_ST_TM")) + ":00";
 		route_ed_tm = String.valueOf(routStEdTmInfo.get("ROUT_ED_TM")) + ":00";;
 
-
-
-		//변경운행
-		if(chgType == OperPlanCalc.CHG_TYPE_CHG_OPER) {
-			if (offsetTm > 0) {
-				route_ed_tm = DateUtil.addSeconds2(route_ed_tm, TIME_PATTERN, offsetTm); //변경운행인 경우 기준도착시간도 변경
-			}
-		}
 
 
 		//대표노선 가져오기
@@ -547,7 +541,7 @@ public class OperPlanService extends ServiceSupport {
 
 					//변경운행
 					if(chgType == OperPlanCalc.CHG_TYPE_CHG_OPER) {
-						if(offsetTm > 0) { //변경운행인 경우
+						if(offsetTm != 0) { //변경운행인 경우
 							if (node_sn == stNodeSn) { //변경운행 시작노드
 
 								paramMap = new HashMap<>();
@@ -560,7 +554,23 @@ public class OperPlanService extends ServiceSupport {
 								String nodeArrvTm = String.valueOf(resultMap.get("ARRV_TM"));
 								String nodeDprtTm = String.valueOf(resultMap.get("DPRT_TM"));
 
-								arrv_tm = DateUtil.addSeconds2(nodeArrvTm, TIME_PATTERN, offsetTm);
+								
+								//변경운행
+								int diffSec1 = 0;
+								
+								if(offsetTm > 0) { //늦게 도착한 경우
+									diffSec1 = DateUtil.diffSeconds(timeMax, nodeArrvTm, TIME_PATTERN);
+								} else { //일찍 도착한 경우
+									diffSec1 = DateUtil.diffSeconds(nodeArrvTm, timeMin, TIME_PATTERN);
+								}
+								
+								logger.info("변경운행 전 도착예정시각:{}, diffSec1:{}, offsetTm:{}", route_ed_tm, diffSec1, offsetTm);
+								
+								arrv_tm = DateUtil.addSeconds2(nodeArrvTm, TIME_PATTERN, (diffSec1+offsetTm));
+								route_ed_tm = DateUtil.addSeconds2(route_ed_tm, TIME_PATTERN, (diffSec1+offsetTm)); //변경운행인 경우 기준도착시간도 변경
+								
+								logger.info("변경운행 후 도착예정시각:{}", route_ed_tm);
+								
 
 							} else { //이후 노드들
 								arrv_tm = DateUtil.addSeconds2(prev_dprt_tm, TIME_PATTERN, prev_diff_sec); //이전 노드 출발시각 + 현재노드까지 걸리는 시간
@@ -940,7 +950,7 @@ public class OperPlanService extends ServiceSupport {
 		List operPlList = null;
 		
 		try {
-			operPlList = makeOperAllocPlNodeInfo(routId, dayDiv, operSn, bSave, 0, 0, 0, null, null, null, null, OperPlanCalc.CHG_TYPE_NONE);
+			operPlList = makeOperAllocPlNodeInfo(routId, dayDiv, operSn, bSave, 0, 0, 0, null, null, null, null, null, null, OperPlanCalc.CHG_TYPE_NONE);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -958,17 +968,20 @@ public class OperPlanService extends ServiceSupport {
 	public List makeChgOperAllocPlNodeInfo(String routId, String operDt, int operSn 
 			,int stNodeSn //변경운행 //변경운행 시작 노드
 			,int offsetTm //변경운행 //도착 예정시간과의 차이(초))
+			,String timeMin //변경운행이 발생하지 않는 최소도착시각
+			,String timeMax //변경운행이 발생하지 않는 최대도착시각			
 			,boolean bSave
 	) {
 		List chgPlList = null;
 		
 		try {
 			
-			logger.info("변경운행 생성 시작 >> routId:{}, operDt:{}, operSn:{}, stNodeSn:{}, diffTm:{}", routId, operDt, operSn, stNodeSn, offsetTm);
+			logger.info("변경운행 생성 시작 >> routId:{}, operDt:{}, operSn:{}, stNodeSn:{}, diffTm:{}, timeMin:{}, timeMax:{}"
+					, routId, operDt, operSn, stNodeSn, offsetTm, timeMin, timeMax);
 			
 			String dayDiv = operPlanMapper.selectDayDiv(operDt);
 			
-			chgPlList = makeOperAllocPlNodeInfo(routId, dayDiv, operSn, false, stNodeSn, 0, offsetTm, null, null, null, null, OperPlanCalc.CHG_TYPE_CHG_OPER);
+			chgPlList = makeOperAllocPlNodeInfo(routId, dayDiv, operSn, false, stNodeSn, 0, offsetTm, timeMin, timeMax, null, null, null, null, OperPlanCalc.CHG_TYPE_CHG_OPER);
 			
 			if(bSave) {
 				

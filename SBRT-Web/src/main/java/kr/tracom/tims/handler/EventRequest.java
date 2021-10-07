@@ -276,7 +276,9 @@ public class EventRequest {
                    
                 case BrtAtCode.DISPATCH:
                 	
-                	AtDispatch dispatch = (AtDispatch)atMessage.getAttrData();            
+                	AtDispatch dispatch = (AtDispatch)atMessage.getAttrData();
+                	
+                	logger.info("디스패치 수신. {}", dispatch);
                 	
                 	try {
                 		String udpDtm = dispatch.getUpdateTm().toString();
@@ -298,41 +300,48 @@ public class EventRequest {
                 		
                 		Map<String, Object> curInfo = curInfoMapper.selectCurOperInfo(paramMap);
                 		
-                		//디스패치 이력 넣기      
-                		//디스패치 구분코드 가져오기
-                		paramMap = new HashMap<>();
-                		paramMap.put("CO_CD", "DISPATCH_DIV");
-                		paramMap.put("COL", "DL_CD");
-                		paramMap.put("COL3", "TXT_VAL1");
-                		paramMap.put("COL_VAL3", msgType);
-                		String dpDiv = commonMapper.selectDlCdCol(paramMap);
+                		if(curInfo != null) {
                 		
-                		paramMap.put("CO_CD", "DISPATCH_KIND");
-                		paramMap.put("COL", "DL_CD");
-                		paramMap.put("COL3", "TXT_VAL1");
-                		paramMap.put("COL_VAL3", msgLv);
-                		String dpLv = commonMapper.selectDlCdCol(paramMap);
+	                		//디스패치 이력 넣기      
+	                		//디스패치 구분코드 가져오기
+	                		paramMap = new HashMap<>();
+	                		paramMap.put("CO_CD", "DISPATCH_DIV");
+	                		paramMap.put("COL", "DL_CD");
+	                		paramMap.put("COL3", "TXT_VAL1");
+	                		paramMap.put("COL_VAL3", msgType);
+	                		String dpDiv = commonMapper.selectDlCdCol(paramMap);
+	                		
+	                		paramMap.put("CO_CD", "DISPATCH_KIND");
+	                		paramMap.put("COL", "DL_CD");
+	                		paramMap.put("COL3", "TXT_VAL1");
+	                		paramMap.put("COL_VAL3", msgLv);
+	                		String dpLv = commonMapper.selectDlCdCol(paramMap);
+	                		
+	                		
+	                		HashMap<String, Object> dispatchLog = new HashMap<String, Object>(curInfo);
+	                		dispatchLog.put("SEND_DATE", udpDtm);
+	                		dispatchLog.put("DSPTCH_DIV", dpDiv);
+	                		dispatchLog.put("DSPTCH_KIND", dpLv);
+	                		dispatchLog.put("DSPTCH_CONTS", dispatch.getMessage());
+	                		
+	                		historyMapper.insertDispatchHistory(dispatchLog);
+	                		
+	                		//웹소켓용 데이터 생성
+	                		
+	                		//디스패치 메시지 넣기
+	                		wsDataMap = new HashMap<>();
+	                		
+	                		wsDataMap.put("ATTR_ID", attrId);
+	                		wsDataMap.put("VHC_ID", vhcId);
+	                		wsDataMap.put("DSPTCH_DIV", dpDiv);
+	                		wsDataMap.put("DSPTCH_KIND", dpLv);
+	                		wsDataMap.put("MESSAGE", dispatch.getMessage());
+	                		
+                		} else {
+                			logger.info("디스패치 무시됨(현재 운행중인 차량정보 없음) : udpDtm:{}, vhcId:{}", udpDtm, vhcId);
+                		}
                 		
                 		
-                		HashMap<String, Object> dispatchLog = new HashMap<String, Object>(curInfo);
-                		dispatchLog.put("SEND_DATE", udpDtm);
-                		dispatchLog.put("DSPTCH_DIV", dpDiv);
-                		dispatchLog.put("DSPTCH_KIND", dpLv);
-                		dispatchLog.put("DSPTCH_CONTS", dispatch.getMessage());
-                		
-                		historyMapper.insertDispatchHistory(dispatchLog);
-                		
-                		
-                		//웹소켓용 데이터 생성
-	                	
-	                	//디스패치 메시지 넣기
-	                	wsDataMap = new HashMap<>();
-	                	
-	                	wsDataMap.put("ATTR_ID", attrId);
-	                	wsDataMap.put("VHC_ID", vhcId);
-	                	wsDataMap.put("DSPTCH_DIV", dpDiv);
-	                	wsDataMap.put("DSPTCH_KIND", dpLv);
-	                	wsDataMap.put("MESSAGE", dispatch.getMessage());
 	                	
 	                	
                 	} catch (Exception e) {
@@ -367,15 +376,10 @@ public class EventRequest {
     	//다음노드(교차로 or 정류소)
     	Map<String, Object> nextNodeInfo = timsMapper.selectNextSttnCrsInfo(curOperInfo);
     	
-    	String prevNodeNm = nextNodeInfo.get("PREV_NODE_NM").toString();
-		String nextNodeId = nextNodeInfo.get("NEXT_NODE_ID").toString();
-		String nextNodeNm = nextNodeInfo.get("NEXT_NODE_NM").toString();
-		String nextNodeType = nextNodeInfo.get("NEXT_NODE_TYPE").toString();
-		
-		curOperInfo.put("PREV_NODE_NM", prevNodeNm);
-		curOperInfo.put("NEXT_NODE_ID", nextNodeId);
-		curOperInfo.put("NEXT_NODE_NM", nextNodeNm); 
-		curOperInfo.put("NEXT_NODE_TYPE", nextNodeType);
+		curOperInfo.put("PREV_NODE_NM", nextNodeInfo.get("PREV_NODE_NM"));
+		curOperInfo.put("NEXT_NODE_ID", nextNodeInfo.get("NEXT_NODE_ID"));
+		curOperInfo.put("NEXT_NODE_NM", nextNodeInfo.get("NEXT_NODE_NM")); 
+		curOperInfo.put("NEXT_NODE_TYPE", nextNodeInfo.get("NEXT_NODE_TYPE"));
     	
     	return curInfoMapper.insertCurOperInfo(curOperInfo);
     }
