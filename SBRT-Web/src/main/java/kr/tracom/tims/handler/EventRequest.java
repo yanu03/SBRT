@@ -381,6 +381,8 @@ public class EventRequest {
     private int insertCurOperInfo(Map<String, Object> curOperInfo) throws Exception {
     	
     	//다음노드(교차로 or 정류소)
+    	String realNodeSn = timsMapper.selectNodeSnByLinkSn(curOperInfo); //통플에서 넘어온 노드순번(실제로는 링크순번) 으로 실제 노드순번 구하기    	
+    	curOperInfo.put("NODE_SN", realNodeSn);
     	Map<String, Object> nextNodeInfo = timsMapper.selectNextSttnCrsInfo(curOperInfo);
     	
 		curOperInfo.put("PREV_NODE_NM", nextNodeInfo.get("PREV_NODE_NM"));
