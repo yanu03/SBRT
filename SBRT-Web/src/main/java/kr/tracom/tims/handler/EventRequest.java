@@ -89,9 +89,10 @@ public class EventRequest {
                 	wsDataMap.put("DVC_ID", vhcInfo.get("DVC_ID"));
                 	wsDataMap.put("GPS_X", busInfoMap.get("LONGITUDE"));
                 	wsDataMap.put("GPS_Y", busInfoMap.get("LATITUDE"));
-                	wsDataMap.put("NEXT_NODE_ID", busInfoMap.get("NEXT_NODE_ID"));
+                	wsDataMap.put("PREV_NODE_NM", busInfoMap.get("PREV_NODE_NM")); //이전 정류소/교차로
+                	wsDataMap.put("NEXT_NODE_ID", busInfoMap.get("NEXT_NODE_ID")); //다음 정류소/교차로
                 	wsDataMap.put("NEXT_NODE_NM", busInfoMap.get("NEXT_NODE_NM"));
-                	wsDataMap.put("NEXT_NODE_TYPE", busInfoMap.get("NEXT_NODE_TYPE"));
+                	wsDataMap.put("NODE_TYPE", busInfoMap.get("NEXT_NODE_TYPE"));
                 	
                 	
                 	
@@ -262,9 +263,10 @@ public class EventRequest {
                  	wsDataMap.put("DVC_ID", vhcInfo.get("DVC_ID"));
                  	wsDataMap.put("GPS_X", busEventMap.get("LONGITUDE"));
                  	wsDataMap.put("GPS_Y", busEventMap.get("LATITUDE"));
-                 	wsDataMap.put("NEXT_NODE_ID", busEventMap.get("NEXT_NODE_ID"));
+                	wsDataMap.put("PREV_NODE_NM", busEventMap.get("PREV_NODE_NM")); //이전 정류소/교차로
+                 	wsDataMap.put("NEXT_NODE_ID", busEventMap.get("NEXT_NODE_ID")); //다음 정류소/교차로
                  	wsDataMap.put("NEXT_NODE_NM", busEventMap.get("NEXT_NODE_NM"));
-                 	wsDataMap.put("NEXT_NODE_TYPE", busEventMap.get("NEXT_NODE_TYPE"));
+                 	wsDataMap.put("NODE_TYPE", busEventMap.get("NEXT_NODE_TYPE"));
                  	wsDataMap.put("EVT_NM", eventNm);
                  	wsDataMap.put("EVT_DATA", eventData);
                 	
@@ -365,10 +367,12 @@ public class EventRequest {
     	//다음노드(교차로 or 정류소)
     	Map<String, Object> nextNodeInfo = timsMapper.selectNextSttnCrsInfo(curOperInfo);
     	
-		String nextNodeId = nextNodeInfo.get("NODE_ID").toString();
-		String nextNodeNm = nextNodeInfo.get("NODE_NM").toString();
-		String nextNodeType = nextNodeInfo.get("NODE_TYPE").toString();
+    	String prevNodeNm = nextNodeInfo.get("PREV_NODE_NM").toString();
+		String nextNodeId = nextNodeInfo.get("NEXT_NODE_ID").toString();
+		String nextNodeNm = nextNodeInfo.get("NEXT_NODE_NM").toString();
+		String nextNodeType = nextNodeInfo.get("NEXT_NODE_TYPE").toString();
 		
+		curOperInfo.put("PREV_NODE_NM", prevNodeNm);
 		curOperInfo.put("NEXT_NODE_ID", nextNodeId);
 		curOperInfo.put("NEXT_NODE_NM", nextNodeNm); 
 		curOperInfo.put("NEXT_NODE_TYPE", nextNodeType);
