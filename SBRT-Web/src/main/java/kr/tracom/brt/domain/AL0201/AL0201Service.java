@@ -8,6 +8,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import kr.tracom.brt.domain.AL0201.AL0201Mapper;
+import kr.tracom.cm.domain.Rout.RoutMapper;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.util.Result;
@@ -18,6 +19,9 @@ public class AL0201Service extends ServiceSupport {
 
 	@Autowired
 	private AL0201Mapper AL0201Mapper;
+	
+	@Autowired
+	private RoutMapper routMapper;
 	
 	public List AL0201G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
@@ -33,6 +37,7 @@ public class AL0201Service extends ServiceSupport {
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
+				
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("C")) {
 					iCnt += AL0201Mapper.AL0201G0I0(data);
@@ -73,6 +78,10 @@ public class AL0201Service extends ServiceSupport {
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
+				List<Map<String, Object>> routList = routMapper.selectRoutListByRepRout(data);
+				if(routList.size()==1) { //노선 하나일때만 노선 ID 세팅
+					data.put("ROUT_ID", routList.get(0).get("ROUT_ID"));
+				}
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("C")) {
 					iCnt += AL0201Mapper.AL0201G1I0(data);

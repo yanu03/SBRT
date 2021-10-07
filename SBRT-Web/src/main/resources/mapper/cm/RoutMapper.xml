@@ -197,6 +197,32 @@
 		order by REP_ROUT_NM, WAY_DIV
 	</select>
 	
+	<select id="selectRoutListByRepRout" resultType="Map">
+		SELECT  ROUT_ID,
+				REP_ROUT_ID,
+				REP_ROUT_NM,
+				INT_ROUT_ID,
+				ROUT_NM,
+				ROUT_TYPE,
+				ST_STTN_ID,
+				ST_STTN_NM,
+				ED_STTN_ID,
+				ED_STTN_NM,
+				RET_STTN_ID,
+				RET_STTN_NM,
+				ROUT_LEN,
+				WAY_DIV,
+				USER_WAY_DIV
+		FROM BMS_ROUT_MST
+		WHERE DEL_YN != 'Y'
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(REP_ROUT_ID)"> 
+		AND REP_ROUT_ID = #{REP_ROUT_ID}
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(WAY_DIV)">
+		AND WAY_DIV = #{WAY_DIV}
+		</if>
+	</select>
+	
 	<select id="selectRoutItem" resultType="Map">
 		SELECT ROUT_ID, ROUT_NM, REP_ROUT_NM
 		FROM BMS_ROUT_MST WHERE DEL_YN != 'Y'
@@ -419,6 +445,28 @@
 			</choose>
 		</where>	
 		ORDER BY ROUT_ID, NODE_SN
+	</select>
+	
+	<select id="selectMainNodeListByRout" resultType="Map" parameterType="Map">
+		SELECT
+		A.ROUT_ID,
+		A.NODE_ID,
+		A.NODE_SN,
+		A.NODE_NM,
+		A.NODE_TYPE,
+		A.STTN_ID,
+		A.STTN_NO,
+		A.CRS_ID,
+		A.GPS_X,
+		A.GPS_Y
+		FROM BRT_MAIN_ROUT_NODE_INFO A
+		<where>	
+			A.ROUT_ID = #{ROUT_ID}
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">
+			AND A.NODE_TYPE = #{NODE_TYPE}
+			</if>
+		</where>
+		ORDER BY NODE_SN
 	</select>
 	
 	<select id="selectSttnList" resultType="Map">

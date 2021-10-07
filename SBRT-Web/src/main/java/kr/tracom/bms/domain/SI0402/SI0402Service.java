@@ -160,6 +160,7 @@ public class SI0402Service extends ServiceSupport {
 				if(routNodeList.size()>0) {
 					for (int i = 0; i < routNodeList.size()-1; i++) {
 						Map data = routNodeList.get(i);
+						
 						Map data2 = routNodeList.get(i+1);
 						if(Constants.NODE_TYPE_BUSSTOP.equals((String) data.get("NODE_TYPE"))){
 							sttnCnt++;
@@ -171,10 +172,17 @@ public class SI0402Service extends ServiceSupport {
 						data.put("LINK_NM",linkNm);
 						double len = DataInterface.getDistanceBetween(CommonUtil.decimalToDouble(data.get("GPS_X")), CommonUtil.decimalToDouble(data.get("GPS_Y")), 
 								CommonUtil.decimalToDouble(data2.get("GPS_X")), CommonUtil.decimalToDouble(data2.get("GPS_Y")));
-								
+						
+						if(i==0) {
+							data.put("ACCRU_LEN",0);
+							si0402Mapper.updateLengthRoutNodeCmpstn(data);
+						}
 						data.put("LEN",CommonUtil.pointRound(len,3));
 						routLen += len;
 						si0402Mapper.SI0402G1I1(data); //링크 insert
+						
+						data2.put("ACCRU_LEN",(int)routLen);
+						si0402Mapper.updateLengthRoutNodeCmpstn(data2);
 					}
 					Map routMap = new HashMap();
 					double routStrtLen = DataInterface.getDistanceBetween(CommonUtil.decimalToDouble(routNodeList.get(0).get("GPS_X")), CommonUtil.decimalToDouble(routNodeList.get(0).get("GPS_Y")), 

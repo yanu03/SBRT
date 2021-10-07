@@ -24,7 +24,30 @@
 		WHERE ROUT_ID = #{ROUT_ID}
 	</select>
 	
-
-
+	<!-- 현재노드의 다음 교차로,정류장 가져오기-->
+	<select id="selectNextSttnCrsInfo" resultType="Map" parameterType="Map">
+		SELECT 
+			NODE_ID
+			,NODE_NM
+			,NODE_SN
+			,NODE_TYPE
+		FROM BMS_ROUT_NODE_CMPSTN
+		WHERE ROUT_ID = #{ROUT_ID} 
+		AND NODE_SN > #{NODE_SN}
+		AND NODE_TYPE IN ('NT001', 'NT002')
+		ORDER BY NODE_SN ASC
+		LIMIT 1
+	</select>
+	
+	
+	<!-- 노드정보 가져오기 -->
+	<select id="selectNodeInfo" resultType="Map" parameterType="Map">
+		SELECT 
+			NODE_ID
+			,NODE_NM
+			,NODE_TYPE
+		FROM BMS_NODE_MST
+		WHERE NODE_ID = #{NODE_ID} 
+	</select>	
 	
 </mapper>

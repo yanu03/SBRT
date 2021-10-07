@@ -1,6 +1,8 @@
 package kr.tracom.cm.domain.OperPlan;
 
 import java.text.SimpleDateFormat;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -980,12 +982,14 @@ public class OperPlanService extends ServiceSupport {
 		            insertMap.put("ROUT_ID", routId);
 		            insertMap.put("ALLOC_NO", chgInfo.get("ALLOC_NO"));
 		            insertMap.put("OPER_SN", operSn);
+		            insertMap.put("OCR_DTM", Instant.now(Clock.systemUTC()));		            
+		            insertMap.put(Constants.UPD_DTM, Instant.now(Clock.systemUTC()));
 		            operPlanMapper.insertChgOperInfo(insertMap);
 	
 		            //리스트 한 번에 insert
 		            insertMap.put("OPER_DT", operDt);
 		            insertMap.put("ITEM_LIST", chgPlList);
-		            operPlanMapper.insertChgOperDtlInfo(insertMap);
+					operPlanMapper.insertChgOperDtlInfo(insertMap);
 		            
 		            logger.info("변경운행 생성 완료!!");
 		            
@@ -1002,6 +1006,10 @@ public class OperPlanService extends ServiceSupport {
 		
 		return chgPlList;
 		
+	}
+	public List<Map<String, Object>> selectOperPlanRout() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return operPlanMapper.selectOperPlanRout(map);
 	}
 
 }

@@ -28,17 +28,9 @@ public class AL0202Service extends ServiceSupport {
 			String wayDescNm = CommonUtil.objectToString(data.get("WAY_DESC_NM"));
 			String stSttnNm = CommonUtil.objectToString(data.get("ST_STTN_NM"));
 			String edSttnNm = CommonUtil.objectToString(data.get("ED_STTN_NM"));
-			if(wayAscNm.isEmpty()) {
+			if(CommonUtil.notEmpty(stSttnNm)&&CommonUtil.notEmpty(edSttnNm)) {
 				data.put("WAY_ASC_STR", stSttnNm+" → "+edSttnNm);
-			}
-			else {
-				data.put("WAY_ASC_STR", wayAscNm+" : "+ stSttnNm+" → "+edSttnNm);
-			}
-			if(wayDescNm.isEmpty()) {
 				data.put("WAY_DESC_STR", edSttnNm+" → "+stSttnNm);
-			}
-			else {
-				data.put("WAY_DESC_STR", wayDescNm+" : "+ edSttnNm+" → "+stSttnNm);
 			}
 		}
 
@@ -47,12 +39,12 @@ public class AL0202Service extends ServiceSupport {
 	}
 	
 	public List AL0202G1R0() throws Exception {
-		Map param = getSimpleDataMap("dma_sub_param");
+		Map param = getSimpleDataMap("dma_sub_search");
 		return al0304Mapper.AL0202G1R0(param);
 	}
 	
 	public List AL0202G1CNT() throws Exception {
-		Map param = getSimpleDataMap("dma_sub_param");
+		Map param = getSimpleDataMap("dma_sub_search");
 		return al0304Mapper.AL0202G1CNT(param);
 	}
 	

@@ -67,6 +67,21 @@
 					</w2:columnInfo>
 				</w2:dataList>
 				
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_MAIN_ROUT_NODE_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
+						<w2:column id="NODE_SN" name="노드순번" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
+						<w2:column id="NODE_TYPE" name="노드유형" dataType="text"></w2:column>
+						<w2:column id="STTN_ID" name="정류소ID" dataType="text"></w2:column>
+						<w2:column id="STTN_NO" name="정류소번호" dataType="text"></w2:column>
+						<w2:column id="CRS_ID" name="교차로ID" dataType="text"></w2:column>
+						<w2:column id="GPS_X" name="경도" dataType="text"></w2:column>
+						<w2:column id="GPS_Y" name="위도" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_CHART_INFO" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="INDEX" name="순서" dataType="text"></w2:column>
@@ -138,6 +153,7 @@
 					
 						<w2:key id="DAY_DIV" name="요일구분" dataType="text"></w2:key>
 						<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
+						<w2:key id="NODE_TYPE" name="노드유형" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_OPER_ALLOC_PL_NODE_CNT" saveRemovedData="true">
@@ -169,12 +185,58 @@
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0203G1S0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
+			<xf:submission id="sub_MAIN_ROUT_NODE_CPMSTN" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_MAIN_ROUT_NODE_INFO" action="/rout/selectMainNodeListByRout"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_MAIN_ROUT_NODE_CPMSTN_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
 		</xf:model>
-		<script type="text/javascript" lazy="false"><![CDATA[
 		
-    //dataList 에 넣을 json
-    var autoOptions = {};
-	scwin.setColumnID = function() {
+	<script type="text/javascript" lazy="false"><![CDATA[
+	var autoOptions = {};
+
+	scwin.onpageload = function() {
+		autoOptions = {
+			Main : { grid : AL0203G0, srchSbm : sub_AL0203G0R0, savSbm : sub_AL0203G0S0, 
+					 srchGrp : pgm_header , keyColumn : "DAY_DIV,ROUT_ID", focusColumn : "ROUT_ID", name : "운행계획 목록"},
+			Sub1 : { grid : AL0203G1, srchSbm : sub_AL0203G1R0, keyColumn : "OPER_SN", savSbm : sub_AL0203G1S0, name : "운행계획 상세" }	
+		 };
+		 
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions);
+		
+		var subOptions2 = {
+			SEARCH:[{cbFnc:scwin.openPopUpChart,nm:"시공도 보기"}
+			]
+		};
+
+		com.setSubBtn2(wfm_subBtn2, autoOptions, subOptions2);
+		
+		var codeOptions = [ 
+							{code : "WAY_DIV", compID : "AL0203G0:WAY_DIV" },
+							{code : "DAY_DIV", compID : "AL0203G0:DAY_DIV" },
+							{code : "ROUT_TYPE", compID : "AL0203G0:ROUT_TYPE" }
+													
+						];		
+	
+		com.setCommonDtl(codeOptions, function() {
+			com.searchGrid(AL0203G0, sub_AL0203G0R0);
+		});	
+		
+		
+		AL0203G0.mergeCells("byrestriccol");
+		/*AL0203G0.mergeCol(2, false);
+		AL0203G0.mergeCol(3, false);
+		AL0203G0.mergeCol(4, false);
+		AL0203G0.mergeCol(5, false);
+		AL0203G0.mergeCells("byrestriccol");*/
+		
+		com.executeSubmission(sub_AL0203SHI0);
+		
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	scwin.setGridViewInfo = function() {
 		
 		var gridHeader ="", gridBody="";
 		var rowData = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
@@ -190,31 +252,8 @@
 		if(maxCnt==0)maxCnt=30;
 		
 		if(rowData.length == 0 ) {
-			gridHeader +='<w2:row style="" id="first_row">';
-			gridHeader +='<w2:column blockSelect="false" id="'+'h'+'OPER_SN'+'" style="height:20px" inputType="text" width="70" value="'+'운행회차'+'" rowSpan="2"></w2:column>';
-			gridHeader +='<w2:column blockSelect="false" id="" style="height:20px;" textAlign="center" inputType="text" width="900" colSpan="2" value="정류소 / 교차로"></w2:column>';
-			gridHeader +='</w2:row>';
-			gridHeader +='<w2:row style="" id="second_row">';
-			gridHeader +='<w2:column blockSelect="false" id="" style="height:20px;" textAlign="center" inputType="text" width="450" colSpan="'+1+'" value="도착시간"></w2:column>';
-			gridHeader +='<w2:column blockSelect="false" id="" style="height:20px;" textAlign="center" inputType="text" width="450" colSpan="'+1+'" value="출발시간"></w2:column>';
-			gridHeader +='</w2:row>';
-			
-			gridBody += '<w2:column blockSelect="false" id="'+'OPER_SN'+'" style="height:20px" inputType="text" width="70"></w2:column>';
-			
-			var gridStr = '<w2:gridView xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" dataList="dlt_VIEW_OPER_PL_NODE_INFO" '
-							+ 'scrollByColumn="true" id="AL0203G1" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false">'
-			+ '<w2:header id="header1" style="">'
-			+ gridHeader
-			+'</w2:header>'
-			+'<w2:gBody id="gBody1" style="">'
-			+'<w2:row id="row2" style="">'
-			+ gridBody
-			+'</w2:row>'
-			+'</w2:gBody>'
-			+'</w2:gridView>' ;
-			
-			AL0203G1.setGridStyle(WebSquare.xml.parse( gridStr , true ));
-			dlt_VIEW_OPER_PL_NODE_INFO.removeAll();
+			dma_sub_search.set("NODE_TYPE", "NT002"); 
+			com.executeSubmission(sub_MAIN_ROUT_NODE_CPMSTN);
 			return;
 		}
 		
@@ -282,50 +321,53 @@
 		
 
 		dlt_VIEW_OPER_PL_NODE_INFO.modifyAllStatus("R")
-	}        
-        
-        
-	scwin.onpageload = function() {
-		autoOptions = {
-			Main : { grid : AL0203G0, srchSbm : sub_AL0203G0R0, savSbm : sub_AL0203G0S0, 
-					 srchGrp : pgm_header , keyColumn : "DAY_DIV,ROUT_ID", focusColumn : "ROUT_ID", name : "운행계획 목록"},
-			Sub1 : { grid : AL0203G1, srchSbm : sub_AL0203G1R0, keyColumn : "OPER_SN", savSbm : sub_AL0203G1S0, name : "운행계획 상세" }	
-		 };
-		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions);
-		
-		var subOptions2 = {
-			SEARCH:[{cbFnc:scwin.openPopUpChart,nm:"시공도 보기"}
-			]
-		};
-
-		com.setSubBtn2(wfm_subBtn2, autoOptions, subOptions2);
-		
-		var codeOptions = [ 
-							{code : "WAY_DIV", compID : "AL0203G0:WAY_DIV" },
-							{code : "DAY_DIV", compID : "AL0203G0:DAY_DIV" },
-							{code : "ROUT_TYPE", compID : "AL0203G0:ROUT_TYPE" }
-													
-						];		
-	
-		com.setCommonDtl(codeOptions, function() {
-			com.searchGrid(AL0203G0, sub_AL0203G0R0);
-		});	
-		
-		
-		AL0203G0.mergeCells("byrestriccol");
-		/*AL0203G0.mergeCol(2, false);
-		AL0203G0.mergeCol(3, false);
-		AL0203G0.mergeCol(4, false);
-		AL0203G0.mergeCol(5, false);
-		AL0203G0.mergeCells("byrestriccol");*/
-		
-		com.executeSubmission(sub_AL0203SHI0);
-		
 	};
-	
-	scwin.onpageunload = function() {
+        
+	scwin.dispEmptyGridView = function() {
 		
+		var gridHeader ="", gridBody="";
+		var rowData = dlt_BRT_MAIN_ROUT_NODE_INFO.getAllJSON();
+		
+		dlt_VIEW_OPER_PL_NODE_INFO.removeAll();
+		
+		gridHeader +='<w2:row style="" id="first_row">';
+		gridHeader +='<w2:column blockSelect="false" id="'+'h'+'OPER_SN'+'" style="height:20px" inputType="text" width="70" value="'+'운행회차'+'" rowSpan="2"></w2:column>';
+		for(var i = 0; i < rowData.length; i++) {
+			var nodeNm = rowData[i].NODE_NM;
+			gridHeader +='<w2:column blockSelect="false" id="'+'h'+'NODE_NM_'+i+'" style="height:20px;" textAlign="center" inputType="text" width="140" colSpan="2" value="'+nodeNm+'"></w2:column>';
+		}
+		gridHeader +='</w2:row>';
+		
+		gridBody += '<w2:column blockSelect="false" id="'+'OPER_SN'+'" style="height:20px" inputType="text" width="70"></w2:column>';
+		
+		gridHeader +='<w2:row style="" id="second_row">';
+		//maxCnt만큼 body 생성  
+		for(var i = 0; i < rowData.length; i++) {
+			gridHeader +='<w2:column blockSelect="false" id="'+'h'+'ARRV_TM_'+i+'" style="height:20px;" textAlign="center" inputType="text" width="70" colSpan="'+1+'" value="도착시간"></w2:column>';
+			gridHeader +='<w2:column blockSelect="false" id="'+'h'+'DPRT_TM_'+i+'" style="height:20px;" textAlign="center" inputType="text" width="70" colSpan="'+1+'" value="출발시간"></w2:column>';
+			gridBody += '<w2:column blockSelect="false" id="'+'ARRV_TM_'+i+'" style="height:20px" inputType="text" width=""></w2:column>'
+			gridBody += '<w2:column blockSelect="false" id="'+'DPRT_TM_'+i+'" style="height:20px" inputType="text" width=""></w2:column>'
+		}
+		gridHeader +='</w2:row>';
+		
+		
+		//gridView 정보 정의 
+		//xml 형식을 정의 하면 <w2:gridView 에 xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" 포함 합니다.
+		var gridStr = '<w2:gridView xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" dataList="dlt_VIEW_OPER_PL_NODE_INFO" '
+						+ 'scrollByColumn="true" id="AL0203G1" ev:onrowindexchange="scwin.AL0203G1_onrowindexchange" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" mergeCol="OPER_SN, WAY_DIV" >'
+		+ '<w2:header id="header1" style="text-align:left">'
+		+ gridHeader
+		+'</w2:header>'
+		+'<w2:gBody id="gBody1" style="">'
+		+'<w2:row id="row2" style="">'
+		+ gridBody
+		+'</w2:row>'
+		+'</w2:gBody>'
+		+'</w2:gridView>' ;
+		
+		AL0203G1.setGridStyle(WebSquare.xml.parse( gridStr , true ));
+		autoOptions.Sub1.grid = AL0203G1;
+		AL0203G1.setFixedColumn(1);
 	};
 	
 	scwin.openPopUpChart = function(){
@@ -379,7 +421,7 @@
 	};
 	
 	scwin.sub_AL0203G1R0_submitdone = function(e) {
-		scwin.setColumnID();
+		scwin.setGridViewInfo();
 //		scwin.fusionChart(AL0203G1.getFocusedRowIndex());
 		com.setFocusedCell(AL0203G1, "OPER_SN");
 //		AL0203CHT0.configure({"ChartNoDataText" :"데이터가 없음."});
@@ -397,6 +439,11 @@
 		com.saveDone(AL0203G1, sub_AL0203G1R0);		
 	};
 	
+
+	scwin.sub_MAIN_ROUT_NODE_CPMSTN_submitdone = function(e) {
+		scwin.dispEmptyGridView();
+	};
+
 	/*scwin.fusionChart = function(row){
 
 		dlt_BRT_CHART_INFO.removeAll();
