@@ -60,4 +60,17 @@ public class MO0101Controller extends ControllerSupport {
 		result.setData("", mo0101Service.MO0101SCK());
 		return result.getResult();
 	}	
+	
+	@RequestMapping("/mo/MO0101P0R0")
+	public @ResponseBody Map<String, Object> MO0101P0R0() throws Exception {
+		result.setData("dlt_BRT_OPER_INST_MSG_MST", mo0101Service.MO0101P0R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/mo/MO0101SCK1")
+	public @ResponseBody Map<String, Object> MO0101SCK1() throws Exception {		
+		
+		result.setData("", mo0101Service.MO0101SCK1());
+		return result.getResult();
+	}		
 }

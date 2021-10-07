@@ -20,4 +20,6 @@ public interface MO0101Mapper {
 	
 	public List MO0101G4R0(Map param);
 	
+	public List MO0101P0R0();
+	
 }

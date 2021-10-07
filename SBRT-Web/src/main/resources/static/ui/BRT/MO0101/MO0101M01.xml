@@ -28,6 +28,13 @@
 						<w2:column id="COMP_NM" name="운수사" dataType="text"></w2:column>
 						<w2:column id="BUS_STS" name="버스상태" dataType="text"></w2:column>
 						<w2:column id="OPER_STS" name="운행상태" dataType="text"></w2:column>
+						<w2:column id="ALLOC_NO" name="배차번호" dataType="text"></w2:column>
+						<w2:column id="CUR_SPD" name="현재속도" dataType="text"></w2:column>
+						<w2:column id="CUR_STOP_TM" name="현재정차시간" dataType="text"></w2:column>
+						<w2:column id="NEXT_NODE_ID" name="다음노드아이디" dataType="text"></w2:column>
+						<w2:column id="NEXT_NODE_NM" name="다음노드명" dataType="text"></w2:column>
+						<w2:column id="PRV_PLCE_NM" name="이전장소명" dataType="text"></w2:column>
+						<w2:column id="NODE_TYPE" name="노드유형" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
@@ -207,6 +214,11 @@
 			
 		 };
 		 
+		 var mainOptions = {
+			SEARCH:scwin.btn_sub_move,
+			CNL:{}
+		}; 
+		 
 		var map = routMap.initMap("map_MO0101", {width:"100%"
 				, height:"100%"
 				, onClick: scwin.onClickMap				
@@ -230,7 +242,7 @@
 		 
 		com.setCommonDtl(codeOptions);
 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);		
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions, mainOptions);		
 
 		MO0101G0.mergeCol(2,false);
 		MO0101G0.mergeCells("byrestriccol");
@@ -341,8 +353,18 @@
 			
 		//정류소 클릭 오버레이 닫기 클릭 이벤트
 		$("#map_MO0101").on("click", "#popup-closer", function() {
-			$(".clickoverlay").remove();
+			$("#sttnInfoPopup").remove();
+		});
+			
+		//차량 클릭 오버레이 닫기 클릭 이벤트
+		$("#map_MO0101").on("click", "#busInfo-closer", function() {
+			$("#busInfoPopup").remove();
 		});	
+		
+		//마커 우클릭 관련
+		$("#map_MO0101").on("click", ".dispatchMessage", function() {
+			scwin.dispatch_onclick();
+		});
 		
 	};	//end onpageload
 	
@@ -350,7 +372,7 @@
 	var busFocus = 0;
 	var sttnFocus = 0;
 	var crossFocus = 0;
-	var busActive = 0;
+	var busActive = 1;
 	var sttnActive = 0;
 	var crossActive = 0;
 		
@@ -403,7 +425,8 @@
 				var rowData = dlt_BRT_CUR_OPER_INFO.getMatchedColumnData("VHC_ID", dataRowJson.VHC_ID, "VHC_ID");
 				//var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID");
 				
-				routMap.showVehicle2("map_MO0101_vehicle", dataRowJson, rowData, MO0101G0, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
+				//routMap.showVehicle2("map_MO0101_vehicle", dataRowJson, rowData, MO0101G0, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
+				routMap.showVehicleClickOverlay2("map_MO0101_vehicle", dataRowJson, rowData, MO0101G0, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
 					
 			} catch (e) {
 				console.log("[scwin.onMessageReceived] Exception :: " + e.message);			
@@ -466,7 +489,7 @@
 		}
 		
 		if ($(".moni_img").find("#li_busimg").hasClass("on") || startMarker == 1) {
-			routMap.showVehicle("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
+			routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
 					dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0);
 		}			 					 
 		startMarker = 0;					 
@@ -797,6 +820,32 @@
 			
 			$("#map_MO0101").find(".clickoverlay").find("#overlay_tbody").append(str);
 		}//end if
+	}
+	
+	scwin.btn_sub_move = function() {
+		if(busActive == 1) {
+			com.gridMove(MO0101G0, "VHC_NO", dma_search.get("CONTENT3"), MO0101G0.getFocusedRowIndex());
+		}
+		else if(sttnActive == 1) {
+			com.gridMove(MO0101G1, "NODE_ID,NODE_NM", dma_search.get("CONTENT3"), MO0101G1.getFocusedRowIndex());
+		}
+		else if(crossActive == 1) {
+			com.gridMove(MO0101G2, "NODE_ID,NODE_NM", dma_search.get("CONTENT3"), MO0101G2.getFocusedRowIndex());
+		}
+	}
+	
+	scwin.dispatch_onclick = function() {
+		var data = { VHC_ID : dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), 
+					 callbackFn : ""} 
+		var options = {
+			id : "MO0101P01",
+			popupName : "메시지 전송",
+			modal : true,
+			width : 400,
+			height : 230
+		};
+		
+		com.openPopup(("/ui/BRT/MO0101/MO0101P01.xml"), options, data);
 	}
 ]]></script>
 	</head>

@@ -77,4 +77,20 @@ public class MO0101Service extends ServiceSupport{
 		
 		return null;
 	}	
+	
+	public List MO0101P0R0() throws Exception{
+		return mo0101Mapper.MO0101P0R0();
+	}
+	
+	//메시지 전송 소켓
+	public List<Map> MO0101SCK1() throws Exception{
+		
+		Map param = getSimpleDataMap("dma_search");
+		
+		String vhcId = String.valueOf(param.get("VHC_ID")); //차량 아이디
+		String message = String.valueOf(param.get("MSG_CONTS")); //메시지 내용
+		
+		
+		return null;
+	}		
 }
