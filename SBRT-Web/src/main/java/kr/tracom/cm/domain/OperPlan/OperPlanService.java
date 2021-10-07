@@ -408,6 +408,12 @@ public class OperPlanService extends ServiceSupport {
 			operNodeList.clear();
 
 			max_speed_per_sec = (max_speed*1000/3600); //m/s 로 변경
+			
+			//운행순번에 따른 기점 출발시각, 종점 도착 시각
+			route_first_node_sn = Integer.valueOf(routStEdTmInfo.get("FIRST_NODE_SN").toString());
+			route_last_node_sn = Integer.valueOf(routStEdTmInfo.get("LAST_NODE_SN").toString());
+			route_st_tm = String.valueOf(routStEdTmInfo.get("ROUT_ST_TM")) + ":00";
+			route_ed_tm = String.valueOf(routStEdTmInfo.get("ROUT_ED_TM")) + ":00";;
 
 
 			//노드별 도착출발시각 계산
@@ -518,9 +524,40 @@ public class OperPlanService extends ServiceSupport {
 
 				//도착시각/출발시각 계산
 				if(node_sn == route_first_node_sn) {      //노선의 첫번째 노드이면
+					
 					dprt_tm = route_st_tm;
 					arrv_tm = dprt_tm; //도착시각=출발시각
+					
+					//변경운행
+					if(chgType == OperPlanCalc.CHG_TYPE_CHG_OPER) {
+						if (node_sn == stNodeSn) { //변경운행 시작노드
 
+							//변경운행
+							int diffSec1 = 0;
+							
+							if(offsetTm > 0) { //늦게 도착한 경우
+								diffSec1 = DateUtil.diffSeconds(timeMax, arrv_tm, TIME_PATTERN);
+							} else { //일찍 도착한 경우
+								diffSec1 = DateUtil.diffSeconds(arrv_tm, timeMin, TIME_PATTERN);
+							}
+							
+							logger.info("변경운행 전 도착예정시각1:{}, diffSec1:{}, offsetTm:{}", route_ed_tm, diffSec1, offsetTm);
+							
+							route_st_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, (diffSec1+offsetTm));
+							route_ed_tm = DateUtil.addSeconds2(route_ed_tm, TIME_PATTERN, (diffSec1+offsetTm)); //변경운행인 경우 기준도착시간도 변경
+							
+							logger.info("변경운행 후 도착예정시각1:{}", route_ed_tm);
+							
+
+						}
+						
+					} //변경운행 종료
+
+					
+					//출/도착시각 변경
+					dprt_tm = route_st_tm;
+					arrv_tm = dprt_tm; //도착시각=출발시각
+					
 					//첫 번째 노드가 정류장이 아닌경우 첫번째 정류장의 출발시각 설정
 					if(!node_type.equals("NT002") && next_node_type.equals("NT002")) {
 						next_diff_sec = 0;
@@ -541,41 +578,39 @@ public class OperPlanService extends ServiceSupport {
 
 					//변경운행
 					if(chgType == OperPlanCalc.CHG_TYPE_CHG_OPER) {
-						if(offsetTm != 0) { //변경운행인 경우
-							if (node_sn == stNodeSn) { //변경운행 시작노드
+						if (node_sn == stNodeSn) { //변경운행 시작노드
 
-								paramMap = new HashMap<>();
-								paramMap.put("ROUT_ID", routId);
-								paramMap.put("NODE_SN", node_sn);
-								paramMap.put("OPER_SN", operSn);
+							paramMap = new HashMap<>();
+							paramMap.put("ROUT_ID", routId);
+							paramMap.put("NODE_SN", node_sn);
+							paramMap.put("OPER_SN", operSn);
 
-								resultMap = operPlanMapper.selectArrvDprtTm(paramMap);
+							resultMap = operPlanMapper.selectArrvDprtTm(paramMap);
 
-								String nodeArrvTm = String.valueOf(resultMap.get("ARRV_TM"));
-								String nodeDprtTm = String.valueOf(resultMap.get("DPRT_TM"));
+							String nodeArrvTm = String.valueOf(resultMap.get("ARRV_TM"));
+							String nodeDprtTm = String.valueOf(resultMap.get("DPRT_TM"));
 
-								
-								//변경운행
-								int diffSec1 = 0;
-								
-								if(offsetTm > 0) { //늦게 도착한 경우
-									diffSec1 = DateUtil.diffSeconds(timeMax, nodeArrvTm, TIME_PATTERN);
-								} else { //일찍 도착한 경우
-									diffSec1 = DateUtil.diffSeconds(nodeArrvTm, timeMin, TIME_PATTERN);
-								}
-								
-								logger.info("변경운행 전 도착예정시각:{}, diffSec1:{}, offsetTm:{}", route_ed_tm, diffSec1, offsetTm);
-								
-								arrv_tm = DateUtil.addSeconds2(nodeArrvTm, TIME_PATTERN, (diffSec1+offsetTm));
-								route_ed_tm = DateUtil.addSeconds2(route_ed_tm, TIME_PATTERN, (diffSec1+offsetTm)); //변경운행인 경우 기준도착시간도 변경
-								
-								logger.info("변경운행 후 도착예정시각:{}", route_ed_tm);
-								
-
-							} else { //이후 노드들
-								arrv_tm = DateUtil.addSeconds2(prev_dprt_tm, TIME_PATTERN, prev_diff_sec); //이전 노드 출발시각 + 현재노드까지 걸리는 시간
-								arrv_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, add_arrv_sec); //신호가 걸려 추가된 시간
+							
+							//변경운행
+							int diffSec1 = 0;
+							
+							if(offsetTm > 0) { //늦게 도착한 경우
+								diffSec1 = DateUtil.diffSeconds(timeMax, nodeArrvTm, TIME_PATTERN);
+							} else { //일찍 도착한 경우
+								diffSec1 = DateUtil.diffSeconds(nodeArrvTm, timeMin, TIME_PATTERN);
 							}
+							
+							logger.info("변경운행 전 도착예정시각2:{}, diffSec1:{}, offsetTm:{}", route_ed_tm, diffSec1, offsetTm);
+							
+							arrv_tm = DateUtil.addSeconds2(nodeArrvTm, TIME_PATTERN, (diffSec1+offsetTm));
+							route_ed_tm = DateUtil.addSeconds2(route_ed_tm, TIME_PATTERN, (diffSec1+offsetTm)); //변경운행인 경우 기준도착시간도 변경
+							
+							logger.info("변경운행 후 도착예정시각2:{}", route_ed_tm);
+							
+
+						} else { //이후 노드들
+							arrv_tm = DateUtil.addSeconds2(prev_dprt_tm, TIME_PATTERN, prev_diff_sec); //이전 노드 출발시각 + 현재노드까지 걸리는 시간
+							arrv_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, add_arrv_sec); //신호가 걸려 추가된 시간
 						}
 
 					} else if(chgType == OperPlanCalc.CHG_TYPE_MODIFY) { //변경운행은 아니고, 수정인 경우

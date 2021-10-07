@@ -8,6 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
 import kr.tracom.cm.domain.Common.CommonMapper;
@@ -71,8 +72,10 @@ public class EventRequest {
 
                 	try {
                 		insertCurOperInfo(busInfoMap);
+                	} catch (DuplicateKeyException e) {
+                		//e.printStackTrace();
                 	} catch (Exception e) {
-						//e.printStackTrace();
+						e.printStackTrace();
 					}
                 	
                 	
@@ -156,17 +159,21 @@ public class EventRequest {
                 		 
                 		 historyMapper.insertEventHistory(busEventMap); //이력 insert                		 
                 		 
-                	 } catch (Exception e) {
-                		 //e.printStackTrace();
+                	 } catch (DuplicateKeyException e) {
+                 		//e.printStackTrace();
+                 	 }	catch (Exception e) {
+                		 e.printStackTrace();
                 	 }
+                	 
+                	 
 
                      switch(eventCode){
                      /** 운행 이벤트 **/
                      case 0x01: //정류장 도착
-                     case 0x03: //기점 도착
-                     case 0x05: //종점 도착
                      case 0x02: //정류장 출발
+                     case 0x03: //기점 도착
                      case 0x04: //기점 출발
+                     case 0x05: //종점 도착
                      case 0x06: //종점 출발
                      case 0x07: //노드 통과
                          //통플에서 정류장통과시에도 노드 통과 이벤트를 준다?
@@ -247,7 +254,7 @@ public class EventRequest {
 
 
                      }
-
+                     
                      
                      
                  	//모니터링용 웹소켓 데이터
@@ -340,10 +347,10 @@ public class EventRequest {
                 		} else {
                 			logger.info("디스패치 무시됨(현재 운행중인 차량정보 없음) : udpDtm:{}, vhcId:{}", udpDtm, vhcId);
                 		}
-                		
-                		
 	                	
 	                	
+                	} catch (DuplicateKeyException e) {
+                		//e.printStackTrace();
                 	} catch (Exception e) {
 						e.printStackTrace();
 					}
