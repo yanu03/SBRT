@@ -54,7 +54,8 @@
 					VHC.USE_YN = 'Y'
 					AND
 					DVC.USE_YN = 'Y'
-					AND DL.TXT_VAL1 = 'ED'
+					AND DVC.DVC_KIND = 'DK004'
+					OR	DVC.DVC_KIND = 'DK010'
 					AND DVC.MNG_ID IS NOT NULL
 
 		<if test="CONTENT != null and CONTENT != ''">
@@ -135,8 +136,8 @@
 			LEFT JOIN  	BMS_ED_RSV_INFO RSV
 			ON			RST.RSV_ID = RSV.RSV_ID
 		WHERE		VHC.VHC_ID = #{VHC_ID}
-		AND			DL.TXT_VAL1 = 'ED'
-		
+		AND 		DVC.DVC_KIND = 'DK004'
+		OR			DVC.DVC_KIND = 'DK010'
 			<if test="RSV_STATE == '예약중'">
 				AND RST.COMPLETE_YN = 'N'
 			</if>
@@ -159,8 +160,9 @@
 			LEFT JOIN BMS_DL_CD_INFO DL ON DVC.DVC_KIND = DL.DL_CD AND DL.CO_CD = 'DVC_KIND'
 			
 		WHERE
-			DL.TXT_VAL1 = 'RD'
-			AND MNG_ID IS NOT NULL
+		 		DVC.DVC_KIND = 'DK004'
+		OR		DVC.DVC_KIND = 'DK010'
+		AND 	MNG_ID IS NOT NULL
 	</select>
  
  	<select id="PI0902G0R1" resultType="String" parameterType="Map">

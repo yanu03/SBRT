@@ -329,13 +329,18 @@
 	};
 	
 	scwin.openPopUpChart = function(){
+		var routId = dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "ROUT_ID");
+		var dayDiv = dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "DAY_DIV");
+		var routNm = dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "ROUT_NM");
 	
-		 var data = { data : "", callbackFn : "scwin.insertSubGrid" };
+		 var data = { data : routId, data2 : dayDiv, data3 : routNm, callbackFn : "" };
          var options = { id : "AL0203P0",
+         				 width : "1300px",
+         				 height : "700px",
                          popupName : "시공도", 
                          modal : true};
 		
-		com.openPopup("/cm/common/popUpChart", options, data);
+		com.openPopup("/cm/common/popUpChart.xml", options, data);
 	};
 	
 	scwin.sub_AL0203G0R0_submitdone = function(e) {
@@ -375,9 +380,9 @@
 	
 	scwin.sub_AL0203G1R0_submitdone = function(e) {
 		scwin.setColumnID();
-		scwin.fusionChart(AL0203G1.getFocusedRowIndex());
+//		scwin.fusionChart(AL0203G1.getFocusedRowIndex());
 		com.setFocusedCell(AL0203G1, "OPER_SN");
-		AL0203CHT0.configure({"ChartNoDataText" :"데이터가 없음."});
+//		AL0203CHT0.configure({"ChartNoDataText" :"데이터가 없음."});
 //		var val_ROUT_ID = dlt_BRT_COR_DTL_INFO.getColData("ROUT_ID");
 //		dma_sub_search.set("ROUT_IDS", val_ROUT_ID);
 //		dma_sub_search.set("TYPE", "DISP_NODE");
@@ -392,23 +397,10 @@
 		com.saveDone(AL0203G1, sub_AL0203G1R0);		
 	};
 	
-	scwin.fusionChart = function(row){
-	debugger;
+	/*scwin.fusionChart = function(row){
+
 		dlt_BRT_CHART_INFO.removeAll();
 		var sttnNm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(row, "NODE_NM");
-		
-		/*var rowData = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getDataRow(row);
-		
-		var rowData = dlt_VIEW_OPER_PL_NODE_INFO.getDataRow(row);
-		
-		var arrvTm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(row, "ARRV_TM");
-		var nodeSn = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(row, "NODE_SN");
-		
-		dlt_CHART_INFO.setCellData(row, "NODE_NM", sttnNm);
-		dlt_CHART_INFO.setCellData(row, "ARRV_TM", arrvTm);
-		dlt_CHART_INFO.setCellData(row, "NODE_SN", nodeSn);*/
-		
-
 		
 		var old_open_sn = -1;
 
@@ -420,11 +412,11 @@
 		var maxCnt = 0;
 		//var j = 0;
 		var rowCntLength = rowCntArr.length;
-		debugger;
+	
 		for(var i = 0; i < 50; i++) {
 			if(maxCnt < rowCntArr[i].CNT)maxCnt = rowCntArr[i].CNT;
 			rowCnt =  rowCntArr[i].CNT;
-			debugger;
+			
 			for(var j = 0; j < rowCnt; j++) {
 				if(j==0||j==rowCnt-1){
 					if(j==0)chartindex= 0;
@@ -469,7 +461,7 @@
       		//,showLegend: "1"
 		}
 		
-		debugger;
+	
 		AL0203CHT0.setChartColumnSimpleRef("data:dlt_BRT_CHART_INFO", "ARRV_TM", null, "INDEX");
 		AL0203CHT0.setChartAttribute(options);		
 		
@@ -480,7 +472,7 @@
 		//AL0203CHT0.setJSONData();
         //AL0203CHT0.draw();
 	
-	}
+	}*/
 	
 	]]></script>
 	</head>
@@ -617,7 +609,7 @@
 					</xf:group>
 				</xf:group>
 				<xf:group id="" class="vertical_line"></xf:group>
-				<xf:group class="pgm_detail grdr_20_2_280_20_a">
+				<xf:group class="pgm_detail grdr_20_2_a">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="운행계획 상세" style=""></w2:textbox>
@@ -665,17 +657,17 @@
 							</w2:gBody>
 						</w2:gridView>
 					</xf:group>
-					<xf:group id="" class="horizontal_line"></xf:group>
+					<!--<xf:group id="" class="horizontal_line"></xf:group>
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="시공도" style=""></w2:textbox>
 						</xf:group>
-						<w2:fusionchart accessibility="false" drawType="javascript" runflashAt="IE6,IE7,IE8" seriesType="simple"
+						  <w2:fusionchart accessibility="false" drawType="javascript" runflashAt="IE6,IE7,IE8" seriesType="simple"
 							chartType="MSLine" style="width: auto; height: 290px;" id="AL0203CHT0" ref="" 
 							labelNode="" valueNode="" seriesNode="">
 						</w2:fusionchart>
 					</xf:group>
-					<xf:group id="" class="" style=""></xf:group>
+					<xf:group id="" class="" style=""></xf:group>-->
 				</xf:group><!--end pgm_detail-->
 			</xf:group><!-- end content -->
 		</xf:group><!-- end container -->
