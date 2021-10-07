@@ -2,31 +2,31 @@
 <?xml-stylesheet href="/cm/css/all.css" type="text/css"?>
 <!-- <?xml-stylesheet href="/cm/css/responsible.css" type="text/css"?> -->
 <?xml-stylesheet href="/cm/css/layout.css" type="text/css"?>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
-	xmlns:xf="http://www.w3.org/2002/xforms">
-	<head>
-		<w2:type>DEFAULT</w2:type>
-		<w2:buildDate />
-		<xf:model>
-			<xf:instance>
-				<data xmlns="" />
-			</xf:instance>
-			<w2:dataCollection baseNode="map">
-				<w2:dataMap baseNode="map" id="dma_loginCheck">
-					<w2:keyInfo>
-						<w2:key id="USER_ID" name="사용자ID" dataType="text"></w2:key>
-						<w2:key id="PASSWORD" name="비밀번호" dataType="text"></w2:key>
-						<w2:key id="SYSTEM_BIT" name="시스템비트" dataType="text"></w2:key>
-					</w2:keyInfo>
-				</w2:dataMap>
-			</w2:dataCollection>
-			<w2:workflowCollection></w2:workflowCollection>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+
+<head>
+    <w2:type>DEFAULT</w2:type>
+    <w2:buildDate />
+    <xf:model>
+        <xf:instance>
+            <data xmlns="" />
+        </xf:instance>
+        <w2:dataCollection baseNode="map">
+            <w2:dataMap baseNode="map" id="dma_loginCheck">
+                <w2:keyInfo>
+                    <w2:key id="USER_ID" name="사용자ID" dataType="text"></w2:key>
+                    <w2:key id="PASSWORD" name="비밀번호" dataType="text"></w2:key>
+                    <w2:key id="SYSTEM_BIT" name="시스템비트" dataType="text" defaultValue="1"></w2:key>
+                </w2:keyInfo>
+            </w2:dataMap>
+        </w2:dataCollection>
+        <w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sbm_loginCheck" ref="data:json,dma_loginCheck" target='' action="/main/login" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit=""
 				ev:submitdone="scwin.sbm_Login_submitdone" ev:submiterror="">
-			</xf:submission>
-		</xf:model>
-		<script type="javascript" lazy="false"><![CDATA[
+        </xf:submission>
+    </xf:model>
+    <script type="javascript" lazy="false"><![CDATA[
 		/**
 		 * 화면 초기 로딩시 수행 스크립트
 		 */
@@ -71,6 +71,15 @@
 			com.executeSubmission(sbm_loginCheck);
 		};
 	
+	
+		scwin.btn_bms_check = function() {
+			dma_loginCheck.set("SYSTEM_BIT",1);
+		}
+		
+		scwin.btn_brt_check = function() {
+			dma_loginCheck.set("SYSTEM_BIT",2);
+		}
+	
 		/**
 		 * 로그인 submitdone 스크립트 - 로그인 성공여부 판단, 성공시 메인페이지 이동, 실패시 메세지 처리
 		 */
@@ -88,108 +97,142 @@
 			}
 		};
 	]]></script>
-	</head>
-	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
-		<xf:group class="login_wrap">
-			<xf:group class="bg_img">
-				<xf:group class="bg_logo" id="" style=""></xf:group>
-				<xf:group class="box" tagname="ul">
-					<xf:group tagname="li" class="system">
-						<xf:select1 disabledClass="w2selectbox_disabled" displayMode="label" id="SYSTEM_BIT"  class="system_select" labelWidthAuto="" mandatory="true" optionOrder=""
-							ref="data:dma_loginCheck.SYSTEM_BIT" renderType="component"  submenuSize="auto">
-								<xf:choices>
-									<xf:item>
-										<xf:label><![CDATA[통합운영관리]]></xf:label>
-										<xf:value><![CDATA[1]]></xf:value>
-									</xf:item>
-									<xf:item>
-										<xf:label><![CDATA[차량운행관리]]></xf:label>
-										<xf:value><![CDATA[2]]></xf:value>
-									</xf:item>
-								</xf:choices>
-						</xf:select1>
-					</xf:group>
-					<xf:group tagname="li" class="id">
-						<xf:group tagname="ul">
-							<xf:group tagname="li"></xf:group>
-							<xf:group class="repeat" tagname="li">
-								<xf:input style=""
-									ref="data:dma_loginCheck.USER_ID" id="ibx_userId" ev:onkeydown="" refSync="true" ev:onkeyup="scwin.ibx_userId_onkeyup" disabled="">
-								</xf:input>
-								<xf:input style="" type="hidden"
-									ref="data:dma_loginCheck.USER_NM">
-								</xf:input>
-							</xf:group>
-							<xf:group tagname="li"></xf:group>
-						</xf:group>
-					</xf:group>
-					<xf:group class="pw" tagname="li">
-						<xf:group tagname="ul">
-							<xf:group tagname="li"></xf:group>
-							<xf:group class="repeat" tagname="li">
-								<xf:secret style=""
-									ref="data:dma_loginCheck.PASSWORD" id="sct_password" ev:onblur="" ev:onkeydown="" refSync="true" ev:onkeyup="scwin.sct_password_onkeyup">
-								</xf:secret>
-							</xf:group>
-							<xf:group tagname="li"></xf:group>
-						</xf:group>
-					</xf:group>
-					
-					<xf:group tagname="li">
-						<xf:group class="ofh">
-							<xf:select appearance="full" id=""
-								style="color:#fff;" selectedindex="-1" cols="" rows=""
-								class="fl">
-								<xf:choices>
-									<xf:item>
-										<xf:label><![CDATA[아이디 저장]]></xf:label>
-										<xf:value><![CDATA[]]>
-										</xf:value>
-									</xf:item>
-								</xf:choices>
-							</xf:select>
-						</xf:group>
-					</xf:group>
-					<xf:group tagname="li">
-						<xf:group class="login_msg">
-							<w2:span label="패스워드 분실시 관리팀으로 연락 주십시요" id="" style="" class="message1"></w2:span>
-							<br></br>
-							<w2:span label="관리팀 Tel.000-0000-0000" id="" style="" class="message2"></w2:span>
-						</xf:group>
-					</xf:group>
+	
 
-				</xf:group>
-				<xf:group class="login_btn" id="" style="">
-						<w2:anchor outerDiv="false" id="btn_login"
-							ev:onclick="scwin.btn_login_onclick">
-							<xf:label><![CDATA[]]>
+	<script type="javascript"><![CDATA[
+	    
+	        var filterbtn = $(".question li a");
+
+    filterbtn.on("click", function () {
+        $(this).parent().addClass("on");
+        $(this).parent().siblings().removeClass("on");
+
+        idx = $(this).parent().index();
+        if (idx == 1) {
+            $(this).parent().parent().addClass("right");
+        } else {
+            $(this).parent().parent().removeClass("right");
+        }
+    });
+
+
+
+
+	]]></script>
+</head>
+
+<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+    <xf:group class="login_wrap">
+        <xf:group class="bg_img">
+            <xf:group class="bg_logo" id="" style=""></xf:group>
+            <xf:group class="box" tagname="ul">
+
+
+			<!-- 디자인추가 -->
+			<xf:group tagname="li" class="system">
+				<xf:group class="question" tagname="ul">
+					<xf:group tagname="li" class="system_inner01 on">
+						<w2:anchor outerDiv="false" class="system01" ev:onclick="scwin.btn_bms_check()">
+							<xf:label>
+								<![CDATA[통합운영관리]]>
 							</xf:label>
 						</w2:anchor>
 					</xf:group>
-			</xf:group>
-	
-			<xf:group class="org_logo" id="" style="">
-				<xf:group id="" style="" class="logo_molit" tagname="a">
-					<w2:attributes>
-						<w2:href><!-- javascript:com.goHome() --></w2:href>
-					</w2:attributes>
-				</xf:group>
-				<xf:group id="" style="" class="logo_kaia" tagname="a">
-					<w2:attributes>
-						<w2:href><!-- javascript:com.goHome() --></w2:href>
-					</w2:attributes>
-				</xf:group>
-				<xf:group id="" style="" class="logo_sejong" tagname="a">
-					<w2:attributes>
-						<w2:href><!-- javascript:com.goHome() --></w2:href>
-					</w2:attributes>
-				</xf:group>
-				<xf:group id="" style="" class="logo_krri" tagname="a">
-					<w2:attributes>
-						<w2:href><!-- javascript:com.goHome() --></w2:href>
-					</w2:attributes>
+					<xf:group tagname="li" class="system_inner02">
+						<w2:anchor outerDiv="false" class="system02" ev:onclick="scwin.btn_brt_check()">
+							<xf:label>
+								<![CDATA[차량운행관리]]>
+							</xf:label>
+						</w2:anchor>
+					</xf:group>
 				</xf:group>
 			</xf:group>
-		</xf:group>
-	</body>
+                <xf:group tagname="li" class="id">
+                    <xf:group tagname="ul">
+                        <xf:group tagname="li"></xf:group>
+                        <xf:group class="repeat" tagname="li">
+                            <xf:input style="padding-left:30px" ref="data:dma_loginCheck.USER_ID" id="ibx_userId" ev:onkeydown="" refSync="true" ev:onkeyup="scwin.ibx_userId_onkeyup" disabled="">
+                            </xf:input>
+                            <xf:input style="" type="hidden" ref="data:dma_loginCheck.USER_NM">
+                            </xf:input>
+                        </xf:group>
+                        <xf:group tagname="li"></xf:group>
+                    </xf:group>
+                </xf:group>
+                <xf:group class="pw" tagname="li">
+                    <xf:group tagname="ul">
+                        <xf:group tagname="li"></xf:group>
+                        <xf:group class="repeat" tagname="li">
+                            <xf:secret style="padding-left:30px" ref="data:dma_loginCheck.PASSWORD" id="sct_password" ev:onblur="" ev:onkeydown="" refSync="true" ev:onkeyup="scwin.sct_password_onkeyup">
+                            </xf:secret>
+                        </xf:group>
+                        <xf:group tagname="li"></xf:group>
+                    </xf:group>
+                </xf:group>
+
+                <xf:group tagname="li">
+                    <xf:group class="ofh" >
+                        <xf:select appearance="full" id=""  selectedindex="-1" cols="" rows="">
+                            <xf:choices>
+                                <xf:item>
+                                    <xf:label>
+                                        <![CDATA[아이디 저장]]>
+                                    </xf:label>
+                                    <xf:value>
+                                        <![CDATA[]]>
+                                    </xf:value>
+                                </xf:item>
+                            </xf:choices>
+                        </xf:select>
+                    </xf:group>
+                    <xf:group class="login_msg">
+                        <w2:span label="패스워드 분실시 관리팀으로 연락 주십시요" id="" style="" class="message1"></w2:span>
+                        <br></br>
+                        <w2:span label="관리팀 Tel.000-0000-0000" id="" style="" class="message2"></w2:span>
+                    </xf:group>
+                </xf:group>
+
+            </xf:group>
+            <xf:group class="login_btn" id="" style="">
+                <w2:anchor outerDiv="false" id="btn_login" ev:onclick="scwin.btn_login_onclick">
+                    <xf:label>
+                        <![CDATA[]]>LOGIN
+                    </xf:label>
+                </w2:anchor>
+            </xf:group>
+        </xf:group>
+
+        <xf:group class="org_logo" id="" style="">
+            <xf:group id="" style="" class="logo_molit" tagname="a">
+                <w2:attributes>
+                    <w2:href>
+                        <!-- javascript:com.goHome() -->
+                    </w2:href>
+                </w2:attributes>
+            </xf:group>
+            <xf:group id="" style="" class="logo_kaia" tagname="a">
+                <w2:attributes>
+                    <w2:href>
+                        <!-- javascript:com.goHome() -->
+                    </w2:href>
+                </w2:attributes>
+            </xf:group>
+            <xf:group id="" style="" class="logo_sejong" tagname="a">
+                <w2:attributes>
+                    <w2:href>
+                        <!-- javascript:com.goHome() -->
+                    </w2:href>
+                </w2:attributes>
+            </xf:group>
+            <xf:group id="" style="" class="logo_krri" tagname="a">
+                <w2:attributes>
+                    <w2:href>
+                        <!-- javascript:com.goHome() -->
+                    </w2:href>
+                </w2:attributes>
+            </xf:group>
+        </xf:group>
+    </xf:group>
+</body>
+
 </html>

@@ -28,10 +28,17 @@ public class OperPlanController extends ControllerSupport {
 		result.setData("dlt_BRT_OPER_PL_ROUT_INFO", operPlanService.selectOperPlanRoutList());
 		return result.getResult();
 	}
-
+	
 	@RequestMapping("/operPlan/selectOperPlanRout")
 	public @ResponseBody Map<String, Object> selectOperPlanRout() throws Exception {
 		result.setData("dlt_BRT_OPER_PL_ROUT_INFO", operPlanService.selectOperPlanRout());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/operPlan/selectOperPlanRout2")
+	public @ResponseBody Map<String, Object> selectOperPlanRout2() throws Exception {
+		result.setData("dlt_BRT_OPER_PL_ROUT_INFO_ASC", operPlanService.selectOperPlanRoutAsc());
+		result.setData("dlt_BRT_OPER_PL_ROUT_INFO_DESC", operPlanService.selectOperPlanRoutDesc());
 		return result.getResult();
 	}
 }

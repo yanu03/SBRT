@@ -16,7 +16,7 @@
 				<data xmlns="" />
 			</xf:instance>
 			<w2:dataCollection baseNode="map">
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_OPER_PL_ROUT_INFO" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_OPER_PL_MST" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
 						<w2:column id="DAY_DIV" name="요일구분" dataType="text"></w2:column>
@@ -27,6 +27,8 @@
 						<w2:column id="ED_STTN_NM" name="종점명" dataType="text"></w2:column>
 						<w2:column id="WAY_ASC_STR" name="상행문구" dataType="text"></w2:column>
 						<w2:column id="WAY_DESC_STR" name="하행문구" dataType="text"></w2:column>
+						<w2:column id="WAY_YN" name="상하행여부" dataType="text"></w2:column>
+						<w2:column id="ROUT_DIV" name="노선구분" dataType="text"></w2:column>
 						<w2:column id="OPER_CNT" name="운영횟수" dataType="text"></w2:column>
 						<w2:column id="ALLOC_CNT" name="배차횟수" dataType="text"></w2:column>
 					</w2:columnInfo>
@@ -58,7 +60,6 @@
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_OPER_ALLOC_PL_ROUT_INFO" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
@@ -76,6 +77,32 @@
 						<w2:column id="COR_COLOR" name="코스ID" dataType="text"></w2:column>
 						<w2:column id="WAY_ASC_NM" name="상행명" dataType="text"></w2:column>
 						<w2:column id="WAY_DESC_NM" name="하행명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataList id="dlt_BRT_OPER_PL_ROUT_INFO_ASC" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
+					<w2:columnInfo>
+						<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
+						<w2:column id="DAY_DIV" name="요일구분" dataType="text"></w2:column>
+						<w2:column id="WAY_DIV" name="상하행구분" dataType="text"></w2:column>
+						<w2:column id="OPER_SN" name="운행순번" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
+						<w2:column id="ROUT_ST_TM" name="노선시작시간" dataType="text"></w2:column>
+						<w2:column id="ROUT_ED_TM" name="노선종료시간" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataList id="dlt_BRT_OPER_PL_ROUT_INFO_DESC" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
+					<w2:columnInfo>
+						<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
+						<w2:column id="DAY_DIV" name="요일구분" dataType="text"></w2:column>
+						<w2:column id="WAY_DIV" name="상하행구분" dataType="text"></w2:column>
+						<w2:column id="OPER_SN" name="운행순번" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
+						<w2:column id="ROUT_ST_TM" name="노선시작시간" dataType="text"></w2:column>
+						<w2:column id="ROUT_ED_TM" name="노선종료시간" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_VIEW_OPER_PL_ROUT_INFO" saveRemovedData="true">
@@ -227,7 +254,7 @@
 				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_AL0202G0R0" ref="data:json,dma_search" target="data:json,dlt_OPER_PL_ROUT_INFO"
+			<xf:submission id="sub_AL0202G0R0" ref="data:json,dma_search" target="data:json,dlt_BRT_OPER_PL_MST"
 				action="/AL/AL0202G0R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0202G0R0_submitdone"
 				ev:submiterror="" abortTrigger="">
@@ -246,9 +273,13 @@
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0202G1CNT_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission> -->
-			<xf:submission id="sub_AL0202G1S0" ref='data:json,[{"id":"dlt_BRT_OPER_PL_ROUT_INFO","action":"modified"},"dma_sub_search"]' target="data:json,dlt_BRT_OPER_PL_ROUT_INFO"
+			<xf:submission id="sub_AL0202G1S0" ref='data:json,[{"id":"dlt_OPER_ALLOC_PL_ROUT_INFO","action":"modified"},"dma_sub_search"]' target="data:json,dma_result"
 				action="/al/AL0202G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중 입니다..."
 				ev:submit="" ev:submitdone="scwin.sub_AL0202G1S0_submitdone" ev:submiterror="">
+			</xf:submission>
+			<xf:submission id="sub_operPlanList" ref='data:json,dma_sub_search' target='data:json,[{"id":"dlt_BRT_OPER_PL_ROUT_INFO_ASC"},{"id":"dlt_BRT_OPER_PL_ROUT_INFO_DESC"}]' action="/operPlan/selectOperPlanRout2" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
@@ -276,7 +307,8 @@
 
 	var GRID_MAX = 30;
 	var autoOptions = [];
-		
+	var oldAllocCnt;
+	var oldOperCnt;
 	scwin.onpageload = function() {		
 		autoOptions = {
 			Main : {
@@ -302,7 +334,8 @@
 		var codeOptions = [{code : "DAY_DIV",compID : "AL0202G0:DAY_DIV"},{code : "WAY_DIV",compID : "AL0202G1:WAY_DIV"}];
 
 		var subOptions = {
-			SAVE:[{cbFnc:scwin.btn_sub_course,nm:"코스선택",class:"search"}
+		
+			SAVE:[{cbFnc:scwin.btn_sub_course,nm:"코스선택",class:"search"}, {cbFnc:scwin.btn_reInstall,nm:"재구성",class:"autoApply"}
 			]
 		};
 		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
@@ -318,7 +351,7 @@
 	};
 
 	scwin.sub_AL0202G0R0_submitdone = function(e) {
-		AL0202G0.setFocusedCell(0, "DAY_DIV", true);		
+		AL0202G0.setFocusedCell(0, "DAY_DIV", true);	
 	};
 	
 	scwin.sub_AL0202G1S0_submitdone = function(e) {
@@ -330,11 +363,15 @@
 		var focusOption = {keyMap : dma_sub_search, keyMapColumn : "REP_ROUT_ID,DAY_DIV"};
 		com.changeDualGrid(AL0202G0, AL0202G1, sub_AL0202G1S0,
 					sub_AL0202G1R0, focusOption , row, oldRow, "배차순위 상세");
+		com.executeSubmission(sub_operPlanList);
 	};
 	
 	scwin.sub_AL0202G1R0_submitdone = function(e) {
-		scwin.setGridExcelInfo();
-		scwin.setGridViewInfo();
+		scwin.reInit();
+		scwin.setGridExcelInfo(); //엑셀용 화면 및 데이터 구성
+		scwin.setGridViewInfo(); //그리드 화면 및 데이터 구성
+		oldAllocCnt = ALLOC_CNT.getValue();
+		oldOperCnt = OPER_CNT.getValue();
 	};
 
 	scwin.get_viewColumnIndex = function(colId){
@@ -348,8 +385,7 @@
 	}
 	
 	scwin.AL0202G1_oncelldblclick = function(row,col,colId) {
-		debugger;
-		
+	
 		if((row%2==0)&&(colId .indexOf("OPER_INFO_1_")>=0)){
 			var rIndex = scwin.get_RealIndex(row,colId);
 			var repRoutId = dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rIndex, "REP_ROUT_ID");
@@ -431,7 +467,252 @@
 		});
 	}
 	
-	//dataList 에 넣을 json
+	
+	scwin.btn_reInstall = function() {
+		if(dlt_OPER_ALLOC_PL_ROUT_INFO.getRowCount()>0){				
+			com.confirm("배차편성 상세가 다시 구성됩니다. 새로 구성하시겠습니까?", function(rtn){
+				if (rtn) {
+					scwin.reInit();
+				}
+			});
+		}
+		else{
+			scwin.reInit();
+		}
+	}
+	
+	var g_rowAllocIndex = 0;
+	var g_rowColumnIndex = 0;
+	scwin.recurOperRoundInstall = function(dltBrtOperPlMst, dltBrtOperPlRoutInfoAsc, dltBrtOperPlRoutInfoDesc, focusIndex, allocIndex){
+		
+		var repRoutId = dltBrtOperPlMst[focusIndex].REP_ROUT_ID;
+		var repRoutNM = dltBrtOperPlMst[focusIndex].REP_ROUT_NM;
+		var dayDiv = dltBrtOperPlMst[focusIndex].DAY_DIV;
+		var routDiv = dltBrtOperPlMst[focusIndex].ROUT_DIV;
+		var wayYn = dltBrtOperPlMst[focusIndex].WAY_YN;
+		var wayAscNm = dltBrtOperPlMst[focusIndex].WAY_ASC_NM;
+		var wayDescNm = dltBrtOperPlMst[focusIndex].WAY_DESC_NM;
+		dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "REP_ROUT_ID", repRoutId);
+		dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "REP_ROUT_NM", repRoutNM);
+		dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "DAY_DIV", dayDiv);
+		dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "WAY_ASC_NM", wayAscNm);
+		dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "WAY_DESC_NM", wayDescNm);
+		
+		if((wayYn=='Y')&&(routDiv=='RD001')){
+			var oldRoutStTm = dltBrtOperPlRoutInfoAsc[g_rowAllocIndex-1].ROUT_ST_TM;
+			var oldRoutEdTm = dltBrtOperPlRoutInfoAsc[g_rowAllocIndex-1].ROUT_ED_TM;
+			var oldWayDiv = dltBrtOperPlRoutInfoAsc[g_rowAllocIndex-1].WAY_DIV;
+			var i = 0;
+			if(oldWayDiv=='WD001'){
+				for(i=g_rowAllocIndex;i<dltBrtOperPlRoutInfoDesc.length;i++){
+					var routStTm = dltBrtOperPlRoutInfoDesc[i].ROUT_ST_TM;
+					if(util.dateMinus(oldRoutEdTm + ":00", routStTm + ":00")>0){
+						var routId = dltBrtOperPlRoutInfoDesc[i].ROUT_ID;
+						var routNm = dltBrtOperPlRoutInfoDesc[i].ROUT_NM;
+						var operSn = dltBrtOperPlRoutInfoDesc[i].OPER_SN;
+						var routEdTm = dltBrtOperPlRoutInfoDesc[i].ROUT_ED_TM;
+						var wayDiv = dltBrtOperPlRoutInfoDesc[i].WAY_DIV;
+						var rowData = {
+							ROUT_ID : routId,
+							ROUT_NM : routNm,
+							OPER_SN : operSn,
+							ROUT_ST_TM : routStTm,
+							ROUT_ED_TM : routEdTm,
+							WAY_DIV : wayDiv,
+							ALLOC_NO : allocIndex
+						};
+						
+						dlt_OPER_ALLOC_PL_ROUT_INFO.setRowJSON(g_rowAllocIndex, rowData, true);
+						g_rowAllocIndex++;
+						g_rowColumnIndex ++;
+						scwin.recurOperRoundInstall(dltBrtOperPlMst, dltBrtOperPlRoutInfoAsc, dltBrtOperPlRoutInfoDesc, focusIndex, allocIndex);
+						return;
+					}
+				}
+				if(i==dltBrtOperPlRoutInfoDesc.length){
+					return;
+				}
+			}
+			else if(oldWayDiv=='WD002'){
+				for(i=g_rowAllocIndex;i<dltBrtOperPlRoutInfoAsc.length;i++){
+					var routStTm = dltBrtOperPlRoutInfoAsc[i].ROUT_ST_TM;
+					if(util.dateMinus(routStTm + ":00", oldRoutEdTm + ":00")>0){
+						var routId = dltBrtOperPlRoutInfoAsc[i].ROUT_ID;
+						var routNm = dltBrtOperPlRoutInfoAsc[i].ROUT_NM;
+						var operSn = dltBrtOperPlRoutInfoAsc[i].OPER_SN;
+						var routEdTm = dltBrtOperPlRoutInfoAsc[i].ROUT_ED_TM;
+						var wayDiv = dltBrtOperPlRoutInfoAsc[i].WAY_DIV;
+						var rowData = {
+							ROUT_ID : routId,
+							ROUT_NM : routNm,
+							OPER_SN : operSn,
+							ROUT_ST_TM : routStTm,
+							ROUT_ED_TM : routEdTm,
+							WAY_DIV : wayDiv,
+							ALLOC_NO : allocIndex
+						};
+						
+						dlt_OPER_ALLOC_PL_ROUT_INFO.setRowJSON(g_rowAllocIndex, rowData, true);
+						g_rowAllocIndex++;
+						g_rowColumnIndex++;
+						scwin.recurOperRoundInstall(dltBrtOperPlMst, dltBrtOperPlRoutInfoAsc, dltBrtOperPlRoutInfoDesc, focusIndex, allocIndex);
+						return;
+					}
+				}
+				if(i==dltBrtOperPlRoutInfoAsc.length){
+					var rowIndex = dlt_OPER_ALLOC_PL_ROUT_CNT.insertRow();
+					dlt_OPER_ALLOC_PL_ROUT_CNT.setCellData(rowIndex, "CNT", g_rowColumnIndex);
+					g_rowColumnIndex = 0;
+					return;
+				}
+			}
+
+		
+		}
+		else if ((wayYn=='Y')&&(routDiv=='RD002')){
+			if(i<halfAllocCnt){
+				dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "WAY_DIV", "WD001");
+			}
+			else{
+				dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "WAY_DIV", "WD002");
+			}
+		}
+		else {
+			dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "ROUT_ID", routId);
+			dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "ROUT_NM", routNm);
+			dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "OPER_SN", operSn);
+			dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "ROUT_ST_TM", routStTm);
+			dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "ROUT_ED_TM", routEdTm);
+		}
+				
+	}
+	
+	//화면 재구성
+	scwin.reInit = function() {
+
+		debugger;
+		var allocCnt = ALLOC_CNT.getValue();
+		var halfAllocCnt = parseInt(Math.ceil(allocCnt/2));
+		var operCnt = OPER_CNT.getValue();
+		oldAllocCnt = allocCnt;
+		oldOperCnt = operCnt;
+		
+		
+		if(com.isEmpty(operCnt)==false){
+			var columnCnt = parseInt(operCnt/allocCnt);
+			
+			dlt_OPER_ALLOC_PL_ROUT_INFO.removeAll();
+			dlt_OPER_ALLOC_PL_ROUT_CNT.removeAll();
+			dlt_VIEW_OPER_PL_ROUT_INFO.removeAll();
+			dlt_EXL_OPER_PL_ROUT_INFO.removeAll();
+			var focusIndex = AL0202G0.getFocusedRowIndex();
+			
+			var dltBrtOperPlMst = dlt_BRT_OPER_PL_MST.getAllJSON();
+			var dltBrtOperPlRoutInfoAsc = dlt_BRT_OPER_PL_ROUT_INFO_ASC.getAllJSON();
+			var dltBrtOperPlRoutInfoDesc = dlt_BRT_OPER_PL_ROUT_INFO_DESC.getAllJSON();
+			var repRoutId = dltBrtOperPlMst[focusIndex].REP_ROUT_ID;
+			var repRoutNM = dltBrtOperPlMst[focusIndex].REP_ROUT_NM;
+			var dayDiv = dltBrtOperPlMst[focusIndex].DAY_DIV;
+			var routDiv = dltBrtOperPlMst[focusIndex].ROUT_DIV;
+			var wayYn = dltBrtOperPlMst[focusIndex].WAY_YN;
+			var wayAscNm = dltBrtOperPlMst[focusIndex].WAY_ASC_NM;
+			var wayDescNm = dltBrtOperPlMst[focusIndex].WAY_DESC_NM;
+			
+			var allocIndex = 0;
+			var oldAllocIndex = -1;
+			for(i=0;i<halfAllocCnt;i++){
+				g_rowAllocIndex = dlt_OPER_ALLOC_PL_ROUT_INFO.insertRow();
+				dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "REP_ROUT_ID", repRoutId);
+				dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "REP_ROUT_NM", repRoutNM);
+				dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "DAY_DIV", dayDiv);
+				dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "WAY_ASC_NM", wayAscNm);
+				dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "WAY_DESC_NM", wayDescNm);
+					
+				if((wayYn=='Y')&&(routDiv=='RD001')){
+					var routId = dltBrtOperPlRoutInfoAsc[i].ROUT_ID;
+					var routNm = dltBrtOperPlRoutInfoAsc[i].ROUT_NM;
+					var operSn = dltBrtOperPlRoutInfoAsc[i].OPER_SN;
+					var routStTm = dltBrtOperPlRoutInfoAsc[i].ROUT_ST_TM;
+					var routEdTm = dltBrtOperPlRoutInfoAsc[i].ROUT_ED_TM;
+					var wayDiv = dltBrtOperPlRoutInfoAsc[i].WAY_DIV;
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "ROUT_ID", routId);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "ROUT_NM", routNm);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "OPER_SN", operSn);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "ROUT_ST_TM", routStTm);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "ROUT_ED_TM", routEdTm);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "WAY_DIV", wayDiv);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "ALLOC_NO", allocIndex);
+					g_rowAllocIndex ++;
+					scwin.recurOperRoundInstall(dltBrtOperPlMst, dltBrtOperPlRoutInfoAsc, dltBrtOperPlRoutInfoDesc, focusIndex, allocIndex);
+					
+				}
+				else if ((wayYn=='Y')&&(routDiv=='RD002')){
+					if(i<halfAllocCnt){
+						dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "WAY_DIV", "WD001");
+
+					}
+					else{
+						dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "WAY_DIV", "WD002");
+					}
+				}
+				else {
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "ROUT_ID", routId);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "ROUT_NM", routNm);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "OPER_SN", operSn);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "ROUT_ST_TM", routStTm);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "ROUT_ED_TM", routEdTm);
+				}
+				
+			}
+			
+			for(i=halfAllocCnt;i<halfAllocCnt;i++){
+				g_rowAllocIndex = dlt_OPER_ALLOC_PL_ROUT_INFO.insertRow();
+				dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "REP_ROUT_ID", repRoutId);
+				dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "REP_ROUT_NM", repRoutNM);
+				dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "DAY_DIV", dayDiv);
+				dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "WAY_ASC_NM", wayAscNm);
+				dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "WAY_DESC_NM", wayDescNm);
+					
+				if((wayYn=='Y')&&(routDiv=='RD001')){
+					var routId = dltBrtOperPlRoutInfoDesc[j].ROUT_ID;
+					var routNm = dltBrtOperPlRoutInfoDesc[j].ROUT_NM;
+					var operSn = dltBrtOperPlRoutInfoDesc[j].OPER_SN;
+					var routStTm = dltBrtOperPlRoutInfoDesc[j].ROUT_ST_TM;
+					var routEdTm = dltBrtOperPlRoutInfoDesc[j].ROUT_ED_TM;
+					var wayDiv = dltBrtOperPlRoutInfoDesc[j].WAY_DIV;
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "ROUT_ID", routId);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "ROUT_NM", routNm);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "OPER_SN", operSn);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "ROUT_ST_TM", routStTm);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "ROUT_ED_TM", routEdTm);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "WAY_DIV", wayDiv);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(g_rowAllocIndex, "ALLOC_NO", allocIndex);
+					g_rowAllocIndex ++;
+					scwin.recurOperRoundInstall(dltBrtOperPlMst, dltBrtOperPlRoutInfoAsc, dltBrtOperPlRoutInfoDesc, focusIndex, allocIndex);
+					
+				}
+				else if ((wayYn=='Y')&&(routDiv=='RD002')){
+					if(i<halfAllocCnt){
+						dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "WAY_DIV", "WD001");
+
+					}
+					else{
+						dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "WAY_DIV", "WD002");
+					}
+				}
+				else {
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "ROUT_ID", routId);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "ROUT_NM", routNm);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "OPER_SN", operSn);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "ROUT_ST_TM", routStTm);
+					dlt_OPER_ALLOC_PL_ROUT_INFO.setCellData(i, "ROUT_ED_TM", routEdTm);
+				}
+				
+			}
+		}
+		
+
+	}
 
 	scwin.setGridExcelInfo = function() {
 		
@@ -521,7 +802,7 @@
 					}
 				}
 				else if(columnNmArr1[j]=="ALLOC_NO"){
-					columnVal = "B"+dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rowIndex+j, columnNmArr1[j]);
+					columnVal = /*"B"+*/dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rowIndex+j, columnNmArr1[j]);
 				}
 				else{
 					columnVal = dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rowIndex+j, columnNmArr1[j]);
@@ -660,7 +941,7 @@
 					}
 				}
 				else if(columnNmArr1[j]=="ALLOC_NO"){
-					columnVal = "B"+dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rowIndex+j, columnNmArr1[j]);
+					columnVal = /*"B"+*/dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rowIndex+j, columnNmArr1[j]);
 				}
 				else{
 					columnVal = dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rowIndex+j, columnNmArr1[j]);
@@ -707,7 +988,7 @@
 					}
 				}
 				else if(columnNmArr1[j]=="ALLOC_NO"){
-					columnVal = "B"+dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rowIndex+j, columnNmArr1[j]);
+					columnVal = /*"B"+*/dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rowIndex+j, columnNmArr1[j]);
 				}
 				else{
 					columnVal = dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rowIndex+j, columnNmArr1[j]);
@@ -839,7 +1120,7 @@
 					<xf:group></xf:group>
 					<xf:group id="" class="" style="">
 						<w2:gridView alwaysTriggerScrollStart="" captionTitle="" id="AL0202G0" class="cm_grid left AL0202G0"
-							dataList="data:dlt_OPER_PL_ROUT_INFO" ev:onrowindexchange="scwin.AL0202G0_onrowindexchange" fixedColumnWithHidden="true"
+							dataList="data:dlt_BRT_OPER_PL_MST" ev:onrowindexchange="scwin.AL0202G0_onrowindexchange" fixedColumnWithHidden="true"
 							autoFit="lastColumn" ignoreCellClick="false" rowNumHeaderValue="순번" rowNumVisible="true" mergeCells="byrestriccol"
 							rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="true" style="" useShiftKey="true"
 							autoFitMinWidth="0" focusMode="row" readOnly="true">
@@ -863,16 +1144,16 @@
 								</w2:row>
 								<w2:row style="" id="routInfo_row2">
 									<w2:column removeBorderStyle="false" width="60" inputType="text" style="height:20px"
-										id="col_WAY_ASC_NM" value="방면" blockSelect="false" displayMode="label">
+										id="col_WAY_ASC_NM1" value="방면" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px"
-										id="col_WAY_ASC_STR" value="상세정보" blockSelect="false" displayMode="label">
+										id="col_WAY_ASC_STR1" value="상세정보" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="60" inputType="text" style="height:20px"
-										id="col_WAY_ASC_NM" value="방면" blockSelect="false" displayMode="label">
+										id="col_WAY_ASC_NM2" value="방면" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px"
-										id="col_WAY_DESC_STR" value="상세정보" blockSelect="false" displayMode="label">
+										id="col_WAY_DESC_STR2" value="상세정보" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
 							</w2:header>
@@ -917,10 +1198,10 @@
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="배차편성 상세" style=""></w2:textbox>
-							<w2:span label="운행횟수 : " style="float: left; margin-left: 50px; margin-right: 10px;margin-top: 2px;" id=""></w2:span>
-							<xf:input adjustMaxLength="false" id="" ref="data:dlt_OPER_PL_ROUT_INFO.OPER_CNT" style="width: 70px;height: 21px; float: left; margin-right:20px" ev:onkeyup="scwin.operCntKeyUp"></xf:input>
-							<w2:span label="배차횟수 : " style="float: left; margin-right: 10px;margin-top: 2px;" id=""></w2:span>
-							<xf:input adjustMaxLength="false" id="" ref="data:dlt_OPER_PL_ROUT_INFO.ALLOC_CNT" style="width: 70px;height: 21px; float: left; margin-right:20px" ev:onkeyup="scwin.allocCntKeyUp"></xf:input>
+							<w2:span label="운행횟수 : " style="float: left; margin-left: 50px; margin-right: 8px;margin-top: 2px;" id=""></w2:span>
+							<xf:input adjustMaxLength="false" id="OPER_CNT" ref="data:dlt_BRT_OPER_PL_MST.OPER_CNT" style="width: 50px;height: 21px; float: left; margin-right:15px" ev:onkeyup=""></xf:input>
+							<w2:span label="배차횟수 : " style="float: left; margin-right: 8px;margin-top: 2px;" id=""></w2:span>
+							<xf:input adjustMaxLength="false" id="ALLOC_CNT" ref="data:dlt_BRT_OPER_PL_MST.ALLOC_CNT" style="width: 50px;height: 21px; float: left; margin-right:15px" ev:onkeyup=""></xf:input>
 						</xf:group>
 						<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
 					</xf:group>
@@ -937,7 +1218,7 @@
 										value="구분" blockSelect="false" displayMode="label" colSpan="" rowSpan="2">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:40px;" id="col_ALLOC_NO"
-										value="배차" blockSelect="false" displayMode="label" colSpan="" rowSpan="2">
+										value="배차순번" blockSelect="false" displayMode="label" colSpan="" rowSpan="2">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px;" id="col_OPER_INFO"
 										value="운행정보" blockSelect="false" displayMode="label" colSpan="3" rowSpan="">

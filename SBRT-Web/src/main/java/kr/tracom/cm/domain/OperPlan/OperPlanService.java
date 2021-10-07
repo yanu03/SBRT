@@ -1059,5 +1059,16 @@ public class OperPlanService extends ServiceSupport {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
 		return operPlanMapper.selectOperPlanRout(map);
 	}
+	
+	public List<Map<String, Object>> selectOperPlanRoutAsc() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		map.put("WAY_DIV", "WD001");
+		return operPlanMapper.selectOperPlanRout(map);
+	}
 
+	public List<Map<String, Object>> selectOperPlanRoutDesc() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		map.put("WAY_DIV", "WD002");
+		return operPlanMapper.selectOperPlanRout(map);
+	}
 }
