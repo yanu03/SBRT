@@ -20,6 +20,11 @@ public class RoutService extends ServiceSupport {
 		return routMapper.selectRoutList(map);
 	}
 	
+	public List<Map<String, Object>> selectRoutListByRepRout() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return routMapper.selectRoutListByRepRout(map);
+	}
+	
 	public List<Map<String, Object>> selectRoutItem() throws Exception {
 		return routMapper.selectRoutItem();
 	}
@@ -39,6 +44,11 @@ public class RoutService extends ServiceSupport {
 	public List<Map<String, Object>> selectNodeListByRepRout() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
 		return routMapper.selectNodeListByRepRout(map);
+	}
+	
+	public List<Map<String, Object>> selectMainNodeListByRout() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		return routMapper.selectMainNodeListByRout(map);
 	}
 
 	public List<Map<String, Object>> selectSttnList() throws Exception {

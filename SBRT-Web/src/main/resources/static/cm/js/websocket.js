@@ -87,6 +87,11 @@ function onMessageReceived(payload) {
 
 		
 		
+	} else if(attrId == 4012) { //4012: 운행이벤트
+		
+		//console.log(payload.body);
+		
+				
 	} else if(attrId == 4020) { //4020: 디스패치
 		
 		//payload.body >>>> {MESSAGE=천천히가세요, DSPTCH_DIV=DP001, ATTR_ID=4020, DSPTCH_KIND=DK002, VHC_ID=VH00000002}

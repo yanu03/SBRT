@@ -64,9 +64,9 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0400G1R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0400G2R0" ref="" target="data:json,dlt_BMS_LIVING_LOG" action="/pi/PI0400G2R0" method="post"
+			<xf:submission id="sub_PI0400G2R0" ref="data:json,dma_search" target="data:json,dlt_BMS_LIVING_LOG" action="/pi/PI0400G2R0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				ev:submit="" ev:submitdone="scwin.sub_PI0400G2R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
@@ -81,7 +81,9 @@
 		
 		var codeOptions = [ {code : "SKY_COND", compID : "PI0400G0:SKY_COND" }
 							,{code : "SKY_COND", compID : "PI0400F0:F_SKY_COND" }
-							
+							,{code : "AREA", compID : "PI0400G2:AREA" }
+							,{code : "VHC_TYPE", compID : "PI0400G2:VHC_TYPE" }
+							,{code : "VHC_STS", compID : "PI0400G2:VHC_STS" }
 		 ];
 		 
 		com.setCommonDtl(codeOptions, function() {
@@ -149,6 +151,10 @@
 	
 	scwin.tabControl_ontabclick = function(tabID,idx) {
 	
+	};
+	
+	scwin.sub_PI0400G2R0_submitdone = function(e) {
+		com.setFocusedCell(PI0400G2, "SEND_DT");
 	};
 	]]></script>
 	</head>
@@ -352,7 +358,7 @@
 							<w2:tabs disabled="false" style="width:70px;height:30px;" id="tabs3" label="기상"></w2:tabs>
 							<w2:content alwaysDraw="false" style="height:100%;" id="content3">
 								<w2:gridView id="PI0400G0" style="" defaultCellHeight="20" rowNumVisible="true"
-									useShiftKey="true" readOnly="" ev:onrowindexchange="scwin.PI0400G0_onrowindexchange" scrollByColumn="false" rowNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태"
+									useShiftKey="true" readOnly="true" ev:onrowindexchange="scwin.PI0400G0_onrowindexchange" scrollByColumn="false" rowNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태"
 									 overflowX="auto" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true"
 									ignoreCellClick="false" dataList="data:dlt_BMS_WEAT_INFO" class="cm_grid tab" autoFit="allColumn" fixedColumnScrollHidden="" sortOrderReverse="true" focusMode="row">
 									<w2:header style="" id="header1">
@@ -430,7 +436,7 @@
 							<w2:tabs disabled="false" style="width:70px;height:30px;" id="tabs4" label="대기"></w2:tabs>
 							<w2:content alwaysDraw="false" style="height:100%" id="content4">
 								<w2:gridView id="PI0400G1" style="" defaultCellHeight="20" rowNumVisible="true"
-									useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태"
+									useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태"
 									 overflowX="auto" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true"
 									ignoreCellClick="false" dataList="data:dlt_BMS_ATMO_INFO" class="cm_grid tab" autoFit="allColumn" fixedColumnScrollHidden="" focusMode="row">
 									<w2:header style="" id="header1">
@@ -517,7 +523,7 @@
 								<w2:header id="header1" style="">
 									<w2:row id="row1" style="">
 										<w2:column blockSelect="false" displayMode="label" id="column3" inputType="text"
-											removeBorderStyle="false" style="height:20px" value="전송일시" width="174">
+											removeBorderStyle="false" style="height:20px" value="전송일시" width="130">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="column4" inputType="text"
 											removeBorderStyle="false" style="height:20px" value="관리ID" width="100">
@@ -544,13 +550,28 @@
 								</w2:header>
 								<w2:gBody id="gBody1" style="">
 									<w2:row id="row2" style="">
-										<w2:column blockSelect="false" displayMode="label" id="column8" inputType="text"
+										<w2:column blockSelect="false" displayMode="label" id="SEND_DT" inputType="text"
 											removeBorderStyle="false" style="height:20px" value="" width="174">
 										</w2:column>
-										<w2:column blockSelect="false" displayMode="label" id="column9" inputType="text"
+										<w2:column blockSelect="false" displayMode="label" id="MNG_ID" inputType="text"
 											removeBorderStyle="false" style="height:20px" value="" width="133">
 										</w2:column>
-										<w2:column blockSelect="false" displayMode="label" id="column10" inputType="text"
+										<w2:column blockSelect="false" displayMode="label" id="VHC_ID" inputType="text"
+											removeBorderStyle="false" style="height:20px" value="" width="195">
+										</w2:column>
+										<w2:column blockSelect="false" displayMode="label" id="VHC_NO" inputType="text"
+											removeBorderStyle="false" style="height:20px" value="" width="195">
+										</w2:column>
+										<w2:column blockSelect="false" displayMode="label" id="AREA" inputType="select"
+											removeBorderStyle="false" style="height:20px" value="" width="195">
+										</w2:column>
+										<w2:column blockSelect="false" displayMode="label" id="MAKER" inputType="text"
+											removeBorderStyle="false" style="height:20px" value="" width="195">
+										</w2:column>
+										<w2:column blockSelect="false" displayMode="label" id="VHC_TYPE" inputType="select"
+											removeBorderStyle="false" style="height:20px" value="" width="195">
+										</w2:column>
+										<w2:column blockSelect="false" displayMode="label" id="VHC_STS" inputType="select"
 											removeBorderStyle="false" style="height:20px" value="" width="195">
 										</w2:column>
 									</w2:row>

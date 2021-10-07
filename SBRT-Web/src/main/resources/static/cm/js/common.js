@@ -4437,6 +4437,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						}
 					}
 					else if( type == gcm.DISP_TYPE.DUAL_GRID2){ //듀얼 그리드 서브그리드만 저장
+						
 						if(i == gcm.BTN.SEARCH.nm){
 							item.cbFnc = function(){
 								var sub = autoOpt.Sub1;
@@ -4487,7 +4488,12 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 							item.cbFnc = function(){
 								var sub = autoOpt.Sub1;
 								if ((typeof sub !== "undefined")&&(sub !== null)){
-									com.exlUploadGrid(sub.grid);
+									if ((typeof sub.exlGrid !== "undefined")&&(sub.exlGrid !== null)){
+										com.exlUploadGrid(sub.exlGrid);
+									}
+									else {
+										com.exlUploadGrid(sub.grid);
+									}
 								}
 							}
 						}
@@ -4495,7 +4501,12 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 							item.cbFnc = function(){
 								var sub = autoOpt.Sub1;
 								if ((typeof sub !== "undefined")&&(sub !== null)){
-									com.exlGrid(sub.grid);
+									if ((typeof sub.exlGrid !== "undefined")&&(sub.exlGrid !== null)){
+										com.exlGrid(sub.exlGrid);
+									}
+									else {
+										com.exlGrid(sub.grid);
+									}
 								}
 							}
 						}
@@ -4503,7 +4514,12 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 							item.cbFnc = function(){
 								var sub = autoOpt.Sub1;
 								if ((typeof sub !== "undefined")&&(sub !== null)){
-									com.exlFrmGrid(sub.grid);
+									if ((typeof sub.exlGrid !== "undefined")&&(sub.exlGrid !== null)){
+										com.exlFrmGrid(sub.exlGrid);
+									}
+									else {
+										com.exlFrmGrid(sub.grid);
+									}
 								}
 							}
 						}
@@ -5639,7 +5655,7 @@ com.delGrid = function(grid,str,afterCb){
 	var focusIdxs = grid.getAllFocusedRowIndex();
 	var count = focusIdxs.length;
 	if (count > 0) {
-		if(	(typeof str == "undefined") || (str.trim() == "")){
+		if(	(str == null) || (typeof str == "undefined") || (str.trim() == "")){
 			var mainNm = "";
 			if(	(typeof gcm.GRID_INFO[grid.org_id] !== "undefined") && (gcm.GRID_INFO[grid.org_id] !== null) 
 					&&(gcm.GRID_INFO[grid.org_id].name !== null)&&(typeof gcm.GRID_INFO[grid.org_id].name !== "undefined")){
@@ -5704,7 +5720,7 @@ com.delGrid = function(grid,str,afterCb){
 				grid.setFocusedCell(focusIndex, 0, false);
 			
 				
-				if((typeof afterCb == "undefined") || (typeof afterCb == "function")){
+				if((afterCb != null) && (typeof afterCb != "undefined") && (typeof afterCb == "function")){
 					afterCb();
 				}
 			}		
@@ -6787,6 +6803,7 @@ com.setSerialNumberToData= function(grid, column){
 			}
 		}
 	}
+	return nodeSn;
 }
 
 com.isEmpty = function(str){

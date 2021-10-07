@@ -88,9 +88,15 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             LEFT JOIN BMS_ROUT_LINK_CMPSTN D ON (A.ROUT_ID = D.ROUT_ID) AND (A.LINK_ID = (D.LINK_ID))
             LEFT JOIN BMS_LINK_MST E ON E.LINK_ID = D.LINK_ID
         WHERE A.ROUT_ID = #{ROUT_ID}
-        AND B.OPER_SN = #{OPER_SN}
-        AND A.LINK_NODE_YN = 'Y'
-        AND B.DAY_DIV = #{DAY_DIV}
+	        AND B.OPER_SN = #{OPER_SN}
+	        AND A.LINK_NODE_YN = 'Y'
+	        AND B.DAY_DIV = #{DAY_DIV}
+        <if test="ST_NODE_SN != null">
+            AND A.NODE_SN <![CDATA[ >= ]]> #{ST_NODE_SN}
+        </if>
+        <if test="ED_NODE_SN != null">
+            AND A.NODE_SN <![CDATA[ <= ]]> #{ED_NODE_SN}
+        </if>        
         ORDER BY A.NODE_SN ASC;
     </select>
 
@@ -330,10 +336,9 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
 
  	<!--변경운행계획 생성-->
     <insert id="insertChgOperInfo" parameterType="hashmap">
-        INSERT INTO BRT_CHG_OPER_INFO
+        INSERT INTO BRT_CUR_CHG_OPER_INFO
         (
-            OCR_DTM
-            ,OPER_DT
+            OPER_DT
             ,REP_ROUT_ID
             ,ROUT_ID
             ,ALLOC_NO
@@ -349,27 +354,40 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,TM_Y
             ,CHG_OPER_DIV
             ,CHG_APPR_DIV-->
+            ,OCR_DTM
             ,UPD_DTM
         )
         VALUES
         (
-            NOW()
-            ,#{OPER_DT}
+            #{OPER_DT}
             ,#{REP_ROUT_ID}
             ,#{ROUT_ID}
             ,#{ALLOC_NO}
             ,#{OPER_SN}
-            ,NOW()
-        );
+            ,#{OCR_DTM}
+            ,#{UPD_DTM}
+        )
+   		ON DUPLICATE KEY UPDATE
+			OCR_DTM = VALUES(OCR_DTM)	
+			,UPD_DTM = VALUES(UPD_DTM);
     </insert>
 
 
 
     <insert id="insertChgOperDtlInfo" parameterType="hashmap">
-        INSERT INTO BRT_CHG_OPER_DTL_INFO
+    
+    	DELETE
+            FROM BRT_CUR_CHG_OPER_DTL_INFO
+        WHERE OPER_DT = #{OPER_DT}
+            AND REP_ROUT_ID = #{REP_ROUT_ID}
+            AND ROUT_ID = #{ROUT_ID}
+            AND ALLOC_NO = #{ALLOC_NO}
+            AND OPER_SN = #{OPER_SN};
+    
+    
+        INSERT INTO BRT_CUR_CHG_OPER_DTL_INFO
         (
-            OCR_DTM
-            ,OPER_DT
+            OPER_DT
             ,REP_ROUT_ID
             ,ROUT_ID
             ,COR_ID
@@ -380,13 +398,13 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,NODE_TYPE
             ,DPRT_TM
             ,ARRV_TM
+            ,OCR_DTM
             ,UPD_DTM
         )
         VALUES
         <foreach collection="ITEM_LIST" item="item" separator=",">
             (
-            NOW()
-            ,#{OPER_DT}
+            #{OPER_DT}
             ,#{item.REP_ROUT_ID}
             ,#{item.ROUT_ID}
             ,#{item.COR_ID}
@@ -397,10 +415,38 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,#{item.NODE_TYPE}
             ,#{item.ARRV_TM}
             ,#{item.DPRT_TM}
-            ,NOW()
+            ,#{OCR_DTM}
+            ,#{UPD_DTM}
             )
         </foreach>
     </insert>
 
-
+	<select id="selectOperPlanRout" resultType="hashmap" parameterType="HashMap">
+		SELECT A.REP_ROUT_ID,
+		A.DAY_DIV,
+		A.WAY_DIV,
+		A.OPER_SN,
+		A.ROUT_ID,
+		A.ROUT_ST_TM,
+		A.ROUT_ED_TM,
+		B.REP_ROUT_NM,
+		C.ROUT_NM
+		FROM BRT_OPER_PL_ROUT_INFO A
+			INNER JOIN BMS_REP_ROUT_MST B
+				ON A.REP_ROUT_ID = B.REP_ROUT_ID
+			LEFT OUTER JOIN BMS_ROUT_MST C
+				ON A.ROUT_ID = C.ROUT_ID
+		WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.DAY_DIV = #{DAY_DIV} AND A.WAY_DIV = #{WAY_DIV}
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+			<if test="TYPE == 'ALL'||TYPE == ''">
+				AND (A.REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || B.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%'))
+			</if>
+			<if test="TYPE == 'REP_ROUT_ID'">
+				AND A.REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'REP_ROUT_NM'">
+				AND B.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</if>
+	</select>
 </mapper>

@@ -208,6 +208,18 @@
 	scwin.FM0100G0_onrowindexchange = function(row,oldRow) {
 		var focusOption = {keyMap : dma_subsearch};
 		com.changeDualGrid(FM0100G0, FM0100G1, sub_FM0100G1S0, sub_FM0100G1R0, focusOption, row, oldRow);
+		
+		var nodeType = dlt_BMS_NODE_MST.getCellData(row, "NODE_TYPE");
+		
+		if(nodeType == "NT001"){
+			INST_LOC.setDisabled(true);
+			//FCLT_KIND.setNodeSet("data:dlt_BMS_FCLT_INFO", "", "");
+		}else if(nodeType == "NT002"){
+			INST_LOC.setDisabled(false);
+			//FCLT_KIND.setNodeSet(nodeset, label, value);
+			
+			//selectbox1.setNodeSet('data:dataList1','lbl','code');
+		}
 	};
 	
 	scwin.sub_FM0100G1R0_submitdone = function(e) {
@@ -273,7 +285,7 @@
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_350_20_a" style="">
 					<xf:group id="" class="" style="">
 						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="정류장 목록" style=""></w2:textbox>
+							<w2:textbox class="df_tt fl" id="" label="노드 목록" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
 					<xf:group></xf:group>
@@ -295,11 +307,11 @@
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column61"
 										value="노드ID" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column57"
-										value="노드타입" blockSelect="false" displayMode="label">
-									</w2:column>
 									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column56"
 										value="노드명" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column57"
+										value="노드타입" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column58"
 										value="위도" blockSelect="false" displayMode="label" sortable="false">
@@ -317,11 +329,11 @@
 									<w2:column removeBorderStyle="false" width="94" inputType="text" style="height:20px" id="NODE_ID"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="117" inputType="select" style="height:20px" id="NODE_TYPE"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
 									<w2:column removeBorderStyle="false" width="161" inputType="text" style="height:20px" id="NODE_NM"
 										value="" blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="117" inputType="select" style="height:20px" id="NODE_TYPE"
+										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="113" inputType="text" style="height:20px" id="GPS_Y"
 										value="" blockSelect="false" displayMode="label"  textAlign="right">
@@ -467,16 +479,15 @@
 				
 				<xf:group id="" class="vertical_line">
 				</xf:group>
-				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_a" style="">
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_280_20_a" style="">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="시설물 정보" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
-					<xf:group id="" class="" style="">
-					</xf:group>
+					<xf:group id="" class="" style=""></xf:group>
 					<xf:group class="" id="" style="">
-						<xf:group  class="w2tb tb" id="FM0100F0" style="width:100%;" tagname="table">
+						<xf:group class="w2tb tb" id="FM0100F0" style="width:100%;" tagname="table">
 							<w2:attributes>
 								<w2:summary></w2:summary>
 							</w2:attributes>
@@ -501,7 +512,8 @@
 									</w2:attributes>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="-선택-"
 										direction="auto" disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="ORG_NM" labelWidthAuto=""
-										mandatory="true" optionOrder="" ev:onchange="scwin.ORG_NM_onchange" ref="data:dlt_BMS_FCLT_INFO.MAKER" renderType="component" style="height:24px;width: 160px;" submenuSize="auto">
+										mandatory="true" optionOrder="" ev:onchange="scwin.ORG_NM_onchange" ref="data:dlt_BMS_FCLT_INFO.MAKER" renderType="component"
+										style="height:24px;width: 160px;" submenuSize="auto">
 										<xf:choices>
 											<xf:itemset nodeset="data:dlt_searchitem2">
 												<xf:label ref="ORG_NM"></xf:label>
@@ -512,7 +524,12 @@
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" class="w2tb_th">시설물유형<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
+								<xf:group tagname="th" class="w2tb_th">
+									시설물유형
+									<w2:attributes>
+										<w2:scope>row</w2:scope>
+									</w2:attributes>
+								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes>
 										<w2:colspan>1</w2:colspan>
@@ -525,7 +542,10 @@
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
-								<xf:group tagname="th" class="w2tb_th">유지보수기관<w2:attributes></w2:attributes></xf:group>
+								<xf:group tagname="th" class="w2tb_th">
+									유지보수기관
+									<w2:attributes></w2:attributes>
+								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes>
 										<w2:colspan>1</w2:colspan>
@@ -542,7 +562,9 @@
 											</xf:itemset>
 										</xf:choices>
 									</xf:select1>
-								</xf:group></xf:group><xf:group style="" tagname="tr">
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
 								<xf:group class="w2tb_th" style="" tagname="th">장착위치</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<w2:attributes>
@@ -556,33 +578,50 @@
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
-								<xf:group tagname="th" class="w2tb_th">모델명<w2:attributes></w2:attributes></xf:group>
+								<xf:group tagname="th" class="w2tb_th">
+									모델명
+									<w2:attributes></w2:attributes>
+								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes></w2:attributes>
 									<xf:input adjustMaxLength="" class="" disabled="false" id="MODEL_NM" mandatory=""
 										ref="data:dlt_BMS_FCLT_INFO.MODEL_NM" style="width:100%;height:21px;" dataType="text" maxlength="20">
 									</xf:input>
-								</xf:group></xf:group>
-								<xf:group tagname="tr" style=""><xf:group tagname="th" class="w2tb_th">관리아이디<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
+								</xf:group>
+							</xf:group>
+							<xf:group tagname="tr" style="">
+								<xf:group tagname="th" class="w2tb_th">
+									관리아이디
+									<w2:attributes>
+										<w2:scope>row</w2:scope>
+									</w2:attributes>
+								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes></w2:attributes>
 									<xf:input adjustMaxLength="" class="" dataType="text" disabled="false" id="MNG_ID" mandatory=""
-										maxlength="20" ref="data:dlt_BMS_FCLT_INFO.MNG_ID" style="width:100%;height:21px;">
+										maxlength="20" ref="data:dlt_BMS_FCLT_INFO.MNG_ID" style="width:100%;height:21px;" readOnly="true">
 									</xf:input>
 								</xf:group>
-								<xf:group tagname="th" class="w2tb_th">시설IP<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
+								<xf:group tagname="th" class="w2tb_th">
+									시설IP
+									<w2:attributes>
+										<w2:scope>row</w2:scope>
+									</w2:attributes>
+								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes></w2:attributes>
 									<xf:input adjustMaxLength="" class="" dataType="text" disabled="false" id="FCLT_IP" mandatory=""
 										maxlength="20" ref="data:dlt_BMS_FCLT_INFO.FCLT_IP" style="width:100%;height:21px;" initValue="">
 									</xf:input>
-								</xf:group></xf:group>
-								<xf:group style="" tagname="tr">
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
 								<xf:group class="w2tb_th" style="" tagname="th">구매일자</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<xf:group id="" style=""></xf:group>
 									<w2:inputCalendar footerDiv="false" id="BUY_DT" style="height: 23px;width: 110px;" renderDiv="true"
-										ref="data:dlt_BMS_FCLT_INFO.BUY_DT" focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component">
+										ref="data:dlt_BMS_FCLT_INFO.BUY_DT" focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false"
+										renderType="component">
 									</w2:inputCalendar>
 								</xf:group>
 								<xf:group class="w2tb_th" style="" tagname="th">설치일자</xf:group>
@@ -593,11 +632,18 @@
 									</w2:attributes>
 									<xf:group id="" style=""></xf:group>
 									<w2:inputCalendar footerDiv="false" id="INST_DT" style="height: 23px;width: 110px;" renderDiv="true"
-										ref="data:dlt_BMS_FCLT_INFO.INST_DT" focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component">
+										ref="data:dlt_BMS_FCLT_INFO.INST_DT" focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false"
+										renderType="component">
 									</w2:inputCalendar>
 								</xf:group>
 							</xf:group>
-							<xf:group tagname="tr" style=""><xf:group tagname="th" class="w2tb_th">사용여부<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
+							<xf:group tagname="tr" style="">
+								<xf:group tagname="th" class="w2tb_th">
+									사용여부
+									<w2:attributes>
+										<w2:scope>row</w2:scope>
+									</w2:attributes>
+								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes>
 										<w2:colspan>3</w2:colspan>
@@ -605,7 +651,8 @@
 									</w2:attributes>
 									<xf:group>
 										<xf:select1 id="USE_YN" selectedIndex="-1" appearance="full"
-											style="width: 150px;height: 21px;margin-left: 20px;" cols="" rows="1" ref="data:dlt_BMS_FCLT_INFO.USE_YN" visibleColumn="" value="">
+											style="width: 150px;height: 21px;margin-left: 20px;" cols="" rows="1" ref="data:dlt_BMS_FCLT_INFO.USE_YN" visibleColumn=""
+											value="">
 											<xf:choices>
 												<xf:item>
 													<xf:label><![CDATA[예]]></xf:label>
@@ -618,7 +665,9 @@
 											</xf:choices>
 										</xf:select1>
 									</xf:group>
-								</xf:group></xf:group><xf:group tagname="tr" style="">
+								</xf:group>
+							</xf:group>
+							<xf:group tagname="tr" style="">
 								<xf:group tagname="th" class="w2tb_th" style="height: 70px;vertical-align: top" id="" tabIndex="">
 									비고
 									<w2:attributes>
@@ -630,12 +679,17 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:textarea id="REMARK" style="width: 100%;height: 70px;" maxlength="200" ref="data:dlt_BMS_FCLT_INFO.REMARK"></xf:textarea>
+									<xf:textarea id="REMARK" style="width: 100%;height: 70px;" maxlength="200"
+										ref="data:dlt_BMS_FCLT_INFO.REMARK">
+									</xf:textarea>
 								</xf:group>
 							</xf:group>
 						</xf:group>
-					</xf:group>					
-				</xf:group> <!-- pgm_detail -->
+					</xf:group>
+					<xf:group style="" id=""></xf:group>
+					<xf:image src="/cm/images/add/bg_brt.png" style="width: 100%;height: 100%;" id=""></xf:image>
+
+				</xf:group><!-- pgm_detail -->
 			</xf:group>
 		</xf:group>
 	</body>

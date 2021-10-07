@@ -26,7 +26,7 @@
 		ORDER BY MEAS_DT DESC
 	</select>
 	
-	<select id="PI0400G2R0" resultType="Map" parameterType="Map">
+<select id="PI0400G2R0" resultType="Map" parameterType="Map">
       SELECT 
       	V.VHC_ID
       	,V.VHC_NO
@@ -35,19 +35,15 @@
       	,V.MAKER
       	,V.VHC_STS
       	,V.VHC_TYPE
-      	,SEND_DT    
+      	,LIV.SEND_DT
+      	,LIV.MNG_ID  
       FROM 
       	BMS_LIVING_LOG LIV 
       LEFT OUTER JOIN BMS_DVC_INFO DV 
       ON LIV.MNG_ID = DV.MNG_ID 
       LEFT OUTER JOIN BMS_VHC_MST V 
       ON DV.VHC_ID = V.VHC_ID
-      <where>
-		<if test="value != null">
-			V.VHC_NO LIKE CONCAT('%', #{value}, '%') 
-			AND
-		</if>
-		
-      </where>
+     ORDER BY
+     	 LIV.SEND_DT
 	</select>
 </mapper>
