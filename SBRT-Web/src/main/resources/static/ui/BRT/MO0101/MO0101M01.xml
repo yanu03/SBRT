@@ -35,6 +35,7 @@
 						<w2:column id="NEXT_NODE_NM" name="다음노드명" dataType="text"></w2:column>
 						<w2:column id="PRV_PLCE_NM" name="이전장소명" dataType="text"></w2:column>
 						<w2:column id="NODE_TYPE" name="노드유형" dataType="text"></w2:column>
+						<w2:column id="MESSAGE" name="디스패치메시지" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
@@ -362,8 +363,14 @@
 		});	
 		
 		//마커 우클릭 관련
-		$("#map_MO0101").on("click", ".dispatchMessage", function() {
+		$("#map_MO0101").on("click", ".dispatchMessage", function(e) {
+			e.stopPropagation();
 			scwin.dispatch_onclick();
+			routMap.removeRightClickOverlay("map_MO0101_vehicle");
+		});
+		
+		$("#map_MO0101").click( function() {
+			routMap.removeRightClickOverlay("map_MO0101_vehicle");	
 		});
 		
 	};	//end onpageload
@@ -417,7 +424,15 @@
 		
 		//attrId = 4014 : 실시간 차량 위치 정보
 		else if(attrId == 4014){
+				//payload.body >>>> {"GPS_Y":36.484005,"ATTR_ID":4014,"DVC_ID":"DV00000002","GPS_X":127.25973,"VHC_ID":"VH00000002"}		
+		
+		//jsonObj.VHC_ID => 차량아이디
+		//jsonObj.GPS_X => x좌표
+		//jsonObj.GPS_Y; => y좌표
+		
+		//content = jsonObj.VHC_ID + "," + jsonObj.GPS_X + ", " + jsonObj.GPS_Y;
 			try {
+
 				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 				dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
 				
@@ -431,8 +446,43 @@
 			} catch (e) {
 				console.log("[scwin.onMessageReceived] Exception :: " + e.message);			
 			}	
+		}
+		
+		else if(attrId == 4020) { //4020: 디스패치
+		
+			//payload.body >>>> {MESSAGE=천천히가세요, DSPTCH_DIV=DP001, ATTR_ID=4020, DSPTCH_KIND=DK002, VHC_ID=VH00000002}
+			
+			//jsonObj.DSPTCH_DIV => 디스패치 구분코드 : DP001(일반메시지), DP002(운행중디스패치), DP003(정차중디스패치)
+			//jsonObj.DSPTCH_KIND => 디스패치 종류(레벨)코드 : DK001(1단계), DK002(2단계), DK003(3단계)
+			//jsonObj.MESSAGE => 디스패치 메시지
+			
+			try {
+				routMap.removeAllBusOverlay("map_MO0101_vehicle");				
+				routMap.removeAllOverlay("map_MO0101_sttn");
+				routMap.removeAllOverlay("map_MO0101_crs");					
+				routMap.mapInfo["map_MO0101_vehicle"].isDsptch = "on";
+				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+				dlt_BRT_CUR_OPER_INFO.setCellData(curIndexArr[0], "MESSAGE", jsonObj.MESSAGE);
+				
+				var dsptchDiv = jsonObj.DSPTCH_DIV;
+				routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
+					dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0);				
+				
+				if (dsptchDiv == "DP001") {
+				
+				} else if (dsptchDiv == "DP002") {
+					
+				} else if (dsptchDiv == "DP003") {
+					
+				}
+					
+						
+			} catch (e) {
+				
+			}
 			
 		}
+		
 	};
 			
 	scwin.MO0101G0_onrowindexchange = function(row,oldRow) {
@@ -477,18 +527,23 @@
 		
 		com.executeSubmission(sub_MO0101G4R0);
 		routMap.showRoute("map_MO0101", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), null, "ONLYLINE");			
-		
 		if ($(".moni_img").find("#li_sttnimg").hasClass("on") || startMarker == 1) {
+			routMap.removeAllBusOverlay("map_MO0101_vehicle");
+			routMap.removeAllOverlay("map_MO0101_sttn");			
 			routMap.initOverlay("map_MO0101_crs");
 			routMap.showMarkerListTab("map_MO0101_sttn", dlt_BMS_ROUT_NODE_CMPSTN2.getAllJSON(), MO0101G1.getFocusedRowIndex(), MO0101G1, MO0101T0, MO0101T1, MO0101T2);
 		}
 		
 		if ($(".moni_img").find("#li_crossimg").hasClass("on") || startMarker == 1) {
+			routMap.removeAllBusOverlay("map_MO0101_vehicle");			
+			routMap.removeAllOverlay("map_MO0101_crs");			
 			routMap.initOverlay("map_MO0101_sttn");
 			routMap.showMarkerListTab("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON(), MO0101G2.getFocusedRowIndex(), MO0101G2, MO0101T0, MO0101T1, MO0101T2);			
 		}
 		
 		if ($(".moni_img").find("#li_busimg").hasClass("on") || startMarker == 1) {
+			routMap.removeAllOverlay("map_MO0101_sttn");
+			routMap.removeAllOverlay("map_MO0101_crs");		
 			routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
 					dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0);
 		}			 					 
@@ -686,6 +741,10 @@
 		crossFocus = row;
 		com.executeSubmission(sub_MO0101G3R0);		
 	};
+	
+	scwin.onClickMap = function(mapId) {
+	
+	}
 	
 	scwin.onClickMapVehicle = function(index, mapId) {
 		$(".moni_img").find("li").removeClass("on");
