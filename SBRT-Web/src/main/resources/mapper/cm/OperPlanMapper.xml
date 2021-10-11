@@ -449,4 +449,77 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
 			</if>
 		</if>
 	</select>
+	
+	<select id="selectCourseList" resultType="Map">
+		SELECT	A.COR_ID
+				,	A.REP_ROUT_ID
+				,	A.COR_NM
+				,	A.COR_TYPE
+				,	A.MOVE_TM
+				,	A.COR_COLOR
+				,	A.REMARK
+				,	B.REP_ROUT_NM
+				
+		FROM	BRT_COR_MST A
+		LEFT JOIN	BMS_REP_ROUT_MST B
+			ON	A.REP_ROUT_ID = B.REP_ROUT_ID
+		<where>
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+				<if test="TYPE == 'ALL'">
+					AND (A.REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || B.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%'))
+				</if>
+				<if test="TYPE == 'REP_ROUT_ID'">
+					AND A.REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
+				</if>
+				<if test="TYPE == 'REP_ROUT_NM'">
+					AND B.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectOperAllocPlanCourseList" resultType="Map">
+		SELECT A.REP_ROUT_ID
+		,A.DAY_DIV
+		,A.ALLOC_NO
+		,A.WAY_DIV
+		,A.COR_SN
+		,A.COR_ID
+		,B.COR_TYPE
+		,B.MOVE_TM
+		,B.COR_COLOR
+		FROM BRT_OPER_ALLOC_PL_COR_INFO A
+		INNER JOIN BRT_COR_MST B
+			ON	A.COR_ID = B.COR_ID
+		WHERE A.REP_ROUT_ID = #{REP_ROUT_ID}
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(DAY_DIV)">
+		AND A.DAY_DIV = #{DAY_DIV}
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(ALLOC_NO)">
+		AND A.DAY_DIV = #{ALLOC_NO}
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(WAY_DIV)">
+		 AND A.WAY_DIV = #{WAY_DIV}
+		</if>
+		ORDER BY A.COR_SN ASC
+	</select>
+
+	<select id="selectCourseDtlList" resultType="Map">
+	SELECT A.COR_ID,
+		A.ROUT_ID,
+		A.ROUT_SN,
+		A.MIN_REST_TM,
+		A.COR_DTL_COLOR
+	FROM BRT_COR_DTL_INFO A
+	<where>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(COR_IDS)">
+		<foreach collection="COR_IDS" item="item" separator=" OR "> COR_ID = #{item}</foreach>
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(COR_ID)">
+		AND A.COR_ID = #{COR_ID}
+	</if>
+	</where>
+	</select>
+	
+	
 </mapper>

@@ -4472,7 +4472,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 							item.cbFnc = function(){
 								var sub = autoOpt.Sub1;
 								if ((typeof sub !== "undefined")&&(sub !== null)){
-									com.cancelGrid(sub.grid);
+									com.cancelGrid(sub.grid, null, sub.cnlGridCb);
 								}
 							}
 						}
@@ -4502,7 +4502,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 								var sub = autoOpt.Sub1;
 								if ((typeof sub !== "undefined")&&(sub !== null)){
 									if ((typeof sub.exlGrid !== "undefined")&&(sub.exlGrid !== null)){
-										com.exlGrid(sub.exlGrid);
+										com.exlGrid(sub.exlGrid, sub.exlGridCb);
 									}
 									else {
 										com.exlGrid(sub.grid);
@@ -5559,12 +5559,12 @@ com.addGridForm = function(grid,form,keyMap,keyColumn,focusID){
 	return insertIndex;
 }
 
-com.cancelGrid = function(grid,str){
+com.cancelGrid = function(grid,str,cnlGridCb){
 
 	var idx = grid.getModifiedIndex().length;
 
 	if (idx > 0) {
-		if(	(typeof str == "undefined") || (str.trim() == "")){
+		if(str== null || (typeof str == "undefined") || (str.trim() == "")){
 			str = com.strModifiedCnt(grid) + "의 저장하지 않은 데이터가 있습니다. 취소 하시겠습니까?";
 		}
 		else {
@@ -5572,7 +5572,7 @@ com.cancelGrid = function(grid,str){
 		} 
 		com.confirm(str, function(rtn) {
 			if (rtn) {
-				com.clearGrid(grid);
+				com.clearGrid(grid,cnlGridCb);
 			}
 		});
 	}
@@ -5637,7 +5637,7 @@ com.delUndoGrid = function(grid){
 	}
 }
 
-com.clearGrid = function(grid){
+com.clearGrid = function(grid, cnlGridCb){
 	
 	 if(com.isEmpty(gcm.GRID_INFO[grid.org_id])==false && com.isEmpty(gcm.GRID_INFO[grid.org_id].undo)==false
 			 && gcm.GRID_INFO[grid.org_id].undo == false)return;
@@ -5648,6 +5648,9 @@ com.clearGrid = function(grid){
 	
 	data.undoAll();
 	data.removeRows(data.getInsertedIndex());
+	if((cnlGridCb != null) && (typeof cnlGridCb != "undefined") && (typeof cnlGridCb == "function")){
+		cnlGridCb();
+	}
 }
 
 com.delGrid = function(grid,str,afterCb){
