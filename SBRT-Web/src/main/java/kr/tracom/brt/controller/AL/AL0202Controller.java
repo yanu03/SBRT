@@ -21,7 +21,7 @@ public class AL0202Controller extends ControllerSupport {
 	
 	@RequestMapping("/AL/AL0202G0R0")
 	public @ResponseBody Map<String, Object> AL0202G0R0() throws Exception {
-		result.setData("dlt_OPER_PL_ROUT_INFO", al0304Service.AL0202G0R0());
+		result.setData("dlt_BRT_OPER_PL_MST", al0304Service.AL0202G0R0());
 		return result.getResult();
 	}
 	
