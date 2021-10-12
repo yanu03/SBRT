@@ -266,10 +266,15 @@
 				busActive = 1;
 				sttnActive = 0;
 				crossActive = 0;
+							
+				scwin.updateStatusBus();			
 								
 				MO0101T0.show();
 				MO0101T1.hide();
 				MO0101T2.hide();
+				$("#map_busstatus").removeClass("status_hide");
+				$("#map_sttnstatus").addClass("status_hide");
+				$("#map_crsstatus").addClass("status_hide");
 				if(busFocus != 0){
 					MO0101G0.setFocusedCell(busFocus, "VHC_ID");
 				} else if (busFocus == 0) {
@@ -282,9 +287,14 @@
 				sttnActive = 1;
 				crossActive = 0;
 				
+				scwin.updateStatusSttn();
+				
 				MO0101T0.hide();
 				MO0101T1.show();
 				MO0101T2.hide();
+				$("#map_busstatus").addClass("status_hide");
+				$("#map_sttnstatus").removeClass("status_hide");				
+				$("#map_crsstatus").addClass("status_hide");
 				if(sttnFocus != 0){
 					MO0101G1.setFocusedCell(sttnFocus, "NODE_ID");
 				} else if (sttnFocus == 0) {
@@ -297,9 +307,14 @@
 				sttnActive = 0;
 				crossActive = 1;
 								
+				scwin.updateStatusCrs();				
+								
 				MO0101T0.hide();
 				MO0101T1.hide();
 				MO0101T2.show();
+				$("#map_busstatus").addClass("status_hide");
+				$("#map_sttnstatus").addClass("status_hide");				
+				$("#map_crsstatus").removeClass("status_hide");
 				if(crossFocus != 0){
 					MO0101G2.setFocusedCell(crossFocus, "NODE_ID");
 				} else if (crossFocus == 0) {
@@ -518,7 +533,7 @@
 		}			
 		
 		com.setFocusedCell(MO0101G0, "VHC_ID");
-		scwin.updateStatusKinds();
+		scwin.updateStatusBus();
 	};
 	
 	scwin.sub_MO0101SHI0_submitdone = function(e) {
@@ -815,8 +830,8 @@
 	};
 	
 	//버스 운행 현황 업데이트 함수
-	scwin.updateStatusKinds = function() {
-		var $busStatus = $(".map_busstatus");
+	scwin.updateStatusBus = function() {
+		var $busStatus = $("#map_busstatus");
 		var runBus = 0;
 		var breakDownBus = 0;
 		var operBus = 0;
@@ -856,6 +871,58 @@
 		$busStatus.find("#operBus").html(operBus);
 		$busStatus.find("#notOperBus").html(notOperBus);
 		$busStatus.find("#cancelOperBus").html(cancelOperBus);
+		
+	}
+	
+	//정류소 현황 업데이트 함수
+	scwin.updateStatusSttn = function() {
+		var $sttnStatus = $("#map_sttnstatus");
+		var runSttn = 0;
+		var breakDownSttn = 0;
+		
+		var allSttnCount = dlt_BMS_ROUT_NODE_CMPSTN2.getAllJSON().length;
+		$sttnStatus.find("#allSttn").html(allSttnCount);
+		
+		for(var i=0; i<allSttnCount; i++) {
+			//정상
+			if(dlt_BMS_ROUT_NODE_CMPSTN2.getCellData(i, "COND_ERROR") == "CE002") {
+				runSttn++;	
+			}
+			//고장
+			else if(dlt_BMS_ROUT_NODE_CMPSTN2.getCellData(i, "COND_ERROR") == "CE001") {
+				breakDownSttn++;
+			}
+			
+		}
+		
+		$sttnStatus.find("#runSttn").html(runSttn);
+		$sttnStatus.find("#breakDownSttn").html(breakDownSttn);
+		
+	}
+	
+	//교차로 현황 업데이트 함수
+	scwin.updateStatusCrs = function() {
+		var $crsStatus = $("#map_crsstatus");
+		var runCrs = 0;
+		var breakDownCrs = 0;
+		
+		var allCrsCount = dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON().length;
+		$crsStatus.find("#allCrs").html(allCrsCount);
+		
+		for(var i=0; i<allCrsCount; i++) {
+			//정상
+			if(dlt_BMS_ROUT_NODE_CMPSTN3.getCellData(i, "CTR_STS") == "CT001") {
+				runCrs++;	
+			}
+			//고장 또는 네트워크 오류
+			else if(dlt_BMS_ROUT_NODE_CMPSTN3.getCellData(i, "CTR_STS") == "CTR002" || dlt_BMS_ROUT_NODE_CMPSTN3.getCellData(i, "CTR_STS") == "CTR003") {
+				breakDownCrs++;
+			}
+			
+		}
+		
+		$crsStatus.find("#runCrs").html(runCrs);
+		$crsStatus.find("#breakDownCrs").html(breakDownCrs);
 		
 	}
 
@@ -1373,7 +1440,7 @@
 						<div id="map_MO0101" style="">
 							<ul id="category_map_MO0101" class="category">
 					   		 </ul>
-					   		 <table class="map_busstatus">
+					   		 <table class="map_status" id="map_busstatus">
 						   		 <tbody>
 						   		 	<tr>
 						   		 		<th colspan="2">버스 운행 현황</th>
@@ -1404,65 +1471,41 @@
 						   		 	</tr>						   		 	
 						   		 </tbody>
 						   	 </table>
-					   		 <table class="map_sttnstatus" style="display:none;">
+					   		 <table class="map_status status_hide" id="map_sttnstatus">
 						   		 <tbody>
 						   		 	<tr>
 						   		 		<th colspan="2">정류장 현황</th>
 						   		 	</tr>
 						   		 	<tr>
-						   		 		<td class="status_kinds">전체대수</td>
-						   		 		<td class="status_count" id="allBus">0</td>
+						   		 		<td class="status_kinds">전체정류장</td>
+						   		 		<td class="status_count" id="allSttn">0</td>
 						   		 	</tr>
 						   		 	<tr>
-						   		 		<td class="status_kinds status_green">정상버스</td>
-						   		 		<td class="status_count" id="runBus">0</td>						   		 	
+						   		 		<td class="status_kinds status_green">정상정류장</td>
+						   		 		<td class="status_count" id="runSttn">0</td>						   		 	
 						   		 	</tr>
 						   		 	<tr>
-						   		 		<td class="status_kinds status_red">고장버스</td>
-						   		 		<td class="status_count" id="breakDownBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds">정상운행</td>
-						   		 		<td class="status_count" id="operBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds">운행종료</td>
-						   		 		<td class="status_count" id="notOperBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds">운행중단</td>
-						   		 		<td class="status_count" id="cancelOperBus">0</td>					   		 	
+						   		 		<td class="status_kinds status_red">고장정류장</td>
+						   		 		<td class="status_count" id="breakDownSttn">0</td>					   		 	
 						   		 	</tr>						   		 	
 						   		 </tbody>
 						   	 </table>
-					   		 <table class="map_crsstatus" style="display:none;">
+					   		 <table class="map_status status_hide" id="map_crsstatus">
 						   		 <tbody>
 						   		 	<tr>
 						   		 		<th colspan="2">교차로 현황</th>
 						   		 	</tr>
 						   		 	<tr>
-						   		 		<td class="status_kinds">전체대수</td>
-						   		 		<td class="status_count" id="allBus">0</td>
+						   		 		<td class="status_kinds">전체교차로</td>
+						   		 		<td class="status_count" id="allCrs">0</td>
 						   		 	</tr>
 						   		 	<tr>
-						   		 		<td class="status_kinds status_green">정상버스</td>
-						   		 		<td class="status_count" id="runBus">0</td>						   		 	
+						   		 		<td class="status_kinds status_green">정상교차로</td>
+						   		 		<td class="status_count" id="runCrs">0</td>						   		 	
 						   		 	</tr>
 						   		 	<tr>
-						   		 		<td class="status_kinds status_red">고장버스</td>
-						   		 		<td class="status_count" id="breakDownBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds">정상운행</td>
-						   		 		<td class="status_count" id="operBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds">운행종료</td>
-						   		 		<td class="status_count" id="notOperBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds">운행중단</td>
-						   		 		<td class="status_count" id="cancelOperBus">0</td>					   		 	
+						   		 		<td class="status_kinds status_red">고장교차로</td>
+						   		 		<td class="status_count" id="breakDownCrs">0</td>					   		 	
 						   		 	</tr>						   		 	
 						   		 </tbody>
 						   	 </table>
