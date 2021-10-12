@@ -145,8 +145,9 @@ public class EventRequest {
                 case BrtAtCode.BUS_OPER_EVENT: //운행 이벤트 정보
                 	//이벤트 이력정보에 insert
                 	
-                	 String eventNm = "";
-                	 String eventData = "";
+                	 //String eventData = "";
+                	 String eventCd = "";
+                	 String eventType = "";
                 	 AtBusOperEvent busEvent = (AtBusOperEvent)atMessage.getAttrData();            	
                 	 
                 	 byte eventCode = busEvent.getEventCode();
@@ -184,12 +185,18 @@ public class EventRequest {
                      case 0x12: //문 닫힘
                     	 
                     	 paramMap = new HashMap<>();
+                    	 
+                    	 paramMap.put("COL", "DL_CD");
+                    	 paramMap.put("CO_CD", "OPER_EVT_TYPE");
+                    	 paramMap.put("COL3", "NUM_VAL4");
+                    	 paramMap.put("COL_VAL3", (int)eventCode);
+                    	 eventCd = commonMapper.selectDlCdCol(paramMap);
+                    	 
                     	 paramMap.put("COL", "DL_CD_NM");
                     	 paramMap.put("CO_CD", "OPER_EVT_TYPE");
                     	 paramMap.put("COL3", "NUM_VAL4");
                     	 paramMap.put("COL_VAL3", (int)eventCode);
-                    	 
-                    	 eventNm = commonMapper.selectDlCdCol(paramMap);
+                    	 eventType = commonMapper.selectDlCdCol(paramMap);
                     	 
                     	 //eventDesc = timsMapper.selectNodeInfo(paramMap);
                     	 
@@ -206,16 +213,19 @@ public class EventRequest {
                      case 0x28: //노선이탈
                          logger.info("운행위반 발생!! [IMP ID : " + busEvent.getImpId() + "]");
                          
-                         eventNm = "운행위반";
-                         
-                         paramMap = new HashMap<>();
-                    	 paramMap.put("COL", "DL_CD_NM");
-                    	 paramMap.put("CO_CD", "VIOLT_TYPE");
-                    	 paramMap.put("COL3", "NUM_VAL4");
-                    	 paramMap.put("COL_VAL3", (int)eventCode);
-                    	 
                          try {
-                        	 eventData = commonMapper.selectDlCdCol(paramMap);
+                        	 paramMap = new HashMap<>();
+                        	 paramMap.put("COL", "DL_CD");
+                        	 paramMap.put("CO_CD", "VIOLT_TYPE");
+                        	 paramMap.put("COL3", "NUM_VAL4");
+                        	 paramMap.put("COL_VAL3", (int)eventCode);
+                        	 eventCd = commonMapper.selectDlCdCol(paramMap);
+                        	 
+                        	 paramMap.put("COL", "DL_CD_NM");
+                        	 paramMap.put("CO_CD", "VIOLT_TYPE");
+                        	 paramMap.put("COL3", "NUM_VAL4");
+                        	 paramMap.put("COL_VAL3", (int)eventCode);
+                        	 eventType = commonMapper.selectDlCdCol(paramMap);
                         	 
                     		 historyMapper.insertOperVioltHistory(busEventMap); //운행위반이력 insert                    		 
                     	 } catch (Exception e) {
@@ -233,17 +243,20 @@ public class EventRequest {
                      case 0x35: //테러
                          logger.info("돌발 발생!! [IMP ID : " + busEvent.getImpId() + "]");
                          
-                         eventNm = "돌발";
-                         
-                         
-                         paramMap = new HashMap<>();
-                    	 paramMap.put("COL", "DL_CD_NM");
-                    	 paramMap.put("CO_CD", "INCDNT_TYPE");
-                    	 paramMap.put("COL3", "NUM_VAL4");
-                    	 paramMap.put("COL_VAL3", (int)eventCode);
                          
                          try {
-                        	 eventData = commonMapper.selectDlCdCol(paramMap);
+                        	 paramMap = new HashMap<>();
+                        	 paramMap.put("COL", "DL_CD");
+                        	 paramMap.put("CO_CD", "INCDNT_TYPE");
+                        	 paramMap.put("COL3", "NUM_VAL4");
+                        	 paramMap.put("COL_VAL3", (int)eventCode);
+                        	 eventCd = commonMapper.selectDlCdCol(paramMap);
+                        	 
+                        	 paramMap.put("COL", "DL_CD_NM");
+                        	 paramMap.put("CO_CD", "INCDNT_TYPE");
+                        	 paramMap.put("COL3", "NUM_VAL4");
+                        	 paramMap.put("COL_VAL3", (int)eventCode);
+                        	 eventType = commonMapper.selectDlCdCol(paramMap);
                         	 
                     		 curInfoMapper.insertIncidentInfo(busEventMap); //돌발정보 insert                    		 
                     	 } catch (Exception e) {
@@ -270,14 +283,15 @@ public class EventRequest {
                  	wsDataMap.put("DVC_ID", vhcInfo.get("DVC_ID"));
                  	wsDataMap.put("GPS_X", busEventMap.get("LONGITUDE"));
                  	wsDataMap.put("GPS_Y", busEventMap.get("LATITUDE"));
+                 	wsDataMap.put("NODE_NM", busEventMap.get("NODE_NM")); //지나온 노드명
                 	wsDataMap.put("PREV_NODE_NM", busEventMap.get("PREV_NODE_NM")); //이전 정류소/교차로
                  	wsDataMap.put("NEXT_NODE_ID", busEventMap.get("NEXT_NODE_ID")); //다음 정류소/교차로
                  	wsDataMap.put("NEXT_NODE_NM", busEventMap.get("NEXT_NODE_NM"));
                  	wsDataMap.put("NODE_TYPE", busEventMap.get("NEXT_NODE_TYPE"));
-                 	wsDataMap.put("EVT_NM", eventNm);
-                 	wsDataMap.put("EVT_DATA", eventData);
+                 	wsDataMap.put("EVT_CODE", eventCd);
+                 	wsDataMap.put("EVT_TYPE", eventType);
                 	
-                    
+                	
                     break;                    
                     
                    
@@ -381,8 +395,10 @@ public class EventRequest {
     private int insertCurOperInfo(Map<String, Object> curOperInfo) throws Exception {
     	
     	//다음노드(교차로 or 정류소)
-    	String realNodeSn = timsMapper.selectNodeSnByLinkSn(curOperInfo); //통플에서 넘어온 노드순번(실제로는 링크순번) 으로 실제 노드순번 구하기    	
-    	curOperInfo.put("NODE_SN", realNodeSn);
+    	Map<String, Object> realNodeInfo = timsMapper.selectNodeByLinkSn(curOperInfo); //통플에서 넘어온 노드순번(실제로는 링크순번) 으로 실제 노드순번 구하기
+    	curOperInfo.put("NODE_TYPE", realNodeInfo.get("NODE_TYPE"));
+    	curOperInfo.put("NODE_NM", realNodeInfo.get("NODE_NM"));
+    	
     	Map<String, Object> nextNodeInfo = timsMapper.selectNextSttnCrsInfo(curOperInfo);
     	
 		curOperInfo.put("PREV_NODE_NM", nextNodeInfo.get("PREV_NODE_NM"));

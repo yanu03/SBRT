@@ -20,7 +20,7 @@ public interface TimsMapper {
 	//현재노드의 다음노드(교차로 or 정류장) 가져오기
 	Map<String, Object> selectNextSttnCrsInfo(Map<String, Object> paramMap);	
 	
-	//링크순번으로 노드순번 가져오기
-	String selectNodeSnByLinkSn(Map<String, Object> paramMap);
+	//링크순번으로 노드정보 가져오기
+	Map<String, Object> selectNodeByLinkSn(Map<String, Object> paramMap);
 	
 }
