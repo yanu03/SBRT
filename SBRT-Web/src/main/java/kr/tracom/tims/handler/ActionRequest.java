@@ -12,6 +12,7 @@ import kr.tracom.cm.domain.OperPlan.OperPlanService;
 import kr.tracom.platform.attribute.AtCode;
 import kr.tracom.platform.attribute.common.AtBrtAction;
 import kr.tracom.platform.attribute.common.AtServiceLogInOut;
+import kr.tracom.platform.attribute.common.AtTimeStamp;
 import kr.tracom.platform.net.config.TimsConfig;
 import kr.tracom.platform.net.protocol.TimsMessage;
 import kr.tracom.platform.net.protocol.TimsMessageBuilder;
@@ -20,6 +21,7 @@ import kr.tracom.platform.net.protocol.payload.PlActionRequest;
 import kr.tracom.platform.service.TService;
 import kr.tracom.platform.service.config.KafkaTopics;
 import kr.tracom.tims.kafka.KafkaProducer;
+import kr.tracom.util.DateUtil;
 
 @Component
 public class ActionRequest {
@@ -69,39 +71,49 @@ public class ActionRequest {
             		String actionData = brtAction.getReserved();        		
             		String dataArr[] = actionData.split(",");
             		
+            		logger.info("======== 변경운행 요청 수신 : {}", actionData);
             		
-            		if(dataArr.length != 10) {
+            		if(dataArr.length == 12) {
+	            		String operDt = dataArr[0];
+	            		String busId = dataArr[1];
+	            		String repRoutId = dataArr[2];
+	            		String courseId = dataArr[3];
+	            		String routId = dataArr[4];
+	            		String allocNo = dataArr[5];
+	            		int operSn = Integer.valueOf(dataArr[6]);
+	            		String stNodeId = dataArr[7];
+	            		int stNodeSn = Integer.valueOf(dataArr[8]);
+	            		int timeDiff = Integer.valueOf(dataArr[9]);
+	            		String timeMin = String.valueOf(dataArr[10]);
+	            		String timeMax = String.valueOf(dataArr[11]);
+	            		
+	            		timeMin = timeMin.substring(11);
+	            		timeMax = timeMax.substring(11);
+	            		
+	            		List<Map<String, Object>> operPlanList = operPlanService.makeChgOperAllocPlNodeInfo(routId, operDt, operSn, stNodeSn, timeDiff, timeMin, timeMax, true);
+	            		
+            		} else {
             			//변경운행 데이터 오류
+            			logger.info("변경운행 데이터 오류!! dataArr.length:{}", dataArr.length);
             		}
-            		
-            		logger.info("======== 변경운행 요청 수신 : {}", dataArr);
-            		
-            		String operDt = dataArr[0];
-            		String busId = dataArr[1];
-            		String repRoutId = dataArr[2];
-            		String courseId = dataArr[3];
-            		String routId = dataArr[4];
-            		String allocNo = dataArr[5];
-            		int operSn = Integer.valueOf(dataArr[6]);
-            		String stNodeId = dataArr[7];
-            		int stNodeSn = Integer.valueOf(dataArr[8]);
-            		int timeDiff = Integer.valueOf(dataArr[9]);
-            		
-            		List<Map<String, Object>> operPlanList = operPlanService.makeChgOperAllocPlNodeInfo(routId, operDt, operSn, stNodeSn, timeDiff, true);
             		
             		
             		//변경운행 생성 후 완료 전송
             		//logger.info("======== 변경운행 생성완료 : {}", operPlanList);
             		AtBrtAction brtRequest = new AtBrtAction();
 
+            		brtRequest.setTimeStamp(new AtTimeStamp(DateUtil.now("yyyyMMddHHmmss")));
             		brtRequest.setActionCode(AtBrtAction.changeOperResponse);
+            		brtRequest.setData("");
             		brtRequest.setReserved(actionData);
-            		//brtRequest.setData();
 
                     
                     TimsConfig timsConfig = TService.getInstance().getTimsConfig();
                     TimsMessageBuilder builder = new TimsMessageBuilder(timsConfig);
                     TimsMessage tMessage = builder.actionRequest(brtRequest);
+                    
+                    logger.info("======== 변경운행 결과 전송 : {}", tMessage);
+            		
                     
                     kafkaProducer.sendKafka(KafkaTopics.T_BRT, tMessage, "");	
             		

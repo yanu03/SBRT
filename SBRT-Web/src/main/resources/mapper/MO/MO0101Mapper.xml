@@ -37,10 +37,8 @@
 						,	A.LINK_SPD
 						,	A.GET_OFF_CNT
 						,	A.PSG_CNT
-						,	A.NEXT_STTN_ID
-						,	A.NEXT_STTN_ARRV_TM
-						,	A.NEXT_CRS_ID
-						,	A.NEXT_CRS_ARRV_TM
+						,	A.NEXT_NODE_ID
+						,	A.NEXT_NODE_ARRV_TM
 						,	A.DOOR_CD
 						,	A.DOOR_TM					
 						,	B.REP_ROUT_NM
@@ -49,6 +47,8 @@
 						,   C.MAKER
 						,   D.DRV_NM
 						,   E.COMP_NM
+						,	A.PRV_PLCE_NM
+						, 	F.NODE_TYPE
 						
 		FROM  			BRT_CUR_OPER_INFO A
 		LEFT JOIN   	BMS_ROUT_MST	B
@@ -59,6 +59,8 @@
 			ON				A.DRV_ID = D.DRV_ID		
 		LEFT JOIN	  	BMS_TRANSCOMP_MST E
 			ON				C.COMP_ID = E.COMP_ID
+		LEFT JOIN		BMS_NODE_MST F
+			ON				A.NEXT_NODE_ID = F.NODE_TYPE	
 			
 		WHERE			A.OPER_DT = DATE_FORMAT(NOW(), '%Y/%m/%d')
 		AND				B.DEL_YN != 'Y'
@@ -71,7 +73,7 @@
 			<if test="CONTENT3 != null and CONTENT3 != ''">
 				AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
 			</if>
-		ORDER BY		A.REP_ROUT_ID, A.ROUT_ID	
+		ORDER BY		A.REP_ROUT_ID, A.ROUT_ID, VHC_ID	
 	</select>
 	
 	<select id="MO0101G1R0" resultType="Map" parameterType="Map">
@@ -160,6 +162,12 @@
 					,	C.CRS_STS
 					,	C.PHASE_CNT
 					,	C.REMARK
+					,	E.CTR_STS
+					, 	E.CTR_MODE
+					,	E.A_PHASE_NO
+					,	E.A_PHASE_TM
+					,	E.B_PHASE_NO
+					,	E.B_PHASE_TM
 					
 		FROM 		  	BMS_ROUT_NODE_CMPSTN A 
 		LEFT JOIN		BMS_ROUT_LINK_CMPSTN B
@@ -168,6 +176,8 @@
 			ON A.NODE_ID = C.CRS_ID
 		LEFT JOIN		BMS_ROUT_MST D	
 			ON A.ROUT_ID = D.ROUT_ID
+		LEFT JOIN		BMS_CRS_SIGOPER_PHASE_INFO E
+			ON C.CRS_ID = E.CRS_ID	
 						
 		WHERE			A.NODE_TYPE = 'NT001'
 		AND				C.DEL_YN != 'Y'
@@ -231,5 +241,15 @@
 			
 		ORDER BY		E.NODE_SN					
 	</select>	
+	
+	<select id="MO0101P0R0" resultType="Map">
+	
+		SELECT			MSG_ID
+					,	MSG_NM
+					,	MSG_CONTS
+					
+		FROM			BRT_OPER_INST_MSG_MST			
+	
+	</select>
 	
 </mapper>

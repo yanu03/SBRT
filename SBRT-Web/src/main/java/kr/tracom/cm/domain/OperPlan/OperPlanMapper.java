@@ -59,6 +59,12 @@ public interface OperPlanMapper {
 
 	public List<Map<String, Object>> selectOperPlanRout(Map<String, Object> params);
 	
+	public List<Map<String, Object>> selectCourseList(Map<String, Object> params);
+	
+	public List<Map<String, Object>> selectOperAllocPlanCourseList(Map<String, Object> params);
+	
+	public List<Map<String, Object>> selectCourseDtlList(Map<String, Object> params);
+	
     //변경운행계획 생성
     int insertChgOperInfo(Map<String, Object> params);
     int insertChgOperDtlInfo(Map<String, Object> params);

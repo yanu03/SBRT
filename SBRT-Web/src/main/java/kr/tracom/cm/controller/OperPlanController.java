@@ -28,13 +28,14 @@ public class OperPlanController extends ControllerSupport {
 		result.setData("dlt_BRT_OPER_PL_ROUT_INFO", operPlanService.selectOperPlanRoutList());
 		return result.getResult();
 	}
-
+	
 	@RequestMapping("/operPlan/selectOperPlanRout")
 	public @ResponseBody Map<String, Object> selectOperPlanRout() throws Exception {
 		result.setData("dlt_BRT_OPER_PL_ROUT_INFO", operPlanService.selectOperPlanRout());
 		return result.getResult();
 	}
 	
+
 	@RequestMapping("/operPlan/selectOperAllocPlanNode")
 	public @ResponseBody Map<String, Object> selectOperAllocPlanNode() throws Exception {
 		result.setData("dlt_BRT_OPER_ALLOC_PL_NODE_INFO", operPlanService.selectOperAllocPlanNode());
@@ -44,6 +45,30 @@ public class OperPlanController extends ControllerSupport {
 	@RequestMapping("/operPlan/selectOperAllocRealNode")
 	public @ResponseBody Map<String, Object> selectOperAllocRealNode() throws Exception {
 		result.setData("dlt_BRT_OPER_ALLOC_RL_NODE_INFO", operPlanService.selectOperAllocRealNode());
+		return result.getResult();	
+	}
+	@RequestMapping("/operPlan/selectOperPlanRout2")
+	public @ResponseBody Map<String, Object> selectOperPlanRout2() throws Exception {
+		result.setData("dlt_BRT_OPER_PL_ROUT_INFO_ASC", operPlanService.selectOperPlanRoutAsc());
+		result.setData("dlt_BRT_OPER_PL_ROUT_INFO_DESC", operPlanService.selectOperPlanRoutDesc());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/operPlan/selectCourseList")
+	public @ResponseBody Map<String, Object> selectCourseList() throws Exception {
+		result.setData("dlt_BRT_COR_MST", operPlanService.selectCourseList());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/operPlan/selectOperAllocPlanCourseList")
+	public @ResponseBody Map<String, Object> selectOperAllocPlanCourseList() throws Exception {
+		result.setData("dlt_BRT_OPER_ALLOC_PL_COR_INFO", operPlanService.selectOperAllocPlanCourseList());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/operPlan/selectCourseDtlList")
+	public @ResponseBody Map<String, Object> selectCourseDtlList() throws Exception {
+		result.setData("dlt_BRT_COR_DTL_INFO", operPlanService.selectCourseDtlList());
 		return result.getResult();
 	}
 }

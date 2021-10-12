@@ -59,6 +59,8 @@
 			,DRV_ID
 			,COR_ID
 			,ROUT_ID
+			,ALLOC_NO
+			,OPER_SN
 			,GPS_X_RAW
 			,GPS_Y_RAW
 			,DRV_ANGLE
@@ -83,6 +85,8 @@
 			,#{DRV_ID}
 			,#{COURSE_ID}
 			,#{ROUT_ID}
+			,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')))  <!--alloc no 찾기 -->
+			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, TIME_FORMAT(#{UPD_DTM}, '%H:%i:%S'))) <!--oper sn 찾기 -->	
 			,#{LONGITUDE_RAW}
 			,#{LATITUDE_RAW}
 			,#{HEADING}
