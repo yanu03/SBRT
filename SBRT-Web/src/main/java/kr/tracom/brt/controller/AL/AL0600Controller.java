@@ -14,12 +14,12 @@ import kr.tracom.cm.support.ControllerSupport;
 
 @Controller
 @Scope("request")
-public class AL0203Controller extends ControllerSupport{
+public class AL0600Controller extends ControllerSupport{
 	
 	@Autowired
 	private AL0203Service al0203Service;
 	
-	@RequestMapping("/al/AL0203G0R0")
+	/*@RequestMapping("/al/AL0203G0R0")
 	public @ResponseBody Map<String, Object> AL0203G0R0() throws Exception {
 		result.setData("dlt_BMS_ROUT_MST", al0203Service.AL0203G0R0());
 		return result.getResult();
@@ -42,7 +42,7 @@ public class AL0203Controller extends ControllerSupport{
 	public @ResponseBody Map<String, Object> AL0203G0P1() throws Exception {
 		result.setData("dlt_BRT_OPER_ALLOC_PL_NODE_CNT", al0203Service.AL0203G1CNT());
 		return result.getResult();
-	}
+	}*/
 	/*
 	@RequestMapping("/al/AL0103G0S0")
 	public @ResponseBody Map<String, Object> AL0103G0S0() throws Exception {

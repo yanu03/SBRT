@@ -34,4 +34,16 @@ public class OperPlanController extends ControllerSupport {
 		result.setData("dlt_BRT_OPER_PL_ROUT_INFO", operPlanService.selectOperPlanRout());
 		return result.getResult();
 	}
+	
+	@RequestMapping("/operPlan/selectOperAllocPlanNode")
+	public @ResponseBody Map<String, Object> selectOperAllocPlanNode() throws Exception {
+		result.setData("dlt_BRT_OPER_ALLOC_PL_NODE_INFO", operPlanService.selectOperAllocPlanNode());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/operPlan/selectOperAllocRealNode")
+	public @ResponseBody Map<String, Object> selectOperAllocRealNode() throws Exception {
+		result.setData("dlt_BRT_OPER_ALLOC_RL_NODE_INFO", operPlanService.selectOperAllocRealNode());
+		return result.getResult();
+	}
 }

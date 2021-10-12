@@ -64,5 +64,8 @@ public interface OperPlanMapper {
     int insertChgOperDtlInfo(Map<String, Object> params);
     
     
+    public List<Map<String, Object>> selectOperAllocPlanNode(Map<String, Object> params);
+    
+    public List<Map<String, Object>> selectOperAllocRealNode(Map<String, Object> params);
 
 }

@@ -55,6 +55,30 @@
 						<w2:key id="OPER_SN" name="운행회차" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>			
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_OPER_ALLOC_RL_NODE_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
+						<w2:column id="DAY_DIV" name="요일구분" dataType="text"></w2:column>
+						<w2:column id="WAY_DIV" name="상하행구분" dataType="text"></w2:column>
+						<w2:column id="OPER_SN" name="운행순번" dataType="text"></w2:column>
+						<w2:column id="NODE_ID" name="노드아이디" dataType="text"></w2:column>
+						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
+						<w2:column id="NODE_SN" name="노드순번" dataType="text"></w2:column>
+						<w2:column id="ALLOC_NO" name="배차번호" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
+						<w2:column id="COR_ID" name="코스아이디" dataType="text"></w2:column>
+						<w2:column id="NODE_TYPE" name="노드유형" dataType="text"></w2:column>
+						<w2:column id="ARRV_TM" name="도착시간" dataType="text"></w2:column>
+						<w2:column id="DPRT_TM" name="출발시간" dataType="text"></w2:column>
+						<w2:column id="REAL_ARRV_TM" name="결과출발시간" dataType="text"></w2:column>
+						<w2:column id="REAL_DPRT_TM" name="결과출발시간" dataType="text"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="date"></w2:column>
+						<w2:column id="UPD_ID" name="갱신아이디" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+						<w2:column id="WAY_ASC_NM" name="상행명" dataType="text"></w2:column>
+						<w2:column id="WAY_DESC_NM" name="하행명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 		</w2:dataCollection>
 		<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_AL0203G1R0" ref="data:json,dma_sub_search" target='data:json,dlt_BRT_OPER_ALLOC_PL_NODE_CNT'
@@ -66,6 +90,10 @@
 				action="/operPlan/selectOperAllocPlanNode" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0203G0P0_submitdone" ev:submiterror=""
 				abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_OPER_ALL_REAL_NODE" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_OPER_ALLOC_RL_NODE_INFO"
+				action="/operPlan/selectOperAllocRealNode" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
+				errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_OPER_ALL_REAL_NODE_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 	</xf:model>
 	<script type="text/javascript" lazy="false"><![CDATA[
@@ -83,6 +111,7 @@
 		
 		com.executeSubmission(sub_AL0203G1R0);		
 		com.executeSubmission(sub_AL0203G0P0);
+		com.executeSubmission(sub_OPER_ALL_REAL_NODE);
 		
 		dma_sub_search.set("OPER_SN", ' ('+dma_sub_search.get("OPER_SN")+')회차');		
 				
@@ -92,9 +121,8 @@
 		
 	};
 	
-	scwin.fusionChart = function(row){
+	scwin.fusionChart = function(chart){
 		dlt_BRT_CHART_INFO.removeAll();
-		var sttnNm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(row, "NODE_NM");
 		
 		var old_open_sn = -1;
 
@@ -145,7 +173,7 @@
 		}
 		
 		var options = { 
-			labelStep:"5"		
+			labelStep:"7"		
 		    ,xAxisName:"시간"
 		    ,yAxisName:"노선"
       		,labelDisplay: "wrap"
@@ -159,20 +187,117 @@
 		
 		
 		CHART.setChartAttribute(options);
-		CHART.setChartColumnSimpleRef("data:dlt_BRT_CHART_INFO", "ARRV_TM", "", "ACCRU_LEN");
+		//CHART.setChartColumnSimpleRef("data:dlt_BRT_CHART_INFO", "ARRV_TM", "OPER_SN", "ACCRU_LEN");
 		//CHART.draw();
 		
-		//AL0203CHT0.setChartColumnSimpleRef("data:dlt_BRT_OPER_ALLOC_PL_NODE_INFO", "ARRV_TM", null, "NODE_SN");
-		//AL0203CHT0.setChartColumnRef("data:dlt_BRT_OPER_ALLOC_PL_NODE_INFO", "ARRV_TM");
-		//AL0203CHT0.setJSONData();
-        //AL0203CHT0.draw();
+		CHART.setJSONData(chart);
+        
 	
 	}
 	
 	scwin.sub_AL0203G0P0_submitdone = function(e) {
-		scwin.fusionChart();
+	
 	};
 	
+	scwin.sub_OPER_ALL_REAL_NODE_submitdone = function(e) {
+	debugger;
+	var rowCount = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowCount();
+	var plAllJson = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
+	var rlAllJson = dlt_BRT_OPER_ALLOC_RL_NODE_INFO.getAllJSON();
+	var category = new Array();
+	var data = new Array();
+	var data1 = new Array();
+	var seriesname = "운행계획 : " + dma_sub_search.get("ROUT_NM") + dma_sub_search.get("OPER_SN");
+	
+	for(var i = 0; i < rowCount; i++ ){
+		var catego = new Object();
+		var newData = new Object();
+		var realData = new Object();
+		
+		catego.label = plAllJson[i].ARRV_TM.substring(0,5);
+		newData.value = plAllJson[i].ACCRU_LEN;
+		realData.value = rlAllJson[i].ACCRU_LEN;
+		
+		category.push(catego);
+		data.push(newData);
+		data1.push(realData);
+	};
+	
+	
+ 	var chart = { 
+	 	/*"chart": {
+	        "caption": "Number of visitors last week",
+	        "subCaption": "Bakersfield Central vs Los Angeles Topanga",
+	        "xAxisName": "Day",
+	        "theme": "fusion"
+	    },*/
+	    "categories": [
+	        {
+	            category
+	        }
+	    ],
+	    "dataset": [
+	        {
+	            seriesname,
+	          	 data
+	        },
+	        {
+	            "seriesname": "test2",
+	             "data": [
+	                {
+	                    "value": "13400"
+	                },
+	                {
+	                    "value": "12800"
+	                },
+	                {
+	                    "value": "22800"
+	                },
+	                {
+	                    "value": "12400"
+	                },
+	                {
+	                    "value": "15800"
+	                },
+	                {
+	                    "value": "19800"
+	                },
+	                {
+	                    "value": "21800"
+	                }
+	            ]
+	        }
+	    ]
+	    /*,"trendlines": [
+	        {
+	            "line": [
+	                {
+	                    "startvalue": "17022",
+	                    "color": "#6baa01",
+	                    "valueOnRight": "1",
+	                    "displayvalue": "Average"
+	                }
+	            ]
+	        }
+	    ]*/
+	}		
+	
+		var options = { 
+			labelStep:"7"		
+		    ,xAxisName:"시간"
+		    ,yAxisName:"노선"
+      		,labelDisplay: "wrap"
+      		,canvasPadding: "20"
+      		,xAxisValueDecimals: "5"
+      		//,numberSuffix: "/"+sttnNm
+      		,lineColor: "#f56363"
+      		,valuePadding: "50"
+      		,labelPadding: "20"
+		}
+		
+		CHART.setChartAttribute(options);
+		CHART.setJSONData(chart);	
+	};
 	]]></script>
 	</head>
 	 <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -180,15 +305,14 @@
 	 		<xf:group id="popup_header" style="" class="popup_header">
 	 			<xf:group class="gr_search" id="" style="">
 	 				<xf:group class="label" id="" style="">
-	 					<w2:span class="" id="" label="노선명 : "></w2:span>
 	 					<w2:span class="" id="" label="" ref="data:dma_sub_search.ROUT_NM"></w2:span>
 	 					<w2:span class="" id="" label="" ref="data:dma_sub_search.OPER_SN"></w2:span>
 	 				</xf:group>
 	 			</xf:group>
 	 		</xf:group>
 	 		<xf:group style="" id="" class="popup_content">
-	 				<w2:fusionchart accessibility="false" drawType="javascript" runflashAt="IE6,IE7,IE8" seriesType="simple" chartType="line"
-		 				style="width: auto; height: 100%;" id="CHART" ref="" labelNode="" valueNode="" seriesNode="">
+	 				<w2:fusionchart accessibility="false" drawType="javascript" runflashAt="IE6,IE7,IE8" seriesType="simple" chartType="MSLine"
+		 				style="width: auto; height: 100%;" id="CHART" ref="" labelNode="" valueNode="" seriesNode="" dataList="" dataTypeFormatter="">
 		 			</w2:fusionchart>
 	 		</xf:group>
 	 	</xf:group>

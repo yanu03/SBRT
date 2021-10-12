@@ -1012,4 +1012,14 @@ public class OperPlanService extends ServiceSupport {
 		return operPlanMapper.selectOperPlanRout(map);
 	}
 
+	public List<Map<String, Object>> selectOperAllocPlanNode() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		return operPlanMapper.selectOperAllocPlanNode(map);
+	}
+	
+	public List<Map<String, Object>> selectOperAllocRealNode() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		return operPlanMapper.selectOperAllocRealNode(map);
+	}
+
 }
