@@ -284,10 +284,10 @@ public class EventRequest {
                  	wsDataMap.put("GPS_X", busEventMap.get("LONGITUDE"));
                  	wsDataMap.put("GPS_Y", busEventMap.get("LATITUDE"));
                  	wsDataMap.put("NODE_NM", busEventMap.get("NODE_NM")); //지나온 노드명
+                 	wsDataMap.put("NODE_TYPE", busEventMap.get("NODE_TYPE")); //지나온 노드 타입
                 	wsDataMap.put("PREV_NODE_NM", busEventMap.get("PREV_NODE_NM")); //이전 정류소/교차로
                  	wsDataMap.put("NEXT_NODE_ID", busEventMap.get("NEXT_NODE_ID")); //다음 정류소/교차로
                  	wsDataMap.put("NEXT_NODE_NM", busEventMap.get("NEXT_NODE_NM"));
-                 	wsDataMap.put("NODE_TYPE", busEventMap.get("NEXT_NODE_TYPE"));
                  	wsDataMap.put("EVT_CODE", eventCd);
                  	wsDataMap.put("EVT_TYPE", eventType);
                 	
