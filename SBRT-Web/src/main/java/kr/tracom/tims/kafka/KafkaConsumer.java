@@ -60,7 +60,7 @@ public class KafkaConsumer {
     private EventResponse eventResponse;
 	
 
-    @KafkaListener(topics = {KafkaTopics.T_BIS, KafkaTopics.T_BRT, KafkaTopics.T_COMMON})
+    @KafkaListener(topics = "#{'${kafka.topic.member}'.split(',')}")
     public void processResult(ConsumerRecord<String, KafkaMessage> record) throws Exception {
     	
     	logger.info("================ Received Kafka message");
