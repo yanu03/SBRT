@@ -95,7 +95,7 @@ public class EventRequest {
                 	wsDataMap.put("PREV_NODE_NM", busInfoMap.get("PREV_NODE_NM")); //이전 정류소/교차로
                 	wsDataMap.put("NEXT_NODE_ID", busInfoMap.get("NEXT_NODE_ID")); //다음 정류소/교차로
                 	wsDataMap.put("NEXT_NODE_NM", busInfoMap.get("NEXT_NODE_NM"));
-                	wsDataMap.put("NODE_TYPE", busInfoMap.get("NEXT_NODE_TYPE"));
+                	wsDataMap.put("NEXT_NODE_TYPE", busInfoMap.get("NEXT_NODE_TYPE"));
                 	
                 	
                 	
@@ -288,6 +288,7 @@ public class EventRequest {
                 	wsDataMap.put("PREV_NODE_NM", busEventMap.get("PREV_NODE_NM")); //이전 정류소/교차로
                  	wsDataMap.put("NEXT_NODE_ID", busEventMap.get("NEXT_NODE_ID")); //다음 정류소/교차로
                  	wsDataMap.put("NEXT_NODE_NM", busEventMap.get("NEXT_NODE_NM"));
+                 	wsDataMap.put("NEXT_NODE_TYPE", busEventMap.get("NEXT_NODE_TYPE"));
                  	wsDataMap.put("EVT_CODE", eventCd);
                  	wsDataMap.put("EVT_TYPE", eventType);
                 	
@@ -298,8 +299,13 @@ public class EventRequest {
                 case BrtAtCode.DISPATCH:
                 	
                 	AtDispatch dispatch = (AtDispatch)atMessage.getAttrData();
+                	Map<String, Object> curInfo = null; 
+                	String vhcId = "";
+                	String dpDiv = "";
+                	String dpLv = "";
                 	
                 	logger.info("디스패치 수신. {}", dispatch);
+                	
                 	
                 	try {
                 		String udpDtm = dispatch.getUpdateTm().toString();
@@ -311,7 +317,7 @@ public class EventRequest {
                 		paramMap.put("MNG_ID", sessionId);
                 		
                 		vhcInfo = timsMapper.selectVhcInfo(paramMap);
-                		String vhcId = String.valueOf(vhcInfo.get("VHC_ID"));
+                		vhcId = String.valueOf(vhcInfo.get("VHC_ID"));
                 		
                 		
                 		//디스패치 이력 생성
@@ -319,7 +325,7 @@ public class EventRequest {
                 		paramMap.put("UPD_DTM", udpDtm);
                 		paramMap.put("VHC_ID", vhcId);
                 		
-                		Map<String, Object> curInfo = curInfoMapper.selectCurOperInfo(paramMap);
+                		curInfo = curInfoMapper.selectCurOperInfo(paramMap);
                 		
                 		if(curInfo != null) {
                 		
@@ -330,13 +336,13 @@ public class EventRequest {
 	                		paramMap.put("COL", "DL_CD");
 	                		paramMap.put("COL3", "TXT_VAL1");
 	                		paramMap.put("COL_VAL3", msgType);
-	                		String dpDiv = commonMapper.selectDlCdCol(paramMap);
+	                		dpDiv = commonMapper.selectDlCdCol(paramMap);
 	                		
 	                		paramMap.put("CO_CD", "DISPATCH_KIND");
 	                		paramMap.put("COL", "DL_CD");
 	                		paramMap.put("COL3", "TXT_VAL1");
 	                		paramMap.put("COL_VAL3", msgLv);
-	                		String dpLv = commonMapper.selectDlCdCol(paramMap);
+	                		dpLv = commonMapper.selectDlCdCol(paramMap);
 	                		
 	                		
 	                		HashMap<String, Object> dispatchLog = new HashMap<String, Object>(curInfo);
@@ -346,17 +352,6 @@ public class EventRequest {
 	                		dispatchLog.put("DSPTCH_CONTS", dispatch.getMessage());
 	                		
 	                		historyMapper.insertDispatchHistory(dispatchLog);
-	                		
-	                		//웹소켓용 데이터 생성
-	                		
-	                		//디스패치 메시지 넣기
-	                		wsDataMap = new HashMap<>();
-	                		
-	                		wsDataMap.put("ATTR_ID", attrId);
-	                		wsDataMap.put("VHC_ID", vhcId);
-	                		wsDataMap.put("DSPTCH_DIV", dpDiv);
-	                		wsDataMap.put("DSPTCH_KIND", dpLv);
-	                		wsDataMap.put("MESSAGE", dispatch.getMessage());
 	                		
                 		} else {
                 			logger.info("디스패치 무시됨(현재 운행중인 차량정보 없음) : udpDtm:{}, vhcId:{}", udpDtm, vhcId);
@@ -368,6 +363,21 @@ public class EventRequest {
                 	} catch (Exception e) {
 						e.printStackTrace();
 					}
+                	
+                	
+                	if(curInfo != null) {
+                		//웹소켓용 데이터 생성
+                		
+                		//디스패치 메시지 넣기
+                		wsDataMap = new HashMap<>();
+                		
+                		wsDataMap.put("ATTR_ID", attrId);
+                		wsDataMap.put("VHC_ID", vhcId);
+                		wsDataMap.put("DSPTCH_DIV", dpDiv);
+                		wsDataMap.put("DSPTCH_KIND", dpLv);
+                		wsDataMap.put("MESSAGE", dispatch.getMessage());
+                	}
+                	
                 	
                 	break;
                     
