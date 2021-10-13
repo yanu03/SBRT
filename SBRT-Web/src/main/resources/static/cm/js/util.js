@@ -93,8 +93,9 @@ util.dateMinus = function(stTm, edTm){
 	return result;
 }
 
-util.datePlus = function(stTm, edTmSec){
+util.datePlus = function(stTm, edTm){
 	var stTmSec = util.timeToSecond(stTm);
+	var edTmSec = util.timeToSecond(edTm);
 	var result = edTmSec + stTmSec;
 	return result;
 }
