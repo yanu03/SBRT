@@ -45,6 +45,7 @@
 						<w2:column id="WAY_ASC_NM" name="상행명" dataType="text"></w2:column>
 						<w2:column id="WAY_DESC_NM" name="하행명" dataType="text"></w2:column>
 						<w2:column id="ACCRU_LEN" name="누적길이" dataType="text"></w2:column>
+						<w2:column id="ARRVDPRT_TM" name="도착출발시간" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_sub_search">
@@ -170,8 +171,114 @@
 	}
 	
 	scwin.sub_AL0203G0P0_submitdone = function(e) {
-		scwin.fusionChart();
+		//scwin.fusionChart();
+		scwin.drawChart();
+		
 	};
+	
+	var CharData = function(){
+		this.seriesname = {};
+		this.data = [];
+	}
+	
+	var Categories = function(){
+		this.category = [];
+	}
+	
+	scwin.drawChart = function(){
+		debugger;
+		
+		var rowCount = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowCount();
+		var categories = new Array();//category추가
+		var category = new Array();//label추가
+		var data = new Array();//value추가
+		
+		for(var i = 0; i < rowCount; i++){
+			var categoryJson = new Object();
+			var dataJson = new Object();
+			var arrvTm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(i, "ARRV_TM");
+			var dprtTm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(i, "DPRT_TM");
+			var accruLen = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(i, "ACCRU_LEN");
+			var nodeType = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(i, "NODE_TYPE");
+			
+			if(nodeType=='NT002'){
+				categoryJson.label = arrvTm;
+				categoryJson = JSON.stringify(categoryJson);
+				category.push(JSON.parse(categoryJson));
+				//categories[i] = category;
+				
+				dataJson.value = accruLen;
+				dataJson = JSON.stringify(dataJson);
+				data.push(JSON.parse(dataJson));
+			}
+			
+			if((nodeType=='NT002')&&(arrvTm!=dprtTm)){
+			
+				var categoryJson = new Object();
+				var dataJson = new Object();
+				
+				categoryJson.label = dprtTm;
+				categoryJson = JSON.stringify(categoryJson);
+				category.push(JSON.parse(categoryJson));
+				
+				dataJson.value = accruLen;
+				dataJson = JSON.stringify(dataJson);
+				data.push(JSON.parse(dataJson));
+			}
+			
+		};
+		
+		var seriesname = "운행계획 : " + dma_sub_search.get("ROUT_NM") + dma_sub_search.get("OPER_SN");
+		var charArray = new Array();
+		var charData = new CharData();
+		var categoryData = new Categories();
+		
+		charData.data = data;
+		charData.seriesname = seriesname;
+		categoryData.category = category;
+		
+		charArray.push(charData);
+		categories.push(categoryData);
+		
+		var test = {
+		    "chart": {
+		        "lineThickness": "3",
+		        "flatScrollBars": "1",
+		        "scrollheight": "5",
+		        "numVisiblePlot": "7",
+		        "theme": "fusion"
+		    },
+		    
+		    "categories": categories,
+		    
+		    "dataset":charArray
+		    
+		}
+	
+		var options = {
+			labelStep:"3"		
+			,xAxisName:"시간"
+			,yAxisName:"거리"
+	      	,labelDisplay: "wrap"
+	      	//,canvasPadding: "20"
+	      	,lineColor: "#f56363"
+	      	//,valuePadding: "50"
+	      	//,labelPadding: "20"
+	      	,lineThickness: "2"
+	      	,flatScrollBars: "1"
+	        ,scrollheight: "8"
+	        ,numVisiblePlot: "60"
+		}
+		
+		setTimeout(function() {
+			//CHART.setSize(3500, 750);
+			CHART.setChartAttribute(options);
+			CHART.setJSONData(test);
+		},100);
+		
+	}
+	
+	
 	
 	]]></script>
 	</head>
@@ -180,15 +287,14 @@
 	 		<xf:group id="popup_header" style="" class="popup_header">
 	 			<xf:group class="gr_search" id="" style="">
 	 				<xf:group class="label" id="" style="">
-	 					<w2:span class="" id="" label="노선명 : "></w2:span>
 	 					<w2:span class="" id="" label="" ref="data:dma_sub_search.ROUT_NM"></w2:span>
 	 					<w2:span class="" id="" label="" ref="data:dma_sub_search.OPER_SN"></w2:span>
 	 				</xf:group>
 	 			</xf:group>
 	 		</xf:group>
 	 		<xf:group style="" id="" class="popup_content">
-	 				<w2:fusionchart accessibility="false" drawType="javascript" runflashAt="IE6,IE7,IE8" seriesType="simple" chartType="line"
-		 				style="width: auto; height: 100%;" id="CHART" ref="" labelNode="" valueNode="" seriesNode="">
+	 				<w2:fusionchart accessibility="false" drawType="javascript" runflashAt="IE6,IE7,IE8" seriesType="simple" chartType="ScrollLine2D"
+		 				style="width: auto; height: 100%;" id="CHART" ref="" labelNode="" valueNode="" seriesNode="" version="">
 		 			</w2:fusionchart>
 	 		</xf:group>
 	 	</xf:group>

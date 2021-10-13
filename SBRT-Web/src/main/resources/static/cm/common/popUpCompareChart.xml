@@ -200,104 +200,95 @@
 	};
 	
 	scwin.sub_OPER_ALL_REAL_NODE_submitdone = function(e) {
-	debugger;
-	var rowCount = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowCount();
-	var plAllJson = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
-	var rlAllJson = dlt_BRT_OPER_ALLOC_RL_NODE_INFO.getAllJSON();
-	var category = new Array();
-	var data = new Array();
-	var data1 = new Array();
-	var seriesname = "운행계획 : " + dma_sub_search.get("ROUT_NM") + dma_sub_search.get("OPER_SN");
-	
-	for(var i = 0; i < rowCount; i++ ){
-		var catego = new Object();
-		var newData = new Object();
-		var realData = new Object();
-		
-		catego.label = plAllJson[i].ARRV_TM.substring(0,5);
-		newData.value = plAllJson[i].ACCRU_LEN;
-		realData.value = rlAllJson[i].ACCRU_LEN;
-		
-		category.push(catego);
-		data.push(newData);
-		data1.push(realData);
+		scwin.drawChart();
 	};
 	
-	
- 	var chart = { 
-	 	/*"chart": {
-	        "caption": "Number of visitors last week",
-	        "subCaption": "Bakersfield Central vs Los Angeles Topanga",
-	        "xAxisName": "Day",
-	        "theme": "fusion"
-	    },*/
-	    "categories": [
-	        {
-	            category
-	        }
-	    ],
-	    "dataset": [
-	        {
-	            seriesname,
-	          	 data
-	        },
-	        {
-	            "seriesname": "test2",
-	             "data": [
-	                {
-	                    "value": "13400"
-	                },
-	                {
-	                    "value": "12800"
-	                },
-	                {
-	                    "value": "22800"
-	                },
-	                {
-	                    "value": "12400"
-	                },
-	                {
-	                    "value": "15800"
-	                },
-	                {
-	                    "value": "19800"
-	                },
-	                {
-	                    "value": "21800"
-	                }
-	            ]
-	        }
-	    ]
-	    /*,"trendlines": [
-	        {
-	            "line": [
-	                {
-	                    "startvalue": "17022",
-	                    "color": "#6baa01",
-	                    "valueOnRight": "1",
-	                    "displayvalue": "Average"
-	                }
-	            ]
-	        }
-	    ]*/
-	}		
-	
-		var options = { 
-			labelStep:"7"		
-		    ,xAxisName:"시간"
-		    ,yAxisName:"노선"
-      		,labelDisplay: "wrap"
-      		,canvasPadding: "20"
-      		,xAxisValueDecimals: "5"
-      		//,numberSuffix: "/"+sttnNm
-      		,lineColor: "#f56363"
-      		,valuePadding: "50"
-      		,labelPadding: "20"
-		}
+	scwin.drawChart = function(){
+		debugger;
+		var rowCount = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowCount();
+		var plAllJson = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
+		var rlAllJson = dlt_BRT_OPER_ALLOC_RL_NODE_INFO.getAllJSON();
+		var category = new Array();
+		var dataset = new Array();
+		var data = new Array();
+		var seriesname = "운행계획 : " + dma_sub_search.get("ROUT_NM") + dma_sub_search.get("OPER_SN");
 		
-		CHART.setChartAttribute(options);
-		CHART.setJSONData(chart);	
-	};
+		for(var i = 0; i < rowCount; i++ ){
+			var catego = new Object();
+			var newData = new Object();
+			var realData = new Object();
+			
+			catego.label = plAllJson[i].ARRV_TM.substring(0,5);
+			newData.value = plAllJson[i].ACCRU_LEN;
+			
+			category.push(catego);
+			data.push(newData);
+		};
+		
+		
+		
+	 	var chart = { 
+		 	
+		    "categories": [
+		        {
+		            category
+		        }
+		    ],
+		    "dataset": [
+		        {
+		            seriesname,
+		          	 data
+		        },
+		        {
+		            "seriesname": "운행결과 : ",
+		             "data": [
+		                {
+		                    "value": "0"
+		                },
+		                {
+		                    "value": "30"
+		                },
+		                {
+		                    "value": "60"
+		                },
+		                {
+		                    "value": "100"
+		                },
+		                {
+		                    "value": "200"
+		                },
+		                {
+		                    "value": "300"
+		                },
+		                {
+		                    "value": "400"
+		                }
+		            ]
+		        }
+		       
+		    ]
+		}		
+		
+			var options = { 
+				labelStep:"7"		
+			    ,xAxisName:"시간"
+			    ,yAxisName:"거리"
+	      		,labelDisplay: "wrap"
+	      		,canvasPadding: "20"
+	      		,lineColor: "#f56363"
+	      		,valuePadding: "50"
+	      		,labelPadding: "20"
+	      		,lineThickness: "2"
+			}
+			
+			setTimeout(function() {
+				CHART.setSize(2500, 750);
+				CHART.setChartAttribute(options);
+				CHART.setJSONData(chart);
+			},100);
+			
+		};
+	
 	]]></script>
 	</head>
 	 <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
