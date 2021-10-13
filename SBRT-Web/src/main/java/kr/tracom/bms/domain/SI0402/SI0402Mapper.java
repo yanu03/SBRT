@@ -24,6 +24,8 @@ public interface SI0402Mapper {
 	
 	public int SI0402G1U0(Map param);
 	
+	public int updateLengthRoutNodeCmpstn(Map param);
+	
 	public Map SI0402G1K0();
 	
 	public Map SI0402G1K1();

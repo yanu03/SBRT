@@ -22,7 +22,6 @@
 					<w2:column id="chk" name="선택" dataType="text"></w2:column>
 					<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 					<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
-
 					<w2:column id="ROUT_TYPE" name="노선유형" dataType="text"></w2:column>
 					<w2:column id="STTN_CNT" name="정류장수" dataType="text"></w2:column>
 					<w2:column id="ROUT_LEN" name="노선거리" dataType="text"></w2:column>
@@ -85,7 +84,18 @@
 	
 	scwin.btn_confirm_onclick = function() {
 		var data = routListGrid.getCheckedJSON("chk");
-		com.closePopup(scwin.closeCallbackFncName, data);		
+		
+		if(data == null || data == ''){
+			var nullData = [{"ROUT_ID" : ''}];
+			
+			com.closePopup(scwin.closeCallbackFncName, nullData);
+		}
+		else{
+			com.closePopup(scwin.closeCallbackFncName, data);
+		}
+	
+		/*var data = routListGrid.getCheckedJSON("chk");
+		com.closePopup(scwin.closeCallbackFncName, data);*/		
 	};
 	
 	scwin.btn_cancel_onclick = function() {
@@ -124,6 +134,21 @@
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
 			com.excludeItemsByGrid(routListGrid, scwin.param.data, "ROUT_ID");
 		}		
+	};
+	
+	//데이터 없음 - 그리드 disabled 처리
+	scwin.NullData_onviewchange = function(info) {
+	
+		if(info.checked == true){
+			com.executeSubmission(sub_routList);
+			routListGrid.setDisabled("grid", true);
+			routListGrid.setDisabled("column","chk",true);
+		}
+		else{
+			routListGrid.setDisabled("grid", false);
+			routListGrid.setDisabled("column","chk",false);
+		}
+		
 	};
 	]]></script>
 	</head>
@@ -165,7 +190,16 @@
 									<w2:value ref="ROUT_ID"></w2:value>
 								</w2:itemset>
 							</w2:choices>
-						</w2:autoComplete>						
+						</w2:autoComplete>
+						<xf:select id="NullData" selectedIndex="-1" appearance="full" style="margin-left: 10px;float: left;margin-top: 2px;"
+							ev:onviewchange="scwin.NullData_onviewchange" cols="" rows="" ref="">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[데이터없음]]></xf:label>
+									<xf:value><![CDATA[Y]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select>						
 					</xf:group>
 					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>

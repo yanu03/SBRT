@@ -20,6 +20,7 @@
 					<w2:keyInfo>
 						<w2:key id="CONTENT" name="검색내용" dataType="text"></w2:key>
 						<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_result">
@@ -45,10 +46,10 @@
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 						<w2:column id="ROUT_TYPE" name="노선유형" dataType="text"></w2:column>
-						<w2:column id="ST_STTN_ID" name="시작정류소ID" dataType="text"></w2:column>
-						<w2:column id="ST_STTN_NM" name="시작정류소명" dataType="text"></w2:column>
-						<w2:column id="ED_STTN_ID" name="종료정류소ID" dataType="text"></w2:column>
-						<w2:column id="ED_STTN_NM" name="종료정류소명" dataType="text"></w2:column>
+						<w2:column id="ST_STTN_ID" name="기점ID" dataType="text"></w2:column>
+						<w2:column id="ST_STTN_NM" name="기점명" dataType="text"></w2:column>
+						<w2:column id="ED_STTN_ID" name="종점ID" dataType="text"></w2:column>
+						<w2:column id="ED_STTN_NM" name="종점명" dataType="text"></w2:column>
 						<w2:column id="RET_STTN_ID" name="회차정류소ID" dataType="text"></w2:column>
 						<w2:column id="RET_STTN_NM" name="회차정류소명" dataType="text"></w2:column>
 						<w2:column id="ROUT_LEN" name="노선거리" dataType="number" defaultValue="0"></w2:column>
@@ -125,7 +126,7 @@
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions, mainOptions);
 
 		var subOptions = {
-			SEARCH: {}
+			SEARCH: scwin.btn_sub_move
 		};
 		
 		
@@ -214,6 +215,11 @@
 			com.saveDone(SI0403G1,sub_SI0403G1R0);
 		}
 	}
+	scwin.btn_sub_move = function() {
+		if(com.isEmpty(dma_sub_search.get("CONTENT"))==false){
+			com.gridMove(SI0403G1, "LINK_ID,LINK_NM", dma_sub_search.get("CONTENT"), SI0403G1.getFocusedRowIndex());
+		}
+	};
 ]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">

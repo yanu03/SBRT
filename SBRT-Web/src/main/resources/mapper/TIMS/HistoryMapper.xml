@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.tims.domain.HistoryMapper">
+	
+	<!--디스패치 이력-->
+	<insert id="insertDispatchHistory" parameterType="Map">
+		INSERT INTO BRT_DSPTCH_LOG (
+			SEND_DATE
+			,OPER_DT
+			,REP_ROUT_ID
+			,VHC_ID
+			,ROUT_ID				
+			,ALLOC_NO
+			,OPER_SN		
+			,COR_ID
+			,REP_ROUT_NM
+			,ROUT_NM			
+			,VHC_NO
+			,LINK_ID
+			,NODE_ID
+			,DSPTCH_DIV
+			,DSPTCH_KIND
+			,SEND_GPS_X
+			,SEND_GPS_Y
+			,DSPTCH_CONTS
+		) 
+		VALUES (
+			#{SEND_DATE}
+			,DATE_FORMAT(#{SEND_DATE}, '%Y-%m-%d')
+			,#{REP_ROUT_ID}			
+			,#{VHC_ID}
+			,#{ROUT_ID}											
+			,#{ALLOC_NO}
+			,#{OPER_SN}
+			,#{COR_ID}
+			,(SELECT REP_ROUT_NM FROM BMS_REP_ROUT_MST WHERE REP_ROUT_ID = #{REP_ROUT_ID})	
+			,(SELECT ROUT_NM FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})
+			,#{VHC_NO}
+			,#{LINK_ID}
+			,#{NODE_ID}
+			,#{DSPTCH_DIV}
+			,#{DSPTCH_KIND}			
+			,#{GPS_X}
+			,#{GPS_Y}
+			,#{DSPTCH_CONTS}
+		)	
+	</insert>
+	
+	
+	<!--운행이벤트 이력-->
+	<insert id="insertEventHistory" parameterType="Map">
+		INSERT INTO BRT_OPER_EVENT_HIS (
+			OPER_DT
+			,REP_ROUT_ID
+			,VHC_ID
+			,UPD_DTM
+			,VHC_NO
+			,DRV_ID
+			,COR_ID
+			,ROUT_ID
+			,ALLOC_NO
+			,OPER_SN
+			,GPS_X_RAW
+			,GPS_Y_RAW
+			,DRV_ANGLE
+			,GPS_X
+			,GPS_Y
+			,CUR_SPD
+			,LINK_ID
+			,NODE_ID
+			,NODE_SN
+			,OPER_STS
+			,EVT_TYPE
+			,EVT_DATA
+			,STOP_TM
+			,OCR_DTM
+		) 
+		VALUES (
+			DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')
+			,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})			
+			,(SELECT VHC_ID FROM BMS_VHC_MST WHERE VHC_NO = #{BUS_NO})
+			,NOW(3)
+			,#{BUS_NO}
+			,#{DRV_ID}
+			,#{COURSE_ID}
+			,#{ROUT_ID}
+			,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')))  <!--alloc no 찾기 -->
+			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, TIME_FORMAT(#{UPD_DTM}, '%H:%i:%S'))) <!--oper sn 찾기 -->	
+			,#{LONGITUDE_RAW}
+			,#{LATITUDE_RAW}
+			,#{HEADING}
+			,#{LONGITUDE}
+			,#{LATITUDE}
+			,#{SPEED}
+			,#{LINK_ID}
+			,#{NODE_ID}
+			,#{NODE_SN}
+			,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'OPER_STS' AND NUM_VAL4 = #{RUN_TYPE}) <!-- 운행 유형  -->
+			,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'OPER_EVT_TYPE' AND NUM_VAL4 = #{EVENT_CD}) <!-- 운행이벤트 유형  -->
+			,#{EVENT_DATA} 
+			,#{STOP_TM}
+			,#{UPD_DTM}
+		)
+	</insert>
+	
+	
+	<!--운행위반 이력-->
+	<insert id="insertOperVioltHistory" parameterType="Map">
+		INSERT INTO BRT_OPER_VIOLT_HIS (
+			OPER_DT
+			,REP_ROUT_ID
+			,VHC_ID
+			,UPD_DTM
+			,OCR_DTM
+			,ROUT_ID
+			,ALLOC_NO
+			,OPER_SN
+			,COR_ID
+			,REP_ROUT_NM
+			,ROUT_NM
+			,VHC_NO			
+			,DRV_ID
+			,GPS_X
+			,GPS_Y
+			,LINK_ID
+			,NODE_ID
+			,VIOLT_TYPE
+		) 
+		VALUES (
+			DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')
+			,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})			
+			,(SELECT VHC_ID FROM BMS_VHC_MST WHERE VHC_NO = #{BUS_NO})
+			,NOW()
+			,#{UPD_DTM}
+			,#{ROUT_ID}
+			,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')))  <!--alloc no 찾기 -->
+			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, TIME_FORMAT(#{UPD_DTM}, '%H:%i:%S'))) <!--oper sn 찾기 -->			
+			,#{COURSE_ID}
+			,(SELECT REP_ROUT_NM FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})
+			,(SELECT ROUT_NM FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})
+			,#{BUS_NO}
+			,#{DRV_ID}
+			,#{LONGITUDE}
+			,#{LATITUDE}
+			,#{LINK_ID}
+			,#{NODE_ID}
+			,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'VIOLT_TYPE' AND NUM_VAL4 = #{EVENT_CD}) <!-- 운행위반유형  -->
+			
+		)
+	</insert>
+	
+	
+	
+
+	
+</mapper>

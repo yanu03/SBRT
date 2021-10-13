@@ -423,4 +423,191 @@ public class DateUtil {
 			return null;
 		}
 	}
+	
+	public static String now() {
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date time = new Date();
+
+		return dateFormat.format(time);
+	}
+
+	public static String now(String pattern) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+		Date time = new Date();
+
+		return dateFormat.format(time);
+	}
+
+	public static String addSeconds(String time, String pattern, int seconds) {
+
+		String retTime = "00:00:00";
+
+		try {
+			SimpleDateFormat transFormat = new SimpleDateFormat(pattern);
+			Date date = transFormat.parse(time);
+
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			cal.add(Calendar.SECOND, seconds);
+			retTime = transFormat.format(cal.getTime());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return retTime;
+
+	}
+
+	public static String addSeconds2(String time, String pattern, int seconds) {
+
+		String retTime = "00:00:00";
+
+		try {
+			SimpleDateFormat transFormat = new SimpleDateFormat(pattern);
+			Date date = transFormat.parse(time);
+
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			cal.add(Calendar.SECOND, seconds);
+			retTime = transFormat.format(cal.getTime());
+
+			String strHour = retTime.substring(0, 2);
+			String strMinSec = retTime.substring(2);
+			int hour = Integer.valueOf(strHour);
+
+			if (hour >= 0 && hour <= 2) {
+				hour += 24;
+				strHour = String.format("%02d", hour);
+			}
+
+			retTime = strHour + strMinSec;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return retTime;
+
+	}
+
+	public static long getTime(String time, String pattern) {
+		long millis = 0;
+		try {
+			SimpleDateFormat transFormat = new SimpleDateFormat(pattern);
+			Date date = transFormat.parse(time);
+			 millis = date.getTime();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return millis;
+
+	}
+	
+	public static int minuteToSecond(String minute) {
+		int second = 0;
+		try {
+			second = Integer.parseInt(minute)*60;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return second;
+	}
+	
+	
+	public static int timeToSecond(String time) {
+		int second = 0;
+		try {
+			String timeArr[] = time.split(":");
+			if(timeArr.length==2) {
+				second = Integer.parseInt(timeArr[0])*60 + Integer.parseInt(timeArr[1]);
+			}
+			else if(timeArr.length==3) {
+				second = Integer.parseInt(timeArr[0])*60*60 + Integer.parseInt(timeArr[1])*60 + Integer.parseInt(timeArr[2]);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return second;
+
+	}
+	
+	public static String secondToTime(int second) {
+		String time = "00:00:00";
+		try {
+			int hour = (int)(second/3600);
+			int min = (int)(second%3600/60);
+			int sec = (int)(second%3600%60);
+			time = String.format("%02d:%02d:%02d",hour,min,sec);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return time;
+	}
+	
+	public static Date getDate(String time, String pattern) {
+
+		Date date = null;
+		long millis = 0;
+		try {
+			SimpleDateFormat transFormat = new SimpleDateFormat(pattern);
+			date = transFormat.parse(time);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return date;
+
+	}
+	
+	public static int diffTime(String tm1, String tm2, String pattern) {
+
+		// boolean bResult = false;
+		int result = 0;
+
+		try {
+			SimpleDateFormat transFormat = new SimpleDateFormat(pattern);
+			Date date1 = transFormat.parse(tm1);
+			Date date2 = transFormat.parse(tm2);
+
+			if (date1.after(date2)) {
+				result = 1;
+			} else if (date2.after(date1)) {
+				result = -1;
+			} else {
+				result = 0;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// logger.info("diffTime() >> {}, {}, {}", tm1, tm2, result);
+
+		return result;
+		// return bResult;
+	}
+
+	public static int diffSeconds(String tm1, String tm2, String pattern) {
+
+		long diffSec = 0;
+
+		try {
+			SimpleDateFormat f = new SimpleDateFormat(pattern);
+			Date d1 = f.parse(tm1);
+			Date d2 = f.parse(tm2);
+			long diff = d1.getTime() - d2.getTime();
+
+			diffSec = diff / 1000;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return (int) diffSec;
+
+	}
 }

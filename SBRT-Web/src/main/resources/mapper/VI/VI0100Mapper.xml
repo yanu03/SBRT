@@ -5,32 +5,35 @@
 
 <select id="VI0100G0R0" resultType="Map">
 	SELECT  
-		a.VHC_ID
-		,a.VHC_NO
-		,b.COMP_NM
-		,b.AREA
-		,(IF(d.USE_YN IS NULL, '', IF(d.USE_YN = 'Y', '노선사용', ''))) AS USE_YN
-		,d.ROUT_NM
+		DATE_FORMAT(a.OPER_DT, '%Y-%m-%d') OPER_DT
+		,a.REP_ROUT_ID
+		,b.REP_ROUT_NM
+		,a.VHC_ID
+		,b.ROUT_ID
+		,b.ROUT_NM
+		,d.COMP_NM
+		,d.AREA
+		,(IF(b.USE_YN IS NULL, '', IF(b.USE_YN = 'Y', '노선사용', ''))) AS USE_YN
+		,e.VHC_NO
 	FROM
-		sbrt.BMS_VHC_MST a
-		LEFT JOIN sbrt.BMS_TRANSCOMP_MST b
-		ON a.COMP_ID = b.COMP_ID
-		LEFT JOIN sbrt.BMS_ROUT_COMP_CMPSTN c
-		ON a.COMP_ID = c.COMP_ID
-		LEFT JOIN sbrt.BMS_ROUT_MST d
-		ON c.ROUT_ID = d.ROUT_ID
+		BRT_CUR_ALLOC_PL_INFO a
+		LEFT JOIN BMS_ROUT_MST b
+		ON a.REP_ROUT_ID = b.REP_ROUT_ID
+		LEFT JOIN BMS_ROUT_COMP_CMPSTN c
+		ON b.ROUT_ID = c.ROUT_ID
+		LEFT JOIN BMS_TRANSCOMP_MST d
+		ON c.COMP_ID = d.COMP_ID
+		LEFT JOIN BMS_VHC_MST e
+		ON a.VHC_ID = e.VHC_ID
 	<where>
 		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-			AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || VIOLT_TYPE LIKE CONCAT('%',#{CONTENT},'%')
+			AND a.REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || b.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
-		<if test="TYPE == 'COMP_NM'">
-			AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%')
+		<if test="TYPE == 'REP_ROUT_ID'">
+			AND a.REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
-		<if test="TYPE == 'ROUT_NM'">
-			AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
-		</if>
-		<if test="TYPE == 'VIOLT_TYPE'">
-			AND VIOLT_TYPE LIKE CONCAT('%',#{CONTENT},'%') 
+		<if test="TYPE == 'REP_ROUT_NM'">
+			AND b.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
 	</where>
 	ORDER BY
@@ -39,25 +42,20 @@
 </select>
 
 <select id="VI0100SHI0" resultType="Map" parameterType="Map">
-	SELECT  
-		b.COMP_NM
-		,d.ROUT_NM
-		,e.VIOLT_TYPE
+		SELECT  
+		a.REP_ROUT_ID
+		,b.REP_ROUT_NM
 	FROM
-		sbrt.BMS_VHC_MST a
-		LEFT JOIN sbrt.BMS_TRANSCOMP_MST b
-		ON a.COMP_ID = b.COMP_ID
-		LEFT JOIN sbrt.BMS_ROUT_COMP_CMPSTN c
-		ON a.COMP_ID = c.COMP_ID
-		LEFT JOIN sbrt.BMS_ROUT_MST d
-		ON c.ROUT_ID = d.ROUT_ID
-		LEFT JOIN sbrt.BRT_OPER_VIOLT_HIS e
-		ON a.VHC_ID = e.VHC_ID
+		BRT_CUR_ALLOC_PL_INFO a
+		LEFT JOIN BMS_ROUT_MST b
+		ON a.REP_ROUT_ID = b.REP_ROUT_ID
 </select>
 
 <select id="VI0100G1R0" resultType="Map">
 	select  
 		DATE_FORMAT(a.OCR_DTM, '%Y-%m-%d %H:%i:%s') OCR_DTM
+		,a.NODE_ID
+		,a.VHC_ID
 		,a.VIOLT_TYPE
 		,a.GPS_X
 		,a.GPS_Y
@@ -65,6 +63,8 @@
 		,a.JUDG_ORG
 		,a.JUDG_TYPE
 		,a.JUDG_DESC
+		,a.ROUT_ID
+		,a.VHC_NO
 		,b.NODE_NM
 	from 	
 		BRT_OPER_VIOLT_HIS a
@@ -72,43 +72,101 @@
 		ON a.NODE_ID = b.NODE_ID
 	where 	
 		VHC_ID = #{VHC_ID}
+	and
+		ROUT_ID = #{ROUT_ID}
+	ORDER BY
+		a.OCR_DTM
 	
 </select>
 
+<select id="VI0100P0R0" resultType="Map">
+		SELECT NODE_ID, NODE_NM
+		FROM BMS_NODE_MST
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || NODE_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'NODE_ID'">
+				AND NODE_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'NODE_NM'">
+				AND NODE_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>
+		ORDER BY
+			NODE_ID
+	</select>
+
+<insert id="VI0100G1I0" parameterType="Map">
+	insert into BRT_OPER_VIOLT_HIS
+			(
+			OCR_DTM
+			,OPER_DT
+			,REP_ROUT_ID
+			,ROUT_ID
+			,NODE_ID
+			,VIOLT_TYPE
+			,GPS_X
+			,GPS_Y
+			,JUDGE
+			,JUDG_ORG
+			,JUDG_TYPE
+			,JUDG_DESC
+			,VHC_ID
+			,VHC_NO
+			,UPD_DTM
+			)
+	values (
+			#{OCR_DTM}
+			,#{OPER_DT}
+			,#{REP_ROUT_ID}
+			,#{ROUT_ID}
+			,#{NODE_ID}
+			,#{VIOLT_TYPE}
+			,#{GPS_X}
+			,#{GPS_Y}
+			,#{JUDGE}
+			,#{JUDG_ORG}
+			,#{JUDG_TYPE}
+			,#{JUDG_DESC}
+			,#{VHC_ID}
+			,#{VHC_NO}
+			,NOW()
+			)	
+
+</insert>
+
+<update id="VI0100G1U0" parameterType="Map">
+	UPDATE	BRT_OPER_VIOLT_HIS
+	SET		OCR_DTM		= #{OCR_DTM}
+			,NODE_ID	= #{NODE_ID}
+			,VIOLT_TYPE	= #{VIOLT_TYPE}
+			,GPS_X		= #{GPS_X}
+			,GPS_Y		= #{GPS_Y}
+			,JUDGE		= #{JUDGE}
+			,JUDG_ORG	= #{JUDG_ORG}
+			,JUDG_TYPE	= #{JUDG_TYPE}
+			,JUDG_DESC	= #{JUDG_DESC}
+			,UPD_DTM	= NOW()
+	WHERE
+			VHC_ID = #{VHC_ID}
+	AND
+			ROUT_ID = #{ROUT_ID}
+	AND
+			OCR_DTM = #{OCR_DTM}
+</update>
+
 <delete id="VI0100G1D0" parameterType="Map">
-	delete from BRT_OPER_VIOLT_HIS
-	where VHC_ID = #{VHC_ID}
+	DELETE FROM 
+		BRT_OPER_VIOLT_HIS
+	WHERE 
+		VHC_ID = #{VHC_ID}
+	AND
+		ROUT_ID = #{ROUT_ID}
+	AND
+		OCR_DTM = #{OCR_DTM}
 </delete>
 
-<!--  <insert id="VI0100G1I0" parameterType="Map">
-	insert into BRT_OPER_VIOLT_HIS
-			(STTN_ID,
-			TRNS_ID,
-			TRNS_DIV,
-			TRNS_NM,
-			GPS_X,
-			GPS_Y,
-			TM_Y,
-			TM_X,
-			USE_YN,
-			REMARK,
-			UPD_DTM,
-			UPD_ID
-			)
-	values (#{STTN_ID},
-			#{TRNS_ID},
-			#{TRNS_DIV},
-			#{TRNS_NM},
-			#{GPS_X},
-			#{GPS_Y},
-			0,
-			0,
-			#{USE_YN},
-			#{REMARK},
-			#{UPD_DTM},
-			#{SSN_USER_ID}
-			)		
 
-</insert>-->
 
 </mapper>

@@ -120,23 +120,19 @@
 	 * 검색항목(selectBox)의 내용이 변경되었을 때 실행된다.
 	 * 직위면 inputBox를 hidden, selectBox를 띄운다. 
 	 */
-	scwin.sbx_ChoiceBox_onviewchange = function(info) {
-		if (info.newValue == "USER_ID") {
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
+		if (info.newValue == "ALL") {
+			acb_autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} else if (info.newValue == "USER_ID") {
+			search_input.hide();
 			acb_autoChoiceBox.setNodeSet("data:dlt_memberSearchItem", "USER_ID", "USER_ID");
-			sbx_PositionCd.hide();
 			acb_autoChoiceBox.show("");
-		} else if (info.newValue == "EMP_NM") {
+		} else if (info.newValue == "USER_NM") {
+			search_input.hide();
 			acb_autoChoiceBox.setNodeSet("data:dlt_memberSearchItem", "USER_NM", "USER_NM");
-			sbx_PositionCd.hide();
-			acb_autoChoiceBox.show();
-		} else if (info.newValue == "POSITION_CD") {
-			sbx_PositionCd.setNodeSet("data:dlt_CommonDtl02", "CODE_NM", "COM_CD");
-			acb_autoChoiceBox.hide();
-			sbx_PositionCd.show("");
-		} else if (info.newValue == "ORG_ID") {
-			sbx_PositionCd.setNodeSet("data:dlt_memberOrganization", "ORG_NM", "ORG_ID");
-			acb_autoChoiceBox.hide();
-			sbx_PositionCd.show("");
+			acb_autoChoiceBox.show("");
 		}
 	};
 	
@@ -255,15 +251,13 @@
 									<xf:label><![CDATA[사용자명]]></xf:label>
 									<xf:value><![CDATA[USER_NM]]></xf:value>
 								</xf:item>
-
-							
 							</xf:choices>
 						</xf:select1>
 						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="사용자 ID 또는 사용자명"></xf:input>						
-						<w2:autoComplete interactionMode="" chooseOptionValue="" chooseOptionLabel="-전체-" visibleRowNum=""
-							chooseOption="true" caseSensitive="false" displayMode="label" id="acb_autoChoiceBox" ref="" useKeywordHighlight="false"
-							style="display:none" search="start" allOption="" textAlign="left" submenuSize="auto" editType="select"
-							noResult="useData" class="search_auto">
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
+							ev:onviewchange="" id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
+							selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
 							<w2:choices>
 								<w2:itemset nodeset="data:dlt_memberSearchItem">
 									<w2:label ref="USER_NM"></w2:label>
@@ -275,7 +269,7 @@
 					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
 			</xf:group><!-- pgm_header -->
-			<xf:group id="pgm_content" class="pgm_content grdc_a_20_700" style="">
+			<xf:group id="pgm_content" class="pgm_content grdc_a_20_900" style="">
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 					<xf:group id="" class="" style="">
 						<xf:group class="defaultbox" id="" style="">
@@ -289,46 +283,46 @@
 							dataList="dlt_memberBasic" id="grd_memberBasic" readOnly="" style="" overflowX="hidden" useShiftKey="true"
 							scrollByColumn="false" overflowY="scroll" rowStatusVisible="false" ev:onafteredit="" rowStatusHeaderValue="상태"
 							ev:oncellclick="scwin.grd_memberBasic_oncellclick" ev:oncelldblclick="" 
-							rowNumHeaderValue="순서" rowNumVisible="true">
+							rowNumHeaderValue="순서" rowNumVisible="true" focusMode="row">
 							<w2:header id="header1" style="">
 								<w2:row id="row2" style="">
-									<w2:column id="column13" blockSelect="false" style="height:25px;" width="100" inputType="text" value="사용자ID"
+									<w2:column id="column13" blockSelect="false" style="height:20px;" width="100" inputType="text" value="사용자ID"
+										displayMode="label" class="req">
+									</w2:column>
+									<w2:column id="column11" blockSelect="false" style="height:20px;" width="150" inputType="text" value="사용자명"
+										displayMode="label" class="req">
+									</w2:column>
+									<w2:column id="column3" blockSelect="false" style="height:20px;" width="150" inputType="text" value="기관"
+										displayMode="label" class="req">
+									</w2:column>
+									<w2:column id="column14" blockSelect="false" style="height:20px;" width="150" inputType="text" value="이메일"
 										displayMode="label">
 									</w2:column>
-									<w2:column id="column11" blockSelect="false" style="height:25px;" width="100" inputType="text" value="사용자명"
-										displayMode="label">
-									</w2:column>
-									<w2:column id="column3" blockSelect="false" style="height:25px;" width="150" inputType="text" value="기관"
-										displayMode="label">
-									</w2:column>
-									<w2:column id="column14" blockSelect="false" style="height:25px;" width="120" inputType="text" value="이메일"
-										displayMode="label">
-									</w2:column>
-									<w2:column id="column16" blockSelect="false" style="height:25px;" width="100" inputType="text"
+									<w2:column id="column16" blockSelect="false" style="height:20px;" width="110" inputType="text"
 										value="전화번호" displayMode="label">
 									</w2:column>
-									<w2:column id="column17" blockSelect="false" style="height:25px;" width="0" inputType="text"
+									<w2:column id="column17" blockSelect="false" style="height:20px;" width="0" inputType="text"
 										value="비밀번호" displayMode="label">
 									</w2:column>
-									<w2:column id="column18" blockSelect="false" style="height:25px;" width="0" inputType="text"
+									<w2:column id="column18" blockSelect="false" style="height:20px;" width="0" inputType="text"
 										value="비밀번호 확인" displayMode="label">
 									</w2:column>
-									<w2:column id="column19" blockSelect="false" style="height:25px;" width="100%" inputType="text"
+									<w2:column id="column19" blockSelect="false" style="height:20px;" width="200" inputType="text"
 										value="비고" displayMode="label">
 									</w2:column>
 								</w2:row>
 							</w2:header>
 							<w2:gBody id="gBody4" style="">
 								<w2:row id="row5" style="">
-									<w2:column id="USER_ID" blockSelect="false" readOnly="true" style="height:25px;" width="" inputType="text"
+									<w2:column id="USER_ID" blockSelect="false" readOnly="true" style="height:20px;" width="" inputType="text"
 										displayMode="label"  userData1="M">
 									</w2:column>
-									<w2:column id="USER_NM" blockSelect="false" readOnly="true" style="height:25px;" width="" inputType="text"
-										displayMode="label"  userData1="M">
+									<w2:column id="USER_NM" blockSelect="false" readOnly="true" style="height:20px;" width="" inputType="text"
+										displayMode="label"  userData1="M" textAlign="left"> 
 									</w2:column>
-									<w2:column id="ORG_ID" blockSelect="false" readOnly="true" style="height:25px;" width="" inputType="select"
+									<w2:column id="ORG_ID" blockSelect="false" readOnly="true" style="height:20px;" width="" inputType="select"
 										displayMode="label" textAlign="left" chooseOption="false" chooseOptionLabel="" checkboxLabelFormatter="" allOption=""
-										ref="">
+										ref="" userData1="M">
 										<w2:choices>
 											<w2:itemset nodeset="data:dlt_memberOrganization">
 												<w2:label ref="ORG_NM"></w2:label>
@@ -336,20 +330,20 @@
 											</w2:itemset>
 										</w2:choices>
 									</w2:column>
-									<w2:column id="EMAIL" blockSelect="false" readOnly="true" style="height:25px" width="" inputType="text"
+									<w2:column id="EMAIL" blockSelect="false" readOnly="true" style="height:20px" width="" inputType="text"
 										displayMode="label" textAlign="left"  userData2="com.checkEmail">
 									</w2:column>
-									<w2:column id="HP_NO" blockSelect="false" readOnly="true" style="height:25px;" width=""
+									<w2:column id="HP_NO" blockSelect="false" readOnly="true" style="height:20px;" width=""
 										inputType="text" displayMode="label">
 									</w2:column>
-									<w2:column id="NEW_USER_PS" blockSelect="false" readOnly="true" style="height:25px;" width=""
+									<w2:column id="NEW_USER_PS" blockSelect="false" readOnly="true" style="height:20px;" width=""
 										inputType="text" displayMode="label">
 									</w2:column>
-									<w2:column id="USER_PS_CONFIRM" blockSelect="false" readOnly="true" style="height:25px;" width=""
+									<w2:column id="USER_PS_CONFIRM" blockSelect="false" readOnly="true" style="height:20px;" width=""
 										inputType="text" displayMode="label">
 									</w2:column>
-									<w2:column id="REMARK" blockSelect="false" readOnly="true" style="height:25px;" width=""
-										inputType="text" displayMode="label">
+									<w2:column id="REMARK" blockSelect="false" readOnly="true" style="height:20px;" width=""
+										inputType="text" displayMode="label" textAlign="left">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
@@ -387,19 +381,19 @@
 							<xf:group style="" tagname="tr">
 								<xf:group style="" class="w2tb_th req" tagname="th">사용자ID</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
-									<xf:input id="ibx_userId" ref="data:dlt_memberBasic.USER_ID" enterBlur="" style="height:24px;" mandatory="true" class="req" maxlength="10" minlength="1" userData1="M"></xf:input>
+									<xf:input id="ibx_userId" ref="data:dlt_memberBasic.USER_ID" enterBlur="" style="height:24px;width: 100px;" mandatory="true" class="req" maxlength="10" minlength="1" userData1="M"></xf:input>
 								</xf:group>
 								<xf:group style="" class="w2tb_th req" tagname="th">사용자명</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td" useLocale="" userData1="M">
-									<xf:input id="ibx_userNm" ref="data:dlt_memberBasic.USER_NM" style="height:24px;" mandatory="true" class="req"></xf:input>
+									<xf:input id="ibx_userNm" ref="data:dlt_memberBasic.USER_NM" style="height:24px;width: 150px" mandatory="true" class="req" maxlength="30"></xf:input>
 								</xf:group>
 							</xf:group>
 							<xf:group style="" tagname="tr">
 								<xf:group style="" class="w2tb_th req" tagname="th">기관</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
-									<xf:select1 allOption="" appearance="minimal" chooseOption="" chooseOptionLabel="&amp;nbsp;" direction="auto"
-										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="ORG_ID" optionOrder="false"
-										ref="data:dlt_memberBasic.ORG_ID" renderType="component" style="height:24px;" submenuSize="auto" userData1="M">
+									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="-선택-"
+										direction="auto" disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="ORG_ID" optionOrder="false"
+										ref="data:dlt_memberBasic.ORG_ID" renderType="component" style="height:24px;width: 150px;" submenuSize="auto" userData1="M">
 										<xf:choices>
 											<xf:itemset nodeset="data:dlt_memberOrganization">
 												<xf:label ref="ORG_NM"></xf:label>
@@ -410,9 +404,9 @@
 								</xf:group>
 								<xf:group style="" class="w2tb_th" tagname="th">시스템</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
-									<xf:select1 allOption="" appearance="minimal" chooseOption="false" chooseOptionLabel="" direction="auto"
-										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="sbx_system" optionOrder="false"
-										ref="data:dlt_memberBasic.SYSTEM_BIT" renderType="component" style="height:24px;" submenuSize="auto">
+									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="-선택-"
+										direction="auto" disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="sbx_system" optionOrder="false"
+										ref="data:dlt_memberBasic.SYSTEM_BIT" renderType="component" style="height:24px;width: 150px;" submenuSize="auto">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
@@ -420,26 +414,26 @@
 							<xf:group style="" tagname="tr">
 								<xf:group style="" class="w2tb_th" tagname="th">전화번호</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
-									<xf:input class="fl" id="ibx_hpNo" ref="data:dlt_memberBasic.HP_NO" style="height:24px;" maskFormat="" displayFormat="" customModelFormatter="com.transPhone" displayFormatter="com.transPhone"></xf:input>
+									<xf:input class="fl" id="ibx_hpNo" ref="data:dlt_memberBasic.HP_NO" style="height:24px;" maskFormat="" displayFormat="" customModelFormatter="com.transPhone" displayFormatter="com.transPhone" allowChar="0-9" maxlength="13"></xf:input>
 								</xf:group>
 								<xf:group style="" class="w2tb_th" tagname="th">이메일</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
-									<xf:input class="fl" id="ibx_email" ref="data:dlt_memberBasic.EMAIL" style="height:24px;" userData2="com.checkEmail"></xf:input>
+									<xf:input class="fl" id="ibx_email" ref="data:dlt_memberBasic.EMAIL" style="height:24px;" userData2="com.checkEmail" maxlength="50"></xf:input>
 								</xf:group>
 							</xf:group>
 							<xf:group style="" tagname="tr">
 								<xf:group style="" class="w2tb_th" tagname="th">새&amp;nbsp;비밀번호</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
-									<xf:secret id="ibx_userPs" mandatory="" style="height:24px;" ref="data:dlt_memberBasic.NEW_USER_PS" autocomplete="new-password"></xf:secret>
+									<xf:secret id="ibx_userPs" mandatory="" style="height:24px;" ref="data:dlt_memberBasic.NEW_USER_PS" autocomplete="new-password" maxlength="100"></xf:secret>
 								</xf:group>
 								<xf:group style="" class="w2tb_th" tagname="th">비밀번호&amp;nbsp;확인</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
-									<xf:secret id="ibx_userPsConfirm" mandatory="" style="height:24px;" ref="data:dlt_memberBasic.USER_PS_CONFIRM">
+									<xf:secret id="ibx_userPsConfirm" mandatory="" style="height:24px;" ref="data:dlt_memberBasic.USER_PS_CONFIRM" maxlength="100">
 									</xf:secret>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" class="w2tb_th" style="height: 70px;" id="" tabIndex="">
+								<xf:group tagname="th" class="w2tb_th" style="height: 70px;vertical-align: top;" id="" tabIndex="">
 									비고
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -450,13 +444,14 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input adjustMaxLength="" class="" disabled="" id="" mandatory="" ref="data:dlt_memberBasic.REMARK"
-										style="width:100%;height:70px;">
-									</xf:input>
+									<xf:textarea adjustMaxLength="" class="" disabled="" id="REMARK" mandatory="" ref="data:dlt_memberBasic.REMARK"
+										style="width:100%;height:70px;" maxlength="200">
+									</xf:textarea>
 								</xf:group>
 							</xf:group>
 						</xf:group>
 					</xf:group>
+					<xf:image src="/cm/images/add/bg_brt.png" style="width: 100%;height: 100%;" id=""></xf:image>
 				</xf:group> <!-- pgm_detail -->
 			</xf:group>
 		</xf:group>

@@ -23,10 +23,11 @@
         				<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
         				<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
         				<w2:column id="ROUT_TYPE" name="노선유형" dataType="text"></w2:column>
-        				<w2:column id="ST_STTN_ID" name="시작정류소ID" dataType="text"></w2:column>
-        				<w2:column id="ST_STTN_NM" name="시작정류소명" dataType="text"></w2:column>
-        				<w2:column id="ED_STTN_ID" name="종료정류소ID" dataType="text"></w2:column>
-        				<w2:column id="ED_STTN_NM" name="종료정류소명" dataType="text"></w2:column>
+        				<w2:column id="ROUT_DIV" name="노선구분" dataType="text"></w2:column>
+        				<w2:column id="ST_STTN_ID" name="기점ID" dataType="text"></w2:column>
+        				<w2:column id="ST_STTN_NM" name="기점명" dataType="text"></w2:column>
+        				<w2:column id="ED_STTN_ID" name="종점ID" dataType="text"></w2:column>
+        				<w2:column id="ED_STTN_NM" name="종점명" dataType="text"></w2:column>
         				<w2:column id="WAY_YN" name="상하행여부" dataType="text"></w2:column>
         				<w2:column id="HOLI_YN" name="휴일여부" dataType="text"></w2:column>
         				<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
@@ -61,7 +62,7 @@
 	<script type="text/javascript" lazy="false"><![CDATA[
 
 	scwin.onpageload = function() {
-		var codeOptions = [ {code : "ROUT_TYPE", compID : "routListGrid:ROUT_TYPE" }];
+		var codeOptions = [ {code : "ROUT_TYPE", compID : "routListGrid:ROUT_TYPE" }, {code : "ROUT_DIV", compID : "routListGrid:ROUT_DIV" }];
 	
 		com.setCommonDtl(codeOptions, function() {
 			com.executeSubmission(sub_reproutList);	
@@ -90,7 +91,19 @@
 	
 	scwin.btn_confirm_onclick = function() {
 		var data = routListGrid.getCheckedJSON("chk");
-		com.closePopup(scwin.closeCallbackFncName, data);		
+		
+		if(data == null || data == ''){
+			var nullData = [{"REP_ROUT_ID" : ''}];
+			
+			com.closePopup(scwin.closeCallbackFncName, nullData);
+		}
+		else{
+			com.closePopup(scwin.closeCallbackFncName, data);
+		}
+	
+	
+		/*var data = routListGrid.getCheckedJSON("chk");
+		com.closePopup(scwin.closeCallbackFncName, data);*/
 	};
 	
 	scwin.btn_cancel_onclick = function() {
@@ -129,6 +142,21 @@
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
 			com.excludeItemsByGrid(routListGrid, scwin.param.data, "ROUT_ID");
 		}		
+	};
+	
+	//데이터 없음 - 그리드 disabled 처리
+	scwin.NullData_onviewchange = function(info) {
+	
+		if(info.checked == true){
+			com.executeSubmission(sub_reproutList);
+			routListGrid.setDisabled("grid", true);
+			routListGrid.setDisabled("column","chk",true);
+		}
+		else{
+			routListGrid.setDisabled("grid", false);
+			routListGrid.setDisabled("column","chk",false);
+		}
+		
 	};
 	]]></script>
 	</head>
@@ -171,7 +199,16 @@
 									<w2:value ref="ROUT_ID"></w2:value>
 								</w2:itemset>
 							</w2:choices>
-						</w2:autoComplete> -->					
+						</w2:autoComplete> -->
+						<xf:select id="NullData" selectedIndex="-1" appearance="full" style="margin-left: 10px;float: left;margin-top: 2px;"
+							ev:onviewchange="scwin.NullData_onviewchange" cols="" rows="" ref="">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[데이터없음]]></xf:label>
+									<xf:value><![CDATA[Y]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select>					
 					</xf:group>
 					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
@@ -194,16 +231,19 @@
 							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:20px" id="column2" value="노선유형"
 								blockSelect="false" displayMode="label">
 							</w2:column>
-							<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px" id="column2" value="기점"
+							<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:20px" id="column2" value="노선구분"
 								blockSelect="false" displayMode="label">
 							</w2:column>
-							<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px" id="column2" value="종점"
+							<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px" id="column6" value="기점명"
 								blockSelect="false" displayMode="label">
 							</w2:column>
-							<w2:column removeBorderStyle="false" width="65" inputType="text" style="height:20px" id="column2" value="상하행여부"
+							<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px" id="column5" value="종점명"
 								blockSelect="false" displayMode="label">
 							</w2:column>
-							<w2:column removeBorderStyle="false" width="60" inputType="text" style="height:20px" id="column2" value="휴일여부"
+							<w2:column removeBorderStyle="false" width="65" inputType="text" style="height:20px" id="column7" value="상하행여부"
+								blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="60" inputType="text" style="height:20px" id="column8" value="휴일여부"
 								blockSelect="false" displayMode="label">
 							</w2:column>
 							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column1" value="비고"
@@ -225,24 +265,14 @@
 							<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="ROUT_TYPE" value=""
 								blockSelect="false" displayMode="label" userData1="M">
 							</w2:column>
-							<w2:column removeBorderStyle="false" width="" inputType="autoComplete " style="height:20px" id="ST_STTN_ID" value=""
+							<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="ROUT_DIV" value=""
 								blockSelect="false" displayMode="label" >
-								<w2:choices>
-									<w2:itemset nodeset="data:dlt_searchItem">
-										<w2:label ref="ST_STTN_ID"></w2:label>
-										<w2:value ref="ST_STTN_NM"></w2:value>
-									</w2:itemset>
-								</w2:choices>
-
 							</w2:column>
-							<w2:column removeBorderStyle="false" width="" inputType="autoComplete " style="height:20px" id="ED_STTN_ID" value=""
+							<w2:column removeBorderStyle="false" width="" inputType="text " style="height:20px" id="ST_STTN_NM" value=""
 								blockSelect="false" displayMode="label" >
-								<w2:choices>
-									<w2:itemset nodeset="data:dlt_searchItem">
-										<w2:label ref="ED_STTN_ID"></w2:label>
-										<w2:value ref="ED_STTN_NM"></w2:value>
-									</w2:itemset>
-								</w2:choices>
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="" inputType="text " style="height:20px" id="ED_STTN_NM" value=""
+								blockSelect="false" displayMode="label" >
 							</w2:column>
 							<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="WAY_YN" value=""
 								blockSelect="false" displayMode="label">

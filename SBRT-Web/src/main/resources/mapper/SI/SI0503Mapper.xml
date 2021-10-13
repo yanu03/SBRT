@@ -4,7 +4,7 @@
 <mapper namespace="kr.tracom.bms.domain.SI0503.SI0503Mapper">
 
 <select id="SI0503G0R0" resultType="Map">
-	select  CRS_ID,
+	SELECT  CRS_ID,
 			CRS_NM,
 			CRS_ENM,
 			GPS_X,
@@ -16,11 +16,11 @@
 			PERIOD_LEN,
 			PERIOD_CNT,
 			USE_YN,
+			IMP_YN,
 			REMARK
 			
-	from BMS_CRS_MST
-	
-	<where>
+	FROM BMS_CRS_MST
+	WHERE DEL_YN != 'Y'
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
 			<if test="TYPE == 'ALL'">
 				AND (CRS_ID LIKE CONCAT('%',#{CONTENT},'%') || CRS_NM LIKE CONCAT('%',#{CONTENT},'%'))
@@ -32,7 +32,6 @@
 				AND CRS_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 		</if>
-	</where>
 </select>
 
 <select id="SI0503G0K0" resultType="Map">
@@ -40,9 +39,9 @@
 </select>
 
 <select id="SI0503SHI0" resultType="Map">
-	select CRS_ID, CRS_NM
-	from BMS_CRS_MST
-	order by CRS_ID
+	SELECT CRS_ID, CRS_NM
+	FROM BMS_CRS_MST WHERE DEL_YN!='Y'
+	ORDER BY CRS_ID
 </select>
 
 <insert id="SI0503G0I0" parameterType="Map">	
@@ -55,7 +54,8 @@
 				USE_YN,
 				REMARK,
 				UPD_DTM,
-				UPD_ID
+				UPD_ID,
+				IMP_YN
 			)
 	
 	values		
@@ -67,7 +67,8 @@
 				#{USE_YN},
 				#{REMARK},
 				#{UPD_DTM},
-				#{SSN_USER_ID}		
+				#{SSN_USER_ID},		
+				#{IMP_YN}		
 			);
 </insert>
 
@@ -79,7 +80,8 @@
 			USE_YN = #{USE_YN},
 			REMARK = #{REMARK},
 			UPD_DTM = #{UPD_DTM},
-			UPD_ID = #{SSN_USER_ID}
+			UPD_ID = #{SSN_USER_ID},
+			IMP_YN = #{IMP_YN}
 
 	where CRS_ID = #{CRS_ID};
 	
@@ -93,7 +95,7 @@
 
 <delete id="SI0503G0D0" parameterType="Map">
 	UPDATE BMS_CRS_MST
-	SET		USE_YN = 'N'
+	SET	DEL_YN = 'Y', USE_YN = 'N'
 	WHERE CRS_ID = #{CRS_ID}
 	
 	UPDATE BMS_ROUT_NODE_CMPSTN
@@ -115,9 +117,9 @@
 
 
 <select id="SI0503G1R0" resultType="Map">
-	select a.ROUT_ID, a.ROUT_NM, a.ROUT_TYPE, a.STTN_CNT, a.ROUT_LEN, a.CURVATURE, a.REMARK, b.CRS_ID
-	from BMS_ROUT_MST a INNER JOIN BMS_ROUT_NODE_CMPSTN b ON a.ROUT_ID = b.ROUT_ID  AND b.NODE_TYPE != 'NT006'
-	where b.CRS_ID = #{CRS_ID}
+	SELECT A.ROUT_ID, A.ROUT_NM, A.ROUT_TYPE, A.STTN_CNT, A.ROUT_LEN, A.CURVATURE, A.REMARK, B.CRS_ID
+	FROM BMS_ROUT_MST A INNER JOIN BMS_ROUT_NODE_CMPSTN B ON A.ROUT_ID = B.ROUT_ID AND A.DEL_YN !='Y' AND B.NODE_TYPE != 'NT006'
+	WHERE B.CRS_ID = #{CRS_ID}
 	
 	
 </select>

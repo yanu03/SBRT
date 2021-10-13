@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import kr.tracom.bms.ftp.FTPHandler;
 import kr.tracom.cm.domain.OperPlan.OperPlanService;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
@@ -21,6 +22,8 @@ public class SI0401Service extends ServiceSupport {
 	@Autowired
 	private OperPlanService operPlanService;
 
+	@Autowired
+	private FTPHandler ftpHandler;
 	
 	public List SI0401G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
@@ -51,6 +54,11 @@ public class SI0401Service extends ServiceSupport {
 					uCnt += si0401Mapper.SI0401G0U0(data);
 				} else if (rowStatus.equals("D")) {
 					dCnt += si0401Mapper.SI0401G0D0(data);
+					try {
+						ftpHandler.deleteRoutList(data.get("ROUT_ID").toString(), "00000000");
+						ftpHandler.deleteRoutemap(data.get("ROUT_ID").toString());
+					} catch(Exception e) {	
+					}
 				} 
 			}			
 		} catch(Exception e) {

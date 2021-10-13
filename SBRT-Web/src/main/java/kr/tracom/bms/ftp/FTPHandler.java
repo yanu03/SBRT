@@ -255,7 +255,8 @@ public class FTPHandler {
 			
 			
 			try {
-				doMoveFile(srcPath, destPath, srcFileName, destFileName);
+				//doMoveFile(srcPath, destPath, srcFileName, destFileName);
+				doCopyFile(srcPath, destPath, srcFileName, destFileName);
 				
 				processSynchronize(getRootLocalPath() + destPath, getRootServerPath() + destPath);
 			} catch(Exception e){
@@ -353,10 +354,11 @@ public class FTPHandler {
 	//PI0702 행선지안내기 예약(파일이동)
 	public void reserveDst(Map<String, Object> routeInfo, List<Map<String, Object>> dlist) throws Exception {
 		
-		String routeNm = String.valueOf(routeInfo.get("ROUT_NM"));
-		String wayDiv = String.valueOf(routeInfo.get("TXT_VAL1")); //U or D
+		//String routeNm = String.valueOf(routeInfo.get("ROUT_NM"));
+		//String wayDiv = String.valueOf(routeInfo.get("TXT_VAL1")); //U or D
+		//String dvcName =  routeNm + wayDiv; //노선이름+U or D
 		
-		String dvcName =  routeNm + wayDiv; //노선이름+U or D
+		String dvcName = String.valueOf(routeInfo.get("DVC_NM")); 
 		
 		
 		for(Map<String, Object> map : dlist) {
@@ -479,6 +481,105 @@ public class FTPHandler {
 
 	}
 	
+	/** 210826 행선지안내기 스케쥴 파일 Read jh **/
+	public List<Map<String, Object>> readSCH(String deviceCd, String fileName) throws IOException {
+		String path = Paths.get(getRootLocalPath(), "/temp/destination/", deviceCd).toString();
+		File file = new File(path + "/" + fileName);
+		FileReader fr = null;
+		List<Map<String, Object>> scheduleList = new ArrayList<>();
+
+		try {
+			fr = new FileReader(file);
+		} catch (FileNotFoundException e) {
+			createSCH(deviceCd, fileName);
+			fr = new FileReader(file);
+		}
+        //입력 버퍼 생성
+        BufferedReader br = new BufferedReader(fr);
+        String line = "";
+        String[] tmp = null;
+        
+        while((line = br.readLine()) != null){
+        	tmp = line.split("\t");
+        	Map<String, Object> map = new HashMap<>();
+        	Map<String, Object> param = new HashMap<>();
+        	param.put("COL", "DL_CD");
+        	param.put("CO_CD", "EFFECT_TYPE");
+        	param.put("COL3", "TXT_VAL1");
+        	param.put("COL_VAL3", tmp[1]);
+        	
+        	map.put("FRAME_NO", tmp[0]);
+        	map.put("EFFECT_TYPE", commonMapper.selectDlCdCol(param));
+        	map.put("EFFECT_SPEED", tmp[2]);
+        	map.put("SHOW_TIME", tmp[3]);
+        	
+        	scheduleList.add(map);
+        }
+        br.close();
+        return scheduleList;
+	}
+	
+	/** 210826 행선지안내기 스케쥴 파일 create jh **/
+	public boolean createSCH(String deviceCd, String fileName) {
+		List<Map<String, Object>> scheduleList = new ArrayList<>();
+		int max = 10;
+		
+		if(fileName.contains("LOGO")) {
+			max = 3;
+		}
+		
+		for(int i = 0; i < max; i ++) {
+			Map<String, Object> scheduleRow = new HashMap<>();
+			int seq = i + 1;
+			
+			scheduleRow.put("FRAME_NO", "FRAME" + seq);
+			scheduleRow.put("EFFECT_TYPE", "ET001");
+			scheduleRow.put("EFFECT_SPEED", "05");
+			scheduleRow.put("SHOW_TIME", "0000");
+			
+			scheduleList.add(scheduleRow);
+			
+		}
+		
+		return writeSCH(scheduleList, deviceCd, fileName);
+	}
+	
+	/** 210826 행선지안내기 스케쥴 파일 write jh**/
+	public boolean writeSCH(List<Map<String, Object>> scheduleList, String deviceCd, String fileName) {
+		String path = Paths.get(getRootLocalPath(), "/temp/destination/", deviceCd).toString();
+		String txt = "";
+
+		for(int i = 0; i < scheduleList.size(); i++) {
+			Map<String, Object> param = new HashMap<>();
+			param.put("COL", "TXT_VAL1");
+			param.put("CO_CD", "EFFECT_TYPE");
+			param.put("COL3", "DL_CD");
+			param.put("COL_VAL3", scheduleList.get(i).get("EFFECT_TYPE").toString());
+			if(i == 0) {
+				txt += scheduleList.get(i).get("FRAME_NO") + Constants.Schedule.TAB 
+					+ commonMapper.selectDlCdCol(param) + Constants.Schedule.TAB 
+					+ String.format("%02d", Integer.valueOf(scheduleList.get(i).get("EFFECT_SPEED").toString())) + Constants.Schedule.TAB 
+					+ String.format("%04d", Integer.valueOf(scheduleList.get(i).get("SHOW_TIME").toString()));
+			}else {
+				txt += Constants.CSVForms.ROW_SEPARATOR
+					+ scheduleList.get(i).get("FRAME_NO") + Constants.Schedule.TAB 
+					+ commonMapper.selectDlCdCol(param) + Constants.Schedule.TAB 
+					+ String.format("%02d", Integer.valueOf(scheduleList.get(i).get("EFFECT_SPEED").toString())) + Constants.Schedule.TAB 
+					+ String.format("%04d", Integer.valueOf(scheduleList.get(i).get("SHOW_TIME").toString()));
+			}
+		}
+		
+		File file = new File(path + "/" + fileName);
+		
+		try {
+			createCSV(file, txt);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	
 	//PI0902 전자노선도 예약 jhlee
 	public void reserveErm(Map<String, Object> vhcData, Map<String, Object> rpData) throws Exception {
@@ -548,7 +649,10 @@ public class FTPHandler {
 					checkNull(map.getOrDefault("X",				"")) + Constants.CSVForms.COMMA +
 					checkNull(map.getOrDefault("Y",				"")) + Constants.CSVForms.COMMA +
 					checkNull(map.getOrDefault("NODE_ENAME",	"")) + Constants.CSVForms.COMMA +
-					checkNull(map.getOrDefault("TRANSIT_CODE",	""));
+					checkNull(map.getOrDefault("TRANSIT_CODE",	"")) + Constants.CSVForms.COMMA +
+					checkNull(map.getOrDefault("DOOR",	""))		 + Constants.CSVForms.COMMA +
+					checkNull(map.getOrDefault("LOCATION_INFO",	""));
+				
 		}
 		
 		//sbrt\routemap
@@ -572,6 +676,7 @@ public class FTPHandler {
 				txt += Constants.CSVForms.ROW_SEPARATOR +
 					checkNull(map.getOrDefault("NODE_ID", 	"")) 	+ Constants.CSVForms.COMMA +
 					checkNull(map.getOrDefault("NODE_NM",	"")) 	+ Constants.CSVForms.COMMA +
+					checkNull(map.getOrDefault("NODE_TYPE",	"")) 	+ Constants.CSVForms.COMMA +
 					checkNull(map.getOrDefault("RANGE", 	""))	+ Constants.CSVForms.COMMA +
 					checkNull(map.getOrDefault("X", 		""))	+ Constants.CSVForms.COMMA +
 					checkNull(map.getOrDefault("Y", 		""));
@@ -612,16 +717,18 @@ public class FTPHandler {
         	tmp = line.split(",");
         	
     		map.put("FILE_NAME",	tmp[0]);
-    		map.put("VERSION",		tmp[1]);
-    		map.put("DESTI_NO",		tmp[2]);
-    		map.put("ROUT_SHAPE",	tmp[3]);
-    		map.put("DAY1",			tmp[4]);
-    		map.put("DAY2",			tmp[5]);
-    		map.put("SATDAY1",		tmp[6]);
-    		map.put("SATDAY2",		tmp[7]);
-    		map.put("SUNDAY1",		tmp[8]);
-    		map.put("SUNDAY2",		tmp[9]);
-    		map.put("REP_NAME",		tmp[10]);
+    		map.put("ROUT_NM",		tmp[1]);
+    		map.put("ROUT_ENM",		tmp[2]);
+    		map.put("VERSION",		tmp[3]);
+    		map.put("DESTI_NO",		tmp[4]);
+    		map.put("ROUT_SHAPE",	tmp[5]);
+    		map.put("DAY1",			tmp[6]);
+    		map.put("DAY2",			tmp[7]);
+    		map.put("SATDAY1",		tmp[8]);
+    		map.put("SATDAY2",		tmp[9]);
+    		map.put("SUNDAY1",		tmp[10]);
+    		map.put("SUNDAY2",		tmp[11]);
+    		map.put("REP_NAME",		tmp[12]);
         		
         	list.add(map);
         	}
@@ -676,16 +783,18 @@ public class FTPHandler {
 		for(Map<String, Object> map : list) {
 			txt += Constants.CSVForms.ROW_SEPARATOR;
 			txt += map.get("FILE_NAME")
-				+  Constants.CSVForms.COMMA + map.get("VERSION")
-				+  Constants.CSVForms.COMMA + map.get("DESTI_NO")
-				+  Constants.CSVForms.COMMA + map.get("ROUT_SHAPE")
-				+  Constants.CSVForms.COMMA + map.get("DAY1")
-				+  Constants.CSVForms.COMMA + map.get("DAY2")
-				+  Constants.CSVForms.COMMA + map.get("SATDAY1")
-				+  Constants.CSVForms.COMMA + map.get("SATDAY2")
-				+  Constants.CSVForms.COMMA + map.get("SUNDAY1")
-				+  Constants.CSVForms.COMMA + map.get("SUNDAY2")
-				+  Constants.CSVForms.COMMA + map.get("REP_NAME");
+				+  Constants.CSVForms.COMMA + map.getOrDefault("ROUT_NM", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("ROUT_ENM", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("VERSION", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("DESTI_NO", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("ROUT_SHAPE", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("DAY1", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("DAY2", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("SATDAY1", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("SATDAY2", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("SUNDAY1", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("SUNDAY2", "")
+				+  Constants.CSVForms.COMMA + map.getOrDefault("REP_NAME", "");
 		}
 		
 		try {
@@ -696,28 +805,64 @@ public class FTPHandler {
 	}
 	
 	
-	/** 210824 노선 파일 삭제 (수정중) jh **/
-	//TODO: 수정 필요함
-	public void deleteRoutemap(String routId) {
-		String routeOriPath = Paths.get(getRootLocalPath(), getRouteOriPath()).toString();
-		String path = Paths.get(getRootLocalPath(), getRouteMapPath()).toString();
+
+	/** 20210830 routelist.csv의 해당 rout_id row 삭제 jh **/
+	public void deleteRoutList(String routIdDel, String maxVer) throws IOException {
+		String path = Paths.get(getRootLocalPath(), getRoutePath()).toString();
+		String fileName = "routelist.csv";
+		File file = new File(path + "/" + fileName);
 		
-		File routeCsv = new File(path + "/" + routId + ".csv");
-		File routePlayList = new File(routeOriPath + "/" + routId);
+		List<Map<String, Object>> list = new ArrayList<>();
 		
-		if(routeCsv.exists()) {
-			routeCsv.delete();
+		if(file.exists()) {
+			list = readRoutList("routelist.csv");
 		}
 		
-		if(routePlayList.exists()) {
-			File[] deleteFileList = routePlayList.listFiles();
-			if(deleteFileList != null && deleteFileList.length > 0) {
-				for(File f : deleteFileList) {
-					f.delete();
-				}				
+		for(Map<String, Object> map : list) {
+			if(routIdDel.equals(map.get("FILE_NAME").toString())) {
+				list.remove(map);
+				break;
 			}
-			routePlayList.delete();
-		}	
+		}
+
+		String txt = "";
+		txt += Constants.CSVForms.ROUTE_VERSION + maxVer + Constants.CSVForms.ROW_SEPARATOR;
+		txt += Constants.CSVForms.ROUTE_LIST;
+		
+		for(Map<String, Object> map : list) {
+			txt += Constants.CSVForms.ROW_SEPARATOR;
+			txt += map.get("FILE_NAME") 
+					+ Constants.CSVForms.COMMA + map.get("ROUT_NM")
+					+ Constants.CSVForms.COMMA + map.get("ROUT_ENM")
+					+ Constants.CSVForms.COMMA + map.get("VERSION") 
+					+ Constants.CSVForms.COMMA + map.get("DESTI_NO") 
+					+ Constants.CSVForms.COMMA + map.get("ROUT_SHAPE")
+					+ Constants.CSVForms.COMMA + map.get("DAY1")
+					+ Constants.CSVForms.COMMA + map.get("DAY2")
+					+ Constants.CSVForms.COMMA + map.get("SATDAY1")
+					+ Constants.CSVForms.COMMA + map.get("SATDAY2")
+					+ Constants.CSVForms.COMMA + map.get("SUNDAY1")
+					+ Constants.CSVForms.COMMA + map.get("SUNDAY2")
+					+ Constants.CSVForms.COMMA + map.get("REP_NAME");
+		}
+		
+		try {
+			createCSV(file, txt);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+		
+	/** 210824 노선관련 폴더, 파일 삭제 jh **/
+	//TODO: 테스트필요
+	public void deleteRoutemap(String routId) {
+		String path = Paths.get(getRootLocalPath(), getRouteMapPath(), "/routelist", "/" + routId).toString();
+		
+		File routFolder = new File(path);
+		
+		if(routFolder.exists()) {
+			deleteFolder(path);
+		}
 	}
 	
 	/** 210824 노선별 routeinfo.csv jh **/
@@ -758,7 +903,6 @@ public class FTPHandler {
 		
 		for(Map<String, Object> linkMap : routLinkList) {
 			txt += Constants.CSVForms.ROW_SEPARATOR + linkMap.get("LINK_ID")
-			 	+  Constants.CSVForms.COMMA + linkMap.get("LINK_NAME")
 			 	+  Constants.CSVForms.COMMA + linkMap.get("ST_NODE")
 			 	+  Constants.CSVForms.COMMA + linkMap.get("ED_NODE")
 			 	+  Constants.CSVForms.COMMA + linkMap.get("LEN")
@@ -787,7 +931,7 @@ public class FTPHandler {
 			FileUtils.forceMkdir(new File(playListPath));
 			
 			for(Map<String, Object> orgaInfo : orgaList) {
-				String orgaId = orgaInfo.get("ORGA_ID").toString();
+				String orgaId = orgaInfo.getOrDefault("ORGA_ID", "").toString();
 				String fileName = orgaId + ".csv";
 				StringBuilder csvContent = new StringBuilder();
 				csvContent.append(Constants.CSVForms.VOICE_PLAYLIST_TITLE);
@@ -805,7 +949,7 @@ public class FTPHandler {
 					    			+ Constants.PlayListVoiceTypes.BUS_KR + Constants.CSVForms.COMMA
 					    			+ orgaVoc.get("VOC_ID") + Constants.VoiceTypes.KR + ".wav" + Constants.CSVForms.COMMA 
 					    			+ orgaVoc.get("START_DATE") + Constants.CSVForms.COMMA 
-					    			+ orgaVoc.get("EXPIRED_DATE") + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("EXPIRE_DATE") + Constants.CSVForms.COMMA
 					    			+ orgaVoc.get("TEXT") + Constants.CSVForms.COMMA
 			    					+ setIldID(orgaVoc.get("VOC_ID") + Constants.VoiceTypes.KR)
 			    					+ Constants.CSVForms.ROW_SEPARATOR);
@@ -816,7 +960,7 @@ public class FTPHandler {
 					    			+ Constants.PlayListVoiceTypes.BUS_EN + Constants.CSVForms.COMMA
 					    			+ orgaVoc.get("VOC_ID") + Constants.VoiceTypes.EN + ".wav" + Constants.CSVForms.COMMA 
 					    			+ orgaVoc.get("START_DATE") + Constants.CSVForms.COMMA 
-					    			+ orgaVoc.get("EXPIRED_DATE") + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("EXPIRE_DATE") + Constants.CSVForms.COMMA
 					    			+ orgaVoc.get("TEXT") + Constants.CSVForms.COMMA
 			    					+ setIldID(orgaVoc.get("VOC_ID") + Constants.VoiceTypes.EN));
 			    		} else {
@@ -826,7 +970,7 @@ public class FTPHandler {
 					    			+ orgaVoc.get("VOC_CODE") + Constants.CSVForms.COMMA
 					    			+ orgaVoc.get("VOC_ID") + Constants.VoiceTypes.KR + ".wav" + Constants.CSVForms.COMMA 
 					    			+ orgaVoc.get("START_DATE") + Constants.CSVForms.COMMA 
-					    			+ orgaVoc.get("EXPIRED_DATE") + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("EXPIRE_DATE") + Constants.CSVForms.COMMA
 					    			+ orgaVoc.get("TEXT") + Constants.CSVForms.COMMA
 			    					+ setIldID(orgaVoc.get("VOC_ID") + Constants.VoiceTypes.KR));
 			    		}
@@ -837,7 +981,7 @@ public class FTPHandler {
 				    			+ orgaVoc.get("VOC_CODE") + Constants.CSVForms.COMMA
 				    			+ orgaVoc.get("VOC_ID") + Constants.VoiceTypes.US + ".wav" + Constants.CSVForms.COMMA 
 				    			+ orgaVoc.get("START_DATE") + Constants.CSVForms.COMMA 
-				    			+ orgaVoc.get("EXPIRED_DATE") + Constants.CSVForms.COMMA
+				    			+ orgaVoc.get("EXPIRE_DATE") + Constants.CSVForms.COMMA
 				    			+ orgaVoc.get("TEXT") + Constants.CSVForms.COMMA
 				    			+ setIldID(orgaVoc.get("VOC_ID").toString() + Constants.VoiceTypes.US));
 		    		}
@@ -873,7 +1017,7 @@ public class FTPHandler {
 		String txt = Constants.CSVForms.ROUTE_VERSION + courseVer 
 				   + Constants.CSVForms.ROW_SEPARATOR;		
 		
-		txt += Constants.CSVForms.ROUTE_TITLE;
+		txt += Constants.CSVForms.COURSE_TITLE;
 		
 		for(Map<String, Object> routMap : courseRoutList) {
 			txt += Constants.CSVForms.ROW_SEPARATOR + courseId
@@ -977,6 +1121,19 @@ public class FTPHandler {
 			return true;
 		} catch(Exception e) {
 			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	/** 210826 routemap 경로 local -> ftp 업로드 **/
+	public boolean syncRouteMap() {
+		String localPath = Paths.get(getRootLocalPath(), getRouteMapPath()).toString();
+		String ftpPath = getRootServerPath() + "/routemap/";
+		
+		try {
+			processSynchronize(localPath, ftpPath);
+			return true;
+		} catch(Exception e) {
 			return false;
 		}
 	}
@@ -1129,7 +1286,27 @@ public class FTPHandler {
 	}
 	
 	
-	
+	/** 210830 특정 폴더 하위에 있는 폴더, 파일 삭제 jh **/
+	public static void deleteFolder(String path) {
+		File folder = new File(path);
+		try {
+			if(folder.exists()){
+				File[] folder_list = folder.listFiles();
+
+				for (int i = 0; i < folder_list.length; i++) {
+					if(folder_list[i].isFile()) {
+						folder_list[i].delete();
+					}else {
+						deleteFolder(folder_list[i].getPath());
+					}
+					folder_list[i].delete();
+				}
+				folder.delete();
+			}
+		} catch (Exception e) {
+			e.getStackTrace();
+		}
+	}
 	
 	
 	

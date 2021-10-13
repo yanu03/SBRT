@@ -80,5 +80,19 @@ public class LoginService {
 		
 		return loginMapper.updatePassword(param);
 	}
+	
+	/**
+	 * 로그인 이력 저장.
+	 */
+	public void insertLoginHis(Map param) {
+		loginMapper.insertLoginHis(param);
+	}
+	
+	/**
+	 * 로그아웃 이력 저장.
+	 */
+	public void insertLogoutHis(Map param) {
+		loginMapper.insertLogoutHis(param);
+	}
 
 }

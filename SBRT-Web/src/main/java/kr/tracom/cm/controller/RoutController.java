@@ -35,6 +35,12 @@ public class RoutController extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/rout/selectRoutListByRepRout")
+	public @ResponseBody Map<String, Object> selectRoutListByRepRout() throws Exception {
+		result.setData("dlt_BMS_ROUT_MST", routService.selectRoutListByRepRout());
+		return result.getResult();
+	}
+	
 	@RequestMapping("/rout/selectNodeListByRouts")
 	public @ResponseBody Map<String, Object> selectNodeListByRouts() throws Exception {
 		result.setData("dlt_BMS_ROUT_NODE_CMPSTN", routService.selectNodeListByRouts());
@@ -44,6 +50,18 @@ public class RoutController extends ControllerSupport {
 	@RequestMapping("/rout/selectNodeListByRout")
 	public @ResponseBody Map<String, Object> selectNodeListByRout() throws Exception {
 		result.setData("dlt_BMS_ROUT_NODE_CMPSTN", routService.selectNodeListByRout());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/rout/selectMainNodeListByRout")
+	public @ResponseBody Map<String, Object> selectMainNodeListByRout() throws Exception {
+		result.setData("dlt_BRT_MAIN_ROUT_NODE_INFO", routService.selectMainNodeListByRout());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/rout/selectNodeListByRepRout")
+	public @ResponseBody Map<String, Object> selectNodeListByRepRout() throws Exception {
+		result.setData("dlt_BMS_ROUT_NODE_CMPSTN", routService.selectNodeListByRepRout());
 		return result.getResult();
 	}
 	

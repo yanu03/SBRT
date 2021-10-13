@@ -1216,6 +1216,18 @@ com.getGridViewDataList = function(gridViewObj) {
 	}
 };
 
+/*삭제된 데이터를 제외한 인덱스 얻기*/
+com.getGridDispIndex = function(grid, index) {
+	var data = com.getGridViewDataList(grid);
+	var dispIndex = 0;
+	for(var i = 0; i < index; i++) { //노선의 노드 순번을 그리드 순서대로 재 할당함.
+		if(data.getRowStatus(i)!="D"){
+			dispIndex++;
+		}
+	}
+	return dispIndex;
+};
+
 /*삭제를 제외한 데이터*/
 com.getGridDispJsonData = function(grid) {
 	var data = com.getGridViewDataList(grid);
@@ -1513,7 +1525,7 @@ com.focusGridFrm = function(grid,frm, index, focusColumn, editMode){
  * @param {String} [options.rowNumSubTotalFontSize]	[defalut: 없음] rowNumVisible 속성이 true인 경우 순서출력 Subtotal 영역의 폰트크기
  * @param {String} [options.rowNumSubTotalFontColo]	 [defalut: 없음] rowNumVisible 속성이 true인 경우 순서출력 Subtotal 영역의 폰트색상
  * @param {String} [options.rowNumHeaderValue]		[defalut: 없음] rowNumVisible 속성이 true인 경우 순서출력 Header 영역의 출력값
- * @param {String} [options.rowNumVisible]			[defalut: false] 순서출력 유무
+ * @param {String} [options.rowNumVisible]			[defalut: false] 순서출력 여부
  * @param {String} [options.showProcess]				[defalut: true] 다운로드 시 프로세스 창을 보여줄지 여부
  * @param {String} [options.massStorage]				[defalut: true] 대용량 다운로드 여부 <br>(default는 true 이 옵션을 true로 하고 showConfirm을 false로 한 경우에 IE에서 신뢰할만한 사이트를 체크하는 옵션이 뜬다.)
  * @param {String} [options.showConfirm]				[defalut: false] 다운로드 확인창을 띄울지 여부 <br>(옵션을 킨 경우 advancedExcelDownload를 호출후 사용자가 window의 버튼을 한번더 클릭해야 한다. massStorage는 자동으로 true가 된다)
@@ -1530,15 +1542,15 @@ com.focusGridFrm = function(grid,frm, index, focusColumn, editMode){
  * @param {String} [options.subTotalRoundingMode]	[defalut: 없음] 다운로드시 subTotal 평균계산시 Round를 지정 한다. <br> "CEILING" => 소수점 올림 <br> "FLOOR" => 소수점 버림 <br>"HALF_UP" => 소수점 반올림
  * @param {String} [options.useStyle]				[defalut: false] 다운로드시 css를 제외한, style을 excel에도 적용할 지 여부 (배경색,폰트)
  * @param {String} [options.freezePane]				[defalut: ""] 틀고정을 위한 좌표값 및 좌표값의 오픈셋 <br>  freezePane="3,4" => X축 3, Y축 4에서 틀고정<br> freezePane="0,1,0,5" => X축 0, Y축 1에서 X축으로 0, Y축으로 5로 틀고정
- * @param {String} [options.autoSizeColumn]			[defalut: false] 너비자동맞춤 설정 유무 - 2016.08.18 옵션 설정을 true로 변경
- * @param {String} [options.displayGridlines]		[defalut: false] 엑셀 전체 셀의 눈금선 제거 유무
+ * @param {String} [options.autoSizeColumn]			[defalut: false] 너비자동맞춤 설정 여부 - 2016.08.18 옵션 설정을 true로 변경
+ * @param {String} [options.displayGridlines]		[defalut: false] 엑셀 전체 셀의 눈금선 제거 여부
  * @param {String} [options.colMerge]				[defalut: false] colMerge된 컬럼을 Merge해서 출력 할 지 여부
- * @param {String} [options.useDataFormat]			[defalut: 없음] 그리드 dataType이 text인 경우, 엑셀의 표시형식 '텍스트' 출력 유무<br> "true" => 표시형식 텍스트<br> "false" => 표시형식 일반 출력)
+ * @param {String} [options.useDataFormat]			[defalut: 없음] 그리드 dataType이 text인 경우, 엑셀의 표시형식 '텍스트' 출력 여부<br> "true" => 표시형식 텍스트<br> "false" => 표시형식 일반 출력)
  * @param {String} [options.indent]					[defalut: 0] 그리드 dataType이 drilldown인 경우, indent 표시를 위한 공백 삽입 개수
- * @param {String} [options.columnMove]				[defalut: false] 그리드 컬럼이동시 이동된 상태로 다운로드 유무 <br> "true" => 컬럼이동 순서대로 출력
+ * @param {String} [options.columnMove]				[defalut: false] 그리드 컬럼이동시 이동된 상태로 다운로드 여부 <br> "true" => 컬럼이동 순서대로 출력
  * @param {String} [options.columnOrder]				[defalut: 없음] 엑셀 다운로드시 다운로드되는 컬럼 순서를 지정 할 수 있는 속성 ( "0,3,2,1"로 지정시 지정한 순서로 다운로드된다 )
- * @param {String} [options.fitToPage]				[defalut: false] 엑셀 프린터 출력시 쪽맞춤 사용 유무
- * @param {String} [options.landScape]				[defalut: false] 엑셀 프린터 출력시 가로 방향 출력 유무
+ * @param {String} [options.fitToPage]				[defalut: false] 엑셀 프린터 출력시 쪽맞춤 사용 여부
+ * @param {String} [options.landScape]				[defalut: false] 엑셀 프린터 출력시 가로 방향 출력 여부
  * @param {String} [options.fitWidth]				[defalut: 1] 엑셀 프린터 출력시 용지너비
  * @param {String} [options.fitHeight]				[defalut: 1] 엑셀 프린터 출력시 용지높이
  * @param {String} [options.scale]					[defalut: 100] 엑셀 프린터 출력시 확대/축소 배율<br> scale을 사용할 경우 fitToPage는 false로 설정 해야 한다.
@@ -1662,7 +1674,7 @@ com.downLoadExcel = function(grdObj, options, infoArr) {
 		rowNumSubTotalFontColor : options.rowNumSubTotalFontColor || "", // String, [defalut: 없음] rowNumVisible 속성이 true인 경우 순서출력
 		// Subtotal 영역의 폰트색상
 		rowNumHeaderValue : options.rowNumHeaderValue || "", // String, [defalut: 없음] rowNumVisible 속성이 true인 경우 순서출력 Header 영역의 출력값
-		rowNumVisible : options.rowNumVisible || "false", // String, [defalut: false] 순서출력 유무
+		rowNumVisible : options.rowNumVisible || "false", // String, [defalut: false] 순서출력 여부
 		showProcess : WebSquare.util.getBoolean(options.showProcess) || true, // Boolean, [defalut: true] 다운로드 시 프로세스 창을 보여줄지 여부
 		massStorage : WebSquare.util.getBoolean(options.massStorage) || true, // Boolean, [defalut: true] 대용량 다운로드 여부 (default는 true 이 옵션을
 		// true로 하고 showConfirm을 false로 한 경우에 IE에서 신뢰할만한 사이트를 체크하는
@@ -1687,17 +1699,17 @@ com.downLoadExcel = function(grdObj, options, infoArr) {
 		useStyle : options.useStyle || "", // String, [defalut: false] 다운로드시 css를 제외한, style을 excel에도 적용할 지 여부 (배경색,폰트)
 		freezePane : options.freezePane || "", // String, [defalut: ""] 틀고정을 위한 좌표값 및 좌표값의 오픈셋 ( ex) freezePane="3,4" X축 3, Y축 4에서 틀고정,
 		// freezePane="0,1,0,5" X축 0, Y축 1에서 X축으로 0, Y축으로 5로 틀공정 )
-		autoSizeColumn : options.autoSizeColumn || "true", // String, [defalut: false] 너비자동맞춤 설정 유무 - 2016.08.18 옵션 설정을 true로 변경
-		displayGridlines : options.displayGridlines || "", // String, [defalut: false] 엑셀 전체 셀의 눈금선 제거 유무
+		autoSizeColumn : options.autoSizeColumn || "true", // String, [defalut: false] 너비자동맞춤 설정 여부 - 2016.08.18 옵션 설정을 true로 변경
+		displayGridlines : options.displayGridlines || "", // String, [defalut: false] 엑셀 전체 셀의 눈금선 제거 여부
 		colMerge : options.colMerge || "", // String, [defalut: false] colMerge된 컬럼을 Merge해서 출력 할 지 여부
-		useDataFormat : options.useDataFormat || "", // String, [defalut: 없음] 그리드 dataType이 text인 경우, 엑셀의 표시형식 '텍스트' 출력 유무( "true"인 경우
+		useDataFormat : options.useDataFormat || "", // String, [defalut: 없음] 그리드 dataType이 text인 경우, 엑셀의 표시형식 '텍스트' 출력 여부( "true"인 경우
 		// 표시형식 텍스트, "false"인 경우 표시형식 일반 출력)
 		indent : options.indent || "", // String, [defalut: 없음] 그리드 dataType이 drilldown인 경우, indent 표시를 위한 공백 삽입 개수, default값은 0
-		columnMove : options.columnMove || "", // String, [defalut: false] 그리드 컬럼이동시 이동된 상태로 다운로드 유무 ( "true"인경우 컬럼이동 순서대로 출력 )
+		columnMove : options.columnMove || "", // String, [defalut: false] 그리드 컬럼이동시 이동된 상태로 다운로드 여부 ( "true"인경우 컬럼이동 순서대로 출력 )
 		columnOrder : options.columnOrder || "", // String, [defalut: 없음] 엑셀 다운로드시 다운로드되는 컬럼 순서를 지정 할 수 있는 속성 ( ex) "0,3,2,1"로 지정시 지정한
 		// 순서로 다운로드된다 )
-		fitToPage : options.fitToPage || "false", // String, [defalut: false] 엑셀 프린터 출력시 쪽맞춤 사용 유무
-		landScape : options.landScape || "false", // String, [defalut: false] 엑셀 프린터 출력시 가로 방향 출력 유무
+		fitToPage : options.fitToPage || "false", // String, [defalut: false] 엑셀 프린터 출력시 쪽맞춤 사용 여부
+		landScape : options.landScape || "false", // String, [defalut: false] 엑셀 프린터 출력시 가로 방향 출력 여부
 		fitWidth : options.fitWidth || "1", // String, [defalut: 1] 엑셀 프린터 출력시 용지너비
 		fitHeight : options.fitHeight || "1", // String, [defalut: 1] 엑셀 프린터 출력시 용지높이
 		scale : options.scale || "100", // String, [defalut: 100] 엑셀 프린터 출력시 확대/축소 배율, scale을 사용할 경우 fitToPage는 false로 설정 해야 한다.
@@ -1871,7 +1883,7 @@ com.uploadExcel = function(grdObj, options) {
  * @param {Object} grdObj GridView Object
  * @param {Object} options JSON형태로 저장된 그리드의 엑셀 업로드 옵션
  * @param {String} [options.type] [default: 1, 0] 데이터 형태 (0이면 실 데이터 형태,1이면 display 표시 방식)
- * @param {String} [options.header] [default: 1, 0] Grid header 존재 유무 (0이면 header row수를 무시하고 전부 업로드하고 1이면 header row수 만큼 skip한다.)
+ * @param {String} [options.header] [default: 1, 0] Grid header 존재 여부 (0이면 header row수를 무시하고 전부 업로드하고 1이면 header row수 만큼 skip한다.)
  * @param {String} [options.delim] [default: ','] CSV 파일에서 데이터를 구분할 구분자
  * @param {String} [options.escapeChar] CSV 데이터에서 제거해야 되는 문자셋 ( ex) '\'' )
  * @param {Number} [options.startRowIndex] [defalut: 0] csv파일에서 그리드의 데이터가 시작되는 행의 번호, startRowIndex가 설정되면, header 설정은 무시된다.
@@ -1892,7 +1904,7 @@ com.uploadExcel = function(grdObj, options) {
 com.uploadCSV = function(grdObj, options) {
 	var options = {
 		type : options.type || "0", // String, [default: 1, 0]데이터 형태 (0이면 실 데이터 형태,1이면 display 표시 방식)
-		header : options.header || "0", // String, [default: 1, 0]Grid header 존재 유무 (0이면 header row수를 무시하고 전부 업로드하고 1이면 header row수 만큼
+		header : options.header || "0", // String, [default: 1, 0]Grid header 존재 여부 (0이면 header row수를 무시하고 전부 업로드하고 1이면 header row수 만큼
 		// skip한다.)
 		delim : options.delim || ",", // String, [default: ',']CSV 파일에서 데이터를 구분할 구분자
 		escapeChar : options.escapeChar || "", // String, CSV 데이터에서 제거해야 되는 문자셋 ( ex) '\'' )
@@ -2583,6 +2595,82 @@ com.validateGridView = function(gridViewObj, tacObj, tabId) {
 	}
 };
 
+com.validateGridView2 = function(gridViewObj, valInfoArr, focusIndex, tacObj, tabId) {
+
+	if (gridViewObj === null) {
+		return false;
+	}
+
+	var dataList = com.getGridViewDataList(gridViewObj);
+	if (dataList === null) {
+		$p.log("Can not find the datalist of '" + gridViewObjId + "' object.");
+		return false;
+	}
+
+	var valStatus = {
+		isValid : true,
+		message : "",
+		error : []
+	// { columnId: "", columnName: "", rowIndex: 0, message: "" }
+	};
+
+	try {
+		var modifiedData = dataList.getRowJSON(focusIndex);
+
+		for ( var valIdx in valInfoArr) {
+			var valInfo = valInfoArr[valIdx];
+			if ((typeof valInfo.id !== "undefined") && (typeof modifiedData[valInfo.id] !== "undefined")) {
+				var value = modifiedData[valInfo.id].trim();
+				if ((typeof valInfo.mandatory !== "undefined") && (valInfo.mandatory === true) && (value.length === 0)) {
+					_setResult(focusIndex, dataList, gridViewObj.getID(), valInfo.id, "필수 입력 항목 입니다.");
+				}
+			}
+
+			if (valStatus.error.length > 0) {
+				break;
+			}
+		}
+			
+		if (valStatus.error.length > 0) {
+			valStatus.isValid = false;
+			valStatus.message = "유효하지 않은 값이 입력 되었습니다";
+
+			if ((typeof tacObj !== "undefined") && (typeof tabId !== "undefined") && (tabId !== "")) {
+				var tabIndex = tacObj.getTabIndex(tabId);
+				tacObj.setSelectedTabIndex(tabIndex);
+			}
+
+			gcm.valStatus.isValid = false;
+			gcm.valStatus.objectType = "gridView";
+			gcm.valStatus.objectName = valStatus.error[0].comObjId;
+			gcm.valStatus.columnId = valStatus.error[0].columnId;
+			gcm.valStatus.rowIndex = valStatus.error[0].rowIndex;
+
+			com.alert(valStatus.error[0].message, "gcm._groupValidationCallback");
+
+		}
+
+		return valStatus.isValid;
+
+		function _setResult(rowIndex, dataList, gridViewObjId, columnId, message) {
+			var errIdx = valStatus.error.length;
+			valStatus.error[errIdx] = {};
+			valStatus.error[errIdx].columnId = columnId;
+			valStatus.error[errIdx].comObjId = gridViewObjId;
+			valStatus.error[errIdx].columnName = dataList.getColumnName(columnId);
+			valStatus.error[errIdx].rowIndex = rowIndex;
+			valStatus.error[errIdx].message = com.attachPostposition(valStatus.error[errIdx].columnName) + " " + message;
+		}
+	} catch (e) {
+		$p.log("[com.validateGridView] Exception :: " + e.message);
+	} finally {
+		modifiedData = null;
+		modifiedIdx = null;
+		dataList = null;
+		gridViewObj = null;
+	}
+};
+
 /**
 * Grid를 Validation Check하여 해당 Table에 Focus를 주는 함수
  * @param {Object} gridViewObj GridView 객체
@@ -3128,6 +3216,29 @@ com.transTime = function(value) {
 
 	return output;
 };
+
+/**
+ * 시간 - 입력된 String 또는 Number에 포메터를 적용하여 반환한다.
+ *
+ * @date 2021.08.27
+ * @param {String} value 시간 Formatter를 적용한 값 (String 또는 Number 타입 지원)
+ * @memberOf com
+ * @author InswaveSystems
+ * @return {String} 포멧터가 적용된 문자열
+ * @example
+ * com.transTime("1234");
+ * // return 예시) "12:34"
+ */
+com.transTime2 = function(value) {
+	var output = value;
+	if(value.length==4){
+		var minute = String(value).substr(0, 2);
+		var second = String(value).substr(2, 2);
+		output = minute + ":" + second;
+	}
+	return output;
+};
+
 
 /**
  * 소수점 2자리에서 반올림 처리를 한다.
@@ -4097,6 +4208,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 				
 				if ((typeof usrOpt !== "undefined")&&(usrOpt !== null)&&
 						((typeof eval("usrOpt."+i) === "function")||(typeof usrOpt[i] !== "undefined"))) {
+					var main = autoOpt.Main;
 					if (typeof eval("usrOpt."+i) === "function") {
 						var tmpParentIdx = wfm_mainBtn.getWindow().btn_main_generator.insertChild();
 						var mainBtn = wfm_mainBtn.getWindow().btn_main_generator.getChild(tmpParentIdx, "btn_main");
@@ -4104,6 +4216,9 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						mainBtn.setValue(str);
 						mainBtn.addClass(item.class);
 						mainBtn.bind("onclick", eval("usrOpt."+i));
+						if ((i == gcm.BTN.SEARCH.nm)&&(typeof main.srchGrp !== "undefined")&&(main.srchGrp !== null)){
+							com.setEnterKeyEvent(main.srchGrp, eval("usrOpt."+i));
+						}
 					}
 					else if((typeof eval(usrOpt[i].cbFnc) === "function")||(typeof usrOpt[i].nm !== "undefined")
 							||(typeof usrOpt[i].class !== "undefined")){
@@ -4111,6 +4226,9 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						var mainBtn = wfm_mainBtn.getWindow().btn_main_generator.getChild(tmpParentIdx, "btn_main");
 						if(typeof eval(usrOpt[i].cbFnc) === "function"){
 							mainBtn.bind("onclick", eval(usrOpt[i].cbFnc));
+							if ((i == gcm.BTN.SEARCH.nm)&&(typeof main.srchGrp !== "undefined")&&(main.srchGrp !== null)){
+								com.setEnterKeyEvent(main.srchGrp, eval(usrOpt[i].cbFnc));
+							}
 						}
 						if(usrOpt[i].nm !== "undefined"){
 							mainBtn.setValue(usrOpt[i].nm);
@@ -4318,7 +4436,8 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 							}
 						}
 					}
-					else if( type == gcm.DISP_TYPE.DUAL_GRID2){ //듀얼 그리드
+					else if( type == gcm.DISP_TYPE.DUAL_GRID2){ //듀얼 그리드 서브그리드만 저장
+						
 						if(i == gcm.BTN.SEARCH.nm){
 							item.cbFnc = function(){
 								var sub = autoOpt.Sub1;
@@ -4332,7 +4451,8 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						}
 						else if(i == gcm.BTN.ADD.nm){
 							item.cbFnc = function(){
-								if ((typeof main.keySbm !== "undefined")&&(main.keySbm !== null)){
+								var sub = autoOpt.Sub1;
+								if ((typeof sub.keySbm !== "undefined")&&(sub.keySbm !== null)){
 									$p.executeSubmission(sub.keySbm);
 								}
 								else{
@@ -4352,7 +4472,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 							item.cbFnc = function(){
 								var sub = autoOpt.Sub1;
 								if ((typeof sub !== "undefined")&&(sub !== null)){
-									com.cancelGrid(sub.grid);
+									com.cancelGrid(sub.grid, null, sub.cnlGridCb);
 								}
 							}
 						}
@@ -4366,17 +4486,41 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						}
 						else if(i==gcm.BTN.EXL_I.nm){
 							item.cbFnc = function(){
-								com.exlUploadGrid(sub.grid);
+								var sub = autoOpt.Sub1;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									if ((typeof sub.exlGrid !== "undefined")&&(sub.exlGrid !== null)){
+										com.exlUploadGrid(sub.exlGrid);
+									}
+									else {
+										com.exlUploadGrid(sub.grid);
+									}
+								}
 							}
 						}
 						else if(i==gcm.BTN.EXL.nm){
 							item.cbFnc = function(){
-								com.exlGrid(sub.grid);
+								var sub = autoOpt.Sub1;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									if ((typeof sub.exlGrid !== "undefined")&&(sub.exlGrid !== null)){
+										com.exlGrid(sub.exlGrid, sub.exlGridCb);
+									}
+									else {
+										com.exlGrid(sub.grid);
+									}
+								}
 							}
 						}
 						else if(i==gcm.BTN.EXL_F.nm){
 							item.cbFnc = function(){
-								com.exlFrmGrid(sub.grid);
+								var sub = autoOpt.Sub1;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									if ((typeof sub.exlGrid !== "undefined")&&(sub.exlGrid !== null)){
+										com.exlFrmGrid(sub.exlGrid);
+									}
+									else {
+										com.exlFrmGrid(sub.grid);
+									}
+								}
 							}
 						}
 						else if(i==gcm.BTN.CLOSE.nm){
@@ -4567,6 +4711,8 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 							item.cbFnc = function(){
 								if ((typeof sub.keySbm !== "undefined")&&(sub.keySbm !== null)){
 									$p.executeSubmission(sub.keySbm);
+								} 	else{
+									com.addGrid2(sub.grid,sub.focusColumn);
 								}
 							}
 						}
@@ -4645,6 +4791,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 								else{
 									com.searchGrid(main.grid, main.srchSbm , main.savSbm);
 								}
+								
 							}
 						}
 						else if(i == gcm.BTN.ADD.nm){
@@ -4947,6 +5094,7 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 			var item = gcm.BTN[i];
 			if(eval("programAuthority."+item.value) == "Y"){
 				if ((typeof eval("subOpt."+i) === "function")||(subOpt[i].length>0)||(typeof eval(subOpt[i].cbFnc) === "function")) {
+					var sub = autoOpt.Sub1;
 					if (typeof eval("subOpt."+i) === "function") {
 						var tmpParentIdx = wfm_subBtn.getWindow().btn_sub_generator.insertChild();
 						var subBtn = wfm_subBtn.getWindow().btn_sub_generator.getChild(tmpParentIdx, "btn_sub");
@@ -4954,6 +5102,10 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 						subBtn.setValue(str);
 						subBtn.addClass(item.class);
 						subBtn.bind("onclick", eval("subOpt."+i));
+						
+						if ((i == gcm.BTN.SEARCH.nm)&&(typeof sub.srchGrp !== "undefined")&&(sub.srchGrp !== null)){
+							com.setEnterKeyEvent(sub.srchGrp, eval("subOpt."+i));
+						}
 					}
 					else if(subOpt[i].length>0){
 						for(var j=0; j<subOpt[i].length; j++){
@@ -4962,6 +5114,9 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 							var optArr = subOpt[i];
 							if(typeof eval(optArr[j].cbFnc) === "function"){
 								subBtn.bind("onclick", eval(optArr[j].cbFnc));
+								if ((i == gcm.BTN.SEARCH.nm)&&(typeof sub.srchGrp !== "undefined")&&(sub.srchGrp !== null)){
+									com.setEnterKeyEvent(sub.srchGrp, eval(optArr[j].cbFnc));
+								}
 							}
 							if(optArr[j].nm !== "undefined"){
 								subBtn.setValue(optArr[j].nm);
@@ -4976,6 +5131,9 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 						var subBtn = wfm_subBtn.getWindow().btn_sub_generator.getChild(tmpParentIdx, "btn_sub");
 						if(typeof eval(subOpt[i].cbFnc) === "function"){
 							subBtn.bind("onclick", eval(subOpt[i].cbFnc));
+							if ((i == gcm.BTN.SEARCH.nm)&&(typeof sub.srchGrp !== "undefined")&&(sub.srchGrp !== null)){
+								com.setEnterKeyEvent(sub.srchGrp, eval(subOpt[i].cbFnc));
+							}
 						}
 						if(subOpt[i].nm !== "undefined"){
 							subBtn.setValue(subOpt[i].nm);
@@ -5401,12 +5559,12 @@ com.addGridForm = function(grid,form,keyMap,keyColumn,focusID){
 	return insertIndex;
 }
 
-com.cancelGrid = function(grid,str){
+com.cancelGrid = function(grid,str,cnlGridCb){
 
 	var idx = grid.getModifiedIndex().length;
 
 	if (idx > 0) {
-		if(	(typeof str == "undefined") || (str.trim() == "")){
+		if(str== null || (typeof str == "undefined") || (str.trim() == "")){
 			str = com.strModifiedCnt(grid) + "의 저장하지 않은 데이터가 있습니다. 취소 하시겠습니까?";
 		}
 		else {
@@ -5414,7 +5572,7 @@ com.cancelGrid = function(grid,str){
 		} 
 		com.confirm(str, function(rtn) {
 			if (rtn) {
-				com.clearGrid(grid);
+				com.clearGrid(grid,cnlGridCb);
 			}
 		});
 	}
@@ -5479,13 +5637,20 @@ com.delUndoGrid = function(grid){
 	}
 }
 
-com.clearGrid = function(grid){
+com.clearGrid = function(grid, cnlGridCb){
+	
+	 if(com.isEmpty(gcm.GRID_INFO[grid.org_id])==false && com.isEmpty(gcm.GRID_INFO[grid.org_id].undo)==false
+			 && gcm.GRID_INFO[grid.org_id].undo == false)return;
+	 
 	var data = com.getGridViewDataList(grid);
 
 	com.delUndoGrid(grid);
 	
 	data.undoAll();
 	data.removeRows(data.getInsertedIndex());
+	if((cnlGridCb != null) && (typeof cnlGridCb != "undefined") && (typeof cnlGridCb == "function")){
+		cnlGridCb();
+	}
 }
 
 com.delGrid = function(grid,str,afterCb){
@@ -5493,7 +5658,7 @@ com.delGrid = function(grid,str,afterCb){
 	var focusIdxs = grid.getAllFocusedRowIndex();
 	var count = focusIdxs.length;
 	if (count > 0) {
-		if(	(typeof str == "undefined") || (str.trim() == "")){
+		if(	(str == null) || (typeof str == "undefined") || (str.trim() == "")){
 			var mainNm = "";
 			if(	(typeof gcm.GRID_INFO[grid.org_id] !== "undefined") && (gcm.GRID_INFO[grid.org_id] !== null) 
 					&&(gcm.GRID_INFO[grid.org_id].name !== null)&&(typeof gcm.GRID_INFO[grid.org_id].name !== "undefined")){
@@ -5558,11 +5723,46 @@ com.delGrid = function(grid,str,afterCb){
 				grid.setFocusedCell(focusIndex, 0, false);
 			
 				
-				if((typeof afterCb == "undefined") || (typeof afterCb == "function")){
+				if((afterCb != null) && (typeof afterCb != "undefined") && (typeof afterCb == "function")){
 					afterCb();
 				}
 			}		
 		});
+	}
+}
+
+com.delGrid2 = function(grid){
+	var data = com.getGridViewDataList(grid);
+	var focusIdxs = grid.getAllFocusedRowIndex();
+	var count = focusIdxs.length;
+	if (count > 0) {
+		for(var i=count-1; i>=0; i--){
+			var isCreate = false;
+			try {
+				var modifiedIdx = data.getModifiedIndex();
+
+				for (var j = 0; j < modifiedIdx.length; j++) {
+					var index = modifiedIdx[j];
+					if(index==focusIdxs[i]){
+						var modifiedData = data.getRowJSON(index);
+						if (modifiedData.rowStatus === "C") { //생성된 경우 visible 하지 않고 삭제함 //getInsertedIndex 로 대신 구현해도 됨
+							isCreate = true;
+						}
+						break;
+					}
+				}
+			} catch (e) {
+				$p.log("[com.delGrid] Exception :: " + e.message);
+			}	
+		
+			if(isCreate==true){ //생성된 경우 데이터에서 삭제함
+				data.removeRow(focusIdxs[i]);
+			}
+			else {
+				grid.setRowVisible(focusIdxs[i], false);
+				data.deleteRow(focusIdxs[i]);
+			}
+		}
 	}
 }
 
@@ -6016,7 +6216,7 @@ com.initGridInfo = function(options){
 			if ((typeof options.Main !== "undefined") && (options.Main!==null)){ //메인 그리드 세팅
 				
 				var gridInfo = {CUR_ROW_INDEX:-1, OLD_ROW_INDEX:-1, ERR_ROW_INDEX:-1, keyColumn:null, focusColumn:null
-						, name:null, keyValue:null, dualSaving:false};
+						, name:null, keyValue:null, dualSaving:false, undo:true};
 				
 				var main = options.Main;
 				if ((typeof main.keyColumn !== "undefined") && (main.keyColumn!==null)){
@@ -6028,11 +6228,15 @@ com.initGridInfo = function(options){
 				if ((typeof main.name !== "undefined") && (main.name!==null)){
 					gridInfo.name = main.name;
 				}
+				if ((typeof main.undo !== "undefined") && (main.undo!==null)){
+					gridInfo.undo = main.undo;
+				}
+				
 				gcm.GRID_INFO[main.grid.org_id] = gridInfo;	
 			}
 			if ((typeof options.Sub1 !== "undefined") && (options.Sub1!==null)){ //서브 그리드1 세팅
 				var gridInfo = {CUR_ROW_INDEX:-1, OLD_ROW_INDEX:-1, ERR_ROW_INDEX:-1, keyColumn:null, focusColumn:null
-						, name:null, keyValue:null, dualSaving:false};
+						, name:null, keyValue:null, dualSaving:false, undo:true};
 				var sub1 = options.Sub1;
 				if ((typeof sub1.keyColumn !== "undefined") && (sub1.keyColumn!==null)){
 					gridInfo.keyColumn = sub1.keyColumn;
@@ -6043,11 +6247,14 @@ com.initGridInfo = function(options){
 				if ((typeof sub1.name !== "undefined") && (sub1.name!==null)){
 					gridInfo.name = sub1.name;
 				}
+				if ((typeof sub1.undo !== "undefined") && (sub1.undo!==null)){
+					gridInfo.undo = sub1.undo;
+				}
 				gcm.GRID_INFO[sub1.grid.org_id] = gridInfo;	
 			}
 			if ((typeof options.Sub2 !== "undefined") && (options.Sub2!==null)){ //서브 그리드1 세팅
 				var gridInfo = {CUR_ROW_INDEX:-1, OLD_ROW_INDEX:-1, ERR_ROW_INDEX:-1, keyColumn:null, focusColumn:null
-						, name:null, keyValue:null, dualSaving:false};
+						, name:null, keyValue:null, dualSaving:false, undo:true};
 				var sub2 = options.Sub2;
 				if ((typeof sub2.keyColumn !== "undefined") && (sub2.keyColumn!==null)){
 					gridInfo.keyColumn = sub2.keyColumn;
@@ -6057,6 +6264,9 @@ com.initGridInfo = function(options){
 				}
 				if ((typeof sub2.name !== "undefined") && (sub2.name!==null)){
 					gridInfo.name = sub2.name;
+				}
+				if ((typeof sub2.undo !== "undefined") && (sub2.undo!==null)){
+					gridInfo.undo = sub2.undo;
 				}
 				gcm.GRID_INFO[sub2.grid.org_id] = gridInfo;	
 			}
@@ -6123,7 +6333,6 @@ com.setKeyGridInfo = function(grid){
   부모 그리드의 row 인덱스 위치가 바뀔때 마다 실행되며 프로그램코드에 해당하는 자식 그리드를 가져온다.
  */
 com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, focusOption, row, oldRow, subNm) {	
-	
 	var mainData = com.getGridViewDataList(mainGrid);
 	var subData = com.getGridViewDataList(subGrid);
 	
@@ -6149,7 +6358,7 @@ com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, f
 
 		for (var i = 0; i < keyColumnArr.length; i++) {
 			curKeyValue = mainData.getCellData(row, keyColumnArr[i]);
-			focusOption.keyMap.set(keyColumn, curKeyValue);
+			focusOption.keyMap.set(keyColumnArr[i], curKeyValue);
 			
 			if(i!=0)curKeyValues += ",";
 			curKeyValues += (curKeyValue);
@@ -6176,11 +6385,92 @@ com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, f
 					if (modifiedSubCnt > 0) {
 						com.saveData(subGrid,null,subSaveSbmObj);
 					} else {
+						
 						com.searchGrid(subGrid,subSrchSbmObj);
 					}
 				} else {
-					var subFocusedValue = mainData.getCellData(mainGrid.getFocusedRowIndex(), keyColumn);
-					if (subFocusedValue) {
+					//var subFocusedValue = mainData.getCellData(mainGrid.getFocusedRowIndex(), keyColumn);
+					if (curKeyValue) {
+						
+						com.searchGrid(subGrid,subSrchSbmObj);
+					}
+				}
+			});
+		}
+	} else {
+		var rowStatus = mainData.getRowStatus(row);
+
+		if (rowStatus == "C") {
+			subData.removeAll();
+		} else {
+			if (curKeyValue) {
+				com.searchGrid(subGrid,subSrchSbmObj);
+			}
+		}
+	}
+	gcm.GRID_INFO[mainGrid.org_id].dualSaving = false;
+};
+
+com.changeDualGrid2 = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, focusOption, row, oldRow, subNm) {	
+	var mainData = com.getGridViewDataList(mainGrid);
+	var subData = com.getGridViewDataList(subGrid);
+	
+	/*var mainData = com.getGridViewDataList(mainGrid);
+	var subData;
+	if (typeof subGrid == "string") {
+		subGrid = $p.getComponentById(subGrid);
+		subData = com.getGridViewDataList(subGrid);
+	}*/
+	var modifiedMainCnt = mainData.getModifiedIndex().length;
+	var modifiedSubCnt = subData.getModifiedIndex().length;
+	var curKeyValue = "";
+	var curKeyValues = "";
+	var keyColumn = "";
+	try{		
+		if ((typeof focusOption.keyMapColumn !== "undefined") && (focusOption.keyMapColumn!==null)){ //keyMap의 column명이 다를때...
+			keyColumn = focusOption.keyMapColumn;
+		}
+		else{
+			keyColumn = gcm.GRID_INFO[mainGrid.org_id].keyColumn;
+		}
+		var keyColumnArr = keyColumn.split(',');
+
+		for (var i = 0; i < keyColumnArr.length; i++) {
+			curKeyValue = mainData.getCellData(row, keyColumnArr[i]);
+			focusOption.keyMap.set(keyColumnArr[i], curKeyValue);
+			
+			if(i!=0)curKeyValues += ",";
+			curKeyValues += (curKeyValue);
+		}
+
+		subNm = gcm.GRID_INFO[subGrid.org_id].name;
+	} catch (e) {
+		
+	}
+
+	com.setGridInfo(mainGrid, focusOption,row, curKeyValues, oldRow);
+
+	if (modifiedSubCnt > 0) {
+		if(gcm.GRID_INFO[mainGrid.org_id].dualSaving){ //메인/서브 그리드 저장중에는 저장여부 팝업 출력 되지 않도록 함
+			if (modifiedSubCnt > 0) {
+				com.saveData(subGrid,null,subSaveSbmObj);
+			} else {
+				com.searchGrid(subGrid,subSrchSbmObj);
+			}
+		}
+		else {
+			com.confirm(subNm + modifiedSubCnt + " 건의 저장하지 않은 데이터가 있습니다. 저장 하시겠습니까?", function(rtn){
+				if (rtn) {
+					if (modifiedSubCnt > 0) {
+						com.saveData(subGrid,null,subSaveSbmObj);
+					} else {
+						com.clearGrid(mainGrid);
+						com.searchGrid(subGrid,subSrchSbmObj);
+					}
+				} else {
+					//var subFocusedValue = mainData.getCellData(mainGrid.getFocusedRowIndex(), keyColumn);
+					if (curKeyValue) {
+						com.clearGrid(mainGrid);
 						com.searchGrid(subGrid,subSrchSbmObj);
 					}
 				}
@@ -6229,7 +6519,7 @@ com.changeThirdGrid = function(mainGrid, subGrid1, subGrid2, subSaveSbmObj1, sub
 		
 		for (var i = 0; i < keyColumnArr.length; i++) {
 			curKeyValue = mainData.getCellData(row, keyColumnArr[i]);
-			focusOption.keyMap.set(keyColumn, curKeyValue);
+			focusOption.keyMap.set(keyColumnArr[i], curKeyValue);
 			
 			if(i!=0)curKeyValues += ",";
 			curKeyValues += (curKeyValue);
@@ -6260,8 +6550,8 @@ com.changeThirdGrid = function(mainGrid, subGrid1, subGrid2, subSaveSbmObj1, sub
 						com.saveData(subGrid2,null,subSaveSbmObj2);
 					}
 				} else {
-					var subFocusedValue = mainData.getCellData(mainGrid.getFocusedRowIndex(), keyColumn);
-					if (subFocusedValue) {
+					//var subFocusedValue = mainData.getCellData(mainGrid.getFocusedRowIndex(), keyColumn);
+					if (curKeyValue) {
 						com.searchGrid(subGrid1,subSrchSbmObj1);
 						com.searchGrid(subGrid2,subSrchSbmObj2);
 					}
@@ -6312,7 +6602,7 @@ com.changeThirdGrid2 = function(mainGrid, subGrid1, subGrid2, subSrchSbmObj1, su
 
 		for (var i = 0; i < keyColumnArr.length; i++) {
 			curKeyValue = mainData.getCellData(row, keyColumnArr[i]);
-			focusOption.keyMap.set(keyColumn, curKeyValue);
+			focusOption.keyMap.set(keyColumnArr[i], curKeyValue);
 			
 			if(i!=0)curKeyValues += ",";
 			curKeyValues += (curKeyValue);
@@ -6343,8 +6633,8 @@ com.changeThirdGrid2 = function(mainGrid, subGrid1, subGrid2, subSrchSbmObj1, su
 						com.saveData(subGrid2,null,subSaveSbmObj2);
 					}
 				} else {
-					var subFocusedValue = mainData.getCellData(mainGrid.getFocusedRowIndex(), keyColumn);
-					if (subFocusedValue) {
+					//var subFocusedValue = mainData.getCellData(mainGrid.getFocusedRowIndex(), keyColumn);
+					if (curKeyValue) {
 						com.searchGrid(subGrid1,subSrchSbmObj1);
 						com.searchGrid(subGrid2,subSrchSbmObj2);
 					}
@@ -6378,7 +6668,7 @@ com.changeSingleGrid = function(mainGrid, row, oldRow) {
 
 		for (var i = 0; i < keyColumnArr.length; i++) {
 			curKeyValue = mainData.getCellData(row, keyColumnArr[i]);
-			focusOption.keyMap.set(keyColumn, curKeyValue);
+			focusOption.keyMap.set(keyColumnArr[i], curKeyValue);
 			
 			if(i!=0)curKeyValues += ",";
 			curKeyValues += (curKeyValue);
@@ -6503,19 +6793,101 @@ com.decodeXss = function(str) {
 }
 
 com.setSerialNumberToData= function(grid, column){
-	   var data = com.getGridViewDataList(grid);
-	   var rowData = data.getAllJSON();
-	   var nodeSn = 0;
-	   for(var i = 0; i < rowData.length; i++) { //노선의 노드 순번을 그리드 순서대로 재 할당함.
-	      if(data.getRowStatus(i)!="D"){
-	         nodeSn ++;
-	         if(data.getCellData(i,column) != nodeSn){
-	        	 data.setCellData(i,column, nodeSn);
-	         }
-	      }
-	   }
+	var data = com.getGridViewDataList(grid);
+	var rowData = data.getAllJSON();
+	var nodeSn = 0;
+	for(var i = 0; i < rowData.length; i++) { //노선의 노드 순번을 그리드 순서대로 재 할당함.
+		if(data.getRowStatus(i)!="D"){
+			nodeSn ++;
+			var oldNodeSn = data.getCellData(i,column);
+			if(oldNodeSn != nodeSn){
+				//data.setCellData(i,oldColumn, oldNodeSn);
+				data.setCellData(i,column, nodeSn);
+			}
+		}
+	}
+	return nodeSn;
 }
 
 com.isEmpty = function(str){
 	return str == ''||str == null||typeof str == "undefined";
+}
+
+com.loadingBar = function(isShowLoadinBar){
+	if(com.isEmpty(isShowLoadinBar))
+	{
+		isShowLoadinBar = false;
+	}
+	if(isShowLoadinBar)
+	{
+		try
+		{
+			$.blockUI({
+		    	message : "<img src='"+ "/cm/images/inc/progressingbar.gif'/>"
+			   	,css:
+			   	{ 
+					 top:  ($(window).height() - 100) / 2 + 'px' 
+					,left: ($(window).width()  - 100) / 2 + 'px' 
+					,width: '100px'
+		        }
+			   ,overlayCSS:
+			   {
+				   backgroundColor: 'transparent'
+			   }
+			});
+		}
+		catch(e)
+		{
+			$p.log(e);
+		}
+	}
+	else{
+		$.unblockUI();
+	}
+}
+
+com.indexGridNear = function(data, column, value){
+	var i = 0;
+	for(i = 0; i < data.getRowCount(); i++) { //노선의 노드 순번을 그리드 순서대로 재 할당함.
+		if(data.getRowStatus(i)!="D"){
+			if(data.getCellData(i,column) > value){
+				return i;
+			}
+		}
+	}
+	return i;
+}
+
+//grid 이동
+com.gridMove = function(grid,searchColumn, content, index){
+	var data = com.getGridViewDataList(grid);
+	var rowData = data.getAllJSON();
+	var startIndex = 0;
+	var keyColumnArr = searchColumn.split(',');
+	
+	if(index<rowData.length-1){ //현재 포커스 다음 index 부터 검색
+		startIndex = index+1;
+	}
+	var nodeSn = 0;
+	for(var i = startIndex; i < rowData.length; i++) { //현재 포커스 다음 index 부터 마지막까지 검색
+		if(data.getRowStatus(i)!="D"){
+			for(var j = 0; j < keyColumnArr.length; j++){
+				if(data.getCellData(i,keyColumnArr[j]).indexOf(content)>=0){
+					grid.setFocusedCell(i, keyColumnArr[j]);
+					return;
+				}
+			}
+		}
+	}
+	
+	for(var i = 0; i < startIndex; i++) { //0 부터 현재 포커스 index 까지 검색
+		if(data.getRowStatus(i)!="D"){
+			for(var j = 0; j < keyColumnArr.length; j++){
+				if(data.getCellData(i,keyColumnArr[j]).indexOf(content)>=0){
+					grid.setFocusedCell(i, keyColumnArr[j]);
+					return;
+				}
+			}
+		}
+	}
 }

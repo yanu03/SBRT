@@ -29,7 +29,7 @@ public class MO0500Controller extends ControllerSupport {
 		result.setData("dlt_grgSearchItem", mo0500Service.MO0500SHI0());
 		return result.getResult();
 	}
-	/*
+	
 	@RequestMapping("/mo/MO0500G0S0")
 	public @ResponseBody Map<String, Object> MO0500G0S0() throws Exception{
 		Map map = mo0500Service.MO0500G0S0();
@@ -37,6 +37,7 @@ public class MO0500Controller extends ControllerSupport {
 		return result.getResultSave();
 	}
 	
+	/*
 	@RequestMapping("/mo/MO0500G0K0")
 	public @ResponseBody Map<String, Object> MO0500G0K0() throws Exception{
 		result.setData("dma_SEQ_BRT_CPLNT_HIS_0", mo0500Service.MO0500G0K0());

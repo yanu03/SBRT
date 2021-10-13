@@ -5,13 +5,637 @@
 
 
 <insert id="insertSimpleOperPlan" parameterType="Map">
-INSERT INTO BRT_OPER_PL_MST( REP_ROUT_ID,WAY_DIV,DAY_DIV,UPD_DTM,UPD_ID )
-VALUES(#{REP_ROUT_ID},#{WAY_DIV},#{DAY_DIV},#{UPD_DTM},#{SSN_USER_ID})
+INSERT INTO BRT_OPER_PL_MST( REP_ROUT_ID,WAY_DIV,DAY_DIV,ST_STTN_ID
+		,ED_STTN_ID,UPD_DTM,UPD_ID )
+VALUES(#{REP_ROUT_ID},#{WAY_DIV},#{DAY_DIV},#{ST_STTN_ID}
+		,#{ED_STTN_ID},#{UPD_DTM},#{SSN_USER_ID})
 ON DUPLICATE KEY UPDATE
-WAY_DIV	= VALUES(WAY_DIV)
-, DAY_DIV		= VALUES(DAY_DIV)
-, UPD_DTM		= VALUES(UPD_DTM)
-, UPD_ID		= VALUES(UPD_ID);
+	WAY_DIV	= VALUES(WAY_DIV)
+	,DAY_DIV		= VALUES(DAY_DIV)
+	,ST_STTN_ID = #{ST_STTN_ID}
+	,ED_STTN_ID = #{ED_STTN_ID}
+	,UPD_DTM		= VALUES(UPD_DTM)
+	,UPD_ID		= VALUES(UPD_ID);
 </insert>
+
+<select id="selectSttnPeakInfoOfOperPlan" resultType="Map">
+SELECT A.ROUT_ID, A.ROUT_LEN, A.ROUT_ID, B.NODE_ID, B.NODE_SN, C.STOP_TM_PEAK, C.STOP_TM_NONE_PEAK
+FROM BMS_ROUT_MST A
+	INNER JOIN BMS_ROUT_NODE_CMPSTN B ON A.ROUT_ID = B.ROUT_ID
+	INNER JOIN BMS_STTN_MST C ON B.NODE_ID = C.STTN_ID
+WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
+	ORDER BY ROUT_ID, NODE_SN
+</select>
+
+<select id="selectOperPlanMst" resultType="Map">
+	SELECT 
+		A.ST_STTN_ID,
+		A.ED_STTN_ID,
+		A.OPER_CNT,
+		A.ALLOC_CNT,
+		A.FST_TM,
+		A.LST_TM,
+		A.AM_PEAK_ST_TM,
+		A.AM_PEAK_ED_TM,
+		A.PM_PEAK_ST_TM,
+		A.PM_PEAK_ED_TM,
+		A.AM_PEAK,
+		A.PM_PEAK,
+		A.NONE_PEAK
+	FROM BRT_OPER_PL_MST A
+	WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.DAY_DIV = #{DAY_DIV}  AND  A.WAY_DIV = #{WAY_DIV}
+</select>
+
+	<!-- 운행계획 생성 시작 -->
+	<!-- 대표노선의 운행계획 리스트 -->
+	<select id="selectPlList" resultType="hashmap">
+        SELECT
+            A.ROUT_ID
+            ,A.OPER_SN
+            ,A.COR_ID
+        FROM BRT_OPER_ALLOC_PL_ROUT_INFO A
+        LEFT JOIN BMS_ROUT_MST B ON A.ROUT_ID = B.ROUT_ID
+            WHERE A.REP_ROUT_ID = #{REP_ROUT_ID}
+            AND B.WAY_DIV = #{WAY_DIV}
+            AND A.DAY_DIV = #{DAY_DIV}
+        ORDER BY A.OPER_SN ASC;
+    </select>
+
+    <insert id="makeOperPl" parameterType="hashmap">
+        CALL `PROC_MAKE_OPER_ALLOC_PL_NODE_INFO`(#{COURSE_ID}, #{ROUT_ID}, #{DAY_DIV}, #{OPER_SN}, 1);
+    </insert>
+
+
+
+    <!--노드정보-->
+    <select id="selectNodeList" resultType="hashmap">
+        SELECT
+            B.REP_ROUT_ID
+            , B.ROUT_ID
+            , B.DAY_DIV
+            , B.COR_ID
+            , C.WAY_DIV
+            , A.NODE_ID
+            , A.NODE_SN
+            , A.NODE_TYPE
+            , B.ALLOC_NO
+            , D.LINK_ID
+            , E.LEN
+            , E.ED_NODE_ID
+        FROM BMS_ROUT_NODE_CMPSTN A
+            LEFT JOIN BRT_OPER_ALLOC_PL_ROUT_INFO B ON A.ROUT_ID = B.ROUT_ID
+            LEFT JOIN BMS_ROUT_MST C ON B.ROUT_ID = C.ROUT_ID
+            LEFT JOIN BMS_ROUT_LINK_CMPSTN D ON (A.ROUT_ID = D.ROUT_ID) AND (A.LINK_ID = (D.LINK_ID))
+            LEFT JOIN BMS_LINK_MST E ON E.LINK_ID = D.LINK_ID
+        WHERE A.ROUT_ID = #{ROUT_ID}
+	        AND B.OPER_SN = #{OPER_SN}
+	        AND A.LINK_NODE_YN = 'Y'
+	        AND B.DAY_DIV = #{DAY_DIV}
+        <if test="ST_NODE_SN != null">
+            AND A.NODE_SN <![CDATA[ >= ]]> #{ST_NODE_SN}
+        </if>
+        <if test="ED_NODE_SN != null">
+            AND A.NODE_SN <![CDATA[ <= ]]> #{ED_NODE_SN}
+        </if>        
+        ORDER BY A.NODE_SN ASC;
+    </select>
+
+    <!--운행순번에 따른 기점 출발시각, 종점 도착 시각-->
+    <select id="selectRoutStEdTm" resultType="hashmap">
+        SELECT
+            MIN(A.NODE_SN) AS FIRST_NODE_SN
+            , MAX(A.NODE_SN) AS LAST_NODE_SN
+            , ROUT_ST_TM
+            , ROUT_ED_TM
+        FROM BMS_ROUT_NODE_CMPSTN A
+            LEFT JOIN BRT_OPER_ALLOC_PL_ROUT_INFO B ON A.ROUT_ID = B.ROUT_ID AND B.OPER_SN = #{OPER_SN}
+        WHERE A.ROUT_ID = #{ROUT_ID} AND B.DAY_DIV = #{DAY_DIV};
+    </select>
+
+    <!--최소 정차시간 -->
+    <select id="selectMinStopTm" resultType="string">
+        SELECT TXT_VAL1
+        FROM BMS_DL_CD_INFO
+        WHERE CO_CD = 'SYS_INFO' AND DL_CD = 'SY003';
+    </select>
+
+    <!--최대 정차시간-->
+    <select id="selectMaxStopTm" resultType="string">
+        SELECT TXT_VAL1
+        FROM BMS_DL_CD_INFO
+        WHERE CO_CD = 'SYS_INFO' AND DL_CD = 'SY004';
+    </select>
+
+    <!--노선의 첨두시 가져오기-->
+    <select id="selectPeakTm" resultType="hashmap">
+        SELECT
+            A.AM_PEAK_ST_TM
+            , A.AM_PEAK_ED_TM
+            , A.PM_PEAK_ST_TM
+            , A.PM_PEAK_ED_TM
+        FROM BRT_OPER_PL_MST A
+            LEFT JOIN BMS_ROUT_MST B ON A.REP_ROUT_ID = B.REP_ROUT_ID
+        WHERE B.ROUT_ID = #{ROUT_ID}
+            AND A.DAY_DIV = #{DAY_DIV}
+            AND A.WAY_DIV = B.WAY_DIV;
+    </select>
+
+    <!--대표노선 가져오기-->
+    <select id="selectRepRout" resultType="string" parameterType="string">
+        SELECT REP_ROUT_ID
+        FROM BMS_ROUT_MST
+        WHERE ROUT_ID = #{ROUT_ID};
+    </select>
+
+
+    <select id="selectAllStopTm" resultType="hashmap" parameterType="string">
+        SELECT
+            A.STTN_ID
+            ,A.STTN_NM
+            ,A.STOP_TM_PEAK
+            ,A.STOP_TM_NONE_PEAK
+        FROM BMS_STTN_MST A
+            LEFT JOIN BMS_ROUT_NODE_CMPSTN B ON A.STTN_ID = B.NODE_ID
+        WHERE B.ROUT_ID = #{ROUT_ID};
+    </select>
+
+
+    <select id="selectAllCrsInfo" resultType="hashmap" parameterType="string">
+        SELECT
+            *
+        FROM BMS_CRS_MST A
+            LEFT JOIN BMS_ROUT_CRS_CMPSTN B ON A.CRS_ID = B.CRS_ID
+    </select>
+
+
+    <!--진입현시정보-->
+    <select id="selectAllNextNodeInfo" resultType="hashmap">
+        SELECT
+	    A.NODE_ID
+            ,A.NODE_TYPE
+            ,A.NODE_SN
+            ,A.LINK_NODE_YN            
+            ,IFNULL(A.CRS_ID, "") AS CRS_ID
+            ,B.ENT_PHASE_NO_1
+            ,B.ENT_PHASE_NO_2
+            ,B.ENT_PHASE_NO_3
+        FROM BMS_ROUT_NODE_CMPSTN A
+            LEFT JOIN BMS_ROUT_CRS_CMPSTN B ON A.ROUT_ID = B.ROUT_ID AND A.NODE_ID = B.CRS_ID AND A.NODE_SN = B.NODE_SN
+        WHERE A.ROUT_ID = #{ROUT_ID}
+        ORDER BY A.NODE_SN ASC;
+
+    </select>
+
+
+    <!--현시정보 확인가능여부-->
+    <select id="selectSigCtlType" resultType="string">
+        SELECT SIG_CTR_TYPE
+        FROM BMS_CRS_MST
+        WHERE CRS_ID = #{NODE_ID};
+    </select>
+
+
+    <!--남은 현시 시간 가져오기-->
+    <select id="selectPhaseRemainTm" resultType="int">
+        SELECT FN_GET_PHASE_REMAIN_TM(
+            #{NODE_ID}
+            <!--,DATE_ADD(#{DPRT_TM}, INTERVAL #{DIFF_TM} SECOND)-->
+            ,#{DPRT_TM}
+            ,#{PHASE_NUM}
+            ,IF(#{DAY_DIV} = 'DY001', 2, 1)
+        );
+    </select>
+
+
+	<!--요일구분 가져오기-->
+    <select id="selectDayDiv" resultType="string">
+        SELECT FN_GET_DAY_DIV(#{OPER_DT});
+    </select>
+
+
+	<!-- 노선 출도착 시간 가져오기 -->
+    <select id="selectArrvDprtTm" resultType="hashmap">
+        SELECT
+            ARRV_TM, DPRT_TM
+        FROM
+            BRT_CUR_OPER_ALLOC_PL_NODE_INFO
+        WHERE ROUT_ID = #{ROUT_ID}
+            AND OPER_SN = #{OPER_SN}
+            AND NODE_SN  = #{NODE_SN}
+    </select>
+
+
+    <insert id="insertOperAllocPlNodeInfo" parameterType="hashmap">
+        INSERT INTO BRT_OPER_ALLOC_PL_NODE_INFO
+        (
+            REP_ROUT_ID
+            ,DAY_DIV
+            ,WAY_DIV
+            ,ALLOC_NO
+            ,OPER_SN
+            ,ROUT_ID
+            ,NODE_ID
+            ,NODE_SN
+            ,NODE_TYPE
+            ,ARRV_TM
+            ,DPRT_TM
+            ,UPD_DTM
+            ,TEST
+            ,TEST2
+            ,TEST3
+        )
+        VALUES
+        (
+            #{REP_ROUT_ID}
+            ,#{DAY_DIV}
+            ,#{WAY_DIV}
+            ,#{ALLOC_NO}
+            ,#{OPER_SN}
+            ,#{ROUT_ID}
+            ,#{NODE_ID}
+            ,#{NODE_SN}
+            ,#{NODE_TYPE}
+            ,#{ARRV_TM}
+            ,#{DPRT_TM}
+            ,NOW()
+            ,#{TEST}
+            ,#{TEST2}
+            ,#{TEST3}
+        )
+        ON DUPLICATE KEY UPDATE
+            COR_ID = VALUES(COR_ID)
+            ,NODE_SN = VALUES(NODE_SN)
+            ,NODE_TYPE = VALUES(NODE_TYPE)
+            ,ARRV_TM = VALUES(ARRV_TM)
+            ,DPRT_TM = VALUES(DPRT_TM)
+            ,UPD_DTM = VALUES(UPD_DTM)
+            ,TEST = VALUES(TEST)
+            ,TEST2 = VALUES(TEST2)
+            ,TEST3 = VALUES(TEST3);
+    </insert>
+
+
+
+    <insert id="insertOperAllocPlNodeInfoList" parameterType="hashmap">
+        INSERT INTO BRT_OPER_ALLOC_PL_NODE_INFO
+        (
+            REP_ROUT_ID
+            ,DAY_DIV
+            ,WAY_DIV
+            ,ALLOC_NO
+            ,OPER_SN
+            ,ROUT_ID
+            ,COR_ID
+            ,NODE_ID
+            ,NODE_SN
+            ,NODE_TYPE
+            ,ARRV_TM
+            ,DPRT_TM
+            ,UPD_DTM
+            ,TEST
+            ,TEST2
+            ,TEST3
+        )
+        VALUES
+        <foreach collection="ITEM_LIST" item="item" separator=",">
+        (
+            #{item.REP_ROUT_ID}
+            ,#{item.DAY_DIV}
+            ,#{item.WAY_DIV}
+            ,#{item.ALLOC_NO}
+            ,#{item.OPER_SN}
+            ,#{item.ROUT_ID}
+            ,#{item.COR_ID}
+            ,#{item.NODE_ID}
+            ,#{item.NODE_SN}
+            ,#{item.NODE_TYPE}
+            ,#{item.ARRV_TM}
+            ,#{item.DPRT_TM}
+            ,NOW()
+            ,#{item.TEST}
+            ,#{item.TEST2}
+            ,#{item.TEST3}
+        )
+        </foreach>
+    </insert>
+
+
+
+    <delete id="deleteOperPl" parameterType="HashMap">
+        DELETE
+            FROM BRT_OPER_ALLOC_PL_NODE_INFO
+        WHERE REP_ROUT_ID = #{REP_ROUT_ID}
+            AND ROUT_ID = #{ROUT_ID}
+            AND DAY_DIV = #{DAY_DIV}
+            AND OPER_SN = #{OPER_SN};
+    </delete>
+
+	<!-- 운행계획 생성 끝 -->
+
+
+
+ 	<!--변경운행계획 생성-->
+    <insert id="insertChgOperInfo" parameterType="hashmap">
+        INSERT INTO BRT_CUR_CHG_OPER_INFO
+        (
+            OPER_DT
+            ,REP_ROUT_ID
+            ,ROUT_ID
+            ,ALLOC_NO
+            ,OPER_SN
+            <!--,VHC_ID
+            ,VHC_NO
+            ,OCR_LINK_ID
+            ,OCR_NODE_ID
+            ,OCR_NODE_TYPE
+            ,GPS_X
+            ,GPS_Y
+            ,TM_X
+            ,TM_Y
+            ,CHG_OPER_DIV
+            ,CHG_APPR_DIV-->
+            ,OCR_DTM
+            ,UPD_DTM
+        )
+        VALUES
+        (
+            #{OPER_DT}
+            ,#{REP_ROUT_ID}
+            ,#{ROUT_ID}
+            ,#{ALLOC_NO}
+            ,#{OPER_SN}
+            ,#{OCR_DTM}
+            ,#{UPD_DTM}
+        )
+   		ON DUPLICATE KEY UPDATE
+			OCR_DTM = VALUES(OCR_DTM)	
+			,UPD_DTM = VALUES(UPD_DTM);
+    </insert>
+
+
+
+    <insert id="insertChgOperDtlInfo" parameterType="hashmap">
+    
+    	DELETE
+            FROM BRT_CUR_CHG_OPER_DTL_INFO
+        WHERE OPER_DT = #{OPER_DT}
+            AND REP_ROUT_ID = #{REP_ROUT_ID}
+            AND ROUT_ID = #{ROUT_ID}
+            AND ALLOC_NO = #{ALLOC_NO}
+            AND OPER_SN = #{OPER_SN};
+    
+    
+        INSERT INTO BRT_CUR_CHG_OPER_DTL_INFO
+        (
+            OPER_DT
+            ,REP_ROUT_ID
+            ,ROUT_ID
+            ,COR_ID
+            ,ALLOC_NO
+            ,OPER_SN
+            ,NODE_ID
+            ,NODE_SN
+            ,NODE_TYPE
+            ,DPRT_TM
+            ,ARRV_TM
+            ,OCR_DTM
+            ,UPD_DTM
+        )
+        VALUES
+        <foreach collection="ITEM_LIST" item="item" separator=",">
+            (
+            #{OPER_DT}
+            ,#{item.REP_ROUT_ID}
+            ,#{item.ROUT_ID}
+            ,#{item.COR_ID}
+            ,#{item.ALLOC_NO}
+            ,#{item.OPER_SN}
+            ,#{item.NODE_ID}
+            ,#{item.NODE_SN}
+            ,#{item.NODE_TYPE}
+            ,#{item.ARRV_TM}
+            ,#{item.DPRT_TM}
+            ,#{OCR_DTM}
+            ,#{UPD_DTM}
+            )
+        </foreach>
+    </insert>
+
+	<select id="selectOperPlanRout" resultType="hashmap" parameterType="HashMap">
+		SELECT A.REP_ROUT_ID,
+		A.DAY_DIV,
+		A.WAY_DIV,
+		A.OPER_SN,
+		A.ROUT_ID,
+		A.ROUT_ST_TM,
+		A.ROUT_ED_TM,
+		B.REP_ROUT_NM,
+		C.ROUT_NM
+		FROM BRT_OPER_PL_ROUT_INFO A
+			INNER JOIN BMS_REP_ROUT_MST B
+				ON A.REP_ROUT_ID = B.REP_ROUT_ID
+			LEFT OUTER JOIN BMS_ROUT_MST C
+				ON A.ROUT_ID = C.ROUT_ID
+		WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.DAY_DIV = #{DAY_DIV} AND A.WAY_DIV = #{WAY_DIV}
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+			<if test="TYPE == 'ALL'||TYPE == ''">
+				AND (A.REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || B.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%'))
+			</if>
+			<if test="TYPE == 'REP_ROUT_ID'">
+				AND A.REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'REP_ROUT_NM'">
+				AND B.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</if>
+	</select>
+	
+
+<select id="selectOperAllocPlanNode" resultType="Map" parameterType="Map">
+	SELECT
+		A.REP_ROUT_ID
+		,A.DAY_DIV
+		,A.WAY_DIV
+		,A.OPER_SN
+		,A.NODE_ID
+		,A.NODE_SN
+		,A.ALLOC_NO
+		,A.COR_ID
+		,A.NODE_TYPE
+		,A.ARRV_TM
+		,A.DPRT_TM
+		<!--  ,LEFT(A.ARRV_TM, 5) AS ARRV_TM
+		,LEFT(A.DPRT_TM, 5) AS DPRT_TM-->
+		,A.UPD_DTM
+		,A.UPD_ID
+		,B.REP_ROUT_NM
+		,B.WAY_ASC_NM
+		,B.WAY_DESC_NM
+		,C.ROUT_ID
+		,C.NODE_NM
+		,C.ACCRU_LEN
+	FROM
+		BRT_OPER_ALLOC_PL_NODE_INFO A 
+		INNER JOIN BMS_REP_ROUT_MST B
+		ON	A.REP_ROUT_ID = B.REP_ROUT_ID 
+		RIGHT OUTER JOIN BMS_ROUT_NODE_CMPSTN C
+		ON	 A.ROUT_ID =  C.ROUT_ID AND A.NODE_ID = C.NODE_ID AND A.NODE_SN = C.NODE_SN
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">			 
+			AND C.NODE_TYPE = #{NODE_TYPE}
+	</if>
+	WHERE
+		A.DAY_DIV = #{DAY_DIV} AND C.ROUT_ID = #{ROUT_ID}
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 
+			AND A.OPER_SN = #{OPER_SN}
+	</if>
+	ORDER BY OPER_SN, NODE_SN
+</select>
+
+<select id="selectOperAllocRealNode" resultType="Map" parameterType="Map">
+	SELECT
+		A.REP_ROUT_ID
+		,A.DAY_DIV
+		,A.WAY_DIV
+		,A.OPER_SN
+		,A.NODE_ID
+		,A.NODE_SN
+		,A.ALLOC_NO
+		,A.COR_ID
+		,A.NODE_TYPE
+		,A.ARRV_TM
+		,A.DPRT_TM
+		<!--  ,LEFT(A.ARRV_TM, 5) AS ARRV_TM
+		,LEFT(A.DPRT_TM, 5) AS DPRT_TM-->
+		,A.UPD_DTM
+		,A.UPD_ID
+		,B.REP_ROUT_NM
+		,B.WAY_ASC_NM
+		,B.WAY_DESC_NM
+		,C.ROUT_ID
+		,C.NODE_NM
+		,C.ACCRU_LEN
+		,DATE_FORMAT(D.ARRV_TM, '%H:%i:%s') REAL_ARRV_TM
+		,DATE_FORMAT(D.DPRT_TM, '%H:%i:%s') REAL_DPRT_TM
+	FROM
+		BRT_OPER_ALLOC_PL_NODE_INFO A 
+		INNER JOIN BMS_REP_ROUT_MST B
+		ON	A.REP_ROUT_ID = B.REP_ROUT_ID 
+		RIGHT OUTER JOIN BMS_ROUT_NODE_CMPSTN C
+		ON	 A.ROUT_ID =  C.ROUT_ID AND A.NODE_ID = C.NODE_ID AND A.NODE_SN = C.NODE_SN
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">			 
+			AND C.NODE_TYPE = #{NODE_TYPE}
+	</if>
+		LEFT OUTER JOIN 
+		(SELECT E.REP_ROUT_ID, E.NODE_ID, E.ROUT_ID, E.OPER_SN, E.ARRV_TM, F.DPRT_TM
+			FROM
+		(SELECT DISTINCT 
+			REP_ROUT_ID
+			,NODE_ID
+			,ROUT_ID
+			,OPER_SN
+			,OCR_DTM AS ARRV_TM  
+		FROM 
+			BRT_OPER_EVENT_HIS
+		WHERE 
+			EVT_TYPE = "ET001" AND DATE_FORMAT(UPD_DTM, '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d')) E
+		INNER JOIN	
+			(SELECT DISTINCT 
+				REP_ROUT_ID
+				,NODE_ID
+				,ROUT_ID
+				,OPER_SN
+				,OCR_DTM AS DPRT_TM  
+			FROM 
+				BRT_OPER_EVENT_HIS 
+			WHERE 
+				EVT_TYPE = "ET002" AND DATE_FORMAT(UPD_DTM, '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d')) F
+		ON E.REP_ROUT_ID = F.REP_ROUT_ID AND E.NODE_ID = F.NODE_ID AND E.ROUT_ID = F.ROUT_ID
+		) D
+		ON A.REP_ROUT_ID = D.REP_ROUT_ID 
+		AND A.NODE_ID = D.NODE_ID 
+		AND A.ROUT_ID = D.ROUT_ID
+		AND A.OPER_SN = D.OPER_SN 
+		AND D.ARRV_TM IS NOT NULL 
+		AND D.DPRT_TM IS NOT NULL
+		
+	WHERE
+		A.DAY_DIV = #{DAY_DIV} AND C.ROUT_ID = #{ROUT_ID}
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 
+			AND A.OPER_SN = #{OPER_SN}
+	</if>
+	ORDER BY OPER_SN, NODE_SN
+</select>
+
+	<select id="selectCourseList" resultType="Map">
+		SELECT	A.COR_ID
+				,	A.REP_ROUT_ID
+				,	A.COR_NM
+				,	A.COR_TYPE
+				,	A.MOVE_TM
+				,	A.COR_COLOR
+				,	A.REMARK
+				,	B.REP_ROUT_NM
+				
+		FROM	BRT_COR_MST A
+		LEFT JOIN	BMS_REP_ROUT_MST B
+			ON	A.REP_ROUT_ID = B.REP_ROUT_ID
+		<where>
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+				<if test="TYPE == 'ALL'">
+					AND (A.REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || B.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%'))
+				</if>
+				<if test="TYPE == 'REP_ROUT_ID'">
+					AND A.REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
+				</if>
+				<if test="TYPE == 'REP_ROUT_NM'">
+					AND B.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectOperAllocPlanCourseList" resultType="Map">
+		SELECT A.REP_ROUT_ID
+		,A.DAY_DIV
+		,A.ALLOC_NO
+		,A.WAY_DIV
+		,A.COR_SN
+		,A.COR_ID
+		,B.COR_TYPE
+		,B.MOVE_TM
+		,B.COR_COLOR
+		FROM BRT_OPER_ALLOC_PL_COR_INFO A
+		INNER JOIN BRT_COR_MST B
+			ON	A.COR_ID = B.COR_ID
+		WHERE A.REP_ROUT_ID = #{REP_ROUT_ID}
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(DAY_DIV)">
+		AND A.DAY_DIV = #{DAY_DIV}
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(ALLOC_NO)">
+		AND A.DAY_DIV = #{ALLOC_NO}
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(WAY_DIV)">
+		 AND A.WAY_DIV = #{WAY_DIV}
+		</if>
+		ORDER BY A.COR_SN ASC
+	</select>
+
+	<select id="selectCourseDtlList" resultType="Map">
+	SELECT A.COR_ID,
+		A.ROUT_ID,
+		A.ROUT_SN,
+		A.MIN_REST_TM,
+		A.COR_DTL_COLOR
+	FROM BRT_COR_DTL_INFO A
+	<where>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(COR_IDS)">
+		<foreach collection="COR_IDS" item="item" separator=" OR "> COR_ID = #{item}</foreach>
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(COR_ID)">
+		AND A.COR_ID = #{COR_ID}
+	</if>
+	</where>
+	</select>
+	
 
 </mapper>

@@ -13,13 +13,13 @@
 					ON a.REP_ROUT_ID = b.REP_ROUT_ID
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-				ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+				COR_ID LIKE CONCAT('%',#{CONTENT},'%') || COR_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
-			<if test="TYPE == 'ROUT_ID'">
-				ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
+			<if test="TYPE == 'COR_ID'">
+				COR_ID LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
-			<if test="TYPE == 'ROUT_NM'">
-				ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			<if test="TYPE == 'COR_NM'">
+				COR_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 		</where>		
 	</select>	
@@ -29,9 +29,9 @@
 	</select>
 
 	<select id="PI0206SHI0" resultType="Map">
-		SELECT		 ROUT_ID
-					,ROUT_NM
-		FROM	     BMS_ROUT_MST
+		SELECT		 COR_ID
+					,COR_NM
+		FROM	     BRT_COR_MST
 	</select>
 
 	<select id="PI0206G1R0" resultType="Map">
@@ -253,15 +253,19 @@
  	<!-- 노드리스트 JH -->
  	<select id="selectAllNodeList" parameterType="Map" resultType="Map">
  		SELECT DISTINCT
-			NODE_ID
-		    , NODE_NM
+			A.NODE_ID
+		    , A.NODE_NM
+		    , IFNULL(B.TXT_VAL1, (SELECT TXT_VAL1 FROM BMS_DL_CD_INFO WHERE DL_CD = 'NT003')) AS NODE_TYPE
 		    , '30' AS 'RANGE'
-		    , TRUNCATE(GPS_X, 6) AS X
-		    , TRUNCATE(GPS_Y, 6) AS Y
+		    , TRUNCATE(A.GPS_X, 6) AS X
+		    , TRUNCATE(A.GPS_Y, 6) AS Y
 		FROM
-			BMS_ROUT_NODE_CMPSTN
+			BMS_ROUT_NODE_CMPSTN A
+			INNER JOIN BMS_ROUT_MST R ON A.ROUT_ID = R.ROUT_ID AND R.DEL_YN !='Y' 
+			LEFT JOIN BMS_DL_CD_INFO B
+			ON A.NODE_TYPE = B.DL_CD
 		WHERE
-			NODE_TYPE IN ('NT001', 'NT003', 'NT004', 'NT005', 'NT007');
+			A.NODE_TYPE IN ('NT001', 'NT003', 'NT004', 'NT005', 'NT007');
  	</select>
  	
  	<!-- 정류장노드, 음성노드 리스트 JH -->
@@ -275,10 +279,13 @@
 		    , TRUNCATE(GPS_Y, 6) AS Y
 		    , IFNULL(REPLACE(STTN_ENM, ',', '.'), '') AS NODE_ENAME
  	<![CDATA[, IF(IFNULL(IF(LINE_CNT >= 3, 2, LINE_CNT -1), 0) < 0, 0, IFNULL(IF(LINE_CNT >= 3, 2, LINE_CNT -1), 0)) AS TRANSIT_CODE]]>
+ 			, IFNULL(B.TXT_VAL1, "") AS DOOR
 		FROM
-			BMS_STTN_MST 
+			(BMS_STTN_MST A
+            LEFT JOIN BMS_DL_CD_INFO B
+            ON A.VHC_DOOR_DIR_TYPE = B.DL_CD  AND A.DEL_YN!='Y') 
 		WHERE
-			USE_YN = 'Y'
+			A.USE_YN = 'Y'
 		
 		UNION ALL
 		
@@ -289,8 +296,9 @@
 		    , '30' AS 'RANGE'
 		    , TRUNCATE(GPS_X, 6) AS X
 		    , TRUNCATE(GPS_Y, 6) AS Y
-		    , NULL AS NODE_ENAME
-		    , NULL AS TRANSIT_CODE
+		    , "" AS NODE_ENAME
+		    , "" AS TRANSIT_CODE
+		    , "" AS DOOR 
 		FROM
 			BMS_VOC_ORGA_INFO
  	</select>
@@ -298,11 +306,11 @@
  	<!-- 노선별 노드 리스트 오름차순 JH -->
  	<select id="selectRoutNodeList" resultType="Map" parameterType="String">
  		SELECT
-			NODE_ID AS NODE_ID
-		FROM
-			BMS_ROUT_NODE_CMPSTN
+			IF(A.NODE_TYPE = 'NT006', A.ORGA_ID, A.NODE_ID) AS NODE_ID
+		FROM BMS_ROUT_NODE_CMPSTN A
+			INNER JOIN BMS_ROUT_MST R ON A.ROUT_ID = R.ROUT_ID AND R.DEL_YN !='Y' 
 		WHERE
-			ROUT_ID = #{routId}
+			A.ROUT_ID = #{routId}
 		ORDER BY NODE_SN ASC
  	</select>
 	
@@ -329,12 +337,11 @@
 	<select id="selectRoutLinkList" resultType="Map" parameterType="String">
 		SELECT
 			A.LINK_ID		AS LINK_ID
-		    , REPLACE(B.LINK_NM, ',', '.')		AS LINK_NAME
-		    , B.ST_NODE_ID	AS ST_NODE
-		    , B.ED_NODE_ID	AS ED_NODE
-		    , B.LEN			AS LEN
-		    , B.MAX_SPD		AS MAX_SPD
-		    , C.TXT_VAL1	AS EVENT_MS
+		    , IFNULL(B.ST_NODE_ID, "")	AS ST_NODE
+		    , IFNULL(B.ED_NODE_ID, "")	AS ED_NODE
+		    , IFNULL(B.LEN, "")			AS LEN
+		    , IFNULL(B.MAX_SPD, (SELECT TXT_VAL1 FROM BMS_DL_CD_INFO WHERE CO_CD = 'SYS_INFO' AND DL_CD = 'SY013'))		AS MAX_SPD
+		    , IFNULL(C.TXT_VAL1, "")	AS EVENT_MS
 		FROM
 			BMS_ROUT_LINK_CMPSTN A
 		    LEFT JOIN BMS_LINK_MST B
@@ -350,13 +357,15 @@
 		SELECT
 			B.ORGA_ID	AS ORGA_ID
 		    , REPLACE(B.ORGA_NM, ',', '.')	AS ORGA_NM
-		    , B.REMARK	AS REMARK
+		    , IFNULL(B.REMARK, "")	AS REMARK
 		FROM
 			BMS_ROUT_NODE_CMPSTN A
+			INNER JOIN BMS_ROUT_MST R
+				ON A.ROUT_ID = R.ROUT_ID AND R.DEL_YN !='Y'
 		    LEFT JOIN BMS_VOC_ORGA_INFO B
-		    ON A.NODE_ID = B.ORGA_ID
+		    ON A.ORGA_ID = B.ORGA_ID
 		WHERE
-			ROUT_ID = #{routId} AND NODE_TYPE = 'NT006'
+			A.ROUT_ID = #{routId} AND NODE_TYPE = 'NT006'
 	</select>
  	
  	<!-- 음성편성별 음성정보 리스트 jh -->
@@ -365,11 +374,11 @@
 			A.ORGA_ID	AS 'ORGA_ID'
 		    , A.SN		AS 'SEQ'
 		    , CAST(C.NUM_VAL4 AS INTEGER) AS 'VOC_CODE'
-		    , A.VOC_ID	AS 'VOC_ID'
-		    , B.PLAY_TYPE	AS 'PLAY_TYPE'
-		    , B.PLAY_ST_DT	AS 'START_DATE'
-		    , B.PLAY_ED_DT	AS 'EXPIRE_DATE'
-		    , B.SCR_TXT	AS 'TEXT'
+		    , IFNULL(A.VOC_ID, "")	AS 'VOC_ID'
+		    , IFNULL(B.PLAY_TYPE, "")	AS 'PLAY_TYPE'
+		    , IFNULL(B.PLAY_ST_DT, "")	AS 'START_DATE'
+		    , IFNULL(B.PLAY_ED_DT, "")	AS 'EXPIRE_DATE'
+		    , IFNULL(B.SCR_TXT, "")	AS 'TEXT'
 		FROM
 			BMS_VOC_ORGA_LIST A
 		    LEFT JOIN BMS_VOC_INFO B
@@ -419,9 +428,11 @@
     
     <select id="makeRoutNewRow" resultType="Map" parameterType="String">
     	SELECT
-			 CONCAT(ROUT_ID, '.csv') AS FILE_NAME
+			ROUT_ID AS FILE_NAME
+		    , REPLACE(ROUT_NM, ',', '.') AS ROUT_NM
+		    , REPLACE(ROUT_NM, ',', '.') AS ROUT_ENM
 			, CONCAT(SUBSTR(DATE_FORMAT(A.UPD_DTM, '%Y%m%d'), 3), "00") AS VERSION
-			, DVC_NM		AS DESTI_NO
+			, IFNULL(DVC_NM, "")		AS DESTI_NO
 			, IFNULL(C.TXT_VAL1, "")	AS ROUT_SHAPE
 			, (SELECT IFNULL(CONCAT(MIN(ROUT_ST_TM), " ~ ",  MAX(ROUT_ST_TM)), "") FROM BRT_OPER_ALLOC_PL_ROUT_INFO WHERE ROUT_ID = #{routId} AND DAY_DIV = 'DY001') AS DAY1
 			, (SELECT IFNULL(CONCAT('1일 ', CAST(COUNT(*) AS CHAR), '회 운행'), "") FROM BRT_OPER_ALLOC_PL_ROUT_INFO WHERE ROUT_ID = #{routId} AND DAY_DIV = 'DY001') AS DAY2
@@ -434,5 +445,16 @@
 			LEFT JOIN BMS_DL_CD_INFO B ON A.WAY_DIV = B.DL_CD AND B.CO_CD = 'WAY_DIV'
 			LEFT JOIN BMS_DL_CD_INFO C ON A.SHAPE_DIV = C.DL_CD AND C.CO_CD = 'SHAPE_DIV'
 		WHERE ROUT_ID = #{routId}
+    </select>
+    
+    <!-- 카카오맵 api 키 쿼리 -->
+    <select id="selectAPIKey" resultType="String">
+    	SELECT
+			REMARK
+		FROM
+			BMS_DL_CD_INFO
+		WHERE
+			CO_CD = 'KEY_API'
+		    AND DL_CD = 'KA002'
     </select>
 </mapper>

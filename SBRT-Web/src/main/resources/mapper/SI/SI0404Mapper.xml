@@ -6,14 +6,11 @@
 <select id="SI0404G1R0" resultType="Map">
 	SELECT A.ROUT_ID, A.NODE_ID, A.NODE_SN, A.NODE_NM, A.NODE_TYPE, A.LINK_ID, A.STTN_ID, A.STTN_NO, A.CRS_ID,
 			A.GPS_X, A.GPS_Y, A.LINK_NODE_YN, B.MORN_STD
-	FROM BMS_ROUT_NODE_CMPSTN A LEFT OUTER JOIN BMS_ROUT_LINK_CMPSTN B ON A.ROUT_ID = B.ROUT_ID AND A.LINK_ID = B.LINK_ID
+	FROM BMS_ROUT_NODE_CMPSTN A INNER JOIN BMS_ROUT_MST R ON A.ROUT_ID = R.ROUT_ID AND R.DEL_YN !='Y' 
+	LEFT OUTER JOIN BMS_ROUT_LINK_CMPSTN B ON A.ROUT_ID = B.ROUT_ID AND A.LINK_ID = B.LINK_ID
 	WHERE A.ROUT_ID = #{ROUT_ID}
-	<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
-		<if test="CONTENT != NULL">
-			AND (A.NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || A.NODE_NM LIKE CONCAT('%',#{CONTENT},'%'))
-		</if>
-		<!-- 	
-		<if test="TYPE == 'ALL'">
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">	
+		<if test="TYPE == 'ALL'||TYPE == ''">
 			AND (A.NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || A.NODE_NM LIKE CONCAT('%',#{CONTENT},'%'))
 		</if>
 		<if test="TYPE == 'NODE_ID'">
@@ -21,7 +18,7 @@
 		</if>
 		<if test="TYPE == 'NODE_NM'">
 			A.NODE_NM LIKE CONCAT('%',#{CONTENT},'%') 
-		</if> -->
+		</if>
 	</if>
 	 ORDER BY NODE_SN
 </select>
@@ -57,23 +54,25 @@
  
  <if test="STTN_ID != '' and STTN_ID != null">
 	INSERT INTO BMS_STTN_MST
-		(STTN_ID,STTN_NM,AREA,STTN_NO,GPS_X,GPS_Y,USE_YN,UPD_DTM,UPD_ID)
-	VALUES(#{STTN_ID},#{NODE_NM},#{AREA},#{STTN_NO},#{GPS_X},#{GPS_Y},'Y',#{UPD_DTM},#{SSN_USER_ID})
+		(STTN_ID,STTN_NM,AREA,STTN_NO,WAY_DIV,GPS_X,GPS_Y,USE_YN,DEL_YN,UPD_DTM,UPD_ID)
+	VALUES(#{STTN_ID},#{NODE_NM},#{AREA},#{STTN_NO},#{WAY_DIV},#{GPS_X},#{GPS_Y},'Y','N',#{UPD_DTM},#{SSN_USER_ID})
 	ON DUPLICATE KEY UPDATE
 	STTN_NM	= VALUES(STTN_NM)
  	, AREA		= VALUES(AREA)
 	, STTN_NO	= VALUES(STTN_NO)
+	, WAY_DIV	= VALUES(WAY_DIV)
 	, GPS_X		= VALUES(GPS_X)
 	, GPS_Y		= VALUES(GPS_Y)
 	, USE_YN	= VALUES(USE_YN)
+	, DEL_YN	= VALUES(DEL_YN)
 	, UPD_DTM	= VALUES(UPD_DTM)
 	, UPD_ID	= VALUES(UPD_ID);
 </if>
 	
 	UPDATE BRT_MAIN_ROUT_NODE_INFO
-		SET NODE_SN= #{NODE_SN}, NODE_TYPE= #{NODE_TYPE}
+		SET NODE_TYPE= #{NODE_TYPE}
 			, NODE_NM= #{NODE_NM}, STTN_ID= #{STTN_ID}, STTN_NO= #{STTN_NO}, GPS_X= #{GPS_X}, GPS_Y= #{GPS_Y}, UPD_DTM= #{UPD_DTM}, UPD_ID= #{SSN_USER_ID}
-	WHERE ROUT_ID= #{ROUT_ID} AND NODE_ID= #{NODE_ID};
+	WHERE ROUT_ID= #{ROUT_ID} AND NODE_ID= #{NODE_ID} AND NODE_SN= #{NODE_SN};
 </insert>
 
 <insert id="SI0404G1I1" parameterType="Map">
@@ -83,16 +82,6 @@
 	INSERT INTO BMS_ROUT_LINK_CMPSTN(ROUT_ID,LINK_ID,LINK_SN,MORN_STD,UPD_DTM,UPD_ID)
 	VALUES(#{ROUT_ID},#{LINK_ID},#{LINK_SN},'MS001',#{UPD_DTM},#{SSN_USER_ID});
 </insert>
-
-<delete id="SI0404G1D0" parameterType="Map">
-	UPDATE BMS_NODE_MST
-		SET USE_YN='N'
-	WHERE NODE_ID= #{NODE_ID};
-	
-	delete from BMS_ROUT_NODE_CMPSTN
-	where ROUT_ID = #{ROUT_ID} 
-	and NODE_ID = #{NODE_ID};
-</delete>
 
 <delete id="SI0404G1DA0" parameterType="Map">
 	UPDATE BMS_NODE_MST A
@@ -114,13 +103,13 @@
 		SET A.USE_YN='N'
 	WHERE B.ROUT_ID = #{ROUT_ID};
 
-	delete from BMS_ROUT_LINK_CMPSTN
-	where ROUT_ID = #{ROUT_ID}
+	DELETE FROM BMS_ROUT_LINK_CMPSTN
+	WHERE ROUT_ID = #{ROUT_ID}
 </delete>
 
 <select id="SI0404P0R0" resultType="Map">
-	select COMP_ID, COMP_NM
-	from BMS_TRANSCOMP_MST
+	SELECT COMP_ID, COMP_NM
+	FROM BMS_TRANSCOMP_MST
 	<where>
 		<if test="TYPE == 'COMP_ID'">
 			AND COMP_ID LIKE CONCAT('%',#{CONTENT},'%')
@@ -132,8 +121,8 @@
 </select>
 
 <select id="SI0404P1R0" resultType="Map">
-	select REP_ROUT_ID, REP_ROUT_NM, USE_YN, REMARK
-	from BMS_REP_ROUT_MST
+	SELECT REP_ROUT_ID, REP_ROUT_NM, USE_YN, REMARK
+	FROM BMS_REP_ROUT_MST
 	<where>
 		<if test="TYPE == 'REP_ROUT_ID'">
 			AND REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
@@ -149,7 +138,7 @@
 </select>
 
 <insert id="SI0404P1I0" parameterType="Map">
-	insert into BMS_REP_ROUT_MST
+	INSERT INTO BMS_REP_ROUT_MST
 			(
 			REP_ROUT_ID,
 			REP_ROUT_NM,
@@ -158,7 +147,7 @@
 			UPD_DTM,
 			UPD_ID
 			)
-	values		
+	VALUES		
 			(
 			#{REP_ROUT_ID},
 			#{REP_ROUT_NM},
@@ -170,32 +159,31 @@
 </insert>
 
 <update id="SI0404P1U0" parameterType="Map">
-	update BMS_REP_ROUT_MST
-	set 	REP_ROUT_NM = #{REP_ROUT_NM},
+	UPDATE BMS_REP_ROUT_MST
+	SET 	REP_ROUT_NM = #{REP_ROUT_NM},
 			USE_YN = #{USE_YN},
 			REMARK = #{REMARK},
 			UPD_DTM = #{UPD_DTM},
 			UPD_ID  = #{SSN_USER_ID}
-	where REP_ROUT_ID = #{REP_ROUT_ID}
+	WHERE REP_ROUT_ID = #{REP_ROUT_ID}
 </update>
 
 <delete id="SI0404P1D0" parameterType="Map">
-	delete
-	from BMS_REP_ROUT_MST
-	where REP_ROUT_ID = #{REP_ROUT_ID}
+	DELETE
+	FROM BMS_REP_ROUT_MST
+	WHERE REP_ROUT_ID = #{REP_ROUT_ID}
 </delete>
 
 <select id="SI0404P2R0" resultType="Map">
-	select STTN_ID, STTN_NM, STTN_ENM
-	from BMS_STTN_MST
-	<where>
+	SELECT STTN_ID, STTN_NM, STTN_ENM
+	FROM BMS_STTN_MST
+	WHERE DEL_YN!='Y'
 		<if test="TYPE == 'STTN_ID'">
 			AND STTN_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
 		<if test="TYPE == 'STTN_NM'">
 			AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
-	</where>
 </select>
 
 </mapper>

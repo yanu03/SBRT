@@ -2,6 +2,7 @@ package kr.tracom.tims.handler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,6 @@ import kr.tracom.platform.net.protocol.TimsMessage;
 import kr.tracom.platform.net.protocol.attribute.AtData;
 import kr.tracom.platform.net.protocol.attribute.AtResult;
 import kr.tracom.platform.net.protocol.payload.PlEventResponse;
-import kr.tracom.ws.WsMessage;
 
 @Component
 public class EventResponse {
@@ -19,9 +19,9 @@ public class EventResponse {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
-    public WsMessage handle(TimsMessage timsMessage, String sessionId){
+    public Map<String, Object> handle(TimsMessage timsMessage, String sessionId){
     	
-    	WsMessage wsMsg = null;
+    	Map<String, Object> resultMap = null;
     	
         boolean bResult = true;
         PlEventResponse payload = (PlEventResponse) timsMessage.getPayload();
@@ -43,7 +43,7 @@ public class EventResponse {
         }
         
         
-        return wsMsg;
+        return resultMap;
     }
     
     

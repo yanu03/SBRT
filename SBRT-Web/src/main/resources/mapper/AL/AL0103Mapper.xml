@@ -7,6 +7,10 @@
 	SELECT			A.COR_ID
 				,	A.REP_ROUT_ID
 				,	A.COR_NM
+				,	A.COR_TYPE
+				,	A.MOVE_TM
+				,	A.COR_COLOR
+				,	A.REMARK
 				,	B.REP_ROUT_NM
 			
 	FROM			BRT_COR_MST A
@@ -44,6 +48,10 @@
 					COR_ID
 					,REP_ROUT_ID
 					,COR_NM
+					,COR_TYPE
+					,MOVE_TM
+					,COR_COLOR
+					,REMARK
 					,UPD_DTM
 					,UPD_ID				
 					)
@@ -53,6 +61,10 @@
 					#{COR_ID}
 					,#{REP_ROUT_ID}
 					,#{COR_NM}
+					,#{COR_TYPE}
+					,#{MOVE_TM}
+					,#{COR_COLOR}
+					,#{REMARK}
 					,#{UPD_DTM}
 					,#{SSN_USER_ID}					
 					)				
@@ -64,6 +76,10 @@
 	
 	SET				REP_ROUT_ID = #{REP_ROUT_ID}
 					,COR_NM = #{COR_NM}
+					,COR_TYPE = #{COR_TYPE}
+					,MOVE_TM = #{MOVE_TM}
+					,COR_COLOR = #{COR_COLOR}
+					,REMARK = #{REMARK}
 					,UPD_DTM = #{UPD_DTM}
 					,UPD_ID	= #{SSN_USER_ID}
 					
@@ -79,6 +95,7 @@
 	SELECT			A.COR_ID
 				,	A.MIN_REST_TM
 				,	A.ROUT_SN
+				,	A.COR_DTL_COLOR
 				,	B.ROUT_ID
 				,	B.ROUT_NM
 				,	B.ROUT_TYPE
@@ -105,6 +122,7 @@
 					(
 						COR_ID
 					,	ROUT_ID
+					,	COR_DTL_COLOR
 					,	MIN_REST_TM
 					,	ROUT_SN
 					,	UPD_DTM
@@ -114,6 +132,7 @@
 					(
 						#{COR_ID}
 					,	#{ROUT_ID}
+					,	#{COR_DTL_COLOR}
 					,	#{MIN_REST_TM}
 					,	#{ROUT_SN}
 					,	#{UPD_DTM}
@@ -121,6 +140,17 @@
 					)			
 
 </insert>
+
+<update id="AL0103G1U0" parameterType="Map">
+	UPDATE			BRT_COR_DTL_INFO
+	
+	SET				COR_DTL_COLOR = #{COR_DTL_COLOR}
+					,MIN_REST_TM = #{MIN_REST_TM}
+					,UPD_DTM = #{UPD_DTM}
+					,UPD_ID	= #{SSN_USER_ID}
+					
+	WHERE			 COR_ID = #{COR_ID}
+</update>
 
 <delete id="AL0103G1D0" parameterType="Map">
 	DELETE FROM		BRT_COR_DTL_INFO
@@ -146,4 +176,49 @@
 	</where>	
 </select>
 
+	<select id="AL0103P01R0" resultType="Map">
+		SELECT  ROUT_ID,
+				REP_ROUT_ID,
+				REP_ROUT_NM,
+				INT_ROUT_ID,
+				ROUT_NM,
+				ROUT_TYPE,
+				ST_STTN_ID,
+				ST_STTN_NM,
+				ED_STTN_ID,
+				ED_STTN_NM,
+				RET_STTN_ID,
+				RET_STTN_NM,
+				ROUT_LEN,
+				WAY_DIV,
+				USER_WAY_DIV
+		FROM BMS_ROUT_MST
+		<where>
+			REP_ROUT_NM = #{REP_ROUT_NM}
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+				<if test="TYPE == 'ALL'">
+					AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
+				</if>
+				<if test="TYPE == 'ROUT_ID'">
+					AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
+				</if>
+				<if test="TYPE == 'ROUT_NM'">
+					AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
+				</if>
+			</if>
+		</where>
+		order by 
+			REP_ROUT_NM, WAY_DIV
+	</select>
+
+	<select id="AL0103P1SH" resultType="Map">
+		SELECT 
+			ROUT_ID, ROUT_NM, REP_ROUT_NM
+		FROM 
+			BMS_ROUT_MST
+		WHERE
+			REP_ROUT_NM = #{REP_ROUT_NM}
+		ORDER BY 
+			ROUT_NM
+	</select>
 </mapper>

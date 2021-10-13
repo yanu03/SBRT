@@ -42,6 +42,6 @@ public class PI0501Controller extends ControllerSupport {
 	public @ResponseBody Map<String, Object> PI0501SHI0() throws Exception {
 		result.setData("dlt_searchitem", pi0501Service.PI0501SHI0());
 		return result.getResult();
-	}	
+	}
 	
 }

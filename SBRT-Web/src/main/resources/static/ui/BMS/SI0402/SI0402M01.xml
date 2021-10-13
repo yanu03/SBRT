@@ -21,7 +21,9 @@
 						<w2:key id="STTN_IDS" name="정류소IDS" dataType="text"></w2:key>
 						<w2:key id="CRS_IDS" name="교차로IDS" dataType="text"></w2:key>
 						<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
+						<w2:key id="WAY_DIV" name="상하행구분" dataType="text"></w2:key>
 						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_result">
@@ -47,10 +49,10 @@
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 						<w2:column id="ROUT_TYPE" name="노선유형" dataType="text"></w2:column>
-						<w2:column id="ST_STTN_ID" name="시작정류소ID" dataType="text"></w2:column>
-						<w2:column id="ST_STTN_NM" name="시작정류소명" dataType="text"></w2:column>
-						<w2:column id="ED_STTN_ID" name="종료정류소ID" dataType="text"></w2:column>
-						<w2:column id="ED_STTN_NM" name="종료정류소명" dataType="text"></w2:column>
+						<w2:column id="ST_STTN_ID" name="기점ID" dataType="text"></w2:column>
+						<w2:column id="ST_STTN_NM" name="기점명" dataType="text"></w2:column>
+						<w2:column id="ED_STTN_ID" name="종점ID" dataType="text"></w2:column>
+						<w2:column id="ED_STTN_NM" name="종점명" dataType="text"></w2:column>
 						<w2:column id="RET_STTN_ID" name="회차정류소ID" dataType="text"></w2:column>
 						<w2:column id="RET_STTN_NM" name="회차정류소명" dataType="text"></w2:column>
 						<w2:column id="ROUT_LEN" name="노선거리" dataType="number" defaultValue="0"></w2:column>
@@ -64,7 +66,9 @@
 					<w2:columnInfo>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
+						<w2:column id="OLD_NODE_ID" name="이전노드ID" dataType="text"></w2:column>
 						<w2:column id="NODE_SN" name="노드순번" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="OLD_NODE_SN" name="이전노드순번" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
 						<w2:column id="NODE_TYPE" name="노드유형" dataType="text"></w2:column>
 						<w2:column id="LINK_ID" name="링크ID" dataType="text"></w2:column>
@@ -100,13 +104,13 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0402G1R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_SI0402G1S0" ref='data:json,{"action":"modified","id":"dlt_BMS_ROUT_NODE_CMPSTN"}' target="data:json,dma_result"
+			<xf:submission id="sub_SI0402G1S0" ref='data:json,[{"id":"dlt_BMS_ROUT_NODE_CMPSTN","action":"modified"},"dma_sub_search"]' target="data:json,dma_result"
 				action="/si/SI0402G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="저장 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0402G1S0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
-
+		
 		<script type="text/javascript" lazy="false"><![CDATA[
 
 	var isSttnAdd;
@@ -115,10 +119,7 @@
 	var isCrossAdd;
 	var oldNodeType;
 	var curRoutId;
-
-	var curPoint;
-	
-
+	var curRoutId;
 
 	scwin.onpageload = function() {
 
@@ -146,7 +147,7 @@
 		var subOptions = {
 			SAVE:[{cbFnc:scwin.subGridUp, nm:"상",class:"up"},{cbFnc:scwin.subGridDown,nm:"하",class:"down"}]
 			, DEL:scwin.btn_sub_del
-			, SEARCH: {mode:"auto"}
+			, SEARCH: scwin.btn_sub_move
 		};
 		
 		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
@@ -209,39 +210,43 @@
 		
 		routMap.initMapInfo("map_SI0402");
 		curRoutId = dlt_BMS_ROUT_MST.getCellData(row,"ROUT_ID");
+		dma_sub_search.set("ROUT_ID", dlt_BMS_ROUT_MST.getCellData(row,"ROUT_ID"));
+		dma_sub_search.set("WAY_DIV", dlt_BMS_ROUT_MST.getCellData(row,"WAY_DIV"));
 		var focusOption = {keyMap : dma_sub_search};
 		com.changeDualGrid(SI0402G0, SI0402G1, sub_SI0402G1S0, sub_SI0402G1R0, focusOption, row, oldRow);
 	};
 	
 	scwin.SI0402G1_onviewchange = function(info) {
-		
-		oldNodeType = info.oldValue;
-		
-		if (info.newValue == "NT005") {
-			com.alert("버텍스로 변경 할수 없습니다.");
-			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE", oldNodeType);
-			return;
-		}
-		
-		if (info.newValue == "NT006") {
-			com.alert("음성노드는 음성 편성에서만 선택할 수 있습니다.");
-			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE", oldNodeType);
-			return;
-		}
-		
-		if ((info.newValue == "NT001") || (info.newValue == "NT002")) { //교차로, 정류소 선택
-			if(info.newValue == "NT002"){
-				scwin.select_sttn(false);
+
+		if(info.colIndex == 2){
+			oldNodeType = info.oldValue;
+			
+			if (info.newValue == "NT005") {
+				com.alert("버텍스로 변경 할수 없습니다.");
+				dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE", oldNodeType);
+				return;
 			}
-			else if(info.newValue == "NT001"){
-				scwin.select_cross(false);
+			
+			if (info.newValue == "NT006") {
+				com.alert("음성노드는 음성 편성에서만 선택할 수 있습니다.");
+				dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE", oldNodeType);
+				return;
 			}
-		}
-		else { //정류소가 아니면 정류소 정보 초기화, 교차로가 아니면 교차로 정보 초기화
-			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(), "NODE_NM", "노드_" + getCurrentDate().substring(4));
-			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(), "CRS_ID", "");
-			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(), "STTN_ID", "");
-			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(), "STTN_NO", "");
+			
+			if ((info.newValue == "NT001") || (info.newValue == "NT002")) { //교차로, 정류소 선택
+				if(info.newValue == "NT002"){
+					scwin.select_sttn(false);
+				}
+				else if(info.newValue == "NT001"){
+					scwin.select_cross(false);
+				}
+			}
+			else { //정류소가 아니면 정류소 정보 초기화, 교차로가 아니면 교차로 정보 초기화
+				dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(), "NODE_NM", "노드_" + util.getCurrentDate().substring(4));
+				dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(), "CRS_ID", "");
+				dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(), "STTN_ID", "");
+				dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(), "STTN_NO", "");
+			}
 		}
 	}
 
@@ -287,10 +292,10 @@
 	scwin.select_sttn = function(isAdd) {
 		//oldNodeType = dlt_BMS_ROUT_NODE_CMPSTN.getCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE");
 		
-		var val_STTN_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("STTN_ID");
-		dma_sub_search.set("STTN_IDS", val_STTN_ID);
-		var param = dma_sub_search.get("ROUT_ID");
-		if (param != "") {
+		//var val_STTN_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("STTN_ID");
+		//dma_sub_search.set("STTN_IDS", val_STTN_ID);
+
+		if (curRoutId != "") {
 			var data = null;
 			if(isAdd){
 				data = { data : dma_sub_search.getJSON(), callbackFn : "scwin.add_sttn_done" };
@@ -333,10 +338,10 @@
 	scwin.select_cross = function(isAdd) {
 		//oldNodeType = dlt_BMS_ROUT_NODE_CMPSTN.getCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE");
 		
-		var val_CRS_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("CRS_ID");
-		dma_sub_search.set("CRS_IDS", val_CRS_ID);
-		var param = dma_sub_search.get("ROUT_ID");
-		if (param != "") {
+		//var val_CRS_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("CRS_ID");
+		//dma_sub_search.set("CRS_IDS", val_CRS_ID);
+
+		if (curRoutId != "") {
 			var data = null;
 			if(isAdd){
 				data = { data : dma_sub_search.getJSON(), callbackFn : "scwin.add_cross_done" };
@@ -380,14 +385,20 @@
 		
 		if(data==null)return;
 
+		var nodeId = com.getGridViewDataList(grid).getCellData(index, "NODE_ID");
+		//var routId = dlt_BMS_ROUT_MST.getCellData(SI0402G1.getFocusedRowIndex(),"ROUT_ID");
 		if(com.getGridViewDataList(grid).getCellData(index,"NODE_TYPE")==routMap.NODE_TYPE.BUSSTOP){
+			com.getGridViewDataList(grid).setCellData(index, "ROUT_ID",curRoutId);
 			com.getGridViewDataList(grid).setCellData(index, "STTN_ID",data.STTN_ID);
+			com.getGridViewDataList(grid).setCellData(index, "OLD_NODE_ID",nodeId);
 			com.getGridViewDataList(grid).setCellData(index, "NODE_ID",data.STTN_ID);
 			com.getGridViewDataList(grid).setCellData(index, "NODE_NM",data.STTN_NM);
 			com.getGridViewDataList(grid).setCellData(index, "STTN_NO",data.STTN_NO);
 		}
 		else if(com.getGridViewDataList(grid).getCellData(index,"NODE_TYPE")==routMap.NODE_TYPE.CROSS){
+			com.getGridViewDataList(grid).setCellData(index, "ROUT_ID",curRoutId);
 			com.getGridViewDataList(grid).setCellData(index, "CRS_ID",data.CRS_ID);
+			com.getGridViewDataList(grid).setCellData(index, "OLD_NODE_ID",nodeId);
 			com.getGridViewDataList(grid).setCellData(index, "NODE_ID",data.CRS_ID);
 			com.getGridViewDataList(grid).setCellData(index, "NODE_NM",data.CRS_NM);
 		}
@@ -397,8 +408,8 @@
 	/*scwin.select_oldNode = function() {
 		var val_NODE_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("NODE_ID");
 		dma_sub_search.set("NODE_IDS", val_NODE_ID);
-		var param = dma_sub_search.get("ROUT_ID");
-		if (param != "") {
+
+		if (curRoutId != "") {
 			var data = { data : dma_sub_search.getJSON(), callbackFn : "scwin.insertNode" };
 			var options = { id : "SI0402P01",
 							popupName : "노드선택", 
@@ -410,8 +421,8 @@
 	scwin.select_stdNode = function() {
 		var val_MOCK_NODE_ID = dlt_BMS_ROUT_NODE_CMPSTN.getColData("MOCK_NODE_ID");
 		dma_sub_search.set("MOCK_NODE_IDS", val_MOCK_NODE_ID);
-		var param = dma_sub_search.get("ROUT_ID");
-		if (param != "") {
+
+		if (curRoutId != "") {
 			var data = { data : dma_sub_search.getJSON(), callbackFn : "scwin.insertStdNode" };
 			var options = { id : "SI0402P01",
 							popupName : "표준노드선택", 
@@ -439,7 +450,7 @@
 	scwin.btn_save_onclick = function() {
 		
 		
-		com.setSerialNumberToData(SI0402G1, "NODE_SN");
+		com.setSerialNumberToData(SI0402G1, "NODE_SN", "OLD_NODE_SN");
 		
 		var idx = SI0402G1.getModifiedIndex().length;
 	
@@ -508,6 +519,13 @@
 		
 		com.delGrid(SI0402G1);
 	};
+	
+	scwin.btn_sub_move = function() {
+		if(com.isEmpty(dma_sub_search.get("CONTENT"))==false){
+			com.gridMove(SI0402G1, "NODE_ID,NODE_NM", dma_sub_search.get("CONTENT"), SI0402G1.getFocusedRowIndex());
+		}
+	};
+	
 	
 	/*scwin.insertNode = function(obj){
 		disp_check_all();

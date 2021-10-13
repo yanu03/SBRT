@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.tims.domain.CurInfoMapper">
+	
+	
+	
+	<!-- 현재운행정보 insert  -->
+	<insert id="insertCurOperInfo" parameterType="Map">
+		INSERT INTO BRT_CUR_OPER_INFO (
+			OPER_DT
+			,REP_ROUT_ID
+			,VHC_ID
+			,ROUT_ID				
+			,ALLOC_NO
+			,OPER_SN							
+			,NODE_ID
+			,COR_ID
+			,VHC_NO
+			,DRV_ID
+			,GPS_X
+			,GPS_Y
+			,OPER_STS
+			,DRV_ANGLE
+			,CUR_SPD
+			,LINK_ID
+			,NODE_SN
+			,NODE_TYPE
+			,PRV_PLCE_NM
+			,NEXT_NODE_ID
+			,UPD_DTM
+		) 
+		VALUES (
+			DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')
+			,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})			
+			,(SELECT VHC_ID FROM BMS_VHC_MST WHERE VHC_NO = #{BUS_NO})
+			,#{ROUT_ID}											
+			,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')))  <!--alloc no 찾기 -->
+			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, TIME_FORMAT(#{UPD_DTM}, '%H:%i:%S'))) <!--oper sn 찾기 -->
+			,#{NODE_ID}
+			,#{COURSE_ID}
+			,#{BUS_NO}
+			,#{DRV_ID}
+			,#{LONGITUDE}
+			,#{LATITUDE}
+			,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'OPER_STS' AND NUM_VAL4 = #{RUN_TYPE}) <!-- 운행 유형  -->
+			,#{HEADING}
+			,#{SPEED}
+			,#{LINK_ID}
+			,#{NODE_SN}
+			,(SELECT NODE_TYPE FROM BMS_NODE_MST WHERE NODE_ID = #{NODE_ID})
+			,(IF(NODE_TYPE = 'NT001' OR NODE_TYPE = 'NT002', (SELECT NODE_NM FROM BMS_NODE_MST WHERE NODE_ID = #{NODE_ID}), NULL))
+			,#{NEXT_NODE_ID}
+			,#{UPD_DTM}
+		)
+		ON DUPLICATE KEY UPDATE
+			ROUT_ID = VALUES(ROUT_ID)
+			,ALLOC_NO = VALUES(ALLOC_NO)
+			,OPER_SN = VALUES(OPER_SN)	
+			,NODE_ID = VALUES(NODE_ID)
+			,COR_ID = VALUES(COR_ID)
+			,VHC_NO = VALUES(VHC_NO)
+			,DRV_ID = VALUES(DRV_ID)
+			,GPS_X = VALUES(GPS_X)
+			,GPS_Y = VALUES(GPS_Y)
+			,OPER_STS = VALUES(OPER_STS)
+			,DRV_ANGLE = VALUES(DRV_ANGLE)
+			,CUR_SPD = VALUES(CUR_SPD)
+			,LINK_ID = VALUES(LINK_ID)
+			,NODE_SN = VALUES(NODE_SN)
+			,NODE_TYPE = VALUES(NODE_TYPE)
+			,PRV_PLCE_NM = VALUES(PRV_PLCE_NM)	
+			,UPD_DTM = VALUES(UPD_DTM);
+	</insert>
+	
+	
+	<!-- 차량의 현재운행정보 가져오기  -->
+	<select id="selectCurOperInfo" resultType="Map" parameterType="Map">
+		SELECT  
+			OPER_DT
+			,REP_ROUT_ID
+			,VHC_ID
+			,ROUT_ID				
+			,ALLOC_NO
+			,OPER_SN							
+			,NODE_ID
+			,COR_ID
+			,VHC_NO
+			,DRV_ID
+			,GPS_X
+			,GPS_Y
+			,OPER_STS
+			,DRV_ANGLE
+			,CUR_SPD
+			,LINK_ID
+			,NODE_SN
+		FROM 	
+			BRT_CUR_OPER_INFO
+		WHERE OPER_DT = DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')
+			AND VHC_ID = #{VHC_ID}
+		LIMIT 1
+	</select>
+	
+	
+	
+	<!--돌발 정보-->
+	<insert id="insertIncidentInfo" parameterType="Map">
+		INSERT INTO BRT_INCDNT_INFO (
+			OPER_DT
+			,REP_ROUT_ID
+			,VHC_ID
+			,INCDNT_TYPE
+			,ROUT_ID
+			,ALLOC_NO
+			,OPER_SN
+			,COR_ID
+			,OCR_DTM
+			,VHC_NO			
+			,DRV_ID
+			,REP_ROUT_NM
+			,ROUT_NM
+			,LINK_ID
+			,NODE_ID
+			,GPS_X
+			,GPS_Y
+			,UPD_DTM
+		) 
+		VALUES (
+			DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')
+			,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})			
+			,(SELECT VHC_ID FROM BMS_VHC_MST WHERE VHC_NO = #{BUS_NO})
+			,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'INCDNT_TYPE' AND NUM_VAL4 = #{EVENT_CD}) <!-- 운행위반유형  -->
+			,#{ROUT_ID}
+			,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')))  <!--alloc no 찾기 -->
+			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, TIME_FORMAT(#{UPD_DTM}, '%H:%i:%S'))) <!--oper sn 찾기 -->			
+			,#{COURSE_ID}
+			,#{UPD_DTM}
+			,#{BUS_NO}
+			,#{DRV_ID}
+			,(SELECT REP_ROUT_NM FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})
+			,(SELECT ROUT_NM FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})
+			,#{LINK_ID}
+			,#{NODE_ID}
+			,#{LONGITUDE}
+			,#{LATITUDE}
+			,NOW()
+		)
+		ON DUPLICATE KEY UPDATE
+			ROUT_ID = VALUES(ROUT_ID)
+			,ALLOC_NO = VALUES(ALLOC_NO)
+			,OPER_SN = VALUES(OPER_SN)
+			,COR_ID = VALUES(COR_ID)
+			,OCR_DTM = VALUES(OCR_DTM)
+			,VHC_NO = VALUES(VHC_NO)	
+			,DRV_ID = VALUES(DRV_ID)
+			,REP_ROUT_NM = VALUES(REP_ROUT_NM)
+			,ROUT_NM = VALUES(ROUT_NM)
+			,LINK_ID = VALUES(LINK_ID)
+			,NODE_ID = VALUES(NODE_ID)
+			,GPS_X = VALUES(GPS_X)
+			,GPS_Y = VALUES(GPS_Y)
+			,UPD_DTM = VALUES(UPD_DTM)
+	</insert>	
+	
+	
+		
+
+
+	
+</mapper>

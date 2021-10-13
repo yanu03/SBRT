@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.cm.domain.Vhc.VhcMapper">
+
+<select id="selectVhcList" resultType="Map">
+	SELECT
+		A.VHC_ID
+		,A.VHC_NO
+		,A.AREA
+		,A.MAKER
+		,B.COMP_NM
+	FROM
+		BMS_VHC_MST A
+		INNER JOIN BRT_REP_ROUT_VHC_CMPSTN C
+		ON A.VHC_ID = C.VHC_ID
+		LEFT JOIN BMS_TRANSCOMP_MST B
+		ON A.COMP_ID = B.COMP_ID
+</select>
+
+
+<select id="selectVhcDvcInfo" resultType="Map">
+	SELECT
+		MNG_ID
+	FROM
+		BMS_DVC_INFO
+	WHERE VHC_ID = #{VHC_ID}
+		AND DVC_KIND = 'DK001'
+		AND USE_YN = 'Y'
+	LIMIT 1;
+</select>
+	
+</mapper>

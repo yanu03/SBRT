@@ -23,6 +23,7 @@
 						<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
 						<w2:key id="AREA" name="권역" dataType="text"></w2:key>
 						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_result">
@@ -49,10 +50,10 @@
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 						<w2:column id="ROUT_TYPE" name="노선유형" dataType="text"></w2:column>
-						<w2:column id="ST_STTN_ID" name="시작정류소ID" dataType="text"></w2:column>
-						<w2:column id="ST_STTN_NM" name="시작정류소명" dataType="text"></w2:column>
-						<w2:column id="ED_STTN_ID" name="종료정류소ID" dataType="text"></w2:column>
-						<w2:column id="ED_STTN_NM" name="종료정류소명" dataType="text"></w2:column>
+						<w2:column id="ST_STTN_ID" name="기점ID" dataType="text"></w2:column>
+						<w2:column id="ST_STTN_NM" name="기점명" dataType="text"></w2:column>
+						<w2:column id="ED_STTN_ID" name="종점ID" dataType="text"></w2:column>
+						<w2:column id="ED_STTN_NM" name="종점명" dataType="text"></w2:column>
 						<w2:column id="RET_STTN_ID" name="회차정류소ID" dataType="text"></w2:column>
 						<w2:column id="RET_STTN_NM" name="회차정류소명" dataType="text"></w2:column>
 						<w2:column id="ROUT_LEN" name="노선거리" dataType="number" defaultValue="0"></w2:column>
@@ -97,7 +98,7 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0404G1R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_SI0404G1S0" ref='data:json,{"action":"modified","id":"dlt_BMS_ROUT_NODE_CMPSTN"}' target="data:json,dma_result"
+			<xf:submission id="sub_SI0404G1S0" ref='data:json,[{"id":"dlt_BMS_ROUT_NODE_CMPSTN","action":"modified"},"dma_sub_search"]' target="data:json,dma_result"
 				action="/si/SI0404G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="저장 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SI0404G1S0_submitdone"
 				ev:submiterror="" abortTrigger="">
@@ -134,7 +135,7 @@
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions, mainOptions);
 
 		var subOptions = {
-			SEARCH: {} //scwin.btn_sub_search_onclick//, DEL:scwin.btn_sub_del
+			SEARCH: scwin.btn_sub_move, DEL:scwin.btn_sub_del
 		};
 		//com.setEnterKeyEvent(pgm_subList, scwin.btn_sub_search_onclick);
 		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
@@ -190,6 +191,8 @@
 	
 	scwin.SI0404G0_onrowindexchange = function(row,oldRow) {
 		routMap.initMapInfo("map_SI0404");
+		dma_sub_search.set("ROUT_ID", dlt_BMS_ROUT_MST.getCellData(row,"ROUT_ID"));
+		dma_sub_search.set("WAY_DIV", dlt_BMS_ROUT_MST.getCellData(row,"WAY_DIV"));
 		var focusOption = {keyMap : dma_sub_search};
 		com.changeDualGrid(SI0404G0, SI0404G1, sub_SI0404G1S0, sub_SI0404G1R0, focusOption, row, oldRow);
 	};
@@ -292,6 +295,12 @@
 			});
 		}
 
+	};
+	
+	scwin.btn_sub_move = function() {
+		if(com.isEmpty(dma_sub_search.get("CONTENT"))==false){
+			com.gridMove(SI0404G1, "NODE_ID,NODE_NM", dma_sub_search.get("CONTENT"), SI0404G1.getFocusedRowIndex());
+		}
 	};
 	
 	//맵 클릭 이벤트

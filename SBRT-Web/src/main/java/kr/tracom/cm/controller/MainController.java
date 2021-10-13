@@ -10,18 +10,23 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.tracom.cm.domain.Common.CommonService;
+import kr.tracom.cm.domain.Main.MainService;
+import kr.tracom.cm.support.ControllerSupport;
+import kr.tracom.util.CommonUtil;
 import kr.tracom.util.Constants;
 import kr.tracom.util.Result;
 import kr.tracom.util.UserInfo;
 
 @Controller
-public class MainController {
+@Scope("request")
+public class MainController extends ControllerSupport {
 
 	@Autowired
 	private UserInfo user;
@@ -29,6 +34,8 @@ public class MainController {
 	@Autowired
 	private CommonService commonService;
 
+	@Autowired
+	private MainService mainService;
 
 	@Value("${main.setting.code.DB}")
 	private String dbCode;
@@ -84,16 +91,16 @@ public class MainController {
 	 * @example
 	 */
 	@RequestMapping(value = "/main/systemChange")
-	public @ResponseBody Map<String, Object> login(@RequestBody Map<String, Object> param, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody Map<String, Object> systemChange(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 
 		Map map = null;
 		Result result = new Result();
 		try {
 
-			map = (Map) param.get("dma_systemChange");
-	
-			int changeSystem = (int)map.get("SYSTEM_BIT");
+			map = (Map) getSimpleDataMap("dma_systemChange");
+			
+			int changeSystem = Integer.parseInt((String)map.get("SYSTEM_BIT"));
 			int SystemBit = Integer.parseInt((String)session.getAttribute(Constants.SSN_SYSTEM_BIT));
 	
 			if(SystemBit==Constants.SYSTEM_ALL) {
@@ -109,4 +116,49 @@ public class MainController {
 		result.setMsg(Result.STATUS_SUCESS, "성공");
 		return result.getResult();
 	}
+	
+	@RequestMapping("/bm/bmsMainG0")
+	public @ResponseBody Map<String, Object> bmsMainG0() throws Exception {
+		result.setData("dlt_BRT_CUR_OPER_INFO", mainService.bmsMainG0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/bm/bmsMainG1")
+	public @ResponseBody Map<String, Object> bmsMainG1() throws Exception {
+		result.setData("dlt_BMS_NEWS_INFO", mainService.bmsMainG1());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/bm/bmsMainF0")
+	public @ResponseBody Map<String, Object> bmsMainF0() throws Exception {
+		result.setData("dma_BMS_WEAT_INFO", mainService.bmsMainF0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/bm/bmsMainF1")
+	public @ResponseBody Map<String, Object> bmsMainF1() throws Exception {
+		result.setData("dma_BMS_WEAT_INFO", mainService.bmsMainF1());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/br/brtMainG1")
+	public @ResponseBody Map<String, Object> brtMainG1() throws Exception {
+		result.setData("dlt_BRT_DSPTCH_LOG", mainService.brtMainG1());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/br/brtMainF0")
+	public @ResponseBody Map<String, Object> brtMainF0() throws Exception {
+		result.setData("dma_BRT_INCDNT_CNT", mainService.brtMainF0());
+		result.setData("dma_BRT_INCDNT_RES_CNT", mainService.brtMainF1());
+		result.setData("dma_BRT_SPEEDING_CNT", mainService.brtMainF2());
+		result.setData("dma_BRT_NOSTOP_CNT", mainService.brtMainF3());
+		return result.getResult();
+	}
+	
+	/*@RequestMapping("/br/brtMainF1")
+	public @ResponseBody Map<String, Object> brtMainF1() throws Exception {
+		result.setData("dma_BRT_INCDNT_HIS", mainService.brtMainF1());
+		return result.getResult();
+	}*/
 }

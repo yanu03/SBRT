@@ -4,8 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -440,7 +443,7 @@ public class CommonUtil {
 		try {
 			result = (object==null||((String)object).isEmpty())?0:Double.parseDouble((String)object);
 		}catch (Exception e) {
-			result = (object==null)?0:Double.parseDouble(String.valueOf(object));
+			result = 0;
 		}
 		return result;
 	}
@@ -450,10 +453,36 @@ public class CommonUtil {
 		try {
 			result = (object==null)?0:Double.parseDouble(String.valueOf(object));
 		}catch (Exception e) {
-			result = (double)object;
+			result = 0;
 		}
 		return result;
 	}
+	
+	public static int decimalToInt(Object object) {
+		int result = 0;
+		try {
+			result = (object==null)?0:Integer.parseInt(String.valueOf(object));
+		}catch (Exception e) {
+			result = 0;
+		}
+		return result;
+	}
+	
+	
+	public static int bigDecimalToInt(Object object) {
+		int result = 0;
+		try {
+			result = (object==null)?0:Integer.parseInt(String.valueOf(object));
+		}catch (Exception e) {
+			try {
+				result = (int) object;
+			} catch (Exception e2) {
+				result = ((BigDecimal)object).intValue();
+			}
+		}
+		return result;
+	}
+	
 	
 	/**
 	 * Object type 변수가 비어있는지 체크
@@ -486,5 +515,37 @@ public class CommonUtil {
 
 	public static double pointRound(double len,int cnt) {
 		return Math.round(len*Math.pow(10, cnt+1))/Math.pow(10, cnt+1);
+	}
+	
+	public static String objectToString(Object object) {
+		String result = CommonUtil.empty(object)?"":(String)object;
+		return result;
+	}
+	
+	//ip가져오기.
+	public static String getIpAddress(HttpServletRequest request) {
+		String unkown = "unknown";
+		String ipAddress = request.getHeader("X-Forwarded-For");
+		if (ipAddress == null || ipAddress.length() == 0 || unkown.equalsIgnoreCase(ipAddress))
+		{
+			ipAddress = request.getHeader("Proxy-Client-ipAddress");
+		}
+		if (ipAddress == null || ipAddress.length() == 0 || unkown.equalsIgnoreCase(ipAddress))
+		{
+			ipAddress = request.getHeader("WL-Proxy-Client-ipAddress");
+		}
+		if (ipAddress == null || ipAddress.length() == 0 || unkown.equalsIgnoreCase(ipAddress))
+		{
+			ipAddress = request.getHeader("HTTP_CLIENT_ipAddress");
+		}
+		if (ipAddress == null || ipAddress.length() == 0 || unkown.equalsIgnoreCase(ipAddress))
+		{
+			ipAddress = request.getHeader("HTTP_X_FORWARDED_FOR");
+		}
+		if (ipAddress == null || ipAddress.length() == 0 || unkown.equalsIgnoreCase(ipAddress))
+		{
+			ipAddress = request.getRemoteAddr();
+		}
+		return ipAddress;
 	}
 }

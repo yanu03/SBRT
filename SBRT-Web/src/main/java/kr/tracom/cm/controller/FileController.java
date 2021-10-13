@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,21 +28,23 @@ import kr.tracom.cm.support.ControllerSupport;
 @Scope("request")
 public class FileController extends ControllerSupport {
 	
-	String strUniqErrorMessage = "Áßº¹µÈ ID°ªÀÌ Á¸ÀçÇÕ´Ï´Ù. ´ëÁß¼Òº°·Î 1°³ÀÇ ID¸¦ ÁöÁ¤ÇÏ½Ê½Ã¿À.";
+	String strUniqErrorMessage = "ì¤‘ë³µëœ IDê°’ì´ ì¡´ì¬í•©ë‹ˆë‹¤. ëŒ€ì¤‘ì†Œë³„ë¡œ 1ê°œì˜ IDë¥¼ ì§€ì •í•˜ì‹­ì‹œì˜¤.";
 	/**
 	 * 
 	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(FileController.class);
 
-	
 	@Autowired
 	protected HttpServletRequest request;
 	
 	@Autowired
 	private FileService fileService;
  
-	@Value("${FILE_ROOT}")
+	@Value("${fileupload.location}")
 	protected String fileRoot;
+	
+	@Value("${windows.fileupload.location}")
+	protected String windowsFileRoot;
 	
 	private static final String FILE_LIST_LITERAL = "fileList";
 	private static final String FILE_ID = "fileId";
@@ -60,10 +63,10 @@ public class FileController extends ControllerSupport {
 	private static final String ROW_STATUS = "rowStatus";
 
 	/**
-	 * ÀÛ¼ºÀÚ: Æ®¶óÄŞ
-	 * ÀÛ¼ºÀÏ: 2017. 2. 23.
-	 * ¼öÁ¤ÀÏ: 2017. 2. 23.
-	 * ¸ñÀû : ÆÄÀÏ¾÷·Îµå °øÅë
+	 * ì‘ì„±ì: íŠ¸ë¼ì½¤
+	 * ì‘ì„±ì¼: 2017. 2. 23.
+	 * ìˆ˜ì •ì¼: 2017. 2. 23.
+	 * ëª©ì  : íŒŒì¼ì—…ë¡œë“œ ê³µí†µ
 	 * 
 	 * @return
 	 * @throws Exception
@@ -83,8 +86,10 @@ public class FileController extends ControllerSupport {
 		}
 
 		String sourcePath = fileRoot+"up/";
-		 
-		 
+		if(SystemUtils.IS_OS_WINDOWS) {
+			sourcePath = windowsFileRoot+"up/";
+		}
+		
 		GregorianCalendar gc = new GregorianCalendar ( );
 		
 		String filePath = '/' + taskName + '/'
@@ -100,7 +105,7 @@ public class FileController extends ControllerSupport {
 		for (Map<String, Object> fileUpload : lstUploadFile){
 			if("".equalsIgnoreCase((String)fileUpload.get(STATUS))&&"R".equalsIgnoreCase((String)fileUpload.get(ROW_STATUS))){
 				String orgfileName = (String) fileUpload.get(ORG_FILE_NAME);
-				orgfileName = orgfileName.replace("&#40;", "(").replace("&#41;", ")"); //ÆÄÀÏ¸í "(" => &#40 "(" => &#41 º¯È¯µÇ´Â Çö»ó ¼öÁ¤
+				orgfileName = orgfileName.replace("&#40;", "(").replace("&#41;", ")"); //íŒŒì¼ëª… "(" => &#40 "(" => &#41 ë³€í™˜ë˜ëŠ” í˜„ìƒ ìˆ˜ì •
 				fileService.doMoveFile(sourcePath,destPath,orgfileName,destFileName);
 				
 				fileUpload.put(FILE_ID, fileId);
@@ -121,10 +126,10 @@ public class FileController extends ControllerSupport {
 	
 		
 	/**
-	 * ÀÛ¼ºÀÚ: Æ®¶óÄŞ
-	 * ÀÛ¼ºÀÏ: 2017. 2. 23.
-	 * ¼öÁ¤ÀÏ: 2017. 2. 23.
-	 * ¸ñÀû : ÆÄÀÏ°¡Á®¿È °øÅë
+	 * ì‘ì„±ì: íŠ¸ë¼ì½¤
+	 * ì‘ì„±ì¼: 2017. 2. 23.
+	 * ìˆ˜ì •ì¼: 2017. 2. 23.
+	 * ëª©ì  : íŒŒì¼ê°€ì ¸ì˜´ ê³µí†µ
 	 * 
 	 * @return
 	 * @throws Exception
@@ -141,10 +146,10 @@ public class FileController extends ControllerSupport {
 	}
 	
 	/**
-	 * ÀÛ¼ºÀÚ: Æ®¶óÄŞ
-	 * ÀÛ¼ºÀÏ: 2017. 2. 23.
-	 * ¼öÁ¤ÀÏ: 2017. 2. 23.
-	 * ¸ñÀû : ÆÄÀÏ»èÁ¦ °øÅë
+	 * ì‘ì„±ì: íŠ¸ë¼ì½¤
+	 * ì‘ì„±ì¼: 2017. 2. 23.
+	 * ìˆ˜ì •ì¼: 2017. 2. 23.
+	 * ëª©ì  : íŒŒì¼ì‚­ì œ ê³µí†µ
 	 * 
 	 * @return
 	 * @throws Exception
@@ -171,11 +176,11 @@ public class FileController extends ControllerSupport {
 	}
 	
 	/**
-	 * ÀÛ¼ºÀÚ: Æ®¶óÄŞ
+	 * ì‘ì„±ì: íŠ¸ë¼ì½¤
 	 *
-	 * ÀÛ¼ºÀÏ: 2017. 2. 19.
-	 * ¼öÁ¤ÀÏ: 2017. 2. 19.
-	 * ¸ñÀû :Ã·ºÎÆÄÀÏ ´Ù¿î·Îµå
+	 * ì‘ì„±ì¼: 2017. 2. 19.
+	 * ìˆ˜ì •ì¼: 2017. 2. 19.
+	 * ëª©ì  :ì²¨ë¶€íŒŒì¼ ë‹¤ìš´ë¡œë“œ
 	 * @throws Exception
 	 */
 	@RequestMapping("/file/doDownloadFile.do")
@@ -188,4 +193,10 @@ public class FileController extends ControllerSupport {
 			//downLoadFileFromNasRoot( destPath , destFileName, orgFileName);
 		
 	}
+	
+	@RequestMapping("/file/doCheckFile")
+	public @ResponseBody Map<String, Object> doCheckFile() throws Exception {
+		result.setData("dma_filechk", fileService.doCheckFile());
+		return result.getResult();
+	}		
 }

@@ -3,8 +3,8 @@
 <mapper namespace="kr.tracom.bms.domain.PI0400.PI0400Mapper">
 
 	<select id="PI0400G0R0" resultType="Map" parameterType="Map">
-		SELECT DATE_FORMAT(NOTI_DT, '%Y%m%d%H%i') NOTI_DT, SKY_COND, TEMPC, TEMP_MINI, HUMI, 
-		RAIN_PRO, RAINFALL, DATE_FORMAT(UPD_DTM, '%Y%m%d%H%i') UPD_DTM 
+		SELECT DATE_FORMAT(NOTI_DT, '%Y-%m-%d %H:%i') NOTI_DT, SKY_COND, TEMPC, TEMP_MINI, HUMI, 
+		RAIN_PRO, RAINFALL, DATE_FORMAT(UPD_DTM, '%Y-%m-%d %H:%i') UPD_DTM 
 		FROM BMS_WEAT_INFO
 		<where>
 				<if test="CONTENT != ''">
@@ -15,8 +15,8 @@
 	</select>
 	
 	<select id="PI0400G1R0" resultType="Map" parameterType="Map">
-		SELECT DATE_FORMAT(MEAS_DT, '%Y%m%d%H%i') MEAS_DT, DUSTC, SDUSTC, SDC, CMC, 
-		OZONEC, NDC, DATE_FORMAT(UPD_DTM, '%Y%m%d%H%i') UPD_DTM 
+		SELECT DATE_FORMAT(MEAS_DT, '%Y-%m-%d %H:%i') MEAS_DT, DUSTC, SDUSTC, SDC, CMC, 
+		OZONEC, NDC, DATE_FORMAT(UPD_DTM, '%Y-%m-%d %H:%i') UPD_DTM 
 		FROM BMS_ATMO_INFO
 		<where>
 			<if test="CONTENT != ''">
@@ -26,19 +26,24 @@
 		ORDER BY MEAS_DT DESC
 	</select>
 	
-	<select id="PI0400G2R0" resultType="Map" parameterType="Map">
-      SELECT V.VHC_ID, V.VHC_NO, SEND_DT    
-      FROM BMS_LIVING_LOG LIV 
+<select id="PI0400G2R0" resultType="Map" parameterType="Map">
+      SELECT 
+      	V.VHC_ID
+      	,V.VHC_NO
+      	,V.VHC_ID
+      	,V.AREA
+      	,V.MAKER
+      	,V.VHC_STS
+      	,V.VHC_TYPE
+      	,LIV.SEND_DT
+      	,LIV.MNG_ID  
+      FROM 
+      	BMS_LIVING_LOG LIV 
       LEFT OUTER JOIN BMS_DVC_INFO DV 
       ON LIV.MNG_ID = DV.MNG_ID 
       LEFT OUTER JOIN BMS_VHC_MST V 
       ON DV.VHC_ID = V.VHC_ID
-      <where>
-		<if test="value != null">
-			V.VHC_NO LIKE CONCAT('%', #{value}, '%') 
-			AND
-		</if>
-		
-      </where>
+     ORDER BY
+     	 LIV.SEND_DT
 	</select>
 </mapper>

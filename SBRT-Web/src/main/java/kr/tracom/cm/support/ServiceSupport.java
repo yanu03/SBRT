@@ -19,6 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +53,11 @@ public class ServiceSupport {
 	private UserInfo user;
 	
 
-	@Value("${FILE_ROOT}")
+	@Value("${fileupload.location}")
 	protected String fileRoot;
+	
+	@Value("${windows.fileupload.location}")
+	protected String windowsFileRoot;
 
 	/**
 	 * @throws Exception
@@ -606,6 +610,10 @@ public class ServiceSupport {
 		}
 	    
 		String strDestPath = (fileRoot + strFilePath).replace("/", File.separator);
+		
+		if(SystemUtils.IS_OS_WINDOWS) {
+			strDestPath = (windowsFileRoot + strFilePath).replace("/", File.separator);
+		}
 
 		File fileDestPath = new File(strDestPath);
 		if (!fileDestPath.exists())

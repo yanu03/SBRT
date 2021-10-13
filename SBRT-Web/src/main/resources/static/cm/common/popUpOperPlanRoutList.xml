@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ev="http://www.w3.org/2001/xml-events"
+    xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+    <head>
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataList id="dlt_BRT_OPER_PL_ROUT_INFO" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
+					<w2:columnInfo>
+						<w2:column id="chk" name="선택" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
+						<w2:column id="DAY_DIV" name="요일구분" dataType="text"></w2:column>
+						<w2:column id="WAY_DIV" name="상하행구분" dataType="text"></w2:column>
+						<w2:column id="OPER_SN" name="운행순번" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
+						<w2:column id="ROUT_ST_TM" name="노선시작시간" dataType="text"></w2:column>
+						<w2:column id="ROUT_ED_TM" name="노선종료시간" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:key>
+						<w2:key id="WAY_DIV" name="상하행구분" dataType="text"></w2:key>
+						<w2:key id="DAY_DIV" name="요일구분" dataType="text"></w2:key>
+						<w2:key id="OPER_SN_LIST" name="운행순번목록" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_operPlanList" ref='data:json,dma_search' target="data:json,dlt_BRT_OPER_PL_ROUT_INFO" action="/operPlan/selectOperPlanRout" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="scwin.sub_operPlanRoutList_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+        
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		dma_search.set("REP_ROUT_ID" , scwin.param.data.REP_ROUT_ID);
+		dma_search.set("WAY_DIV" , scwin.param.data.WAY_DIV);
+		dma_search.set("DAY_DIV" , scwin.param.data.DAY_DIV);
+		dma_search.set("OPER_SN_LIST" , scwin.param.data.OPER_SN_LIST);
+		
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		var btnOptions = 
+		[
+			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
+		];
+		com.setMainBtn3(wfm_mainBtn, btnOptions);
+		
+		var codeOptions = [ {code : "DAY_DIV", compID : "operPlanGrid:DAY_DIV" }, {code : "WAY_DIV", compID : "operPlanGrid:WAY_DIV" }];
+		
+		com.setCommonDtl(codeOptions, function() {
+			com.executeSubmission(sub_operPlanList);	
+		});
+		
+		//com.executeSubmission(sub_operPlanList);			
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	scwin.btn_search_onclick = function() {
+		com.executeSubmission(sub_operPlanList);
+	};
+	
+	scwin.btn_confirm_onclick = function() {
+		var data = operPlanGrid.getCheckedJSON("chk");
+		
+		if(data == null || data == ''){
+			var nullData = [{"OPER_SN" : ''}];
+			
+			com.closePopup(scwin.closeCallbackFncName, nullData);
+		}
+		else{
+			com.closePopup(scwin.closeCallbackFncName, data);
+		}
+		
+	
+		//var data = AL0302P1.getCheckedJSON("chk");
+		//com.closePopup(scwin.closeCallbackFncName, data);
+	};
+		
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();
+	};
+	
+	scwin.operPlanGrid_onrowindexchange = function(row,oldRow) {
+		operPlanGrid.setCellChecked(row,"chk",true);
+	};
+	
+	scwin.sub_operPlanRoutList_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+			//com.excludeItemsByGrid(operPlanGrid, dma_search.get("OPER_SN_LIST"), "OPER_SN");
+		}
+	};
+	
+	//데이터 없음 - 그리드 disabled 처리
+	scwin.NullData_onviewchange = function(info) {
+	
+		if(info.checked == true){
+			com.executeSubmission(sub_operPlanList);
+			operPlanGrid.setDisabled("grid", true);
+			operPlanGrid.setDisabled("column","chk",true);
+		}
+		else{
+			operPlanGrid.setDisabled("grid", false);
+			operPlanGrid.setDisabled("column","chk",false);
+		}
+		
+	};
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+				<xf:group class="gr_search" id="" style="">
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="검색항목"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="대표노선ID 또는 대표노선명"></xf:input>
+						<xf:select id="NullData" selectedIndex="-1" appearance="full" style="margin-left: 10px;float: left;margin-top: 2px;"
+							ev:onviewchange="scwin.NullData_onviewchange" cols="" rows="" ref="">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[데이터없음]]></xf:label>
+									<xf:value><![CDATA[Y]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select>		
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group>
+			<xf:group style="" id="" class="popup_content">
+				<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BRT_OPER_PL_ROUT_INFO" useShiftKey="false" readOnly="true"
+					style="" scrollByColumn="false" id="operPlanGrid" autoFit="" class="cm_grid popup" focusMode="true"
+					ev:onrowindexchange="scwin.operPlanGrid_onrowindexchange">
+					<w2:header style="" id="header1">
+						<w2:row style="" id="row1">
+							<w2:column blockSelect="false" id="chkHeader" inputType="radio" style="height:20px" value="선택" width="39">
+							</w2:column>
+							<w2:column id="h_REP_ROUT_ID" removeBorderStyle="false" width="90" inputType="text" style="height:20px" textAlign="left"
+								value="대표노선ID" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column id="h_REP_ROUT_NM" removeBorderStyle="false" width="70" inputType="text" style="height:20px" textAlign="left"
+								value="대표노선명" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column id="h_DAY_DIV" removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+								value="요일구분" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column id="h_WAY_DIV" removeBorderStyle="false" width="70" inputType="text" style="height:20px" 
+								value="상하행" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column id="h_OPER_SN" removeBorderStyle="false" width="70" inputType="text" style="height:20px" 
+								value="운행순번" blockSelect="false" displayMode="label">
+							</w2:column> 
+							<w2:column id="h_ROUT_ST_TM" removeBorderStyle="false" width="90" inputType="text" style="height:20px" 
+								value="노선시작(시분)" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column id="h_ROUT_ED_TM" removeBorderStyle="false" width="90" inputType="text" style="height:20px" 
+								value="노선종료(시분)" blockSelect="false" displayMode="label">
+							</w2:column>
+						</w2:row>
+					</w2:header>
+					<w2:gBody id="gBody1" style="">
+						<w2:row id="row2" style="">
+							<w2:column falseValue="0" defaultValue="" trueValue="1" width="" readOnly="false" style="height:20px"
+								inputType="radio" id="chk" blockSelect="false">
+							</w2:column>
+							<w2:column blockSelect="false" id="REP_ROUT_ID" inputType="text" style="height:20px" width="" textAlign="">
+							</w2:column>
+							<w2:column blockSelect="false" id="REP_ROUT_NM" inputType="text" style="height:20px" width="" textAlign="">
+							</w2:column>
+							<w2:column blockSelect="false" id="DAY_DIV" inputType="select" style="height:20px" width="" textAlign="">
+							</w2:column>
+							<w2:column blockSelect="false" id="WAY_DIV" inputType="select" style="height:20px" width="" textAlign="">
+							</w2:column>
+							<w2:column blockSelect="false" id="OPER_SN" inputType="text" style="height:20px;" width="" textAlign="">
+							</w2:column>
+							<w2:column id="ROUT_ST_TM" blockSelect="false" style="height:20px" width="" inputType="text"
+								displayMode="label">
+							</w2:column>
+							<w2:column id="ROUT_ED_TM" blockSelect="false" style="height:20px" width="" inputType="text"
+								displayMode="label">
+							</w2:column>
+						</w2:row>
+					</w2:gBody>
+				</w2:gridView>
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

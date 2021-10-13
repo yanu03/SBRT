@@ -12,6 +12,7 @@
 			A.CENTER_YN,
 			A.STTN_FCLT_TYPE,
 			A.VHC_DOOR_DIR_TYPE,
+			A.WAY_DIV,
 			A.GPS_X,
 			A.GPS_Y,
 			A.APPL_RDS,
@@ -19,10 +20,11 @@
 			A.BAY_LEN,
 			A.LINE_CNT,
 			A.USE_YN,
+			A.STOP_TM_PEAK,
+			A.STOP_TM_NONE_PEAK,
 			A.REMARK
-			
-	from BMS_STTN_MST A <!-- LEFT OUTER JOIN BMS_NODE_MST B ON A.NODE_ID = B.NODE_ID -->
-	<where>
+	FROM BMS_STTN_MST A <!-- LEFT OUTER JOIN BMS_NODE_MST B ON A.NODE_ID = B.NODE_ID -->
+	WHERE A.DEL_YN != 'Y'
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
 			<if test="TYPE == 'ALL'">
 				AND (A.STTN_ID LIKE CONCAT('%',#{CONTENT},'%') || A.STTN_NM LIKE CONCAT('%',#{CONTENT},'%') || A.STTN_NO LIKE CONCAT('%',#{CONTENT},'%'))
@@ -37,8 +39,6 @@
 				AND A.STTN_NO LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 		</if>
-
-	</where>
 </select>
 
 <select id="SI0501G0K0" resultType="Map">
@@ -46,13 +46,13 @@
 </select>
 
 <select id="SI0501SHI0" resultType="Map">
-	select STTN_ID, STTN_NM, STTN_NO
-	from BMS_STTN_MST
-	order by STTN_ID
+	SELECT STTN_ID, STTN_NM, STTN_NO
+	FROM BMS_STTN_MST WHERE DEL_YN!='Y'
+	ORDER BY STTN_ID
 </select>
 
 <insert id="SI0501G0I0" parameterType="Map">
-	insert into BMS_STTN_MST
+	INSERT INTO BMS_STTN_MST
 			(
 			STTN_ID,
 			STTN_NM,
@@ -62,17 +62,20 @@
 			CENTER_YN,
 			STTN_FCLT_TYPE,
 			VHC_DOOR_DIR_TYPE,
+			WAY_DIV,
 			APPL_RDS,
 			BAY_TYPE,
 			BAY_LEN,
 			LINE_CNT,
 			USE_YN,
+			STOP_TM_PEAK,
+			STOP_TM_NONE_PEAK,
 			REMARK,
 			UPD_DTM,
 			UPD_ID
 			)
 	
-	values		
+	VALUES		
 			(
 			#{STTN_ID},
 			#{STTN_NM},
@@ -82,11 +85,14 @@
 			#{CENTER_YN},
 			#{STTN_FCLT_TYPE},
 			#{VHC_DOOR_DIR_TYPE},
+			#{WAY_DIV,},
 			#{APPL_RDS},
 			#{BAY_TYPE},
 			#{BAY_LEN},
 			#{LINE_CNT},
 			#{USE_YN},
+			#{STOP_TM_PEAK},
+			#{STOP_TM_NONE_PEAK},
 			#{REMARK},
 			#{UPD_DTM},
 			#{SSN_USER_ID}			
@@ -102,11 +108,14 @@
 			CENTER_YN =#{CENTER_YN},
 			STTN_FCLT_TYPE =#{STTN_FCLT_TYPE},
 			VHC_DOOR_DIR_TYPE =#{VHC_DOOR_DIR_TYPE},
+			WAY_DIV =#{WAY_DIV},
 			APPL_RDS =#{APPL_RDS},
 			BAY_TYPE =#{BAY_TYPE},
 			BAY_LEN =#{BAY_LEN},
 			LINE_CNT =#{LINE_CNT},
 			USE_YN = #{USE_YN},
+			STOP_TM_PEAK = #{STOP_TM_PEAK},
+			STOP_TM_NONE_PEAK = #{STOP_TM_NONE_PEAK},
 			REMARK = #{REMARK},
 			UPD_DTM = #{UPD_DTM},
 			UPD_ID  = #{SSN_USER_ID}
@@ -118,11 +127,26 @@
 			UPD_DTM = #{UPD_DTM},
 			UPD_ID = #{SSN_USER_ID}
 	WHERE NODE_ID = #{STTN_ID};
+	
+	UPDATE BMS_ROUT_MST
+	SET		ST_STTN_NM = #{STTN_NM},
+			ST_STTN_ENM = #{STTN_ENM},
+			UPD_DTM = #{UPD_DTM},
+			UPD_ID = #{SSN_USER_ID}
+	WHERE ST_STTN_ID = #{STTN_ID};
+	
+	UPDATE BMS_ROUT_MST
+	SET		ED_STTN_NM = #{STTN_NM},
+			ED_STTN_ENM = #{STTN_ENM},
+			UPD_DTM = #{UPD_DTM},
+			UPD_ID = #{SSN_USER_ID}
+	WHERE ED_STTN_ID = #{STTN_ID};
+
 </update>
 
 <delete id="SI0501G0D0" parameterType="Map">
 	UPDATE BMS_STTN_MST
-	SET		USE_YN = 'N'
+	SET	DEL_YN = 'Y', USE_YN = 'N'
 	WHERE STTN_ID = #{STTN_ID};
 	
 	UPDATE BMS_ROUT_NODE_CMPSTN
@@ -143,29 +167,29 @@
 </delete>
 
 <select id="SI0501G1R0" resultType="Map">
-	select a.ROUT_ID, a.ROUT_NM, a.ROUT_TYPE, a.STTN_CNT, a.ROUT_LEN, a.CURVATURE, a.REMARK, b.STTN_ID
-	from BMS_ROUT_MST a INNER JOIN BMS_ROUT_NODE_CMPSTN b ON a.ROUT_ID = b.ROUT_ID AND b.NODE_TYPE != 'NT006'
-	where b.STTN_ID = #{STTN_ID}
+	SELECT A.ROUT_ID, A.ROUT_NM, A.ROUT_TYPE, A.STTN_CNT, A.ROUT_LEN, A.CURVATURE, A.REMARK, B.STTN_ID
+	FROM BMS_ROUT_MST A INNER JOIN BMS_ROUT_NODE_CMPSTN B ON A.ROUT_ID = B.ROUT_ID AND A.DEL_YN !="Y" AND B.NODE_TYPE != 'NT006'
+	WHERE B.STTN_ID = #{STTN_ID}
 	
 </select>
 
 <insert id="SI0501G1I0" parameterType="Map">
-	insert into BMS_ROUT_NODE_CMPSTN
+	INSERT INTO BMS_ROUT_NODE_CMPSTN
 			(ROUT_ID, STTN_ID, STTN_ID_SN)
-	values (#{ROUT_ID}, #{STTN_ID}, 0)		
+	VALUES (#{ROUT_ID}, #{STTN_ID}, 0)		
 
 </insert>
 
 <delete id="SI0501G1D0" parameterType="Map">
-	delete from BMS_ROUT_NODE_CMPSTN
-	where ROUT_ID = #{ROUT_ID}
-	and STTN_ID = #{STTN_ID}
+	DELETE FROM BMS_ROUT_NODE_CMPSTN
+	WHERE ROUT_ID = #{ROUT_ID}
+	AND STTN_ID = #{STTN_ID}
 </delete>
 
 <select id="SI0501P0R0" resultType="Map">
 	
-	select ROUT_ID, ROUT_NM, ROUT_TYPE, STTN_CNT, ROUT_LEN, CURVATURE, REMARK
-	from BMS_ROUT_MST
+	SELECT ROUT_ID, ROUT_NM, ROUT_TYPE, STTN_CNT, ROUT_LEN, CURVATURE, REMARK
+	FROM BMS_ROUT_MST
 	<where>
 		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 			AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 

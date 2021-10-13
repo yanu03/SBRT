@@ -16,6 +16,9 @@
         				<w2:column id="STTN_ID" name="정류소ID" dataType="text"></w2:column>
         				<w2:column id="STTN_NM" name="정류소명" dataType="text"></w2:column>
         				<w2:column id="STTN_ENM" name="정류소영문명" dataType="text"></w2:column>
+        				<w2:column id="STTN_NO" name="정류소번호" dataType="text"></w2:column>
+        				<w2:column id="WAY_DIV" name="상하행" dataType="text"></w2:column>
+        				<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
         			</w2:columnInfo>
         		</w2:dataList>
         		<w2:dataMap baseNode="map" id="dma_search">
@@ -29,12 +32,15 @@
         	<w2:workflowCollection></w2:workflowCollection>
         	<xf:submission id="sub_sttnList" ref="data:json,dma_search" target="data:json,dlt_BMS_STTN_MST" action="/rout/selectSttnList"
         		method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
-        		mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+        		mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_sttnListGrid_submitdone" ev:submiterror="" abortTrigger="">
         	</xf:submission>
         </xf:model>
         <script type="text/javascript" lazy="false"><![CDATA[
         
 	scwin.onpageload = function() {
+		var codeOptions = [{code : "WAY_DIV", compID : "sttnListGrid:WAY_DIV" }];
+		com.setCommonDtl(codeOptions);
+		
 		scwin.param = com.getParameter();
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
 		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
@@ -43,7 +49,8 @@
 			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
 		];
 		com.setMainBtn3(wfm_mainBtn, btnOptions);
-		com.executeSubmission(sub_sttnList);				
+	
+		com.executeSubmission(sub_sttnList);
 	};
 	
 	scwin.onpageunload = function() {
@@ -52,12 +59,35 @@
 	
 	
 	scwin.btn_search_onclick = function() {
-		$p.executeSubmission(sub_sttnList);
+		com.executeSubmission(sub_sttnList);
 	};
 	
+	/*scwin.sub_sttnListGrid_submitdone = function(e) {
+		var idx = dlt_BMS_STTN_MST.insertRow();
+		var data = {
+			STTN_ID: "-",
+			STTN_NO: "-",
+			STTN_NM: "정류소 없음"
+		};
+		
+		dlt_BMS_STTN_MST.setRowJSON(idx, data, true);
+	};*/
+	
+	//데이터 없음 체크시 공백
 	scwin.btn_confirm_onclick = function() {
 		var data = sttnListGrid.getCheckedJSON("chk");
-		com.closePopup(scwin.closeCallbackFncName, data);		
+		
+		if(data == null || data == ''){
+			var nullData = [{"STTN_ID" : '', "STTN_ENM" : ''}];
+			
+			com.closePopup(scwin.closeCallbackFncName, nullData);
+		}
+		else{
+			com.closePopup(scwin.closeCallbackFncName, data);
+		}
+	
+		/*var data = sttnListGrid.getCheckedJSON("chk");
+		com.closePopup(scwin.closeCallbackFncName, data);*/		
 	};
 	
 	scwin.btn_cancel_onclick = function() {
@@ -73,6 +103,21 @@
 			sttnListGrid.setCellChecked(row,"chk",true)
 		}
 	}
+	
+	//데이터 없음 - 그리드 disabled 처리
+	scwin.NullData_onviewchange = function(info) {
+	
+		if(info.checked == true){
+			com.executeSubmission(sub_sttnList);
+			sttnListGrid.setDisabled("grid", true);
+			sttnListGrid.setDisabled("column","chk",true);
+		}
+		else{
+			sttnListGrid.setDisabled("grid", false);
+			sttnListGrid.setDisabled("column","chk",false);
+		}
+		
+	};
 
 	/*scwin.sbx_ChoiceBox_onviewchange = function(info) {		
 		if (info.newValue == "ALL") {
@@ -115,6 +160,15 @@
 	    						</xf:choices>
 	    					</xf:select1> -->
 						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="정류소ID 또는 정류소명"></xf:input>
+						<xf:select id="NullData" selectedIndex="-1" appearance="full" style="margin-left: 10px;float: left;margin-top: 2px;"
+							ev:onviewchange="scwin.NullData_onviewchange" cols="" rows="" ref="">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[데이터없음]]></xf:label>
+									<xf:value><![CDATA[Y]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select>
 					</xf:group>
 					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
@@ -122,13 +176,16 @@
 			
 			<xf:group style="" id="" class="popup_content">
 				<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BMS_STTN_MST" useShiftKey="false" readOnly="true"
-					style="width:775px" scrollByColumn="false" id="sttnListGrid" autoFit="allColumn" class="cm_grid popup"
-					ev:onrowindexchange="scwin.sttnListGrid_onrowindexchange">
+					scrollByColumn="false" id="sttnListGrid" autoFit="lastColumn" class="cm_grid popup"
+					ev:onrowindexchange="scwin.sttnListGrid_onrowindexchange" focusMode="true">
 					<w2:header style="" id="header1">
 							<w2:row id="row1" style="">
 								<w2:column width="39" inputType="radio" style="height:20px" id="chkHeader" value="선택" blockSelect="false"></w2:column>
-								<w2:column width="70" id="column2" value="정류소ID"></w2:column>
-								<w2:column width="70" id="column3" value="정류소명"></w2:column>
+								<w2:column width="100" id="column1" value="정류소ID"></w2:column>
+								<w2:column width="100" id="column2" value="정류소번호"></w2:column>
+								<w2:column width="100" id="column3" value="상하행"></w2:column>
+								<w2:column width="200" id="column4" value="정류소명"></w2:column>
+								<w2:column width="100" id="column5" value="비고"></w2:column>
 							</w2:row>
 						</w2:header>
 						<w2:gBody id="gBody1" style="">
@@ -136,8 +193,11 @@
 								<w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px"
 									inputType="radio" id="chk" blockSelect="false">
 								</w2:column>
-								<w2:column width="70" id="STTN_ID"></w2:column>
-								<w2:column width="70" id="STTN_NM"></w2:column>
+								<w2:column id="STTN_ID"></w2:column>
+								<w2:column id="STTN_NO"></w2:column>
+								<w2:column inputType="select" id="WAY_DIV"></w2:column>
+								<w2:column id="STTN_NM" textAlign="left"></w2:column>
+								<w2:column id="REMARK" textAlign="left"></w2:column>
 						</w2:row>
 					</w2:gBody>
 				</w2:gridView>

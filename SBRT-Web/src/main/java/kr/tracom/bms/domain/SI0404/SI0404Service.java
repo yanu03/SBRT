@@ -40,15 +40,16 @@ public class SI0404Service extends ServiceSupport {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;
-		List<Map<String, Object>> soundList = null;
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
 		
+		List<Map<String, Object>> soundList = null;
 		List<Map<String, Object>> param = getSimpleList("dlt_BMS_ROUT_NODE_CMPSTN");
 		try {
 			
 			//기존 노선노드테이블, 노선링크테이블 삭제
-			if(param.size()>0) {				
-				si0404Mapper.SI0404G1DA0(param.get(0));
-				si0404Mapper.SI0404G1DA1(param.get(0));
+			if(param.size()>0) {
+				si0404Mapper.SI0404G1DA0(map);
+				si0404Mapper.SI0404G1DA1(map);
 			}
 			
 			for (int i = 0; i < param.size(); i++) { //노드 생성
@@ -74,6 +75,7 @@ public class SI0404Service extends ServiceSupport {
 						}
 					}
 					data.put("NODE_SN",(i+1));
+					data.put("WAY_DIV",map.get("WAY_DIV"));
 					iCnt += si0404Mapper.SI0404G1I0(data);
 					
 				} 

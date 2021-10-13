@@ -11,7 +11,7 @@
 		,REMARK
 	FROM
 		BMS_STTN_MST
-	<where>
+	WHERE DEL_YN!='Y'
 		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 			AND STTN_ID LIKE CONCAT('%',#{CONTENT},'%') || STTN_NM LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
@@ -21,35 +21,33 @@
 		<if test="TYPE == 'STTN_NM'">
 			AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
-	</where>
 	ORDER BY
 		STTN_ID
 	</select>
 
 	<select id="VH0300SHI0" resultType="Map" parameterType="Map">
-		SELECT  
-			STTN_ID
-			,STTN_NM
+		SELECT STTN_ID, STTN_NM
 		FROM
 			BMS_STTN_MST
+		WHERE DEL_YN!='Y'
 	</select>
 	
 	
 	<select id="VH0300G1R0" resultType="Map">
-		select  
-			a.OCR_DTM
-			,a.VHC_NO
-			,a.DOOR_SN
-			,a.LOC_STOP_DIV
-		from 	
-			BRT_ACRT_LOC_STOP_LOG a
-			LEFT JOIN BMS_STTN_MST b
-			ON a.STTN_ID = b.STTN_ID
+		SELECT  
+			A.OCR_DTM
+			,A.VHC_NO
+			,A.DOOR_SN
+			,A.LOC_STOP_DIV
+		FROM 	
+			BRT_ACRT_LOC_STOP_LOG A
+			LEFT JOIN BMS_STTN_MST B
+			ON A.STTN_ID = B.STTN_ID AND B.DEL_YN!='Y'
 	</select>
 	
 	<delete id="VH0300G1D0" parameterType="Map">
-		delete from BRT_ACRT_LOC_STOP_LOG
-		where OCR_DTM = #{OCR_DTM}
+		DELETE FROM BRT_ACRT_LOC_STOP_LOG
+		WHERE OCR_DTM = #{OCR_DTM}
 	</delete>
 
 <!--  <insert id="VI0100G1I0" parameterType="Map">

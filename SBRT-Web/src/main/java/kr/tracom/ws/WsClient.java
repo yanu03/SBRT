@@ -1,6 +1,5 @@
 package kr.tracom.ws;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -18,12 +17,13 @@ public class WsClient {
 	SimpMessageSendingOperations messagingTemplate;
 
 
-	public void sendMessage(WsMessage wsMsg) {
+	public void sendMessage(Map<String, Object> wsMap) {
+	
 
 		//logger.info("################# sendMessage : " + message);
 		
 		try {
-			messagingTemplate.convertAndSend("/topic/public", wsMsg);
+			messagingTemplate.convertAndSend("/topic/public", wsMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

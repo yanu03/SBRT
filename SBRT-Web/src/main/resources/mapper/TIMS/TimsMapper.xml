@@ -3,56 +3,70 @@
 
 <mapper namespace="kr.tracom.tims.domain.TimsMapper">
 	
-	<insert id="insertEventHistory" parameterType="Map">
-		INSERT INTO BRT_OPER_EVENT_HIS (
-			OPER_DT
-			,REP_ROUT_ID
-			,VHC_ID
-			,UPD_DTM
-			,VHC_NO
-			,DRV_ID
-			,COR_ID
-			,ROUT_ID
-			,GPS_X_RAW
-			,GPS_Y_RAW
-			,DRV_ANGLE
-			,GPS_X
-			,GPS_Y
-			,CUR_SPD
-			,LINK_ID
-			,NODE_ID
-			,NODE_SN
-			,OPER_STS
-			,EVT_TYPE
-			,EVT_DATA
-			,STOP_TM
-			,OCR_DTM
-		) 
-		VALUES (
-			DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')
-			,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})			
-			,(SELECT VHC_ID FROM BMS_VHC_MST WHERE VHC_NO = #{BUS_NO})
-			,NOW()
-			,#{BUS_NO}
-			,#{DRV_ID}
-			,#{COURSE_ID}
-			,#{ROUT_ID}
-			,#{LONGITUDE_RAW}
-			,#{LATITUDE_RAW}
-			,#{HEADING}
-			,#{LONGITUDE}
-			,#{LATITUDE}
-			,#{SPEED}
-			,#{LINK_ID}
-			,#{NODE_ID}
-			,#{NODE_SN}
-			,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'VHC_OPER_TYPE' AND NUM_VAL4 = #{RUN_TYPE}) <!-- 운행 유형  -->
-			,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'OPER_EVT_TYPE' AND NUM_VAL4 = #{EVENT_CD}) <!-- 운행이벤트 유형  -->
-			,#{EVENT_DATA} 
-			,#{STOP_TM}
-			,#{UPD_DTM}
-		)
-	</insert>
-
+	
+	<!-- 차량정보 가져오기  -->
+	<select id="selectVhcInfo" resultType="Map" parameterType="Map">
+		SELECT  
+			A.VHC_ID
+			,A.VHC_NO
+			,B.DVC_ID
+		FROM BMS_VHC_MST A
+			LEFT JOIN BMS_DVC_INFO B ON A.VHC_ID = B.VHC_ID
+		WHERE MNG_ID = #{MNG_ID}				
+	</select>
+	
+	<!-- 노선이름 가져오기  -->
+	<select id="selectRoutName" resultType="String" parameterType="String">
+		SELECT  
+			ROUT_NM
+		FROM 	
+			BMS_ROUT_MST
+		WHERE ROUT_ID = #{ROUT_ID}
+	</select>
+	
+	<!-- 현재노드의 다음 교차로,정류장 가져오기-->
+	<select id="selectNextSttnCrsInfo" resultType="Map" parameterType="Map">
+		SELECT 
+			NODE_ID AS NEXT_NODE_ID
+			,NODE_NM AS NEXT_NODE_NM
+			,NODE_SN AS NEXT_NODE_SN
+			,NODE_TYPE AS NEXT_NODE_TYPE
+			,(
+			  SELECT PRV_PLCE_NM 
+			  FROM BRT_CUR_OPER_INFO 
+			  WHERE OPER_DT = DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d') AND ROUT_ID = #{ROUT_ID} AND VHC_NO = #{BUS_NO}
+			) AS PREV_NODE_NM	
+		FROM BMS_ROUT_NODE_CMPSTN
+		WHERE ROUT_ID = #{ROUT_ID} 
+			AND NODE_SN > #{NODE_SN}
+			AND NODE_TYPE IN ('NT001', 'NT002')
+		ORDER BY NODE_SN ASC
+		LIMIT 1
+	</select>
+	
+	
+	<!-- 노드정보 가져오기 -->
+	<select id="selectNodeInfo" resultType="Map" parameterType="Map">
+		SELECT 
+			NODE_ID
+			,NODE_NM
+			,NODE_TYPE
+		FROM BMS_NODE_MST
+		WHERE NODE_ID = #{NODE_ID} 
+	</select>	
+	
+	<select id="selectNodeByLinkSn" resultType="Map" parameterType="Map">
+		SELECT
+			NODE_SN
+			,NODE_TYPE
+			,NODE_NM 
+		FROM BMS_ROUT_NODE_CMPSTN 
+		WHERE ROUT_ID = #{ROUT_ID} 
+			AND NODE_ID = #{NODE_ID} 
+			AND NODE_SN >= #{NODE_SN} <!-- #{NODE_SN} :: LINK_SN -->
+	</select>	
+	
+	
+	
 	
 </mapper>

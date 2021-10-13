@@ -40,7 +40,11 @@ public class SI0502Service extends ServiceSupport {
 					iCnt += si0502Mapper.SI0502G1I0(data);
 				} else if (rowStatus.equals("D")) {
 					dCnt += si0502Mapper.SI0502G1D0(data);
-				} 
+				}
+				else if (rowStatus.equals("U")) {
+					uCnt += si0502Mapper.SI0502G1U0(data);
+				}
+				
 			}			
 		} catch(Exception e) {
 			if (e instanceof DuplicateKeyException)
@@ -53,7 +57,6 @@ public class SI0502Service extends ServiceSupport {
 			}		
 		}
 
-		
 		Map result = saveResult(iCnt, uCnt, dCnt);
 		
 		return result;	

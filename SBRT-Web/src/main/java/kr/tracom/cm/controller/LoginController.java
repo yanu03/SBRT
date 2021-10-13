@@ -20,6 +20,7 @@ import kr.tracom.cm.domain.Login.LoginService;
 import kr.tracom.cm.support.ControllerSupport;
 import kr.tracom.util.Result;
 import kr.tracom.util.UserInfo;
+import kr.tracom.util.CommonUtil;
 import kr.tracom.util.Constants;
 
 @Controller
@@ -45,7 +46,15 @@ public class LoginController extends ControllerSupport {
 	 */
 	@RequestMapping(value = "/main/logout")
 	public @ResponseBody Map<String, Object> logout() throws Exception {
+		HttpSession session = request.getSession();
 		try {
+			Map param = new HashMap<>();
+			
+			param.put(Constants.SSN_USER_ID, session.getAttribute(Constants.SSN_USER_ID));
+			param.put(Constants.SSN_USER_NM, session.getAttribute(Constants.SSN_USER_NM));
+			param.put("IP", CommonUtil.getIpAddress(request));
+			
+			loginService.insertLogoutHis(param);
 			result.setMsg(Result.STATUS_SUCESS, "정상적으로 로그아웃 되었습니다.");
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -95,12 +104,23 @@ public class LoginController extends ControllerSupport {
 			session.setAttribute(Constants.SSN_SYSTEM_BIT, memberMap.get("SYSTEM_BIT"));
 			
 			int systemBit = Integer.parseInt((String)memberMap.get("SYSTEM_BIT"));
+			int loginSystemBit = Integer.parseInt((String) loginParam.get("SYSTEM_BIT"));
 			if(systemBit==Constants.SYSTEM_ALL) {
-				session.setAttribute(Constants.SSN_CUR_SYSTEM, Constants.SYSTEM_BIS);
+				
+				session.setAttribute(Constants.SSN_CUR_SYSTEM, loginSystemBit);
+			}
+			else if(systemBit==loginSystemBit) {
+				
+				session.setAttribute(Constants.SSN_CUR_SYSTEM, systemBit);
 			}
 			else {
-				session.setAttribute(Constants.SSN_CUR_SYSTEM, systemBit);
-			}	
+				if(systemBit==1) {
+					result.setMsg(Result.STATUS_ERROR, "차량운행관리 시스템 접근 권한이 없습니다. 시스템 관리자에게 문의하시기 바랍니다.");
+				}
+				else {
+					result.setMsg(Result.STATUS_ERROR, "통합운영관리 시스템 접근 권한이 없습니다. 시스템 관리자에게 문의하시기 바랍니다.");
+				}
+			}
 			
 			// 로그인한 ID가 시스템 관리자인지 여부를 체크한다.
 			// 시스템 관리자 ID는 websquareConfig.properties 파일의 system.admin.id 속성에 정의하면 된다.
@@ -121,6 +141,10 @@ public class LoginController extends ControllerSupport {
 			//session.setAttribute("MENU_LIST", (List) sessionMList);
 
 			user.setUserInfo(session);
+			
+			//로그인 이력 저장.
+			memberMap.put("IP", CommonUtil.getIpAddress(request));
+			loginService.insertLoginHis(memberMap);
 
 			result.setMsg(Result.STATUS_SUCESS, "로그인 성공");
 		} else if (status.equals("error")) {

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.cm.domain.Node.NodeMapper">
+
+	<select id="selectNodeList" resultType="Map">
+		SELECT 			NODE_ID
+					,	MOCK_NODE_ID
+					,	NODE_NM
+					,	NODE_ENM
+					,	NODE_TYPE
+					,	GPS_X
+					,	GPS_Y
+					,	TM_X
+					,	TM_Y
+					,	ENTRY_RECOG_RADS
+					,	ADVNC_RECOG_RADS
+					,	USE_YN
+					,	UPD_DTM
+					,	UPD_ID
+					
+		FROM			BMS_NODE_MST
+		WHERE			(NODE_TYPE = 'NT001'
+		OR				NODE_TYPE = 'NT002')
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+				<if test="TYPE == 'ALL' || TYPE == ''">
+					AND (NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || NODE_NM LIKE CONCAT('%',#{CONTENT},'%'))
+				</if>
+				<if test="TYPE == 'NODE_ID'">
+					AND NODE_ID LIKE CONCAT('%',#{CONTENT},'%')
+				</if>
+				<if test="TYPE == 'NODE_NM'">
+					AND NODE_NM LIKE CONCAT('%',#{CONTENT},'%') 
+				</if>
+			</if>
+			
+	</select>
+
+	<select id="selectNodeItem" resultType="Map">
+		SELECT			NODE_ID, NODE_NM
+		FROM			BMS_NODE_MST
+		ORDER BY		NODE_ID
+	</select>
+	
+
+</mapper>
