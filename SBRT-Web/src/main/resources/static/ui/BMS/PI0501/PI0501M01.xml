@@ -107,7 +107,11 @@
 	};
 
 	scwin.onpageunload = function() {
-
+			
+	};
+	
+	scwin.PLAY_ST_DT_Check = function(e){
+	
 	};
 	
 	scwin.sub_PI0501G0R0_submitdone = function(e) {
@@ -267,6 +271,25 @@
 		
 
 	};
+	
+
+	scwin.PLAY_ED_DT_onviewchange = function(info) {
+		debugger;
+		
+		//var playStDt = document.getElementById("mf_tac_layout_contents_MN00040601_body_PLAY_ST_DT_input").value;
+		var playStDt = PLAY_ST_DT.getValue();
+		//var playEdDt = document.getElementById("mf_tac_layout_contents_MN00040601_body_PLAY_ED_DT_input").value;
+		var playEdDt = PLAY_ED_DT.getValue();
+		
+		if(playStDt > playEdDt){
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkClose(info))
+		}
+	};
+	
+
+	scwin.checkClose = function(info){
+	   PLAY_ED_DT.setValue(info.oldValue);
+	}
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -518,13 +541,13 @@
 									<w2:inputCalendar calendarDisplayFormat="" calendarDisplayFormatFunc=""
 										calendarValueType="yearMonthDate" displayFormat="" editType="" focusOnDateSelect="false" footerDiv="false" id="PLAY_ST_DT"
 										ioFormat="" ref="data:dlt_VDO_INFO.PLAY_ST_DT" renderDiv="true" renderType="component" rightAlign="false"
-										style="height:23px;width: 110px;">
+										style="height:23px;width: 110px;" invalidMessageFunc="" ev:onviewchange="scwin.PLAY_ST_DT_onviewchange">
 									</w2:inputCalendar>
 									~
 									<w2:inputCalendar calendarDisplayFormat="" calendarDisplayFormatFunc=""
 										calendarValueType="yearMonthDate" displayFormat="" editType="" focusOnDateSelect="false" footerDiv="false" id="PLAY_ED_DT"
 										ioFormat="" ref="data:dlt_VDO_INFO.PLAY_ED_DT" renderDiv="true" renderType="component" rightAlign="false"
-										style="height:23px;width: 110px;">
+										style="height:23px;width: 110px;" ev:onviewchange="scwin.PLAY_ED_DT_onviewchange" dateValidSet="true" dateValidCheck="true" defaultDate="" disabled="" displayFormatFunc="">
 									</w2:inputCalendar>									
 								</xf:group>
 							</xf:group>
