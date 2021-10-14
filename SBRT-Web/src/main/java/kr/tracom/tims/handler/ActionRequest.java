@@ -21,6 +21,7 @@ import kr.tracom.platform.net.protocol.payload.PlActionRequest;
 import kr.tracom.platform.service.TService;
 import kr.tracom.platform.service.config.KafkaTopics;
 import kr.tracom.tims.kafka.KafkaProducer;
+import kr.tracom.tims.manager.ThreadManager;
 import kr.tracom.util.DateUtil;
 
 @Component
@@ -33,6 +34,11 @@ public class ActionRequest {
     
     @Autowired
     KafkaProducer kafkaProducer;
+
+    
+    @Autowired
+    ThreadManager threadManager;
+    
 
 
 
@@ -53,10 +59,15 @@ public class ActionRequest {
 
                 if(inOut == (byte)0) {
                     logger.info("login {}", sessionId);
+                    
+                    
+                    threadManager.getEventThread(sessionId);
 
                 }
                 else if(inOut == (byte)1){
                     logger.info("logout");
+                    
+                    threadManager.removeEventThread(sessionId);
                 }
 
                 break;
