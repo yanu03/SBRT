@@ -52,6 +52,12 @@ public class MO0101Controller extends ControllerSupport {
 	public @ResponseBody Map<String, Object> MO0101G4R0() throws Exception {
 		result.setData("dlt_BMS_NODE_MST", mo0101Service.MO0101G4R0());
 		return result.getResult();
+	}
+	
+	@RequestMapping("/mo/MO0101G5R0")
+	public @ResponseBody Map<String, Object> MO0101G5R0() throws Exception {
+		result.setData("dlt_BMS_ROUT_NODE_CMPSTN4", mo0101Service.MO0101G5R0());
+		return result.getResult();
 	}	
 	
 	@RequestMapping("/mo/MO0101SCK")

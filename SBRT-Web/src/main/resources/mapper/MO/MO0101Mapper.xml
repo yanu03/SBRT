@@ -92,6 +92,7 @@
 					,	A.LINK_NODE_YN
 					,	B.MORN_STD
 					,	IF(H.CNT > 0 , 'CE001','CE002') COND_ERROR
+					,	C.WAY_DIV
 					
 		FROM 		  	BMS_ROUT_NODE_CMPSTN A 
 		LEFT JOIN 		BMS_ROUT_LINK_CMPSTN B
@@ -243,6 +244,61 @@
 			
 		ORDER BY		E.NODE_SN					
 	</select>	
+	
+	<select id="MO0101G5R0" resultType="Map" parameterType="Map">
+		SELECT 			A.ROUT_ID
+					,	A.NODE_ID
+					, 	A.NODE_SN
+					, 	A.NODE_NM
+					,	A.NODE_TYPE
+					,	A.LINK_ID
+					, 	A.STTN_ID
+					, 	A.STTN_NO
+					, 	A.CRS_ID
+					, 	A.ORGA_ID
+					,	A.GPS_X
+					, 	A.GPS_Y
+					,	A.LINK_NODE_YN
+					,	A.PHASE_NO
+					,	B.MORN_STD
+					,	C.CRS_KIND
+					,	C.CRS_STS
+					,	C.PHASE_CNT
+					,	C.REMARK
+					,	E.CTR_STS
+					, 	E.CTR_MODE
+					,	E.A_PHASE_NO
+					,	E.A_PHASE_TM
+					,	E.B_PHASE_NO
+					,	E.B_PHASE_TM
+					
+		FROM 		  	BMS_ROUT_NODE_CMPSTN A 
+		LEFT JOIN		BMS_ROUT_LINK_CMPSTN B
+			ON A.ROUT_ID = B.ROUT_ID AND A.LINK_ID = B.LINK_ID
+		LEFT JOIN		BMS_CRS_MST C
+			ON A.NODE_ID = C.CRS_ID
+		LEFT JOIN		BMS_ROUT_MST D	
+			ON A.ROUT_ID = D.ROUT_ID
+		LEFT JOIN		BMS_CRS_SIGOPER_PHASE_INFO E
+			ON C.CRS_ID = E.CRS_ID	
+						
+		WHERE			A.NODE_TYPE = 'NT005'
+		AND				A.PHASE_NO IS NOT NULL
+		AND				C.DEL_YN != 'Y'
+		AND				C.CRS_ID IS NOT NULL
+		<if test="CONTENT1 != null">
+			AND D.REP_ROUT_ID = #{CONTENT1}			
+		</if>
+		<if test="CONTENT2 != ''">
+			AND A.ROUT_ID = #{CONTENT2}				
+		</if>
+		<if test="CONTENT3 != null and CONTENT3 != ''">
+			AND (A.NODE_ID LIKE CONCAT('%',#{CONTENT3},'%') || A.NODE_NM LIKE CONCAT('%',#{CONTENT3},'%'))
+		</if>		
+		
+		GROUP BY	  	NODE_ID
+		ORDER BY 		NODE_SN
+	</select>
 	
 	<select id="MO0101P0R0" resultType="Map">
 	
