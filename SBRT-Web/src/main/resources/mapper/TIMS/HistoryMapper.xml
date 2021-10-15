@@ -27,7 +27,7 @@
 		) 
 		VALUES (
 			#{SEND_DATE}
-			,DATE_FORMAT(#{SEND_DATE}, '%Y-%m-%d')
+			,#{OPER_DT}
 			,#{REP_ROUT_ID}			
 			,#{VHC_ID}
 			,#{ROUT_ID}											
@@ -77,7 +77,7 @@
 			,OCR_DTM
 		) 
 		VALUES (
-			DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')
+			#{OPER_DT}
 			,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})			
 			,(SELECT VHC_ID FROM BMS_VHC_MST WHERE VHC_NO = #{BUS_NO})
 			,NOW(3)
@@ -85,8 +85,8 @@
 			,#{DRV_ID}
 			,#{COURSE_ID}
 			,#{ROUT_ID}
-			,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')))  <!--alloc no 찾기 -->
-			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, TIME_FORMAT(#{UPD_DTM}, '%H:%i:%S'))) <!--oper sn 찾기 -->	
+			,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, #{OPER_DT}))  <!--alloc no 찾기 -->
+			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, #{UPD_DTM})) <!--oper sn 찾기 -->	
 			,#{LONGITUDE_RAW}
 			,#{LATITUDE_RAW}
 			,#{HEADING}
@@ -128,14 +128,14 @@
 			,VIOLT_TYPE
 		) 
 		VALUES (
-			DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')
+			#{OPER_DT}
 			,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})			
 			,(SELECT VHC_ID FROM BMS_VHC_MST WHERE VHC_NO = #{BUS_NO})
 			,NOW()
 			,#{UPD_DTM}
 			,#{ROUT_ID}
-			,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')))  <!--alloc no 찾기 -->
-			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, TIME_FORMAT(#{UPD_DTM}, '%H:%i:%S'))) <!--oper sn 찾기 -->			
+			,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, #{OPER_DT}))  <!--alloc no 찾기 -->
+			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, #{UPD_DTM})) <!--oper sn 찾기 -->			
 			,#{COURSE_ID}
 			,(SELECT REP_ROUT_NM FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})
 			,(SELECT ROUT_NM FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})
