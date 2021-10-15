@@ -226,9 +226,9 @@
 		}		
 	};
 	
-	scwin.btn_address_onclick = function() {
+	scwin.btn_address_onclick = function(row) {
 //		이전 지도검색 주소 찾기 팝업
-//		var row = SI0102G0.getFocusedRowIndex();
+		var row = SI0102G0.getFocusedRowIndex();
 //
 //		var data = { GPS_X : dlt_BMS_TRANSCOMP_MST.getCellData(row, "GPS_X"), 
 //					 GPS_Y : dlt_BMS_TRANSCOMP_MST.getCellData(row, "GPS_Y"),
@@ -250,7 +250,10 @@
 			popupName : "주소 검색",
 			modal : true,
 		};
-		var data = {};
+		var data = {
+					ROW_INDEX : row,
+					callbackFn : "scwin.insertCool"
+		};
 		
 		com.openPopup(("/ui/BMS/SI0102/SI0102P04.xml"), options, data);
 		
@@ -277,6 +280,13 @@
 	    });        
 	    
 */
+	};
+	scwin.insertCool = function(cooldinate) {
+		
+		var row = SI0102G0.getFocusedRowIndex();
+		
+		dlt_BMS_TRANSCOMP_MST.setCellData(row, "GPS_X", cooldinate.substr(0, 10));
+		dlt_BMS_TRANSCOMP_MST.setCellData(row, "GPS_Y", cooldinate.substr(16, 24));
 	};
 	
 
@@ -336,10 +346,34 @@
 		com.delGrid(SI0102G1);
 	}
 	
-	scwin.SI0102G0_oncellclick = function(row,col,colId) {
+//	scwin.SI0102G0_oncellclick = function(row,col,colId) {
+//		var gridColumn = SI0102G0.getColumnID(col);
+//		
+//		var row = SI0102G0.getFocusedRowIndex();
+//
+//		if (gridColumn == "LOCATION") {
+//			var data = { GPS_X : dlt_BMS_TRANSCOMP_MST.getCellData(row, "GPS_X"), 
+//						 GPS_Y : dlt_BMS_TRANSCOMP_MST.getCellData(row, "GPS_Y"),
+//						 COMP_ID : dlt_BMS_TRANSCOMP_MST.getCellData(row, "COMP_ID"), 
+//						 ROW_INDEX : row,
+//						 callbackFn : ""} 
+//			var options = {
+//				id : "SI0102P03",
+//				popupName : "위치 보기",
+//				modal : true,
+//				width : 900,
+//				height : 650
+//			};
+//			com.openPopup(("/ui/BMS/SI0102/SI0102P03.xml"), options, data);
+//		}		
+//	};
+//	
+	scwin.btn_cool_onclick = function(row,col,colId) {
 		var gridColumn = SI0102G0.getColumnID(col);
+		
+		var row = SI0102G0.getFocusedRowIndex();
 
-		if (gridColumn == "LOCATION") {
+//		if (gridColumn == "LOCATION") {
 			var data = { GPS_X : dlt_BMS_TRANSCOMP_MST.getCellData(row, "GPS_X"), 
 						 GPS_Y : dlt_BMS_TRANSCOMP_MST.getCellData(row, "GPS_Y"),
 						 COMP_ID : dlt_BMS_TRANSCOMP_MST.getCellData(row, "COMP_ID"), 
@@ -353,7 +387,7 @@
 				height : 650
 			};
 			com.openPopup(("/ui/BMS/SI0102/SI0102P03.xml"), options, data);
-		}		
+//		}		
 	};
 	]]></script>
 	</head>
@@ -439,9 +473,6 @@
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column10"
 										value="사업자등록번호" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column43"
-										value="위치보기" blockSelect="false" displayMode="label">
 									</w2:column>									
 									<w2:column removeBorderStyle="false" width="380" inputType="text" style="height:20px" id="column9"
 										value="주소" blockSelect="false" displayMode="label">
@@ -488,9 +519,6 @@
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="COMP_REG_NO"
 										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="button" style="height:20px" id="LOCATION"
-										value="보기" blockSelect="false" displayMode="label">
 									</w2:column>									
 									<w2:column removeBorderStyle="false" width="261" inputType="text" style="height:20px" id="ADDR" value=""
 										blockSelect="false" displayMode="label" textAlign="left">
@@ -524,7 +552,7 @@
 							<w2:footer style="" id="footer1">
 								<w2:row style="" id="row3">
 									<w2:column removeBorderStyle="false" width="" inputType="expression" style="height:20px;" id="column42"
-										value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')"
+										value="" blockSelect="false" displayMode="label" colSpan="14" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')"
 										textAlign="left">
 									</w2:column>
 									<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column51" value=""
@@ -603,20 +631,24 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:input adjustMaxLength="" class="" disabled="" id="ADDR" mandatory="" maxlength="100"
-										ref="data:dlt_BMS_TRANSCOMP_MST.ADDR" style="width:87.12%;height:21px;">
+										ref="data:dlt_BMS_TRANSCOMP_MST.ADDR" style="width:87.12%;height:21px;" refSync="">
 									</xf:input>
 									<w2:anchor class="btn_gcm" ev:onclick="scwin.btn_address_onclick" id="btn_address" outerDiv="true"
 										style="left:0px;top:0px;margin-right: 5px;">
 										<xf:label><![CDATA[찾기]]></xf:label>
 									</w2:anchor>
 								</xf:group>
-								<xf:group tagname="td" class="w2tb_th">전화번호<w2:attributes></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_th">위치보기<w2:attributes></w2:attributes></xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes></w2:attributes>
-									<xf:input allowChar="0-9" customModelFormatter="com.transPhone" customModelUnformatter=""
-										dataType="text" disabled="" displayFormatter="com.transPhone" id="" maskFormat="" maxlength="13" minByteLength=""
-										ref="data:dlt_BMS_TRANSCOMP_MST.PHONE" style="width:110px;height: 21px;" validator="">
-									</xf:input>
+									
+									
+									<w2:anchor class="btn_gcm" ev:onclick="scwin.btn_cool_onclick" id="btn_cool" outerDiv="true"
+												style="left:0px;top:0px;margin-right: 5px;">
+										<xf:label><![CDATA[보기테스트]]></xf:label>
+									</w2:anchor>
+									
+									
 								</xf:group></xf:group>
 							<xf:group style="" tagname="tr">
 								<xf:group class="w2tb_th" style="" tagname="th">팩스</xf:group>
@@ -649,22 +681,27 @@
 									</xf:input>
 								</xf:group></xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group class="w2tb_th" tagname="th">운전자&amp;nbsp;수<w2:attributes>
+								<xf:group class="w2tb_th" tagname="th">
+									운전자&amp;nbsp;수
+									<w2:attributes>
 										<w2:scope>row</w2:scope>
-									</w2:attributes></xf:group>
+									</w2:attributes>
+								</xf:group>
 								<xf:group class="w2tb_td" tagname="td">
 									<w2:attributes></w2:attributes>
 									<w2:spinner buttonSize="30" dataType="number" id="" inputReadOnly="" max="9999999" min="0"
 										ref="data:dlt_BMS_TRANSCOMP_MST.DRV_CNT" skin="type1" style="position: relative;width: 110px;height: 21px;display: none;">
 									</w2:spinner>
-									<xf:input allowChar="0-9" customModelFormatter="" dataType="text"
-										displayFormatter="" id="drv_cnt" maxlength="5" ref="data:dlt_BMS_TRANSCOMP_MST.DRV_CNT"
-										style="width:110px;height: 21px;" minByteLength="">
+									<xf:input allowChar="0-9" customModelFormatter="" dataType="text" displayFormatter="" id="drv_cnt"
+										maxlength="5" ref="data:dlt_BMS_TRANSCOMP_MST.DRV_CNT" style="width:110px;height: 21px;" minByteLength="">
 									</xf:input>
 								</xf:group>
-								<xf:group class="w2tb_th" tagname="th">운행노선수(개)<w2:attributes>
+								<xf:group class="w2tb_th" tagname="th">
+									운행노선수(개)
+									<w2:attributes>
 										<w2:scope>row</w2:scope>
-									</w2:attributes></xf:group>
+									</w2:attributes>
+								</xf:group>
 								<xf:group class="w2tb_td" tagname="td">
 									<w2:attributes>
 										<w2:colspan>1</w2:colspan>
@@ -677,21 +714,26 @@
 										maxlength="5" minByteLength="" ref="data:dlt_BMS_TRANSCOMP_MST.SVC_ROUT_CNT" style="width:110px;height: 21px;">
 									</xf:input>
 								</xf:group>
-								<xf:group tagname="td" class="w2tb_th">면허대수(대)<w2:attributes></w2:attributes></xf:group>
-								<xf:group tagname="td" class="w2tb_td">
+								<xf:group class="w2tb_th" tagname="td" style="">
+									사업자등록번호
 									<w2:attributes></w2:attributes>
-									<w2:spinner buttonSize="30" dataType="number" id="" inputReadOnly="" max="9999999" min="0"
-										ref="data:dlt_BMS_TRANSCOMP_MST.LIC_VHC_CNT" skin="type1" style="position: relative;width: 110px;height: 21px;display: none;">
-									</w2:spinner>
-									<xf:input allowChar="0-9" customModelFormatter="" dataType="text" displayFormatter=""
-										id="LIC_VHC_CNT" maxlength="5" minByteLength="" ref="data:dlt_BMS_TRANSCOMP_MST.LIC_VHC_CNT"
-										style="width:110px;height: 21px;">
+								</xf:group>
+								<xf:group class="w2tb_td" tagname="td" style="">
+									<w2:attributes></w2:attributes>
+									<xf:input adjustMaxLength="" allowChar="0-9" applyFormat="" class="" customModelFormatter=""
+										dataType="text" disabled="" displayFormat="" displayFormatter="" escape="" euroMask="" id="COMP_REG_NO" imeMode="" ioFormat=""
+										mandatory="" maskFormat="" maskFormatModelExcludeChar="" maxlength="10" ref="data:dlt_BMS_TRANSCOMP_MST.COMP_REG_NO"
+										style="width:110px;height:21px;" validator="">
 									</xf:input>
-								</xf:group></xf:group>
+								</xf:group>
+							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group class="w2tb_th" tagname="th">예비차대수(대)<w2:attributes>
+								<xf:group class="w2tb_th" tagname="th">
+									예비차대수(대)
+									<w2:attributes>
 										<w2:scope>row</w2:scope>
-									</w2:attributes></xf:group>
+									</w2:attributes>
+								</xf:group>
 								<xf:group class="w2tb_td" tagname="td">
 									<w2:attributes></w2:attributes>
 									<w2:spinner buttonSize="30" dataType="number" id="" inputReadOnly="" max="9999999" min="0"
@@ -701,9 +743,31 @@
 										maxlength="5" minByteLength="" ref="data:dlt_BMS_TRANSCOMP_MST.SPR_VHC_CNT" style="width:110px;height: 21px;" refSync="">
 									</xf:input>
 								</xf:group>
-								<xf:group class="w2tb_th" tagname="th"><w2:attributes>
-										<w2:scope>row</w2:scope>
-									<w2:colspan>4</w2:colspan><w2:rowspan>1</w2:rowspan></w2:attributes></xf:group></xf:group>
+								<xf:group class="w2tb_th" tagname="td" style="">
+									전화번호
+									<w2:attributes></w2:attributes>
+								</xf:group>
+								<xf:group class="w2tb_td" tagname="td" style="">
+									<w2:attributes></w2:attributes>
+									<xf:input allowChar="0-9" customModelFormatter="com.transPhone" customModelUnformatter=""
+										dataType="text" disabled="" displayFormatter="com.transPhone" id="" maskFormat="" maxlength="13" minByteLength=""
+										ref="data:dlt_BMS_TRANSCOMP_MST.PHONE" style="width:110px;height: 21px;" validator="">
+									</xf:input>
+								</xf:group>
+								<xf:group class="w2tb_th" tagname="td" style="">
+									면허대수(대)
+									<w2:attributes></w2:attributes>
+								</xf:group>
+								<xf:group class="w2tb_td" tagname="td" style="">
+									<w2:attributes></w2:attributes>
+									<w2:spinner buttonSize="30" dataType="number" id="" inputReadOnly="" max="9999999" min="0"
+										ref="data:dlt_BMS_TRANSCOMP_MST.LIC_VHC_CNT" skin="type1" style="position: relative;width: 110px;height: 21px;display: none;">
+									</w2:spinner>
+									<xf:input allowChar="0-9" customModelFormatter="" dataType="text" displayFormatter="" id="LIC_VHC_CNT10"
+										maxlength="5" minByteLength="" ref="data:dlt_BMS_TRANSCOMP_MST.LIC_VHC_CNT" style="width:110px;height: 21px;">
+									</xf:input>
+								</xf:group>
+							</xf:group>
 							<xf:group tagname="tr" style="">
 								<xf:group tagname="th" class="w2tb_th" style="vertical-align: top;" id="" tabIndex="">
 									비고

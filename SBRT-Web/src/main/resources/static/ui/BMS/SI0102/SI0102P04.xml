@@ -15,17 +15,31 @@
             </w2:workflowCollection>
         </xf:model>
          <script type="text/javascript" lazy="false"><![CDATA[
-        
+           
+                
+            
+            
 	scwin.onpageload = function() {
+	var geocoder = new daum.maps.services.Geocoder();
+	scwin.param = com.getParameter();
+	scwin.closeCallbackFncName = scwin.param.callbackFn;
 	    daum.postcode.load(function(){
 	        new daum.Postcode({
 		        width : 795,
 		        height : 558,
 	            oncomplete: function(data) {
-	                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
-	                // 예제를 참고하여 다양한 활용법을 확인해 보세요.
-	                $p.parent().ADDR.setValue(data.address);
-	                com.closePopup();
+		            $p.parent().ADDR.setValue(data.address);
+	         
+	            geocoder.addressSearch(data.address, function(results, status) {
+                    // 정상적으로 검색이 완료됐으면
+                    if (status === daum.maps.services.Status.OK) {
+
+                        var result = results[0]; //첫번째 결과의 값을 활용
+							var result1 = result.x+result.y;
+							com.closePopup(scwin.closeCallbackFncName, result1);
+                    }
+                });
+	            
 	            }
 	        }).embed(mf_tac_layout_contents_MN00010102_body_SI0102P04_wframe);
 	       })		
