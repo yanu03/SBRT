@@ -24,6 +24,7 @@ import kr.tracom.platform.net.protocol.TimsMessage;
 import kr.tracom.platform.net.protocol.attribute.AtMessage;
 import kr.tracom.platform.net.protocol.payload.PlEventRequest;
 import kr.tracom.platform.service.kafka.model.KafkaMessage;
+import kr.tracom.tims.OperDtUtil;
 import kr.tracom.tims.domain.CurInfoMapper;
 import kr.tracom.tims.domain.HistoryMapper;
 import kr.tracom.tims.domain.TimsMapper;
@@ -406,6 +407,10 @@ public class EventThread extends Thread{
                 		paramMap.put("UPD_DTM", udpDtm);
                 		paramMap.put("VHC_ID", vhcId);
                 		
+                		//운행일 생성. 시간에 따라 0시(24시) ~ 02시까지는 이전 날짜로 운행일 설정
+                		String operDt = OperDtUtil.convertTimeToOperDt(udpDtm, "yyyy-MM-dd HH:mm:ss");
+                		paramMap.put("OPER_DT", operDt); 
+                		
                 		curInfo = curInfoMapper.selectCurOperInfo(paramMap);
                 		
                 		if(curInfo != null) {
@@ -427,6 +432,7 @@ public class EventThread extends Thread{
 	                		
 	                		
 	                		HashMap<String, Object> dispatchLog = new HashMap<String, Object>(curInfo);
+	                		dispatchLog.put("OPER_DT", operDt);
 	                		dispatchLog.put("SEND_DATE", udpDtm);
 	                		dispatchLog.put("DSPTCH_DIV", dpDiv);
 	                		dispatchLog.put("DSPTCH_KIND", dpLv);
@@ -473,17 +479,11 @@ public class EventThread extends Thread{
     }
     
     
-    Map<String, Object> getNextNodeInfo(Map<String, Object> curOperInfo) {
-    	
-    	//다음노드(교차로 or 정류소)
-    	Map<String, Object> nextNodeInfo = timsMapper.selectNextSttnCrsInfo(curOperInfo);
-    	
-		
-		return nextNodeInfo;
-    	
-    }
     
     private int insertCurOperInfo(Map<String, Object> curOperInfo) throws Exception {
+    	
+    	//운행일 생성. 시간에 따라 0시(24시) ~ 02시까지는 이전 날짜로 운행일 설정
+    	curOperInfo.put("OPER_DT", OperDtUtil.convertTimeToOperDt(curOperInfo.get("UPD_DTM").toString(), "yyyy-MM-dd HH:mm:ss")); 
     	
     	//다음노드(교차로 or 정류소)
     	Map<String, Object> realNodeInfo = timsMapper.selectNodeByLinkSn(curOperInfo); //통플에서 넘어온 노드순번(실제로는 링크순번) 으로 실제 노드순번 구하기

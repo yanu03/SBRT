@@ -113,16 +113,33 @@
 	
 	
 	scwin.sub_SI0200G0R0_submitdone = function(e) {
+	debugger;
 		com.setFocusedCell(SI0200G0, "VHC_ID");
+		var rowCount = dlt_BMS_VHC_MST.getRowCount();
+		var data = dlt_BMS_VHC_MST.getCellData(SI0200G0.getFocusedRowIndex(), "VHC_NO");
+		var test2 = dlt_BMS_VHC_MST.getDataRow(1);
+		test2.getData("VHC_NO");
+		for (var i = 0; i<rowCount; i++) {
+			if (dlt_BMS_VHC_MST.getDataRow(i) === data){
+				com.alert("overrap");
+			} else {
+			}
+		}
+		
+		//com.setFocusedCell(SI0200G0, "VHC_ID");
+
 	};
 	
 	scwin.sub_SI0200G0K0_submitdone = function(e) {
 		com.addGridForm(SI0200G0, SI0200F0, dma_SEQ_BMS_VHC_MST_0, "VHC_ID", "VHC_NO");
-		
 	};
+	
+	
+	
 
 	//찾기 버튼 이벤트
 	scwin.btn_searchComp_onclick = function(e) {
+
 		var data = { COMP_ID : dlt_BMS_VHC_MST.getCellData(SI0200G0.getFocusedRowIndex(), "COMP_ID"),
 				   	 callbackFn : "scwin.searchCompCallback" };
 				   	 
@@ -137,6 +154,7 @@
 	scwin.searchCompCallback = function(returnValue) {
 		COMP_NM.setValue(returnValue[0].COMP_NM);
 		dlt_BMS_VHC_MST.setCellData(SI0200G0.getFocusedRowIndex(), "COMP_ID", returnValue[0].COMP_ID);
+		dlt_BMS_VHC_MST.setCellData(SI0200G0.getFocusedRowIndex(), "AREA", returnValue[0].AREA);
 	};
 
 
@@ -248,7 +266,7 @@
 										blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column9" value="제조사"
-										blockSelect="false" displayMode="label">
+										blockSelect="false" displayMode="label" validator="scwin.check_overrap">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="110" inputType="text" style="height:20px" id="column8" value="출고일자"
 										blockSelect="false" displayMode="label">
@@ -260,10 +278,10 @@
 							<w2:gBody style="" id="gBody1">
 								<w2:row style="" id="row2">
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="VHC_ID" userData1="M" value=""
-										blockSelect="false" displayMode="label">
+										blockSelect="false" displayMode="label" valueType="" viewType="" userData2="" userData3="">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px" id="VHC_NO" userData1="M" value=""
-										blockSelect="false" displayMode="label">
+										blockSelect="false" displayMode="label" >
 									</w2:column>
 									<w2:column width="144" id="COMP_NM" textAlign="left" userData1="M" maxByteLength="" maxLength="30">
 									</w2:column>
@@ -334,7 +352,7 @@
 									<w2:attributes></w2:attributes>
 									<xf:input adjustMaxLength="" class="req" disabled="" fireEventOnInvalid="" id="VHC_NO" invalidMessageFunc="" mandatory=""
 										readOnly="" ref="data:dlt_BMS_VHC_MST.VHC_NO" style="width:100%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
-										validator="" maxlength="9">
+										validator="" maxlength="9" customModelFormatter="">
 									</xf:input>
 								</xf:group>
 							</xf:group>
@@ -358,7 +376,7 @@
 									</w2:attributes>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="" chooseOptionLabel="전체" direction="auto" disabled="false"
 										disabledClass="w2selectbox_disabled" displayMode="label" id="AREA" labelWidthAuto="" mandatory="true" optionOrder=""
-										ref="data:dlt_BMS_VHC_MST.AREA" renderType="component" style="height:24px;width: 60%;" submenuSize="auto" class="req">
+										ref="data:dlt_BMS_VHC_MST.AREA" renderType="component" style="height:24px;width: 60%;" submenuSize="auto" class="req" title="">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>

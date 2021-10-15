@@ -31,12 +31,12 @@
 			,UPD_DTM
 		) 
 		VALUES (
-			DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')
+			#{OPER_DT}
 			,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})			
 			,(SELECT VHC_ID FROM BMS_VHC_MST WHERE VHC_NO = #{BUS_NO})
 			,#{ROUT_ID}											
-			,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')))  <!--alloc no 찾기 -->
-			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, TIME_FORMAT(#{UPD_DTM}, '%H:%i:%S'))) <!--oper sn 찾기 -->
+			,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, #{OPER_DT}))  <!--alloc no 찾기 -->
+			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, #{UPD_DTM})) <!--oper sn 찾기 -->
 			,#{NODE_ID}
 			,#{COURSE_ID}
 			,#{BUS_NO}
@@ -96,7 +96,7 @@
 			,NODE_SN
 		FROM 	
 			BRT_CUR_OPER_INFO
-		WHERE OPER_DT = DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')
+		WHERE OPER_DT = #{OPER_DT}
 			AND VHC_ID = #{VHC_ID}
 		LIMIT 1
 	</select>
@@ -126,13 +126,13 @@
 			,UPD_DTM
 		) 
 		VALUES (
-			DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')
+			#{OPER_DT}
 			,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})			
 			,(SELECT VHC_ID FROM BMS_VHC_MST WHERE VHC_NO = #{BUS_NO})
 			,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'INCDNT_TYPE' AND NUM_VAL4 = #{EVENT_CD}) <!-- 운행위반유형  -->
 			,#{ROUT_ID}
-			,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, DATE_FORMAT(#{UPD_DTM}, '%Y-%m-%d')))  <!--alloc no 찾기 -->
-			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, TIME_FORMAT(#{UPD_DTM}, '%H:%i:%S'))) <!--oper sn 찾기 -->			
+			,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, #{OPER_DT}))  <!--alloc no 찾기 -->
+			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, #{UPD_DTM})) <!--oper sn 찾기 -->			
 			,#{COURSE_ID}
 			,#{UPD_DTM}
 			,#{BUS_NO}
