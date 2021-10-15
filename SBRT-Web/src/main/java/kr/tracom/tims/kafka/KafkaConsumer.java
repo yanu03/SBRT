@@ -118,8 +118,9 @@ public class KafkaConsumer {
 				break;
 				
 			case PlCode.OP_EVENT_REQ:
-//				wsMessage = eventRequest.handle(timsMessage, sessionId);
-				map = eventRequest.handle(timsMessage, sessionId);
+				//map = eventRequest.handle(timsMessage, sessionId);
+				eventRequest.receiveKafka(kafkaMessage); //이벤트는 쓰레드로 별도 처리
+				
 				break;
 				
 			case PlCode.OP_EVENT_RES:
@@ -202,7 +203,8 @@ public class KafkaConsumer {
 				break;
 				
 			case PlCode.OP_EVENT_REQ:
-				map = eventRequest.handle(timsMessage, sessionId);
+				//map = eventRequest.handle(timsMessage, sessionId);
+				eventRequest.receiveKafka(kafkaMessage); //이벤트는 쓰레드로 별도 처리
 				break;
 				
 			case PlCode.OP_EVENT_RES:

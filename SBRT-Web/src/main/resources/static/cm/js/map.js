@@ -57,7 +57,12 @@ var RoutMAP = function(){
 	this.rightClickOverlay = null;
 	this.dsptchOverlay = null;
 	this.dsptchOverArr = [];
+	this.eventOverlay = null;
+	this.eventOverArr = [];
 	this.isDsptch = "off";
+	this.divDsptch = "";
+	this.isEvent = "off";
+	this.divEvent = "";
 }
 
 /**노선 맵 시작**/
@@ -894,8 +899,12 @@ routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid
 	}
 	
 	var marker = null;
+	
 	if(idx==focusIdx) {
 		zIndex = 6;
+		if (typeof data.VHC_ID != "undefined") {
+			zIndex = 9999;	
+		}
 		// 마커 이미지를 생성합니다    
 		marker = new kakao.maps.Marker({
 			position : new kakao.maps.LatLng(data.GPS_Y, data.GPS_X), // Marker의 중심좌표 // 설정.
@@ -916,15 +925,25 @@ routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid
 			zIndex: zIndex
 		});
 	}
-	
+		
 	marker.normalImage = markerImage;
-	if(routMap.mapInfo[mapId].isDsptch == "off") {
-		routMap.showBubbleOverlay(mapId, data, marker, idx, focusIdx);
-		routMap.showClickBusOverlay(mapId, data, idx, focusIdx, marker);
-	}
+	
+	//오버레이 관련
+	//디스패치 오버레이가 아니면
+
+	routMap.showBubbleOverlay(mapId, data, marker, idx, focusIdx);
+		//routMap.showClickBusOverlay(mapId, data, idx, focusIdx, marker);
 	
 	if(routMap.mapInfo[mapId].isDsptch == "on") {
-		routMap.showDsptchOverlay(mapId, data, idx, focusIdx, marker);
+		if(idx == focusIdx) {
+			routMap.showDsptchOverlay(mapId, data, idx, focusIdx, marker);
+		}
+	}
+	
+	if(routMap.mapInfo[mapId].isEvent == "on") {
+		if(idx == focusIdx) {
+			routMap.showEventOverlay(mapId, data, idx, focusIdx, marker);
+		}
 	}
 	
 	marker.setMap(routMap.mapInfo[mapId].map); //Marker가 표시될 Map 설정.
@@ -970,6 +989,10 @@ routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid
 	
 	
 	kakao.maps.event.addListener(marker, 'rightclick', function() {
+//		var position2 = new kakao.maps.LatLng(36.482456, 127.297272);
+//		routMap.mapInfo[mapId].busOverArr[idx].setPosition(position2);
+		
+		
 		routMap.removeRightClickOverlay(mapId);
 		
 		var rightClickOverlay = null;
@@ -1005,13 +1028,12 @@ routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid
 
 routMap.showBubbleOverlay = function(mapId, data, marker, idx, focusIdx) {
 	var zIndex= 5;
-	
 	var overlayName = null;
 	var overlay = null;
 	var msg = "";
 	
 	//정류장 or 교차로
-	if (typeof data.NODE_TYPE != "undefined" && data.NODE_TYPE != "") {
+	if (typeof data.VHC_ID == "undefined") {
 		if(data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP){
 			 msg = "<div class = 'customoverlay busstop'>";
 			 
@@ -1038,6 +1060,7 @@ routMap.showBubbleOverlay = function(mapId, data, marker, idx, focusIdx) {
 	
 	//버스
 	else {
+		overlayName = "번호없음";
 		if (typeof data.VHC_NO != "undefined") {
 			overlayName = data.VHC_NO
 		} else if (typeof data.RPC_VHC_NO != "undefined") {
@@ -1055,15 +1078,32 @@ routMap.showBubbleOverlay = function(mapId, data, marker, idx, focusIdx) {
 		position: marker.getPosition(),
 		zIndex : zIndex
 	});
-	
 
-	
-	if(idx!=focusIdx) {
-		kakao.maps.event.addListener(marker, 'mouseover', routMap.makeOverListener(routMap.mapInfo[mapId].map, null, overlay));
-		kakao.maps.event.addListener(marker, 'mouseout', routMap.makeOutListener(routMap.mapInfo[mapId],null,overlay,null));
+	if (typeof data.VHC_ID == "undefined" && data.NODE_TYPE =="NT002") {
+		overlay.setMap(routMap.mapInfo[mapId].map);
 	}
 	
-	if (typeof data.NODE_TYPE != "undefined") {
+	else {
+		if(idx==focusIdx) {
+			overlay.setZIndex(10000);
+			//routMap.mapInfo[mapId].overArr[focusIdx].setMap(routMap.mapInfo[mapId].map);
+			overlay.setMap(routMap.mapInfo[mapId].map);
+		}
+		
+		if(idx!=focusIdx) {
+			kakao.maps.event.addListener(marker, 'mouseover', routMap.makeOverListener(routMap.mapInfo[mapId].map, null, overlay));
+			kakao.maps.event.addListener(marker, 'mouseout', routMap.makeOutListener(routMap.mapInfo[mapId],null,overlay,null));
+		}		
+	}
+
+	
+	if (typeof data.VHC_ID == "undefined") {
+		routMap.mapInfo[mapId].overlay = overlay;
+		routMap.mapInfo[mapId].overArr.push(routMap.mapInfo[mapId].overlay);		
+	}
+	
+	else {
+		
 		routMap.mapInfo[mapId].busOverlay = overlay;
 		
 		if(idx<routMap.mapInfo[mapId].busOverArr.length){
@@ -1073,11 +1113,6 @@ routMap.showBubbleOverlay = function(mapId, data, marker, idx, focusIdx) {
 			routMap.mapInfo[mapId].busOverArr.push(routMap.mapInfo[mapId].busOverlay);
 			
 		}
-	}
-	
-	else {
-		routMap.mapInfo[mapId].overlay = overlay;
-		routMap.mapInfo[mapId].overArr.push(routMap.mapInfo[mapId].overlay);
 	}
 	
 }
@@ -1284,55 +1319,234 @@ routMap.showClickBusOverlay = function(mapId, data, idx, focusIdx, marker) {
 }
 
 routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
+	var zIndex = 100000;
+	var showMessage = "";
+	var min = "";
+	var sec = "";
+	if(Math.abs(parseInt(data.MESSAGE) >= 60)) {
+		min = Math.abs(parseInt(data.MESSAGE/60)) + "분 ";
+	}
+		sec = Math.abs(parseInt(data.MESSAGE%60)) + "초 ";
 
-	var zIndex = 5;
-	
-	var dsptchMsg = "";
-	
-	dsptchMsg += '<div class="dsptchMessagePopup clickoverlay" id="busInfoPopup" style="position: absolute;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
-	dsptchMsg += '<a href="javascript:void(0)" id="busInfo-closer" class="close"><span class="blind">닫기</span></a>'
-	dsptchMsg += '<div id="popup-content">'
-	dsptchMsg += '<div class="tit"><span style="margin-right: 40px; word-wrap:break-word; white-space: normal;"><strong>'+data.VHC_NO+'</strong></span></div>' 
-	dsptchMsg += '<div class="content">' 
-	dsptchMsg += '<div class="trafficInfor">' 
-	dsptchMsg += '<table class="tby03">' 
-	dsptchMsg += '<caption>디스패치메시지</caption>' 
-	dsptchMsg += '<colgroup>' 
-	dsptchMsg += '<col style="width:*">' 
-	dsptchMsg += '<col style="width:19%">' 
-	dsptchMsg += '<col style="width:13%">' 
-	dsptchMsg += '<col style="width:19%">' 
-	dsptchMsg += '<col style="width:13%">' 
-	dsptchMsg += '</colgroup>' 
-	dsptchMsg += '<tbody id="overlay_tbody">' 
-	dsptchMsg += '<tr> '
-	dsptchMsg += '<th style="font-size: 10px;">메시지내용</th>' 
-	dsptchMsg += '<td style="font-size: 10px; padding: 5px;" colspan="4" id="">'
-	dsptchMsg +=  '<div style="white-space: normal;">'+data.MESSAGE+'</div></td>' 
-	dsptchMsg += '</tr>'
-	dsptchMsg += '</tbody>' 
-	dsptchMsg += '</table>' 
-	dsptchMsg += '</div> </div>'
-	dsptchMsg += '</div></div>'	
-	
-	dsptchOverlay = new kakao.maps.CustomOverlay({
-		content: dsptchMsg,
-		position: marker.getPosition(),
-		zIndex : zIndex
-	});
-	
-	routMap.mapInfo[mapId].dsptchOverlay = dsptchOverlay;
-	
-	if(idx<routMap.mapInfo[mapId].busOverArr.length){
-		routMap.mapInfo[mapId].dsptchOverArr[idx] = routMap.mapInfo[mapId].dsptchOverlay;
+	if (routMap.mapInfo[mapId].divDsptch == "DP001" || routMap.mapInfo[mapId].divDsptch == "DP002") {
+		if (routMap.mapInfo[mapId].divDsptch == "DP001") {
+			showMessage = data.MESSAGE;
+		}	
+		else if (routMap.mapInfo[mapId].divDsptch == "DP002") {
+			
+			if(parseInt(data.MESSAGE) > 0) {
+				showMessage = min+ sec+ "느립니다.";
+			} else if(parseInt(data.MESSAGE) < 0){
+				showMessage = min+ sec +"빠릅니다.";
+			} 
+			
+		}	
+		var dsptchMsg = "";
+		
+		dsptchMsg += '<div class="dsptchMessagePopup clickoverlay" id="busInfoPopup" style="position: absolute;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
+		dsptchMsg += '<a href="javascript:void(0)" id="busInfo-closer" class="close"><span class="blind">닫기</span></a>'
+		dsptchMsg += '<div id="popup-content">'
+		dsptchMsg += '<div class="tit"><span style="margin-right: 40px; word-wrap:break-word; white-space: normal;"><strong>'+data.VHC_NO+'</strong></span></div>' 
+		dsptchMsg += '<div class="content">' 
+		dsptchMsg += '<div class="trafficInfor">' 
+		dsptchMsg += '<table class="tby03">' 
+		dsptchMsg += '<caption>디스패치메시지</caption>' 
+		dsptchMsg += '<colgroup>' 
+		dsptchMsg += '<col style="width:*">' 
+		dsptchMsg += '<col style="width:19%">' 
+		dsptchMsg += '<col style="width:13%">' 
+		dsptchMsg += '<col style="width:19%">' 
+		dsptchMsg += '<col style="width:13%">' 
+		dsptchMsg += '</colgroup>' 
+		dsptchMsg += '<tbody id="overlay_tbody">' 
+		dsptchMsg += '<tr> '
+		dsptchMsg += '<th style="font-size: 10px;">메시지내용</th>' 
+		dsptchMsg += '<td style="font-size: 10px; padding: 5px;" colspan="4" id="">'
+		dsptchMsg +=  '<div style="white-space: normal;">'+showMessage+'</div></td>' 
+		dsptchMsg += '</tr>'
+		dsptchMsg += '</tbody>' 
+		dsptchMsg += '</table>' 
+		dsptchMsg += '</div> </div>'
+		dsptchMsg += '</div></div>'	
+		
+		dsptchOverlay = new kakao.maps.CustomOverlay({
+			content: dsptchMsg,
+			position: marker.getPosition(),
+			zIndex : zIndex
+		});
+		
+		routMap.mapInfo[mapId].dsptchOverlay = dsptchOverlay;
+		/*if(idx<routMap.mapInfo[mapId].busOverArr.length){
+			routMap.mapInfo[mapId].dsptchOverArr[idx] = routMap.mapInfo[mapId].dsptchOverlay;
+		}
+		else{
+			routMap.mapInfo[mapId].dsptchOverArr.push(routMap.mapInfo[mapId].dsptchOverlay);
+		}*/
+		//routMap.mapInfo[mapId].dsptchOverArr.push(routMap.mapInfo[mapId].dsptchOverlay);
+		routMap.mapInfo[mapId].dsptchOverArr[0] = routMap.mapInfo[mapId].dsptchOverlay;
+		dsptchOverlay.setMap(routMap.mapInfo[mapId].map);	
+	}		
+		
+	else if (routMap.mapInfo[mapId].divDsptch == "DP003") {
+		showMessage = min+ sec +"정차하세요.";
+		$("#stopMessage").text(showMessage);
 	}
-	else{
-		routMap.mapInfo[mapId].dsptchOverArr.push(routMap.mapInfo[mapId].dsptchOverlay);
-	}
-	
-	dsptchOverlay.setMap(routMap.mapInfo[mapId].map);
 	
 	routMap.mapInfo[mapId].isDsptch = "off";
+	
+	if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
+		setTimeout(function() {
+			routMap.mapInfo[mapId].dsptchOverArr[0].setMap(null);
+			routMap.mapInfo[mapId].dsptchOverArr[0] = null;
+		},5000);
+	}
+}
+
+routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
+	var zIndex = 100000;
+	var eventMsg = "";
+	var stopTime = 0;
+	var prevNodeType = "";
+	var nextNodeType = "";
+	var min = "";
+	var sec = "";
+	
+	if(data.NODE_TYPE == "NT001") {
+		prevNodeType = "교차로";
+	} else if(data.NODE_TYPE == "NT002"){
+		prevNodeType = "정류소";
+	}
+	
+	if(data.NEXT_NODE_TYPE == "NT001") {
+		nextNodeType = "교차로"; 
+	} else if(data.NEXT_NODE_TYPE == "NT002") {
+		nextNodeType = "정류소";
+	}
+	
+	if (routMap.mapInfo[mapId].divEvent == "ET001") {
+		eventMsg += '<div class="busInfoPopup clickoverlay" id="busInfoPopup" style="position: absolute;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
+		eventMsg += '<a href="javascript:void(0)" id="busInfo-closer" class="close"><span class="blind">닫기</span></a>'
+		eventMsg += '<div id="popup-content">'
+		eventMsg += '<div class="tit"><span id="event_type" style="margin-right: 40px; word-wrap:break-word; white-space: normal;"><strong>'+data.EVT_TYPE+'</strong></span></div>' 
+		eventMsg += '<div class="content">' 
+		eventMsg += '<div class="trafficInfor">' 
+		eventMsg += '<table class="tby03">' 
+		eventMsg += '<caption>이벤트정보</caption>' 
+		eventMsg += '<colgroup>' 
+		eventMsg += '<col style="width:*">' 
+		eventMsg += '<col style="width:19%">' 
+		eventMsg += '<col style="width:13%">' 
+		eventMsg += '<col style="width:19%">' 
+		eventMsg += '<col style="width:13%">' 
+		eventMsg += '<col style="width:19%">' 
+		eventMsg += '<col style="width:13%">' 
+		eventMsg += '<col style="width:19%">' 
+		eventMsg += '<col style="width:13%">' 
+		eventMsg += '</colgroup>' 
+		eventMsg += '<tbody id="overlay_tbody">' 
+		eventMsg += '<tr>'
+		eventMsg += '<th style="font-size: 10px;">이전 '+prevNodeType+'</th>' 
+		eventMsg += '<td style="font-size: 10px; padding: 5px; white-space: break-spaces;" colspan="4" id="">'
+		eventMsg +=  '<div style="width: 80px">'+data.PREV_NODE_NM+'</div></td>' 
+		eventMsg += '<th style="font-size: 10px;">다음 '+nextNodeType+'</th>' 
+		eventMsg += '<td style="font-size: 10px; padding: 5px; white-space: break-spaces;" colspan="4" id="">'
+		eventMsg +=  '<div style="width: 80px">'+data.NEXT_NODE_NM+'</div></td>' 
+		eventMsg += '</tr>'
+		eventMsg += '<tr>'
+		eventMsg += '<th style="font-size: 10px;">현재정차시간</th>' 
+		eventMsg += '<td style="font-size: 10px; padding: 5px;" colspan="8" id="">'
+		eventMsg +=  '<div id="cur_stop_tm" style="width: 80px">0초</div></td>' 
+		eventMsg += '</tr>'
+		eventMsg += '<tr>'
+		eventMsg += '<th style="font-size: 10px;">정차메시지</th>' 
+		eventMsg += '<td style="font-size: 10px; padding: 5px;" colspan="8" id="">'
+		eventMsg +=  '<div id="stopMessage" style="width: 80px"></div></td>' 
+		eventMsg += '</tr>'
+		eventMsg += '</tbody>' 
+		eventMsg += '</table>' 
+		eventMsg += '</div> </div>'
+		eventMsg += '</div></div>'
+			
+		addStopTime = setInterval(function() {
+			stopTime++;
+			
+			if(stopTime >= 60) {
+				min = parseInt((stopTime/60))+"분 ";
+			}
+			sec = parseInt((stopTime%60))+"초";
+			
+			var total = min+sec;
+			
+			$("#cur_stop_tm").text(total);
+		}, 1000);
+	}
+	
+	else {
+		if (routMap.mapInfo[mapId].eventOverArr[0] != null) {
+			
+			if(routMap.mapInfo[mapId].divEvent == "ET001"){
+				$("#event_type").text(data.EVT_TYPE);
+			}
+			
+			setTimeout(function() {
+				clearInterval(addStopTime);
+				routMap.mapInfo[mapId].eventOverArr[0].setMap(null);
+				routMap.mapInfo[mapId].eventOverArr[0] = null;		
+			},1500);
+			
+		}		
+	}
+	
+/*	else if (routMap.mapInfo[mapId].divEvent == "ET002") {
+		if (routMap.mapInfo[mapId].eventOverArr[0] != null) {
+			
+			$("#event_type").text(data.EVT_TYPE);
+			
+			setTimeout(function() {
+				clearInterval(addStopTime);
+				routMap.mapInfo[mapId].eventOverArr[0].setMap(null);
+				routMap.mapInfo[mapId].eventOverArr[0] = null;		
+			},1500);
+			
+		}
+	}
+	
+	//그 외 이벤트
+	else if (routMap.mapInfo[mapId].divEvent == "ETC") {
+		if (routMap.mapInfo[mapId].eventOverArr[0] != null) {
+			routMap.mapInfo[mapId].eventOverArr[0].setMap(null);
+			routMap.mapInfo[mapId].eventOverArr[0] = null;
+		}
+	}*/
+	
+	//도착 이벤트
+	if (routMap.mapInfo[mapId].divEvent == "ET001") {
+		eventOverlay = new kakao.maps.CustomOverlay({
+			content: eventMsg,
+			position: marker.getPosition(),
+			zIndex : zIndex
+		});
+		
+		routMap.mapInfo[mapId].eventOverlay = eventOverlay;
+		/*if(idx<routMap.mapInfo[mapId].eventOverArr.length){
+			routMap.mapInfo[mapId].eventOverArr[idx] = routMap.mapInfo[mapId].eventOverlay;
+		}
+		else{
+			routMap.mapInfo[mapId].eventOverArr.push(routMap.mapInfo[mapId].eventOverlay);
+		}*/
+		//routMap.mapInfo[mapId].eventOverArr.push(routMap.mapInfo[mapId].eventOverlay);
+		routMap.mapInfo[mapId].eventOverArr[0] = routMap.mapInfo[mapId].eventOverlay;
+		eventOverlay.setMap(routMap.mapInfo[mapId].map);
+		
+		routMap.mapInfo[mapId].isEvent = "off";
+		routMap.mapInfo[mapId].divEvent = "";
+		
+		/*setTimeout(function() {
+			routMap.mapInfo[mapId].eventOverArr[0].setMap(null);
+			routMap.mapInfo[mapId].eventOverArr[0] = null;
+		},5000);*/
+		
+	}
 }
 
 //범례 SHOW 메소드
@@ -2100,7 +2314,7 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid, tab1, tab2, t
 
 	marker.normalImage = markerImage;
 	routMap.showBubbleOverlay(mapId, data, marker, idx, focusIdx);
-	routMap.showClickOverlay(mapId, data, idx, focusIdx, marker, markerImage);
+	//routMap.showClickOverlay(mapId, data, idx, focusIdx, marker, markerImage);
 	
 
 
@@ -2108,8 +2322,8 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid, tab1, tab2, t
 	// 마커에 click 이벤트를 등록합니다
 	kakao.maps.event.addListener(marker, 'click', function() {
 		//일단 하드코딩 문제 생길시 수정 필요
-		routMap.removeRightClickOverlay("map_MO0101_vehicle");
-		routMap.removeAllOverlay("map_MO0101_sttn");		
+//		routMap.removeRightClickOverlay("map_MO0101_vehicle");
+//		routMap.removeAllOverlay("map_MO0101_sttn");		
 		routMap.removeAllOverlay("map_MO0101_crs");		
 		
 		if (!routMap.mapInfo[mapId].selectedMarker
@@ -3524,6 +3738,26 @@ routMap.showVehicleClickOverlay2 = function(mapId, json, cur_vhc_id, grid, index
 	}
 }
 
+routMap.moveVehicle = function(mapId, json, index, focusIdx) {
+	var latLng = new kakao.maps.LatLng(json.GPS_Y, json.GPS_X);
+	
+	routMap.mapInfo[mapId].busMarkers[index].setPosition(latLng);
+	routMap.mapInfo[mapId].busOverArr[index].setPosition(latLng);
+	
+	if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
+		routMap.mapInfo[mapId].dsptchOverArr[0].setPosition(latLng);
+	}
+	
+	if(routMap.mapInfo[mapId].eventOverArr[0] != null) {
+		routMap.mapInfo[mapId].eventOverArr[0].setPosition(latLng);
+	}
+	
+	if(json != null){
+		if(focusIdx!=-1 && focusIdx == index){
+			routMap.moveMap(mapId, json.GPS_Y, json.GPS_X);
+		}
+	}	
+}
 
 routMap.changeLocVehicleByClick = function(mapId, grid, curIndex, e){
 	var data = com.getGridViewDataList(grid);
@@ -3556,7 +3790,10 @@ routMap.showVehicle3 = function(mapId, json, grid) {
 routMap.showVehicleClickOverlay = function(mapId, list, vhc_id, grid) {
 
 	var focusIdx = -1;
+	
+
 	routMap.initBus(mapId);
+
 	
 	if(list != null && list.length != 0) {
 		for(var i = 0; i < list.length; i++) {

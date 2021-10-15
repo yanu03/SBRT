@@ -71,4 +71,10 @@ public class OperPlanController extends ControllerSupport {
 		result.setData("dlt_BRT_COR_DTL_INFO", operPlanService.selectCourseDtlList());
 		return result.getResult();
 	}
+	
+	@RequestMapping("/operPlan/selectTargetCourseDtlList")
+	public @ResponseBody Map<String, Object> dlt_BRT_TARGET_COR_DTL_INFO() throws Exception {
+		result.setData("dlt_BRT_TARGET_COR_DTL_INFO", operPlanService.selectTargetCourseDtlList());
+		return result.getResult();
+	}
 }
