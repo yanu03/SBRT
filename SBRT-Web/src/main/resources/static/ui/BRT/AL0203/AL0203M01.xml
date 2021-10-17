@@ -64,6 +64,7 @@
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 						<w2:column id="WAY_ASC_NM" name="상행명" dataType="text"></w2:column>
 						<w2:column id="WAY_DESC_NM" name="하행명" dataType="text"></w2:column>
+						<w2:column id="ACCRU_LEN" name="누적길이" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				
@@ -93,7 +94,9 @@
 				
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_VIEW_OPER_PL_NODE_INFO" saveRemovedData="true">
 					<w2:columnInfo>
+						<w2:column id="chk" name="선택" dataType="text" defaultValue="0"></w2:column>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 						<w2:column id="DAY_DIV" name="요일구분" dataType="text"></w2:column>
 						<w2:column id="OPER_SN" name="운행순번" dataType="text"></w2:column>
 						<w2:column id="ARRV_TM_0"  name="도착시간_0" dataType="text"></w2:column><w2:column id="DPRT_TM_0" name="출발시간_0" dataType="text"></w2:column>
@@ -150,7 +153,6 @@
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_sub_search">
 					<w2:keyInfo>
-					
 						<w2:key id="DAY_DIV" name="요일구분" dataType="text"></w2:key>
 						<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
 						<w2:key id="NODE_TYPE" name="노드유형" dataType="text"></w2:key>
@@ -204,7 +206,8 @@
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions);
 		
 		var subOptions2 = {
-			SEARCH:[{cbFnc:scwin.openPopUpChart,nm:"시공도 보기"}
+			SEARCH:[{cbFnc:scwin.openPopUpChart,nm:"거리 시공도 보기"}
+			//,{cbFnc:scwin.openPopUpChart,nm:"정류소 시공도 보기"}
 			]
 		};
 
@@ -260,6 +263,7 @@
 		dlt_VIEW_OPER_PL_NODE_INFO.removeAll();
 		
 		gridHeader +='<w2:row style="" id="first_row">';
+		gridHeader +='<w2:column blockSelect="false" readOnly="true" id="chkHeader" style="height:20px" inputType="checkbox" width="42" value="선택" rowSpan="2" sortable="false"></w2:column>';
 		gridHeader +='<w2:column blockSelect="false" id="'+'h'+'OPER_SN'+'" style="height:20px" inputType="text" width="70" value="'+'운행회차'+'" rowSpan="2"></w2:column>';
 		for(var i = 0; i < maxCnt; i++) {
 			var nodeNm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(i, "NODE_NM");
@@ -267,6 +271,7 @@
 		}
 		gridHeader +='</w2:row>';
 		
+		gridBody += '<w2:column blockSelect="false" disabled="false" falseValue="0" defaultValue="" trueValue="1" id="chk" readOnly="false" style="height:20px" inputType="checkbox" width="70"></w2:column>';
 		gridBody += '<w2:column blockSelect="false" id="'+'OPER_SN'+'" style="height:20px" inputType="text" width="70"></w2:column>';
 		
 		gridHeader +='<w2:row style="" id="second_row">';
@@ -281,8 +286,9 @@
 		
 		var rowIndex = 0;
 		var rowCnt = 0;
-		var j = 0;
+		
 		for(var i = 0; i < rowCntArr.length; i++) {
+			var j = 0;
 			rowIndex += rowCnt;
 			rowCnt =  rowCntArr[i].CNT;
 			var columnVal = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(rowIndex+j, "OPER_SN");
@@ -304,7 +310,7 @@
 		//gridView 정보 정의 
 		//xml 형식을 정의 하면 <w2:gridView 에 xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" 포함 합니다.
 		var gridStr = '<w2:gridView xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" dataList="dlt_VIEW_OPER_PL_NODE_INFO" '
-						+ 'scrollByColumn="true" id="AL0203G1" ev:onrowindexchange="scwin.AL0203G1_onrowindexchange" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" mergeCol="OPER_SN, WAY_DIV" >'
+						+ 'scrollByColumn="true" ignoreCellClick="false"  fixedColumnWithHidden="true" id="AL0203G1" ev:onrowindexchange="scwin.AL0203G1_onrowindexchange" class ="cm_grid right" useShiftKey="false" mergeCells="byrestriccol" focusMode="row" mergeCol="OPER_SN, WAY_DIV" >'
 		+ '<w2:header id="header1" style="text-align:left">'
 		+ gridHeader
 		+'</w2:header>'
@@ -371,12 +377,27 @@
 	};
 	
 	scwin.openPopUpChart = function(){
+		debugger;
+
+		var jsonData = AL0203G1.getCheckedJSON("chk");
+		var chkCnt = jsonData.length;
+		
+		var transData = new Array();
+		for(var i=0; i<chkCnt; i++){
+			for(var j=0; j<dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowCount(); j++){
+				if(jsonData[i].OPER_SN  ==  dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(j, "OPER_SN")){
+					transData.push(dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowJSON(j));
+				}
+			}
+		}
+		
+		//var operSn = dlt_VIEW_OPER_PL_NODE_INFO.getCellData(AL0203G1.getCheckedIndex("chk"), "OPER_SN");
 		var routId = dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "ROUT_ID");
 		var dayDiv = dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "DAY_DIV");
 		var routNm = dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "ROUT_NM");
-		var operSn = dlt_VIEW_OPER_PL_NODE_INFO.getCellData(AL0203G1.getFocusedRowIndex(), "OPER_SN");
+		//var operSn = dlt_VIEW_OPER_PL_NODE_INFO.getCellData(AL0203G1.getFocusedRowIndex(), "OPER_SN");
 		
-		 var data = { data : routId, data2 : dayDiv, data3 : routNm, data4 : operSn, callbackFn : "" };
+		 var data = { data : routId, data2 : dayDiv, data3 : routNm, data4:transData, data5:chkCnt, callbackFn : "" };
          var options = { id : "AL0203P0",
          				 width : "1600px",
          				 height : "800px",
@@ -674,6 +695,9 @@
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row3">
+									<w2:column blockSelect="false" readOnly="false" id="chkHeader" style="height:20px" 
+									inputType="checkbox" width="42" value="선택" rowSpan="2" sortable="false">
+									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:40px;" id="column15"
 										value="운행회차" blockSelect="false" displayMode="label" colSpan="" rowSpan="2">
 									</w2:column>
@@ -692,6 +716,9 @@
 							</w2:header>
 							<w2:gBody style="" id="gBody1">
 								<w2:row style="" id="row2">
+									<w2:column blockSelect="false" disabled="false" falseValue="0" defaultValue="0" trueValue="1" id="chk" 
+									readOnly="false" style="height:20px" inputType="checkbox" width="70">
+									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="OPER_SN" value=""
 										blockSelect="false" displayMode="label" readOnly="true">
 									</w2:column>
