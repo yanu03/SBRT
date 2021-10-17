@@ -21,4 +21,5 @@ public interface SI0200Mapper {
 	public int SI0200G0D0(Map param);
 	
 	public int SI0200G0U0(Map param);
+	
 }

@@ -62,6 +62,12 @@ public class MO0101Service extends ServiceSupport{
 		// TODO Auto-generated method stub
 		Map param = getSimpleDataMap("dma_search");
 		return mo0101Mapper.MO0101G4R0(param);
+	}
+	
+	public List MO0101G5R0() throws Exception {
+		// TODO Auto-generated method stub
+		Map param = getSimpleDataMap("dma_search");
+		return mo0101Mapper.MO0101G5R0(param);
 	}	
 
 	public List<Map> MO0101SCK() throws Exception{

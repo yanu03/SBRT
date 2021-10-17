@@ -583,21 +583,31 @@ FROM BRT_OPER_ALLOC_PL_NODE_INFO A
 	</select>
 
 	<select id="selectCourseDtlList" resultType="Map">
-	SELECT A.COR_ID,
-		A.ROUT_ID,
-		A.ROUT_SN,
-		A.MIN_REST_TM,
-		A.COR_DTL_COLOR
-	FROM BRT_COR_DTL_INFO A
-	<where>
-	<if test="@kr.tracom.util.CommonUtil@notEmpty(COR_IDS)">
-		<foreach collection="COR_IDS" item="item" separator=" OR "> COR_ID = #{item}</foreach>
-	</if>
-	<if test="@kr.tracom.util.CommonUtil@notEmpty(COR_ID)">
-		AND A.COR_ID = #{COR_ID}
-	</if>
-	</where>
+	SELECT	A.COR_ID
+			,	A.MIN_REST_TM
+			,	A.ROUT_SN
+			,	A.COR_DTL_COLOR
+			,	B.ROUT_ID
+			,	B.ROUT_NM
+			,	B.ROUT_TYPE
+			,	B.STTN_CNT
+			,	B.ROUT_LEN
+			,	B.CURVATURE
+			,	B.JIT_DSPCH_YN
+			,	B.ST_STTN_NM
+			,	B.ED_STTN_NM
+			,	B.WAY_DIV
+	FROM			BRT_COR_DTL_INFO A
+		INNER JOIN	BMS_ROUT_MST B
+		ON			A.ROUT_ID = B.ROUT_ID
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(COR_IDS)">
+		WHERE A.COR_ID IN
+			<foreach collection="COR_IDS" item="item" index="index"  open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(COR_ID)">
+			WHERE A.COR_ID = #{COR_ID}
+		</if>
 	</select>
-	
-
 </mapper>

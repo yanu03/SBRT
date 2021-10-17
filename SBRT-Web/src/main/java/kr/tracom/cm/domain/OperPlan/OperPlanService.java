@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.tracom.cm.domain.Common.CommonMapper;
 import kr.tracom.cm.support.ServiceSupport;
@@ -1096,7 +1098,23 @@ public class OperPlanService extends ServiceSupport {
 	
 	public List<Map<String, Object>> selectCourseDtlList() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		String temp[] = map.get("COR_IDS").toString().replace("[","").replace("]","").replace(" ","").split(",");
+		map.put("COR_IDS", temp);
 		return operPlanMapper.selectCourseDtlList(map);
+	}
+
+	public List<Map<String, Object>> selectTargetCourseDtlList() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		String temp[] = map.get("COR_IDS").toString().replace("[","").replace("]","").replace(" ","").split(",");
+		
+		Map<String, Object> param = new HashMap<String, Object>();
+		List<Map<String, Object>>  list  =new ArrayList<>();
+		
+		for(int i=0; i<temp.length; i++ ) {
+			param.put("COR_ID",temp[i]);
+			list.addAll(operPlanMapper.selectCourseDtlList(param));
+		}
+		return list;
 	}
 
 }
