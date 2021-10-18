@@ -77,7 +77,7 @@ public class SI0402Service extends ServiceSupport {
 					}
 					
 					if(key!=null)data.put("NODE_ID",key.get("SEQ"));
-					if(CommonUtil.empty(data.get("OLD_NODE_SN"))){
+					if(CommonUtil.empty(data.get("OLD_NODE_SN"))||"0".equals(data.get("OLD_NODE_SN"))){
 						iCnt += si0402Mapper.SI0402G1I0(data);
 					}
 					else {
