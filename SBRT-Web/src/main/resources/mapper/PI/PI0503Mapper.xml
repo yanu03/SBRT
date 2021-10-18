@@ -14,19 +14,21 @@
 		ON		 	 A.ORGA_ID = B.ORGA_ID	
 		LEFT JOIN	 BMS_VDO_INFO C
 		ON   	     B.VDO_ID = C.VDO_ID
-		GROUP BY 	 A.ORGA_ID
+		
+		
 
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-				AND ORGA_ID LIKE CONCAT('%',#{CONTENT},'%') || ORGA_NM LIKE CONCAT('%',#{CONTENT},'%') 
+				AND A.ORGA_ID LIKE CONCAT('%',#{CONTENT},'%') || ORGA_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 			<if test="TYPE == 'ORGA_ID'">
-				AND ORGA_ID LIKE CONCAT('%',#{CONTENT},'%')
+				AND A.ORGA_ID LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
 			<if test="TYPE == 'ORGA_NM'">
-				AND ORGA_NM LIKE CONCAT('%',#{CONTENT},'%') 
+				AND A.ORGA_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 		</where>
+		GROUP BY A.ORGA_ID
 	</select>	
 
 	<select id="PI0503SHI0" resultType="Map">
