@@ -77,6 +77,7 @@
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 						<w2:column id="WAY_ASC_NM" name="상행명" dataType="text"></w2:column>
 						<w2:column id="WAY_DESC_NM" name="하행명" dataType="text"></w2:column>
+						<w2:column id="ACCRU_LEN" name="누적길이" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 		</w2:dataCollection>
@@ -99,22 +100,26 @@
 	<script type="text/javascript" lazy="false"><![CDATA[
 
 	scwin.onpageload = function() {
-	
+		debugger;
 		scwin.param = com.getParameter();
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
 		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		
+		dlt_BRT_OPER_ALLOC_PL_NODE_INFO.setJSON(scwin.param.data5, true);
+		dlt_BRT_OPER_ALLOC_RL_NODE_INFO.setJSON(scwin.param.data6, true);
+		
 		
 		dma_sub_search.set("ROUT_ID", scwin.param.data);
 		dma_sub_search.set("DAY_DIV", scwin.param.data2);
 		dma_sub_search.set("ROUT_NM", scwin.param.data3);
 		dma_sub_search.set("OPER_SN", scwin.param.data4);
 		
-		com.executeSubmission(sub_AL0203G1R0);		
-		com.executeSubmission(sub_AL0203G0P0);
-		com.executeSubmission(sub_OPER_ALL_REAL_NODE);
+		//com.executeSubmission(sub_AL0203G1R0);		
+		//com.executeSubmission(sub_AL0203G0P0);
+		//com.executeSubmission(sub_OPER_ALL_REAL_NODE);
 		
-		dma_sub_search.set("OPER_SN", ' ('+dma_sub_search.get("OPER_SN")+')회차');		
-				
+		dma_sub_search.set("OPER_SN", dma_sub_search.get("OPER_SN")+'회차');		
+		scwin.drawChart();		
 	};
 	
 	scwin.onpageunload = function() {
@@ -200,89 +205,131 @@
 	};
 	
 	scwin.sub_OPER_ALL_REAL_NODE_submitdone = function(e) {
-		scwin.drawChart();
+	
 	};
+	
+	var CharData = function(){
+		this.seriesname = {};
+		this.data = [];
+	}
 	
 	scwin.drawChart = function(){
 		debugger;
+		
+		var category = new Array();
+		var charArray = new Array();
+		var data = new Array();
+		
+		
 		var rowCount = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowCount();
+		
 		var plAllJson = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
 		var rlAllJson = dlt_BRT_OPER_ALLOC_RL_NODE_INFO.getAllJSON();
-		var category = new Array();
-		var dataset = new Array();
-		var data = new Array();
-		var seriesname = "운행계획 : " + dma_sub_search.get("ROUT_NM") + dma_sub_search.get("OPER_SN");
+		
+		var seriesname = "운행계획 : " + dma_sub_search.get("OPER_SN");
 		
 		for(var i = 0; i < rowCount; i++ ){
-			var catego = new Object();
-			var newData = new Object();
+			var categoryJson = new Object();
+			var dataJson = new Object();
 			var realData = new Object();
 			
-			catego.label = plAllJson[i].ARRV_TM.substring(0,5);
-			newData.value = plAllJson[i].ACCRU_LEN;
+			var operSn = plAllJson[i].OPER_SN;
+			var arrvTm = plAllJson[i].ARRV_TM;
+			var dprtTm = plAllJson[i].DPRT_TM;
+			var accruLen = plAllJson[i].ACCRU_LEN;
+			var nodeType = plAllJson[i].NODE_TYPE;
 			
-			category.push(catego);
-			data.push(newData);
+			var operSnRl = rlAllJson[i].OPER_SN;
+			var arrvTmRl = rlAllJson[i].REAL_ARRV_TM;
+			var dprtTmRl = rlAllJson[i].REAL_DPRT_TM;
+			var accruLenRl = rlAllJson[i].ACCRU_LEN;
+			var nodeTypeRl = rlAllJson[i].NODE_TYPE;
+			
+			if(nodeType=='NT002'){
+				categoryJson.label = arrvTm;
+				categoryJson = JSON.stringify(categoryJson);
+				category.push(JSON.parse(categoryJson));
+				
+				dataJson.value = accruLen;
+				dataJson = JSON.stringify(dataJson);
+				data.push(JSON.parse(dataJson));
+			}
+			
+			if((nodeType=='NT002')&&(arrvTm!=dprtTm)){
+			
+				var categoryJson = new Object();
+				var dataJson = new Object();
+				
+				categoryJson.label = dprtTm;
+				categoryJson = JSON.stringify(categoryJson);
+				category.push(JSON.parse(categoryJson));
+				
+				dataJson.value = accruLen;
+				dataJson = JSON.stringify(dataJson);
+				data.push(JSON.parse(dataJson));
+			}
+			
+			if(nodeTypeRl=='NT002'){
+				categoryJson.label = arrvTmRl;
+				categoryJson = JSON.stringify(categoryJson);
+				category.push(JSON.parse(categoryJson));
+				
+				dataJson.value = accruLenRl;
+				dataJson = JSON.stringify(dataJson);
+				data.push(JSON.parse(dataJson));
+			}
+			
+			if((nodeTypeRl=='NT002')&&(arrvTm!=dprtTm)){
+			
+				var categoryJson = new Object();
+				var dataJson = new Object();
+				
+				categoryJson.label = dprtTmRl;
+				categoryJson = JSON.stringify(categoryJson);
+				category.push(JSON.parse(categoryJson));
+				
+				dataJson.value = accruLenRl;
+				dataJson = JSON.stringify(dataJson);
+				data.push(JSON.parse(dataJson));
+			}
+			
 		};
 		
+		var charData = new CharData();
+		
+		charData.data = data;
+		charData.seriesname = seriesname;
+		
+		charArray.push(charData);
 		
 		
-	 	var chart = { 
-		 	
+	 	var chart = {
 		    "categories": [
 		        {
 		            category
 		        }
 		    ],
-		    "dataset": [
-		        {
-		            seriesname,
-		          	 data
-		        },
-		        {
-		            "seriesname": "운행결과 : ",
-		             "data": [
-		                {
-		                    "value": "0"
-		                },
-		                {
-		                    "value": "30"
-		                },
-		                {
-		                    "value": "60"
-		                },
-		                {
-		                    "value": "100"
-		                },
-		                {
-		                    "value": "200"
-		                },
-		                {
-		                    "value": "300"
-		                },
-		                {
-		                    "value": "400"
-		                }
-		            ]
-		        }
-		       
-		    ]
+		    "dataset": 
+		    		charArray
 		}		
 		
-			var options = { 
-				labelStep:"7"		
-			    ,xAxisName:"시간"
-			    ,yAxisName:"거리"
-	      		,labelDisplay: "wrap"
-	      		,canvasPadding: "20"
-	      		,lineColor: "#f56363"
-	      		,valuePadding: "50"
-	      		,labelPadding: "20"
-	      		,lineThickness: "2"
-			}
+		var options = {
+			labelStep:"3"		
+			,xAxisName:"시간"
+			,yAxisName:"거리"
+	      	,labelDisplay: "wrap"
+	      	//,canvasPadding: "20"
+	      	,lineColor: "#f56363"
+	      	//,valuePadding: "50"
+	      	//,labelPadding: "20"
+	      	,lineThickness: "2"
+	      	,flatScrollBars: "1"
+	        ,scrollheight: "6"
+	        ,numVisiblePlot: "60"
+		}
 			
 			setTimeout(function() {
-				CHART.setSize(2500, 750);
+				//CHART.setSize(2500, 750);
 				CHART.setChartAttribute(options);
 				CHART.setJSONData(chart);
 			},100);

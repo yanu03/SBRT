@@ -373,6 +373,8 @@ public class EventThread extends Thread{
                  	wsDataMap.put("NEXT_NODE_TYPE", busEventMap.get("NEXT_NODE_TYPE"));
                  	wsDataMap.put("EVT_CODE", eventCd);
                  	wsDataMap.put("EVT_TYPE", eventType);
+                 	wsDataMap.put("SPEED", busEventMap.get("SPEED"));
+                 	wsDataMap.put("EVT_DATA", busEventMap.get("EVENT_DATA"));
                 	
                 	
                     break;                    
