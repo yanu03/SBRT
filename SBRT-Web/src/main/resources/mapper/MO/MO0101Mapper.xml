@@ -197,7 +197,7 @@
 		ORDER BY 		NODE_SN
 	</select>	
 	
-	<select id="MO0101G4R0" resultType="Map">
+	<select id="selectCategory" resultType="Map">
 		SELECT 			A.NODE_ID
 					,	A.MOCK_NODE_ID
 					,	A.NODE_NM
@@ -245,7 +245,7 @@
 		ORDER BY		E.NODE_SN					
 	</select>	
 	
-	<select id="MO0101G5R0" resultType="Map" parameterType="Map">
+	<select id="selectSigOper" resultType="Map" parameterType="Map">
 		SELECT 			A.ROUT_ID
 					,	A.NODE_ID
 					, 	A.NODE_SN
@@ -310,4 +310,46 @@
 	
 	</select>
 	
+	<select id="MO0101G3R0" resultType="Map" parameterType="Map">
+		
+		SELECT			DATE_FORMAT(A.OPER_DT, '%Y-%m-%d %H:%i%s') OPER_DT
+					,	A.REP_ROUT_ID
+					,	A.VHC_ID
+					,	A.UPD_DTM
+					,	A.VHC_NO
+					,	A.DRV_ID
+					,	A.COR_ID
+					,	A.ROUT_ID
+					,	A.ALLOC_NO
+					,	A.OPER_SN
+					,	A.GPS_X_RAW
+					,	A.GPS_Y_RAW
+					,	A.DRV_ANGLE
+					,	A.GPS_X
+					,	A.GPS_Y
+					,	A.CUR_SPD
+					,	A.LINK_ID
+					,	A.NODE_ID
+					,	A.NODE_SN
+					,	A.OPER_STS
+					,	A.EVT_TYPE
+					,	A.EVT_DATA
+					,	A.STOP_TM
+					,	DATE_FORMAT(A.OCR_DTM, '%H:%i:%s') OCR_DTM
+					,	B.NODE_NM
+					,	C.ORGA_NM
+					
+		FROM			BRT_OPER_EVENT_HIS A
+		LEFT JOIN	  	BMS_NODE_MST B
+			ON			A.EVT_DATA = B.NODE_ID
+		LEFT JOIN	  	BMS_VOC_ORGA_INFO C
+			ON			A.EVT_DATA = C.ORGA_ID
+	
+		WHERE			VHC_ID = #{VHC_ID}
+		AND				DATE_FORMAT(OPER_DT, '%Y-%m-%d') = CURDATE() 
+			
+		ORDER BY		OPER_DT DESC
+		LIMIT			100;			
+		
+	</select>
 </mapper>

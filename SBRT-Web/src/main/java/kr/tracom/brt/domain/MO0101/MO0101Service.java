@@ -37,7 +37,7 @@ public class MO0101Service extends ServiceSupport{
 		Map param = getSimpleDataMap("dma_search");
 		return mo0101Mapper.MO0101G0R0(param);
 	}
-
+	
 	public List MO0101G1R0() throws Exception{
 		Map param = getSimpleDataMap("dma_search");
 		return mo0101Mapper.MO0101G1R0(param);
@@ -58,16 +58,16 @@ public class MO0101Service extends ServiceSupport{
 		return mo0101Mapper.MO0101G2R0(param);
 	}
 	
-	public List MO0101G4R0() throws Exception {
+	public List selectCategory() throws Exception {
 		// TODO Auto-generated method stub
 		Map param = getSimpleDataMap("dma_search");
-		return mo0101Mapper.MO0101G4R0(param);
+		return mo0101Mapper.selectCategory(param);
 	}
 	
-	public List MO0101G5R0() throws Exception {
+	public List selectSigOper() throws Exception {
 		// TODO Auto-generated method stub
 		Map param = getSimpleDataMap("dma_search");
-		return mo0101Mapper.MO0101G5R0(param);
+		return mo0101Mapper.selectSigOper(param);
 	}	
 
 	public List<Map> MO0101SCK() throws Exception{
@@ -127,5 +127,10 @@ public class MO0101Service extends ServiceSupport{
 		
 		
 		return null;
-	}		
+	}	
+	
+	public List MO0101G3R0() throws Exception{
+		Map param = getSimpleDataMap("dma_search");
+		return mo0101Mapper.MO0101G3R0(param);
+	}
 }
