@@ -338,17 +338,78 @@
 					,	DATE_FORMAT(A.OCR_DTM, '%H:%i:%s') OCR_DTM
 					,	B.NODE_NM
 					,	C.ORGA_NM
+					,	D.ROUT_NM
 					
 		FROM			BRT_OPER_EVENT_HIS A
 		LEFT JOIN	  	BMS_NODE_MST B
 			ON			A.EVT_DATA = B.NODE_ID
 		LEFT JOIN	  	BMS_VOC_ORGA_INFO C
 			ON			A.EVT_DATA = C.ORGA_ID
+		LEFT JOIN		BMS_ROUT_MST D
+			ON			A.ROUT_ID = D.ROUT_ID
 	
-		WHERE			VHC_ID = #{VHC_ID}
-		AND				DATE_FORMAT(OPER_DT, '%Y-%m-%d') = CURDATE() 
-			
+		WHERE			DATE_FORMAT(OPER_DT, '%Y-%m-%d') = CURDATE() 
+		<if test="CONTENT1 != null">
+			AND A.REP_ROUT_ID = #{CONTENT1}
+		</if>
+		<if test="CONTENT2 != ''">
+			AND A.ROUT_ID = #{CONTENT2}
+		</if>
+		<if test="CONTENT3 != null and CONTENT3 != ''">
+			AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
+		</if>			
 		ORDER BY		OPER_DT DESC
+		LIMIT			100;			
+		
+	</select>
+	
+	<select id="MO0101G4R0" resultType="Map" parameterType="Map">
+		
+		SELECT			DATE_FORMAT(A.SEND_DATE, '%H:%i:%s') SEND_DATE			
+					,	A.OPER_DT
+					,	A.REP_ROUT_ID
+					,	A.VHC_ID
+					,	A.DSPTCH_DIV
+					,	A.ROUT_ID
+					,	A.ALLOC_NO
+					,	A.OPER_SN
+					,	A.COR_ID
+					,	A.REP_ROUT_NM
+					,	A.ROUT_NM
+					,	A.VHC_NO
+					,	A.LINK_ID
+					,	A.NODE_ID
+					,	A.DSPTCH_KIND
+					,	A.SEND_GPS_X
+					,	A.SEND_GPS_Y
+					,	A.SEND_TM_X
+					,	A.SEND_TM_Y
+					,	A.FRNT_GPS_Y
+					,	A.FRNT_GPS_X
+					,	A.FRNT_TM_X
+					,	A.FRNT_TM_Y
+					,	A.REAR_GPS_X
+					,	A.REAR_GPS_Y
+					,	A.REAR_TM_X
+					,	A.REAR_TM_Y
+					,	A.DSPTCH_CONTS
+					,	B.ROUT_NM
+					
+		FROM			BRT_DSPTCH_LOG A
+		LEFT JOIN		BMS_ROUT_MST B
+			ON A.ROUT_ID = B.ROUT_ID
+	
+		WHERE			DATE_FORMAT(SEND_DATE, '%Y-%m-%d') = CURDATE() 
+		<if test="CONTENT1 != null">
+			AND A.REP_ROUT_ID = #{CONTENT1}
+		</if>
+		<if test="CONTENT2 != ''">
+			AND A.ROUT_ID = #{CONTENT2}
+		</if>
+		<if test="CONTENT3 != null and CONTENT3 != ''">
+			AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
+		</if>					
+		ORDER BY		SEND_DATE DESC
 		LIMIT			100;			
 		
 	</select>

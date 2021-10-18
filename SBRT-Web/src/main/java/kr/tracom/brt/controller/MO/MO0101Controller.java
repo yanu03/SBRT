@@ -85,4 +85,10 @@ public class MO0101Controller extends ControllerSupport {
 		result.setData("dlt_BRT_OPER_EVENT_HIS", mo0101Service.MO0101G3R0());
 		return result.getResult();
 	}
+	
+	@RequestMapping("/mo/MO0101G4R0")
+	public @ResponseBody Map<String, Object> MO0101G4R0() throws Exception {
+		result.setData("dlt_BRT_DSPTCH_LOG", mo0101Service.MO0101G4R0());
+		return result.getResult();
+	}
 }
