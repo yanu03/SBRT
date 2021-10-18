@@ -65,6 +65,7 @@
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 						<w2:column id="WAY_ASC_NM" name="상행명" dataType="text"></w2:column>
 						<w2:column id="WAY_DESC_NM" name="하행명" dataType="text"></w2:column>
+						<w2:column id="ACCRU_LEN" name="누적길이" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 
@@ -90,6 +91,7 @@
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 						<w2:column id="WAY_ASC_NM" name="상행명" dataType="text"></w2:column>
 						<w2:column id="WAY_DESC_NM" name="하행명" dataType="text"></w2:column>
+						<w2:column id="ACCRU_LEN" name="누적길이" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 
@@ -565,12 +567,25 @@
 	};
 	
 	scwin.openPopUpChart = function(){
+		debugger;
+		
+		var jsonData = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
+		var transData = new Array();
+		var realData = new Array();
+		
+		for(var j=0; j<dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowCount(); j++){
+			if(jsonData[j].OPER_SN  == dlt_VIEW_OPER_PL_NODE_INFO.getCellData(AL0203G1.getFocusedRowIndex(), "OPER_SN")){
+				transData.push(dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowJSON(j));
+				realData.push(dlt_BRT_OPER_ALLOC_RL_NODE_INFO.getRowJSON(j));
+			}
+		}
+	
 		var routId = dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "ROUT_ID");
 		var dayDiv = dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "DAY_DIV");
 		var routNm = dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "ROUT_NM");
 		var operSn = dlt_VIEW_OPER_PL_NODE_INFO.getCellData(AL0203G1.getFocusedRowIndex(), "OPER_SN");
 		
-		 var data = { data : routId, data2 : dayDiv, data3 : routNm, data4 : operSn, callbackFn : "" };
+		 var data = { data : routId, data2 : dayDiv, data3 : routNm, data4 : operSn, data5:transData, data6:realData, callbackFn : "" };
          var options = { id : "AL0203P0",
          				 width : "1600px",
          				 height : "900px",
@@ -833,7 +848,7 @@
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ST_STTN_NM"
-										value="" blockSelect="false" displayMode="label" textAlign="left">
+										value="" blockSelect="false" displayMode="label" textAlign="left" disabled="">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ED_STTN_NM"
 										value="" blockSelect="false" displayMode="label" textAlign="left">

@@ -2800,6 +2800,7 @@ routMap.addVertexByClick = function(mapId,grid,routeId,e){
 		
 		//routeData = com.getGridDispJsonData(grid);
 		routMap.drawRoute(mapId, grid, idx);
+		grid.setFocusedCell(idx,"NODE_ID");
 	}
 }
 
@@ -2854,7 +2855,7 @@ routMap.addSttnByClick = function(mapId,grid,routeId,e){
 				};
 	
 		com.getGridViewDataList(grid).setRowJSON(idx, data, true);
-		
+		grid.setFocusedCell(idx,"NODE_ID");
 		//routeData = com.getGridDispJsonData(grid);
 		//routMap.drawRoute(mapId, grid, idx);
 	}
@@ -2911,7 +2912,7 @@ routMap.addCrossByClick = function(mapId,grid,routeId,e){
 				};
 	
 		com.getGridViewDataList(grid).setRowJSON(idx, data, true);
-		
+		grid.setFocusedCell(idx,"NODE_ID");
 		//routeData = com.getGridDispJsonData(grid);
 		//routMap.drawRoute(mapId, grid, idx);
 	}
