@@ -1,5 +1,6 @@
 package kr.tracom.brt.domain.MO0101;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -153,4 +154,34 @@ public class MO0101Service extends ServiceSupport{
 		Map param = getSimpleDataMap("dma_search");
 		return mo0101Mapper.MO0101G7R0(param);
 	}
+	
+	public List selectCommuMap() throws Exception{
+		return mo0101Mapper.selectCommuMap();
+	}
+	
+	//신호등 현시 요청 소켓
+	public List<Map> MO0101SCK2() throws Exception{
+		
+		List<Map<String, Object>> param = getSimpleList("dlt_BMS_ROUT_NODE_CMPSTN4");
+		HashSet<String> crsList = new HashSet<>(); //교차로 리스트
+		try {
+			for (int i=0; i<param.size(); i++) {
+				Map data = (Map) param.get(i);
+				String crsId = (String)data.get("CRS_ID");
+				crsList.add(crsId);
+			}
+			
+			
+			
+			
+			
+			
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		return null;
+	}		
 }

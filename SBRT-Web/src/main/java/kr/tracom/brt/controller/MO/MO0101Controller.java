@@ -109,4 +109,17 @@ public class MO0101Controller extends ControllerSupport {
 		result.setData("dlt_FCLT_COND_LOG", mo0101Service.MO0101G7R0());
 		return result.getResult();
 	}
+	
+	@RequestMapping("/mo/selectCommuMap")
+	public @ResponseBody Map<String, Object> selectCommuMap() throws Exception {
+		result.setData("dlt_FCLT_COND_LOG", mo0101Service.selectCommuMap());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/mo/MO0101SCK2")
+	public @ResponseBody Map<String, Object> MO0101SCK2() throws Exception {		
+		
+		result.setData("", mo0101Service.MO0101SCK2());
+		return result.getResult();
+	}	
 }

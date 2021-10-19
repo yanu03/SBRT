@@ -33,4 +33,6 @@ public interface MO0101Mapper {
 	public List MO0101G6R0(Map param);
 	
 	public List MO0101G7R0(Map param);
+	
+	public List selectCommuMap();
 }
