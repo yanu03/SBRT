@@ -7,6 +7,12 @@
 		SELECT AUTH_CD, SYSTEM_BIT, AUTH_NM, USE_YN, REMARK 
 		  FROM BMS_AUTHORITY_MST
 		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				 AND AUTH_CD LIKE CONCAT('%',#{CONTENT},'%') || AUTH_NM LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != '' and USE_YN != null and USE_YN != ''">
+			 	 AND USE_YN = #{USE_YN} AND AUTH_CD LIKE CONCAT('%',#{CONTENT},'%') || AUTH_NM LIKE CONCAT('%',#{CONTENT},'%')  
+			</if>
 			<if test="TYPE  == 'AUTH_CD'" >
 				AND AUTH_CD LIKE CONCAT('%',#{CONTENT}, '%')
 			</if>
