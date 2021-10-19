@@ -55,10 +55,22 @@ public class VD0100Service extends ServiceSupport {
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("C")) {
 					iCnt += vd0100Mapper.VD0100G1I0(data);
+					if(data.getOrDefault("MNG_ID", "").toString().length() == 10) {
+						//INSERT
+						vd0100Mapper.VD0100G1I2(data);
+					}
 				} else if (rowStatus.equals("U")) {
 					uCnt += vd0100Mapper.VD0100G1U0(data);
+					if(data.getOrDefault("MNG_ID", "").toString().length() == 10) {
+						//UPDATE
+						vd0100Mapper.VD0100G1U2(data);
+					}
 				} else if (rowStatus.equals("D")) {
 					dCnt += vd0100Mapper.VD0100G1D0(data);
+					if(data.getOrDefault("MNG_ID", "").toString().length() == 10) {
+						//DELETE
+						vd0100Mapper.VD0100G1D2(data);
+					}
 				} 
 			}			
 		} catch(Exception e) {

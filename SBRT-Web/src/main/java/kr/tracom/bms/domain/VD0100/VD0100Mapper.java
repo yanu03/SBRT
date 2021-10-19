@@ -24,4 +24,11 @@ public interface VD0100Mapper {
 	
 	public int VD0100G1D0(Map param);
 	
+	/** PLF 테이블 관련 20211018 jh **/
+	public int VD0100G1I2(Map param);
+	
+	public int VD0100G1U2(Map param);
+	
+	public int VD0100G1D2(Map param);
+	
 }

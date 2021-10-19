@@ -256,6 +256,8 @@
 		}
 	};
 	
+
+	
 	
 	scwin.VOC_PATH_ondone = function(retXml) {
 		var time_audio = document.getElementById("audio0");
@@ -269,6 +271,62 @@
 		});				
 				
 	};	
+	
+	
+	scwin.ER_TTS_onviewchange = function(info) {
+		var eng = /[ㄱ-ㅎㅏ-ㅣ가-힣]/g;
+		
+		var chk_han = info.newValue.replace(eng, "");
+		ER_TTS.setValue(chk_han);
+	};
+	
+	scwin.SCR_TXT_EN_onviewchange = function(info) {
+		var eng = /[ㄱ-ㅎㅏ-ㅣ가-힣]/g;
+		
+		var chk_han = info.newValue.replace(eng, "");
+		SCR_TXT_EN.setValue(chk_han);
+	};
+	
+	scwin.STTN_TEXT_A_EN_onviewchange = function(info) {
+		var eng = /[ㄱ-ㅎㅏ-ㅣ가-힣]/g;
+		
+		var chk_han = info.newValue.replace(eng, "");
+		STTN_TEXT_A_EN.setValue(chk_han);
+	};
+	
+	scwin.STTN_TEXT_B_EN_onviewchange = function(info) {
+		var eng = /[ㄱ-ㅎㅏ-ㅣ가-힣]/g;
+		
+		var chk_han = info.newValue.replace(eng, "");
+		STTN_TEXT_B_EN.setValue(chk_han);
+	};
+	
+	scwin.PLAY_ST_DT_onviewchange = function(info) {
+		debugger;
+		var playstdt = PLAY_ST_DT.getValue();
+		var playeddt = PLAY_ED_DT.getValue();
+		
+		if (playeddt < playstdt){
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.",scwin.checkClosest(info));
+		}
+	};
+	
+	scwin.checkClosest = function(info) {
+		PLAY_ST_DT.setValue(info.oldValue);
+	};
+	
+	scwin.checkCloseed = function(info) {
+		PLAY_ED_DT.setValue(info.oldValue);
+	};
+	
+	scwin.PLAY_ED_DT_onviewchange = function(info) {
+		var playstdt = PLAY_ST_DT.getValue();
+		var playeddt = PLAY_ED_DT.getValue();
+		
+		if (playeddt < playstdt){
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.",scwin.checkCloseed(info));
+		}
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -513,14 +571,14 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<w2:inputCalendar footerDiv="false" id="" style="float:left; width:110px; height:23px;margin-right: 5px;" renderDiv="true"
+									<w2:inputCalendar footerDiv="false" id="PLAY_ST_DT" style="float:left; width:110px; height:23px;margin-right: 5px;" renderDiv="true"
 										focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component"
-										ref="data:dlt_BMS_VOC_INFO.PLAY_ST_DT" editType="" displayFormat="" ioFormat="" calendarDisplayFormatFunc="">
+										ref="data:dlt_BMS_VOC_INFO.PLAY_ST_DT" editType="" displayFormat="" ioFormat="" calendarDisplayFormatFunc="" ev:onviewchange="scwin.PLAY_ST_DT_onviewchange">
 									</w2:inputCalendar>
 									<w2:span label="~" style="margin-right: 5px;" id=""></w2:span>
-									<w2:inputCalendar footerDiv="false" id="" style="width: 110px;height: 23px;" renderDiv="true"
+									<w2:inputCalendar footerDiv="false" id="PLAY_ED_DT" style="width: 110px;height: 23px;" renderDiv="true"
 										focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component"
-										ref="data:dlt_BMS_VOC_INFO.PLAY_ED_DT">
+										ref="data:dlt_BMS_VOC_INFO.PLAY_ED_DT" ev:onviewchange="scwin.PLAY_ED_DT_onviewchange">
 									</w2:inputCalendar>
 								</xf:group>
 							</xf:group>
@@ -552,7 +610,7 @@
 									</w2:attributes>
 									<xf:group class="ml5 fr" id="" style=""></xf:group>
 			
-									<xf:textarea id="KR_TTS" style="width: 80%;height: 100px;" ref="data:dlt_BMS_VOC_INFO.KR_TTS" maxlength="200"></xf:textarea>
+									<xf:textarea id="KR_TTS" style="width: 80%;height: 100px;" ref="data:dlt_BMS_VOC_INFO.KR_TTS" maxlength="200" ev:onviewchange="scwin.KR_TTS_onviewchange" ev:onkeypress="scwin.KR_TTS_onkeypress" ev:onblur="scwin.KR_TTS_onblur"></xf:textarea>
 									<xf:group style="display: inline;position: relative;margin-left: 5px; width: 120px;float:right;"  id="">
 										<xf:trigger type="button" class="table_btn" style="width: 100px;height: 20px;margin-bottom: 10px;margin-top: 20px;" id="playTTS" ev:onclick="scwin.playTTS_onclick">
 											<xf:label><![CDATA[미리듣기]]></xf:label>
@@ -577,7 +635,7 @@
 									</w2:attributes>
 									<xf:group class="ml5 fr" id="" style=""></xf:group>
 			
-									<xf:textarea id="ER_TTS" style="width: 80%;height: 100px;" ref="data:dlt_BMS_VOC_INFO.EN_TTS" maxlength="200"></xf:textarea>
+									<xf:textarea id="ER_TTS" style="width: 80%;height: 100px;" ref="data:dlt_BMS_VOC_INFO.EN_TTS" maxlength="200" ev:onviewchange="scwin.ER_TTS_onviewchange"></xf:textarea>
 									<xf:group style="display: inline;position: relative;margin-left: 5px; width: 120px;float:right;"  id="">
 										<xf:trigger type="button" class="table_btn" style="width: 100px;height: 20px;margin-bottom: 10px;margin-top: 20px;" id="playTTS2" ev:onclick="scwin.playTTS2_onclick">
 											<xf:label><![CDATA[미리듣기]]></xf:label>
@@ -602,7 +660,7 @@
 									</w2:attributes>
 									<xf:group class="ml5 fr" id="" style=""></xf:group>
 			
-									<xf:textarea id="" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.SCR_TXT" userData1="" maxlength="200"></xf:textarea>
+									<xf:textarea id="SCR_TXT" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.SCR_TXT" userData1="" maxlength="200" ev:onviewchange="scwin.SCR_TXT_onviewchange"></xf:textarea>
 								</xf:group>
 							</xf:group>
 							<xf:group style="" tagname="tr">
@@ -618,7 +676,7 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:group class="ml5 fr" id="" style=""></xf:group>
-									<xf:textarea id="" ref="data:dlt_BMS_VOC_INFO.SCR_TXT_EN" style="width: 100%;height: 100%;" maxlength="200"></xf:textarea>
+									<xf:textarea id="SCR_TXT_EN" ref="data:dlt_BMS_VOC_INFO.SCR_TXT_EN" style="width: 100%;height: 100%;" maxlength="200" ev:onviewchange="scwin.SCR_TXT_EN_onviewchange"></xf:textarea>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
@@ -651,11 +709,11 @@
 									</w2:attributes>
 									<xf:group class="ml5 fr" id="" style=""></xf:group>
 			
-									<xf:textarea id="" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.STTN_TEXT_A" maxlength="200"></xf:textarea>
+									<xf:textarea id="STTN_TEXT_A" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.STTN_TEXT_A" maxlength="200" ev:onviewchange="scwin.STTN_TEXT_A_onviewchange"></xf:textarea>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" style="" class="w2tb_th">
+								<xf:group tagname="th" style="" class="w2tb_th req">
 									다음정류장문구 (한글)
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -668,11 +726,11 @@
 									</w2:attributes>
 									<xf:group class="ml5 fr" id="" style=""></xf:group>
 			
-									<xf:textarea id="" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.STTN_TEXT_B" maxlength="200"></xf:textarea>
+									<xf:textarea id="STTN_TEXT_B" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.STTN_TEXT_B" maxlength="200" ev:onviewchange="scwin.STTN_TEXT_B_onviewchange"></xf:textarea>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" style="" class="w2tb_th">
+								<xf:group tagname="th" style="" class="w2tb_th req">
 									이번정류장문구 (영문)
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -685,7 +743,7 @@
 									</w2:attributes>
 									<xf:group class="ml5 fr" id="" style=""></xf:group>
 			
-									<xf:textarea id="" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.STTN_TEXT_A_EN" maxlength="200"></xf:textarea>
+									<xf:textarea id="STTN_TEXT_A_EN" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.STTN_TEXT_A_EN" maxlength="200" ev:onviewchange="scwin.STTN_TEXT_A_EN_onviewchange"></xf:textarea>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
@@ -702,7 +760,7 @@
 									</w2:attributes>
 									<xf:group class="ml5 fr" id="" style=""></xf:group>
 			
-									<xf:textarea id="" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.STTN_TEXT_B_EN" maxlength="200"></xf:textarea>
+									<xf:textarea id="STTN_TEXT_B_EN" style="width: 100%;height: 100%;" ref="data:dlt_BMS_VOC_INFO.STTN_TEXT_B_EN" maxlength="200" ev:onviewchange="scwin.STTN_TEXT_B_EN_onviewchange"></xf:textarea>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
