@@ -138,4 +138,19 @@ public class MO0101Service extends ServiceSupport{
 		Map param = getSimpleDataMap("dma_search");
 		return mo0101Mapper.MO0101G4R0(param);
 	}
+	
+	public List MO0101G5R0() throws Exception{
+		Map param = getSimpleDataMap("dma_search");
+		return mo0101Mapper.MO0101G5R0(param);
+	}
+	
+	public List MO0101G6R0() throws Exception{
+		Map param = getSimpleDataMap("dma_search");
+		return mo0101Mapper.MO0101G6R0(param);
+	}
+	
+	public List MO0101G7R0() throws Exception{
+		Map param = getSimpleDataMap("dma_search");
+		return mo0101Mapper.MO0101G7R0(param);
+	}
 }

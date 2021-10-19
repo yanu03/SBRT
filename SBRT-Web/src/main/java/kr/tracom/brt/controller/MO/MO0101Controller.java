@@ -91,4 +91,22 @@ public class MO0101Controller extends ControllerSupport {
 		result.setData("dlt_BRT_DSPTCH_LOG", mo0101Service.MO0101G4R0());
 		return result.getResult();
 	}
+	
+	@RequestMapping("/mo/MO0101G5R0")
+	public @ResponseBody Map<String, Object> MO0101G5R0() throws Exception {
+		result.setData("dlt_FCLT_COND_LOG", mo0101Service.MO0101G5R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/mo/MO0101G6R0")
+	public @ResponseBody Map<String, Object> MO0101G6R0() throws Exception {
+		result.setData("dlt_FCLT_COND_LOG", mo0101Service.MO0101G6R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/mo/MO0101G7R0")
+	public @ResponseBody Map<String, Object> MO0101G7R0() throws Exception {
+		result.setData("dlt_FCLT_COND_LOG", mo0101Service.MO0101G7R0());
+		return result.getResult();
+	}
 }
