@@ -174,7 +174,7 @@ public class EventThread extends Thread{
                 	wsDataMap.put("ATTR_ID", attrId);
                 	wsDataMap.put("ROUT_ID", busInfoMap.get("ROUT_ID"));
                 	wsDataMap.put("ROUT_NM", busInfoMap.get("ROUT_NM"));
-                	wsDataMap.put("VHC_NM", busInfoMap.get("BUS_NO"));
+                	wsDataMap.put("VHC_NO", busInfoMap.get("BUS_NO"));
                 	
                 	wsDataMap.put("VHC_ID", vhcInfo.get("VHC_ID"));
                 	wsDataMap.put("DVC_ID", vhcInfo.get("DVC_ID"));
@@ -365,8 +365,7 @@ public class EventThread extends Thread{
                  	
                  	wsDataMap = new HashMap<>();
                  	wsDataMap.put("ATTR_ID", attrId);
-                 	
-        			wsDataMap.put("VHC_NM", busEvent.getBusNo());
+        			wsDataMap.put("VHC_NO", busEvent.getBusNo());
         			wsDataMap.put("ROUT_ID", busEvent.getRouteId());
         			wsDataMap.put("ROUT_NM", busEventMap.get("ROUT_NM"));
                  	wsDataMap.put("VHC_ID", vhcInfo.get("VHC_ID"));
