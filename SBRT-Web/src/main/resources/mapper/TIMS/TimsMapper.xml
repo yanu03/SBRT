@@ -57,13 +57,15 @@
 	
 	<select id="selectNodeByLinkSn" resultType="Map" parameterType="Map">
 		SELECT
-			NODE_SN
-			,NODE_TYPE
-			,NODE_NM 
-		FROM BMS_ROUT_NODE_CMPSTN 
-		WHERE ROUT_ID = #{ROUT_ID} 
-			AND NODE_ID = #{NODE_ID} 
-			AND NODE_SN >= #{NODE_SN} <!-- #{NODE_SN} :: LINK_SN -->
+			A.NODE_SN
+			,A.NODE_TYPE
+			,A.NODE_NM
+			,B.ROUT_NM
+		FROM BMS_ROUT_NODE_CMPSTN A
+			LEFT JOIN BMS_ROUT_MST B ON A.ROUT_ID = B.ROUT_ID			
+		WHERE A.ROUT_ID = #{ROUT_ID} 
+			AND A.NODE_ID = #{NODE_ID} 
+			AND A.NODE_SN >= #{NODE_SN} <!-- #{NODE_SN} :: LINK_SN -->
 	</select>	
 	
 	

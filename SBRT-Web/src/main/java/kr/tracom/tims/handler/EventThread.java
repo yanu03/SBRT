@@ -172,6 +172,10 @@ public class EventThread extends Thread{
                 	
                 	wsDataMap = new HashMap<>();
                 	wsDataMap.put("ATTR_ID", attrId);
+                	wsDataMap.put("ROUT_ID", busInfoMap.get("ROUT_ID"));
+                	wsDataMap.put("ROUT_NM", busInfoMap.get("ROUT_NM"));
+                	wsDataMap.put("VHC_NM", busInfoMap.get("BUS_NO"));
+                	
                 	wsDataMap.put("VHC_ID", vhcInfo.get("VHC_ID"));
                 	wsDataMap.put("DVC_ID", vhcInfo.get("DVC_ID"));
                 	wsDataMap.put("GPS_X", busInfoMap.get("LONGITUDE"));
@@ -361,6 +365,10 @@ public class EventThread extends Thread{
                  	
                  	wsDataMap = new HashMap<>();
                  	wsDataMap.put("ATTR_ID", attrId);
+                 	
+        			wsDataMap.put("VHC_NM", busEvent.getBusNo());
+        			wsDataMap.put("ROUT_ID", busEvent.getRouteId());
+        			wsDataMap.put("ROUT_NM", busEventMap.get("ROUT_NM"));
                  	wsDataMap.put("VHC_ID", vhcInfo.get("VHC_ID"));
                  	wsDataMap.put("DVC_ID", vhcInfo.get("DVC_ID"));
                  	wsDataMap.put("GPS_X", busEventMap.get("LONGITUDE"));
@@ -383,8 +391,11 @@ public class EventThread extends Thread{
                 case BrtAtCode.DISPATCH:
                 	
                 	AtDispatch dispatch = (AtDispatch)atMessage.getAttrData();
-                	Map<String, Object> curInfo = null; 
+                	Map<String, Object> curInfo = null;
+                	String routId = "";
+                	String routNm = "";
                 	String vhcId = "";
+                	String vhcNo = "";
                 	String dpDiv = "";
                 	String dpLv = "";
                 	
@@ -402,7 +413,7 @@ public class EventThread extends Thread{
                 		
                 		vhcInfo = timsMapper.selectVhcInfo(paramMap);
                 		vhcId = String.valueOf(vhcInfo.get("VHC_ID"));
-                		
+                		vhcNo = String.valueOf(vhcInfo.get("VHC_NO"));
                 		
                 		//디스패치 이력 생성
                 		//버스의 현재 정보 가져오기 //BRT_CUR_OPER_INFO               		
@@ -417,6 +428,9 @@ public class EventThread extends Thread{
                 		
                 		if(curInfo != null) {
                 		
+                			routId = String.valueOf(curInfo.get("ROUT_ID"));
+                			routNm = String.valueOf(curInfo.get("ROUT_NM"));
+                			
 	                		//디스패치 이력 넣기      
 	                		//디스패치 구분코드 가져오기
 	                		paramMap = new HashMap<>();
@@ -462,6 +476,9 @@ public class EventThread extends Thread{
                 		
                 		wsDataMap.put("ATTR_ID", attrId);
                 		wsDataMap.put("VHC_ID", vhcId);
+                		wsDataMap.put("VHC_NO", vhcNo);
+                		wsDataMap.put("ROUT_ID", routId);
+                		wsDataMap.put("ROUT_NM", routNm);
                 		wsDataMap.put("DSPTCH_DIV", dpDiv);
                 		wsDataMap.put("DSPTCH_KIND", dpLv);
                 		wsDataMap.put("MESSAGE", dispatch.getMessage());
@@ -489,6 +506,7 @@ public class EventThread extends Thread{
     	
     	//다음노드(교차로 or 정류소)
     	Map<String, Object> realNodeInfo = timsMapper.selectNodeByLinkSn(curOperInfo); //통플에서 넘어온 노드순번(실제로는 링크순번) 으로 실제 노드순번 구하기
+    	curOperInfo.put("ROUT_NM", realNodeInfo.get("ROUT_NM"));
     	curOperInfo.put("NODE_TYPE", realNodeInfo.get("NODE_TYPE"));
     	curOperInfo.put("NODE_NM", realNodeInfo.get("NODE_NM"));
     	

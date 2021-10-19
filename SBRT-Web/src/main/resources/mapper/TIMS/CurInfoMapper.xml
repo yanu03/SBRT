@@ -77,27 +77,29 @@
 	<!-- 차량의 현재운행정보 가져오기  -->
 	<select id="selectCurOperInfo" resultType="Map" parameterType="Map">
 		SELECT  
-			OPER_DT
-			,REP_ROUT_ID
-			,VHC_ID
-			,ROUT_ID				
-			,ALLOC_NO
-			,OPER_SN							
-			,NODE_ID
-			,COR_ID
-			,VHC_NO
-			,DRV_ID
-			,GPS_X
-			,GPS_Y
-			,OPER_STS
-			,DRV_ANGLE
-			,CUR_SPD
-			,LINK_ID
-			,NODE_SN
+			A.OPER_DT
+			,A.REP_ROUT_ID
+			,A.VHC_ID
+			,A.ROUT_ID				
+			,A.ALLOC_NO
+			,A.OPER_SN							
+			,A.NODE_ID
+			,A.COR_ID
+			,A.VHC_NO
+			,A.DRV_ID
+			,A.GPS_X
+			,A.GPS_Y
+			,A.OPER_STS
+			,A.DRV_ANGLE
+			,A.CUR_SPD
+			,A.LINK_ID
+			,A.NODE_SN
+			,B.ROUT_NM
 		FROM 	
-			BRT_CUR_OPER_INFO
-		WHERE OPER_DT = #{OPER_DT}
-			AND VHC_ID = #{VHC_ID}
+			BRT_CUR_OPER_INFO A
+			LEFT JOIN BMS_ROUT_MST B ON A.ROUT_ID = B.ROUT_ID 
+		WHERE A.OPER_DT = #{OPER_DT}
+			AND A.VHC_ID = #{VHC_ID}
 		LIMIT 1
 	</select>
 	
