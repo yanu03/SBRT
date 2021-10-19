@@ -234,6 +234,30 @@
 	scwin.FM0100G1_onrowindexchange = function(row,oldRow) {
 		dlt_BMS_FCLT_INFO.setCellData(row, "NODE_ID", dma_subsearch.get("NODE_ID"));
 	};
+	
+	scwin.BUY_DT_onviewchange = function(info) {
+		var instdt = INST_DT.getValue();
+		var buydt = BUY_DT.getValue();
+		
+		if (buydt > instdt){
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseBUY(info));
+		}
+	};
+	scwin.checkCloseBUY = function(info) {
+		BUY_DT.setValue(info.oldValue);
+	}
+	scwin.checkCloseINST = function(info) {
+		INST_DT.setValue(info.oldValue);
+	}
+	
+	scwin.INST_DT_onviewchange = function(info) {
+		var instdt = INST_DT.getValue();
+		var buydt = BUY_DT.getValue();
+		
+		if (buydt > instdt){
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseINST(info));
+		}
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -621,7 +645,7 @@
 									<xf:group id="" style=""></xf:group>
 									<w2:inputCalendar footerDiv="false" id="BUY_DT" style="height: 23px;width: 110px;" renderDiv="true"
 										ref="data:dlt_BMS_FCLT_INFO.BUY_DT" focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false"
-										renderType="component">
+										renderType="component" defaultDate="" dateValidCheck="true" dateValidSet="true" ev:onviewchange="scwin.BUY_DT_onviewchange">
 									</w2:inputCalendar>
 								</xf:group>
 								<xf:group class="w2tb_th" style="" tagname="th">설치일자</xf:group>
@@ -633,7 +657,7 @@
 									<xf:group id="" style=""></xf:group>
 									<w2:inputCalendar footerDiv="false" id="INST_DT" style="height: 23px;width: 110px;" renderDiv="true"
 										ref="data:dlt_BMS_FCLT_INFO.INST_DT" focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false"
-										renderType="component">
+										renderType="component" userData1="" defaultDate="" nextTabID="" class="" displayFormatFunc="" ev:onviewchange="scwin.INST_DT_onviewchange">
 									</w2:inputCalendar>
 								</xf:group>
 							</xf:group>

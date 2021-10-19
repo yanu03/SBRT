@@ -142,4 +142,74 @@
 	WHERE			DVC_ID = #{DVC_ID}
 </delete>
 
+
+<!-- plf 테이블에 삽입 20211018 jh -->
+<insert id="VD0100G1I2" parameterType="Map">
+	INSERT INTO PLF_IMP_DEV_MST (
+								  IMP_ID
+								, IMP_NM
+								, IMP_TYPE
+								, VHC_ID
+								, VHC_NO
+								, USE_YN
+								)
+	VALUES (
+			  #{MNG_ID}
+			, (SELECT VHC_NO FROM BMS_VHC_MST WHERE VHC_ID = #{VHC_ID})
+			, ''
+			, #{VHC_ID}
+			, (SELECT VHC_NO FROM BMS_VHC_MST WHERE VHC_ID = #{VHC_ID})
+			, 'Y'
+	);
+	
+	INSERT INTO PLF_IMP_SESS_INFO (
+								  PLF_ID
+								, SESS_ID
+                                , SESS_NM
+                                , SESS_IP
+                                , REMOTE_TYPE
+                                , ELAPSED_TIME
+                                , IN_PACKET
+                                , OUT_PACKET
+                                )
+	VALUES(
+			  'SB-2021-01'
+			, #{MNG_ID}
+			, (SELECT VHC_NO FROM BMS_VHC_MST WHERE VHC_ID = #{VHC_ID})
+			, '-'
+			, ''
+			, '0'
+			, '0'
+			, '0'
+		);
+</insert>
+
+<!-- plf 테이블 업데이트 20211018 jh -->
+<update id="VD0100G1U2" parameterType="Map">
+	UPDATE
+		PLF_IMP_DEV_MST
+	SET
+		  IMP_ID = #{MNG_ID}
+		, IMP_TYPE = ''
+	WHERE
+		IMP_NM = (SELECT VHC_NO FROM BMS_VHC_MST WHERE VHC_ID = #{VHC_ID});
+		
+	UPDATE
+		PLF_IMP_SESS_INFO
+	SET
+		  SESS_ID = #{MNG_ID}
+		, REMOTE_TYPE = ''
+	WHERE
+		SESS_NM = (SELECT VHC_NO FROM BMS_VHC_MST WHERE VHC_ID = #{VHC_ID});
+</update>
+
+<!-- plf 테이블 삭제 20211018 jh -->
+<delete id="VD0100G1D2" parameterType="Map">
+	DELETE FROM PLF_IMP_DEV_MST
+	WHERE IMP_ID = #{MNG_ID};
+	
+	DELETE FROM PLF_IMP_SESS_INFO
+	WHERE SESS_ID = #{MNG_ID};
+</delete>
+
 </mapper>
