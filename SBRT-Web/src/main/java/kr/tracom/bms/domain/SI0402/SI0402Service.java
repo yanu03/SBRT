@@ -77,21 +77,22 @@ public class SI0402Service extends ServiceSupport {
 					}
 					
 					if(key!=null)data.put("NODE_ID",key.get("SEQ"));
-					if(CommonUtil.empty(data.get("OLD_NODE_SN"))){
+					if(CommonUtil.empty(data.get("OLD_NODE_SN"))||"0".equals(data.get("OLD_NODE_SN"))){
 						iCnt += si0402Mapper.SI0402G1I0(data);
 					}
 					else {
 						 iCnt += si0402Mapper.SI0402G1U0(data);
 					}
 					
-					if(CommonUtil.notEmpty(data.get("STTN_ID"))||CommonUtil.notEmpty(data.get("CRS_ID"))){
-						if(CommonUtil.notEmpty(data.get("STTN_ID"))){
+					if((Constants.NODE_TYPE_VERTEX.equals((String) data.get("NODE_TYPE"))==false)
+						&&(CommonUtil.notEmpty(data.get("STTN_ID"))||CommonUtil.notEmpty(data.get("CRS_ID")))){
+						if(Constants.NODE_TYPE_BUSSTOP.equals((String) data.get("NODE_TYPE"))&&CommonUtil.notEmpty(data.get("STTN_ID"))){
 							data.put("TYPE","STTN_ID");	
 							//data.put("WAY_DIV",map.get("WAY_DIV"));	
 							routMapper.updateSttn(data);
 						
 						}
-						else if(CommonUtil.notEmpty(data.get("CRS_ID"))){
+						else if(Constants.NODE_TYPE_CROSS.equals((String) data.get("NODE_TYPE"))&&CommonUtil.notEmpty(data.get("CRS_ID"))){
 							data.put("TYPE","CRS_ID");
 							routMapper.updateCrs(data);
 						}
@@ -111,14 +112,15 @@ public class SI0402Service extends ServiceSupport {
 						data.put("LINK_NODE_YN","Y");
 					}
 					
-					if(CommonUtil.notEmpty(data.get("STTN_ID"))||CommonUtil.notEmpty(data.get("CRS_ID"))){
+					if((Constants.NODE_TYPE_VERTEX.equals((String) data.get("NODE_TYPE"))==false)
+						&&(CommonUtil.notEmpty(data.get("STTN_ID"))||CommonUtil.notEmpty(data.get("CRS_ID")))){
 						
-						if(CommonUtil.notEmpty(data.get("STTN_ID"))){
+						if(Constants.NODE_TYPE_BUSSTOP.equals((String) data.get("NODE_TYPE"))&&CommonUtil.notEmpty(data.get("STTN_ID"))){
 							data.put("TYPE","STTN_ID");
 							//data.put("WAY_DIV",map.get("WAY_DIV"));	
 							routMapper.updateSttn(data);
 						}
-						else if(CommonUtil.notEmpty(data.get("CRS_ID"))){
+						else if(Constants.NODE_TYPE_CROSS.equals((String) data.get("NODE_TYPE"))&&CommonUtil.notEmpty(data.get("CRS_ID"))){
 							data.put("TYPE","CRS_ID");
 							routMapper.updateCrs(data);
 						}

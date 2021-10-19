@@ -94,6 +94,7 @@
 	select a.ORGA_ID,
 		  	a.VDO_ID,
 		  	a.SN,
+		  	a.SN AS OLD_SN,
 		  	b.VDO_NM,
 		  	b.FILE_TYPE,
 		  	b.PLAY_TM,
@@ -124,14 +125,15 @@
 	update BMS_BIT_VDO_ORGA_LIST
 	set SN = #{SN}
 	where ORGA_ID = #{ORGA_ID}
-	and	VDO_ID = #{VDO_ID}		
-
+	and	VDO_ID = #{VDO_ID}
+	and SN = #{OLD_SN}
 </update>
 
 <delete id="PI0602G2D0" parameterType="Map">
 	DELETE FROM BMS_BIT_VDO_ORGA_LIST 
 	WHERE ORGA_ID = #{ORGA_ID}
 	AND VDO_ID = #{VDO_ID}
+	AND SN = #{OLD_SN}
 </delete>
 
 

@@ -63,9 +63,6 @@
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BIT_VDO_ORGA_LIST" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="VDO_ID" name="영상ID" dataType="text"></w2:column>
-
-
-
 						<w2:column id="VDO_NM" name="영상명" dataType="text"></w2:column>
 						<w2:column id="FILE_TYPE" name="파일유형" dataType="text"></w2:column>
 						<w2:column id="PLAY_TM" name="재생시간" dataType="number"></w2:column>
@@ -73,6 +70,7 @@
 						<w2:column id="PLAY_ED_DT" name="재생종료일" dataType="date"></w2:column>
 						<w2:column id="SN" name="순번" dataType="text"></w2:column>
 						<w2:column id="ORGA_ID" name="편성ID" dataType="text"></w2:column>
+						<w2:column id="OLD_SN" name="순번2" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_subsearch">
@@ -188,10 +186,12 @@
 	};
 
 	scwin.sub_PI0602G2S0_submitdone = function(e) {
-		com.saveDone(PI0602G2,sub_PI0602G2R0);		
+		com.saveDone(PI0602G2,sub_PI0602G2R0);
+		com.executeSubmission(sub_PI0602G0R0);		
 	};
 	
 	scwin.btn_up_onclick = function() {
+		
 	    var idx = PI0602G2.getFocusedRowIndex();
 	    com.getGridViewDataList(PI0602G2).rowMoveUp(idx);
 	    var data = dlt_BIT_VDO_ORGA_LIST.getAllJSON();
