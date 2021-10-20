@@ -77,10 +77,10 @@
 				action="/organization/searchOrganization" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sbm_searchOrganization_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sbm_saveOrganizationBasic" ref='data:json,{"id":"dlt_organizationBasic","action":"modified"}'
+			<xf:submission id="sbm_saveOrganizationBasic" ref='data:json,[{"action":"modified","id":"dlt_organizationBasic"},"dma_search"]'
 				target="data:json,dlt_organizationBasic" action="/organization/updateOrganizationBasic" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중 입니다..." ev:submit=""
-				ev:submitdone="scwin.sbm_saveOrganizationBasic_submitdone" ev:submiterror="">
+				ev:submitdone="scwin.sbm_saveOrganizationBasic_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sbm_organizationSearchItem" ref="" target='data:json,["dlt_organizationSearchItem","dlt_organizationBoss"]' action="/organization/selectOrganizaionSearchItem"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
@@ -382,7 +382,7 @@
 							<xf:group style="" tagname="tr">
 							<xf:group class="w2tb_th" tagname="th">전화번호</xf:group>
 								<xf:group class="w2tb_td" tagname="td">
-									<xf:input id="ibx_orgPhone" ref="data:dlt_organizationBasic.PHONE" style="height:24px;" disabled="" refSync="" allowChar="0-9" maxlength="13"></xf:input>
+									<xf:input id="ibx_orgPhone" ref="data:dlt_organizationBasic.PHONE" style="height:24px;" disabled="" refSync="" allowChar="0-9-" maxlength="13" customModelFormatter="com.transPhone" displayFormatter="com.transPhone"></xf:input>
 								</xf:group>
 								<xf:group class="w2tb_th" tagname="th"><w2:attributes><w2:colspan>2</w2:colspan><w2:rowspan>1</w2:rowspan></w2:attributes></xf:group>
 							</xf:group>

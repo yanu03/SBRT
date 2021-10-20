@@ -9,11 +9,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="selectOrganizaion" resultType="Map" parameterType="Map">
 		SELECT ORG_ID, ORG_NM, ORG_DIV, SORT, ORG_ENM, REP_NM, COMP_REG_NO, ADDR, PHONE, FAX, EMAIL, REMARK
 		FROM BMS_ORG_MST where 1 = 1
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND ORG_ID LIKE CONCAT('%',#{CONTENT},'%') || ORG_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
 		<if test="TYPE == 'ORG_NM'">
-			and ORG_NM LIKE concat('%',#{CONTENT},'%')
+			and ORG_NM LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
 		<if test="TYPE == 'ORG_ID'">
-			and ORG_ID LIKE concat('%',#{CONTENT},'%')
+			and ORG_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>		
 		ORDER BY ORG_ID
 	</select>	
