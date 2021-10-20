@@ -83,7 +83,7 @@
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_PI0203G0K0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI0203G0S0" ref='data:json,{"action":"modified","id":"dlt_BMS_VOC_INFO"}' target="data:json,dma_result" action="/pi/PI0203G0S0" method="post"
+			<xf:submission id="sub_PI0203G0S0" ref='data:json,[{"action":"modified","id":"dlt_BMS_VOC_INFO"},"dma_AUDIO_INFO"]' target="data:json,dma_result" action="/pi/PI0203G0S0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_PI0203G0S0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -260,6 +260,33 @@
 		});				
 				
 	};
+	
+	scwin.PLAY_ST_DT_onviewchange = function(info) {
+		
+		var playstdt = PLAY_ST_DT.getValue();
+		var playeddt = PLAY_ED_DT.getValue();
+		
+		if (playstdt > playeddt && playeddt != ""){
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseBUY(info));
+		}
+		
+	};
+	
+	scwin.PLAY_ED_DT_onviewchange = function(info) {
+		var playstdt = PLAY_ST_DT.getValue();
+		var playeddt = PLAY_ED_DT.getValue();
+		
+		if (playstdt > playeddt){
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseINST(info));
+		}
+	};
+	
+	scwin.checkCloseBUY = function(info) {
+		PLAY_ST_DT.setValue(info.oldValue);
+	}
+	scwin.checkCloseINST = function(info) {
+		PLAY_ED_DT.setValue(info.oldValue);
+	}
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -475,12 +502,12 @@
 									</w2:attributes>
 									<w2:inputCalendar footerDiv="false" id="PLAY_ST_DT" style="float:left; width:110px; height:23px;margin-right: 5px;"
 										renderDiv="true" focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component"
-										ref="data:dlt_BMS_VOC_INFO.PLAY_ST_DT" editType="" displayFormat="" ioFormat="" calendarDisplayFormatFunc="">
+										ref="data:dlt_BMS_VOC_INFO.PLAY_ST_DT" editType="" displayFormat="" ioFormat="" calendarDisplayFormatFunc="" ev:onviewchange="scwin.PLAY_ST_DT_onviewchange">
 									</w2:inputCalendar>
 									<w2:span label="~" style="margin-right: 5px;" id=""></w2:span>
 									<w2:inputCalendar footerDiv="false" id="PLAY_ED_DT" style="width: 110px;height: 23px;" renderDiv="true"
 										focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component"
-										ref="data:dlt_BMS_VOC_INFO.PLAY_ED_DT">
+										ref="data:dlt_BMS_VOC_INFO.PLAY_ED_DT" ev:onviewchange="scwin.PLAY_ED_DT_onviewchange">
 									</w2:inputCalendar>
 								</xf:group>
 							</xf:group>
