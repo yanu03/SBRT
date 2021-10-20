@@ -124,9 +124,10 @@
 						<w2:column id="A_PHASE_NO" name="A_현시번호" dataType="text"></w2:column>
 						<w2:column id="A_PHASE_TM" name="A_현시진행시간" dataType="text"></w2:column>
 						<w2:column id="B_PHASE_NO" name="B_현시번호" dataType="text"></w2:column>
-						
+
 						<w2:column id="B_PHASE_TM" name="B_현시진행시간" dataType="text"></w2:column>
-					<w2:column id="COND_ERROR" name="name25" dataType="text"></w2:column></w2:columnInfo>
+						<w2:column id="COND_ERROR" name="name25" dataType="text"></w2:column>
+					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN4" saveRemovedData="true">
 					<w2:columnInfo>
@@ -217,7 +218,7 @@
 						<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_FCLT_COND_LOG" saveRemovedData="true"> <!-- 정류장 시설물 -->
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_FCLT_COND_LOG" saveRemovedData="true"><!-- 정류장 시설물 -->
 					<w2:columnInfo>
 						<w2:column id="SEND_DATE" name="전송일시" dataType="text"></w2:column>
 						<w2:column id="FCLT_COND" name="시설물상태" dataType="text"></w2:column>
@@ -227,7 +228,7 @@
 						<w2:column id="NODE_ID" name="노드아이디" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_FCLT_COND_LOG2" saveRemovedData="true"> <!-- 교차로 시설물 -->
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_FCLT_COND_LOG2" saveRemovedData="true"><!-- 교차로 시설물 -->
 					<w2:columnInfo>
 						<w2:column id="SEND_DATE" name="전송일시" dataType="text"></w2:column>
 						<w2:column id="FCLT_COND" name="시설물상태" dataType="text"></w2:column>
@@ -297,7 +298,15 @@
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0101G7R0" ref="data:json,dma_search" target="data:json,dlt_FCLT_COND_LOG2" action="/mo/MO0101G7R0" method="post" mediatype="application/json" encoding="UTF-8"
+			<xf:submission id="sub_MO0101G7R0" ref="data:json,dma_search" target="data:json,dlt_FCLT_COND_LOG2" action="/mo/MO0101G7R0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_selectCommuMap" ref="" target="" action="/mo/selectCommuMap" method="post" mediatype="application/json"
+				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
+				ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_MO0101SCK2" ref="data:json,dlt_BMS_ROUT_NODE_CMPSTN4" target="" action="/mo/MO0101SCK2" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -409,8 +418,7 @@
 				busActive = 0;
 				sttnActive = 0;
 				crossActive = 1;
-				
-								
+				com.executeSubmission(sub_MO0101SCK2);				
 				scwin.updateStatusCrs();				
 								
 				MO0101T0.hide();
@@ -1775,7 +1783,7 @@
 											ev:oncellclick="" showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false"
 											rowNumHeaderValue="순서" sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 											fixedColumnWithHidden="true" dataList="" ignoreCellClick="false" style="height:160px;"
-											autoFit="lastColumn" visibleRowNum="" id="MO0101G6" class="cm_grid left" tooltipPositionY="" focusMode="row">
+											autoFit="lastColumn" visibleRowNum="" id="MO0101G6" class="cm_grid left" tooltipPositionY="" focusMode="row" >
 											<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 											<w2:header style="" id="header1">
 												<w2:row style="" id="row1">
