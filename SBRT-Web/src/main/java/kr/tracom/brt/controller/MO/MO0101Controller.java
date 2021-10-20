@@ -48,15 +48,15 @@ public class MO0101Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
-	@RequestMapping("/mo/MO0101G4R0")
-	public @ResponseBody Map<String, Object> MO0101G4R0() throws Exception {
-		result.setData("dlt_BMS_NODE_MST", mo0101Service.MO0101G4R0());
+	@RequestMapping("/mo/selectCategory")
+	public @ResponseBody Map<String, Object> selectCategory() throws Exception {
+		result.setData("dlt_BMS_NODE_MST", mo0101Service.selectCategory());
 		return result.getResult();
 	}
 	
-	@RequestMapping("/mo/MO0101G5R0")
-	public @ResponseBody Map<String, Object> MO0101G5R0() throws Exception {
-		result.setData("dlt_BMS_ROUT_NODE_CMPSTN4", mo0101Service.MO0101G5R0());
+	@RequestMapping("/mo/selectSigOper")
+	public @ResponseBody Map<String, Object> selectSigOper() throws Exception {
+		result.setData("dlt_BMS_ROUT_NODE_CMPSTN4", mo0101Service.selectSigOper());
 		return result.getResult();
 	}	
 	
@@ -78,5 +78,48 @@ public class MO0101Controller extends ControllerSupport {
 		
 		result.setData("", mo0101Service.MO0101SCK1());
 		return result.getResult();
-	}		
+	}
+	
+	@RequestMapping("/mo/MO0101G3R0")
+	public @ResponseBody Map<String, Object> MO0101G3R0() throws Exception {
+		result.setData("dlt_BRT_OPER_EVENT_HIS", mo0101Service.MO0101G3R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/mo/MO0101G4R0")
+	public @ResponseBody Map<String, Object> MO0101G4R0() throws Exception {
+		result.setData("dlt_BRT_DSPTCH_LOG", mo0101Service.MO0101G4R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/mo/MO0101G5R0")
+	public @ResponseBody Map<String, Object> MO0101G5R0() throws Exception {
+		result.setData("dlt_FCLT_COND_LOG", mo0101Service.MO0101G5R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/mo/MO0101G6R0")
+	public @ResponseBody Map<String, Object> MO0101G6R0() throws Exception {
+		result.setData("dlt_FCLT_COND_LOG", mo0101Service.MO0101G6R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/mo/MO0101G7R0")
+	public @ResponseBody Map<String, Object> MO0101G7R0() throws Exception {
+		result.setData("dlt_FCLT_COND_LOG", mo0101Service.MO0101G7R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/mo/selectCommuMap")
+	public @ResponseBody Map<String, Object> selectCommuMap() throws Exception {
+		result.setData("dlt_FCLT_COND_LOG", mo0101Service.selectCommuMap());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/mo/MO0101SCK2")
+	public @ResponseBody Map<String, Object> MO0101SCK2() throws Exception {		
+		
+		result.setData("", mo0101Service.MO0101SCK2());
+		return result.getResult();
+	}	
 }

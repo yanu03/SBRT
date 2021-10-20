@@ -97,6 +97,8 @@
 				errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_OPER_ALL_REAL_NODE_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 	</xf:model>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
 	<script type="text/javascript" lazy="false"><![CDATA[
 
 	scwin.onpageload = function() {
@@ -108,7 +110,6 @@
 		dlt_BRT_OPER_ALLOC_PL_NODE_INFO.setJSON(scwin.param.data5, true);
 		dlt_BRT_OPER_ALLOC_RL_NODE_INFO.setJSON(scwin.param.data6, true);
 		
-		
 		dma_sub_search.set("ROUT_ID", scwin.param.data);
 		dma_sub_search.set("DAY_DIV", scwin.param.data2);
 		dma_sub_search.set("ROUT_NM", scwin.param.data3);
@@ -119,7 +120,8 @@
 		//com.executeSubmission(sub_OPER_ALL_REAL_NODE);
 		
 		dma_sub_search.set("OPER_SN", dma_sub_search.get("OPER_SN")+'회차');		
-		scwin.drawChart();		
+		//scwin.drawChart();
+		scwin.testDrawChart2();		
 	};
 	
 	scwin.onpageunload = function() {
@@ -213,13 +215,17 @@
 		this.data = [];
 	}
 	
+	function date_ascending(a, b) {
+       return a - b;
+    };
+	
 	scwin.drawChart = function(){
 		debugger;
 		
 		var category = new Array();
 		var charArray = new Array();
-		var data = new Array();
-		
+		var Adata = new Array();
+		var Bdata = new Array();
 		
 		var rowCount = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowCount();
 		
@@ -228,79 +234,131 @@
 		
 		var seriesname = "운행계획 : " + dma_sub_search.get("OPER_SN");
 		
-		for(var i = 0; i < rowCount; i++ ){
+		for(var x = 0; x < rowCount; x++){
+			var arrvTm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(x, "ARRV_TM");
+			var dprtTm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(x, "DPRT_TM");
+			var arrvTmRl = dlt_BRT_OPER_ALLOC_RL_NODE_INFO.getCellData(x, "REAL_ARRV_TM");
+			var dprtTmRl = dlt_BRT_OPER_ALLOC_RL_NODE_INFO.getCellData(x, "REAL_DPRT_TM");
+			
+			/*var categoryJson = new Object();
+			categoryJson.label = arrvTm;
+			categoryJson = JSON.stringify(categoryJson);
+			category.push(JSON.parse(categoryJson));
+			
 			var categoryJson = new Object();
-			var dataJson = new Object();
+			categoryJson.label = dprtTm;
+			categoryJson = JSON.stringify(categoryJson);
+			category.push(JSON.parse(categoryJson));
+			
+			var categoryJson = new Object();
+			categoryJson.label = arrvTmRl;
+			categoryJson = JSON.stringify(categoryJson);
+			category.push(JSON.parse(categoryJson));
+			
+			var categoryJson = new Object();
+			categoryJson.label = dprtTmRl;
+			categoryJson = JSON.stringify(categoryJson);
+			category.push(JSON.parse(categoryJson));*/
+			
+			category.push(arrvTm);
+			category.push(dprtTm);
+			category.push(arrvTmRl);
+			category.push(dprtTmRl);
+		};
+		
+		category.sort(date_ascending);
+		
+		for(var i = 0; i < rowCount; i++ ){
+			
 			var realData = new Object();
 			
 			var operSn = plAllJson[i].OPER_SN;
-			var arrvTm = plAllJson[i].ARRV_TM;
-			var dprtTm = plAllJson[i].DPRT_TM;
+			//var arrvTm = plAllJson[i].ARRV_TM;
+			//var dprtTm = plAllJson[i].DPRT_TM;
 			var accruLen = plAllJson[i].ACCRU_LEN;
 			var nodeType = plAllJson[i].NODE_TYPE;
 			
 			var operSnRl = rlAllJson[i].OPER_SN;
-			var arrvTmRl = rlAllJson[i].REAL_ARRV_TM;
-			var dprtTmRl = rlAllJson[i].REAL_DPRT_TM;
+			//var arrvTmRl = rlAllJson[i].REAL_ARRV_TM;
+			//var dprtTmRl = rlAllJson[i].REAL_DPRT_TM;
 			var accruLenRl = rlAllJson[i].ACCRU_LEN;
 			var nodeTypeRl = rlAllJson[i].NODE_TYPE;
 			
 			if(nodeType=='NT002'){
-				categoryJson.label = arrvTm;
+				var categoryJson = new Object();
+				var dataJson = new Object();
+				/*categoryJson.label = arrvTm;
 				categoryJson = JSON.stringify(categoryJson);
 				category.push(JSON.parse(categoryJson));
 				
 				dataJson.value = accruLen;
 				dataJson = JSON.stringify(dataJson);
-				data.push(JSON.parse(dataJson));
+				data.push(JSON.parse(dataJson));*/
+				
+				Adata.push(accruLen);
 			}
 			
 			if((nodeType=='NT002')&&(arrvTm!=dprtTm)){
-			
 				var categoryJson = new Object();
 				var dataJson = new Object();
 				
-				categoryJson.label = dprtTm;
+				/*categoryJson.label = dprtTm;
 				categoryJson = JSON.stringify(categoryJson);
 				category.push(JSON.parse(categoryJson));
 				
 				dataJson.value = accruLen;
 				dataJson = JSON.stringify(dataJson);
-				data.push(JSON.parse(dataJson));
+				data.push(JSON.parse(dataJson));*/
+				
+				Adata.push(accruLen);
 			}
 			
 			if(nodeTypeRl=='NT002'){
-				categoryJson.label = arrvTmRl;
+				var categoryJson = new Object();
+				var dataJson = new Object();
+				/*categoryJson.label = arrvTmRl;
 				categoryJson = JSON.stringify(categoryJson);
 				category.push(JSON.parse(categoryJson));
 				
 				dataJson.value = accruLenRl;
 				dataJson = JSON.stringify(dataJson);
-				data.push(JSON.parse(dataJson));
+				data1.push(JSON.parse(dataJson));*/
+				
+				Bdata.push(accruLenRl);
 			}
 			
 			if((nodeTypeRl=='NT002')&&(arrvTm!=dprtTm)){
-			
 				var categoryJson = new Object();
 				var dataJson = new Object();
 				
-				categoryJson.label = dprtTmRl;
+				/*categoryJson.label = dprtTmRl;
 				categoryJson = JSON.stringify(categoryJson);
 				category.push(JSON.parse(categoryJson));
 				
 				dataJson.value = accruLenRl;
 				dataJson = JSON.stringify(dataJson);
-				data.push(JSON.parse(dataJson));
+				data1.push(JSON.parse(dataJson));*/
+				
+				Bdata.push(accruLenRl);
 			}
 			
 		};
 		
 		var charData = new CharData();
 		
-		charData.data = data;
-		charData.seriesname = seriesname;
+		//charData.data = data;
+		//charData.seriesname = seriesname;
 		
-		charArray.push(charData);
+		//charArray.push(charData);
+		charArray.push(Adata);
+		charArray.push(Bdata);
+		
+		var charData = new CharData();
+		
+		//charData.data = data1;
+		//charData.seriesname = seriesname;
+		
+		//charArray.push(charData);
 		
 		
 	 	var chart = {
@@ -334,7 +392,180 @@
 				CHART.setJSONData(chart);
 			},100);
 			
+		/*var ctx = document.getElementById('myChart');
+		var myChart = new Chart(ctx, {
+		    type: 'line',
+		    data: {
+		        labels: [1,2,3,4,5],
+		        datasets: [{
+		            label: '# of Votes',
+		            data: {datasets : [
+		            	{
+		            		data:[5,10,15,20,25]
+		           		},
+		            	{
+		            		data:[30,35,40,45,50]
+		            	}
+		            ]},
+		            backgroundColor: [
+		                'rgba(255, 99, 132, 0.2)',
+		                'rgba(54, 162, 235, 0.2)',
+		                'rgba(255, 206, 86, 0.2)',
+		                'rgba(75, 192, 192, 0.2)',
+		                'rgba(153, 102, 255, 0.2)',
+		                'rgba(255, 159, 64, 0.2)'
+		            ],
+		            borderColor: [
+		                'rgba(255, 99, 132, 1)',
+		                'rgba(54, 162, 235, 1)',
+		                'rgba(255, 206, 86, 1)',
+		                'rgba(75, 192, 192, 1)',
+		                'rgba(153, 102, 255, 1)',
+		                'rgba(255, 159, 64, 1)'
+		            ],
+		            borderWidth: 1
+		        }]
+		    },
+		    options: {
+		        scales: {
+		            y: {
+		                beginAtZero: true
+		            },
+		            x: {
+		                type: 'timeseries'
+		            }
+		        }
+		    }
+		});*/
+			
+};
+
+
+	scwin.testDrawChart2 = function(){
+		debugger;
+		var datasets = new Array();
+		var transData = new Array();
+		var i = 0;
+		var j = 0;
+		var num = 0;
+
+		var rowCount = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowCount();
+		var jsonData = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
+		var rlAllJson = dlt_BRT_OPER_ALLOC_RL_NODE_INFO.getAllJSON();
+		
+		var data = new Array();
+		for(var y = 0; y < jsonData.length; y++){
+			var label = jsonData[y].OPER_SN + "회차";
+			var updDtm = jsonData[y].UPD_DTM;
+			var operSn = jsonData[y].OPER_SN;
+			var arrvTm = jsonData[y].ARRV_TM;
+			var dprtTm = jsonData[y].DPRT_TM;
+			var accruLen = jsonData[y].ACCRU_LEN;
+			var nodeType = jsonData[y].NODE_TYPE;
+			
+			if(nodeType=='NT002'){
+				var categoryJson = new Object();
+				
+				categoryJson.x = new Date(updDtm+' '+arrvTm);
+				categoryJson.y = accruLen;
+				data.push(categoryJson);
+				
+			}
+			
+			if((nodeType=='NT002')&&(arrvTm!=dprtTm)){
+				var categoryJson = new Object();
+			
+				categoryJson.x = new Date(updDtm+' '+dprtTm);
+				categoryJson.y = accruLen;
+				data.push(categoryJson);
+			}
+			
 		};
+
+		var charData = new CharData();
+		
+		charData.data = data;
+		charData.label = label+" 운행계획";
+		
+		datasets.push(charData);
+		
+		var data = new Array();
+		for(var y = 0; y < rlAllJson.length; y++){
+			var label = rlAllJson[y].OPER_SN + "회차";
+			var updDtm = rlAllJson[y].UPD_DTM;
+			var operSn = rlAllJson[y].OPER_SN;
+			var arrvTm = rlAllJson[y].REAL_ARRV_TM;
+			var dprtTm = rlAllJson[y].REAL_DPRT_TM;
+			var accruLen = rlAllJson[y].ACCRU_LEN;
+			var nodeType = rlAllJson[y].NODE_TYPE;
+			
+			if(nodeType=='NT002'){
+				var categoryJson = new Object();
+				
+				categoryJson.x = new Date(updDtm+' '+arrvTm);
+				categoryJson.y = accruLen;
+				data.push(categoryJson);
+				
+			}
+			
+			if((nodeType=='NT002')&&(arrvTm!=dprtTm)){
+				var categoryJson = new Object();
+			
+				categoryJson.x = new Date(updDtm+' '+dprtTm);
+				categoryJson.y = accruLen;
+				data.push(categoryJson);
+			}
+			
+		};
+		
+		var charData = new CharData();
+		
+		charData.data = data;
+		charData.label = label+" 실제운행";
+		
+		datasets.push(charData);
+		
+		
+		var ctx = document.getElementById('myChart');
+		var myChart = new Chart(ctx, {
+			    type: 'line',
+				data: {
+					datasets
+				    /*datasets: [{
+					      label: '운행계획',
+					      data: [{
+					        x: new Date(2021, 10, 19, 03, 24, 20),
+					        y: 1
+					      }, {
+					        x: new Date(2021, 10, 19, 4, 24, 0),
+					        y: 10
+					      }
+					      ]
+					    },
+					    {
+					      label: '실제운행',
+					      data: [{
+					        x: new Date(2021, 10, 19, 3, 28, 0),
+					        y: 2
+					      }, {
+					        x: new Date(2021, 10, 19, 4, 24, 0),
+					        y: 11
+					      }]
+					    }
+					    ]*/
+				  },
+			    options: {
+			        scales: {
+			           xAxes: [{
+				        type: 'time',
+				        time: {
+				          unit: 'minute'
+				        }
+				      }]
+			        }
+			    }
+			});
+	}
 	
 	]]></script>
 	</head>
@@ -349,9 +580,10 @@
 	 			</xf:group>
 	 		</xf:group>
 	 		<xf:group style="" id="" class="popup_content">
-	 				<w2:fusionchart accessibility="false" drawType="javascript" runflashAt="IE6,IE7,IE8" seriesType="simple" chartType="MSLine"
+	 				<!--  <w2:fusionchart accessibility="false" drawType="javascript" runflashAt="IE6,IE7,IE8" seriesType="simple" chartType="MSLine"
 		 				style="width: auto; height: 100%;" id="CHART" ref="" labelNode="" valueNode="" seriesNode="" dataList="" dataTypeFormatter="">
-		 			</w2:fusionchart>
+		 			</w2:fusionchart>-->
+		 			<canvas id="myChart"></canvas>
 	 		</xf:group>
 	 	</xf:group>
 	 </body>
