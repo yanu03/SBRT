@@ -187,7 +187,8 @@ public class MO0101Service extends ServiceSupport{
 				int phaseNo = mo0101Mapper.selectCurPhaseNo(paramMap);
 				
 				HashMap<String, Object> phaseInfoMap = new HashMap<>();
-				phaseInfoMap.put("CRS_ID", BrtAtCode.TRAFFIC_LIGHT_STATUS_RESPONSE);
+				//phaseInfoMap.put("CRS_ID", BrtAtCode.TRAFFIC_LIGHT_STATUS_RESPONSE);
+				phaseInfoMap.put("CRS_ID", crsId);
 				phaseInfoMap.put("PHASE_NO", phaseNo);
 				
 				phaseInfoMapList.add(phaseInfoMap);

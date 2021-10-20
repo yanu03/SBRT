@@ -280,7 +280,7 @@
 			<!-- 신호등 위치 -->
 			<xf:submission id="sub_selectSigOper" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN4"
 				action="/mo/selectSigOper" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_selectSigOper_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_MO0101G3R0" ref="data:json,dma_search" target="data:json,dlt_BRT_OPER_EVENT_HIS" action="/mo/MO0101G3R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
@@ -418,9 +418,10 @@
 				busActive = 0;
 				sttnActive = 0;
 				crossActive = 1;
-				com.executeSubmission(sub_MO0101SCK2);				
+				com.executeSubmission(sub_selectSigOper);				
+				routMap.removeAllOverlay("map_MO0101_sttn");				
 				scwin.updateStatusCrs();				
-								
+				
 				MO0101T0.hide();
 				MO0101T1.hide();
 				MO0101T2.show();
@@ -509,7 +510,8 @@
 		
 		
 		map.setLevel(4);
-		map.setZoomable(false);
+		//map.setZoomable(false);
+		
 	};	//end onpageload
 	
 	var startMarker = 1;
@@ -519,6 +521,7 @@
 	var busActive = 1;
 	var sttnActive = 0;
 	var crossActive = 0;
+	var sigTimeout = null;
 		
 	scwin.connect = function() {
 		var socket = new SockJS('/websocket');
@@ -571,7 +574,7 @@
 				
 				if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
 					dlt_BRT_OPER_EVENT_HIS.insertRow(0);
-					
+					debugger;
 					var today = new Date();   
 					var hours = today.getHours();
 					var minutes = today.getMinutes(); 
@@ -580,7 +583,7 @@
 					
 					dlt_BRT_OPER_EVENT_HIS.setCellData(0, "OCR_DTM", timeResult);
 					dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_TYPE", jsonObj.EVT_TYPE);
-					var eventType = dlt_BRT_OPER_EVENT_HIS.getcellData(0, "EVT_TYPE");
+					var eventType = dlt_BRT_OPER_EVENT_HIS.getcellData(0, "EVT_CODE");
 					var eventMessage = "";
 					
 					switch(eventType) {
@@ -608,9 +611,8 @@
 						eventMessage = "종점에서 출발하였습니다.";
 						break;
 						
-						//노드통과랑 음성출력 수정해야 할수도
 						case "ET007":
-						eventMessage = "현재속도 " + jsonObj.SPPED+ "km/h, 평균 "+ 
+						eventMessage = "현재속도 " + jsonObj.SPEED+ "km/h, 평균 "+ 
 										jsonObj.EVT_DATA + "km/h 입니다.";						
 						break;
 						
@@ -707,8 +709,8 @@
 					var seconds = today.getSeconds(); 
 					var timeResult = hours + ':' + minutes + ':' + seconds
 					dlt_BRT_DSPTCH_LOG.setCellData(0, "SEND_DATE", timeResult);
-//					dlt_BRT_DSPTCH_LOG.setCellData(0, "ROUT_NM", jsonObj.);
-//					dlt_BRT_DSPTCH_LOG.setCellData(0, "VHC_NO", jsonObj.);
+					dlt_BRT_DSPTCH_LOG.setCellData(0, "ROUT_NM", jsonObj.ROUT_NM);
+					dlt_BRT_DSPTCH_LOG.setCellData(0, "VHC_NO", jsonObj.VHC_NO);
 					
 					dlt_BRT_DSPTCH_LOG.setCellData(0, "DSPTCH_DIV", jsonObj.DSPTCH_DIV);
 					
@@ -763,6 +765,19 @@
 			} catch (e) {
 				console.log("[scwin.onMessageReceived] Exception :: " + e.message);		
 			}
+			
+		}
+		
+		//신호등 현시 수신
+		else if (attrId == 4360) {
+			var crsId = null;
+			var phaseNo = null;
+			
+			if(dataList != null && dataList.length != 0){		
+				for(var i = 0; i < dataList.length; i++) {
+					routMap.showSigMarker("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN4.getAllJSON()[i], dataList[i]);
+				}
+			}			
 			
 		}
 		
@@ -825,7 +840,7 @@
 			//routMap.initOverlay("map_MO0101_sttn");
 			routMap.showMarkerListTab("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON(), MO0101G2.getFocusedRowIndex(), MO0101G2);
 			for(var i=0; i<dlt_BMS_ROUT_NODE_CMPSTN4.getAllJSON().length; i++){
-				routMap.showSigMarker("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN4.getAllJSON()[i]);		
+				routMap.showSigMarker("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN4.getAllJSON()[i], null);		
 			}
 		}
 		
@@ -956,7 +971,8 @@
 //					for(var i=0; i<dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON().length; i++){
 //						routMap.showMarkerTab("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON()[i], i, focusIdx, focusGrid);		
 //					}	
-					routMap.showMarkerListTab("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON(), focusIdx, focusGrid);				
+					routMap.showMarkerListTab("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON(), focusIdx, focusGrid);
+								
 				}
 				//정상 정류장
 				else if(spanClassName == "normal_busimg") {
@@ -985,7 +1001,10 @@
 //					for(var i=0; i<dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON().length; i++){
 //						routMap.showMarkerTab("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON()[i], i, focusIdx, focusGrid);		
 //					}	
-					routMap.showMarkerListTab("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON(), focusIdx, focusGrid);					
+					routMap.showMarkerListTab("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN3.getAllJSON(), focusIdx, focusGrid);		
+//					for(var i=0; i<dlt_BMS_ROUT_NODE_CMPSTN4.getAllJSON().length; i++){
+//						routMap.showSigMarker("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN4.getAllJSON()[i], null);		
+//					}									
 				}
 				else if(spanClassName == "normal_busimg") {
 					routMap.initNode("map_MO0101_sttn");
@@ -1403,6 +1422,22 @@
 		var selectedNodeId = dlt_FCLT_COND_LOG.getCellData(row, "NODE_ID");
 		var curIndexArr = dlt_BMS_ROUT_NODE_CMPSTN2.getMatchedIndex("NODE_ID", selectedNodeId);
 		MO0101G1.setFocusedCell(curIndexArr[0], "NODE_ID");
+	};
+	
+	scwin.sub_selectSigOper_submitdone = function(e) {
+		if(sigTimeout) {
+			clearInterval(sigTimeout);	
+		}
+
+		sigTimeout = setTimeout(function showSig() {
+			$p.executeSubmission(sub_MO0101SCK2);
+			sigTimeout = setTimeout(showSig, 3000);
+		}, 3000);
+
+	
+//		var time = setInterval(function() {
+//			$p.executeSubmission(sub_MO0101SCK2);
+//		},3000);
 	};
 	]]></script>
 	</head>

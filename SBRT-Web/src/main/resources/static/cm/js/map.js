@@ -2289,24 +2289,35 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid) {
 	routMap.mapInfo[mapId].markers.push(marker);
 }
 
-routMap.showSigMarker = function(mapId, data) {
+routMap.showSigMarker = function(mapId, baseData, socketData) {
 	var imageSize = new kakao.maps.Size(32, 15); 
 	//var imageSize = new kakao.maps.Size(30, 20); 
 	var markerImage = null;	
 	var Zindex = -1;
 	
 	if(routMap.mapInfo[mapId].isShowCrs == "on"){
-		if(data.NODE_TYPE == routMap.NODE_TYPE.VERTEX) {
-			zIndex = 3;
-			//imageSize = new kakao.maps.Size(19, 19);
-			markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/light_red.png", imageSize);
-			//markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/cross_selected.png", imageSize);
+		
+		zIndex = 3;
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/light_red.png", imageSize);
+		if(socketData != null && typeof socketData != "undefined"){
+			var phaseNoArr = baseData.PHASE_NO.split(',');
+			
+			for(i in phaseNoArr) {
+				if(socketData.CRS_ID == baseData.CRS_ID && socketData.PHASE_NO == phaseNoArr[i]){
+					markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/light_green.png", imageSize);
+				}
+			}
 		}
+		
+		
+		
+		//if(data.NODE_TYPE == routMap.NODE_TYPE.VERTEX) {
+		//}
 	}	
 	
 	var marker = null;
 	marker = new kakao.maps.Marker({
-		position : new kakao.maps.LatLng(data.GPS_Y, data.GPS_X), // Marker의 중심좌표 // 설정.
+		position : new kakao.maps.LatLng(baseData.GPS_Y, baseData.GPS_X), // Marker의 중심좌표 // 설정.
 		image : markerImage,
 		zIndex: 3
 	});	
