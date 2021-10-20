@@ -492,6 +492,7 @@
 	
 	<select id="selectCommuMap" resultType="Map">
 		SELECT 	 		A.LINK_ID
+					,	A.AVRG_SPD
 			 	 	,	B.GPS_X AS ST_GPS_X
 					,	B.GPS_Y AS ST_GPS_Y
 				 	,	C.GPS_X AS ED_GPS_X
@@ -499,9 +500,13 @@
 		 
 		 FROM 			BMS_LINK_MST A 
 		 LEFT JOIN 		BMS_NODE_MST B 
-		 	ON A.ST_NODE_ID = B.NODE_ID
+		 	ON 			A.ST_NODE_ID = B.NODE_ID
 		 LEFT JOIN		BMS_NODE_MST C 
-		 	ON A.ED_NODE_ID = C.NODE_ID 
+		 	ON 			A.ED_NODE_ID = C.NODE_ID 
+		 	
+		 WHERE			A.USE_YN = 'Y'
+		 AND			A.AVRG_SPD IS NOT NULL
+
 	</select>	
 	
 	<!--교차로 현시정보 가져오기 -->

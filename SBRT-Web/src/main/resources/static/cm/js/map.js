@@ -3969,6 +3969,48 @@ routMap.addOverMapType = function(mapId, type) {
 routMap.removeOverMapType = function(mapId, type) {
 	routMap.mapInfo[mapId].map.removeOverlayMapTypeId(type);
 }
+
+routMap.showCommuMap = function(mapId, list) {
+	routMap.initDisplay(mapId);
+	if(list != null && list.length != 0) {
+		for(var i = 0; i < list.length; i++) {
+			list[i].index = i;
+			
+			if(i < list.length -1){
+				//원활
+				var color = "#4CAF50";
+				
+				//서행
+				if(list[i].AVRG_SPD > 15 && list[i].AVRG_SPD < 25){
+					color = "#FFC107";
+				}
+				
+				//정체
+				else if(list[i].AVRG_SPD <= 15){
+					color = "#F44336";
+				}
+				
+				var path = [];
+				path.push(new kakao.maps.LatLng(list[i].ST_GPS_Y, list[i].ST_GPS_X));
+				path.push(new kakao.maps.LatLng(list[i].ED_GPS_Y, list[i].ED_GPS_X));
+				
+				var polyline = new kakao.maps.Polyline({
+					path: path,
+					strokeColor: color, // 라인 색상
+					strokeWeight: 7, // 라인 두께
+					strokeStyle:'solid',
+					strokeOpacity: 0.8
+				});
+				
+				polyline.setMap(routMap.mapInfo[mapId].map);
+				
+				routMap.mapInfo[mapId].polylines.push(polyline);
+			}
+			
+		}
+		
+	}
+}
 /**두 지점간의 거리 계산 **/
 function getDistanceBetween(x1, y1, x2, y2) {
 	let kEarthRadiusKms = 6376.5;

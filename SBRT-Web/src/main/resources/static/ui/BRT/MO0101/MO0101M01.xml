@@ -238,6 +238,16 @@
 						<w2:column id="NODE_ID" name="노드아이디" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_LINK_MST" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="LINK_ID" name="링크아이디" dataType="text"></w2:column>
+						<w2:column id="ST_GPS_X" name="시작GPS_X" dataType="text"></w2:column>
+						<w2:column id="ST_GPS_Y" name="시작GPS_Y" dataType="text"></w2:column>
+						<w2:column id="ED_GPS_X" name="끝GPS_X" dataType="text"></w2:column>
+						<w2:column id="ED_GPS_Y" name="끝GPS_Y" dataType="text"></w2:column>
+						<w2:column id="AVRG_SPD" name="평균속도" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_MO0101G0R0" ref="data:json,dma_search" target="data:json,dlt_BRT_CUR_OPER_INFO" action="/mo/MO0101G0R0"
@@ -302,7 +312,7 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_selectCommuMap" ref="" target="" action="/mo/selectCommuMap" method="post" mediatype="application/json"
+			<xf:submission id="sub_selectCommuMap" ref="" target="data:json,dlt_BMS_LINK_MST" action="/mo/selectCommuMap" method="post" mediatype="application/json"
 				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -451,7 +461,8 @@
 			$(".map-type").find(".maptype2-text").removeClass("active");
 			
 			if($(".map-type").find(".map-type-03").hasClass("active")) {
-				routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.TRAFFIC);
+				routMap.showCommuMap("map_MO0101", dlt_BMS_LINK_MST.getAllJSON());
+				//routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.TRAFFIC);
 			}
 			
 			$(this).addClass("active");
@@ -463,7 +474,8 @@
 			$(".map-type").find(".maptype1-text").removeClass("active");
 			
 			if($(".map-type").find(".map-type-03").hasClass("active")) {
-				routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.TRAFFIC);
+				routMap.showCommuMap("map_MO0101", dlt_BMS_LINK_MST.getAllJSON());
+				//routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.TRAFFIC);
 			}
 			
 			$(this).addClass("active");
@@ -473,12 +485,13 @@
 		$(".map-type").find(".map-type-03").click( function() {
 			if( $(this).hasClass("active")) {
 				$(this).removeClass("active");	
-				routMap.removeOverMapType('map_MO0101',kakao.maps.MapTypeId.TRAFFIC);
+				routMap.showRoute("map_MO0101", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), null, "ONLYLINE");
+				//routMap.removeOverMapType('map_MO0101',kakao.maps.MapTypeId.TRAFFIC);
 			} else {
-				$(this).addClass("active");			
-				routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.TRAFFIC);
+				$(this).addClass("active");
+				routMap.showCommuMap("map_MO0101", dlt_BMS_LINK_MST.getAllJSON());
+				//routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.TRAFFIC);
 			}
-			
 			if ( $(this).find("span").hasClass("active")) {
 				$(this).find("span").removeClass("active");
 			} else {
@@ -511,6 +524,8 @@
 		
 		map.setLevel(4);
 		//map.setZoomable(false);
+		
+		com.executeSubmission(sub_selectCommuMap);
 		
 	};	//end onpageload
 	
@@ -574,7 +589,6 @@
 				
 				if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
 					dlt_BRT_OPER_EVENT_HIS.insertRow(0);
-					debugger;
 					var today = new Date();   
 					var hours = today.getHours();
 					var minutes = today.getMinutes(); 
@@ -1433,11 +1447,6 @@
 			$p.executeSubmission(sub_MO0101SCK2);
 			sigTimeout = setTimeout(showSig, 3000);
 		}, 3000);
-
-	
-//		var time = setInterval(function() {
-//			$p.executeSubmission(sub_MO0101SCK2);
-//		},3000);
 	};
 	]]></script>
 	</head>

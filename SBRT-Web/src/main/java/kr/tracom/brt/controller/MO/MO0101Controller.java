@@ -112,13 +112,12 @@ public class MO0101Controller extends ControllerSupport {
 	
 	@RequestMapping("/mo/selectCommuMap")
 	public @ResponseBody Map<String, Object> selectCommuMap() throws Exception {
-		result.setData("dlt_FCLT_COND_LOG", mo0101Service.selectCommuMap());
+		result.setData("dlt_BMS_LINK_MST", mo0101Service.selectCommuMap());
 		return result.getResult();
 	}
 	
 	@RequestMapping("/mo/MO0101SCK2")
 	public @ResponseBody Map<String, Object> MO0101SCK2() throws Exception {		
-		
 		result.setData("", mo0101Service.MO0101SCK2());
 		return result.getResult();
 	}	
