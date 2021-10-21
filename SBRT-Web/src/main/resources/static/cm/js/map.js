@@ -3971,7 +3971,7 @@ routMap.removeOverMapType = function(mapId, type) {
 }
 
 routMap.showCommuMap = function(mapId, list) {
-	routMap.initDisplay(mapId);
+	//routMap.initDisplay(mapId);
 	if(list != null && list.length != 0) {
 		for(var i = 0; i < list.length; i++) {
 			list[i].index = i;
@@ -3997,7 +3997,7 @@ routMap.showCommuMap = function(mapId, list) {
 				var polyline = new kakao.maps.Polyline({
 					path: path,
 					strokeColor: color, // 라인 색상
-					strokeWeight: 7, // 라인 두께
+					strokeWeight: 5, // 라인 두께
 					strokeStyle:'solid',
 					strokeOpacity: 0.8
 				});

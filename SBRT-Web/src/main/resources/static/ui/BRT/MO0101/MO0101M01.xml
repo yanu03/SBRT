@@ -248,6 +248,11 @@
 						<w2:column id="AVRG_SPD" name="평균속도" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				<w2:dataList baseNode="map" id="dlt_SIG_PERIOD">
+					<w2:columnInfo>
+						<w2:column id="SIG_PERIOD" name="신호요청주기" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_MO0101G0R0" ref="data:json,dma_search" target="data:json,dlt_BRT_CUR_OPER_INFO" action="/mo/MO0101G0R0"
@@ -290,7 +295,8 @@
 			<!-- 신호등 위치 -->
 			<xf:submission id="sub_selectSigOper" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN4"
 				action="/mo/selectSigOper" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_selectSigOper_submitdone" ev:submiterror="" abortTrigger="">
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_selectSigOper_submitdone" ev:submiterror=""
+				abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_MO0101G3R0" ref="data:json,dma_search" target="data:json,dlt_BRT_OPER_EVENT_HIS" action="/mo/MO0101G3R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
@@ -312,13 +318,17 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_selectCommuMap" ref="" target="data:json,dlt_BMS_LINK_MST" action="/mo/selectCommuMap" method="post" mediatype="application/json"
-				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
-				ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_selectCommuMap" ref="" target="data:json,dlt_BMS_LINK_MST" action="/mo/selectCommuMap" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0101SCK2" ref="data:json,dlt_BMS_ROUT_NODE_CMPSTN4" target="" action="/mo/MO0101SCK2" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
-				ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_MO0101SCK2" ref="data:json,dlt_BMS_ROUT_NODE_CMPSTN4" target="" action="/mo/MO0101SCK2" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_selectSigPeriod" ref="" target="data:json,dlt_SIG_PERIOD" action="/mo/selectSigPeriod" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
@@ -526,7 +536,7 @@
 		//map.setZoomable(false);
 		
 		com.executeSubmission(sub_selectCommuMap);
-		
+		com.executeSubmission(sub_selectSigPeriod);
 	};	//end onpageload
 	
 	var startMarker = 1;
@@ -1438,6 +1448,12 @@
 		MO0101G1.setFocusedCell(curIndexArr[0], "NODE_ID");
 	};
 	
+	scwin.clearInterval = function() {
+		if(sigTimeout) {
+			clearInterval(sigTimeout);	
+		}
+	}
+	
 	scwin.sub_selectSigOper_submitdone = function(e) {
 		if(sigTimeout) {
 			clearInterval(sigTimeout);	
@@ -1445,8 +1461,8 @@
 
 		sigTimeout = setTimeout(function showSig() {
 			$p.executeSubmission(sub_MO0101SCK2);
-			sigTimeout = setTimeout(showSig, 3000);
-		}, 3000);
+			sigTimeout = setTimeout(showSig, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
+		}, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
 	};
 	]]></script>
 	</head>

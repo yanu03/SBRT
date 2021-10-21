@@ -58,7 +58,13 @@ public class MO0101Controller extends ControllerSupport {
 	public @ResponseBody Map<String, Object> selectSigOper() throws Exception {
 		result.setData("dlt_BMS_ROUT_NODE_CMPSTN4", mo0101Service.selectSigOper());
 		return result.getResult();
-	}	
+	}
+	
+	@RequestMapping("/mo/selectSigPeriod")
+	public @ResponseBody Map<String, Object> selectSigPeriod() throws Exception {
+		result.setData("dlt_SIG_PERIOD", mo0101Service.selectSigPeriod());
+		return result.getResult();
+	}		
 	
 	@RequestMapping("/mo/MO0101SCK")
 	public @ResponseBody Map<String, Object> MO0101SCK() throws Exception {		
@@ -121,4 +127,5 @@ public class MO0101Controller extends ControllerSupport {
 		result.setData("", mo0101Service.MO0101SCK2());
 		return result.getResult();
 	}	
+	
 }

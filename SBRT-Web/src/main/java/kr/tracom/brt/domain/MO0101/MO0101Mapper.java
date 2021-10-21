@@ -22,6 +22,8 @@ public interface MO0101Mapper {
 	
 	public List selectSigOper(Map param);
 	
+	public List selectSigPeriod();
+	
 	public List MO0101P0R0();
 	
 	public List MO0101G3R0(Map param);
