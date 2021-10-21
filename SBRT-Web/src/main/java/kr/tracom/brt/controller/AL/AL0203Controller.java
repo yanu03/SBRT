@@ -43,6 +43,13 @@ public class AL0203Controller extends ControllerSupport{
 		result.setData("dlt_BRT_OPER_ALLOC_PL_NODE_CNT", al0203Service.AL0203G1CNT());
 		return result.getResult();
 	}
+	
+	@RequestMapping("/al/AL0203P0S0")
+	public @ResponseBody Map<String, Object> AL0203P0S0() throws Exception {
+		Map map = al0203Service.AL0203P0S0();
+		result.setData("dma_result", map);
+		return result.getResultSave();
+	}	
 	/*
 	@RequestMapping("/al/AL0103G0S0")
 	public @ResponseBody Map<String, Object> AL0103G0S0() throws Exception {
