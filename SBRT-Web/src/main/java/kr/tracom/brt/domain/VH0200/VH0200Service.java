@@ -23,6 +23,23 @@ public class VH0200Service extends ServiceSupport {
 		return vh0200Mapper.VH0200G0R0(map);
 	}
 	
+	public List VH0200G1R0() throws Exception {
+		// TODO Auto-generated method stub
+		Map param = getSimpleDataMap("dma_sub_search");
+		return vh0200Mapper.VH0200G1R0(param);
+	}
+	
+	public List VH0200G1CNT() throws Exception {
+		Map param = getSimpleDataMap("dma_sub_search");
+		return vh0200Mapper.VH0200G1CNT(param);
+	}
+	
+	public List VH0200G2R0() throws Exception {
+		// TODO Auto-generated method stub
+		Map param = getSimpleDataMap("dma_sub_search");
+		return vh0200Mapper.VH0200G2R0(param);
+	}
+	
 	/*
 	public List AL0203SHI0() throws Exception {
 		return al0203Mapper.AL0203SHI0();

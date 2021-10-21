@@ -2289,24 +2289,35 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid) {
 	routMap.mapInfo[mapId].markers.push(marker);
 }
 
-routMap.showSigMarker = function(mapId, data) {
+routMap.showSigMarker = function(mapId, baseData, socketData) {
 	var imageSize = new kakao.maps.Size(32, 15); 
 	//var imageSize = new kakao.maps.Size(30, 20); 
 	var markerImage = null;	
 	var Zindex = -1;
 	
 	if(routMap.mapInfo[mapId].isShowCrs == "on"){
-		if(data.NODE_TYPE == routMap.NODE_TYPE.VERTEX) {
-			zIndex = 3;
-			//imageSize = new kakao.maps.Size(19, 19);
-			markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/light_red.png", imageSize);
-			//markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/cross_selected.png", imageSize);
+		
+		zIndex = 3;
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/light_red.png", imageSize);
+		if(socketData != null && typeof socketData != "undefined"){
+			var phaseNoArr = baseData.PHASE_NO.split(',');
+			
+			for(i in phaseNoArr) {
+				if(socketData.CRS_ID == baseData.CRS_ID && socketData.PHASE_NO == phaseNoArr[i]){
+					markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/light_green.png", imageSize);
+				}
+			}
 		}
+		
+		
+		
+		//if(data.NODE_TYPE == routMap.NODE_TYPE.VERTEX) {
+		//}
 	}	
 	
 	var marker = null;
 	marker = new kakao.maps.Marker({
-		position : new kakao.maps.LatLng(data.GPS_Y, data.GPS_X), // Marker의 중심좌표 // 설정.
+		position : new kakao.maps.LatLng(baseData.GPS_Y, baseData.GPS_X), // Marker의 중심좌표 // 설정.
 		image : markerImage,
 		zIndex: 3
 	});	
@@ -3957,6 +3968,48 @@ routMap.addOverMapType = function(mapId, type) {
 
 routMap.removeOverMapType = function(mapId, type) {
 	routMap.mapInfo[mapId].map.removeOverlayMapTypeId(type);
+}
+
+routMap.showCommuMap = function(mapId, list) {
+	//routMap.initDisplay(mapId);
+	if(list != null && list.length != 0) {
+		for(var i = 0; i < list.length; i++) {
+			list[i].index = i;
+			
+			if(i < list.length -1){
+				//원활
+				var color = "#4CAF50";
+				
+				//서행
+				if(list[i].AVRG_SPD > 15 && list[i].AVRG_SPD < 25){
+					color = "#FFC107";
+				}
+				
+				//정체
+				else if(list[i].AVRG_SPD <= 15){
+					color = "#F44336";
+				}
+				
+				var path = [];
+				path.push(new kakao.maps.LatLng(list[i].ST_GPS_Y, list[i].ST_GPS_X));
+				path.push(new kakao.maps.LatLng(list[i].ED_GPS_Y, list[i].ED_GPS_X));
+				
+				var polyline = new kakao.maps.Polyline({
+					path: path,
+					strokeColor: color, // 라인 색상
+					strokeWeight: 5, // 라인 두께
+					strokeStyle:'solid',
+					strokeOpacity: 0.8
+				});
+				
+				polyline.setMap(routMap.mapInfo[mapId].map);
+				
+				routMap.mapInfo[mapId].polylines.push(polyline);
+			}
+			
+		}
+		
+	}
 }
 /**두 지점간의 거리 계산 **/
 function getDistanceBetween(x1, y1, x2, y2) {

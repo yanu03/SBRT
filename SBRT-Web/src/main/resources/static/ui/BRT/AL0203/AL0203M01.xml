@@ -194,7 +194,13 @@
 			Sub1 : { grid : AL0203G1, srchSbm : sub_AL0203G1R0, keyColumn : "OPER_SN", savSbm : sub_AL0203G1S0, name : "운행계획 상세" }	
 		 };
 		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions);
+		var mainOptions = {
+			RESERV:{cbFnc:scwin.btn_distri_onclick, nm:"배포",class:"reserv"}
+			,RESERV_CNL:{disp:"hide"}
+			
+		};  
+		 
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions, mainOptions);
 		
 		var subOptions2 = {
 			SEARCH:[{cbFnc:scwin.openPopUpChart,nm:"거리 시공도 보기"}
@@ -230,6 +236,21 @@
 	scwin.onpageunload = function() {
 		
 	};
+	
+	//베포버튼
+	scwin.btn_distri_onclick = function(){
+		debugger;
+		var jsondata = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
+		
+		var data = {data : jsondata, callbackFn : "scwin.AL0203P0_callbackFn"};
+		if(jsondata.length > 0){
+			var options = { id : "AL0203P01",
+							popupName : "배포 날짜",
+							modal : true};
+			com.openPopup("/ui/BRT/AL0203/AL0203P01.xml", options, data);
+		}
+	}
+	
 	scwin.setGridViewInfo = function() {
 		
 		var gridHeader ="", gridBody="";
@@ -392,7 +413,7 @@
          var options = { id : "AL0203P0",
          				 width : "1600px",
          				 height : "800px",
-                         popupName : "운행 계획 시공도", 
+                         popupName : "운행 결과 비교 시공도", 
                          modal : true};
 		
 		com.openPopup("/cm/common/popUpChart.xml", options, data);

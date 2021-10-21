@@ -75,6 +75,11 @@ public class MO0101Service extends ServiceSupport{
 		// TODO Auto-generated method stub
 		Map param = getSimpleDataMap("dma_search");
 		return mo0101Mapper.selectSigOper(param);
+	}
+	
+	public List selectSigPeriod() throws Exception {
+		// TODO Auto-generated method stub
+		return mo0101Mapper.selectSigPeriod();
 	}	
 
 	public List<Map> MO0101SCK() throws Exception{
@@ -187,7 +192,8 @@ public class MO0101Service extends ServiceSupport{
 				int phaseNo = mo0101Mapper.selectCurPhaseNo(paramMap);
 				
 				HashMap<String, Object> phaseInfoMap = new HashMap<>();
-				phaseInfoMap.put("CRS_ID", BrtAtCode.TRAFFIC_LIGHT_STATUS_RESPONSE);
+				//phaseInfoMap.put("CRS_ID", BrtAtCode.TRAFFIC_LIGHT_STATUS_RESPONSE);
+				phaseInfoMap.put("CRS_ID", crsId);
 				phaseInfoMap.put("PHASE_NO", phaseNo);
 				
 				phaseInfoMapList.add(phaseInfoMap);

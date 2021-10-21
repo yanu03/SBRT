@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+	<w2:type>DEFAULT</w2:type>
+	<w2:buildDate />
+	<xf:model>
+		<xf:instance>
+			<data xmlns="" />
+		</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="MONTH" name="월" dataType="text"></w2:column>
+						<w2:column id="WEEK" name="주" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
+						<w2:column id="COR_ID" name="코스ID" dataType="text"></w2:column>
+						<w2:column id="OPER_SN" name="운행순번" dataType="text"></w2:column>
+						<w2:column id="NODE_ID" name="노드아이디" dataType="text"></w2:column>
+						<w2:column id="NODE_SN" name="노드순번" dataType="text"></w2:column>
+						<w2:column id="ALLOC_NO" name="배차번호" dataType="text"></w2:column>
+						<w2:column id="NODE_TYPE" name="노드유형" dataType="text"></w2:column>
+						<w2:column id="DPRT_TM" name="출발시간" dataType="text"></w2:column>
+						<w2:column id="ARRV_TM" name="도착시간" dataType="text"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="date"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="COMP_ECPT_ID" name="운수사제외ID" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataMap baseNode="map" id="dma_result">
+					<w2:keyInfo>
+						<w2:key id="STATUS" name="STATUS" dataType="text"></w2:key>
+						<w2:key id="ICNT" name="입력건수" dataType="text"></w2:key>
+						<w2:key id="UCNT" name="수정건수" dataType="text"></w2:key>
+						<w2:key id="DCNT" name="삭제건수" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
+					</w2:keyInfo>
+					<w2:data></w2:data>
+				</w2:dataMap>
+			</w2:dataCollection>
+		<w2:workflowCollection></w2:workflowCollection>
+		<xf:submission id="sub_AL0203P0S0" ref='data:json,{"action":"modified","id":"dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO"}' target="data:json,dma_search" action="/al/AL0203P0S0" method="post"
+			mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중입니다..."
+			ev:submit="" ev:submitdone="scwin.sub_AL0203P0S0_submitdone" ev:submiterror="" abortTrigger="">
+		</xf:submission>
+	</xf:model>
+	<script type="text/javascript" lazy="false"><![CDATA[
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	scwin.btn_confirm_onclick = function() {
+		debugger;
+		var data = AL0203C0.getValue();
+		
+		var date = data.slice(0,4) + '-' + data.slice(4,6) + '-' + data.slice(6,8)
+		
+		date = new Date(date);
+		
+		var year = date.getFullYear();
+		var month = date.getMonth() + 1;
+		var weekNo = scwin.weekNumberByThurFnc(date);
+		
+		if(weekNo === 'prev') {
+		    var afterDate = new Date(year, month-1, 0);
+		    year = month === 1 ? year - 1 : year;
+		    month = month === 1 ? 12 : month - 1;
+		    weekNo = scwin.weekNumberByThurFnc(afterDate);
+		  }
+		if(weekNo === 'next') {
+		    year = month === 12 ? year + 1 : year;
+		    month = month === 12 ? 1 : month + 1;
+		    weekNo = 1;
+		  }
+		
+		var cnt = scwin.param.data.length;
+		
+		var i = 0;
+		for(i; i<cnt; i++){
+			dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO.insertRow(i);
+			dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "MONTH", month);
+			dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "WEEK", weekNo);
+			dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "REP_ROUT_ID", scwin.param.data[i].REP_ROUT_ID);
+			dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "ROUT_ID", scwin.param.data[i].ROUT_ID);
+			dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "COR_ID", scwin.param.data[i].COR_ID);
+			dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "OPER_SN", scwin.param.data[i].OPER_SN);
+			dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "NODE_ID", scwin.param.data[i].NODE_ID);
+			dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "NODE_SN", scwin.param.data[i].NODE_SN);
+			dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "ALLOC_NO", scwin.param.data[i].ALLOC_NO);
+			dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "NODE_TYPE", scwin.param.data[i].NODE_TYPE);
+			dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "DPRT_TM", scwin.param.data[i].DPRT_TM);
+			dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "ARRV_TM", scwin.param.data[i].ARRV_TM);
+		}
+		
+		var rowCnt = dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO.getRowCount();
+		
+		com.executeSubmission(sub_AL0203P0S0);
+		
+	};
+	
+	
+	//월,주 구하기 함수
+	scwin.weekNumberByThurFnc = function(date){
+		var year = date.getFullYear();
+		var month = date.getMonth();
+		var day = date.getDate();
+		
+		var firstDate = new Date(year, month, 1);
+		var lastDate = new Date(year, month+1, 0);
+		var firstDayOfWeek = firstDate.getDay() === 0 ? 7 : firstDate.getDay();
+		var lastDayOfweek = lastDate.getDay();
+		
+		var lastDay = lastDate.getDate();
+		
+		var firstWeekCheck = firstDayOfWeek === 5 || firstDayOfWeek === 6 || firstDayOfWeek === 7;
+		var lastWeekCheck = lastDayOfweek === 1 || lastDayOfweek === 2 || lastDayOfweek === 3;
+		
+		var lastWeekNo = Math.ceil((firstDayOfWeek - 1 + lastDay) / 7);
+		
+		var weekNo = Math.ceil((firstDayOfWeek - 1 + day) / 7);
+		
+		if(weekNo === 1 && firstWeekCheck){
+			weekNo = 'prev';
+		} 
+		else if(weekNo === lastWeekNo && lastWeekCheck){
+			weekNo = 'next';
+		} 
+		else if(firstWeekCheck){
+			weekNo = weekNo -1;
+		}
+		
+		return weekNo;
+	}
+	
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();		
+	};
+	
+
+	scwin.sub_AL0203P0S0_submitdone = function(e) {
+		com.closePopup();
+	};
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+			</xf:group>
+			<xf:group style="" id="" class="popup_content">
+				<w2:calendar footerDiv="false" id="AL0203C0" style="width: auto;height: auto;" useYearSelect="" highlightSelectedWeek="true" calendarValueType="yearMonthDate"></w2:calendar>
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>
