@@ -560,15 +560,25 @@ FROM BRT_OPER_ALLOC_PL_NODE_INFO A
 		SELECT A.REP_ROUT_ID
 		,A.DAY_DIV
 		,A.ALLOC_NO
-		,A.WAY_DIV
 		,A.COR_SN
+		,A.WAY_DIV
 		,A.COR_ID
+		,B.COR_NM
 		,B.COR_TYPE
 		,B.MOVE_TM
 		,B.COR_COLOR
+		,C.ROUT_ID
+		,C.ROUT_SN
+		,C.MIN_REST_TM
+		,D.REP_ROUT_NM
+		,D.ROUT_NM
 		FROM BRT_OPER_ALLOC_PL_COR_INFO A
 		INNER JOIN BRT_COR_MST B
 			ON	A.COR_ID = B.COR_ID
+		LEFT OUTER JOIN BRT_COR_DTL_INFO C
+			ON	A.COR_ID = C.COR_ID
+		INNER JOIN BMS_ROUT_MST D
+			ON	A.REP_ROUT_ID = D.REP_ROUT_ID AND C.ROUT_ID = D.ROUT_ID
 		WHERE A.REP_ROUT_ID = #{REP_ROUT_ID}
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(DAY_DIV)">
 		AND A.DAY_DIV = #{DAY_DIV}
@@ -579,7 +589,7 @@ FROM BRT_OPER_ALLOC_PL_NODE_INFO A
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(WAY_DIV)">
 		 AND A.WAY_DIV = #{WAY_DIV}
 		</if>
-		ORDER BY A.COR_SN ASC
+		ORDER BY A.REP_ROUT_ID, A.DAY_DIV, A.ALLOC_NO, A.COR_SN ,C.ROUT_SN ASC
 	</select>
 
 	<select id="selectCourseDtlList" resultType="Map">
@@ -587,19 +597,24 @@ FROM BRT_OPER_ALLOC_PL_NODE_INFO A
 			,	A.MIN_REST_TM
 			,	A.ROUT_SN
 			,	A.COR_DTL_COLOR
-			,	B.ROUT_ID
-			,	B.ROUT_NM
-			,	B.ROUT_TYPE
-			,	B.STTN_CNT
-			,	B.ROUT_LEN
-			,	B.CURVATURE
-			,	B.JIT_DSPCH_YN
-			,	B.ST_STTN_NM
-			,	B.ED_STTN_NM
-			,	B.WAY_DIV
+			,	B.COR_COLOR
+			,	B.COR_NM
+			,	B.COR_TYPE
+			,	C.ROUT_ID
+			,	C.ROUT_NM
+			,	C.ROUT_TYPE
+			,	C.STTN_CNT
+			,	C.ROUT_LEN
+			,	C.CURVATURE
+			,	C.JIT_DSPCH_YN
+			,	C.ST_STTN_NM
+			,	C.ED_STTN_NM
+			,	C.WAY_DIV
 	FROM			BRT_COR_DTL_INFO A
-		INNER JOIN	BMS_ROUT_MST B
-		ON			A.ROUT_ID = B.ROUT_ID
+		INNER JOIN	BRT_COR_MST B
+		ON			A.COR_ID = B.COR_ID
+		INNER JOIN	BMS_ROUT_MST C
+		ON			A.ROUT_ID = C.ROUT_ID
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(COR_IDS)">
 		WHERE A.COR_ID IN
 			<foreach collection="COR_IDS" item="item" index="index"  open="(" close=")" separator=",">
@@ -609,5 +624,6 @@ FROM BRT_OPER_ALLOC_PL_NODE_INFO A
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(COR_ID)">
 			WHERE A.COR_ID = #{COR_ID}
 		</if>
+		ORDER BY  A.ROUT_SN ASC
 	</select>
 </mapper>
