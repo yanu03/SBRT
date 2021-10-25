@@ -327,8 +327,7 @@
 	</select>
 	
 	<select id="MO0101G3R0" resultType="Map" parameterType="Map">
-		
-		SELECT			DATE_FORMAT(A.OPER_DT, '%Y-%m-%d %H:%i%s') OPER_DT
+		SELECT			DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
 					,	A.REP_ROUT_ID
 					,	A.VHC_ID
 					,	A.UPD_DTM
@@ -364,7 +363,7 @@
 		LEFT JOIN		BMS_ROUT_MST D
 			ON			A.ROUT_ID = D.ROUT_ID
 	
-		WHERE			DATE_FORMAT(OPER_DT, '%Y-%m-%d') = CURDATE() 
+		WHERE			DATE_FORMAT(OPER_DT, '%Y-%m-%d') = CURDATE()
 		<if test="CONTENT1 != null">
 			AND A.REP_ROUT_ID = #{CONTENT1}
 		</if>
@@ -374,7 +373,7 @@
 		<if test="CONTENT3 != null and CONTENT3 != ''">
 			AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
 		</if>			
-		ORDER BY		OPER_DT DESC
+		ORDER BY		UPD_DTM DESC
 		LIMIT			100;			
 		
 	</select>
