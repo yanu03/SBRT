@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
 	xmlns:xf="http://www.w3.org/2002/xforms">
-	<head>
+	<head meta_vertical_guides="" meta_horizontal_guides="184">
 	<w2:type>DEFAULT</w2:type>
 	<w2:buildDate />
 	<xf:model>
@@ -36,6 +36,8 @@
 	
 		scwin.param = com.getParameter();
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		
+		VD0203C0.setSize(250, 200);
 	};
 	
 	scwin.onpageunload = function() {
@@ -56,7 +58,28 @@
 		com.closePopup();		
 	};
 	
-]]></script>
+
+	
+	scwin.input1_onviewchange = function(info) {
+		
+		var val = info.newValue;
+		VD0203C0.setDateFormat("yyyy-MM-dd");
+		
+		VD0203C0.gotoCalendar(val);
+	};
+	
+	
+	
+	scwin.VD0203C0_ondateselect = function(dateStr,dateObj) {
+		debugger;
+		VD0203C0.setDateFormat("yyyy-MM-dd");
+		input1.setValue(dateStr);
+	};
+	
+	scwin.VD0203C0_onclick = function(e) {
+		VD0203C0.setDateFormat("yyyy-MM-dd");
+	};
+	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
@@ -64,7 +87,9 @@
 			</xf:group>
 
 			<xf:group style="" id="" class="popup_content">
-				<w2:calendar footerDiv="false" id="VD0203C0" style="width: auto;height: auto;" useYearSelect=""></w2:calendar>
+				<w2:span label="예약일 :" style="" id=""></w2:span>
+				<xf:input adjustMaxLength="false" id="input1" style="width: 144px;height: 21px;margin: 15px;" ev:onkeypress="scwin.input1_onkeypress" ev:onviewchange="scwin.input1_onviewchange"></xf:input>
+				<w2:calendar footerDiv="false" id="VD0203C0" style="width: auto;height: auto;" useYearSelect="" ev:onclick="scwin.VD0203C0_onclick" ev:ondateselect="scwin.VD0203C0_ondateselect" displayFormat='' displayFormatFunc=""></w2:calendar>
 			</xf:group>
 			<xf:group id="" style="" class="popup_bottom">
 				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">

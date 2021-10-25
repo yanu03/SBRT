@@ -637,8 +637,14 @@ public class ServiceSupport {
 		{
 			throw new IllegalArgumentException("파일이름이 유효하지 않습니다.");
 		}
-		sourcePath = fileRoot + sourcePath;
-		destPath = fileRoot + destPath;
+		
+		if(SystemUtils.IS_OS_WINDOWS) {
+			sourcePath = windowsFileRoot + sourcePath;
+			destPath = windowsFileRoot + destPath;
+		} else {
+			sourcePath = fileRoot + sourcePath;
+			destPath = fileRoot + destPath;	
+		}
 		
 		File fileSourcePath = new File(sourcePath);
 		if (!fileSourcePath.exists())
@@ -667,9 +673,15 @@ public class ServiceSupport {
 		{
 			throw new IllegalArgumentException("파일이름이 유효하지 않습니다.");
 		}
-		sourcePath = fileRoot + sourcePath;
-		destPath = fileRoot + destPath;
 		
+		if(SystemUtils.IS_OS_WINDOWS) {
+			sourcePath = windowsFileRoot + sourcePath;
+			destPath = windowsFileRoot + destPath;
+		} else {
+			sourcePath = fileRoot + sourcePath;
+			destPath = fileRoot + destPath;
+		}
+				
 		File fileSourcePath = new File(sourcePath);
 		if (!fileSourcePath.exists())
 		{
