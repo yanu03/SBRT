@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.brt.domain.VH0400.VH0400Mapper">
+
+<select id="VH0400G0R0" parameterType="Map" resultType="Map">
+	SELECT				DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+					,	A.REP_ROUT_ID
+					,	A.VHC_ID
+					,	A.UPD_DTM
+					,	A.VHC_NO
+					,	A.DRV_ID
+					,	A.COR_ID
+					,	A.ROUT_ID
+					,	A.ALLOC_NO
+					,	A.OPER_SN
+					,	A.GPS_X_RAW AS GPS_X
+					,	A.GPS_Y_RAW AS GPS_Y
+					,	A.DRV_ANGLE
+					,	A.GPS_X
+					,	A.GPS_Y
+					,	A.CUR_SPD
+					,	A.LINK_ID
+					,	A.NODE_ID
+					,	A.NODE_SN
+					,	A.OPER_STS
+					,	A.EVT_TYPE
+					,	A.EVT_DATA
+					,	A.STOP_TM
+					,	DATE_FORMAT(A.OCR_DTM, '%H:%i:%s') OCR_DTM
+					,	B.NODE_NM
+					,	B.NODE_TYPE
+					, 	C.ROUT_NM
+					,	D.ORGA_NM
+					
+	FROM				BRT_OPER_EVENT_HIS A
+	LEFT JOIN 			BMS_NODE_MST B
+	ON 					A.NODE_ID = B.NODE_ID	
+	LEFT JOIN			BMS_ROUT_MST C	
+	ON					A.ROUT_ID = C.ROUT_ID
+	LEFT JOIN	  		BMS_VOC_ORGA_INFO D
+	ON					A.EVT_DATA = D.ORGA_ID
+	
+	WHERE				A.OPER_DT IS NOT NULL	
+	<if test="CONTENT4 != null and CONTENT4 != ''">
+		AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT4}, '%')
+	</if>
+	<if test="(F_DATE != null and F_DATE != '') and (L_DATE == null or L_DATE == '')">
+		<![CDATA[AND A.OPER_DT >= #{F_DATE}]]>
+	</if>
+	<if test="(F_DATE == null or F_DATE == '') and L_DATE != null and L_DATE != '' ">
+		<![CDATA[AND A.OPER_DT <= #{L_DATE}]]>
+	</if>
+	<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
+		AND A.OPER_DT between #{F_DATE} and #{L_DATE}
+		</if>			
+	ORDER BY			A.OPER_DT DESC
+	LIMIT				1000
+</select>
+
+</mapper>
