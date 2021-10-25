@@ -18,48 +18,56 @@ SELECT
 	,GPS_Y
 FROM
 	BRT_CUR_CHG_OPER_INFO_HIS
+	<where>
+		<if test="(CONTENT != null and CONTENT != '')">
+			<![CDATA[REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')]]>
+		</if>
+		<if test="(F_DATE != null and F_DATE != '')">
+			<![CDATA[AND DATE_FORMAT(OCR_DTM, '%Y%m%d') = #{F_DATE}]]>
+		</if>
+	</where>
 ORDER BY
 	UPD_DTM DESC
 </select>
 
 <select id="VH0200G1R0" resultType="Map" parameterType="Map">
-	SELECT
-		A.REP_ROUT_ID
-		<!--  ,A.DAY_DIV
-		,A.WAY_DIV-->
-		,A.OPER_SN
-		,A.NODE_ID
-		,A.NODE_SN
-		,A.ALLOC_NO
-		,A.COR_ID
-		,A.NODE_TYPE
-		,A.ARRV_TM
-		,A.DPRT_TM
-		<!--  ,LEFT(A.ARRV_TM, 5) AS ARRV_TM
-		,LEFT(A.DPRT_TM, 5) AS DPRT_TM-->
-		,DATE_FORMAT(A.UPD_DTM, '%Y-%m-%d') UPD_DTM 
-		,B.REP_ROUT_NM
-		,B.WAY_ASC_NM
-		,B.WAY_DESC_NM
-		,C.ROUT_ID
-		,C.NODE_NM
-		,C.ACCRU_LEN
-	FROM
-		BRT_CUR_OPER_ALLOC_PL_NODE_INFO_HIS A 
-		INNER JOIN BMS_REP_ROUT_MST B
-		ON	A.REP_ROUT_ID = B.REP_ROUT_ID 
-		INNER JOIN BMS_ROUT_NODE_CMPSTN C
-		ON	 A.ROUT_ID =  C.ROUT_ID AND A.NODE_ID = C.NODE_ID AND A.NODE_SN = C.NODE_SN
-	<if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">			 
-			AND C.NODE_TYPE = #{NODE_TYPE}
-	</if>
-	WHERE
-		A.OPER_DT = #{OCR_DTM} AND C.ROUT_ID = #{ROUT_ID}
+SELECT 
+	A.REP_ROUT_ID 
+	,A.OPER_SN 
+	,A.NODE_ID 
+	,A.NODE_SN 
+	,A.ALLOC_NO 
+	,A.COR_ID 
+	,A.NODE_TYPE 
+   	,A.ARRV_TM 
+   	,A.DPRT_TM 
+   	,DATE_FORMAT(A.UPD_DTM, '%Y-%m-%d') UPD_DTM 
+   	,B.REP_ROUT_NM 
+   	,B.WAY_ASC_NM 
+   	,B.WAY_DESC_NM 
+   	,C.ROUT_ID 
+   	,C.NODE_NM 
+   	,C.ACCRU_LEN 
+   	,D.ARRV_TM AS CHG_ARRV_TM 
+   	,D.DPRT_TM AS CHG_DPRT_TM 
+FROM 
+	BRT_CUR_OPER_ALLOC_PL_NODE_INFO_HIS A 
+   	INNER JOIN BMS_REP_ROUT_MST B 
+    ON A.REP_ROUT_ID = B.REP_ROUT_ID 
+  	INNER JOIN BMS_ROUT_NODE_CMPSTN C 
+    ON A.ROUT_ID = C.ROUT_ID AND A.NODE_ID = C.NODE_ID AND A.NODE_SN = C.NODE_SN 
+   	LEFT OUTER JOIN  BRT_CUR_CHG_OPER_DTL_INFO_HIS D 
+ 	ON A.REP_ROUT_ID = D.REP_ROUT_ID AND A.ROUT_ID = D.ROUT_ID AND A.OPER_SN = D.OPER_SN AND A.NODE_ID = D.NODE_ID 
+WHERE 
+	A.OPER_DT = DATE_FORMAT(#{OCR_DTM}, '%Y-%m-%d') AND C.ROUT_ID = #{ROUT_ID} AND D.OCR_DTM = #{OCR_DTM}
 	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 
-			AND A.OPER_SN = #{OPER_SN}
+		AND A.OPER_SN = #{OPER_SN}
 	</if>
-	ORDER BY OPER_SN, NODE_SN
+ORDER BY 
+	OPER_SN, NODE_SN
 </select>
+
+
 
 
 <select id="VH0200G1CNT" resultType="Map" parameterType="Map">
@@ -79,36 +87,25 @@ ORDER BY
 <select id="VH0200G2R0" resultType="Map" parameterType="Map">
 	SELECT
 		A.REP_ROUT_ID
-		<!--  ,A.DAY_DIV
-		,A.WAY_DIV-->
 		,A.OPER_SN
 		,A.NODE_ID
 		,A.NODE_SN
 		,A.ALLOC_NO
 		,A.COR_ID
 		,A.NODE_TYPE
-		,A.ARRV_TM
-		,A.DPRT_TM
-		<!--  ,LEFT(A.ARRV_TM, 5) AS ARRV_TM
-		,LEFT(A.DPRT_TM, 5) AS DPRT_TM-->
+		,A.ARRV_TM AS CHG_ARRV_TM
+		,A.DPRT_TM AS CHG_DPRT_TM
 		,DATE_FORMAT(A.UPD_DTM, '%Y-%m-%d') UPD_DTM 
 		,DATE_FORMAT(A.OCR_DTM, '%Y-%m-%d') OCR_DTM 
 		,DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT 
-		,B.REP_ROUT_NM
-		,B.WAY_ASC_NM
-		,B.WAY_DESC_NM
 		,C.ROUT_ID
 		,C.NODE_NM
 		,C.ACCRU_LEN
 	FROM
 		BRT_CUR_CHG_OPER_DTL_INFO_HIS A 
-		INNER JOIN BMS_REP_ROUT_MST B
-		ON	A.REP_ROUT_ID = B.REP_ROUT_ID 
 		INNER JOIN BMS_ROUT_NODE_CMPSTN C
 		ON	 A.ROUT_ID =  C.ROUT_ID AND A.NODE_ID = C.NODE_ID AND A.NODE_SN = C.NODE_SN
-	<if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">			 
-			AND C.NODE_TYPE = #{NODE_TYPE}
-	</if>
+		AND C.NODE_TYPE = 'NT002'
 	WHERE
 		DATE_FORMAT(A.OCR_DTM, '%Y-%m-%d') = #{OCR_DTM} AND C.ROUT_ID = #{ROUT_ID}
 	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 

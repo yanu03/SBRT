@@ -12,6 +12,7 @@
 			<w2:dataCollection baseNode="map">
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_COR_MST" saveRemovedData="true">
 					<w2:columnInfo>
+						<w2:column id="chk" name="선택" dataType="text"></w2:column>
 						<w2:column id="COR_ID" name="코스아이디" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
 						<w2:column id="COR_NM" name="코스명" dataType="text"></w2:column>
@@ -22,35 +23,6 @@
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_COR_DTL_INFO" saveRemovedData="true">
-					<w2:columnInfo>
-						<w2:column id="COR_ID" name="코스ID" dataType="text"></w2:column>
-						<w2:column id="MIN_REST_TM" name="최소휴게시간" dataType="text"></w2:column>
-						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
-						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
-						<w2:column id="ROUT_TYPE" name="노선유형" dataType="text"></w2:column>
-						<w2:column id="STTN_CNT" name="정류장수" dataType="text"></w2:column>
-						<w2:column id="ROUT_LEN" name="노선거리" dataType="text"></w2:column>
-						<w2:column id="CURVATURE" name="굴곡도" dataType="text"></w2:column>
-						<w2:column id="JIT_DSPCH_YN" name="공동배차여부" dataType="text"></w2:column>
-						<w2:column id="ST_STTN_NM" name="기점명" dataType="text"></w2:column>
-						<w2:column id="ED_STTN_NM" name="종점명" dataType="text"></w2:column>
-						<w2:column id="WAY_DIV" name="상하행" dataType="text"></w2:column>
-						<w2:column id="COR_DTL_COLOR" name="코스색" dataType="text"></w2:column>
-						<w2:column id="ROUT_SN" name="노선순번" dataType="text"></w2:column>
-					</w2:columnInfo>
-				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_TARET_COR_MST" saveRemovedData="true">
-					<w2:columnInfo>
-						<w2:column id="COR_ID" name="코스아이디" dataType="text"></w2:column>
-						<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
-						<w2:column id="COR_NM" name="코스명" dataType="text"></w2:column>
-						<w2:column id="COR_TYPE" name="코스유형" dataType="text"></w2:column>
-						<w2:column id="MOVE_TM" name="이동시간" dataType="text"></w2:column>
-						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
-						<w2:column id="COR_COLOR" name="코스색" dataType="text"></w2:column>
-					</w2:columnInfo>
-				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_TARGET_COR_DTL_INFO" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="COR_ID" name="코스ID" dataType="text"></w2:column>
 						<w2:column id="MIN_REST_TM" name="최소휴게시간" dataType="text"></w2:column>
@@ -106,8 +78,7 @@
 		dma_search.set("REP_ROUT_ID" , scwin.param.data.REP_ROUT_ID);
 		dma_search.set("DAY_DIV", scwin.param.data.DAY_DIV);
 		dma_search.set("WAY_DIV", scwin.param.data.WAY_DIV);
-		dlt_BRT_TARET_COR_MST.removeAll();
-		dlt_BRT_TARET_COR_MST.setJSON(scwin.param.data.BRT_TARGET_COR_LIST, true);
+		
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
 		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
 		var btnOptions = 
@@ -115,14 +86,11 @@
 			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
 		];
 		com.setMainBtn3(wfm_mainBtn, btnOptions);
-		var subOptions = {
-			SAVE: [{cbFnc:scwin.btn_up_onclick, nm:"상",class:"up"},{cbFnc:scwin.btn_down_onclick,nm:"하",class:"down"}]
-		}; 
-		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);	
+
 		var codeOptions = [
-							{code : "COR_TYPE", compID : "corGrid:COR_TYPE, targetCorGrid:COR_TYPE" },
-							{code : "ROUT_TYPE", compID : "corDtlGrid:ROUT_TYPE, targetCorDtlGrid:ROUT_TYPE" },
-							{code : "WAY_DIV", compID : "corDtlGrid:WAY_DIV, targetCorDtlGrid:WAY_DIV" }
+							{code : "COR_TYPE", compID : "corGrid:COR_TYPE" },
+							{code : "ROUT_TYPE", compID : "corDtlGrid:ROUT_TYPE" },
+							{code : "WAY_DIV", compID : "corDtlGrid:WAY_DIV" }
 						];	
 		
 		com.setCommonDtl(codeOptions, function() {
@@ -144,66 +112,13 @@
 	};
 	
 	scwin.btn_confirm_onclick = function() {
-		var data = corGrid.getCheckedJSON("chk");
-		
-		if(data == null || data == ''){
-			var nullData = [{"OPER_SN" : ''}];
-			
-			com.closePopup(scwin.closeCallbackFncName, nullData);
-		}
-		else{
-			com.closePopup(scwin.closeCallbackFncName, data);
-		}
-		
-	
-		//var data = AL0302P1.getCheckedJSON("chk");
-		//com.closePopup(scwin.closeCallbackFncName, data);
+		var data = dlt_BRT_COR_DTL_INFO.getAllJSON();
+		com.closePopup(scwin.closeCallbackFncName, data);
 	};
 		
 	scwin.btn_cancel_onclick = function() {
 		com.closePopup();
 	};
-	
-	scwin.btn_up_onclick = function() {
-		var idx = targetCorGrid.getFocusedRowIndex();
-		dlt_BRT_TARET_COR_MST.rowMoveUp(idx);
-		scwin.targetCorGrid_submit(false);
-	};
-
-	scwin.btn_down_onclick = function() {
-		var idx = targetCorGrid.getFocusedRowIndex();
-		dlt_BRT_TARET_COR_MST.rowMoveDown(idx);
-		scwin.targetCorGrid_submit(false);
-	};
-	
-	// -> 버튼
-	scwin.btn_grid_add_onclick = function() {
-		var focusIdxs = corGrid.getAllFocusedRowIndex();
-		var focusTargetIdx = targetCorGrid.getFocusedRowIndex();
-		var count = focusIdxs.length;
-		
-		if (count > 0) {
-			for(i = 0 ; i<count; i++){
-				var data = dlt_BRT_COR_MST.getAllJSON()[focusIdxs[i]];
-				if(focusTargetIdx==-1)
-					focusTargetIdx = dlt_BRT_TARET_COR_MST.insertRow();
-				else
-					focusTargetIdx = dlt_BRT_TARET_COR_MST.insertRow(focusTargetIdx);
-				dlt_BRT_TARET_COR_MST.setRowJSON(focusTargetIdx, data, true);
-			}
-		}
-		scwin.targetCorGrid_submit(false)
-	};
-	
-	// <- 버튼
-	scwin.btn_grid_del_onclick = function() {
-		com.delGrid(targetCorGrid,null,scwin.btn_sub_del_cb);
-		
-	};
-
-	scwin.btn_sub_del_cb = function() {
-		scwin.targetCorGrid_submit(false);
-	}
 	
 	scwin.sub_corList_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
@@ -254,53 +169,15 @@
 
 	scwin.corGrid_onrowindexchange = function(row,oldRow) {
 		var focusIdxs = corGrid.getAllFocusedRowIndex();
-
-		scwin.corGrid_submit(true);
-	};
-
-	scwin.targetCorGrid_submit = function(isFocus) {
-		var data = com.getGridViewDataList(targetCorGrid);
-		if(data.getRowCount()==0){
-			dlt_BRT_TARGET_COR_DTL_INFO.removeAll()
-			return;
-		}
-		if(isFocus){
-			var focusIdxs = targetCorGrid.getAllFocusedRowIndex();
-			
-			var param =new Array();
-			for(var i=0;i<focusIdxs.length;i++){
-				param.push(data.getCellData(focusIdxs[i], "COR_ID"));
-			}
-			
-			if(com.isEmpty(param)==false){
-				dma_sub_search.set("COR_IDS",param);
-				com.executeSubmission(sub_targetCorDtlList);
-			}
+		
+		if(corGrid.getCellChecked(row,"chk")){
+			corGrid.setCellChecked(row,"chk",false)
 		}
 		else {
-			var param =new Array();
-			for(var i=0;i<data.getRowCount();i++){
-				param.push(data.getCellData(i, "COR_ID"));
-			}
-			
-			if(com.isEmpty(param)==false){
-				dma_sub_search.set("COR_IDS",param);
-				com.executeSubmission(sub_targetCorDtlList);
-			}
+			corGrid.setCellChecked(row,"chk",true)
 		}
-	};
-	
-	scwin.sub_targetCorDtlList_submitdone = function(e) {
-		var sCode = com.getResultCode(e);
-		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
-			scwin.setGridColor(targetCorGrid);
-		}
-	};
 		
-	scwin.targetCorGrid_onrowindexchange = function(row,oldRow) {
-		var focusIdxs = targetCorGrid.getAllFocusedRowIndex();
-		
-		scwin.targetCorGrid_submit(false);
+		scwin.corGrid_submit(true);
 	};
 	
 	scwin.setGridColor = function(grid) {
@@ -309,21 +186,6 @@
 			var corColor = data.getCellData(i, "COR_COLOR");
 			grid.setCellColor(i, "COR_COLOR", corColor);
 		}
-	};
-	
-	//데이터 없음 - 그리드 disabled 처리
-	scwin.NullData_onviewchange = function(info) {
-	
-		if(info.checked == true){
-			com.executeSubmission(sub_corList);
-			corGrid.setDisabled("grid", true);
-			corGrid.setDisabled("column","chk",true);
-		}
-		else{
-			corGrid.setDisabled("grid", false);
-			corGrid.setDisabled("column","chk",false);
-		}
-		
 	};
 	
 	]]></script>
@@ -337,325 +199,161 @@
 					</xf:group>
 					<xf:group class="search" id="" style="">
 						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="대표노선ID 또는 대표노선명"></xf:input>
-						<!-- <xf:select id="NullData" selectedIndex="-1" appearance="full" style="margin-left: 10px;float: left;margin-top: 2px;"
-							ev:onviewchange="scwin.NullData_onviewchange" cols="" rows="" ref="">
-							<xf:choices>
-								<xf:item>
-									<xf:label><![CDATA[데이터없음]]></xf:label>
-									<xf:value><![CDATA[Y]]></xf:value>
-								</xf:item>
-							</xf:choices>
-						</xf:select>-->
 					</xf:group>
 					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
 			</xf:group>
-			<xf:group style="" id="" class="popup_content grdc_if_60_if">
-				<xf:group class="pgm_detail grdr_20_2_280_20_a">
-					<xf:group id="" class="gr_sub_header" style="">
-						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="코스 목록" style=""></w2:textbox>
-						</xf:group>
-					</xf:group>
-					<xf:group></xf:group>
-					<w2:gridView autoFit="lastColumn" autoFitMinWidth="0" class="cm_grid right" dataList="data:dlt_BRT_COR_MST" ev:onrowindexchange="scwin.corGrid_onrowindexchange"
-						fixedColumnWithHidden="true" focusMode="row" id="corGrid" ignoreCellClick="false" readOnly="true" rowNumHeaderValue="순번"
-						rowNumVisible="true" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" useShiftKey="true" >
-						<w2:caption style="" id="caption2" value="this is a grid caption."></w2:caption>
-						<w2:header style="" id="header2">
-							<w2:row style="" id="row3">
-								<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column3"
-									value="코스아이디" blockSelect="false" displayMode="label">
-								</w2:column>
-								<w2:column removeBorderStyle="false" width="67" inputType="text" style="height:20px" id="column2"
-									value="대표노선명" blockSelect="false" displayMode="label">
-								</w2:column>
-								<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column1"
-									value="코스명" blockSelect="false" displayMode="label">
-								</w2:column>
-								<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column4"
-									value="코스유형" blockSelect="false" displayMode="label">
-								</w2:column>
-								<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column5"
-									value="코스색" blockSelect="false" displayMode="label">
-								</w2:column>
-								<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column6"
-									value="소요시간" blockSelect="false" displayMode="label">
-								</w2:column>
-							</w2:row>
-						</w2:header>
-						<w2:gBody style="" id="gBody2">
-							<w2:row style="" id="row4">
-								<w2:column removeBorderStyle="false" width="125" inputType="text" style="height:20px" id="COR_ID"
-									value="" blockSelect="false" displayMode="label">
-								</w2:column>
-								<w2:column removeBorderStyle="false" width="67" inputType="text" style="height:20px" id="REP_ROUT_NM"
-									value="" blockSelect="false" displayMode="label">
-								</w2:column>
-								<w2:column removeBorderStyle="false" width="192" inputType="text" style="height:20px" id="COR_NM"
-									value="" blockSelect="false" displayMode="label" textAlign="left">
-								</w2:column>
-								<w2:column removeBorderStyle="false" width="67" inputType="select" style="height:20px" id="COR_TYPE"
-									value="" blockSelect="false" displayMode="label">
-								</w2:column>
-								<w2:column removeBorderStyle="false" width="67" inputType="color" style="height:20px" id="COR_COLOR"
-									value="" blockSelect="false" type="color">
-								</w2:column>
-								<w2:column removeBorderStyle="false" width="67" inputType="text" style="height:20px" id="MOVE_TM"
-									value="" blockSelect="false" displayMode="label">
-								</w2:column>
-							</w2:row>
-						</w2:gBody>
-						<w2:footer style="" id="footer1">
-							<w2:row style="" id="row3">
-								<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;"
-									id="column42" value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan=""
-									expression="&quot;데이터 개수 : &quot; + COUNT(&apos;COMP_ID&apos;)" textAlign="left">
-								</w2:column>
-							</w2:row>
-						</w2:footer>							
-					</w2:gridView>
-					<xf:group id="" class="horizontal_line"></xf:group>
-					<xf:group id="" class="pgm_sub_subList grdr_20_2_a" style="">
-						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="코스 상세 정보" style=""></w2:textbox>
-						</xf:group>
-						<xf:group></xf:group>
-						<w2:gridView autoFit="lastColumn" autoFitMinWidth="0" class="cm_grid right" dataList="data:dlt_BRT_COR_DTL_INFO"
-							fixedColumnWithHidden="true" focusMode="row" id="corDtlGrid" ignoreCellClick="false" readOnly="true" rowNumHeaderValue="순번"
-							rowNumVisible="true" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" useShiftKey="true" >
-							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
-							<w2:header style="" id="header1">
-								<w2:row style="" id="row1">
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column12"
-										value="코스ID" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column10"
-										value="노선ID" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column9"
-										value="노선명" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="60" inputType="text" style="height:20px" id="column8"
-										value="노선유형" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column1"
-										value="상하행" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column25"
-										value="최소휴게시간" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column3"
-										value="기점명" blockSelect="false" displayMode="label">
-									</w2:column>	
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column2"
-										value="종점명" blockSelect="false" displayMode="label">
-									</w2:column>
-									<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column15"
-										value="코스색" blockSelect="false" displayMode="label">
-									</w2:column> -->								
-								</w2:row>
-							</w2:header>
-							<w2:gBody style="" id="gBody1">
-								<w2:row style="" id="row2">
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="COR_ID"
-										value="" blockSelect="false" displayMode="label" readOnly="true">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_ID"
-										value="" blockSelect="false" displayMode="label" readOnly="true">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_NM"
-										value="" blockSelect="false" displayMode="label" textAlign="left" readOnly="true">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="ROUT_TYPE"
-										value="" blockSelect="false" displayMode="label" readOnly="true">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="WAY_DIV"
-										value="" blockSelect="false" displayMode="label" readOnly="true">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="MIN_REST_TM"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ST_STTN_NM"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ED_STTN_NM"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="COR_DTL_COLOR"
-										value="" blockSelect="false" displayMode="label" type="color">
-									</w2:column> -->									
-								</w2:row>
-							</w2:gBody>
-							<w2:footer id="footer1" style="">
-								<w2:row id="row3" style="">
-									<w2:column blockSelect="false" colSpan="14" displayMode="label"
-										expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" id="column42" inputType="expression" removeBorderStyle="false"
-										style="height:20px;" textAlign="left" width="3015" readOnly="true">
-									</w2:column>
-								</w2:row>
-							</w2:footer>								
-						</w2:gridView>												
-					</xf:group><!-- pgm_sublist end -->
-				</xf:group> <!-- end pgm_detail -->
-				<xf:group style="position: relative; text-align: center;">
-					<xf:group style="position: absolute; top: 28%; transform: translate(0px, -30px);">
-						<w2:anchor class="btn_com right" id="btn_grid_add" outerDiv="" style="" ev:onclick="scwin.btn_grid_add_onclick">
-							<xf:label><![CDATA[→]]></xf:label>
-						</w2:anchor>
-						<w2:anchor class="btn_com left" id="btn_grid_del" outerDiv="" style="margin-top:5px" ev:onclick="scwin.btn_grid_del_onclick">
-							<xf:label><![CDATA[←]]></xf:label>
-						</w2:anchor>
+			<xf:group class="pgm_detail grdr_20_2_280_20_a">
+				<xf:group id="" class="gr_sub_header" style="">
+					<xf:group class="defaultbox" id="" style="">
+						<w2:textbox class="df_tt fl" id="" label="코스 목록" style=""></w2:textbox>
 					</xf:group>
 				</xf:group>
-				<xf:group class="pgm_detail grdr_20_2_280_20_a">					
-					<xf:group id="" class="gr_sub_header" style="">
-						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="선택 된 코스 목록" style=""></w2:textbox>
-						</xf:group>
-						<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
-					</xf:group>		
+				<xf:group></xf:group>
+				<w2:gridView autoFit="lastColumn" autoFitMinWidth="0" class="cm_grid right" dataList="data:dlt_BRT_COR_MST" ev:onrowindexchange="scwin.corGrid_onrowindexchange"
+					fixedColumnWithHidden="true" focusMode="row" id="corGrid" ignoreCellClick="false" readOnly="true" rowNumHeaderValue="순번"
+					rowNumVisible="true" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" useShiftKey="true" >
+					<w2:caption style="" id="caption2" value="this is a grid caption."></w2:caption>
+					<w2:header style="" id="header2">
+						<w2:row style="" id="row3">
+							<w2:column width="39" inputType="radio" style="height:20px" id="chkHeader" value="선택" blockSelect="false">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column3"
+								value="코스아이디" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="67" inputType="text" style="height:20px" id="column2"
+								value="대표노선명" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column1"
+								value="코스명" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column4"
+								value="코스유형" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column5"
+								value="코스색" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column6"
+								value="소요시간" blockSelect="false" displayMode="label">
+							</w2:column>
+						</w2:row>
+					</w2:header>
+					<w2:gBody style="" id="gBody2">
+						<w2:row style="" id="row4">
+							<w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px"
+								inputType="radio" id="chk" blockSelect="false">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="125" inputType="text" style="height:20px" id="COR_ID"
+								value="" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="67" inputType="text" style="height:20px" id="REP_ROUT_NM"
+								value="" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="192" inputType="text" style="height:20px" id="COR_NM"
+								value="" blockSelect="false" displayMode="label" textAlign="left">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="67" inputType="select" style="height:20px" id="COR_TYPE"
+								value="" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="67" inputType="color" style="height:20px" id="COR_COLOR"
+								value="" blockSelect="false" type="color">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="67" inputType="text" style="height:20px" id="MOVE_TM"
+								value="" blockSelect="false" displayMode="label">
+							</w2:column>
+						</w2:row>
+					</w2:gBody>
+					<w2:footer style="" id="footer1">
+						<w2:row style="" id="row3">
+							<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;"
+								id="column42" value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan=""
+								expression="&quot;데이터 개수 : &quot; + COUNT(&apos;COMP_ID&apos;)" textAlign="left">
+							</w2:column>
+						</w2:row>
+					</w2:footer>							
+				</w2:gridView>
+				<xf:group id="" class="horizontal_line"></xf:group>
+				<xf:group id="" class="pgm_sub_subList grdr_20_2_a" style="">
+					<xf:group class="defaultbox" id="" style="">
+						<w2:textbox class="df_tt fl" id="" label="코스 상세 정보" style=""></w2:textbox>
+					</xf:group>
 					<xf:group></xf:group>
-					<w2:gridView autoFit="lastColumn" autoFitMinWidth="0" class="cm_grid right" dataList="data:dlt_BRT_TARET_COR_MST"  ev:onrowindexchange="scwin.targetCorGrid_onrowindexchange"
-						fixedColumnWithHidden="true" focusMode="row" id="targetCorGrid" ignoreCellClick="false" readOnly="true" rowNumHeaderValue="순번"
+					<w2:gridView autoFit="lastColumn" autoFitMinWidth="0" class="cm_grid right" dataList="data:dlt_BRT_COR_DTL_INFO" 
+						fixedColumnWithHidden="true" focusMode="row" id="corDtlGrid" ignoreCellClick="false" readOnly="true" rowNumHeaderValue="순번"
 						rowNumVisible="true" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" useShiftKey="true" >
-						<w2:caption style="" id="caption2" value="this is a grid caption."></w2:caption>
-						<w2:header style="" id="header2">
-							<w2:row style="" id="row3">
-								<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column3"
-									value="코스아이디" blockSelect="false" displayMode="label">
+						<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
+						<w2:header style="" id="header1">
+							<w2:row style="" id="row1">
+								<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column12"
+									value="코스ID" blockSelect="false" displayMode="label">
 								</w2:column>
-								<w2:column removeBorderStyle="false" width="67" inputType="text" style="height:20px" id="column2"
-									value="대표노선명" blockSelect="false" displayMode="label">
+								<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column10"
+									value="노선ID" blockSelect="false" displayMode="label">
 								</w2:column>
-								<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column1"
-									value="코스명" blockSelect="false" displayMode="label">
+								<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column9"
+									value="노선명" blockSelect="false" displayMode="label">
 								</w2:column>
-								<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column4"
-									value="코스유형" blockSelect="false" displayMode="label">
+								<w2:column removeBorderStyle="false" width="60" inputType="text" style="height:20px" id="column8"
+									value="노선유형" blockSelect="false" displayMode="label">
 								</w2:column>
-								<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column5"
+								<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column1"
+									value="상하행" blockSelect="false" displayMode="label">
+								</w2:column>
+								<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column25"
+									value="최소휴게시간" blockSelect="false" displayMode="label">
+								</w2:column>
+								<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column3"
+									value="기점명" blockSelect="false" displayMode="label">
+								</w2:column>	
+								<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column2"
+									value="종점명" blockSelect="false" displayMode="label">
+								</w2:column>
+								<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column15"
 									value="코스색" blockSelect="false" displayMode="label">
-								</w2:column>
-								<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column6"
-									value="소요시간" blockSelect="false" displayMode="label">
-								</w2:column>
+								</w2:column> -->								
 							</w2:row>
 						</w2:header>
-						<w2:gBody style="" id="gBody2">
-							<w2:row style="" id="row4">
-								<w2:column removeBorderStyle="false" width="125" inputType="text" style="height:20px" id="COR_ID"
+						<w2:gBody style="" id="gBody1">
+							<w2:row style="" id="row2">
+								<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="COR_ID"
+									value="" blockSelect="false" displayMode="label" readOnly="true">
+								</w2:column>
+								<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_ID"
+									value="" blockSelect="false" displayMode="label" readOnly="true">
+								</w2:column>
+								<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_NM"
+									value="" blockSelect="false" displayMode="label" textAlign="left" readOnly="true">
+								</w2:column>
+								<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="ROUT_TYPE"
+									value="" blockSelect="false" displayMode="label" readOnly="true">
+								</w2:column>
+								<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="WAY_DIV"
+									value="" blockSelect="false" displayMode="label" readOnly="true">
+								</w2:column>
+								<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="MIN_REST_TM"
 									value="" blockSelect="false" displayMode="label">
 								</w2:column>
-								<w2:column removeBorderStyle="false" width="67" inputType="text" style="height:20px" id="REP_ROUT_NM"
+								<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ST_STTN_NM"
 									value="" blockSelect="false" displayMode="label">
 								</w2:column>
-								<w2:column removeBorderStyle="false" width="192" inputType="text" style="height:20px" id="COR_NM"
-									value="" blockSelect="false" displayMode="label" textAlign="left">
-								</w2:column>
-								<w2:column removeBorderStyle="false" width="67" inputType="select" style="height:20px" id="COR_TYPE"
+								<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ED_STTN_NM"
 									value="" blockSelect="false" displayMode="label">
 								</w2:column>
-								<w2:column removeBorderStyle="false" width="67" inputType="color" style="height:20px" id="COR_COLOR"
-									value="" blockSelect="false" type="color">
-								</w2:column>
-								<w2:column removeBorderStyle="false" width="67" inputType="text" style="height:20px" id="MOVE_TM"
-									value="" blockSelect="false" displayMode="label">
-								</w2:column>
+								<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="COR_DTL_COLOR"
+									value="" blockSelect="false" displayMode="label" type="color">
+								</w2:column> -->									
 							</w2:row>
 						</w2:gBody>
-						<w2:footer style="" id="footer1">
-							<w2:row style="" id="row3">
-								<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;"
-									id="column42" value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan=""
-									expression="&quot;데이터 개수 : &quot; + COUNT(&apos;COMP_ID&apos;)" textAlign="left">
+						<w2:footer id="footer1" style="">
+							<w2:row id="row3" style="">
+								<w2:column blockSelect="false" colSpan="14" displayMode="label"
+									expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" id="column42" inputType="expression" removeBorderStyle="false"
+									style="height:20px;" textAlign="left" width="3015" readOnly="true">
 								</w2:column>
 							</w2:row>
-						</w2:footer>							
-					</w2:gridView>
-					<xf:group id="" class="horizontal_line"></xf:group>
-					<xf:group id="" class="pgm_sub_subList grdr_20_2_a" style="">
-						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="선택 된 코스 상세 정보" style=""></w2:textbox>
-						</xf:group>
-						<xf:group></xf:group>
-						<w2:gridView autoFit="lastColumn" autoFitMinWidth="0" class="cm_grid right" dataList="data:dlt_BRT_TARGET_COR_DTL_INFO" 
-							fixedColumnWithHidden="true" focusMode="row" id="targetCorDtlGrid" ignoreCellClick="false" readOnly="true" rowNumHeaderValue="순번"
-							rowNumVisible="true" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" useShiftKey="true" >
-							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
-							<w2:header style="" id="header1">
-								<w2:row style="" id="row1">
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column12"
-										value="코스ID" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column10"
-										value="노선ID" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column9"
-										value="노선명" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="60" inputType="text" style="height:20px" id="column8"
-										value="노선유형" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column1"
-										value="상하행" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column25"
-										value="최소휴게시간" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column3"
-										value="기점명" blockSelect="false" displayMode="label">
-									</w2:column>	
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column2"
-										value="종점명" blockSelect="false" displayMode="label">
-									</w2:column>
-									<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column15"
-										value="코스색" blockSelect="false" displayMode="label">
-									</w2:column> -->								
-								</w2:row>
-							</w2:header>
-							<w2:gBody style="" id="gBody1">
-								<w2:row style="" id="row2">
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="COR_ID"
-										value="" blockSelect="false" displayMode="label" readOnly="true">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_ID"
-										value="" blockSelect="false" displayMode="label" readOnly="true">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_NM"
-										value="" blockSelect="false" displayMode="label" textAlign="left" readOnly="true">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="ROUT_TYPE"
-										value="" blockSelect="false" displayMode="label" readOnly="true">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="WAY_DIV"
-										value="" blockSelect="false" displayMode="label" readOnly="true">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="MIN_REST_TM"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ST_STTN_NM"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ED_STTN_NM"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="COR_DTL_COLOR"
-										value="" blockSelect="false" displayMode="label" type="color">
-									</w2:column> -->									
-								</w2:row>
-							</w2:gBody>
-							<w2:footer id="footer1" style="">
-								<w2:row id="row3" style="">
-									<w2:column blockSelect="false" colSpan="14" displayMode="label"
-										expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" id="column42" inputType="expression" removeBorderStyle="false"
-										style="height:20px;" textAlign="left" width="3015" readOnly="true">
-									</w2:column>
-								</w2:row>
-							</w2:footer>								
-						</w2:gridView>												
-					</xf:group><!-- pgm_sublist end -->
-				</xf:group>
+						</w2:footer>								
+					</w2:gridView>												
+				</xf:group><!-- pgm_sublist end -->
 			</xf:group>
 			<xf:group id="" style="" class="popup_bottom">
 				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">

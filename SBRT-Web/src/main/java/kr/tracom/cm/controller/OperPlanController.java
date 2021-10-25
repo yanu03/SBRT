@@ -62,7 +62,7 @@ public class OperPlanController extends ControllerSupport {
 	
 	@RequestMapping("/operPlan/selectOperAllocPlanCourseList")
 	public @ResponseBody Map<String, Object> selectOperAllocPlanCourseList() throws Exception {
-		result.setData("dlt_BRT_OPER_ALLOC_PL_COR_INFO", operPlanService.selectOperAllocPlanCourseList());
+		result.setData("dlt_BRT_OPER_ALLOC_PL_COR_DTL_INFO", operPlanService.selectOperAllocPlanCourseList());
 		return result.getResult();
 	}
 	
