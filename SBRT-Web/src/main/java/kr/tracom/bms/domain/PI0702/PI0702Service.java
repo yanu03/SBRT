@@ -60,14 +60,14 @@ public class PI0702Service extends ServiceSupport {
 			
 			//예약 정보, 예약결과 정보 insert
 			Map<String, Object> paramMap = new HashMap<String, Object>();
-			iCnt = pi0702Mapper.PI0702G1I0(paramMap);
+			//iCnt = pi0702Mapper.PI0702G1I0(paramMap);
 			
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("U")) {
-					
-					data.put("ORGA_ID",map.get("ORGA_ID"));
+					iCnt = pi0702Mapper.PI0702G1I0(data);
+					//data.put("ORGA_ID",map.get("ORGA_ID"));
 					
 					//차량별 장치코드리스트
 					String vhcId = String.valueOf(data.get("VHC_ID"));
