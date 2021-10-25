@@ -2222,6 +2222,8 @@ com._openPopup = function(url, opt, data) {
 	$p.openPopup(url, options);
 };
 
+
+
 /**
  * 그룹안에 포함된 컴포넌트의 입력 값에 대한 유효성을 검사한다.
  * 컴포넌트 속성 유효성 검사를 수행하고, valInfoArr 유효성 검사 옵션에 대해서 유효성 검사를 수행한다.

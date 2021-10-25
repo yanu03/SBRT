@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.tracom.brt.domain.AL0203.AL0203Mapper">
+<mapper namespace="kr.tracom.brt.domain.AL0204.AL0204Mapper">
 
-<select id="AL0203G0R0" resultType="Map">
+<select id="AL0204G0R0" resultType="Map">
 	SELECT			
 		A.REP_ROUT_ID
 		,A.DAY_DIV
@@ -14,27 +14,81 @@
 		,(SELECT STTN_NM FROM BMS_STTN_MST WHERE STTN_ID = A.ED_STTN_ID AND DEL_YN!='Y') ED_STTN_NM
 		,C.ROUT_ID
 		,C.ROUT_NM
-	FROM BRT_OPER_PL_MST A
+	FROM 
+		BRT_OPER_PL_MST A
 		LEFT OUTER JOIN BMS_REP_ROUT_MST B
-			ON A.REP_ROUT_ID = B.REP_ROUT_ID
+		ON A.REP_ROUT_ID = B.REP_ROUT_ID
 		LEFT OUTER JOIN BMS_ROUT_MST C
-			ON A.REP_ROUT_ID = C.REP_ROUT_ID AND A.WAY_DIV = C.WAY_DIV AND C.DEL_YN != 'Y'
+		ON A.REP_ROUT_ID = C.REP_ROUT_ID AND A.WAY_DIV = C.WAY_DIV AND C.DEL_YN != 'Y'
 	<where>
-			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-				AND (C.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || B.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%'))
-			</if>
-			<if test="TYPE == 'ROUT_NM'">
-				AND C.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
-			</if>
-			<if test="TYPE == 'REP_ROUT_NM'">
-				AND B.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
-			</if>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND (C.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || B.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%'))
+		</if>
+		<if test="TYPE == 'ROUT_NM'">
+			AND C.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'REP_ROUT_NM'">
+			AND B.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
 	</where>
 	GROUP BY
 		C.ROUT_ID, A.DAY_DIV
 	ORDER BY
 		A.REP_ROUT_ID, A.DAY_DIV, A.WAY_DIV
 </select>
+
+<select id="AL0204G1R0" resultType="Map" parameterType="Map">
+	SELECT
+		A.REP_ROUT_ID
+		,A.DAY_DIV
+		,A.WAY_DIV
+		,A.OPER_SN
+		,A.NODE_ID
+		,A.NODE_SN
+		,A.ALLOC_NO
+		,A.COR_ID
+		,A.NODE_TYPE
+		,A.ARRV_TM
+		,A.DPRT_TM
+		,DATE_FORMAT(A.UPD_DTM, '%Y-%m-%d') UPD_DTM 
+		,B.REP_ROUT_NM
+		,B.WAY_ASC_NM
+		,B.WAY_DESC_NM
+		,C.ROUT_ID
+		,C.NODE_NM
+		,C.ACCRU_LEN
+	FROM
+		BRT_WEEK_OPER_ALLOC_PL_NODE_INFO A 
+		INNER JOIN BMS_REP_ROUT_MST B
+		ON	A.REP_ROUT_ID = B.REP_ROUT_ID 
+		INNER JOIN BMS_ROUT_NODE_CMPSTN C
+		ON	 A.ROUT_ID =  C.ROUT_ID AND A.NODE_ID = C.NODE_ID AND A.NODE_SN = C.NODE_SN
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">			 
+			AND C.NODE_TYPE = #{NODE_TYPE}
+	</if>
+	WHERE
+		A.DAY_DIV = #{DAY_DIV} AND C.ROUT_ID = #{ROUT_ID} AND A.MONTH = #{MONTH} AND A.WEEK = #{WEEK} AND A.YEAR = #{YEAR}
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 
+			AND A.OPER_SN = #{OPER_SN}
+	</if>
+	ORDER BY OPER_SN, NODE_SN
+</select>
+
+<select id="AL0204G1CNT" resultType="Map" parameterType="Map">
+		SELECT 
+			COUNT(*) CNT
+		FROM 
+			BRT_WEEK_OPER_ALLOC_PL_NODE_INFO A
+			INNER JOIN BRT_MAIN_ROUT_NODE_INFO B
+				ON	 A.ROUT_ID =  B.ROUT_ID AND A.NODE_ID = B.NODE_ID AND A.NODE_SN = B.NODE_SN AND B.NODE_TYPE ='NT002'
+		WHERE  A.DAY_DIV = #{DAY_DIV} AND B.ROUT_ID = #{ROUT_ID}
+		GROUP BY 
+			OPER_SN 
+		ORDER BY 
+			OPER_SN
+</select>
+
+<!--  
 
 
 <select id="AL0203SHI0" resultType="Map">
@@ -56,10 +110,7 @@
 		,A.NODE_TYPE
 		,A.ARRV_TM
 		,A.DPRT_TM
-		<!--  ,LEFT(A.ARRV_TM, 5) AS ARRV_TM
-		,LEFT(A.DPRT_TM, 5) AS DPRT_TM-->
 		,DATE_FORMAT(A.UPD_DTM, '%Y-%m-%d') UPD_DTM 
-		,A.UPD_ID
 		,B.REP_ROUT_NM
 		,B.WAY_ASC_NM
 		,B.WAY_DESC_NM
@@ -67,7 +118,7 @@
 		,C.NODE_NM
 		,C.ACCRU_LEN
 	FROM
-		BRT_OPER_ALLOC_PL_NODE_INFO A 
+		BRT_WEEK_OPER_ALLOC_PL_NODE_INFO A 
 		INNER JOIN BMS_REP_ROUT_MST B
 		ON	A.REP_ROUT_ID = B.REP_ROUT_ID 
 		INNER JOIN BMS_ROUT_NODE_CMPSTN C
@@ -76,7 +127,7 @@
 			AND C.NODE_TYPE = #{NODE_TYPE}
 	</if>
 	WHERE
-		A.DAY_DIV = #{DAY_DIV} AND C.ROUT_ID = #{ROUT_ID}
+		A.DAY_DIV = #{DAY_DIV} AND C.ROUT_ID = #{ROUT_ID} AND A.MONTH = #{MONTH} AND A.WEEK = #{WEEK}
 	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 
 			AND A.OPER_SN = #{OPER_SN}
 	</if>
@@ -100,13 +151,10 @@
 
 <insert id="AL0203P0I0" parameterType="Map">
 	INSERT INTO BRT_WEEK_OPER_ALLOC_PL_NODE_INFO(
-		YEAR
-		,MONTH
+		MONTH
 		,WEEK
 		,REP_ROUT_ID
 		,ROUT_ID
-		,DAY_DIV
-		,WAY_DIV
 		,COR_ID
 		,OPER_SN
 		,NODE_ID
@@ -117,13 +165,10 @@
 		,ARRV_TM
 		,UPD_DTM
 	)VALUES(
-		#{YEAR}
-		,#{MONTH}
+		#{MONTH}
 		,#{WEEK}
 		,#{REP_ROUT_ID}
 		,#{ROUT_ID}
-		,#{DAY_DIV}
-		,#{WAY_DIV}
 		,#{COR_ID}
 		,#{OPER_SN}
 		,#{NODE_ID}
@@ -134,7 +179,7 @@
 		,#{ARRV_TM}
 		,#{UPD_DTM}
 	)
-</insert>
+</insert>-->
 
 
 </mapper>
