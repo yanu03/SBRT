@@ -5,7 +5,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 		<link rel="shortcut icon" href="/cm/images/inc/favicon.ico" />
-		<title>Project Template</title>
+		<title>S-BRT</title>
 		<script type="text/javascript">
 			function i18nUrl (url){
 			    var locale = WebSquare.cookie.getCookie( "locale" );
