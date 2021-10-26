@@ -1346,7 +1346,9 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 				showMessage = min+ sec+ "느립니다.";
 			} else if(parseInt(data.MESSAGE) < 0){
 				showMessage = min+ sec +"빠릅니다.";
-			} 
+			} else if(parseInt(dsptchConts) == 0) {
+				contsResult = "정상 운행중입니다.";
+			}
 			
 		}	
 		var dsptchMsg = "";

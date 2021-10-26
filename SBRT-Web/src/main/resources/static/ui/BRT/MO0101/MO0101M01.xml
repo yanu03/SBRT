@@ -763,6 +763,9 @@
 							else if(parseInt(dsptchConts) < 0) {
 								contsResult = min + sec + "빠릅니다."; 
 							}
+							else if(parseInt(dsptchConts) == 0) {
+								contsResult = "정상 운행중입니다.";
+							}
 						}
 						
 						else if(dsptchDiv == "DP003") {
@@ -1409,12 +1412,13 @@
 	};
 	
 	scwin.sub_MO0101G4R0_submitdone = function(e) {
-		var dsptchDiv = ""; 
-		var dsptchConts = "";
-		var contsResult = "";
-		var min = "";
-		var sec = "";
+
 		for(var i=0; i<dlt_BRT_DSPTCH_LOG.getDataLength(); i++) {
+			var dsptchDiv = ""; 
+			var dsptchConts = "";
+			var contsResult = "";
+			var min = "";
+			var sec = "";			
 			dsptchDiv =  dlt_BRT_DSPTCH_LOG.getCellData(i, "DSPTCH_DIV");
 			dsptchConts = dlt_BRT_DSPTCH_LOG.getCellData(i, "DSPTCH_CONTS");
 			
@@ -1430,6 +1434,9 @@
 					}
 					else if(parseInt(dsptchConts) < 0) {
 						contsResult = min + sec + "빠릅니다."; 
+					}
+					else if(parseInt(dsptchConts) == 0) {
+						contsResult = "정상 운행중입니다.";
 					}
 				}
 				
