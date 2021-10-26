@@ -207,6 +207,7 @@
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 						<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
 						<w2:column id="CUR_SPD" name="현재속도" dataType="text"></w2:column>
+						<w2:column id="EVT_CODE" name="name12" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_DSPTCH_LOG" saveRemovedData="true">
@@ -533,7 +534,7 @@
 		
 		
 		map.setLevel(4);
-		//map.setZoomable(false);
+		map.setZoomable(false);
 		
 		com.executeSubmission(sub_selectCommuMap);
 		com.executeSubmission(sub_selectSigPeriod);
@@ -593,7 +594,6 @@
 		else if(attrId == 4012) {
 		//console.log(payload.body);
 			try {
-				var eventCode = jsonObj.EVT_CODE;
 				
 				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 				
@@ -606,11 +606,15 @@
 					var timeResult = hours + ':' + minutes + ':' + seconds
 					
 					dlt_BRT_OPER_EVENT_HIS.setCellData(0, "OCR_DTM", timeResult);
-					dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_TYPE", jsonObj.EVT_TYPE);
-					var eventType = dlt_BRT_OPER_EVENT_HIS.getcellData(0, "EVT_CODE");
+					dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_TYPE", jsonObj.EVT_CODE);
+					dlt_BRT_OPER_EVENT_HIS.setCellData(0, "ROUT_NM", jsonObj.ROUT_NM);
+					dlt_BRT_OPER_EVENT_HIS.setCellData(0, "VHC_NO", jsonObj.VHC_NO);
+					//dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_CODE", jsonObj.EVT_CODE);
+					//var eventType = dlt_BRT_OPER_EVENT_HIS.getcellData(0, "EVT_CODE");
+					var eventCode = jsonObj.EVT_CODE;
 					var eventMessage = "";
 					
-					switch(eventType) {
+					switch(eventCode) {
 						case "ET001":
 						eventMessage = jsonObj.NODE_NM + "에 도착하였습니다.";
 						break;
@@ -641,7 +645,8 @@
 						break;
 						
 						case "ET008":
-						eventMessage = jsonObj.EVT_DATA + " 음성 방송 출력되었습니다.";
+						//eventMessage = jsonObj.EVT_DATA + " 음성 방송 출력되었습니다.";
+						eventMessage = "음성 방송 출력되었습니다. " + "("+jsonObj.EVT_DATA+")";						
 						break;
 						
 						case "ET009":
@@ -747,9 +752,9 @@
 						
 					if(parseInt(dsptchConts) != "undefined" && dsptchDiv != "DP001") {
 						if(Math.abs(parseInt(dsptchConts) >= 60)) {
-							 min = Math.abs(parseInt(dsptchConts)) + "분 ";
+							 min = Math.abs(parseInt(dsptchConts/60)) + "분 ";
 						}
-						 sec = Math.abs(parseInt(dsptchConts)) + "초 ";
+						 sec = Math.abs(parseInt(dsptchConts%60)) + "초 ";
 						 
 						if(dsptchDiv == "DP002") {
 							if(parseInt(dsptchConts) > 0) {
@@ -757,6 +762,9 @@
 							}
 							else if(parseInt(dsptchConts) < 0) {
 								contsResult = min + sec + "빠릅니다."; 
+							}
+							else if(parseInt(dsptchConts) == 0) {
+								contsResult = "정상 운행중입니다.";
 							}
 						}
 						
@@ -1386,7 +1394,8 @@
 				break;
 				
 				case "ET008":
-				eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "ORGA_NM") + " 음성 방송 출력되었습니다.";
+				//eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "ORGA_NM") + " 음성 방송 출력되었습니다.";
+				eventMessage = "음성 방송 출력되었습니다. " + "("+dlt_BRT_OPER_EVENT_HIS.getCellData(i, "EVT_DATA") +")";
 				break;
 				
 				case "ET009":
@@ -1403,20 +1412,21 @@
 	};
 	
 	scwin.sub_MO0101G4R0_submitdone = function(e) {
-		var dsptchDiv = ""; 
-		var dsptchConts = "";
-		var contsResult = "";
-		var min = "";
-		var sec = "";
+
 		for(var i=0; i<dlt_BRT_DSPTCH_LOG.getDataLength(); i++) {
+			var dsptchDiv = ""; 
+			var dsptchConts = "";
+			var contsResult = "";
+			var min = "";
+			var sec = "";			
 			dsptchDiv =  dlt_BRT_DSPTCH_LOG.getCellData(i, "DSPTCH_DIV");
 			dsptchConts = dlt_BRT_DSPTCH_LOG.getCellData(i, "DSPTCH_CONTS");
 			
 			if(parseInt(dsptchConts) != "undefined") {
 				if(Math.abs(parseInt(dsptchConts) >= 60)) {
-					 min = Math.abs(parseInt(dsptchConts)) + "분 ";
+					 min = Math.abs(parseInt(dsptchConts/60)) + "분 ";
 				}
-				 sec = Math.abs(parseInt(dsptchConts)) + "초 ";
+				 sec = Math.abs(parseInt(dsptchConts%60)) + "초 ";
 				 
 				if(dsptchDiv == "DP002") {
 					if(parseInt(dsptchConts) > 0) {
@@ -1424,6 +1434,9 @@
 					}
 					else if(parseInt(dsptchConts) < 0) {
 						contsResult = min + sec + "빠릅니다."; 
+					}
+					else if(parseInt(dsptchConts) == 0) {
+						contsResult = "정상 운행중입니다.";
 					}
 				}
 				
@@ -1454,17 +1467,17 @@
 		}
 	}
 	
-	scwin.sub_selectSigOper_submitdone = function(e) {
-		if(sigTimeout) {
-			clearInterval(sigTimeout);	
-		}
-
-		sigTimeout = setTimeout(function showSig() {
-			$p.executeSubmission(sub_MO0101SCK2);
-			sigTimeout = setTimeout(showSig, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
-		}, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
-	};
-	]]></script>
+//	scwin.sub_selectSigOper_submitdone = function(e) {
+//		if(sigTimeout) {
+//			clearInterval(sigTimeout);	
+//		}
+//
+//		sigTimeout = setTimeout(function showSig() {
+//			$p.executeSubmission(sub_MO0101SCK2);
+//			sigTimeout = setTimeout(showSig, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
+//		}, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
+//	};
+//	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
@@ -1942,7 +1955,7 @@
 						   		 		<th colspan="2">버스 운행 현황</th>
 						   		 	</tr>
 						   		 	<tr>
-						   		 		<td class="status_kinds">전체대수</td>
+						   		 		<td class="status_kinds status_black">전체대수</td>
 						   		 		<td class="status_count" id="allBus">0</td>
 						   		 	</tr>
 <!-- 						   		 	<tr>
@@ -1993,7 +2006,7 @@
 						   		 		<th colspan="2">정류장 현황</th>
 						   		 	</tr>
 						   		 	<tr>
-						   		 		<td class="status_kinds">전체정류장</td>
+						   		 		<td class="status_kinds status_black">전체정류장</td>
 						   		 		<td class="status_count" id="allSttn">0</td>
 						   		 	</tr>
 						   		 	<tr>
@@ -2012,7 +2025,7 @@
 						   		 		<th colspan="2">교차로 현황</th>
 						   		 	</tr>
 						   		 	<tr>
-						   		 		<td class="status_kinds">전체교차로</td>
+						   		 		<td class="status_kinds status_black">전체교차로</td>
 						   		 		<td class="status_count" id="allCrs">0</td>
 						   		 	</tr>
 						   		 	<tr>

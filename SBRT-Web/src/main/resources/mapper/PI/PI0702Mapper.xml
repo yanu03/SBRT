@@ -85,7 +85,7 @@
 				
 		VALUES	(
 					#{RSV_ID}	
-					,NOW()
+					,STR_TO_DATE(#{RSV_DT}, '%Y%m%d')
 				);
 	
 		INSERT INTO BMS_DESTI_RSV_RST_INFO
@@ -94,14 +94,20 @@
 				,MNG_ID
 				,COMPLETE_YN
 			)
-			SELECT 		#{RSV_ID}
+            VALUES
+            (
+            	#{RSV_ID}
+            	,#{MNG_ID}
+            	,"N"
+            )            
+<!-- 			SELECT 		#{RSV_ID}
 						,DVC.MNG_ID
 						,'N' COMPLETE_YN
 			FROM		BMS_VHC_MST VHC
 				LEFT JOIN BMS_DVC_INFO DVC ON VHC.VHC_ID = DVC.VHC_ID		
 				LEFT JOIN BMS_DL_CD_INFO DL ON DVC.DVC_KIND = DL.DL_CD AND DL.CO_CD = 'DVC_KIND'	
-			WHERE DL.TXT_VAL1 = 'RD'		
-		
+			WHERE DL.TXT_VAL1 = 'RD' AND DVC.MNG_ID = #{MNG_ID} -->
+	
 	</insert>
 
 	<update id="PI0702G1U0" parameterType="Map">

@@ -62,8 +62,15 @@
 	
 	scwin.input1_onviewchange = function(info) {
 		
-		var val = info.newValue;
 		VD0203C0.setDateFormat("yyyy-MM-dd");
+//		input1.setDisplayFormatter("yyyy-MM-dd");
+		var val = info.newValue;
+		for (var i =0; i< val.length; i++) {
+			if (val[i] == "-") {
+				val = val.replace("-", "");
+			}
+		}
+		
 		
 		VD0203C0.gotoCalendar(val);
 	};
@@ -71,7 +78,7 @@
 	
 	
 	scwin.VD0203C0_ondateselect = function(dateStr,dateObj) {
-		debugger;
+		
 		VD0203C0.setDateFormat("yyyy-MM-dd");
 		input1.setValue(dateStr);
 	};

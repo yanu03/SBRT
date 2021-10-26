@@ -85,11 +85,22 @@ public class AL0201Service extends ServiceSupport {
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("C")) {
 					iCnt += AL0201Mapper.AL0201G1I0(data);
-				} else if (rowStatus.equals("U")) {
-					uCnt += AL0201Mapper.AL0201G1U0(data);
 				} else if (rowStatus.equals("D")) {
 					dCnt += AL0201Mapper.AL0201G1D0(data);
 				} 
+			}	
+			
+			
+			for (int i = 0; i < param.size(); i++) {
+				Map data = (Map) param.get(i);
+				List<Map<String, Object>> routList = routMapper.selectRoutListByRepRout(data);
+				if(routList.size()==1) { //노선 하나일때만 노선 ID 세팅
+					data.put("ROUT_ID", routList.get(0).get("ROUT_ID"));
+				}
+				String rowStatus = (String) data.get("rowStatus");
+				if (rowStatus.equals("U")) {
+					uCnt += AL0201Mapper.AL0201G1U0(data);
+				}
 			}			
 		} catch(Exception e) {
 			if (e instanceof DuplicateKeyException)

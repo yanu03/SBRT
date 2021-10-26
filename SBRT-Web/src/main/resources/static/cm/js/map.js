@@ -51,6 +51,8 @@ var RoutMAP = function(){
 	this.isShowRoad = "on";
 	this.isShowAbnormal = "on";
 	this.isShowSound = "on";
+	this.isShowIncdnt = "";
+	this.isShowViolt = "";
 	this.onMarkerClick = {};
 	this.clickOverlay = null;
 	this.clickOverArr = [];
@@ -1344,7 +1346,9 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 				showMessage = min+ sec+ "느립니다.";
 			} else if(parseInt(data.MESSAGE) < 0){
 				showMessage = min+ sec +"빠릅니다.";
-			} 
+			} else if(parseInt(dsptchConts) == 0) {
+				contsResult = "정상 운행중입니다.";
+			}
 			
 		}	
 		var dsptchMsg = "";
@@ -1908,7 +1912,14 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);
 
 	}
-	
+	else if (routMap.mapInfo[mapId].isShowIncdnt == "on"){
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/incdnt.png", imageSize);
+		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/incdnt_selected.png", imageSize);
+	}
+	else if (routMap.mapInfo[mapId].isShowViolt == "on"){
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/violt.png", imageSize);
+		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/violt_selected.png", imageSize);
+	}
 		
 	var marker = null;
 	
@@ -1959,6 +1970,15 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 			 msg = "<div class = 'customoverlay conderror busstop'>";
 		 }		
 	}
+	
+	else if(typeof data.INCDNT_TYPE != "undefined" ) {
+		msg = "<div class = 'customoverlay incdnt'>";
+	}
+	
+	else if(typeof data.VIOLT_TYPE != "undefined") {
+		msg = "<div class = 'customoverlay vilot'>";
+	}
+	
 	if(data.draggable){
 		
 		msg += "<span class = 'map_title' style=''>" + data.NODE_NM
@@ -1966,11 +1986,70 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 			+ "</div>";	
 			//+ "<span class = '' style='font-size: 12px; margin-left:2px; margin-bottom:2px; display:block;'>"+ data.GPS_Y + "," + data.GPS_X +"</span>"
 	}
-	else {
+	
+	else if (typeof data.NODE_NM != "undefined") {
 		msg += "<span class = 'map_title' style=''>" + data.NODE_NM + "</span>"
 			+ "</div>";
 			//+ "<span class = '' style='font-size: 12px; margin-left:2px; margin-bottom:2px; display:block;'>"+ data.GPS_Y + "," + data.GPS_X +"</span>"
 	 }
+	
+	else if(typeof data.INCDNT_TYPE != "undefined" ) {
+		var incdntType = data.INCDNT_TYPE;
+		var showType = "";
+		
+		switch(incdntType) {
+			case "IC001":
+				showType = "사고";
+				break;
+			case "IC002":
+				showType = "낙하";
+				break;
+			case "IC003":
+				showType = "고장";
+				break;
+			case "IC004":
+				showType = "기타";
+				break;
+		}
+		
+		msg += "<span class = 'map_title' style=''>" + showType + "</span>"
+		+ "</div>";
+	}
+	
+	else if(typeof data.VIOLT_TYPE != "undefined" ) {
+		var violtType = data.VIOLT_TYPE;
+		var showType = "";
+		
+		switch(violtType) {
+		case "VL001":
+			showType = "급가속";
+			break;
+		case "VL002":
+			showType = "급감속";
+			break;
+		case "VL003":
+			showType = "과속";
+			break;
+		case "VL004":
+			showType = "무정차통과";
+			break;
+		case "VL005":
+			showType = "개문주행";
+			break;
+		case "VL006":
+			showType = "급출발";
+			break;
+		case "VL007":
+			showType = "노선이탈";
+			break;
+		case "VL008":
+			showType = "급정지";
+			break;
+		}
+		
+		msg += "<span class = 'map_title' style=''>" + showType + "</span>"
+		+ "</div>";
+	}
 	
 	if(idx==focusIdx) {
 		overlay = new kakao.maps.CustomOverlay({
@@ -2016,7 +2095,15 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 		routMap.mapInfo[mapId].oldSelectedIndex = routMap.mapInfo[mapId].selectedIndex;
 		routMap.mapInfo[mapId].selectedIndex = idx;
 		if(typeof grid != "undefined") {
-			grid.setFocusedCell(idx,"NODE_ID");
+			if(typeof data.NODE_NM != "undefined"){
+				grid.setFocusedCell(idx,"NODE_ID");
+			}
+			else if(typeof data.INCDNT_TYPE != "undefined") {
+				grid.setFocusedCell(idx,"ROUT_NM");
+			}
+			else if(typeof data.VIOLT_TYPE != "undefined") {
+				grid.setFocusedCell(idx,"ROUT_NM");
+			}
 		}
 	});
 	
@@ -3582,7 +3669,6 @@ routMap.showNode = function(mapId, list, focusIdx, grid) {
 
 routMap.showMarkerList = function(mapId, list, focusIdx, grid) {
 	routMap.initNode(mapId);
-	
 	if(list != null && list.length != 0) {
 		for(var i = 0; i < list.length; i++) {
 			list[i].index = i;
@@ -3760,7 +3846,6 @@ routMap.showVehicle3 = function(mapId, json, grid) {
 
 //실시간 위치정보 모니터링 화면과 같이 클릭 오버레이가 다른 showVehicle
 routMap.showVehicleClickOverlay = function(mapId, list, vhc_id, grid) {
-
 	var focusIdx = -1;
 	
 

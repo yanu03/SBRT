@@ -81,7 +81,7 @@
 	<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
 	
-		debugger;
+		
 		scwin.param = com.getParameter();
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
 		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
@@ -121,6 +121,229 @@
        return a - b;
     };
 
+
+
+	
+	scwin.drawChart = function(chkCnt){
+		
+		var i = 0;
+		var j = 0;
+		var num = 0;
+		
+		//var categories = new Array();	//category추가
+		var category = new Array();		//label추가
+		var charArray = new Array();	//seriesname, data[]추가
+		var data = new Array();			//value추가
+		
+		
+		var rowCount = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowCount();
+		var jsonData = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
+		var transData = new Array();
+		
+		for(var x = 0; x < rowCount; x++){
+			var arrvTm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(x, "ARRV_TM");
+			var dprtTm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(x, "DPRT_TM");
+			
+			var categoryJson = new Object();
+			categoryJson.label = arrvTm;
+			categoryJson = JSON.stringify(categoryJson);
+			category.push(JSON.parse(categoryJson));
+			
+			var categoryJson = new Object();
+			categoryJson.label = dprtTm;
+			categoryJson = JSON.stringify(categoryJson);
+			category.push(JSON.parse(categoryJson));
+		};
+		
+		category.sort(date_ascending);
+		
+		for(i; i<chkCnt; i++){
+			for(j; j<rowCount; j++){
+				if(jsonData[num].OPER_SN  ==  dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(j, "OPER_SN")){
+					transData.push(dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowJSON(j));
+				}else if(jsonData[num].OPER_SN  !=  dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(j, "OPER_SN")){
+					num = j;
+					j = j;
+					break;
+				}
+			}
+			
+			for(var y = 0; y < transData.length; y++){
+				var categoryJson = new Object();
+				var dataJson = new Object();
+				
+				var seriesname = transData[y].OPER_SN + "회차";
+				var operSn = transData[y].OPER_SN;
+				//var arrvTm = transData[y].ARRV_TM;
+				//var dprtTm = transData[y].DPRT_TM;
+				var accruLen = transData[y].ACCRU_LEN;
+				var nodeType = transData[y].NODE_TYPE;
+				
+				
+				if(nodeType=='NT002'){
+					//categoryJson.label = arrvTm;
+					//categoryJson = JSON.stringify(categoryJson);
+					//category.push(JSON.parse(categoryJson));
+					
+					dataJson.value = accruLen;
+					dataJson = JSON.stringify(dataJson);
+					data.push(JSON.parse(dataJson));
+				}
+				
+				if((nodeType=='NT002')&&(arrvTm!=dprtTm)){
+				
+					var categoryJson = new Object();
+					var dataJson = new Object();
+					
+					//categoryJson.label = dprtTm;
+					//categoryJson = JSON.stringify(categoryJson);
+					//category.push(JSON.parse(categoryJson));
+					
+					dataJson.value = accruLen;
+					dataJson = JSON.stringify(dataJson);
+					data.push(JSON.parse(dataJson));
+				}
+				
+			};
+		
+
+		//var categoryData = new Categories();
+		var charData = new CharData();
+		
+		charData.data = data;
+		charData.seriesname = seriesname;
+		//categoryData.category = category;
+		
+		charArray.push(charData);
+		//category.push(category);
+		
+		transData = [];
+		//data = [];
+	}
+		
+		var test = {
+			
+		    "chart": {
+		        "lineThickness": "3",
+		        "flatScrollBars": "1",
+		        "scrollheight": "3",
+		        "numVisiblePlot": "7",
+		        "theme": "fusion"
+		    },
+		    
+		    "categories": [{
+			     category
+		    }],
+		    
+		    "dataset":
+		    	charArray
+		    
+		}
+	
+		var options = {
+			labelStep:"1"		
+			,xAxisName:"시간"
+			,yAxisName:"거리"
+	      	,labelDisplay: "wrap"
+	      	//,canvasPadding: "20"
+	      	,lineColor: "#f56363"
+	      	//,valuePadding: "50"
+	      	//,labelPadding: "20"
+	      	,lineThickness: "2"
+	      	,flatScrollBars: "1"
+	        ,scrollheight: "6"
+	        ,numVisiblePlot: "60"
+		}
+		
+		setTimeout(function() {
+			//CHART.setSize(3500, 750);
+			CHART.setChartAttribute(options);
+			CHART.setJSONData(test);
+			CHART.draw();
+		},100);
+		
+		
+	}	
+	
+	
+	
+	scwin.testDrawChart = function(chkCnt){
+		
+		
+		
+		
+		var i = 0;
+		var j = 0;
+		var num = 0;
+		
+		//var categories = new Array();	//category추가
+		var category = new Array();		//label추가
+		var charArray = new Array();	//seriesname, data[]추가
+		var data = new Array();			//value추가
+		
+		
+		var rowCount = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowCount();
+		var jsonData = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
+		var transData = new Array();
+		
+		for(i; i<chkCnt; i++){
+			for(j; j<rowCount; j++){
+				if(jsonData[num].OPER_SN  ==  dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(j, "OPER_SN")){
+					transData.push(dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowJSON(j));
+				}else if(jsonData[num].OPER_SN  !=  dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(j, "OPER_SN")){
+					num = j;
+					j = j;
+					break;
+				}
+			}
+			
+			for(var y = 0; y < transData.length; y++){
+				var categoryJson = new Object();
+				var dataJson = new Object();
+				var seriesname = transData[y].OPER_SN + "회차";
+				var operSn = transData[y].OPER_SN;
+				var arrvTm = transData[y].ARRV_TM;
+				var dprtTm = transData[y].DPRT_TM;
+				var accruLen = transData[y].ACCRU_LEN;
+				var nodeType = transData[y].NODE_TYPE;
+				
+				if(nodeType=='NT002'){
+					
+					categoryJson.label = arrvTm;
+					categoryJson = JSON.stringify(categoryJson);
+					category.push(JSON.parse(categoryJson));
+					
+					dataJson.value = accruLen;
+					dataJson = JSON.stringify(dataJson);
+					data.push(JSON.parse(dataJson));
+				}
+				
+				if((nodeType=='NT002')&&(arrvTm!=dprtTm)){
+				
+					var categoryJson = new Object();
+					var dataJson = new Object();
+					
+					categoryJson.label = dprtTm;
+					categoryJson = JSON.stringify(categoryJson);
+					category.push(JSON.parse(categoryJson));
+					
+					dataJson.value = accruLen;
+					dataJson = JSON.stringify(dataJson);
+					data.push(JSON.parse(dataJson));
+				}
+				
+			};
+
+		/*var charData = new CharData();
+		
+		charData.data = data;
+		charData.seriesname = seriesname;
+		
+		charArray.push(charData);*/
+		
+		transData = [];
+	}
+}
 	
 	
 	var CharData = function(){
@@ -129,7 +352,7 @@
 	}
 	
 	scwin.testDrawChart2 = function(chkCnt){
-		debugger;
+		
 		var datasets = new Array();
 		var transData = new Array();
 		var i = 0;
