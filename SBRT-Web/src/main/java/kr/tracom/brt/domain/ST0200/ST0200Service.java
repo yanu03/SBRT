@@ -23,13 +23,20 @@ public class ST0200Service extends ServiceSupport {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServiceSupport.class);
 
-
 	@Autowired
-	private PI0503Mapper pi0503Mapper;
+	private ST0200Mapper st0200Mapper;
 	
-	@Autowired
-	private FTPHandler ftpHandler;
+	public List ST0200G0R0() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return st0200Mapper.ST0200G0R0(map);
+	}
 	
+	public List ST0200G1R0() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		String temp[] = map.get("ROUT_ID").toString().replace("[","").replace("]","").replace(" ","").split(",");
+		map.put("ROUT_ID", temp);
+		return st0200Mapper.ST0200G1R0(map);
+	}
 	
 	/*public List PI0503G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
