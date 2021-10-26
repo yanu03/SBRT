@@ -52,6 +52,7 @@ var RoutMAP = function(){
 	this.isShowAbnormal = "on";
 	this.isShowSound = "on";
 	this.isShowIncdnt = "";
+	this.isShowViolt = "";
 	this.onMarkerClick = {};
 	this.clickOverlay = null;
 	this.clickOverArr = [];
@@ -1912,7 +1913,11 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 	else if (routMap.mapInfo[mapId].isShowIncdnt == "on"){
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/incdnt.png", imageSize);
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/incdnt_selected.png", imageSize);
-	}	
+	}
+	else if (routMap.mapInfo[mapId].isShowViolt == "on"){
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/violt.png", imageSize);
+		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/violt_selected.png", imageSize);
+	}
 		
 	var marker = null;
 	
@@ -1968,6 +1973,10 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 		msg = "<div class = 'customoverlay incdnt'>";
 	}
 	
+	else if(typeof data.VIOLT_TYPE != "undefined") {
+		msg = "<div class = 'customoverlay vilot'>";
+	}
+	
 	if(data.draggable){
 		
 		msg += "<span class = 'map_title' style=''>" + data.NODE_NM
@@ -2005,6 +2014,41 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 		+ "</div>";
 	}
 	
+	else if(typeof data.VIOLT_TYPE != "undefined" ) {
+		var violtType = data.VIOLT_TYPE;
+		var showType = "";
+		
+		switch(violtType) {
+		case "VL001":
+			showType = "급가속";
+			break;
+		case "VL002":
+			showType = "급감속";
+			break;
+		case "VL003":
+			showType = "과속";
+			break;
+		case "VL004":
+			showType = "무정차통과";
+			break;
+		case "VL005":
+			showType = "개문주행";
+			break;
+		case "VL006":
+			showType = "급출발";
+			break;
+		case "VL007":
+			showType = "노선이탈";
+			break;
+		case "VL008":
+			showType = "급정지";
+			break;
+		}
+		
+		msg += "<span class = 'map_title' style=''>" + showType + "</span>"
+		+ "</div>";
+	}
+	
 	if(idx==focusIdx) {
 		overlay = new kakao.maps.CustomOverlay({
 			content: msg,
@@ -2022,7 +2066,6 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 	}
 	// 마커에 click 이벤트를 등록합니다
 	kakao.maps.event.addListener(marker, 'click', function() {
-		debugger;
 		//infoWindow.close();
 		// 클릭된 마커가 없고, click 마커가 클릭된 마커가 아니면
 		// 마커의 이미지를 클릭 이미지로 변경합니다
@@ -2054,6 +2097,9 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 				grid.setFocusedCell(idx,"NODE_ID");
 			}
 			else if(typeof data.INCDNT_TYPE != "undefined") {
+				grid.setFocusedCell(idx,"ROUT_NM");
+			}
+			else if(typeof data.VIOLT_TYPE != "undefined") {
 				grid.setFocusedCell(idx,"ROUT_NM");
 			}
 		}
@@ -3798,7 +3844,6 @@ routMap.showVehicle3 = function(mapId, json, grid) {
 
 //실시간 위치정보 모니터링 화면과 같이 클릭 오버레이가 다른 showVehicle
 routMap.showVehicleClickOverlay = function(mapId, list, vhc_id, grid) {
-
 	var focusIdx = -1;
 	
 
