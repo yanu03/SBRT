@@ -25,7 +25,9 @@
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_COR_DTL_INFO" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="COR_ID" name="코스ID" dataType="text"></w2:column>
-						<w2:column id="MIN_REST_TM" name="최소휴게시간" dataType="text"></w2:column>
+						<w2:column id="COR_NM" name="코스명" dataType="text"></w2:column>
+						<w2:column id="COR_TYPE" name="코스유형" dataType="text"></w2:column>
+						<w2:column id="REST_TM" name="휴게시간" dataType="text"></w2:column>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 						<w2:column id="ROUT_TYPE" name="노선유형" dataType="text"></w2:column>
@@ -36,6 +38,9 @@
 						<w2:column id="ST_STTN_NM" name="기점명" dataType="text"></w2:column>
 						<w2:column id="ED_STTN_NM" name="종점명" dataType="text"></w2:column>
 						<w2:column id="WAY_DIV" name="상하행" dataType="text"></w2:column>
+						<w2:column id="COR_COLOR" name="코스색" dataType="text"></w2:column>
+						<w2:column id="COR_DTL_COLOR" name="코스색" dataType="text"></w2:column>
+						<w2:column id="ROUT_SN" name="노선순번" dataType="text"></w2:column>
 						<w2:column id="COR_DTL_COLOR" name="코스색" dataType="text"></w2:column>
 						<w2:column id="ROUT_SN" name="노선순번" dataType="text"></w2:column>
 					</w2:columnInfo>
@@ -162,7 +167,7 @@
 	scwin.sub_corDtlList_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
-
+			scwin.setGridColor(corDtlGrid);
 		}
 	};
 	
@@ -184,7 +189,7 @@
 		var data = com.getGridViewDataList(grid);
 		for(var i = 0; i < data.getRowCount(); i++) {
 			var corColor = data.getCellData(i, "COR_COLOR");
-			grid.setCellColor(i, "COR_COLOR", corColor);
+			grid.setRowColor(i,corColor);
 		}
 	};
 	
@@ -300,7 +305,7 @@
 									value="상하행" blockSelect="false" displayMode="label">
 								</w2:column>
 								<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column25"
-									value="최소휴게시간" blockSelect="false" displayMode="label">
+									value="휴게시간" blockSelect="false" displayMode="label">
 								</w2:column>
 								<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column3"
 									value="기점명" blockSelect="false" displayMode="label">
@@ -330,7 +335,7 @@
 								<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="WAY_DIV"
 									value="" blockSelect="false" displayMode="label" readOnly="true">
 								</w2:column>
-								<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="MIN_REST_TM"
+								<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="REST_TM"
 									value="" blockSelect="false" displayMode="label">
 								</w2:column>
 								<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ST_STTN_NM"
