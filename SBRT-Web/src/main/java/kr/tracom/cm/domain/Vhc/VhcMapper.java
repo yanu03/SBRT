@@ -13,6 +13,9 @@ public interface VhcMapper {
 	
 	public Map<String, Object> selectVhcDvcInfo(Map param);
 	
+	public List<Map<String, Object>> selectVhcItem();
+	
+	
 	/*public int updateSttn(Map param);
 	public int updateCrs(Map param);
 	public int updateRout(Map param);

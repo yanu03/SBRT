@@ -29,46 +29,11 @@ public class VhcController extends ControllerSupport {
 		result.setData("dlt_BMS_VHC_MST", vhcService.selectVhcList());
 		return result.getResult();
 	}
-
-/*	@RequestMapping("/rout/selectRoutItem")
-	public @ResponseBody Map<String, Object> selectRoutItem() throws Exception {
-		result.setData("dlt_searchitem", routService.selectRoutItem());
-		return result.getResult();
-	}
-
-	@RequestMapping("/rout/selectRoutList")
-	public @ResponseBody Map<String, Object> selectRoutList() throws Exception {
-		result.setData("dlt_BMS_ROUT_MST", routService.selectRoutList());
+	
+	@RequestMapping("/vhc/selectVhcItem")
+	public @ResponseBody Map<String, Object> selectVhcItem() throws Exception {
+		result.setData("dlt_vhcItem", vhcService.selectVhcItem());
 		return result.getResult();
 	}
 	
-	@RequestMapping("/rout/selectNodeListByRouts")
-	public @ResponseBody Map<String, Object> selectNodeListByRouts() throws Exception {
-		result.setData("dlt_BMS_ROUT_NODE_CMPSTN", routService.selectNodeListByRouts());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/rout/selectNodeListByRout")
-	public @ResponseBody Map<String, Object> selectNodeListByRout() throws Exception {
-		result.setData("dlt_BMS_ROUT_NODE_CMPSTN", routService.selectNodeListByRout());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/rout/selectNodeListByRepRout")
-	public @ResponseBody Map<String, Object> selectNodeListByRepRout() throws Exception {
-		result.setData("dlt_BMS_ROUT_NODE_CMPSTN", routService.selectNodeListByRepRout());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/rout/selectSttnList")
-	public @ResponseBody Map<String, Object> selectSttnList() throws Exception {
-		result.setData("dlt_BMS_STTN_MST", routService.selectSttnList());
-		return result.getResult();
-	}
-
-	@RequestMapping("/rout/selectSttnItem")
-	public @ResponseBody Map<String, Object> selectSttnItem() throws Exception {
-		result.setData("dlt_searchitem", routService.selectSttnItem());
-		return result.getResult();
-	}*/
 }

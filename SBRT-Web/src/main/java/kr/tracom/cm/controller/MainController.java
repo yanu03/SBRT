@@ -147,6 +147,12 @@ public class MainController extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/br/brtMainG2")
+	public @ResponseBody Map<String, Object> brtMainG2() throws Exception {
+		result.setData("dlt_BRT_OPER_EVENT_HIS", mainService.brtMainG2());
+		return result.getResult();
+	}
+	
 	@RequestMapping("/br/brtMainF0")
 	public @ResponseBody Map<String, Object> brtMainF0() throws Exception {
 		result.setData("dma_BRT_INCDNT_CNT", mainService.brtMainF0());
