@@ -137,7 +137,7 @@
 		
 	</style>
 	<script type="text/javascript" lazy="false"><![CDATA[
-
+	var isEditKeySkip = false;
 	scwin.onpageload = function() {
 	
 		var autoOptions = {
@@ -432,13 +432,14 @@
 	}
 	
 	scwin.setROUT_ST_TM = function(rowIndex, value){
-		debugger;
+		
 		var routStTm = "";
 		var routStTm2 = "";
 		var routEdTm = "";
 		var operIntv = "";
 		isEditKeySkip = true;
 		var rowCount = dlt_BRT_OPER_PL_ROUT_INFO.getRowCount();
+		dlt_BRT_OPER_PL_ROUT_INFO.setCellData(rowIndex, "ROUT_ST_TM", value);
 		for(var i = rowIndex; i < rowCount; i++) {
 			if(i==rowIndex){
 				routStTm = value;
@@ -449,9 +450,15 @@
 				}
 				
 				if(i<rowCount-1){
-					var afterRoutStTm = dlt_BRT_OPER_PL_ROUT_INFO.getCellData(i+1, "ROUT_ST_TM");
-					var operIntv = util.dateMinus(routStTm + ":00", afterRoutStTm + ":00")/60;
-					dlt_BRT_OPER_PL_ROUT_INFO.setCellData(i, "OPER_INTV", operIntv);
+					var operIntv = dlt_BRT_OPER_PL_ROUT_INFO.getCellData(i, "OPER_INTV");
+					if(com.isEmpty(operIntv)){
+						var operIntv = util.dateMinus(routStTm + ":00", afterRoutStTm + ":00")/60;
+						dlt_BRT_OPER_PL_ROUT_INFO.setCellData(i, "OPER_INTV", operIntv);
+					}
+					else {
+						routStTm2 = util.secondToTime(util.datePlus2(routStTm, operIntv*60)).substring(0,5);
+						dlt_BRT_OPER_PL_ROUT_INFO.setCellData(i+1, "ROUT_ST_TM", routStTm2);
+					}
 				}
 				
 				var operTm = dlt_BRT_OPER_PL_ROUT_INFO.getCellData(i, "OPER_TM");
@@ -488,6 +495,7 @@
 		var routEdTm2 = "";
 		var operIntv = "";
 		isEditKeySkip = true;
+		dlt_BRT_OPER_PL_ROUT_INFO.setCellData(rowIndex, "ROUT_ED_TM", value);
 		/*for(var i = rowIndex; i < dlt_BRT_OPER_PL_ROUT_INFO.getRowCount()-1; i++) {
 			if(i==rowIndex)routEdTm = value;
 			else routEdTm = dlt_BRT_OPER_PL_ROUT_INFO.getCellData(i, "ROUT_ED_TM");
@@ -504,7 +512,17 @@
 		isEditKeySkip = false;
 	}
 	
-	var isEditKeySkip = false;
+	scwin.setOPER_TM = function(rowIndex, value){
+		var routStTm = "";
+		var routEdTm = "";
+		var routEdTm2 = "";
+		var operIntv = "";
+		isEditKeySkip = true;
+		dlt_BRT_OPER_PL_ROUT_INFO.setCellData(rowIndex, "OPER_TM", value);
+		isEditKeySkip = false;
+	}
+	
+
 	scwin.setOPER_INTV = function(focusIndex,rowIndex, value, data){
 		var operIntv = "";
 		var routStTm = "";
@@ -542,11 +560,12 @@
 	}
 	
 	scwin.AL0201G1_onafteredit = function(row,col,value) {
-		debugger;
+		
 		if(isEditKeySkip)return;
 		var rowCnt = dlt_BRT_OPER_PL_ROUT_INFO.getRowCount();
 		var columnId =AL0201G1.getColumnID(col);
 		if (columnId == "ROUT_ST_TM") {
+			debugger;
 			if(row==0)
 				dlt_BRT_OPER_PL_MST.setCellData(AL0201G0.getFocusedRowIndex(), "FST_TM", com.transTime2(value));
 			if(row==(rowCnt-1))
@@ -571,6 +590,16 @@
 			}
 		}
 		
+		if (columnId == "OPER_TM") {
+			if(value.length == 4){
+				value = com.transTime2(value);
+			}
+			
+			if(value.length == 5){
+				scwin.setOPER_TM(row,value);
+			}
+		}
+		
 		if (columnId == "OPER_INTV") {
 			
 			var jsonIndex = AL0201G1.getCheckedIndex("chk");
@@ -579,6 +608,10 @@
 			}
 			if(jsonIndex.length==0) {
 				scwin.setOPER_INTV(row,row, value);
+			}
+			else {
+				AL0201G1.checkAll("chk", false);
+				com.alert("선택된 항목에 운행간격 적용하였습니다.");
 			}
 		}
 	};
@@ -804,13 +837,13 @@
 										value="선택" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="0" inputType="text" style="height:20px" id="column1"
-										value="대표노선ID" blockSelect="false" displayMode="label">
+										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="0" inputType="text" style="height:20px" id="column2"
-										value="요일구분" blockSelect="false" displayMode="label">
+										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="0" inputType="text" style="height:20px" id="column3"
-										value="상하행" blockSelect="false" displayMode="label">
+										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="40" inputType="text" style="height:20px" id="column25"
 										value="운행순번" blockSelect="false" displayMode="label">
@@ -856,7 +889,7 @@
 										displayMode="label">
 									</w2:column>
 									<w2:column id="OPER_TM" blockSelect="false" style="height:20px;" width="" inputType="text"
-										readonly="true" displayMode="label">
+										readonly="" displayMode="label">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>

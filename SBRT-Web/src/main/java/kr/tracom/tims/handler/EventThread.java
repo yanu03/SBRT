@@ -321,12 +321,12 @@ public class EventThread extends Thread{
                          
                          break;
 
-                     /** 돌발 **/
-                     case 0x31: //차량 고장
-                     case 0x32: //차량 사고
-                     case 0x33: //차내 폭력 사고
-                     case 0x34: //강도
-                     case 0x35: //테러
+                     /** 돌발 **/ //2021.10.26일자 적용
+                     case 0x31: //사고
+                     case 0x32: //낙하
+                     case 0x33: //고장
+                     case 0x34: //기타
+                     //case 0x35: //테러 
                          logger.info("돌발 발생!! [IMP ID : " + busEvent.getImpId() + "]");
                          
                          
