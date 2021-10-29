@@ -1002,7 +1002,8 @@ public class OperPlanService extends ServiceSupport {
 	/**
 	 * 변경운행계획 생성
 	 */
-	public List makeChgOperAllocPlNodeInfo(String routId, String operDt, int operSn 
+	public List makeChgOperAllocPlNodeInfo(String vhcId, String routId, String operDt, int operSn
+			,String stNodeId
 			,int stNodeSn //변경운행 //변경운행 시작 노드
 			,int offsetTm //변경운행 //도착 예정시간과의 차이(초))
 			,String timeMin //변경운행이 발생하지 않는 최소도착시각
@@ -1027,14 +1028,19 @@ public class OperPlanService extends ServiceSupport {
 					Map<String, Object> chgInfo = (Map<String, Object>)chgPlList.get(0);
 					
 		            Map<String, Object> insertMap = new HashMap<>();
+		            
+		            insertMap.put("VHC_ID", vhcId);
+		            insertMap.put("OCR_NODE_ID", stNodeId);
 		            insertMap.put("OPER_DT", operDt);
 		            insertMap.put("REP_ROUT_ID", chgInfo.get("REP_ROUT_ID"));
 		            insertMap.put("ROUT_ID", routId);
 		            insertMap.put("ALLOC_NO", chgInfo.get("ALLOC_NO"));
 		            insertMap.put("OPER_SN", operSn);
-		            insertMap.put("OCR_DTM", Instant.now(Clock.systemUTC()));		            
+		            insertMap.put("OCR_DTM", Instant.now(Clock.systemUTC()));
+		            insertMap.put("VHC_ID", vhcId);
 		            insertMap.put(Constants.UPD_DTM, Instant.now(Clock.systemUTC()));
 		            operPlanMapper.insertChgOperInfo(insertMap);
+		            
 	
 		            //리스트 한 번에 insert
 		            insertMap.put("OPER_DT", operDt);

@@ -343,11 +343,12 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,ROUT_ID
             ,ALLOC_NO
             ,OPER_SN
-            <!--,VHC_ID
+            ,VHC_ID
             ,VHC_NO
-            ,OCR_LINK_ID
             ,OCR_NODE_ID
             ,OCR_NODE_TYPE
+            <!--,
+            ,OCR_LINK_ID
             ,GPS_X
             ,GPS_Y
             ,TM_X
@@ -363,7 +364,11 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,#{REP_ROUT_ID}
             ,#{ROUT_ID}
             ,#{ALLOC_NO}
-            ,#{OPER_SN}
+            ,#{OPER_SN}            
+            ,#{VHC_ID}
+            ,(SELECT VHC_NO FROM BMS_VHC_MST WHERE VHC_ID = #{VHC_ID})
+            ,#{OCR_NODE_ID}
+            ,(SELECT NODE_TYPE FROM BMS_NODE_MST WHERE NODE_ID = #{OCR_NODE_ID})            
             ,#{OCR_DTM}
             ,#{UPD_DTM}
         )
