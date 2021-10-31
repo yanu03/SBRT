@@ -160,11 +160,6 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0203G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_AL0203G0S0" ref='data:json,{"action":"modified","id":"dlt_BRT_COR_MST"}' target="data:json,dma_result"
-				action="/al/AL0203G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0203G0S0_submitdone" ev:submiterror=""
-				abortTrigger="">
-			</xf:submission>
 			<xf:submission id="sub_AL0203SHI0" ref="" target="data:json,dlt_searchitem" action="/al/AL0203SHI0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
@@ -174,7 +169,7 @@
 				customHandler="" mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0203G1R0_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_AL0203G1S0" ref="data:json,dlt_BRT_COR_DTL_INFO" target="data:json,dma_result" action="/al/AL0203G1S0" method="post" mediatype="application/json" encoding="UTF-8"
+			<xf:submission id="sub_AL0203G1S0" ref="data:json,dlt_BRT_OPER_ALLOC_PL_NODE_INFO" target="data:json,dma_result" action="/al/AL0203G1S0" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0203G1S0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -189,7 +184,7 @@
 
 	scwin.onpageload = function() {
 		autoOptions = {
-			Main : { grid : AL0203G0, srchSbm : sub_AL0203G0R0, savSbm : sub_AL0203G0S0, 
+			Main : { grid : AL0203G0, srchSbm : sub_AL0203G0R0, 
 					 srchGrp : pgm_header , keyColumn : "DAY_DIV,ROUT_ID", focusColumn : "ROUT_ID", name : "운행계획 목록"},
 			Sub1 : { grid : AL0203G1, srchSbm : sub_AL0203G1R0, keyColumn : "OPER_SN", savSbm : sub_AL0203G1S0, name : "운행계획 상세" }	
 		 };
@@ -423,14 +418,6 @@
 	
 	scwin.sub_AL0203G0R0_submitdone = function(e) {
 		com.setFocusedCell(AL0203G0, "REP_ROUT_NM");
-	};
-	
-	scwin.sub_AL0203G0S0_submitdone = function(e) {
-		
-		var sCode = com.getResultCode(e);
-		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
-			com.saveDone(AL0203G0,sub_AL0203G0R0);
-		}
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {

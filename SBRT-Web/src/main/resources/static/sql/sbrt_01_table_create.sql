@@ -1,0 +1,4053 @@
+CREATE TABLE `BMS_AD_LOG` (
+  `PLAY_DTM` datetime NOT NULL COMMENT '재생일시',
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `ID` varchar(10) DEFAULT NULL COMMENT '영상음성아이디',
+  `PLAY_TYPE` char(5) DEFAULT NULL COMMENT '재생유형',
+  `AD_NM` varchar(50) DEFAULT NULL COMMENT '홍보명',
+  PRIMARY KEY (`PLAY_DTM`,`MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='홍보로그';
+
+
+CREATE TABLE `BMS_ATMO_INFO` (
+  `MEAS_DT` datetime NOT NULL COMMENT '측정일시',
+  `DUSTC` decimal(4,1) DEFAULT NULL COMMENT '미세먼지농도',
+  `SDUSTC` decimal(4,1) DEFAULT NULL COMMENT '초미세먼지농도',
+  `SDC` decimal(5,4) DEFAULT NULL COMMENT '아황산가스농도',
+  `CMC` decimal(5,4) DEFAULT NULL COMMENT '일산화탄소농도',
+  `OZONEC` decimal(5,4) DEFAULT NULL COMMENT '오존농도',
+  `NDC` decimal(5,4) DEFAULT NULL COMMENT '이산화질소농도',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`MEAS_DT`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='대기정보';
+
+
+CREATE TABLE `BMS_ATTACH_MST` (
+  `ATTACH_ID` varchar(10) NOT NULL COMMENT '첨부아이디',
+  `FILE_NM` varchar(30) DEFAULT NULL COMMENT '파일명',
+  `FILE_SIZE` bigint(20) DEFAULT NULL COMMENT '파일크기',
+  `FILE_PATH` varchar(100) DEFAULT NULL COMMENT '파일경로',
+  `FILE_EXT` varchar(10) DEFAULT NULL COMMENT '파일확장자',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`ATTACH_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='파일첨부마스터';
+
+
+CREATE TABLE `BMS_AUTHORITY_MST` (
+  `AUTH_CD` varchar(10) NOT NULL COMMENT '권한코드',
+  `SYSTEM_BIT` char(5) DEFAULT NULL COMMENT '시스템비트',
+  `AUTH_NM` varchar(30) DEFAULT NULL COMMENT '권한명',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`AUTH_CD`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='권한마스터';
+
+
+CREATE TABLE `BMS_BIT_VDO_INFO` (
+  `VDO_ID` varchar(10) NOT NULL COMMENT '영상아이디',
+  `VDO_NM` varchar(20) DEFAULT NULL COMMENT '영상명',
+  `CON_ID` varchar(10) DEFAULT NULL COMMENT '계약아이디',
+  `PLAY_ST_DT` date DEFAULT NULL COMMENT '재생시작일',
+  `FILE_TYPE` char(5) DEFAULT NULL COMMENT '파일유형',
+  `IMG_PLAY_TM` smallint(4) DEFAULT NULL COMMENT '이미지재생시간',
+  `ATTACH_ID` varchar(10) DEFAULT NULL COMMENT '첨부아이디',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `PLAY_TM` decimal(4,0) DEFAULT NULL COMMENT '재생시간',
+  `PLAY_ED_DT` date DEFAULT NULL COMMENT '재생종료일',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`VDO_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='BIT영상정보';
+
+
+CREATE TABLE `BMS_BIT_VDO_ORGA_INFO` (
+  `ORGA_ID` varchar(10) NOT NULL COMMENT '편성아이디',
+  `ORGA_NM` varchar(20) DEFAULT NULL COMMENT '편성명',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`ORGA_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='BIT영상편성정보';
+
+
+CREATE TABLE `BMS_BIT_VDO_ORGA_LIST` (
+  `ORGA_ID` varchar(10) NOT NULL COMMENT '편성아이디',
+  `VDO_ID` varchar(10) NOT NULL COMMENT '영상아이디',
+  `SN` smallint(5) NOT NULL COMMENT '순번',
+  PRIMARY KEY (`ORGA_ID`,`VDO_ID`,`SN`),
+  KEY `R/33` (`VDO_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='BIT영상편성목록';
+
+
+CREATE TABLE `BMS_BIT_VDO_RSV_INFO` (
+  `RSV_ID` varchar(10) NOT NULL COMMENT '예약아이디',
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `RSV_DT` date DEFAULT NULL COMMENT '예약일',
+  `ORGA_ID` varchar(10) DEFAULT NULL COMMENT '편성아이디',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`RSV_ID`,`MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='BIT영상예약정보';
+
+
+CREATE TABLE `BMS_BIT_VDO_RSV_RST_INFO` (
+  `RSV_ID` varchar(10) NOT NULL COMMENT '예약아이디',
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `PROCE_RST` char(5) DEFAULT NULL COMMENT '처리결과',
+  `RST_CONT` varchar(50) DEFAULT NULL COMMENT '결과내용',
+  `SEND_DATE` datetime DEFAULT NULL COMMENT '전송일시',
+  `COMPLETE_YN` char(1) DEFAULT NULL COMMENT '완료여부',
+  PRIMARY KEY (`RSV_ID`,`MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='BIT영상예약결과';
+
+
+CREATE TABLE `BMS_CO_CD_INFO` (
+  `CO_CD` varchar(20) NOT NULL COMMENT '공통코드',
+  `CO_CD_NM` varchar(30) NOT NULL COMMENT '공통코드명',
+  `SORT` smallint(5) DEFAULT NULL COMMENT '정렬순서',
+  `CO_CD_ENM` varchar(50) DEFAULT NULL COMMENT '공통코드영문명',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  `SYSTEM_YN` char(1) DEFAULT NULL COMMENT '시스템여부',
+  PRIMARY KEY (`CO_CD`),
+  KEY `IDX_BMS_CD_CD_INFO` (`SORT`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='공통코드정보';
+
+
+CREATE TABLE `BMS_CRS_GRP_SIGOPER_HIS` (
+  `CRS_GRP_ID` varchar(10) NOT NULL COMMENT '교차로그룹아이디',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `SIG_CTR_STS` char(1) DEFAULT NULL COMMENT '신호제어상태',
+  `SIG_OPER_MODE` char(1) DEFAULT NULL COMMENT '신호운영모드',
+  `PHASE_LEN` smallint(3) DEFAULT NULL COMMENT '주기길이',
+  `PERIOD_CNT` smallint(3) DEFAULT NULL COMMENT '주기수',
+  `DAY_PL_NO` tinyint(2) DEFAULT NULL COMMENT '일일계획번호',
+  `PHASE_PL_NO` tinyint(2) DEFAULT NULL COMMENT '현시계획번호',
+  `LINK_PL_NO` tinyint(2) DEFAULT NULL COMMENT '연동계획번호',
+  PRIMARY KEY (`CRS_GRP_ID`,`UPD_DTM`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='교차로그룹신호운영정보이력';
+
+
+CREATE TABLE `BMS_CRS_GRP_SIGOPER_INFO` (
+  `CRS_GRP_ID` varchar(10) NOT NULL COMMENT '교차로그룹아이디',
+  `SIG_CTR_STS` char(1) DEFAULT NULL COMMENT '신호제어상태',
+  `SIG_OPER_MODE` char(1) DEFAULT NULL COMMENT '신호운영모드',
+  `PHASE_LEN` smallint(3) DEFAULT NULL COMMENT '주기길이',
+  `PERIOD_CNT` smallint(3) DEFAULT NULL COMMENT '주기수',
+  `DAY_PL_NO` tinyint(2) DEFAULT NULL COMMENT '일일계획번호',
+  `PHASE_PL_NO` tinyint(2) DEFAULT NULL COMMENT '현시계획번호',
+  `LINK_PL_NO` tinyint(2) DEFAULT NULL COMMENT '연동계획번호',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`CRS_GRP_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='교차로그룹신호운영정보';
+
+
+CREATE TABLE `BMS_CRS_HIS` (
+  `CRS_ID` varchar(10) NOT NULL COMMENT '교차로아이디',
+  `CRS_NM` varchar(30) NOT NULL COMMENT '교차로명',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `CRS_ENM` varchar(50) DEFAULT NULL COMMENT '교차로영문명',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT 'GPS 경도',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT 'GPS 위도',
+  `CRS_KIND` char(5) DEFAULT NULL COMMENT '교차로종류',
+  `SIG_CTR_TYPE` char(5) DEFAULT NULL COMMENT '신호제어기 유형',
+  `MAIN_PHASE` tinyint(1) DEFAULT NULL COMMENT '주현시',
+  `PHASE_CNT` tinyint(1) DEFAULT NULL COMMENT '현시수',
+  `PERIOD_LEN` smallint(3) DEFAULT NULL COMMENT '주기길이',
+  `PERIOD_CNT` smallint(3) DEFAULT NULL COMMENT '주기카운트',
+  `APPL_ST_DT` date DEFAULT NULL COMMENT '적용시작일',
+  `APPL_ED_DT` date DEFAULT NULL COMMENT '적용종료일',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `DEL_YN` char(1) DEFAULT 'N' COMMENT '삭제여부',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`CRS_ID`,`UPD_DTM`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='교차로 마스터';
+
+
+CREATE TABLE `BMS_CRS_MST` (
+  `CRS_ID` varchar(10) NOT NULL COMMENT '교차로아이디',
+  `CRS_NM` varchar(30) NOT NULL COMMENT '교차로명',
+  `CRS_STS` char(5) DEFAULT NULL COMMENT '교차로상태',
+  `CRS_ENM` varchar(50) DEFAULT NULL COMMENT '교차로영문명',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT 'GPS 경도',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT 'GPS 위도',
+  `CRS_KIND` char(5) DEFAULT NULL COMMENT '교차로종류',
+  `SIG_CTR_TYPE` char(5) DEFAULT NULL COMMENT '신호제어기 유형',
+  `MAIN_PHASE` tinyint(1) DEFAULT NULL COMMENT '주현시',
+  `PHASE_CNT` smallint(1) DEFAULT NULL COMMENT '현시수',
+  `PERIOD_LEN` smallint(3) DEFAULT NULL COMMENT '주기길이',
+  `PERIOD_CNT` smallint(3) DEFAULT NULL COMMENT '주기카운트',
+  `APPL_ST_DT` date DEFAULT NULL COMMENT '적용시작일',
+  `APPL_ED_DT` date DEFAULT NULL COMMENT '적용종료일',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `IMP_YN` char(1) DEFAULT 'Y' COMMENT '통합플랫폼여부',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `DEL_YN` char(1) DEFAULT 'N' COMMENT '삭제여부',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`CRS_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='교차로 마스터';
+
+
+CREATE TABLE `BMS_CRS_SIGOPER_BASE_PLAN_INFO` (
+  `CRS_ID` varchar(10) NOT NULL COMMENT '교차로아이디',
+  `BASE_PL_NO` decimal(2,0) NOT NULL COMMENT 'BASE신호운영계획번호',
+  `TM_PL_NO` decimal(2,0) NOT NULL COMMENT '시간대별신호운영계획번호',
+  `ST_TM` time DEFAULT NULL COMMENT '시작 시분',
+  `ST_HOUR` decimal(2,0) DEFAULT NULL COMMENT '시작시',
+  `ST_MIN` decimal(2,0) DEFAULT NULL COMMENT '시작분',
+  `PERIOD_LEN` decimal(3,0) DEFAULT NULL COMMENT '주기길이',
+  `OFFSET` decimal(3,0) DEFAULT NULL COMMENT '연동계획값',
+  `A1_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'A1_계획현시값',
+  `A2_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'A2_계획현시값',
+  `A3_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'A3_계획현시값',
+  `A4_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'A4_계획현시값',
+  `A5_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'A5_계획현시값',
+  `A6_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'A6_계획현시값',
+  `A7_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'A7_계획현시값',
+  `A8_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'A8_계획현시값',
+  `B1_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'B1_계획현시값',
+  `B2_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'B2_계획현시값',
+  `B3_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'B3_계획현시값',
+  `B4_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'B4_계획현시값',
+  `B5_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'B5_계획현시값',
+  `B6_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'B6_계획현시값',
+  `B7_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'B7_계획현시값',
+  `B8_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'B8_계획현시값',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`CRS_ID`,`BASE_PL_NO`,`TM_PL_NO`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='신호교차로BASE신호운영계획정보';
+
+
+CREATE TABLE `BMS_CRS_SIGOPER_DAY_PLAN_INFO` (
+  `CRS_ID` varchar(10) NOT NULL COMMENT '교차로아이디',
+  `DAY_PL_NO` decimal(2,0) NOT NULL COMMENT '일일신호운영계획번호',
+  `TM_PL_NO` decimal(2,0) NOT NULL COMMENT '시간대별신호운영계획번호',
+  `ST_TM` time DEFAULT NULL COMMENT '시작 시분',
+  `ST_HOUR` decimal(2,0) DEFAULT NULL COMMENT '시작시',
+  `ST_MIN` decimal(2,0) DEFAULT NULL COMMENT '시작분',
+  `PERIOD_LEN` decimal(3,0) DEFAULT NULL COMMENT '주기길이',
+  `OFFSET` decimal(3,0) DEFAULT NULL COMMENT '연동계획값',
+  `A1_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'A1_계획현시값',
+  `A2_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'A2_계획현시값',
+  `A3_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'A3_계획현시값',
+  `A4_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'A4_계획현시값',
+  `A5_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'A5_계획현시값',
+  `A6_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'A6_계획현시값',
+  `A7_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'A7_계획현시값',
+  `A8_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'A8_계획현시값',
+  `B1_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'B1_계획현시값',
+  `B2_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'B2_계획현시값',
+  `B3_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'B3_계획현시값',
+  `B4_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'B4_계획현시값',
+  `B5_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'B5_계획현시값',
+  `B6_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'B6_계획현시값',
+  `B7_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'B7_계획현시값',
+  `B8_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT 'B8_계획현시값',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`CRS_ID`,`DAY_PL_NO`,`TM_PL_NO`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='신호교차로일일신호운영계획정보';
+
+
+CREATE TABLE `BMS_CRS_SIGOPER_DTL_HIS` (
+  `CRS_ID` varchar(10) NOT NULL COMMENT '교차로아이디',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `SIG_CTR_TYPE` char(1) DEFAULT NULL COMMENT '신호제어기유형',
+  `SIG_CTR_OPER_DTM` datetime DEFAULT NULL COMMENT '신호제어기운행일시',
+  `PWR_STS` char(1) DEFAULT NULL COMMENT '전원상태',
+  `MCU_STS` char(1) DEFAULT NULL COMMENT 'MCU상태',
+  `DIMMING_STS` char(1) DEFAULT NULL COMMENT '조광제어상태',
+  `RING_MODE` char(1) DEFAULT NULL COMMENT 'RING운영방식',
+  `PPC_STS` char(1) DEFAULT NULL COMMENT 'PPC상태',
+  `CTR_MODE` char(1) DEFAULT NULL COMMENT '제어모드',
+  `A_PHASE_NO` tinyint(1) DEFAULT NULL COMMENT 'A_현시번호',
+  `A_STEP_NO` tinyint(2) DEFAULT NULL COMMENT 'A_STEP번호',
+  `B_PHASE_NO` tinyint(1) DEFAULT NULL COMMENT 'B_현시번호',
+  `B_STEP_NO` tinyint(2) DEFAULT NULL COMMENT 'B_STEP번호',
+  `PP_MNL_PRCS_YN` char(1) DEFAULT NULL COMMENT 'PP수동진행여부',
+  `PP_MNL_YN` char(1) DEFAULT NULL COMMENT 'PP수동여부',
+  `PP_FLASH_YN` char(1) DEFAULT NULL COMMENT 'PP점멸여부',
+  `PP_LIGHT_YN` char(1) DEFAULT NULL COMMENT 'PP소등여부',
+  `CONFLICT_STS` char(1) DEFAULT NULL COMMENT '모순상태',
+  `LIGHT_STS` char(1) DEFAULT NULL COMMENT '소등상태',
+  `BLINK_STS` char(1) DEFAULT NULL COMMENT '점멸상태',
+  `DB_STS` char(1) DEFAULT NULL COMMENT 'DB상태',
+  `PUSHBTN_YN` char(1) DEFAULT NULL COMMENT '푸시버튼여부',
+  `FLASH_REASON` char(1) DEFAULT NULL COMMENT '점멸원인',
+  `LTURN_YN` char(1) DEFAULT NULL COMMENT '시자체좌회전여부',
+  `MNL_YN` char(1) DEFAULT NULL COMMENT '수동조작여부',
+  `CONFLICT_YN` char(1) DEFAULT NULL COMMENT '모순여부',
+  `DOOR_STS` char(1) DEFAULT NULL COMMENT 'DOOR상태',
+  `CONFLICT_LSU_NO` char(1) DEFAULT NULL COMMENT '모순LSU번호',
+  `CONFLICT_EVID` char(1) DEFAULT NULL COMMENT '모순근거',
+  `CONFLICT_CIRCUIT_NO` char(1) DEFAULT NULL COMMENT '모순회로번호',
+  `PED_LIGHT_STS` char(1) DEFAULT NULL COMMENT '보행자등출력상태',
+  `PUSHBTN_STS` char(1) DEFAULT NULL COMMENT '푸시버튼상태',
+  `PED_DEV_STS` char(1) DEFAULT NULL COMMENT '보행자작동장치상태',
+  `OPT_STS` char(1) DEFAULT NULL COMMENT '옵션보드상태',
+  `PERIOD_CNTR` smallint(3) DEFAULT NULL COMMENT '주기수',
+  `PREV_PERIOD_LEN` smallint(3) DEFAULT NULL COMMENT '전주기길이',
+  `PERIOD_LEN` smallint(3) DEFAULT NULL COMMENT '현주기길이',
+  `OFFSET` smallint(3) DEFAULT NULL COMMENT '연동값',
+  `PHASE_HOLD_NO` tinyint(1) DEFAULT NULL COMMENT '유지현시번호',
+  `PHASE_OMIT_NO` tinyint(1) DEFAULT NULL COMMENT '생략현시번호',
+  `LIGHT_TYPE` char(1) DEFAULT NULL COMMENT '등기종류',
+  `MAP_NO` tinyint(1) DEFAULT NULL COMMENT '맵번호',
+  `SPILL_BACK_STS` char(1) DEFAULT NULL COMMENT '앞막힘제어상태',
+  `MODULE_STS` char(1) DEFAULT NULL COMMENT '모듈상태',
+  `A_PSIG_CTR_STS` char(1) DEFAULT NULL COMMENT 'ACTIVE우선신호제어상태',
+  `A_PSIG_CTR_MODE` char(1) DEFAULT NULL COMMENT 'ACTIVE우선신호제어모드',
+  `A_PSIG_PERIOD` tinyint(1) DEFAULT NULL COMMENT 'ACTIVE우선신호현시',
+  `A_VAL` smallint(3) DEFAULT NULL COMMENT 'A운영현시',
+  `B_VAL` smallint(3) DEFAULT NULL COMMENT 'B운영현시',
+  PRIMARY KEY (`CRS_ID`,`UPD_DTM`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='신호교차로상세운영이력';
+
+
+CREATE TABLE `BMS_CRS_SIGOPER_DTL_INFO` (
+  `CRS_ID` varchar(10) NOT NULL COMMENT '교차로아이디',
+  `SIG_CTR_TYPE` char(1) DEFAULT NULL COMMENT '신호제어기유형',
+  `SIG_CTR_OPER_DTM` datetime DEFAULT NULL COMMENT '신호제어기운행일시',
+  `PWR_STS` char(1) DEFAULT NULL COMMENT '전원상태',
+  `MCU_STS` char(1) DEFAULT NULL COMMENT 'MCU상태',
+  `DIMMING_STS` char(1) DEFAULT NULL COMMENT '조광제어상태',
+  `RING_MODE` char(1) DEFAULT NULL COMMENT 'RING운영방식',
+  `PPC_STS` char(1) DEFAULT NULL COMMENT 'PPC상태',
+  `CTR_MODE` char(1) DEFAULT NULL COMMENT '제어모드',
+  `A_PHASE_NO` tinyint(1) DEFAULT NULL COMMENT 'A_현시번호',
+  `A_STEP_NO` tinyint(2) DEFAULT NULL COMMENT 'A_STEP번호',
+  `B_PHASE_NO` tinyint(1) DEFAULT NULL COMMENT 'B_현시번호',
+  `B_STEP_NO` tinyint(2) DEFAULT NULL COMMENT 'B_STEP번호',
+  `PP_MNL_PRCS_YN` char(1) DEFAULT NULL COMMENT 'PP수동진행여부',
+  `PP_MNL_YN` char(1) DEFAULT NULL COMMENT 'PP수동여부',
+  `PP_FLASH_YN` char(1) DEFAULT NULL COMMENT 'PP점멸여부',
+  `PP_LIGHT_YN` char(1) DEFAULT NULL COMMENT 'PP소등여부',
+  `CONFLICT_STS` char(1) DEFAULT NULL COMMENT '모순상태',
+  `LIGHT_STS` char(1) DEFAULT NULL COMMENT '소등상태',
+  `BLINK_STS` char(1) DEFAULT NULL COMMENT '점멸상태',
+  `DB_STS` char(1) DEFAULT NULL COMMENT 'DB상태',
+  `PUSHBTN_YN` char(1) DEFAULT NULL COMMENT '푸시버튼여부',
+  `FLASH_REASON` char(1) DEFAULT NULL COMMENT '점멸원인',
+  `LTURN_YN` char(1) DEFAULT NULL COMMENT '시자체좌회전여부',
+  `MNL_YN` char(1) DEFAULT NULL COMMENT '수동조작여부',
+  `CONFLICT_YN` char(1) DEFAULT NULL COMMENT '모순여부',
+  `DOOR_STS` char(1) DEFAULT NULL COMMENT 'DOOR상태',
+  `CONFLICT_LSU_NO` char(1) DEFAULT NULL COMMENT '모순LSU번호',
+  `CONFLICT_EVID` char(1) DEFAULT NULL COMMENT '모순근거',
+  `CONFLICT_CIRCUIT_NO` char(1) DEFAULT NULL COMMENT '모순회로번호',
+  `PED_LIGHT_STS` char(1) DEFAULT NULL COMMENT '보행자등출력상태',
+  `PUSHBTN_STS` char(1) DEFAULT NULL COMMENT '푸시버튼상태',
+  `PED_DEV_STS` char(1) DEFAULT NULL COMMENT '보행자작동장치상태',
+  `OPT_STS` char(1) DEFAULT NULL COMMENT '옵션보드상태',
+  `PERIOD_CNTR` decimal(3,0) DEFAULT NULL COMMENT '주기수',
+  `PREV_PERIOD_LEN` decimal(3,0) DEFAULT NULL COMMENT '전주기길이',
+  `PERIOD_LEN` decimal(3,0) DEFAULT NULL COMMENT '현주기길이',
+  `OFFSET` decimal(3,0) DEFAULT NULL COMMENT '연동값',
+  `PHASE_HOLD_NO` decimal(1,0) DEFAULT NULL COMMENT '유지현시번호',
+  `PHASE_OMIT_NO` decimal(1,0) DEFAULT NULL COMMENT '생략현시번호',
+  `LIGHT_TYPE` char(1) DEFAULT NULL COMMENT '등기종류',
+  `MAP_NO` decimal(1,0) DEFAULT NULL COMMENT '맵번호',
+  `SPILL_BACK_STS` char(1) DEFAULT NULL COMMENT '앞막힘제어상태',
+  `MODULE_STS` char(1) DEFAULT NULL COMMENT '모듈상태',
+  `A_PSIG_CTR_STS` char(1) DEFAULT NULL COMMENT 'ACTIVE우선신호제어상태',
+  `A_PSIG_CTR_MODE` char(1) DEFAULT NULL COMMENT 'ACTIVE우선신호제어모드',
+  `A_PSIG_PERIOD` decimal(1,0) DEFAULT NULL COMMENT 'ACTIVE우선신호현시',
+  `A_VAL` decimal(3,0) DEFAULT NULL COMMENT 'A운영현시',
+  `B_VAL` decimal(3,0) DEFAULT NULL COMMENT 'B운영현시',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`CRS_ID`),
+  CONSTRAINT `FK_BMS_CRS_MST_TO_CRS_SIGOPER_DTL_INFO` FOREIGN KEY (`CRS_ID`) REFERENCES `BMS_CRS_MST` (`CRS_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='신호교차로상세운영정보';
+
+
+CREATE TABLE `BMS_CRS_SIGOPER_HOLIDAY_PLAN_INFO` (
+  `CRS_ID` varchar(10) NOT NULL COMMENT '교차로아이디',
+  `APPL_MON` decimal(2,0) NOT NULL COMMENT '적용월',
+  `APPL_DT` decimal(2,0) NOT NULL COMMENT '적용일',
+  `DAY_PL_NO` decimal(2,0) DEFAULT NULL COMMENT '일일신호운영계획번호',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`CRS_ID`,`APPL_MON`,`APPL_DT`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='신호교차로특수일신호운영계획정보';
+
+
+CREATE TABLE `BMS_CRS_SIGOPER_PHASE_INFO` (
+  `CRS_ID` varchar(10) NOT NULL COMMENT '교차로아이디',
+  `CTR_STS` char(5) DEFAULT NULL COMMENT '제어기상태',
+  `CTR_MODE` char(5) DEFAULT NULL COMMENT '신호제어모드',
+  `A_PHASE_NO` decimal(1,0) DEFAULT NULL COMMENT 'A_현시번호',
+  `A_PHASE_TM` decimal(3,0) DEFAULT NULL COMMENT 'A_현시진행시간',
+  `B_PHASE_NO` decimal(1,0) DEFAULT NULL COMMENT 'B_현시번호',
+  `B_PHASE_TM` decimal(3,0) DEFAULT NULL COMMENT 'B_현시진행시간',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`CRS_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='신호교차로신호운영현시정보';
+
+
+CREATE TABLE `BMS_CRS_SIGOPER_PHASE_INFO_HIS` (
+  `CRS_ID` varchar(10) NOT NULL COMMENT '교차로아이디',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `CTR_STS` char(5) DEFAULT NULL COMMENT '제어기상태',
+  `CTR_MODE` char(5) DEFAULT NULL COMMENT '신호제어모드',
+  `A_PHASE_NO` decimal(1,0) DEFAULT NULL COMMENT 'A_현시번호',
+  `A_PHASE_TM` decimal(3,0) DEFAULT NULL COMMENT 'A_현시진행시간',
+  `B_PHASE_NO` decimal(1,0) DEFAULT NULL COMMENT 'B_현시번호',
+  `B_PHASE_TM` decimal(3,0) DEFAULT NULL COMMENT 'B_현시진행시간',
+  PRIMARY KEY (`CRS_ID`,`UPD_DTM`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='신호교차로신호운영현시정보이력';
+
+
+CREATE TABLE `BMS_CRS_SIGOPER_TRF_HIS` (
+  `CRS_ID` varchar(10) NOT NULL COMMENT '교차로아이디',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `CRS_STS` char(1) DEFAULT NULL COMMENT '교차로상태',
+  `CRS_GRP_ID` varchar(10) DEFAULT NULL COMMENT '교차로그룹ID',
+  `PHASE_CNT` tinyint(1) DEFAULT NULL COMMENT '현시수',
+  `MAIN_PHASE_NO` tinyint(1) DEFAULT NULL COMMENT '주현시번호',
+  `PHASE_LEN` smallint(3) DEFAULT NULL COMMENT '주기길이',
+  `LINK_PL_VAL` smallint(3) DEFAULT NULL COMMENT '연동계획값',
+  `A1_PL` smallint(3) DEFAULT NULL COMMENT 'A1계획현시',
+  `A2_PL` smallint(3) DEFAULT NULL COMMENT 'A2계획현시',
+  `A3_PL` smallint(3) DEFAULT NULL COMMENT 'A3계획현시',
+  `A4_PL` smallint(3) DEFAULT NULL COMMENT 'A4계획현시',
+  `A5_PL` smallint(3) DEFAULT NULL COMMENT 'A5계획현시',
+  `A6_PL` smallint(3) DEFAULT NULL COMMENT 'A6계획현시',
+  `A7_PL` smallint(3) DEFAULT NULL COMMENT 'A7계획현시',
+  `A8_PL` smallint(3) DEFAULT NULL COMMENT 'A8계획현시',
+  `B1_PL` smallint(3) DEFAULT NULL COMMENT 'B1계획현시',
+  `B2_PL` smallint(3) DEFAULT NULL COMMENT 'B2계획현시',
+  `B3_PL` smallint(3) DEFAULT NULL COMMENT 'B3계획현시',
+  `B4_PL` smallint(3) DEFAULT NULL COMMENT 'B4계획현시',
+  `B5_PL` smallint(3) DEFAULT NULL COMMENT 'B5계획현시',
+  `B6_PL` smallint(3) DEFAULT NULL COMMENT 'B6계획현시',
+  `B7_PL` smallint(3) DEFAULT NULL COMMENT 'B7계획현시',
+  `B8_PL` smallint(3) DEFAULT NULL COMMENT 'B8계획현시',
+  `A1_TRF` smallint(3) DEFAULT NULL COMMENT 'A1교통량',
+  `A2_TRF` smallint(3) DEFAULT NULL COMMENT 'A2교통량',
+  `A3_TRF` smallint(3) DEFAULT NULL COMMENT 'A3교통량',
+  `A4_TRF` smallint(3) DEFAULT NULL COMMENT 'A4교통량',
+  `A5_TRF` smallint(3) DEFAULT NULL COMMENT 'A5교통량',
+  `A6_TRF` smallint(3) DEFAULT NULL COMMENT 'A6교통량',
+  `A7_TRF` smallint(3) DEFAULT NULL COMMENT 'A7교통량',
+  `A8_TRF` smallint(3) DEFAULT NULL COMMENT 'A8교통량',
+  `B1_TRF` smallint(3) DEFAULT NULL COMMENT 'B1교통량',
+  `B2_TRF` smallint(3) DEFAULT NULL COMMENT 'B2교통량',
+  `B3_TRF` smallint(3) DEFAULT NULL COMMENT 'B3교통량',
+  `B4_TRF` smallint(3) DEFAULT NULL COMMENT 'B4교통량',
+  `B5_TRF` smallint(3) DEFAULT NULL COMMENT 'B5교통량',
+  `B6_TRF` smallint(3) DEFAULT NULL COMMENT 'B6교통량',
+  `B7_TRF` smallint(3) DEFAULT NULL COMMENT 'B7교통량',
+  `B8_TRF` smallint(3) DEFAULT NULL COMMENT 'B8교통량',
+  `A1_SPD` smallint(3) DEFAULT NULL COMMENT 'A1속도',
+  `A1_LEN` smallint(3) DEFAULT NULL COMMENT 'A1길이',
+  `A2_SPD` smallint(3) DEFAULT NULL COMMENT 'A2속도',
+  `A2_LEN` smallint(3) DEFAULT NULL COMMENT 'A2길이',
+  `A3_SPD` smallint(3) DEFAULT NULL COMMENT 'A3속도',
+  `A3_LEN` smallint(3) DEFAULT NULL COMMENT 'A3길이',
+  `A4_SPD` smallint(3) DEFAULT NULL COMMENT 'A4속도',
+  `A4_LEN` smallint(3) DEFAULT NULL COMMENT 'A4길이',
+  `A5_SPD` smallint(3) DEFAULT NULL COMMENT 'A5속도',
+  `A5_LEN` smallint(3) DEFAULT NULL COMMENT 'A5길이',
+  `A6_SPD` smallint(3) DEFAULT NULL COMMENT 'A6속도',
+  `A6_LEN` smallint(3) DEFAULT NULL COMMENT 'A6길이',
+  `A7_SPD` smallint(3) DEFAULT NULL COMMENT 'A7속도',
+  `A7_LEN` smallint(3) DEFAULT NULL COMMENT 'A7길이',
+  `A8_SPD` smallint(3) DEFAULT NULL COMMENT 'A8속도',
+  `A8_LEN` smallint(3) DEFAULT NULL COMMENT 'A8길이',
+  `B1_SPD` smallint(3) DEFAULT NULL COMMENT 'B1속도',
+  `B1_LEN` smallint(3) DEFAULT NULL COMMENT 'B1길이',
+  `B2_SPD` smallint(3) DEFAULT NULL COMMENT 'B2속도',
+  `B2_LEN` smallint(3) DEFAULT NULL COMMENT 'B2길이',
+  `B3_SPD` smallint(3) DEFAULT NULL COMMENT 'B3속도',
+  `B3_LEN` smallint(3) DEFAULT NULL COMMENT 'B3길이',
+  `B4_SPD` smallint(3) DEFAULT NULL COMMENT 'B4속도',
+  `B4_LEN` smallint(3) DEFAULT NULL COMMENT 'B4길이',
+  `B5_SPD` smallint(3) DEFAULT NULL COMMENT 'B5속도',
+  `B5_LEN` smallint(3) DEFAULT NULL COMMENT 'B5길이',
+  `B6_SPD` smallint(3) DEFAULT NULL COMMENT 'B6속도',
+  `B6_LEN` smallint(3) DEFAULT NULL COMMENT 'B6길이',
+  `B7_SPD` smallint(3) DEFAULT NULL COMMENT 'B7속도',
+  `B7_LEN` smallint(3) DEFAULT NULL COMMENT 'B7길이',
+  `B8_SPD` smallint(3) DEFAULT NULL COMMENT 'B8속도',
+  `B8_LEN` smallint(3) DEFAULT NULL COMMENT 'B8길이',
+  PRIMARY KEY (`CRS_ID`,`UPD_DTM`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='교차로신호운영및교통정보이력';
+
+
+CREATE TABLE `BMS_CRS_SIGOPER_TRF_INFO` (
+  `CRS_ID` varchar(10) NOT NULL COMMENT '교차로아이디',
+  `CRS_STS` char(1) DEFAULT NULL COMMENT '교차로상태',
+  `CRS_GRP_ID` varchar(10) DEFAULT NULL COMMENT '교차로그룹ID',
+  `PHASE_CNT` decimal(1,0) DEFAULT NULL COMMENT '현시수',
+  `MAIN_PHASE_NO` decimal(1,0) DEFAULT NULL COMMENT '주현시번호',
+  `PHASE_LEN` decimal(3,0) DEFAULT NULL COMMENT '주기길이',
+  `LINK_PL_VAL` decimal(3,0) DEFAULT NULL COMMENT '연동계획값',
+  `A1_PL` decimal(3,0) DEFAULT NULL COMMENT 'A1계획현시',
+  `A2_PL` decimal(3,0) DEFAULT NULL COMMENT 'A2계획현시',
+  `A3_PL` decimal(3,0) DEFAULT NULL COMMENT 'A3계획현시',
+  `A4_PL` decimal(3,0) DEFAULT NULL COMMENT 'A4계획현시',
+  `A5_PL` decimal(3,0) DEFAULT NULL COMMENT 'A5계획현시',
+  `A6_PL` decimal(3,0) DEFAULT NULL COMMENT 'A6계획현시',
+  `A7_PL` decimal(3,0) DEFAULT NULL COMMENT 'A7계획현시',
+  `A8_PL` decimal(3,0) DEFAULT NULL COMMENT 'A8계획현시',
+  `B1_PL` decimal(3,0) DEFAULT NULL COMMENT 'B1계획현시',
+  `B2_PL` decimal(3,0) DEFAULT NULL COMMENT 'B2계획현시',
+  `B3_PL` decimal(3,0) DEFAULT NULL COMMENT 'B3계획현시',
+  `B4_PL` decimal(3,0) DEFAULT NULL COMMENT 'B4계획현시',
+  `B5_PL` decimal(3,0) DEFAULT NULL COMMENT 'B5계획현시',
+  `B6_PL` decimal(3,0) DEFAULT NULL COMMENT 'B6계획현시',
+  `B7_PL` decimal(3,0) DEFAULT NULL COMMENT 'B7계획현시',
+  `B8_PL` decimal(3,0) DEFAULT NULL COMMENT 'B8계획현시',
+  `A1_TRF` decimal(3,0) DEFAULT NULL COMMENT 'A1교통량',
+  `A2_TRF` decimal(3,0) DEFAULT NULL COMMENT 'A2교통량',
+  `A3_TRF` decimal(3,0) DEFAULT NULL COMMENT 'A3교통량',
+  `A4_TRF` decimal(3,0) DEFAULT NULL COMMENT 'A4교통량',
+  `A5_TRF` decimal(3,0) DEFAULT NULL COMMENT 'A5교통량',
+  `A6_TRF` decimal(3,0) DEFAULT NULL COMMENT 'A6교통량',
+  `A7_TRF` decimal(3,0) DEFAULT NULL COMMENT 'A7교통량',
+  `A8_TRF` decimal(3,0) DEFAULT NULL COMMENT 'A8교통량',
+  `B1_TRF` decimal(3,0) DEFAULT NULL COMMENT 'B1교통량',
+  `B2_TRF` decimal(3,0) DEFAULT NULL COMMENT 'B2교통량',
+  `B3_TRF` decimal(3,0) DEFAULT NULL COMMENT 'B3교통량',
+  `B4_TRF` decimal(3,0) DEFAULT NULL COMMENT 'B4교통량',
+  `B5_TRF` decimal(3,0) DEFAULT NULL COMMENT 'B5교통량',
+  `B6_TRF` decimal(3,0) DEFAULT NULL COMMENT 'B6교통량',
+  `B7_TRF` decimal(3,0) DEFAULT NULL COMMENT 'B7교통량',
+  `B8_TRF` decimal(3,0) DEFAULT NULL COMMENT 'B8교통량',
+  `A1_SPD` decimal(3,0) DEFAULT NULL COMMENT 'A1속도',
+  `A1_LEN` decimal(3,0) DEFAULT NULL COMMENT 'A1길이',
+  `A2_SPD` decimal(3,0) DEFAULT NULL COMMENT 'A2속도',
+  `A2_LEN` decimal(3,0) DEFAULT NULL COMMENT 'A2길이',
+  `A3_SPD` decimal(3,0) DEFAULT NULL COMMENT 'A3속도',
+  `A3_LEN` decimal(3,0) DEFAULT NULL COMMENT 'A3길이',
+  `A4_SPD` decimal(3,0) DEFAULT NULL COMMENT 'A4속도',
+  `A4_LEN` decimal(3,0) DEFAULT NULL COMMENT 'A4길이',
+  `A5_SPD` decimal(3,0) DEFAULT NULL COMMENT 'A5속도',
+  `A5_LEN` decimal(3,0) DEFAULT NULL COMMENT 'A5길이',
+  `A6_SPD` decimal(3,0) DEFAULT NULL COMMENT 'A6속도',
+  `A6_LEN` decimal(3,0) DEFAULT NULL COMMENT 'A6길이',
+  `A7_SPD` decimal(3,0) DEFAULT NULL COMMENT 'A7속도',
+  `A7_LEN` decimal(3,0) DEFAULT NULL COMMENT 'A7길이',
+  `A8_SPD` decimal(3,0) DEFAULT NULL COMMENT 'A8속도',
+  `A8_LEN` decimal(3,0) DEFAULT NULL COMMENT 'A8길이',
+  `B1_SPD` decimal(3,0) DEFAULT NULL COMMENT 'B1속도',
+  `B1_LEN` decimal(3,0) DEFAULT NULL COMMENT 'B1길이',
+  `B2_SPD` decimal(3,0) DEFAULT NULL COMMENT 'B2속도',
+  `B2_LEN` decimal(3,0) DEFAULT NULL COMMENT 'B2길이',
+  `B3_SPD` decimal(3,0) DEFAULT NULL COMMENT 'B3속도',
+  `B3_LEN` decimal(3,0) DEFAULT NULL COMMENT 'B3길이',
+  `B4_SPD` decimal(3,0) DEFAULT NULL COMMENT 'B4속도',
+  `B4_LEN` decimal(3,0) DEFAULT NULL COMMENT 'B4길이',
+  `B5_SPD` decimal(3,0) DEFAULT NULL COMMENT 'B5속도',
+  `B5_LEN` decimal(3,0) DEFAULT NULL COMMENT 'B5길이',
+  `B6_SPD` decimal(3,0) DEFAULT NULL COMMENT 'B6속도',
+  `B6_LEN` decimal(3,0) DEFAULT NULL COMMENT 'B6길이',
+  `B7_SPD` decimal(3,0) DEFAULT NULL COMMENT 'B7속도',
+  `B7_LEN` decimal(3,0) DEFAULT NULL COMMENT 'B7길이',
+  `B8_SPD` decimal(3,0) DEFAULT NULL COMMENT 'B8속도',
+  `B8_LEN` decimal(3,0) DEFAULT NULL COMMENT 'B8길이',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`CRS_ID`),
+  CONSTRAINT `FK_BMS_CRS_MST_TO_CRS_SIGOPER_TRF_INFO` FOREIGN KEY (`CRS_ID`) REFERENCES `BMS_CRS_MST` (`CRS_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='교차로신호운영및교통정보';
+
+
+CREATE TABLE `BMS_CRS_SIGOPER_WEEK_PLAN_INFO` (
+  `CRS_ID` varchar(10) NOT NULL COMMENT '교차로아이디',
+  `DAY_PL_NO_0` decimal(2,0) DEFAULT NULL COMMENT '일일신호운영계획번호(일요일)',
+  `DAY_PL_NO_1` decimal(2,0) DEFAULT NULL COMMENT '일일신호운영계획번호(월요일)',
+  `DAY_PL_NO_2` decimal(2,0) DEFAULT NULL COMMENT '일일신호운영계획번호(화요일)',
+  `DAY_PL_NO_3` decimal(2,0) DEFAULT NULL COMMENT '일일신호운영계획번호(수요일)',
+  `DAY_PL_NO_4` decimal(2,0) DEFAULT NULL COMMENT '일일신호운영계획번호(목요일)',
+  `DAY_PL_NO_5` decimal(2,0) DEFAULT NULL COMMENT '일일신호운영계획번호(금요일)',
+  `DAY_PL_NO_6` decimal(2,0) DEFAULT NULL COMMENT '일일신호운영계획번호(토요일)',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`CRS_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='신호교차로주간신호운영계획정보';
+
+
+CREATE TABLE `BMS_DESTI_DTL_INFO` (
+  `DESTI_ID` varchar(10) NOT NULL COMMENT '행선지표출아이디',
+  `ROUT_ID` varchar(10) DEFAULT NULL COMMENT '노선아이디',
+  `DVC_TYPE` char(5) DEFAULT NULL COMMENT '장치유형',
+  `FRAME_NO` decimal(2,0) DEFAULT NULL COMMENT '프레임번호',
+  `EFFECT` char(5) DEFAULT NULL COMMENT '효과',
+  `EFFECT_SPD` decimal(2,0) DEFAULT NULL COMMENT '효과속도',
+  `DSP_TM` decimal(4,0) DEFAULT NULL COMMENT '표출시간',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`DESTI_ID`),
+  CONSTRAINT `FK_BMS_DESTI_INFO_TO_BMS_DESTI_DTL_INFO` FOREIGN KEY (`DESTI_ID`) REFERENCES `BMS_DESTI_INFO` (`DESTI_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='행선지표출상세정보';
+
+
+CREATE TABLE `BMS_DESTI_INFO` (
+  `DESTI_ID` varchar(10) NOT NULL COMMENT '행선지표출아이디',
+  `ROUT_ID` varchar(10) DEFAULT NULL COMMENT '노선아이디',
+  `DVC_TYPE` char(5) DEFAULT NULL COMMENT '장치유형',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`DESTI_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='행선지표출정보';
+
+
+CREATE TABLE `BMS_DESTI_RSV_INFO` (
+  `RSV_ID` varchar(10) NOT NULL COMMENT '예약아이디',
+  `RSV_DT` date DEFAULT NULL COMMENT '예약일자',
+  PRIMARY KEY (`RSV_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='행선지표출예약';
+
+
+CREATE TABLE `BMS_DESTI_RSV_RST_INFO` (
+  `RSV_ID` varchar(10) NOT NULL COMMENT '예약아이디',
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `PROCE_RST` char(5) DEFAULT NULL COMMENT '처리결과',
+  `RST_CONT` varchar(50) DEFAULT NULL COMMENT '결과내용',
+  `SEND_DTM` datetime DEFAULT NULL COMMENT '전송일시',
+  `COMPLETE_YN` char(1) DEFAULT NULL COMMENT '완료여부',
+  PRIMARY KEY (`RSV_ID`,`MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='행선표출예약결과';
+
+
+CREATE TABLE `BMS_DL_CD_INFO` (
+  `CO_CD` varchar(20) NOT NULL COMMENT '공통코드',
+  `DL_CD` char(5) NOT NULL COMMENT '상세코드',
+  `DL_CD_NM` varchar(50) NOT NULL COMMENT '상세코드명',
+  `SORT` decimal(5,0) DEFAULT NULL COMMENT '정렬순서',
+  `DL_CD_ENM` varchar(50) DEFAULT NULL COMMENT '상세코드영문명',
+  `TXT_VAL1` varchar(20) DEFAULT NULL COMMENT '참조값1',
+  `TXT_VAL2` varchar(20) DEFAULT NULL COMMENT '참조값2',
+  `TXT_VAL3` varchar(20) DEFAULT NULL COMMENT '참조값3',
+  `NUM_VAL4` decimal(8,3) DEFAULT NULL COMMENT '참조값4',
+  `NUM_VAL5` decimal(8,3) DEFAULT NULL COMMENT '참조값5',
+  `NUM_VAL6` decimal(8,3) DEFAULT NULL COMMENT '참조값6',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`CO_CD`,`DL_CD`),
+  KEY `IDX_BMS_DL_CD_INFO` (`SORT`),
+  CONSTRAINT `R/50` FOREIGN KEY (`CO_CD`) REFERENCES `BMS_CO_CD_INFO` (`CO_CD`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='상세코드정보';
+
+
+CREATE TABLE `BMS_DRV_MST` (
+  `DRV_ID` varchar(10) NOT NULL COMMENT '운전자아이디',
+  `ATTACH_ID` varchar(10) DEFAULT NULL COMMENT '첨부아이디',
+  `COMP_ID` varchar(10) NOT NULL COMMENT '운수사아이디',
+  `DRV_NM` varchar(30) NOT NULL COMMENT '운전자명',
+  `DRV_ENM` varchar(50) DEFAULT NULL COMMENT '운전자영문명',
+  `PHONE` blob DEFAULT NULL COMMENT '전화번호',
+  `BUS_DIV` char(5) DEFAULT NULL COMMENT '버스구분',
+  `EPLY_DATE1` date DEFAULT NULL COMMENT '입사일1',
+  `EPLY_DATE2` date DEFAULT NULL COMMENT '입사일2',
+  `LIC_NO` blob DEFAULT NULL COMMENT '운전면허번호',
+  `CERTI_DT` date DEFAULT NULL COMMENT '자격취득일',
+  `EPLY_YN` char(5) DEFAULT NULL COMMENT '재직여부',
+  `RETIRE_DT` date DEFAULT NULL COMMENT '퇴직일',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  PRIMARY KEY (`DRV_ID`),
+  KEY `R/82` (`ATTACH_ID`),
+  KEY `FK_BMS_TRANSCOMP_MST_TO_BMS_DRV_MST` (`COMP_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운전자 마스터';
+
+
+CREATE TABLE `BMS_DVC_COND_INFO` (
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `DVC_COND` char(5) NOT NULL COMMENT '장치상태',
+  `VER_INFO` varchar(50) DEFAULT NULL COMMENT '버전정보',
+  `SEND_DATE` datetime DEFAULT NULL COMMENT '전송일시',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  PRIMARY KEY (`MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='장치현상태정보';
+
+
+CREATE TABLE `BMS_DVC_COND_LOG` (
+  `SEND_DATE` datetime NOT NULL COMMENT '전송일시',
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `DVC_COND` char(5) NOT NULL COMMENT '장치상태',
+  `VER_INFO` varchar(50) DEFAULT NULL COMMENT '버전정보',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  PRIMARY KEY (`SEND_DATE`,`MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='장치상태로그';
+
+
+CREATE TABLE `BMS_DVC_HIS` (
+  `DVC_ID` varchar(10) NOT NULL COMMENT '장치아이디',
+  `SN` decimal(5,0) NOT NULL COMMENT '순번',
+  `APLY_DATE` date DEFAULT NULL COMMENT '적용일',
+  `WORK_TYPE` char(5) DEFAULT NULL COMMENT '작업유형',
+  `WORK_AMT` decimal(11,0) DEFAULT NULL COMMENT '작업비용',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`DVC_ID`,`SN`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='장치이력';
+
+
+CREATE TABLE `BMS_DVC_INFO` (
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `DVC_ID` varchar(10) NOT NULL COMMENT '장치아이디',
+  `ORG_ID` varchar(10) NOT NULL COMMENT '기관아이디',
+  `DVC_KIND` char(5) NOT NULL COMMENT '장치종류',
+  `DVC_TYPE` char(5) DEFAULT NULL COMMENT '장치유형',
+  `INST_LOC` char(5) NOT NULL COMMENT '설치위치',
+  `DVC_IP` varchar(16) DEFAULT NULL COMMENT '장치IP',
+  `FILE_NM` varchar(30) DEFAULT NULL COMMENT '파일명',
+  `MNG_ID` varchar(16) DEFAULT NULL COMMENT '관리아이디',
+  `DEV_SERIAL_NO` varchar(50) DEFAULT NULL COMMENT '시리얼번호',
+  `MODEL_NM` varchar(20) DEFAULT NULL COMMENT '모델명',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`VHC_ID`,`DVC_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='장치정보';
+
+
+CREATE TABLE `BMS_DVC_LOC_INFO` (
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `ROUT_ID` varchar(10) DEFAULT NULL COMMENT '노선아이디',
+  `GPS_X` decimal(12,6) NOT NULL COMMENT 'GPS_X',
+  `GPS_Y` decimal(12,6) NOT NULL COMMENT 'GPS_Y',
+  `SPD` decimal(5,2) DEFAULT NULL COMMENT '속도',
+  `HEADING` decimal(11,0) DEFAULT NULL COMMENT '헤딩',
+  `SEND_DATE` datetime DEFAULT NULL COMMENT '전송일시',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  PRIMARY KEY (`MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='장치현위치정보';
+
+
+CREATE TABLE `BMS_DVC_LOC_LOG` (
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `SEND_DATE` datetime NOT NULL COMMENT '전송일시',
+  `GPS_X` decimal(12,6) NOT NULL COMMENT 'GPS_X',
+  `GPS_Y` decimal(12,6) NOT NULL COMMENT 'GPS_Y',
+  `SPD` decimal(5,2) DEFAULT NULL COMMENT '속도',
+  `HEADING` decimal(11,0) DEFAULT NULL COMMENT '헤딩',
+  `EPLY_ID` varchar(10) DEFAULT NULL COMMENT '사원아이디',
+  `ROUTE_ID` varchar(10) DEFAULT NULL COMMENT '노선아이디',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  PRIMARY KEY (`MNG_ID`,`SEND_DATE`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='장치위치로그';
+
+
+CREATE TABLE `BMS_ED_INFO` (
+  `SET_ID` varchar(10) NOT NULL COMMENT '설정아이디',
+  `SET_NM` varchar(20) DEFAULT NULL COMMENT '설정명',
+  `TIME_KO` decimal(4,0) DEFAULT NULL COMMENT '국문표출시간',
+  `TIME_EN` decimal(4,0) DEFAULT NULL COMMENT '영문표출시간',
+  `CATEGORY` char(5) DEFAULT NULL COMMENT '범례표출위치',
+  `FRAME` char(5) DEFAULT NULL COMMENT '프레임표출모양',
+  `FONT` char(5) DEFAULT NULL COMMENT '폰트종류',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  PRIMARY KEY (`SET_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='전자노선도정보';
+
+
+CREATE TABLE `BMS_ED_RSV_INFO` (
+  `RSV_ID` varchar(10) NOT NULL COMMENT '예약아이디',
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `RSV_DT` date DEFAULT NULL COMMENT '예약일',
+  `SET_ID` varchar(10) DEFAULT NULL COMMENT '설정아이디',
+  PRIMARY KEY (`RSV_ID`,`MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='전자노선도예약정보';
+
+
+CREATE TABLE `BMS_ED_RSV_RST_INFO` (
+  `RSV_ID` varchar(10) NOT NULL COMMENT '예약아이디',
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `PROCE_RST` char(5) DEFAULT NULL COMMENT '처리결과',
+  `RST_CONT` varchar(50) DEFAULT NULL COMMENT '결과내용',
+  `SEND_DTM` datetime DEFAULT NULL COMMENT '전송일시',
+  `COMPLETE_YN` char(1) DEFAULT NULL COMMENT '완료여부',
+  PRIMARY KEY (`RSV_ID`,`MNG_ID`),
+  CONSTRAINT `R/42` FOREIGN KEY (`RSV_ID`, `MNG_ID`) REFERENCES `BMS_ED_RSV_INFO` (`RSV_ID`, `MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='전자노선도예약결과정보';
+
+
+CREATE TABLE `BMS_EMAIL_MST` (
+  `EMAIL_ID` varchar(10) NOT NULL COMMENT '이메일아이디',
+  `SENDER_NM` varchar(50) NOT NULL COMMENT '발신자명',
+  `SENDER_ADDR` varchar(100) NOT NULL COMMENT '발신자주소',
+  `RCPT_IDS` varchar(200) NOT NULL COMMENT '수신자',
+  `EMAIL_TITLE` varchar(100) NOT NULL COMMENT '이메일제목',
+  `EMAIL_CONTENTS` longtext NOT NULL COMMENT '이메일내용',
+  `SEND_DIV` char(5) DEFAULT NULL COMMENT '전송구분',
+  `SEND_STS` char(5) DEFAULT NULL COMMENT '전송상태',
+  `RSV_DTM` datetime DEFAULT NULL COMMENT '예약일시',
+  `SEND_DTM` datetime DEFAULT NULL COMMENT '전송일시',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`EMAIL_ID`,`SENDER_NM`,`SENDER_ADDR`,`RCPT_IDS`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='메일마스터';
+
+
+CREATE TABLE `BMS_EMER_CLSFCTN_MST` (
+  `CLSFCTN_ID` varchar(10) NOT NULL COMMENT '분류아이디',
+  `CLSFCTN_NM` varchar(30) NOT NULL COMMENT '분류명',
+  `CLSFCTN_ENM` varchar(50) DEFAULT NULL COMMENT '분류영문명',
+  `PARENT_ID` varchar(10) DEFAULT NULL COMMENT '부모아이디',
+  `LEVEL` decimal(11,0) DEFAULT NULL COMMENT '레벨',
+  `SORT` decimal(11,0) DEFAULT NULL COMMENT '정렬',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`CLSFCTN_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='비상연락망분류마스터';
+
+
+CREATE TABLE `BMS_EMER_MEMBER_INFO` (
+  `CLSFCTN_ID` varchar(10) DEFAULT NULL COMMENT '분류아이디',
+  `MEMER_ID` varchar(10) NOT NULL COMMENT '구성원아이디',
+  `ORG_ID` varchar(10) DEFAULT NULL COMMENT '기관아이디',
+  `SN` decimal(5,0) DEFAULT NULL COMMENT '순번',
+  `MEMER_NM` varchar(30) DEFAULT NULL COMMENT '구성원명',
+  `MEMER_DIV` char(5) DEFAULT NULL COMMENT '구성원구분',
+  `PHONE` varchar(13) DEFAULT NULL COMMENT '전화번호',
+  `FAX` varchar(13) DEFAULT NULL COMMENT '팩스',
+  `EMAIL` varchar(50) DEFAULT NULL COMMENT '메일',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) NOT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`MEMER_ID`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='비상연락망구성원정보';
+
+
+CREATE TABLE `BMS_FCLT_COND_INFO` (
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `FCLT_COND` char(5) DEFAULT NULL COMMENT '시설상태',
+  `VER_INFO` varchar(50) DEFAULT NULL COMMENT '버전정보',
+  `SEND_DATE` datetime DEFAULT NULL COMMENT '전송일시',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  PRIMARY KEY (`MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='시설현상태정보';
+
+
+CREATE TABLE `BMS_FCLT_COND_LOG` (
+  `SEND_DATE` datetime NOT NULL COMMENT '전송일시',
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `FCLT_COND` char(5) NOT NULL COMMENT '시설상태',
+  `VER_INFO` varchar(50) DEFAULT NULL COMMENT '버전정보',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  PRIMARY KEY (`SEND_DATE`,`MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='시설상태로그';
+
+
+CREATE TABLE `BMS_FCLT_HIS` (
+  `FCLT_ID` varchar(10) NOT NULL COMMENT '시설아이디',
+  `SN` decimal(5,0) NOT NULL COMMENT '순번',
+  `APLY_DATE` date DEFAULT NULL COMMENT '적용일',
+  `WORK_TYPE` char(5) DEFAULT NULL COMMENT '작업유형',
+  `WORK_AMT` decimal(11,0) DEFAULT NULL COMMENT '작업비용',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  PRIMARY KEY (`FCLT_ID`,`SN`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='시설이력';
+
+
+CREATE TABLE `BMS_FCLT_INFO` (
+  `FCLT_ID` varchar(10) NOT NULL COMMENT '시설아이디',
+  `NODE_ID` varchar(10) DEFAULT NULL COMMENT '노드아이디',
+  `MAKER` varchar(10) DEFAULT NULL COMMENT '제조사',
+  `MRO_ID` varchar(10) DEFAULT NULL COMMENT '유지보수기관ID',
+  `FCLT_KIND` char(5) DEFAULT NULL COMMENT '시설종류',
+  `FCLT_TYPE` char(5) DEFAULT NULL COMMENT '시설유형',
+  `INST_LOC` char(5) DEFAULT NULL COMMENT '설치위치',
+  `MNG_ID` varchar(16) DEFAULT NULL COMMENT '관리아이디',
+  `FILE_NM` varchar(30) DEFAULT NULL COMMENT '파일명',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT 'GPS_X좌표',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT 'GPS_Y좌표',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT 'TM_X좌표',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT 'TM_Y좌표',
+  `FCLT_IP` varchar(16) DEFAULT NULL COMMENT '시설IP',
+  `REL_KIND` char(5) DEFAULT NULL COMMENT '관계종류',
+  `REL_ID` varchar(10) DEFAULT NULL COMMENT '관계아이디',
+  `DEV_SERIAL_NO` varchar(50) DEFAULT NULL COMMENT '시리얼번호',
+  `MODEL_NM` varchar(20) DEFAULT NULL COMMENT '모델명',
+  `INST_DT` date DEFAULT NULL COMMENT '설치일',
+  `BUY_DT` date DEFAULT NULL COMMENT '구매일',
+  `CCTV_URL` varchar(200) DEFAULT NULL COMMENT 'CCTV_URL',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`FCLT_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='시설정보';
+
+
+CREATE TABLE `BMS_FCLT_UPD_LOG` (
+  `RSV_ID` varchar(10) NOT NULL COMMENT '예약아이디',
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `PROCE_RST` char(5) NOT NULL COMMENT '처리결과',
+  `RST_CONT` varchar(50) DEFAULT NULL COMMENT '결과내용',
+  `SEND_DATE` datetime DEFAULT NULL COMMENT '전송일시',
+  `COMPLETE_YN` char(1) DEFAULT NULL COMMENT '완료여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  PRIMARY KEY (`RSV_ID`,`MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='시설업데이트로그';
+
+
+CREATE TABLE `BMS_FCLT_UPD_RSV_INFO` (
+  `RSV_ID` varchar(10) NOT NULL COMMENT '예약아이디',
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `RSV_DT` datetime DEFAULT NULL COMMENT '예약일시',
+  `VER_INFO` varchar(50) DEFAULT NULL COMMENT '버전정보',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`RSV_ID`,`MNG_ID`),
+  KEY `FK_BMS_FCLT_COND_INFO_TO_BMS_FCLT_UPD_RSV_INFO` (`MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='시설업데이트예약정보';
+
+
+CREATE TABLE `BMS_GRG_COMP_CMPSTN` (
+  `COMP_ID` varchar(10) NOT NULL COMMENT '운수사아이디',
+  `GRG_ID` varchar(10) NOT NULL COMMENT '차고지아이디',
+  PRIMARY KEY (`GRG_ID`,`COMP_ID`),
+  KEY `FK_BMS_TRANSCOMP_MST_TO_BMS_GRG_COMP_CMPSTN` (`COMP_ID`),
+  CONSTRAINT `FK_BMS_TRANSCOMP_MST_TO_BMS_GRG_COMP_CMPSTN` FOREIGN KEY (`COMP_ID`) REFERENCES `BMS_TRANSCOMP_MST` (`COMP_ID`),
+  CONSTRAINT `R/5` FOREIGN KEY (`GRG_ID`) REFERENCES `BMS_GRG_MST` (`GRG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='차고지와운수사구성';
+
+
+CREATE TABLE `BMS_GRG_MST` (
+  `GRG_ID` varchar(10) NOT NULL COMMENT '차고지아이디',
+  `GRG_NM` varchar(30) NOT NULL COMMENT '차고지명',
+  `GRG_ENM` varchar(50) DEFAULT NULL COMMENT '차고지영문명',
+  `OWNER_TYPE` char(5) DEFAULT NULL COMMENT '소유형태',
+  `ADDR` varchar(100) DEFAULT NULL COMMENT '주소',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT 'GPS_X좌표',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT 'GPS_Y좌표',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT 'TM_X좌표',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT 'TM_Y좌표',
+  `PHONE` varchar(13) DEFAULT NULL COMMENT '전화번호',
+  `FAX` varchar(13) DEFAULT NULL COMMENT '팩스',
+  `EMAIL` varchar(50) DEFAULT NULL COMMENT '메일',
+  `CNG_YN` char(1) DEFAULT NULL COMMENT 'CNG충전여부',
+  `ELEC_YN` char(1) DEFAULT NULL COMMENT '전기충전여부',
+  `LEGAL_AREA` decimal(7,2) DEFAULT NULL COMMENT '법적면적',
+  `SECURE_AREA` decimal(7,2) DEFAULT NULL COMMENT '확보면적',
+  `COL` decimal(4,1) DEFAULT NULL COMMENT '적용반경',
+  `APPL_ST_DT` date DEFAULT NULL COMMENT '적용시작일',
+  `APPL_ED_DT` date DEFAULT NULL COMMENT '적용종료일',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`GRG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='차고지마스터';
+
+
+CREATE TABLE `BMS_GRG_RDS_INFO` (
+  `GRG_ID` varchar(10) NOT NULL COMMENT '차고지아이디',
+  `SN` decimal(5,0) NOT NULL COMMENT '순번',
+  `GPS_X` decimal(12,6) NOT NULL COMMENT 'GPS_X좌표',
+  `GPS_Y` decimal(12,6) NOT NULL COMMENT 'GPS_Y좌표',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT 'TM_X좌표',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT 'TM_Y좌표',
+  PRIMARY KEY (`GRG_ID`,`SN`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='차고지반경정보';
+
+
+CREATE TABLE `BMS_INNER_LED_INFO` (
+  `ILD_ID` varchar(10) NOT NULL COMMENT '실내LED기본아이디',
+  `ILD_NM` varchar(30) DEFAULT NULL COMMENT '실내LED명',
+  `SN` decimal(5,0) DEFAULT NULL COMMENT '순번',
+  `TXT_A` varchar(200) DEFAULT NULL COMMENT '상단표출문구',
+  `TXT_B` varchar(200) DEFAULT NULL COMMENT '하단표출문구',
+  `VOC_ID` varchar(11) DEFAULT NULL COMMENT '음성아이디',
+  `TXT_CD` char(5) DEFAULT NULL COMMENT '텍스트 타입 코드',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`ILD_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='실내LED기본정보';
+
+
+CREATE TABLE `BMS_INTG_HIS` (
+  `INTG_DTM` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '연계일시',
+  `INTG_NM` varchar(30) NOT NULL COMMENT '연계명',
+  `INTG_STS` char(5) DEFAULT NULL COMMENT '연계상태',
+  `DATA` blob DEFAULT NULL COMMENT '데이터',
+  `LOG` varchar(200) DEFAULT NULL COMMENT '로그',
+  PRIMARY KEY (`INTG_DTM`,`INTG_NM`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='연계이력';
+
+
+CREATE TABLE `BMS_INTG_MST` (
+  `INTG_ID` varchar(10) NOT NULL DEFAULT '0' COMMENT '연계아이디',
+  `INTG_NM` varchar(30) DEFAULT NULL COMMENT '연계명',
+  `INTG_ENM` varchar(50) DEFAULT NULL COMMENT '연계영문명',
+  `INTG_TYPE` char(5) DEFAULT NULL COMMENT '연계유형',
+  `INTG_URL` varchar(200) DEFAULT NULL COMMENT '연계URL',
+  `INTG_API_KEY` varchar(200) DEFAULT NULL COMMENT '연계API키',
+  `ID` varchar(200) DEFAULT NULL COMMENT '아이디',
+  `PWD` varchar(128) DEFAULT NULL COMMENT '패스워드',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`INTG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='연계마스터';
+
+
+CREATE TABLE `BMS_LINE_MST` (
+  `LINE_ID` varchar(10) NOT NULL COMMENT '라인아이디',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) NOT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`LINE_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='라인 마스터';
+
+
+CREATE TABLE `BMS_LINK_HIS` (
+  `LINK_ID` varchar(10) NOT NULL COMMENT '링크아이디',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `LINK_NM` varchar(50) DEFAULT NULL COMMENT '링크명',
+  `LINK_ENM` varchar(50) DEFAULT NULL COMMENT '링크영문명',
+  `ST_NODE_ID` varchar(10) DEFAULT NULL COMMENT '시작노드아이디',
+  `ED_NODE_ID` varchar(10) DEFAULT NULL COMMENT '종료노드아이디',
+  `LINK_SECTION_TYPE` char(5) DEFAULT NULL COMMENT '링크구간유형',
+  `LINK_TYPE` char(5) DEFAULT NULL COMMENT '링크유형',
+  `DIR` varchar(20) DEFAULT NULL COMMENT '방향',
+  `LEN` decimal(8,3) DEFAULT NULL COMMENT '길이',
+  `LINE_CNT` decimal(1,0) DEFAULT NULL COMMENT '차선수',
+  `GATE_N1` decimal(3,0) DEFAULT NULL COMMENT '게이트번호1',
+  `GATE_N2` decimal(3,0) DEFAULT NULL COMMENT '게이트번호2',
+  `ROAD_NM` varchar(30) DEFAULT NULL COMMENT '도로명',
+  `CONN_CD` char(3) DEFAULT NULL COMMENT '연결로코드',
+  `MAX_SPD` decimal(5,2) DEFAULT NULL COMMENT '최대속도',
+  `AVRG_SPD` decimal(5,2) DEFAULT NULL COMMENT '평균속도',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `SBRT_YN` char(1) DEFAULT NULL COMMENT 'SBRT노선여부',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`LINK_ID`,`UPD_DTM`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='링크마스터이력';
+
+
+CREATE TABLE `BMS_LINK_MST` (
+  `LINK_ID` varchar(10) NOT NULL COMMENT '링크아이디',
+  `LINK_NM` varchar(50) DEFAULT NULL COMMENT '링크명',
+  `LINK_ENM` varchar(50) DEFAULT NULL COMMENT '링크영문명',
+  `ST_NODE_ID` varchar(10) DEFAULT NULL COMMENT '시작노드아이디',
+  `ED_NODE_ID` varchar(10) DEFAULT NULL COMMENT '종료노드아이디',
+  `LINK_SECTION_TYPE` char(5) DEFAULT NULL COMMENT '링크구간유형',
+  `LINK_TYPE` char(5) DEFAULT NULL COMMENT '링크유형',
+  `DIR` varchar(20) DEFAULT NULL COMMENT '방향',
+  `LEN` decimal(8,3) DEFAULT NULL COMMENT '길이',
+  `LINE_CNT` decimal(1,0) DEFAULT NULL COMMENT '차선수',
+  `GATE_N1` decimal(3,0) DEFAULT NULL COMMENT '게이트번호1',
+  `GATE_N2` decimal(3,0) DEFAULT NULL COMMENT '게이트번호2',
+  `ROAD_NM` varchar(30) DEFAULT NULL COMMENT '도로명',
+  `CONN_CD` char(3) DEFAULT NULL COMMENT '연결로코드',
+  `MAX_SPD` decimal(5,2) DEFAULT NULL COMMENT '최대속도',
+  `AVRG_SPD` decimal(5,2) DEFAULT NULL COMMENT '평균속도',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `SBRT_YN` char(1) DEFAULT NULL COMMENT 'SBRT노선여부',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`LINK_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='링크마스터';
+
+
+CREATE TABLE `BMS_LIVING_LOG` (
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `SEND_DT` datetime NOT NULL COMMENT '전송일시',
+  `ATTR_ID` char(5) NOT NULL COMMENT '어트리뷰트ID',
+  PRIMARY KEY (`MNG_ID`,`SEND_DT`,`ATTR_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='생활정보로그';
+
+
+CREATE TABLE `BMS_MEMBER_INFO` (
+  `MEMER_ID` varchar(10) NOT NULL COMMENT '구성원아이디',
+  `ORG_ID` varchar(10) NOT NULL COMMENT '기관아이디',
+  `MEMER_NM` varchar(30) DEFAULT NULL COMMENT '구성원명',
+  `MEMER_DIV` char(5) DEFAULT NULL COMMENT '구성원구분',
+  `PHONE` varchar(13) DEFAULT NULL COMMENT '전화번호',
+  `FAX` varchar(13) DEFAULT NULL COMMENT '팩스',
+  `EMAIL` varchar(50) DEFAULT NULL COMMENT '메일',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`MEMER_ID`),
+  KEY `FK_BMS_ORG_MST_TO_BMS_MEMER_INFO` (`ORG_ID`),
+  CONSTRAINT `FK_BMS_ORG_MST_TO_BMS_MEMER_INFO` FOREIGN KEY (`ORG_ID`) REFERENCES `BMS_ORG_MST` (`ORG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='구성원정보';
+
+
+CREATE TABLE `BMS_MENU_MST` (
+  `MENU_CD` varchar(10) NOT NULL COMMENT '메뉴코드',
+  `SYSTEM_BIT` char(5) DEFAULT NULL COMMENT '시스템코드',
+  `PROG_CD` varchar(10) DEFAULT NULL COMMENT '프로그램코드',
+  `MENU_NM` varchar(100) DEFAULT NULL COMMENT '메뉴명',
+  `MULTI_LANGUAGE` varchar(100) DEFAULT NULL COMMENT '다국어',
+  `PARENT_MENU_CD` varchar(10) DEFAULT NULL COMMENT '부모메뉴코드',
+  `LEVEL` decimal(11,0) DEFAULT NULL COMMENT '레벨',
+  `SORT` decimal(11,0) DEFAULT NULL COMMENT '정렬',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`MENU_CD`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='메뉴마스터';
+
+
+CREATE TABLE `BMS_MOCK_LINK` (
+  `MOCK_LINK_ID` varchar(10) NOT NULL COMMENT '표준링크아이디',
+  `F_NODE` varchar(10) DEFAULT NULL COMMENT '시작노드ID',
+  `T_NODE` varchar(10) DEFAULT NULL COMMENT '종료노드ID',
+  `LANES` decimal(1,0) DEFAULT NULL COMMENT '차로수',
+  `ROAD_RANK` varchar(3) DEFAULT NULL COMMENT '도로등급',
+  `ROAD_TYPE` char(5) DEFAULT NULL COMMENT '도로유형',
+  `ROAD_NO` varchar(10) DEFAULT NULL COMMENT '도로번호',
+  `ROAD_NAME` varchar(32) DEFAULT NULL COMMENT '도로명',
+  `ROAD_USE` char(1) DEFAULT NULL COMMENT '도로사용여부',
+  `MULTI_LINK` char(1) DEFAULT NULL COMMENT '중용구간여부',
+  `CONNECT` char(5) DEFAULT NULL COMMENT '연결로코드',
+  `MAX_SPD` decimal(3,0) DEFAULT NULL COMMENT '최고제한속도',
+  `REST_VEH` varchar(3) DEFAULT NULL COMMENT '통과제한차량',
+  `REST_W` decimal(3,0) DEFAULT NULL COMMENT '통과제한하중',
+  `REST_H` decimal(3,0) DEFAULT NULL COMMENT '통과제한높이',
+  `LENGTH` decimal(15,11) DEFAULT NULL COMMENT '도로길이',
+  `REMARK` varchar(254) DEFAULT NULL COMMENT '비고',
+  PRIMARY KEY (`MOCK_LINK_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='표준링크';
+
+
+CREATE TABLE `BMS_MOCK_LINK_CMPSTN` (
+  `MOCK_LINK_ID` varchar(10) NOT NULL COMMENT '표준링크아이디',
+  `LINK_ID` varchar(10) NOT NULL COMMENT '링크아이디',
+  `LINK_SN` decimal(5,0) NOT NULL COMMENT '링크순번',
+  `SBRT_YN` char(1) NOT NULL COMMENT 'SBRT노선여부',
+  PRIMARY KEY (`MOCK_LINK_ID`,`LINK_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='표준링크구성';
+
+
+CREATE TABLE `BMS_MOCK_NODE` (
+  `MOCK_NODE_ID` varchar(10) NOT NULL COMMENT '노드ID',
+  `NODE_TYPE` char(5) DEFAULT NULL COMMENT '노드유형',
+  `NODE_NAME` varchar(32) DEFAULT NULL COMMENT '교차로명칭',
+  `TURN_P` char(1) DEFAULT NULL COMMENT '회전제한유무',
+  `REMARK` varchar(254) DEFAULT NULL COMMENT '비고',
+  `GPS_X` decimal(12,6) NOT NULL COMMENT 'GPS_X좌표',
+  `GPS_Y` decimal(12,6) NOT NULL COMMENT 'GPS_Y좌표',
+  `TM_X` decimal(12,4) NOT NULL COMMENT 'TM_X좌표',
+  `TM_Y` decimal(12,4) NOT NULL COMMENT 'TM_Y좌표',
+  PRIMARY KEY (`MOCK_NODE_ID`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='표준노드';
+
+
+CREATE TABLE `BMS_MULTI_ATTACH_DTL_INFO` (
+  `ATTACH_ID` varchar(10) NOT NULL COMMENT '첨부아이디',
+  `FILE_SN` decimal(5,0) NOT NULL DEFAULT 0 COMMENT '첨부순번',
+  `ORG_FILE_NM` varchar(30) DEFAULT NULL COMMENT '원파일명',
+  `FILE_NM` varchar(30) DEFAULT NULL COMMENT '파일명',
+  `FILE_SIZE` decimal(10,0) DEFAULT NULL COMMENT '파일크기',
+  `FILE_PATH` varchar(100) DEFAULT NULL COMMENT '파일경로',
+  `FILE_EXT` varchar(10) DEFAULT NULL COMMENT '파일확장자',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`ATTACH_ID`,`FILE_SN`),
+  CONSTRAINT `R/78` FOREIGN KEY (`ATTACH_ID`) REFERENCES `BMS_MULTI_ATTACH_MST` (`ATTACH_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='다중파일첨부상세정보';
+
+
+CREATE TABLE `BMS_MULTI_ATTACH_MST` (
+  `ATTACH_ID` varchar(10) NOT NULL COMMENT '첨부아이디',
+  `MAX_ATTACH_CNT` decimal(10,0) DEFAULT 0 COMMENT '첨부제한개수',
+  `MAX_ATTACH_SIZE` decimal(10,0) DEFAULT 0 COMMENT '첨부제한크기',
+  `USE_YN` varchar(1) DEFAULT NULL COMMENT '사용여부',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`ATTACH_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='다중파일첨부마스터';
+
+
+CREATE TABLE `BMS_NEWS_CFG_INFO` (
+  `PROV_ID` varchar(10) NOT NULL COMMENT '제공처아이디',
+  `PROV_URL` varchar(200) DEFAULT NULL COMMENT '제공처URL',
+  `PROV_NM` varchar(20) DEFAULT NULL COMMENT '제공처명',
+  `CATEGORY` varchar(20) DEFAULT NULL COMMENT '범주',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`PROV_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='쿠키뉴스설정정보';
+
+
+CREATE TABLE `BMS_NEWS_INFO` (
+  `SN` int(11) NOT NULL AUTO_INCREMENT COMMENT '순번',
+  `CATEGORY` varchar(20) DEFAULT NULL COMMENT '범주',
+  `PROV_NM` varchar(20) DEFAULT NULL COMMENT '제공처명',
+  `NEWS_TITLE` varchar(50) DEFAULT NULL COMMENT '뉴스제목',
+  `PUB_DT` datetime DEFAULT NULL COMMENT '출판일시',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`SN`)
+) ENGINE=InnoDB AUTO_INCREMENT=2223 DEFAULT CHARSET=utf8 COMMENT='쿠키뉴스정보';
+
+
+CREATE TABLE `BMS_NODE_MST` (
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `MOCK_NODE_ID` varchar(10) DEFAULT NULL COMMENT '표준노드아이디',
+  `NODE_NM` varchar(30) NOT NULL COMMENT '노드명',
+  `NODE_ENM` varchar(50) DEFAULT NULL COMMENT '노드영문명',
+  `NODE_TYPE` char(5) NOT NULL COMMENT '노드유형',
+  `GPS_X` decimal(12,6) NOT NULL COMMENT 'GPS_X좌표',
+  `GPS_Y` decimal(12,6) NOT NULL COMMENT 'GPS_Y좌표',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT 'TM_X좌표',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT 'TM_Y좌표',
+  `ENTRY_RECOG_RADS` decimal(4,1) DEFAULT NULL COMMENT '진입인식반경',
+  `ADVNC_RECOG_RADS` decimal(4,1) DEFAULT NULL COMMENT '진출인식반경',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`NODE_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='노드마스터';
+
+
+CREATE TABLE `BMS_NOTICE_MST` (
+  `NOTICE_ID` varchar(10) NOT NULL COMMENT '공지아이디',
+  `VHC_RCPT_IDS` varchar(200) DEFAULT NULL COMMENT '차량수신자',
+  `STTN_RCPT_IDS` varchar(200) DEFAULT NULL COMMENT '정류소수신자',
+  `TITLE` varchar(100) NOT NULL COMMENT '제목',
+  `SEND_DIV` char(5) DEFAULT NULL COMMENT '전송구분',
+  `SEND_STS` char(5) DEFAULT NULL COMMENT '전송상태',
+  `REG_DTM` datetime DEFAULT NULL COMMENT '등록일시',
+  `RSV_DTM` datetime DEFAULT NULL COMMENT '예약일시',
+  `SEND_DTM` datetime DEFAULT NULL COMMENT '전송일시',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `CONTENTS` longtext NOT NULL COMMENT '내용',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`NOTICE_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='공지마스터';
+
+
+CREATE TABLE `BMS_NOTICE_STTN_CMPSTN` (
+  `NOTICE_ID` varchar(10) NOT NULL,
+  `STTN_ID` varchar(10) NOT NULL,
+  PRIMARY KEY (`NOTICE_ID`,`STTN_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='공지와정류소 구성';
+
+
+CREATE TABLE `BMS_NOTICE_VHC_CMPSTN` (
+  `NOTICE_ID` varchar(10) NOT NULL,
+  `VHC_ID` varchar(10) NOT NULL,
+  PRIMARY KEY (`NOTICE_ID`,`VHC_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='공지와차량 구성';
+
+
+CREATE TABLE `BMS_ORG_MST` (
+  `ORG_ID` varchar(10) NOT NULL COMMENT '기관아이디',
+  `ORG_DIV` char(6) NOT NULL COMMENT '기관구분',
+  `SORT` decimal(11,0) DEFAULT NULL COMMENT '정렬',
+  `ORG_NM` varchar(30) NOT NULL COMMENT '기관명',
+  `ORG_ENM` varchar(50) DEFAULT NULL COMMENT '기관영문명',
+  `REP_NM` varchar(30) DEFAULT NULL COMMENT '대표자명',
+  `COMP_REG_NO` varchar(12) DEFAULT NULL COMMENT '사업자등록번호',
+  `ADDR` varchar(100) DEFAULT NULL COMMENT '주소',
+  `PHONE` varchar(13) DEFAULT NULL COMMENT '전화번호',
+  `FAX` varchar(13) DEFAULT NULL COMMENT '팩스',
+  `EMAIL` varchar(50) DEFAULT NULL COMMENT '메일',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`ORG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='기관마스터';
+
+
+CREATE TABLE `BMS_PROG_AUTH_INFO` (
+  `AUTH_CD` varchar(10) NOT NULL COMMENT '권한코드',
+  `PROG_CD` varchar(10) NOT NULL COMMENT '프로그램코드',
+  `AUTH_CHECK` char(1) DEFAULT NULL COMMENT '권한체크여부',
+  `SCH_AH` char(1) DEFAULT NULL COMMENT '조회권한여부',
+  `SAV_AH` char(1) DEFAULT NULL COMMENT '저장권한여부',
+  `GEX_AH` char(1) DEFAULT NULL COMMENT '엑셀폼다운권한여부',
+  `IEX_AH` char(1) DEFAULT NULL COMMENT '엑셀입력권한여부',
+  `EXL_AH` char(1) DEFAULT NULL COMMENT '엑셀권한권한여부',
+  `DEL_AH` char(1) DEFAULT NULL COMMENT '삭제권한여부',
+  `FN1_AH` char(1) DEFAULT NULL COMMENT '기능키1권한여부',
+  `FN2_AH` char(1) DEFAULT NULL COMMENT '기능키2권한여부',
+  `FN3_AH` char(1) DEFAULT NULL COMMENT '기능키3권한여부',
+  `FN4_AH` char(1) DEFAULT NULL COMMENT '기능키4권한여부',
+  `FN5_AH` char(1) DEFAULT NULL COMMENT '기능키5권한여부',
+  `FN6_AH` char(1) DEFAULT NULL COMMENT '기능키6권한여부',
+  `FN7_AH` char(1) DEFAULT NULL COMMENT '기능키7권한여부',
+  `FN8_AH` char(1) DEFAULT NULL COMMENT '기능키8권한여부',
+  `HELP_AH` char(1) DEFAULT NULL COMMENT '도움말권한여부',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`AUTH_CD`,`PROG_CD`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='프로그램권한정보';
+
+
+CREATE TABLE `BMS_PROG_MST` (
+  `PROG_CD` varchar(50) NOT NULL COMMENT '프로그램코드',
+  `PROG_NM` varchar(50) DEFAULT NULL COMMENT '프로그램명',
+  `PROG_GRP_CD` char(5) DEFAULT NULL COMMENT '프로그램그룹코드',
+  `PROG_PH` varchar(100) DEFAULT NULL COMMENT '프로그램경로',
+  `TARGET` varchar(10) DEFAULT NULL COMMENT '타겟',
+  `AUTH_CHECK` char(1) DEFAULT NULL COMMENT '권한체크여부',
+  `SCH_AH` char(1) DEFAULT NULL COMMENT '조회권한여부',
+  `SAV_AH` char(1) DEFAULT NULL COMMENT '저장권한여부',
+  `GEX_AH` char(1) DEFAULT NULL COMMENT '엑셀폼다운권한여부',
+  `IEX_AH` char(1) DEFAULT NULL COMMENT '엑셀입력권한여부',
+  `EXL_AH` char(1) DEFAULT NULL COMMENT '엑셀권한권한여부',
+  `DEL_AH` char(1) DEFAULT NULL COMMENT '삭제권한여부',
+  `FN1_AH` char(1) DEFAULT NULL COMMENT '기능키1권한여부',
+  `FN2_AH` char(1) DEFAULT NULL COMMENT '기능키2권한여부',
+  `FN3_AH` char(1) DEFAULT NULL COMMENT '기능키3권한여부',
+  `FN4_AH` char(1) DEFAULT NULL COMMENT '기능키4권한여부',
+  `FN5_AH` char(1) DEFAULT NULL COMMENT '기능키5권한여부',
+  `FN6_AH` char(1) DEFAULT NULL COMMENT '기능키6권한여부',
+  `FN7_AH` char(1) DEFAULT NULL COMMENT '기능키7권한여부',
+  `HELP_AH` char(1) DEFAULT NULL COMMENT '도움말권한여부',
+  `SWP_AH` char(1) DEFAULT NULL COMMENT '정류장정리권한여부',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`PROG_CD`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='프로그램마스터';
+
+
+CREATE TABLE `BMS_REP_ROUT_MST` (
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `REP_ROUT_NM` varchar(5) NOT NULL COMMENT '대표노선명',
+  `ROUT_TYPE` char(5) DEFAULT NULL COMMENT '노선유형',
+  `ROUT_DIV` char(5) DEFAULT NULL COMMENT '노선구분',
+  `AREA` char(5) DEFAULT NULL COMMENT '권역',
+  `ST_STTN_ID` varchar(10) DEFAULT NULL COMMENT '시작정류소아이디',
+  `ED_STTN_ID` varchar(10) DEFAULT NULL COMMENT '종료정류소아이디',
+  `WAY_ASC_NM` varchar(30) DEFAULT NULL COMMENT '상행명',
+  `WAY_DESC_NM` varchar(30) DEFAULT NULL COMMENT '하행명',
+  `WAY_YN` char(1) DEFAULT NULL COMMENT '상하행여부',
+  `HOLI_YN` char(1) DEFAULT NULL COMMENT '휴일노선유무',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `DEL_YN` char(1) DEFAULT 'N' COMMENT '삭제여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`REP_ROUT_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='대표노선마스터';
+
+
+CREATE TABLE `BMS_ROAD_MST` (
+  `ROAD_ID` varchar(10) NOT NULL COMMENT '도로아이디',
+  `ROAD_NO` varchar(5) NOT NULL COMMENT '도로번호',
+  `ROUT_LEN` decimal(10,3) DEFAULT NULL COMMENT '노선거리',
+  `ROUT_STRT_LEN` decimal(10,3) DEFAULT NULL COMMENT '노선직선거리',
+  `CURVATURE` decimal(5,3) DEFAULT NULL COMMENT '굴곡도',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`ROAD_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='도로마스터';
+
+
+CREATE TABLE `BMS_ROAD_NODE_CMPSTN` (
+  `ROAD_ID` varchar(10) NOT NULL DEFAULT '' COMMENT '도로아이디',
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `NODE_SN` decimal(5,0) NOT NULL DEFAULT 0 COMMENT '노드순번',
+  `ROUT_NM` varchar(5) DEFAULT NULL COMMENT '노선명',
+  `ROUT_TYPE` char(5) DEFAULT NULL COMMENT '노선유형',
+  `NODE_NM` varchar(30) DEFAULT NULL COMMENT '노드명',
+  `NODE_ENM` varchar(50) DEFAULT NULL COMMENT '노드영문명',
+  `NODE_TYPE` char(5) DEFAULT NULL COMMENT '노드유형',
+  `STTN_ID` varchar(10) DEFAULT NULL COMMENT '정류소아이디',
+  `STTN_SN` decimal(5,0) DEFAULT NULL COMMENT '정류소순번',
+  `CRS_ID` varchar(10) DEFAULT NULL COMMENT '교차로아이디',
+  `CRS_SN` decimal(5,0) DEFAULT NULL COMMENT '교차로순번',
+  `ROUT_LEN` decimal(3,3) DEFAULT NULL COMMENT '노선길이',
+  PRIMARY KEY (`ROAD_ID`,`NODE_ID`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='도로와노드구성';
+
+
+CREATE TABLE `BMS_ROUT_COMP_CMPSTN` (
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `COMP_ID` varchar(10) NOT NULL COMMENT '운수사아이디',
+  PRIMARY KEY (`ROUT_ID`,`COMP_ID`) USING BTREE,
+  KEY `FK_BMS_TRANSCOMP_MST_TO_BMS_ROUT_COMP_CMPSTN` (`COMP_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='노선과운수사 구성';
+
+
+CREATE TABLE `BMS_ROUT_CRS_CMPSTN` (
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `CRS_ID` varchar(10) NOT NULL COMMENT '교차로아이디',
+  `NODE_SN` decimal(11,0) NOT NULL DEFAULT 0 COMMENT '노드순번',
+  `ENT_PHASE_NO_1` decimal(1,0) DEFAULT NULL COMMENT '진입현시번호_1',
+  `ENT_PHASE_NO_2` decimal(1,0) DEFAULT NULL COMMENT '진입현시번호_2',
+  `ENT_PHASE_NO_3` decimal(1,0) DEFAULT NULL COMMENT '진입현시번호_3',
+  PRIMARY KEY (`ROUT_ID`,`CRS_ID`,`NODE_SN`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='노선과교차로 구성';
+
+
+CREATE TABLE `BMS_ROUT_HIS` (
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `INT_ROUT_ID` varchar(10) DEFAULT NULL COMMENT '연계아이디',
+  `REP_ROUT_NM` varchar(5) NOT NULL COMMENT '대표노선명',
+  `ROUT_NM` varchar(30) NOT NULL COMMENT '노선명',
+  `ROUT_TYPE` char(5) NOT NULL COMMENT '노선유형',
+  `ROUT_DIV` char(5) DEFAULT NULL COMMENT '노선구분',
+  `DVC_NM` varchar(10) DEFAULT NULL COMMENT '장치노선명',
+  `RSV_ROUT_YN` char(1) DEFAULT NULL COMMENT '예비노선여부',
+  `ST_STTN_ID` varchar(10) DEFAULT NULL COMMENT '시작정류소아이디',
+  `ST_STTN_NM` varchar(30) DEFAULT NULL COMMENT '시작정류소명',
+  `ST_STTN_ENM` varchar(50) DEFAULT NULL COMMENT '시작정류소영문명',
+  `ED_STTN_ID` varchar(10) DEFAULT NULL COMMENT '종료정류소아이디',
+  `ED_STTN_ENM` varchar(50) DEFAULT NULL COMMENT '종료정류소영문명',
+  `ED_STTN_NM` varchar(30) DEFAULT NULL COMMENT '종료정류소명',
+  `RET_STTN_ID` varchar(10) DEFAULT NULL COMMENT '회차정류소아이디',
+  `RET_STTN_NM` varchar(30) DEFAULT NULL COMMENT '회차정류소명',
+  `RET_STTN_ENM` varchar(50) DEFAULT NULL COMMENT '회차정류소영문명',
+  `STTN_CNT` decimal(3,0) DEFAULT NULL COMMENT '정류소수',
+  `ROUT_LEN` decimal(10,3) DEFAULT NULL COMMENT '노선거리',
+  `ROUT_STRT_LEN` decimal(10,3) DEFAULT NULL COMMENT '노선직선거리',
+  `CURVATURE` decimal(3,3) DEFAULT NULL COMMENT '굴곡도',
+  `JIT_DSPCH_YN` char(5) DEFAULT NULL COMMENT '공동배차여부',
+  `LIC_VHC_CNT` decimal(3,0) DEFAULT NULL COMMENT '면허차대수',
+  `SPR_VHC_CNT` decimal(3,0) DEFAULT NULL COMMENT '예비차대수',
+  `APPL_ST_DT` date DEFAULT NULL COMMENT '적용시작일',
+  `APPL_ED_DT` date DEFAULT NULL COMMENT '적용종료일',
+  `WAY_DIV` char(5) DEFAULT NULL COMMENT '상하행구분',
+  `USER_WAY_DIV` char(5) DEFAULT NULL COMMENT '사용자상하행구분',
+  `WAY_INFO` varchar(30) DEFAULT NULL COMMENT '방면정보',
+  `AREA` char(5) DEFAULT NULL COMMENT '권역',
+  `SHAPE_DIV` char(5) DEFAULT NULL COMMENT '노선도모양구분',
+  `HOLI_YN` char(1) DEFAULT NULL COMMENT '휴일노선여부',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `DEL_YN` char(1) DEFAULT 'N' COMMENT '삭제여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_ID` varchar(10) NOT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`ROUT_ID`,`UPD_DTM`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='노선이력';
+
+
+CREATE TABLE `BMS_ROUT_LINE_CMPSTN` (
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `LINE_ID` varchar(10) NOT NULL COMMENT '라인아이디',
+  `LINE_SN` decimal(5,0) NOT NULL COMMENT '라인순번',
+  PRIMARY KEY (`ROUT_ID`,`LINE_ID`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='노선과라인 구성';
+
+
+CREATE TABLE `BMS_ROUT_LINK_CMPSTN` (
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `LINK_ID` varchar(10) NOT NULL COMMENT '링크아이디',
+  `LINK_SN` decimal(5,0) NOT NULL COMMENT '링크순번',
+  `MORN_STD` char(5) DEFAULT NULL COMMENT '집중모니터링',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`ROUT_ID`,`LINK_ID`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='노선과링크구성';
+
+
+CREATE TABLE `BMS_ROUT_MST` (
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `INT_ROUT_ID` varchar(10) DEFAULT NULL COMMENT '연계아이디',
+  `REP_ROUT_NM` varchar(5) NOT NULL COMMENT '대표노선명',
+  `ROUT_NM` varchar(30) NOT NULL COMMENT '노선명',
+  `ROUT_TYPE` char(5) NOT NULL COMMENT '노선유형',
+  `ROUT_DIV` char(5) DEFAULT NULL COMMENT '노선구분',
+  `DVC_NM` varchar(10) DEFAULT NULL COMMENT '장치노선명',
+  `RSV_ROUT_YN` char(1) DEFAULT NULL COMMENT '예비노선여부',
+  `ST_STTN_ID` varchar(10) DEFAULT NULL COMMENT '시작정류소아이디',
+  `ST_STTN_NM` varchar(30) DEFAULT NULL COMMENT '시작정류소명',
+  `ST_STTN_ENM` varchar(50) DEFAULT NULL COMMENT '시작정류소영문명',
+  `ED_STTN_ID` varchar(10) DEFAULT NULL COMMENT '종료정류소아이디',
+  `ED_STTN_ENM` varchar(50) DEFAULT NULL COMMENT '종료정류소영문명',
+  `ED_STTN_NM` varchar(30) DEFAULT NULL COMMENT '종료정류소명',
+  `RET_STTN_ID` varchar(10) DEFAULT NULL COMMENT '회차정류소아이디',
+  `RET_STTN_NM` varchar(30) DEFAULT NULL COMMENT '회차정류소명',
+  `RET_STTN_ENM` varchar(50) DEFAULT NULL COMMENT '회차정류소영문명',
+  `STTN_CNT` decimal(3,0) DEFAULT NULL COMMENT '정류소수',
+  `ROUT_LEN` decimal(10,3) DEFAULT NULL COMMENT '노선거리',
+  `ROUT_STRT_LEN` decimal(10,3) DEFAULT NULL COMMENT '노선직선거리',
+  `CURVATURE` decimal(3,3) DEFAULT NULL COMMENT '굴곡도',
+  `JIT_DSPCH_YN` char(5) DEFAULT NULL COMMENT '공동배차여부',
+  `LIC_VHC_CNT` decimal(3,0) DEFAULT NULL COMMENT '면허차대수',
+  `SPR_VHC_CNT` decimal(3,0) DEFAULT NULL COMMENT '예비차대수',
+  `APPL_ST_DT` date DEFAULT NULL COMMENT '적용시작일',
+  `APPL_ED_DT` date DEFAULT NULL COMMENT '적용종료일',
+  `WAY_DIV` char(5) DEFAULT NULL COMMENT '상하행구분',
+  `USER_WAY_DIV` char(5) DEFAULT NULL COMMENT '사용자상하행구분',
+  `WAY_INFO` varchar(30) DEFAULT NULL COMMENT '방면정보',
+  `AREA` char(5) DEFAULT NULL COMMENT '권역',
+  `SHAPE_DIV` char(5) DEFAULT NULL COMMENT '노선도모양구분',
+  `HOLI_YN` char(1) DEFAULT NULL COMMENT '휴일노선여부',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `DEL_YN` char(1) DEFAULT 'N' COMMENT '삭제여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) NOT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`ROUT_ID`) USING BTREE,
+  KEY `FK_BRT_REP_ROUT_MST_TO_BMS_ROUT_MST` (`REP_ROUT_ID`),
+  CONSTRAINT `FK_BRT_GRP_ROUT_MST_TO_BMS_ROUT_MST` FOREIGN KEY (`REP_ROUT_ID`) REFERENCES `BMS_REP_ROUT_MST` (`REP_ROUT_ID`),
+  CONSTRAINT `FK_BRT_REP_ROUT_MST_TO_BMS_ROUT_MST` FOREIGN KEY (`REP_ROUT_ID`) REFERENCES `BMS_REP_ROUT_MST` (`REP_ROUT_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='노선마스터';
+
+
+CREATE TABLE `BMS_ROUT_NODE_CMPSTN` (
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `NODE_SN` decimal(11,0) NOT NULL COMMENT '노드순번',
+  `NODE_NM` varchar(30) DEFAULT NULL COMMENT '노드명',
+  `NODE_ENM` varchar(50) DEFAULT NULL COMMENT '노드영문명',
+  `NODE_TYPE` char(5) DEFAULT NULL COMMENT '노드유형',
+  `LINK_ID` varchar(10) DEFAULT NULL COMMENT '링크아이디',
+  `LINK_NODE_YN` char(1) DEFAULT NULL COMMENT '링크노드여부',
+  `STTN_ID` varchar(10) DEFAULT NULL COMMENT '정류소아이디',
+  `STTN_NO` varchar(5) DEFAULT NULL COMMENT '정류소번호',
+  `CRS_ID` varchar(10) DEFAULT NULL COMMENT '교차로아이디',
+  `ORGA_ID` varchar(10) DEFAULT NULL COMMENT '편성아이디',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT 'GPS 경도',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT 'GPS 위도',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT 'TM 경도',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT 'TM 위도',
+  `MORN_STD` char(5) DEFAULT NULL COMMENT '집중모니터링',
+  `ACCRU_LEN` decimal(8,0) DEFAULT NULL COMMENT '누적길이',
+  `PHASE_NO` varchar(10) DEFAULT NULL COMMENT '현시번호',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`ROUT_ID`,`NODE_ID`,`NODE_SN`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='노선과노드구성';
+
+
+CREATE TABLE `BMS_SCRDOOR_INFO` (
+  `STTN_ID` varchar(10) NOT NULL COMMENT '정류소아이디',
+  `SCRDOOR_ID` varchar(10) NOT NULL COMMENT '스크린도어아이디',
+  `DOOR_SN` decimal(5,0) NOT NULL COMMENT '도어순번',
+  `FCLT_ID` varchar(10) DEFAULT NULL COMMENT '시설아이디',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`STTN_ID`,`SCRDOOR_ID`),
+  KEY `FK_BMS_FCLT_INFO_TO_BMS_SCRDOOR_INFO` (`FCLT_ID`),
+  CONSTRAINT `FK_BMS_FCLT_INFO_TO_BMS_SCRDOOR_INFO` FOREIGN KEY (`FCLT_ID`) REFERENCES `BMS_FCLT_INFO` (`FCLT_ID`),
+  CONSTRAINT `FK_BMS_STTN_MST_TO_BMS_SCRDOOR_INFO` FOREIGN KEY (`STTN_ID`) REFERENCES `BMS_STTN_MST` (`STTN_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='스크린도어정보';
+
+
+CREATE TABLE `BMS_SCR_INFO` (
+  `SET_ID` varchar(10) NOT NULL COMMENT '설정아이디',
+  `SET_NM` varchar(20) DEFAULT NULL COMMENT '설정명',
+  `FONT_COLOR` char(5) DEFAULT NULL COMMENT '폰트색상',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`SET_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='화면설정정보';
+
+
+CREATE TABLE `BMS_SCR_RSV_INFO` (
+  `RSV_ID` varchar(10) NOT NULL COMMENT '예약아이디',
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `RSV_DT` date DEFAULT NULL COMMENT '예약일',
+  `SET_ID` varchar(10) DEFAULT NULL COMMENT '설정아이디',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`RSV_ID`,`MNG_ID`),
+  KEY `R/65` (`SET_ID`),
+  CONSTRAINT `R/65` FOREIGN KEY (`SET_ID`) REFERENCES `BMS_SCR_INFO` (`SET_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='화면설정예약';
+
+
+CREATE TABLE `BMS_SCR_RSV_RST_INFO` (
+  `RSV_ID` varchar(10) NOT NULL COMMENT '예약아이디',
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `PROCE_RST` char(5) NOT NULL COMMENT '처리결과',
+  `RST_CONT` varchar(50) DEFAULT NULL COMMENT '결과내용',
+  `SEND_DTM` datetime DEFAULT NULL COMMENT '전송일시',
+  `COMPLETE_YN` char(1) DEFAULT NULL COMMENT '완료여부',
+  PRIMARY KEY (`RSV_ID`,`MNG_ID`),
+  CONSTRAINT `R/64` FOREIGN KEY (`RSV_ID`, `MNG_ID`) REFERENCES `BMS_SCR_RSV_INFO` (`RSV_ID`, `MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='화면설정예약결과';
+
+
+CREATE TABLE `BMS_SMS_MST` (
+  `SMS_ID` varchar(10) NOT NULL DEFAULT '0' COMMENT '문자아이디',
+  `SENDER_PHONE` varchar(13) NOT NULL DEFAULT '' COMMENT '발신자전화번호',
+  `RCPT_IDS` varchar(200) NOT NULL DEFAULT '' COMMENT '수신자',
+  `SMS_CONTENTS` longtext NOT NULL COMMENT '문자내용',
+  `SEND_DIV` char(5) DEFAULT NULL COMMENT '전송구분',
+  `SMS_DIV` char(5) DEFAULT NULL COMMENT '문자구분',
+  `REG_DTM` datetime DEFAULT NULL COMMENT '등록일시',
+  `RSV_DTM` datetime DEFAULT NULL COMMENT '예약일시',
+  `SEND_DTM` datetime DEFAULT NULL COMMENT '전송일시',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`SMS_ID`,`SENDER_PHONE`,`RCPT_IDS`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='문자마스터';
+
+
+CREATE TABLE `BMS_STTN_DOOR_CMPSTN` (
+  `STTN_ID` varchar(10) NOT NULL COMMENT '정류소아이디',
+  `FCLT_ID` varchar(10) NOT NULL COMMENT '시설아이디',
+  `DOOR_SN` decimal(5,0) DEFAULT NULL COMMENT '도어순번',
+  PRIMARY KEY (`STTN_ID`,`FCLT_ID`),
+  KEY `R/131` (`FCLT_ID`),
+  CONSTRAINT `R/131` FOREIGN KEY (`FCLT_ID`) REFERENCES `BMS_FCLT_INFO` (`FCLT_ID`),
+  CONSTRAINT `R/133` FOREIGN KEY (`STTN_ID`) REFERENCES `BMS_STTN_MST` (`STTN_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='정류소와도어구성';
+
+
+CREATE TABLE `BMS_STTN_HIS` (
+  `STTN_ID` varchar(10) NOT NULL COMMENT '정류소아이디',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `STTN_NM` varchar(30) NOT NULL COMMENT '정류소명',
+  `STTN_ENM` varchar(50) DEFAULT NULL COMMENT '정류소영문명',
+  `AREA` char(5) DEFAULT NULL COMMENT '권역',
+  `STTN_NO` varchar(5) DEFAULT NULL COMMENT '정류소번호',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT 'GPS 경도',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT 'GPS 위도',
+  `CENTER_YN` char(1) DEFAULT NULL COMMENT '중앙차로여부',
+  `STTN_FCLT_TYPE` char(5) DEFAULT NULL COMMENT '정류소시설유형',
+  `VHC_DOOR_DIR_TYPE` char(5) DEFAULT NULL COMMENT '버스문열림방향유형',
+  `WAY_DIV` char(5) DEFAULT NULL COMMENT '상하행구분',
+  `APPL_RDS` decimal(4,1) DEFAULT NULL COMMENT '적용반경',
+  `BAY_TYPE` char(5) DEFAULT NULL COMMENT '베이유형',
+  `BAY_LEN` decimal(5,0) DEFAULT NULL COMMENT '베이길이',
+  `LINE_CNT` decimal(1,0) DEFAULT NULL COMMENT '차선수',
+  `STOP_TM_PEAK` decimal(3,0) DEFAULT NULL COMMENT '필요정차시간(초)(첨두시)',
+  `STOP_TM_NONE_PEAK` decimal(3,0) DEFAULT NULL COMMENT '필요정차시간(초)(비첨두시)',
+  `APPL_ST_DT` date DEFAULT NULL COMMENT '적용시작일',
+  `APPL_ED_DT` date DEFAULT NULL COMMENT '적용종료일',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `DEL_YN` char(1) DEFAULT 'N' COMMENT '삭제여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`STTN_ID`,`UPD_DTM`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='정류소이력';
+
+
+CREATE TABLE `BMS_STTN_MST` (
+  `STTN_ID` varchar(10) NOT NULL COMMENT '정류소아이디',
+  `STTN_NM` varchar(30) NOT NULL COMMENT '정류소명',
+  `STTN_ENM` varchar(50) DEFAULT NULL COMMENT '정류소영문명',
+  `AREA` char(5) DEFAULT NULL COMMENT '권역',
+  `STTN_NO` varchar(5) DEFAULT NULL COMMENT '정류소번호',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT 'GPS 경도',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT 'GPS 위도',
+  `CENTER_YN` char(1) DEFAULT NULL COMMENT '중앙차로여부',
+  `STTN_FCLT_TYPE` char(5) DEFAULT NULL COMMENT '정류소시설유형',
+  `VHC_DOOR_DIR_TYPE` char(5) DEFAULT NULL COMMENT '버스문열림방향유형',
+  `WAY_DIV` char(5) DEFAULT NULL COMMENT '상하행구분',
+  `APPL_RDS` decimal(4,1) DEFAULT NULL COMMENT '적용반경',
+  `BAY_TYPE` char(5) DEFAULT NULL COMMENT '베이유형',
+  `BAY_LEN` decimal(5,0) DEFAULT NULL COMMENT '베이길이',
+  `LINE_CNT` decimal(1,0) DEFAULT NULL COMMENT '차선수',
+  `STOP_TM_PEAK` decimal(3,0) DEFAULT NULL COMMENT '필요정차시간(초)(첨두시)',
+  `STOP_TM_NONE_PEAK` decimal(3,0) DEFAULT NULL COMMENT '필요정차시간(초)(비첨두시)',
+  `APPL_ST_DT` date DEFAULT NULL COMMENT '적용시작일',
+  `APPL_ED_DT` date DEFAULT NULL COMMENT '적용종료일',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `DEL_YN` char(1) DEFAULT 'N' COMMENT '삭제여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`STTN_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='정류소마스터';
+
+
+CREATE TABLE `BMS_SYSTEM_MST` (
+  `SYSTEM_CD` varchar(10) NOT NULL COMMENT '시스템코드',
+  `SYSTEM_VALUE` char(5) NOT NULL COMMENT '시스템값',
+  `SYSTEM_NM` varchar(30) DEFAULT NULL COMMENT '시스템명',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`SYSTEM_VALUE`,`SYSTEM_CD`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='시스템마스터';
+
+
+CREATE TABLE `BMS_TRANSCOMP_MST` (
+  `COMP_ID` varchar(10) NOT NULL COMMENT '운수사아이디',
+  `AREA` char(5) DEFAULT NULL COMMENT '권역',
+  `COMP_NM` varchar(30) NOT NULL COMMENT '운수사명',
+  `COMP_ENM` varchar(50) DEFAULT NULL COMMENT '운수사영문명',
+  `REP_NM` varchar(30) NOT NULL COMMENT '대표자명',
+  `COMP_REG_NO` varchar(12) DEFAULT NULL COMMENT '사업자등록번호',
+  `ADDR` varchar(100) DEFAULT NULL COMMENT '주소',
+  `GPS_X` decimal(12,6) NOT NULL COMMENT 'GPS_X좌표',
+  `GPS_Y` decimal(12,6) NOT NULL COMMENT 'GPS_Y좌표',
+  `TM_X` decimal(12,4) NOT NULL COMMENT 'TM_X좌표',
+  `TM_Y` decimal(12,4) NOT NULL COMMENT 'TM_Y좌표',
+  `PHONE` varchar(13) DEFAULT NULL COMMENT '전화번호',
+  `FAX` varchar(13) DEFAULT NULL COMMENT '팩스',
+  `EMAIL` varchar(50) DEFAULT NULL COMMENT '메일',
+  `DRV_CNT` smallint(5) DEFAULT NULL COMMENT '운전자수',
+  `SVC_ROUT_CNT` smallint(3) DEFAULT NULL COMMENT '운행노선수',
+  `LIC_VHC_CNT` smallint(5) DEFAULT NULL COMMENT '면허차대수',
+  `SPR_VHC_CNT` smallint(5) DEFAULT NULL COMMENT '예비차대수',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`COMP_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운수사마스터';
+
+
+CREATE TABLE `BMS_TRANSFER_INFO` (
+  `STTN_ID` varchar(10) NOT NULL COMMENT '정류소아이디',
+  `TRNS_ID` varchar(10) NOT NULL COMMENT '환승아이디',
+  `TRNS_DIV` char(5) NOT NULL COMMENT '환승구분',
+  `TRNS_NM` varchar(30) DEFAULT NULL COMMENT '환승명',
+  `GPS_X` decimal(12,6) NOT NULL COMMENT 'GPS_X좌표',
+  `GPS_Y` decimal(12,6) NOT NULL COMMENT 'GPS_Y좌표',
+  `TM_Y` decimal(12,4) NOT NULL COMMENT 'TM_Y좌표',
+  `TM_X` decimal(12,4) NOT NULL COMMENT 'TM_X좌표',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`STTN_ID`,`TRNS_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='환승정보';
+
+
+CREATE TABLE `BMS_UPD_LOG` (
+  `RSV_ID` varchar(10) NOT NULL COMMENT '예약아이디',
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `PROCE_RST` char(5) DEFAULT NULL COMMENT '처리결과',
+  `RST_CONT` varchar(50) DEFAULT NULL COMMENT '결과내용',
+  `SEND_DTM` datetime DEFAULT NULL COMMENT '전송일시',
+  `COMPLETE_YN` char(10) DEFAULT NULL COMMENT '완료여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  PRIMARY KEY (`RSV_ID`,`MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='업데이트로그';
+
+
+CREATE TABLE `BMS_UPD_RSV_INFO` (
+  `RSV_ID` varchar(10) NOT NULL COMMENT '예약아이디',
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `RSV_DT` date DEFAULT NULL COMMENT '예약일시',
+  `ATTACH_ID` varchar(10) DEFAULT NULL COMMENT '첨부아이디',
+  `VER_INFO` varchar(50) DEFAULT NULL COMMENT '버전정보',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`RSV_ID`,`MNG_ID`),
+  KEY `FK_BMS_DVC_COND_TO_BMS_UPD_RSV` (`MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='업데이트예약';
+
+
+CREATE TABLE `BMS_USER_AUTH_CMPSTN` (
+  `USER_ID` varchar(10) NOT NULL COMMENT '사용자아이디',
+  `AUTH_CD` varchar(10) NOT NULL COMMENT '권한그룹아이디',
+  PRIMARY KEY (`USER_ID`,`AUTH_CD`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='사용자와권한구성';
+
+
+CREATE TABLE `BMS_USER_HIS` (
+  `OCR_DTM` datetime NOT NULL COMMENT '발생일시',
+  `USER_ID` varchar(100) NOT NULL COMMENT '사용자ID',
+  `USER_NM` varchar(30) DEFAULT NULL COMMENT '사용자명',
+  `LOGIN_STS` char(5) DEFAULT NULL COMMENT '발생유형',
+  `IP` varchar(16) DEFAULT NULL COMMENT 'IP',
+  PRIMARY KEY (`OCR_DTM`,`USER_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='사용자이력';
+
+
+CREATE TABLE `BMS_USER_MST` (
+  `USER_ID` varchar(10) NOT NULL COMMENT '사용자아이디',
+  `ORG_ID` varchar(10) DEFAULT NULL COMMENT '기관아이디',
+  `SYSTEM_BIT` char(5) DEFAULT NULL COMMENT '시스템비트',
+  `USER_NM` varchar(30) NOT NULL COMMENT '사용자명',
+  `USER_PS` varchar(100) DEFAULT NULL COMMENT '비밀번호',
+  `SCD_PS` varchar(100) DEFAULT NULL COMMENT '2차비밀번호',
+  `EMAIL` varchar(50) DEFAULT NULL COMMENT '이메일',
+  `HP_NO` varchar(13) DEFAULT NULL COMMENT '휴대폰',
+  `LAST_LOGIN_DTM` datetime DEFAULT NULL COMMENT '마지막로그인일시',
+  `PASSWORD_UPDATE_DTM` datetime DEFAULT NULL COMMENT '비밀번호변경일시',
+  `SCD_PS_UPDATE_DTM` datetime DEFAULT NULL COMMENT '2차비밀번호변경일시',
+  `USER_STATUS` char(5) DEFAULT NULL COMMENT '사용자상태',
+  `IP` varchar(16) DEFAULT NULL COMMENT 'IP',
+  `SCD_PS_USE_YN` char(1) DEFAULT NULL COMMENT '2차비밀번호 사용여부',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`USER_ID`),
+  KEY `FK_BMS_ORG_MST_TO_BMS_USER_MST` (`ORG_ID`),
+  CONSTRAINT `FK_BMS_ORG_MST_TO_BMS_USER_MST` FOREIGN KEY (`ORG_ID`) REFERENCES `BMS_ORG_MST` (`ORG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='사용자마스터';
+
+
+CREATE TABLE `BMS_USER_NEWS_CFG_INFO` (
+  `USER_NEWS_ID` varchar(10) NOT NULL COMMENT '사용자뉴스ID',
+  `NEWS_TITLE` varchar(50) DEFAULT NULL COMMENT '뉴스제목',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `NEWS_CONTENTS` varchar(200) DEFAULT NULL COMMENT '뉴스내용',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `CATEGORY` varchar(20) DEFAULT NULL COMMENT '범주',
+  `PROV_NM` varchar(20) DEFAULT NULL COMMENT '제공처명',
+  `PUB_DT` datetime DEFAULT NULL COMMENT '출판일시',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`USER_NEWS_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='사용자뉴스설정';
+
+
+CREATE TABLE `BMS_USER_PROG_AUTH_INFO` (
+  `USER_ID` varchar(10) NOT NULL COMMENT '사용자아이디',
+  `PROG_CD` varchar(10) NOT NULL COMMENT '프로그램아이디',
+  `AUTH_CHECK` char(1) DEFAULT NULL COMMENT '권한체크여부',
+  `SCH_AH` char(1) DEFAULT NULL COMMENT '조회권한여부',
+  `SAV_AH` char(1) DEFAULT NULL COMMENT '저장권한여부',
+  `GEX_AH` char(1) DEFAULT NULL COMMENT '엑셀폼다운권한여부',
+  `IEX_AH` char(1) DEFAULT NULL COMMENT '엑셀입력권한여부',
+  `EXL_AH` char(1) DEFAULT NULL COMMENT '엑셀권한권한여부',
+  `DEL_AH` char(1) DEFAULT NULL COMMENT '삭제권한여부',
+  `FN1_AH` char(1) DEFAULT NULL COMMENT '기능키1권한여부',
+  `FN2_AH` char(1) DEFAULT NULL COMMENT '기능키2권한여부',
+  `FN3_AH` char(1) DEFAULT NULL COMMENT '기능키3권한여부',
+  `FN4_AH` char(1) DEFAULT NULL COMMENT '기능키4권한여부',
+  `FN5_AH` char(1) DEFAULT NULL COMMENT '기능키5권한여부',
+  `FN6_AH` char(1) DEFAULT NULL COMMENT '기능키6권한여부',
+  `FN7_AH` char(1) DEFAULT NULL COMMENT '기능키7권한여부',
+  `HELP_AH` char(1) DEFAULT NULL COMMENT '도움말권한여부',
+  `SWP_AH` char(1) DEFAULT NULL COMMENT '정류장정리권한여부',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`USER_ID`,`PROG_CD`) USING BTREE,
+  CONSTRAINT `FK_BMS_USER_MST_TO_BMS_USER_AUTH_MST` FOREIGN KEY (`USER_ID`) REFERENCES `BMS_USER_MST` (`USER_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='사용자프로그램권한정보';
+
+
+CREATE TABLE `BMS_VDO_INFO` (
+  `VDO_ID` varchar(10) NOT NULL COMMENT '영상아이디',
+  `VDO_NM` varchar(20) DEFAULT NULL COMMENT '영상명',
+  `CON_ID` varchar(10) DEFAULT NULL COMMENT '계약아이디',
+  `PLAY_ST_DT` date DEFAULT NULL COMMENT '재생시작일',
+  `FILE_TYPE` char(5) NOT NULL COMMENT '파일유형',
+  `IMG_PLAY_TM` decimal(4,0) DEFAULT NULL COMMENT '이미지재생시간',
+  `FILE_NM` varchar(30) DEFAULT NULL COMMENT '파일명',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `PLAY_TM` decimal(4,0) DEFAULT NULL COMMENT '재생시간',
+  `PLAY_ED_DT` date DEFAULT NULL COMMENT '재생종료일',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`VDO_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='영상정보';
+
+
+CREATE TABLE `BMS_VDO_ORGA_INFO` (
+  `ORGA_ID` varchar(10) NOT NULL COMMENT '편성아이디',
+  `ORGA_NM` varchar(20) DEFAULT NULL COMMENT '편성명',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`ORGA_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='영상편성정보';
+
+
+CREATE TABLE `BMS_VDO_ORGA_LIST` (
+  `ORGA_ID` varchar(10) NOT NULL COMMENT '편성아이디',
+  `VDO_ID` varchar(10) NOT NULL COMMENT '영상아이디',
+  `SN` decimal(5,0) NOT NULL COMMENT '순번',
+  PRIMARY KEY (`ORGA_ID`,`VDO_ID`,`SN`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='영상편성목록';
+
+
+CREATE TABLE `BMS_VDO_RSV_INFO` (
+  `RSV_ID` varchar(10) NOT NULL COMMENT '예약아이디',
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `RSV_DT` date DEFAULT NULL COMMENT '예약일',
+  `ORGA_ID` varchar(10) DEFAULT NULL COMMENT '편성아이디',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`RSV_ID`,`MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='영상예약';
+
+
+CREATE TABLE `BMS_VDO_RSV_RST_INFO` (
+  `RSV_ID` varchar(10) NOT NULL COMMENT '예약아이디',
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `PROCE_RST` char(5) DEFAULT NULL COMMENT '처리결과',
+  `RST_CONT` varchar(50) DEFAULT NULL COMMENT '결과내용',
+  `SEND_DTM` datetime DEFAULT NULL COMMENT '전송일시',
+  `COMPLETE_YN` char(1) DEFAULT NULL COMMENT '완료여부',
+  PRIMARY KEY (`RSV_ID`,`MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='영상예약결과정보';
+
+
+CREATE TABLE `BMS_VHC_MST` (
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `COMP_ID` varchar(10) NOT NULL COMMENT '운수사아이디',
+  `AREA` char(5) NOT NULL COMMENT '권역',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `CHAS_NO` varchar(17) DEFAULT NULL COMMENT '차대번호',
+  `MAKER` varchar(30) DEFAULT NULL COMMENT '제조사',
+  `RELS_DT` date DEFAULT NULL COMMENT '출고일자',
+  `MODEL_NM` varchar(30) DEFAULT NULL COMMENT '모델명',
+  `VHC_KIND` char(5) DEFAULT NULL COMMENT '차량종류',
+  `ROUT_TYPE` char(5) DEFAULT NULL COMMENT '노선유형',
+  `VHC_TYPE` char(5) DEFAULT NULL COMMENT '차량유형',
+  `VHC_FUEL` char(5) DEFAULT NULL COMMENT '차량연료',
+  `VHC_STS` char(5) DEFAULT NULL COMMENT '버스상태',
+  `PSG_CNT` decimal(3,0) DEFAULT NULL COMMENT '승차인원',
+  `SPARE_YN` char(1) DEFAULT NULL COMMENT '예비차여부',
+  `SCRAP_YN` char(1) DEFAULT NULL COMMENT '대폐차여부',
+  `APPL_ST_DT` date DEFAULT NULL COMMENT '적용시작일',
+  `APPL_ED_DT` date DEFAULT NULL COMMENT '적용종료일',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`VHC_ID`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='차량 마스터';
+
+
+CREATE TABLE `BMS_VOC_INFO` (
+  `VOC_ID` varchar(10) NOT NULL COMMENT '음성아이디',
+  `ROUT_ID` varchar(10) DEFAULT NULL COMMENT '노선아이디',
+  `VOC_NM` varchar(20) DEFAULT NULL COMMENT '음성명',
+  `PLAY_ST_DT` date DEFAULT NULL COMMENT '재생시작일',
+  `PLAY_TYPE` char(5) DEFAULT NULL COMMENT '재생유형',
+  `KR_TTS` varchar(200) DEFAULT NULL COMMENT '한국어TTS',
+  `EN_TTS` varchar(200) DEFAULT NULL COMMENT '영어TTS',
+  `SCR_TXT` varchar(200) DEFAULT NULL COMMENT '화면표시문구',
+  `SCR_TXT_EN` varchar(200) DEFAULT NULL COMMENT '영어화면표시문구',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `PLAY_TM` decimal(4,0) DEFAULT NULL COMMENT '재생시간',
+  `VOC_DIV` char(5) DEFAULT NULL COMMENT '음성구분',
+  `CON_ID` varchar(10) DEFAULT NULL COMMENT '계약아이디',
+  `PLAY_ED_DT` date DEFAULT NULL COMMENT '재생종료일',
+  `STTN_TEXT_A` varchar(200) DEFAULT NULL COMMENT '이번정류장문구',
+  `STTN_TEXT_A_EN` varchar(200) DEFAULT NULL COMMENT '영어이번정류장문구',
+  `STTN_TEXT_B` varchar(200) DEFAULT NULL COMMENT '다음정류장문구',
+  `STTN_TEXT_B_EN` varchar(200) DEFAULT NULL COMMENT '영어다음정류장문구',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`VOC_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='음성정보';
+
+
+CREATE TABLE `BMS_VOC_ORGA_INFO` (
+  `ORGA_ID` varchar(10) NOT NULL COMMENT '편성아이디',
+  `ORGA_NM` varchar(20) DEFAULT NULL COMMENT '편성명',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT 'GPS_Y',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT 'GPS_X',
+  `ALL_PLAY_TM` decimal(4,0) DEFAULT NULL COMMENT '총재생시간',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`ORGA_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='음성편성';
+
+
+CREATE TABLE `BMS_VOC_ORGA_LIST` (
+  `ORGA_ID` varchar(10) NOT NULL COMMENT '편성아이디',
+  `VOC_ID` varchar(10) NOT NULL COMMENT '음성아이디',
+  `SN` decimal(5,0) NOT NULL COMMENT '순번',
+  PRIMARY KEY (`ORGA_ID`,`VOC_ID`,`SN`),
+  KEY `R/36` (`VOC_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='음성편성목록';
+
+
+CREATE TABLE `BMS_VOC_RSV_INFO` (
+  `RSV_ID` varchar(10) NOT NULL COMMENT '예약아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `RSV_DT` date DEFAULT NULL COMMENT '예약일자',
+  PRIMARY KEY (`RSV_ID`,`ROUT_ID`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='음성예약';
+
+
+CREATE TABLE `BMS_VOC_RSV_RST_INFO` (
+  `RSV_ID` varchar(10) NOT NULL COMMENT '예약아이디',
+  `MNG_ID` varchar(16) NOT NULL COMMENT '관리아이디',
+  `PROCE_RST` char(5) DEFAULT NULL COMMENT '처리결과',
+  `RST_CONT` varchar(50) DEFAULT NULL COMMENT '결과내용',
+  `SEND_DTM` datetime DEFAULT NULL COMMENT '전송일시',
+  `COMPLETE_YN` char(1) DEFAULT NULL COMMENT '완료여부',
+  PRIMARY KEY (`RSV_ID`,`MNG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='음성예약결과';
+
+
+CREATE TABLE `BMS_WEAT_INFO` (
+  `NOTI_DT` datetime NOT NULL COMMENT '발표일시',
+  `SKY_COND` char(5) NOT NULL COMMENT '하늘상태',
+  `TEMPC` decimal(4,1) DEFAULT NULL COMMENT '온도',
+  `TEMP_MINI` decimal(4,1) DEFAULT NULL COMMENT '최저기온',
+  `TEMP_HIGH` decimal(4,1) DEFAULT NULL COMMENT '최고기온',
+  `HUMI` decimal(4,1) DEFAULT NULL COMMENT '습도',
+  `RAIN_PRO` decimal(4,1) DEFAULT NULL COMMENT '강수확률',
+  `RAINFALL` decimal(4,1) DEFAULT NULL COMMENT '강수량',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`NOTI_DT`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='기상정보';
+
+
+CREATE TABLE `BRT_ACRT_LOC_STOP_LOG` (
+  `OCR_DTM` datetime NOT NULL COMMENT '발생일시',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `SEND_DATE` datetime NOT NULL COMMENT '전송일시',
+  `STTN_ID` varchar(10) NOT NULL COMMENT '정류소아이디',
+  `SCRDOOR_ID` varchar(10) NOT NULL COMMENT '스크린도어아이디',
+  `DOOR_SN` decimal(5,0) DEFAULT NULL COMMENT '도어순번',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `GRP_ROUT_NM` varchar(5) DEFAULT NULL COMMENT '대표노선명',
+  `ROUT_NM` varchar(5) DEFAULT NULL COMMENT '노선명',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `STTN_NM` varchar(30) DEFAULT NULL COMMENT '정류소명',
+  `LOC_STOP_DIV` char(5) DEFAULT NULL COMMENT '정차위치구분',
+  PRIMARY KEY (`OCR_DTM`,`REP_ROUT_ID`,`ROUT_ID`,`VHC_ID`),
+  KEY `R/137` (`VHC_ID`),
+  KEY `FK_BMS_SCRDOOR_INFO_TO_BRT_ACRT_LOC_STOP_LOG` (`STTN_ID`,`SCRDOOR_ID`),
+  CONSTRAINT `FK_BMS_SCRDOOR_INFO_TO_BRT_ACRT_LOC_STOP_LOG` FOREIGN KEY (`STTN_ID`, `SCRDOOR_ID`) REFERENCES `BMS_SCRDOOR_INFO` (`STTN_ID`, `SCRDOOR_ID`),
+  CONSTRAINT `R/137` FOREIGN KEY (`VHC_ID`) REFERENCES `BMS_VHC_MST` (`VHC_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='정위치정차로그';
+
+
+CREATE TABLE `BRT_ALLOC_PL_MST` (
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `DAY_DIV` char(5) NOT NULL COMMENT '요일구분',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `WAY_DIV` char(5) DEFAULT NULL COMMENT '상하행구분',
+  `VHC_ID` varchar(10) DEFAULT NULL COMMENT '차량아이디',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`REP_ROUT_ID`,`DAY_DIV`,`ALLOC_NO`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='배차계획마스터';
+
+
+CREATE TABLE `BRT_ALLOC_PL_MST_HIS` (
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `DAY_DIV` char(5) NOT NULL COMMENT '요일구분',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `WAY_DIV` char(5) DEFAULT NULL COMMENT '상하행구분',
+  `VHC_ID` varchar(10) DEFAULT NULL COMMENT '차량아이디',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`REP_ROUT_ID`,`ALLOC_NO`,`DAY_DIV`,`UPD_DTM`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='배차계획마스터이력';
+
+
+CREATE TABLE `BRT_CHG_OPER_STAT` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `VHC_NO` varchar(9) NOT NULL COMMENT '차량번호',
+  `DRV_ID` varchar(10) NOT NULL COMMENT '운전자아이디',
+  `OPER_CNT` decimal(3,0) DEFAULT NULL COMMENT '운행횟수',
+  `CHG_OPER_CNT` decimal(3,0) DEFAULT NULL COMMENT '변경운행횟수',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`VHC_NO`,`DRV_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='변경운행통계';
+
+
+CREATE TABLE `BRT_COR_DTL_INFO` (
+  `COR_ID` varchar(10) NOT NULL COMMENT '코스아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `ROUT_SN` decimal(5,0) DEFAULT NULL COMMENT '노선순번',
+  `REST_TM` char(5) DEFAULT NULL COMMENT '휴게시간',
+  `COR_DTL_COLOR` varchar(11) DEFAULT NULL COMMENT '코스상세색',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`COR_ID`,`ROUT_ID`),
+  CONSTRAINT `FK_BRT_COR_MST_TO_BRT_COR_DTL_INFO` FOREIGN KEY (`COR_ID`) REFERENCES `BRT_COR_MST` (`COR_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='코스상세정보';
+
+
+CREATE TABLE `BRT_COR_MST` (
+  `COR_ID` varchar(10) NOT NULL COMMENT '코스아이디',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `COR_NM` varchar(30) DEFAULT NULL COMMENT '코스명',
+  `COR_TYPE` char(5) DEFAULT NULL COMMENT '코스유형',
+  `MOVE_TM` char(5) DEFAULT NULL COMMENT '이동시간',
+  `COR_COLOR` varchar(11) DEFAULT NULL COMMENT '코스색',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`COR_ID`),
+  KEY `FK_BRT_REP_ROUT_MST_TO_BRT_COR_MST` (`REP_ROUT_ID`),
+  CONSTRAINT `FK_BRT_REP_ROUT_MST_TO_BRT_COR_MST` FOREIGN KEY (`REP_ROUT_ID`) REFERENCES `BMS_REP_ROUT_MST` (`REP_ROUT_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='코스마스터';
+
+
+CREATE TABLE `BRT_CPLNT_HIS` (
+  `CPLNT_ID` varchar(10) NOT NULL COMMENT '민원아이디',
+  `OPER_DT` date DEFAULT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) DEFAULT NULL COMMENT '대표노선아이디',
+  `VHC_ID` varchar(10) DEFAULT NULL COMMENT '차량아이디',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `ROUT_ID` varchar(10) DEFAULT NULL COMMENT '노선아이디',
+  `ALLOC_NO` decimal(2,0) DEFAULT NULL COMMENT '배차번호',
+  `OPER_SN` decimal(2,0) DEFAULT NULL COMMENT '운행순번',
+  `COR_ID` varchar(10) DEFAULT NULL COMMENT '코스아이디',
+  `OCR_DTM` datetime NOT NULL COMMENT '발생일시',
+  `REP_ROUT_NM` varchar(5) DEFAULT NULL COMMENT '대표노선명',
+  `ROUT_NM` varchar(30) DEFAULT NULL COMMENT '노선명',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT 'GPS_X좌표',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT 'GPS_Y좌표',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT 'TM_X좌표',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT 'TM_Y좌표',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `LINK_ID` varchar(10) DEFAULT NULL COMMENT '링크아이디',
+  `NODE_ID` varchar(10) DEFAULT NULL COMMENT '노드아이디',
+  `CPLNT_TYPE` char(5) DEFAULT NULL COMMENT '민원유형',
+  `CPLNT_NM` varchar(30) DEFAULT NULL COMMENT '민원자명',
+  `CPLNT_PHONE` varchar(13) DEFAULT NULL COMMENT '민원자전화번호',
+  `CPLNT_CONTS` varchar(200) DEFAULT NULL COMMENT '민원내용',
+  `JUDGE` varchar(10) DEFAULT NULL COMMENT '조치자',
+  `JUDG_ORG` varchar(20) DEFAULT NULL COMMENT '조치기관',
+  `JUDG_TYPE` char(5) DEFAULT NULL COMMENT '조치유형',
+  `JUDG_DESC` varchar(2000) DEFAULT NULL COMMENT '조치상세내역',
+  `JUDG_DTM` datetime DEFAULT NULL COMMENT '조치일시',
+  PRIMARY KEY (`CPLNT_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='민원이력';
+
+
+CREATE TABLE `BRT_CPLNT_STAT` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `DRV_ID` varchar(10) NOT NULL COMMENT '운전자아이디',
+  `STAT_H` char(2) NOT NULL COMMENT '통계시간',
+  `CPLNT_TYPE` varchar(5) DEFAULT NULL COMMENT '민원유형',
+  `CPLNT_CNT` decimal(3,0) DEFAULT NULL COMMENT '민원건수',
+  `JUDG_TYPE` varchar(5) DEFAULT NULL COMMENT '민원조치유형',
+  `JUDG_CNT` decimal(3,0) DEFAULT NULL COMMENT '민원조치건수',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`VHC_ID`,`DRV_ID`,`STAT_H`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='민원통계';
+
+
+CREATE TABLE `BRT_CUR_ALLOC_PL_INFO` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `WAY_DIV` char(5) NOT NULL DEFAULT '0' COMMENT '상하행구분',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `VHC_ID` varchar(10) DEFAULT NULL COMMENT '차량아이디',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`WAY_DIV`,`ALLOC_NO`) USING BTREE,
+  KEY `R/166` (`VHC_ID`),
+  CONSTRAINT `R/166` FOREIGN KEY (`VHC_ID`) REFERENCES `BMS_VHC_MST` (`VHC_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='현재배차계획정보';
+
+
+CREATE TABLE `BRT_CUR_CHG_OPER_DTL_INFO` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `COR_ID` varchar(10) NOT NULL COMMENT '코스아이디',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `NODE_SN` decimal(5,0) NOT NULL COMMENT '노드순번',
+  `NODE_TYPE` char(5) DEFAULT NULL COMMENT '노드유형',
+  `DPRT_TM` char(8) DEFAULT NULL COMMENT '출발시간',
+  `ARRV_TM` char(8) DEFAULT NULL COMMENT '도착시간',
+  `OCR_DTM` datetime NOT NULL COMMENT '발생일시',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`COR_ID`,`ALLOC_NO`,`OPER_SN`,`NODE_ID`,`NODE_SN`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='변경운행상세정보';
+
+
+CREATE TABLE `BRT_CUR_CHG_OPER_DTL_INFO_HIS` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `COR_ID` varchar(10) NOT NULL COMMENT '코스아이디',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `NODE_SN` decimal(5,0) NOT NULL COMMENT '노드순번',
+  `NODE_TYPE` char(5) DEFAULT NULL COMMENT '노드유형',
+  `DPRT_TM` char(8) DEFAULT NULL COMMENT '출발시간',
+  `ARRV_TM` char(8) DEFAULT NULL COMMENT '도착시간',
+  `OCR_DTM` datetime NOT NULL COMMENT '발생일시',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`COR_ID`,`ALLOC_NO`,`OPER_SN`,`NODE_ID`,`NODE_SN`,`UPD_DTM`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='변경운행상세정보이력';
+
+
+CREATE TABLE `BRT_CUR_CHG_OPER_INFO` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `VHC_ID` varchar(10) DEFAULT NULL COMMENT '차량아이디',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `OCR_LINK_ID` varchar(10) DEFAULT NULL COMMENT '발생링크아이디',
+  `OCR_NODE_ID` varchar(10) DEFAULT NULL COMMENT '발생노드아이디',
+  `OCR_NODE_TYPE` char(5) DEFAULT NULL COMMENT '발생노드유형',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT '차량GPS_X좌표',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT '차량GPS_Y좌표',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT '차량TM_X좌표',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT '차량TM_Y좌표',
+  `CHG_OPER_DIV` char(5) DEFAULT NULL COMMENT '변경운행구분',
+  `CHG_APPR_DIV` char(5) DEFAULT NULL COMMENT '변경승인구분',
+  `OCR_DTM` datetime NOT NULL COMMENT '발생일시',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`ALLOC_NO`,`OPER_SN`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='변경운행정보';
+
+
+CREATE TABLE `BRT_CUR_CHG_OPER_INFO_HIS` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `VHC_ID` varchar(10) DEFAULT NULL COMMENT '차량아이디',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `OCR_LINK_ID` varchar(10) DEFAULT NULL COMMENT '발생링크아이디',
+  `OCR_NODE_ID` varchar(10) DEFAULT NULL COMMENT '발생노드아이디',
+  `OCR_NODE_TYPE` char(5) DEFAULT NULL COMMENT '발생노드유형',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT '차량GPS_X좌표',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT '차량GPS_Y좌표',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT '차량TM_X좌표',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT '차량TM_Y좌표',
+  `CHG_OPER_DIV` char(5) DEFAULT NULL COMMENT '변경운행구분',
+  `CHG_APPR_DIV` char(5) DEFAULT NULL COMMENT '변경승인구분',
+  `OCR_DTM` datetime NOT NULL COMMENT '발생일시',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`ALLOC_NO`,`OPER_SN`,`UPD_DTM`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='변경운행정보이력';
+
+
+CREATE TABLE `BRT_CUR_DRV_ALLOC_INFO` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `DRV_SN` decimal(5,0) NOT NULL COMMENT '운전자순번',
+  `DRV_ID` varchar(10) NOT NULL COMMENT '운전자아이디',
+  `ST_ROUT_ID` varchar(10) DEFAULT NULL COMMENT '시작노선아이디',
+  `ST_NODE_ID` varchar(10) DEFAULT NULL COMMENT '시작노드아이디',
+  `ST_OPER_SN` decimal(5,0) DEFAULT NULL COMMENT '시작운행순번',
+  `ED_ROUT_ID` varchar(10) DEFAULT NULL COMMENT '종료노선아이디',
+  `ED_NODE_ID` varchar(10) DEFAULT NULL COMMENT '종료노드아이디',
+  `ED_OPER_SN` decimal(5,0) DEFAULT NULL COMMENT '종료운행순번',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ALLOC_NO`,`DRV_SN`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운전자배정정보';
+
+
+CREATE TABLE `BRT_CUR_OPER_ALLOC_PL_NODE_INFO` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `COR_ID` varchar(10) NOT NULL,
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `NODE_SN` decimal(5,0) NOT NULL COMMENT '노드순번',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `NODE_TYPE` char(5) DEFAULT NULL COMMENT '노드유형',
+  `DPRT_TM` char(8) DEFAULT NULL COMMENT '출발시간',
+  `ARRV_TM` char(8) DEFAULT NULL COMMENT '도착시간',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`COR_ID`,`OPER_SN`,`NODE_ID`,`NODE_SN`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='현재운행배차계획노드정보';
+
+
+CREATE TABLE `BRT_CUR_OPER_ALLOC_PL_NODE_INFO_HIS` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `COR_ID` varchar(10) NOT NULL,
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `NODE_SN` decimal(5,0) NOT NULL COMMENT '노드순번',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `NODE_TYPE` char(5) DEFAULT NULL COMMENT '노드유형',
+  `DPRT_TM` char(8) DEFAULT NULL COMMENT '출발시간',
+  `ARRV_TM` char(8) DEFAULT NULL COMMENT '도착시간',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`COR_ID`,`OPER_SN`,`NODE_ID`,`NODE_SN`,`UPD_DTM`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='현재운행배차계획노드정보이력';
+
+
+CREATE TABLE `BRT_CUR_OPER_ALLOC_PL_ROUT_INFO` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `COR_ID` varchar(10) DEFAULT NULL COMMENT '코스아이디',
+  `ROUT_ST_TM` char(8) DEFAULT NULL COMMENT '노선시작시간',
+  `ROUT_ED_TM` char(8) DEFAULT NULL COMMENT '노선종료시간',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`OPER_SN`) USING BTREE,
+  KEY `FK_BRT_CURR_ALLOC_PL_INFO_TO_BRT_CUR_OPER_ALLOC_PL_ROUT_INFO` (`OPER_DT`,`REP_ROUT_ID`,`ALLOC_NO`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='현재운행배차계획노선정보';
+
+
+CREATE TABLE `BRT_CUR_OPER_ALLOC_PL_ROUT_INFO_HIS` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `COR_ID` varchar(10) DEFAULT NULL COMMENT '코스아이디',
+  `ROUT_ST_TM` char(8) DEFAULT NULL COMMENT '노선시작시간',
+  `ROUT_ED_TM` char(8) DEFAULT NULL COMMENT '노선종료시간',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`OPER_SN`,`UPD_DTM`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='현재운행배차계획노선정보이력';
+
+
+CREATE TABLE `BRT_CUR_OPER_HIS` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `UPD_DTM` datetime(3) NOT NULL COMMENT '갱신일시',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `ALLOC_NO` decimal(2,0) DEFAULT NULL COMMENT '배차번호',
+  `OPER_SN` decimal(3,0) DEFAULT NULL COMMENT '운행순번',
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `COR_ID` varchar(10) NOT NULL COMMENT '코스아이디',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `DRV_ID` varchar(10) DEFAULT NULL COMMENT '운전자아이디',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT '현재GPS_X좌표',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT '현재GPS_Y좌표',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT '현재TM_X좌표',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT '현재TM_Y좌표',
+  `OPER_STS` char(5) DEFAULT NULL COMMENT '운행상태',
+  `BUS_STS` char(5) DEFAULT NULL COMMENT '버스상태',
+  `OBE_STS` char(5) DEFAULT NULL COMMENT 'OBE상태',
+  `SNSTVTY` decimal(3,3) DEFAULT NULL COMMENT '무선수신감도',
+  `DRV_ANGLE` decimal(5,0) DEFAULT NULL COMMENT '차량진행각도',
+  `CUR_SPD` decimal(3,0) DEFAULT NULL COMMENT '현재속도',
+  `ACLRTN_YN` char(1) DEFAULT NULL COMMENT '가속여부',
+  `DCLRTN_YN` char(1) DEFAULT NULL COMMENT '감속여부',
+  `CUR_STOP_TM` char(5) DEFAULT NULL COMMENT '현재정차시간',
+  `OPER_LEN` decimal(3,3) DEFAULT NULL COMMENT '운행거리',
+  `REP_ROUT_NM` varchar(5) DEFAULT NULL COMMENT '대표노선명',
+  `NODE_SN` decimal(5,0) DEFAULT NULL COMMENT '노드순번',
+  `NODE_TYPE` char(5) DEFAULT NULL COMMENT '노드유형',
+  `ARRV_TM` char(8) DEFAULT NULL COMMENT '노드도착시간',
+  `DPRT_TM` char(8) DEFAULT NULL COMMENT '노드출발시간',
+  `LINK_ID` varchar(10) DEFAULT NULL COMMENT '링크아이디',
+  `LINK_SN` decimal(5,0) DEFAULT NULL COMMENT '링크순번',
+  `LINK_SPD` decimal(3,0) DEFAULT NULL COMMENT '링크속도',
+  `PRV_PLCE_NM` varchar(30) DEFAULT NULL COMMENT '이전정류소명',
+  `GET_OFF_CNT` decimal(3,0) DEFAULT NULL COMMENT '정류소하차인원',
+  `PSG_CNT` decimal(3,0) DEFAULT NULL COMMENT '정류소탑승인원',
+  `NEXT_NODE_ID` varchar(10) DEFAULT NULL COMMENT '다음정류소아이디',
+  `NEXT_NODE_ARRV_TM` char(5) DEFAULT NULL COMMENT '다음정류소도착예정시간',
+  `DOOR_CD` char(5) DEFAULT NULL,
+  `DOOR_TM` char(5) DEFAULT NULL COMMENT '개폐시간',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`VHC_ID`,`UPD_DTM`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='현재운행이력';
+
+
+CREATE TABLE `BRT_CUR_OPER_INFO` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `ALLOC_NO` decimal(2,0) DEFAULT NULL COMMENT '배차번호',
+  `OPER_SN` decimal(3,0) DEFAULT NULL COMMENT '운행순번',
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `COR_ID` varchar(10) NOT NULL COMMENT '코스아이디',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `DRV_ID` varchar(10) DEFAULT NULL COMMENT '운전자아이디',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT '현재GPS_X좌표',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT '현재GPS_Y좌표',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT '현재TM_X좌표',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT '현재TM_Y좌표',
+  `OPER_STS` char(5) DEFAULT NULL COMMENT '운행상태',
+  `BUS_STS` char(5) DEFAULT NULL COMMENT '버스상태',
+  `OBE_STS` char(5) DEFAULT NULL COMMENT 'OBE상태',
+  `SNSTVTY` decimal(3,3) DEFAULT NULL COMMENT '무선수신감도',
+  `DRV_ANGLE` decimal(5,2) DEFAULT NULL COMMENT '차량진행각도',
+  `CUR_SPD` decimal(3,0) DEFAULT NULL COMMENT '현재속도',
+  `ACLRTN_YN` char(1) DEFAULT NULL COMMENT '가속여부',
+  `DCLRTN_YN` char(1) DEFAULT NULL COMMENT '감속여부',
+  `CUR_STOP_TM` char(5) DEFAULT NULL COMMENT '현재정차시간',
+  `OPER_LEN` decimal(3,3) DEFAULT NULL COMMENT '운행거리',
+  `REP_ROUT_NM` varchar(5) DEFAULT NULL COMMENT '대표노선명',
+  `NODE_SN` decimal(5,0) DEFAULT NULL COMMENT '노드순번',
+  `NODE_TYPE` char(5) DEFAULT NULL COMMENT '노드유형',
+  `ARRV_TM` char(8) DEFAULT NULL COMMENT '노드도착시간',
+  `DPRT_TM` char(8) DEFAULT NULL COMMENT '노드출발시간',
+  `LINK_ID` varchar(10) DEFAULT NULL COMMENT '링크아이디',
+  `LINK_SN` decimal(5,0) DEFAULT NULL COMMENT '링크순번',
+  `LINK_SPD` decimal(3,0) DEFAULT NULL COMMENT '링크속도',
+  `PRV_PLCE_NM` varchar(30) DEFAULT NULL COMMENT '이전장소명',
+  `GET_OFF_CNT` decimal(3,0) DEFAULT NULL COMMENT '정류소하차인원',
+  `PSG_CNT` decimal(3,0) DEFAULT NULL COMMENT '정류소탑승인원',
+  `NEXT_NODE_ID` varchar(10) DEFAULT NULL COMMENT '다음노드아이디',
+  `NEXT_NODE_ARRV_TM` char(5) DEFAULT NULL COMMENT '다음노드도착예정시간',
+  `DOOR_CD` char(5) DEFAULT NULL COMMENT '개폐코드',
+  `DOOR_TM` char(5) DEFAULT NULL COMMENT '개폐시간',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`VHC_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='현재운행정보';
+
+
+CREATE TABLE `BRT_CUR_OPER_PL_ROUT_INFO` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `ROUT_ST_TIME` char(5) DEFAULT NULL COMMENT '노선시작시간',
+  `ROUT_ED_TIME` char(5) DEFAULT NULL COMMENT '노선종료시간',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`OPER_SN`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='현재운행계획노선정보';
+
+
+CREATE TABLE `BRT_DRV_ALLOC_INFO` (
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `DRV_ID` varchar(10) NOT NULL COMMENT '운전자아이디',
+  `SEC_DRV_ID` varchar(10) DEFAULT NULL COMMENT '2교대운전자아이디',
+  `THR_DRV_ID` varchar(10) DEFAULT NULL COMMENT '3교대운전자아이디',
+  `SEC_TRAN_TM` char(5) DEFAULT NULL COMMENT '2교대시각',
+  `THR_TRAN_TM` char(5) DEFAULT NULL COMMENT '3교대시각',
+  `ST_ROUT_ID` varchar(10) DEFAULT NULL COMMENT '시작노선아이디',
+  `ST_NODE_ID` varchar(10) DEFAULT NULL COMMENT '시작노드아이디',
+  `ST_OPER_SN` decimal(5,0) DEFAULT NULL COMMENT '시작운행순번',
+  `ED_ROUT_ID` varchar(10) DEFAULT NULL COMMENT '종료노선아이디',
+  `ED_NODE_ID` varchar(10) DEFAULT NULL COMMENT '종료노드아이디',
+  `ED_OPER_SN` decimal(5,0) DEFAULT NULL COMMENT '종료운행순번',
+  PRIMARY KEY (`REP_ROUT_ID`,`ALLOC_NO`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운전자배정정보';
+
+
+CREATE TABLE `BRT_DSPTCH_LOG` (
+  `SEND_DATE` datetime NOT NULL COMMENT '전송일시',
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `DSPTCH_DIV` char(5) NOT NULL COMMENT '디스패치구분',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `ALLOC_NO` decimal(2,0) DEFAULT NULL COMMENT '배차번호',
+  `OPER_SN` decimal(3,0) DEFAULT NULL COMMENT '운행순번',
+  `COR_ID` varchar(10) DEFAULT NULL COMMENT '코스아이디',
+  `REP_ROUT_NM` varchar(5) DEFAULT NULL COMMENT '대표노선명',
+  `ROUT_NM` varchar(30) DEFAULT NULL COMMENT '노선명',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `LINK_ID` varchar(10) DEFAULT NULL COMMENT '링크아이디',
+  `NODE_ID` varchar(10) DEFAULT NULL COMMENT '노드아이디',
+  `DSPTCH_KIND` char(5) DEFAULT NULL COMMENT '디스패치종류',
+  `SEND_GPS_X` decimal(12,6) DEFAULT NULL COMMENT '전송_GPS_X좌표',
+  `SEND_GPS_Y` decimal(12,6) DEFAULT NULL COMMENT '전송_GPS_Y좌표',
+  `SEND_TM_X` decimal(12,4) DEFAULT NULL COMMENT '전송_TM_X좌표',
+  `SEND_TM_Y` decimal(12,4) DEFAULT NULL COMMENT '전송_TM_Y좌표',
+  `FRNT_GPS_Y` decimal(12,6) DEFAULT NULL COMMENT '앞차_GPS_Y좌표',
+  `FRNT_GPS_X` decimal(12,6) DEFAULT NULL COMMENT '앞차_GPS_X좌표',
+  `FRNT_TM_X` decimal(12,4) DEFAULT NULL COMMENT '앞차_TM_X좌표',
+  `FRNT_TM_Y` decimal(12,4) DEFAULT NULL COMMENT '앞차_TM_Y좌표',
+  `REAR_GPS_X` decimal(12,6) DEFAULT NULL COMMENT '뒤차_GPS_X좌표',
+  `REAR_GPS_Y` decimal(12,6) DEFAULT NULL COMMENT '뒤차_GPS_Y좌표',
+  `REAR_TM_X` decimal(12,4) DEFAULT NULL COMMENT '뒤차_TM_X좌표',
+  `REAR_TM_Y` decimal(12,4) DEFAULT NULL COMMENT '뒤차_TM_Y좌표',
+  `DSPTCH_CONTS` varchar(200) DEFAULT NULL COMMENT '디스패치내용',
+  PRIMARY KEY (`SEND_DATE`,`OPER_DT`,`REP_ROUT_ID`,`VHC_ID`,`DSPTCH_DIV`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='디스패치로그';
+
+
+CREATE TABLE `BRT_DVC_STAT` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `DVC_ID` varchar(10) NOT NULL COMMENT '장치아이디',
+  `DVC_COND` char(5) DEFAULT NULL COMMENT '장치상태',
+  `DVC_CNT` char(5) DEFAULT NULL COMMENT '장치개수',
+  `ERROR_CNT` decimal(3,0) DEFAULT NULL COMMENT '장애건수',
+  PRIMARY KEY (`REP_ROUT_ID`,`ROUT_ID`,`VHC_ID`,`OPER_DT`,`DVC_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='장치통계';
+
+
+CREATE TABLE `BRT_FCLT_STAT` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `FCLT_ID` varchar(10) NOT NULL COMMENT '시설아이디',
+  `FCLT_COND` char(5) DEFAULT NULL COMMENT '시설상태',
+  `FCLT_CNT` char(5) DEFAULT NULL COMMENT '시설물개수',
+  `ERROR_CNT` decimal(3,0) DEFAULT NULL COMMENT '장애건수',
+  PRIMARY KEY (`REP_ROUT_ID`,`ROUT_ID`,`NODE_ID`,`OPER_DT`,`FCLT_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='시설통계';
+
+
+CREATE TABLE `BRT_HOLI_MST` (
+  `HOLI_DT` date NOT NULL COMMENT '휴일일자',
+  `DAY_OF_WEEK` decimal(1,0) DEFAULT NULL COMMENT '요일',
+  `HOLI_NM` varchar(30) DEFAULT NULL COMMENT '휴일명',
+  `HOLI_ENM` varchar(50) DEFAULT NULL COMMENT '휴일영문명',
+  `DAY_TYPE` char(5) DEFAULT NULL COMMENT '요일구분',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`HOLI_DT`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='휴일마스터';
+
+
+CREATE TABLE `BRT_INCDNT_HIS` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `INCDNT_TYPE` char(5) NOT NULL COMMENT '돌발유형',
+  `ROUT_ID` varchar(10) DEFAULT NULL COMMENT '노선아이디',
+  `ALLOC_NO` decimal(2,0) DEFAULT NULL COMMENT '배차번호',
+  `INCDNT_DETAIL` varchar(100) DEFAULT NULL COMMENT '돌발상세내역',
+  `OPER_SN` decimal(3,0) DEFAULT NULL COMMENT '운행순번',
+  `COR_ID` varchar(10) DEFAULT NULL COMMENT '코스아이디',
+  `OCR_DTM` datetime DEFAULT NULL COMMENT '발생일시',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `DRV_ID` varchar(10) DEFAULT NULL COMMENT '운전자아이디',
+  `REP_ROUT_NM` varchar(5) DEFAULT NULL COMMENT '대표노선명',
+  `ROUT_NM` varchar(30) DEFAULT NULL COMMENT '노선명',
+  `LINK_ID` varchar(10) DEFAULT NULL COMMENT '링크아이디',
+  `NODE_ID` varchar(10) DEFAULT NULL COMMENT '노드아이디',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT '돌발GPS_X좌표',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT '돌발GPS_Y좌표',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT '돌발TM_X좌표',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT '돌발TM_Y좌표',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`VHC_ID`,`UPD_DTM`,`INCDNT_TYPE`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='돌발이력';
+
+
+CREATE TABLE `BRT_INCDNT_INFO` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `INCDNT_TYPE` char(5) NOT NULL COMMENT '돌발유형',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `ALLOC_NO` decimal(2,0) DEFAULT NULL COMMENT '배차번호',
+  `INCDNT_DETAIL` varchar(100) DEFAULT NULL COMMENT '돌발상세내역',
+  `OPER_SN` decimal(3,0) DEFAULT NULL COMMENT '운행순번',
+  `COR_ID` varchar(10) DEFAULT NULL COMMENT '코스아이디',
+  `OCR_DTM` datetime DEFAULT NULL COMMENT '발생일시',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `DRV_ID` varchar(10) DEFAULT NULL COMMENT '운전자아이디',
+  `REP_ROUT_NM` varchar(5) DEFAULT NULL COMMENT '대표노선명',
+  `ROUT_NM` varchar(30) DEFAULT NULL COMMENT '노선명',
+  `LINK_ID` varchar(10) DEFAULT NULL COMMENT '링크아이디',
+  `NODE_ID` varchar(10) DEFAULT NULL COMMENT '노드아이디',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT '돌발GPS_X좌표',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT '돌발GPS_Y좌표',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT '돌발TM_X좌표',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT '돌발TM_Y좌표',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`VHC_ID`,`INCDNT_TYPE`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='돌발정보';
+
+
+CREATE TABLE `BRT_INCDNT_RES_INFO` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `INCDNT_TYPE` char(5) NOT NULL COMMENT '돌발유형',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `COR_ID` varchar(10) NOT NULL COMMENT '코스아이디',
+  `CLOSE_DTM` datetime NOT NULL COMMENT '종료일시',
+  `GRP_ROUT_NM` varchar(5) DEFAULT NULL COMMENT '대표노선명',
+  `ROUT_NM` varchar(30) DEFAULT NULL COMMENT '노선명',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `LINK_ID` varchar(10) DEFAULT NULL COMMENT '링크아이디',
+  `NODE_ID` varchar(10) DEFAULT NULL COMMENT '노드아이디',
+  `INCDNT_RES_TYPE` char(5) DEFAULT NULL COMMENT '돌발대응유형',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '돌발대응내용',
+  `PROG_DIV` char(5) DEFAULT NULL COMMENT '진행구분',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`VHC_ID`,`INCDNT_TYPE`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='돌발대응정보';
+
+
+CREATE TABLE `BRT_INCDNT_SCNRO_MST` (
+  `SCNRO_ID` varchar(10) NOT NULL COMMENT '시나리오아이디',
+  `SCNRO_NM` varchar(30) DEFAULT NULL COMMENT '시나리오명',
+  `INCDNT_TYPE` char(5) DEFAULT NULL COMMENT '돌발유형',
+  `INCDNT_RES_TYPE` char(5) DEFAULT NULL COMMENT '돌발대응유형',
+  `RES_SCNRO` varchar(200) DEFAULT NULL COMMENT '대응시나리오',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`SCNRO_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='돌발시나리오마스터';
+
+
+CREATE TABLE `BRT_INCDNT_STAT` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `DRV_ID` varchar(10) NOT NULL COMMENT '운전자아이디',
+  `STAT_H` decimal(2,0) NOT NULL COMMENT '통계시간',
+  `INCDNT_TYPE` varchar(5) DEFAULT NULL COMMENT '돌발유형',
+  `INCDNT_CNT` decimal(3,0) DEFAULT NULL COMMENT '돌발건수',
+  `INCDNT_RES_TYPE` varchar(5) DEFAULT NULL COMMENT '돌발대응유형',
+  `INCDNT_RES_CNT` decimal(3,0) DEFAULT NULL COMMENT '돌발대응건수',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`VHC_ID`,`DRV_ID`,`STAT_H`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='돌발통계';
+
+
+CREATE TABLE `BRT_LANE_VIOLT_HIS` (
+  `OCR_DTM` datetime NOT NULL COMMENT '위반일시',
+  `VIOLT_VHC` varchar(20) NOT NULL COMMENT '위반차량',
+  `OCR_PLACE` varchar(50) DEFAULT NULL COMMENT '위반장소',
+  `VIOLT_DTL` varchar(50) DEFAULT NULL COMMENT '위반내용',
+  `EVIDENCE` varchar(20) NOT NULL COMMENT '증거파일명',
+  PRIMARY KEY (`OCR_DTM`,`VIOLT_VHC`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `BRT_MAIN_ROUT_NODE_INFO` (
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `NODE_SN` decimal(5,0) NOT NULL COMMENT '노드순번',
+  `NODE_TYPE` char(5) NOT NULL COMMENT '노드유형',
+  `NODE_NM` varchar(30) DEFAULT NULL COMMENT '노드명',
+  `NODE_ENM` varchar(50) DEFAULT NULL COMMENT '노드영문명',
+  `STTN_ID` varchar(10) DEFAULT NULL COMMENT '정류소아이디',
+  `STTN_NO` varchar(5) DEFAULT NULL COMMENT '정류소번호',
+  `CRS_ID` varchar(10) DEFAULT NULL COMMENT '교차로아이디',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT 'GPS 경도',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT 'GPS 위도',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT 'TM 경도',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT 'TM 위도',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`ROUT_ID`,`NODE_ID`,`NODE_SN`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='주요노선노드정보';
+
+
+CREATE TABLE `BRT_MNL_CTR_INS_HIS` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `COR_ID` varchar(10) NOT NULL COMMENT '코스아이디',
+  `OPER_STS` char(5) NOT NULL COMMENT '운행상태',
+  `MSG_CONTS` varchar(2000) NOT NULL COMMENT '메시지내용',
+  `UPD_ID` varchar(10) NOT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`VHC_ID`,`UPD_DTM`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='수동조정지시이력';
+
+
+CREATE TABLE `BRT_NODE_PNCTLTY_STAT` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `STAT_H` char(2) NOT NULL COMMENT '통계시간',
+  `PNCTLTY_CNT` decimal(3,0) DEFAULT NULL COMMENT '정시성횟수',
+  `PNCTLTY_VIOLT_CNT` decimal(3,0) DEFAULT NULL COMMENT '정시성위반횟수',
+  `PNCTLTY_VIOLT_TM` char(5) DEFAULT NULL COMMENT '정시성위반시간',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`NODE_ID`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='노드정시성통계';
+
+
+CREATE TABLE `BRT_OPER_ALLOC_PL_COR_INFO` (
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `DAY_DIV` char(5) NOT NULL COMMENT '요일구분',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `COR_SN` decimal(3,0) NOT NULL COMMENT '코스순번',
+  `COR_ID` varchar(10) NOT NULL COMMENT '코스아이디',
+  `WAY_DIV` char(5) DEFAULT NULL COMMENT '상하행구분',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`REP_ROUT_ID`,`DAY_DIV`,`ALLOC_NO`,`COR_SN`),
+  KEY `IDX_BRT_OPER_ALLOC_PL_ROUT_INFO` (`REP_ROUT_ID`,`DAY_DIV`,`ALLOC_NO`,`COR_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운행배차계획코스정보';
+
+
+CREATE TABLE `BRT_OPER_ALLOC_PL_NODE_INFO` (
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `DAY_DIV` char(5) NOT NULL COMMENT '요일구분',
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `NODE_SN` decimal(5,0) NOT NULL COMMENT '노드순번',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `WAY_DIV` char(5) DEFAULT NULL COMMENT '상하행구분',
+  `ROUT_ID` varchar(10) DEFAULT NULL COMMENT '노선아이디',
+  `COR_ID` varchar(10) DEFAULT NULL COMMENT '코스아이디',
+  `NODE_TYPE` char(5) DEFAULT NULL COMMENT '노드유형',
+  `ARRV_TM` char(8) DEFAULT NULL COMMENT '도착시간',
+  `DPRT_TM` char(8) DEFAULT NULL COMMENT '출발시간',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  `TEST` varchar(50) DEFAULT NULL,
+  `TEST2` varchar(10) DEFAULT NULL,
+  `TEST3` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`REP_ROUT_ID`,`DAY_DIV`,`OPER_SN`,`NODE_ID`,`NODE_SN`,`ALLOC_NO`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운행배차계획노드정보';
+
+
+CREATE TABLE `BRT_OPER_ALLOC_PL_NODE_INFO_HIS` (
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `DAY_DIV` char(5) NOT NULL COMMENT '요일구분',
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `NODE_SN` decimal(5,0) NOT NULL COMMENT '노드순번',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `WAY_DIV` char(5) DEFAULT NULL COMMENT '상하행구분',
+  `ROUT_ID` varchar(10) DEFAULT NULL COMMENT '노선아이디',
+  `COR_ID` varchar(10) DEFAULT NULL COMMENT '코스아이디',
+  `NODE_TYPE` char(5) DEFAULT NULL COMMENT '노드유형',
+  `ARRV_TM` char(8) DEFAULT NULL COMMENT '도착시간',
+  `DPRT_TM` char(8) DEFAULT NULL COMMENT '출발시간',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  `TEST` varchar(50) DEFAULT NULL,
+  `TEST2` varchar(10) DEFAULT NULL,
+  `TEST3` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`REP_ROUT_ID`,`DAY_DIV`,`OPER_SN`,`NODE_ID`,`NODE_SN`,`ALLOC_NO`,`UPD_DTM`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운행배차계획노드정보이력';
+
+
+CREATE TABLE `BRT_OPER_ALLOC_PL_ROUT_INFO` (
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `DAY_DIV` char(5) NOT NULL COMMENT '요일구분',
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `WAY_DIV` char(5) DEFAULT NULL COMMENT '상하행구분',
+  `ROUT_ID` varchar(10) DEFAULT NULL COMMENT '노선아이디',
+  `COR_ID` varchar(10) DEFAULT NULL COMMENT '코스아이디',
+  `ALLOC_NM` varchar(30) DEFAULT NULL COMMENT '배차명',
+  `ROUT_ST_TM` char(8) DEFAULT NULL COMMENT '노선시작시간',
+  `ROUT_ED_TM` char(8) DEFAULT NULL COMMENT '노선종료시간',
+  `REST_TM` char(8) DEFAULT NULL COMMENT '휴게시간',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`REP_ROUT_ID`,`DAY_DIV`,`OPER_SN`,`ALLOC_NO`),
+  KEY `IDX_BRT_OPER_ALLOC_PL_ROUT_INFO` (`REP_ROUT_ID`,`DAY_DIV`,`WAY_DIV`,`ALLOC_NO`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운행배차계획노선정보';
+
+
+CREATE TABLE `BRT_OPER_ALLOC_PL_ROUT_INFO_HIS` (
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `DAY_DIV` char(5) NOT NULL COMMENT '요일구분',
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `WAY_DIV` char(5) DEFAULT NULL COMMENT '상하행구분',
+  `ALLOC_NO` decimal(2,0) DEFAULT NULL COMMENT '배차번호',
+  `ROUT_ID` varchar(10) DEFAULT NULL COMMENT '노선아이디',
+  `COR_ID` varchar(10) DEFAULT NULL COMMENT '코스아이디',
+  `ROUT_ST_TM` char(8) DEFAULT NULL COMMENT '노선시작시간',
+  `ROUT_ED_TM` char(8) DEFAULT NULL COMMENT '노선종료시간',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`REP_ROUT_ID`,`DAY_DIV`,`OPER_SN`,`UPD_DTM`),
+  KEY `IDX_BRT_OPER_ALLOC_PL_ROUT_INFO` (`REP_ROUT_ID`,`DAY_DIV`,`WAY_DIV`,`ALLOC_NO`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운행배차계획노선정보이력';
+
+
+CREATE TABLE `BRT_OPER_APPR_INFO` (
+  `OPER_APPR_ID` varchar(10) NOT NULL COMMENT '운행승인아이디',
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `OCR_DTM` datetime NOT NULL COMMENT '발생일시',
+  `COMP_NM` varchar(30) DEFAULT NULL COMMENT '운수사명',
+  `VHC_TYPE` char(5) DEFAULT NULL COMMENT '차량유형',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `REP_ROUT_ID` varchar(10) DEFAULT NULL COMMENT '대표노선아이디',
+  `REP_ROUT_NM` varchar(5) DEFAULT NULL COMMENT '대표노선명',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `ENT_LINK_ID` varchar(10) DEFAULT NULL COMMENT '진입링크아이디',
+  `ENT_NODE_ID` varchar(10) DEFAULT NULL COMMENT '진입노드',
+  `ADJ_STTN_ID` varchar(10) DEFAULT NULL COMMENT '근접정류소아이디',
+  `ADJ_CRS_ID` varchar(10) DEFAULT NULL COMMENT '근접교차로아이디',
+  `ROUT_NM` varchar(5) DEFAULT NULL COMMENT '노선명',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT '차량GPS_X좌표',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT '차량GPS_Y좌표',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT '차량TM_X좌표',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT '차량TM_Y좌표',
+  `ATTACH_IMG_ID` varchar(10) DEFAULT NULL COMMENT '첨부이미지아이디',
+  `CCTV_URL` varchar(200) DEFAULT NULL COMMENT 'CCTV_URL',
+  `OPER_APPR_STS` char(5) DEFAULT NULL COMMENT '운행승인상태',
+  `OPER_APPR_DIV` char(5) DEFAULT NULL COMMENT '운행승인구분',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_APPR_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운행승인정보';
+
+
+CREATE TABLE `BRT_OPER_END_SPOT_HIS` (
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `REP_ROUT_NM` varchar(5) DEFAULT NULL COMMENT '대표노선명',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `OCR_DTM` datetime NOT NULL COMMENT '발생일시',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT 'GPS_X좌표',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT 'GPS_Y좌표',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT 'TM_X좌표',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT 'TM_Y좌표',
+  `ROUT_NM` varchar(5) DEFAULT NULL COMMENT '노선명',
+  `ROUT_ID` varchar(10) DEFAULT NULL COMMENT '노선아이디',
+  PRIMARY KEY (`REP_ROUT_ID`,`VHC_ID`,`UPD_DTM`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운행종료장소이력';
+
+
+CREATE TABLE `BRT_OPER_EVENT_HIS` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `UPD_DTM` datetime(3) NOT NULL COMMENT '갱신일시',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `DRV_ID` varchar(10) DEFAULT NULL COMMENT '운전자아이디',
+  `COR_ID` varchar(10) DEFAULT NULL COMMENT '코스아이디',
+  `ROUT_ID` varchar(10) DEFAULT NULL COMMENT '노선아이디',
+  `ALLOC_NO` decimal(2,0) DEFAULT NULL COMMENT '배차번호',
+  `OPER_SN` decimal(3,0) DEFAULT NULL COMMENT '운행순번',
+  `GPS_X_RAW` decimal(12,6) DEFAULT NULL COMMENT 'GPS_X 정보(raw)',
+  `GPS_Y_RAW` decimal(12,6) DEFAULT NULL COMMENT 'GPS_Y 정보(raw)',
+  `DRV_ANGLE` decimal(3,0) DEFAULT NULL COMMENT '차량진행각도',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT 'GPS_X 정보(맵매칭)',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT 'GPS_Y 정보(맵매칭)',
+  `CUR_SPD` decimal(3,0) DEFAULT NULL COMMENT '현재속도',
+  `LINK_ID` varchar(10) DEFAULT NULL COMMENT '링크아이디',
+  `NODE_ID` varchar(10) DEFAULT NULL COMMENT '노드아이디',
+  `NODE_SN` decimal(5,0) DEFAULT NULL COMMENT '노드순번',
+  `OPER_STS` char(5) DEFAULT NULL COMMENT '운행상태',
+  `EVT_TYPE` char(5) DEFAULT NULL COMMENT '이벤트유형',
+  `EVT_DATA` varchar(10) DEFAULT NULL COMMENT '이벤트값유형',
+  `STOP_TM` char(5) DEFAULT NULL COMMENT '정차시간',
+  `OCR_DTM` datetime DEFAULT NULL COMMENT '발생일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`VHC_ID`,`UPD_DTM`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운행이벤트이력';
+
+
+CREATE TABLE `BRT_OPER_INST_MSG_MST` (
+  `MSG_ID` varchar(10) NOT NULL COMMENT '메시지아이디',
+  `MSG_NM` varchar(30) NOT NULL COMMENT '메시지명',
+  `MSG_CONTS` varchar(2000) NOT NULL COMMENT '메시지내용',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`MSG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운행지시메시지마스터';
+
+
+CREATE TABLE `BRT_OPER_PL_MST` (
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `DAY_DIV` char(5) NOT NULL COMMENT '요일구분',
+  `WAY_DIV` char(5) NOT NULL COMMENT '상하행구분',
+  `ST_STTN_ID` varchar(10) DEFAULT NULL COMMENT '시작정류소아이디',
+  `ED_STTN_ID` varchar(10) DEFAULT NULL COMMENT '종료정류소아이디',
+  `OPER_CNT` decimal(3,0) DEFAULT 0 COMMENT '운행횟수',
+  `ALLOC_CNT` decimal(2,0) DEFAULT 0 COMMENT '배차횟수',
+  `FST_TM` char(5) DEFAULT NULL COMMENT '첫차시간',
+  `LST_TM` char(5) DEFAULT NULL COMMENT '막차시간',
+  `AM_PEAK_ST_TM` char(5) DEFAULT NULL COMMENT '오전첨두시작시간',
+  `AM_PEAK_ED_TM` char(5) DEFAULT NULL COMMENT '오전첨두종료시간',
+  `PM_PEAK_ST_TM` char(5) DEFAULT NULL COMMENT '오후첨두시작시간',
+  `PM_PEAK_ED_TM` char(5) DEFAULT NULL COMMENT '오후첨두종료시간',
+  `AM_PEAK` char(5) DEFAULT NULL COMMENT '오전첨두시배차간격',
+  `PM_PEAK` char(5) DEFAULT NULL COMMENT '오후첨두시배차간격',
+  `NONE_PEAK` char(5) DEFAULT NULL COMMENT '비첨두시배차간격',
+  `REMARK` varchar(200) DEFAULT NULL COMMENT '비고',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`REP_ROUT_ID`,`WAY_DIV`,`DAY_DIV`) USING BTREE,
+  CONSTRAINT `R/208` FOREIGN KEY (`REP_ROUT_ID`) REFERENCES `BMS_REP_ROUT_MST` (`REP_ROUT_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운행계획마스터';
+
+
+CREATE TABLE `BRT_OPER_PL_MST_HIS` (
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `DAY_DIV` char(5) NOT NULL COMMENT '요일구분',
+  `WAY_DIV` char(5) NOT NULL COMMENT '상하행구분',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `ST_STTN_ID` varchar(10) DEFAULT NULL COMMENT '시작정류소아이디',
+  `ED_STTN_ID` varchar(10) DEFAULT NULL COMMENT '종료정류소아이디',
+  `OPER_CNT` decimal(3,0) DEFAULT NULL COMMENT '운행횟수',
+  `ALLOC_CNT` decimal(2,0) DEFAULT NULL COMMENT '배차횟수',
+  `FST_TM` char(5) DEFAULT NULL COMMENT '첫차시간',
+  `LST_TM` char(5) DEFAULT NULL COMMENT '막차시간',
+  `AM_PEAK_ST_TM` char(5) DEFAULT NULL COMMENT '오전첨두시작시간',
+  `AM_PEAK_ED_TM` char(5) DEFAULT NULL COMMENT '오전첨두종료시간',
+  `PM_PEAK_ST_TM` char(5) DEFAULT NULL COMMENT '오후첨두시작시간',
+  `PM_PEAK_ED_TM` char(5) DEFAULT NULL COMMENT '오후첨두종료시간',
+  `AM_PEAK` char(5) DEFAULT NULL COMMENT '오전첨두시배차간격',
+  `PM_PEAK` char(5) DEFAULT NULL COMMENT '오후첨두시배차간격',
+  `NONE_PEAK` char(5) DEFAULT NULL COMMENT '비첨두시배차간격',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`REP_ROUT_ID`,`WAY_DIV`,`DAY_DIV`,`UPD_DTM`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운행계획마스터이력';
+
+
+CREATE TABLE `BRT_OPER_PL_ROUT_INFO` (
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `DAY_DIV` char(5) NOT NULL COMMENT '요일구분',
+  `WAY_DIV` char(5) NOT NULL COMMENT '상하행구분',
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `ROUT_ID` varchar(10) DEFAULT NULL COMMENT '노선아이디',
+  `ROUT_ST_TM` char(8) DEFAULT NULL COMMENT '노선시작시간',
+  `ROUT_ED_TM` char(8) DEFAULT NULL COMMENT '노선종료시간',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`REP_ROUT_ID`,`WAY_DIV`,`DAY_DIV`,`OPER_SN`) USING BTREE,
+  KEY `IDX_BRT_PL_ROUT_INFO` (`REP_ROUT_ID`,`DAY_DIV`,`WAY_DIV`,`ROUT_ID`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운행계획노선정보';
+
+
+CREATE TABLE `BRT_OPER_PL_ROUT_INFO_HIS` (
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `DAY_DIV` char(5) NOT NULL COMMENT '요일구분',
+  `WAY_DIV` char(5) NOT NULL COMMENT '상하행구분',
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `ROUT_ID` varchar(10) DEFAULT NULL COMMENT '노선아이디',
+  `ROUT_ST_TM` char(8) DEFAULT NULL COMMENT '노선시작시간',
+  `ROUT_ED_TM` char(8) DEFAULT NULL COMMENT '노선종료시간',
+  `UPD_ID` varchar(10) DEFAULT NULL COMMENT '갱신아이디',
+  PRIMARY KEY (`REP_ROUT_ID`,`WAY_DIV`,`DAY_DIV`,`OPER_SN`,`UPD_DTM`) USING BTREE,
+  KEY `IDX_BRT_PL_ROUT_INFO` (`REP_ROUT_ID`,`DAY_DIV`,`WAY_DIV`,`ROUT_ID`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운행계획노선정보이력';
+
+
+CREATE TABLE `BRT_OPER_PNCTLTY_STAT` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `VHC_NO` varchar(9) NOT NULL COMMENT '차량번호',
+  `DRV_ID` varchar(10) NOT NULL COMMENT '운전자아이디',
+  `STAT_H` char(2) NOT NULL COMMENT '통계시간',
+  `PNCTLTY_CNT` decimal(3,0) DEFAULT NULL COMMENT '정시성횟수',
+  `PNCTLTY_VIOLT_CNT` decimal(3,0) DEFAULT NULL COMMENT '정시성위반횟수',
+  `PNCTLTY_VIOLT_TM` char(5) DEFAULT NULL COMMENT '정시성위반시간',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`OPER_SN`,`VHC_NO`,`DRV_ID`,`STAT_H`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운행정시성통계';
+
+
+CREATE TABLE `BRT_OPER_VIOLT_HIS` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `OCR_DTM` datetime DEFAULT NULL COMMENT '발생일시',
+  `ROUT_ID` varchar(10) DEFAULT NULL COMMENT '노선아이디',
+  `ALLOC_NO` decimal(2,0) DEFAULT NULL COMMENT '배차번호',
+  `OPER_SN` decimal(3,0) DEFAULT NULL COMMENT '운행순번',
+  `COR_ID` varchar(10) DEFAULT NULL COMMENT '코스아이디',
+  `REP_ROUT_NM` varchar(5) DEFAULT NULL COMMENT '대표노선명',
+  `ROUT_NM` varchar(30) DEFAULT NULL COMMENT '노선명',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `COMP_NM` varchar(30) DEFAULT NULL COMMENT '운수사명',
+  `DRV_ID` varchar(10) DEFAULT NULL COMMENT '운전자아이디',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT 'GPS_X좌표',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT 'GPS_Y좌표',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT 'TM_X좌표',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT 'TM_Y좌표',
+  `LINK_ID` varchar(10) DEFAULT NULL COMMENT '링크아이디',
+  `NODE_ID` varchar(10) DEFAULT NULL COMMENT '노드아이디',
+  `VIOLT_TYPE` char(5) DEFAULT NULL COMMENT '위반유형',
+  `JUDGE` varchar(10) DEFAULT NULL COMMENT '조치자',
+  `JUDG_ORG` varchar(20) DEFAULT NULL COMMENT '조치기관',
+  `JUDG_TYPE` char(5) DEFAULT NULL COMMENT '조치유형',
+  `JUDG_DESC` varchar(2000) DEFAULT NULL COMMENT '조치상세내역',
+  `JUDG_DTM` datetime DEFAULT NULL COMMENT '조치일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`VHC_ID`,`UPD_DTM`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운행위반이력';
+
+
+CREATE TABLE `BRT_OPER_VIOLT_STAT` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  `DRV_ID` varchar(10) NOT NULL COMMENT '운전자아이디',
+  `STAT_H` char(2) NOT NULL COMMENT '통계시간',
+  `VIOLT_TYPE` varchar(5) DEFAULT NULL COMMENT '위반유형',
+  `VIOLT_CNT` decimal(3,0) DEFAULT NULL COMMENT '위반건수',
+  `JUDG_TYPE` varchar(5) DEFAULT NULL COMMENT '위반조치유형',
+  `JUDG_CNT` decimal(3,0) DEFAULT NULL COMMENT '위반조치건수',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`VHC_ID`,`DRV_ID`,`STAT_H`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='운행위반통계';
+
+
+CREATE TABLE `BRT_REP_ROUT_DRV_CMPSTN` (
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `DRV_ID` varchar(10) NOT NULL COMMENT '운전자아이디',
+  PRIMARY KEY (`REP_ROUT_ID`,`DRV_ID`),
+  KEY `FK_BMS_DRV_MST_TO_BRT_REP_ROUT_DRV_CMPSTN` (`DRV_ID`),
+  CONSTRAINT `FK_BMS_DRV_MST_TO_BRT_REP_ROUT_DRV_CMPSTN` FOREIGN KEY (`DRV_ID`) REFERENCES `BMS_DRV_MST` (`DRV_ID`),
+  CONSTRAINT `FK_BRT_REP_ROUT_MST_TO_BRT_REP_ROUT_DRV_CMPSTN` FOREIGN KEY (`REP_ROUT_ID`) REFERENCES `BMS_REP_ROUT_MST` (`REP_ROUT_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='대표노선과운전자구성';
+
+
+CREATE TABLE `BRT_REP_ROUT_VHC_CMPSTN` (
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `VHC_ID` varchar(10) NOT NULL COMMENT '차량아이디',
+  PRIMARY KEY (`REP_ROUT_ID`,`VHC_ID`),
+  KEY `R/41` (`VHC_ID`),
+  CONSTRAINT `FK_BRT_REP_ROUT_MST_TO_BRT_REP_ROUT_VHC_CMPSTN` FOREIGN KEY (`REP_ROUT_ID`) REFERENCES `BMS_REP_ROUT_MST` (`REP_ROUT_ID`),
+  CONSTRAINT `R/41` FOREIGN KEY (`VHC_ID`) REFERENCES `BMS_VHC_MST` (`VHC_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='대표노선과차량구성';
+
+
+CREATE TABLE `BRT_ROUT_AVER_OPER_SP_STAT` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `STAT_H` char(2) DEFAULT NULL COMMENT '통계시간',
+  `AVRG_SPD` decimal(3,0) DEFAULT NULL COMMENT '평균속도',
+  `MAX_SPD` decimal(3,0) DEFAULT NULL COMMENT '최대속도',
+  `MIN_SPD` decimal(3,0) DEFAULT NULL COMMENT '최소속도',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`OPER_SN`,`ALLOC_NO`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='노선별평균운행속도비교통계';
+
+
+CREATE TABLE `BRT_ROUT_LINK_STAT` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `LINK_ID` varchar(10) NOT NULL COMMENT '링크아이디',
+  `STAT_H` char(2) NOT NULL DEFAULT '' COMMENT '통계시간',
+  `LINK_SN` decimal(5,0) DEFAULT NULL COMMENT '링크순번',
+  `LINK_AVRG_SPD` decimal(3,0) DEFAULT NULL COMMENT '링크평균속도',
+  `LINK_MAX_SPD` decimal(3,0) DEFAULT NULL COMMENT '링크최대속도',
+  `LINK_MIN_SPD` decimal(3,0) DEFAULT NULL COMMENT '링크최소속도',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`LINK_ID`,`STAT_H`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='노선링크통계';
+
+
+CREATE TABLE `BRT_ROUT_OPER_STAT` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `AVRG_OPER_TM` char(5) DEFAULT NULL COMMENT '평균운행시간',
+  `OPER_ED_TM` char(5) DEFAULT NULL COMMENT '운행종료시간',
+  `FST_TM` char(3) DEFAULT NULL COMMENT '첫차시간',
+  `LST_TM` char(5) DEFAULT NULL COMMENT '막차시간',
+  `AVRG_SPD` decimal(3,0) DEFAULT NULL COMMENT '평균속도',
+  `LINK_MAX_SPD` decimal(3,0) DEFAULT NULL COMMENT '링크최대속도',
+  `MAX_SPD_LINK_ID` varchar(10) DEFAULT NULL COMMENT '최대속도링크아이디',
+  `LINK_MIN_SPD` decimal(3,0) DEFAULT NULL COMMENT '링크최소속도',
+  `MIN_SPD_LINK_ID` varchar(10) DEFAULT NULL COMMENT '최소속도링크아이디',
+  `OPER_CNT` decimal(2,0) DEFAULT NULL COMMENT '운행횟수',
+  `VHC_CNT` decimal(2,0) DEFAULT NULL COMMENT '차량개수',
+  `STTN_CNT` decimal(2,0) DEFAULT NULL COMMENT '정류소개수',
+  `AVRG_STOP_TM` char(5) DEFAULT NULL COMMENT '평균정차시간',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='노선운행통계';
+
+
+CREATE TABLE `BRT_RPC_VHC_INFO` (
+  `OCR_DTM` datetime NOT NULL COMMENT '발생일시',
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `COR_ID` varchar(10) NOT NULL COMMENT '코스아이디',
+  `GRP_VHC_ID` varchar(10) NOT NULL COMMENT '원차량아이디',
+  `GRP_VHC_NO` varchar(9) DEFAULT NULL COMMENT '원차량번호',
+  `GRP_DRV_ID` varchar(10) DEFAULT NULL COMMENT '원운전자아이디',
+  `GRP_DRV_NM` varchar(30) DEFAULT NULL COMMENT '원운전자명',
+  `RPC_VHC_ID` varchar(10) DEFAULT NULL COMMENT '대체차량아이디',
+  `RPC_VHC_NO` varchar(9) DEFAULT NULL COMMENT '대체차량번호',
+  `RPC_DRV_ID` varchar(10) DEFAULT NULL COMMENT '대체운전자아이디',
+  `RPC_DRV_NM` varchar(30) DEFAULT NULL COMMENT '대체운전자명',
+  `RPC_DT` date DEFAULT NULL COMMENT '대체일',
+  `OCR_TM` char(5) DEFAULT NULL COMMENT '발생시간',
+  `RPC_TM` char(5) DEFAULT NULL COMMENT '대체시간',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT 'GPS_X좌표',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT 'GPS_Y좌표',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT 'TM_X좌표',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT 'TM_Y좌표',
+  `DETAILS` varchar(200) DEFAULT NULL COMMENT '상세내역',
+  `ROUT_ID` varchar(10) DEFAULT NULL COMMENT '노선아이디',
+  PRIMARY KEY (`OCR_DTM`,`OPER_DT`,`REP_ROUT_ID`,`ALLOC_NO`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='대체차량 정보';
+
+
+CREATE TABLE `BRT_SGN_STAT` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `AVRG_STOP_TM` char(5) DEFAULT NULL COMMENT '평균정차시간',
+  `PASS_VHC_CNT` decimal(3,0) DEFAULT NULL COMMENT '통과차량건수',
+  `STOP_VHC_CNT` decimal(3,0) DEFAULT NULL COMMENT '정차차량건수',
+  `PSIG_CNT` decimal(3,0) DEFAULT NULL COMMENT '우선신호발생건수',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`NODE_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='신호통계';
+
+
+CREATE TABLE `BRT_STTN_STAT` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `AVRG_STOP_TM` char(5) DEFAULT NULL COMMENT '평균정차시간',
+  `STOP_DSPTCH_CNT` decimal(3,0) DEFAULT NULL COMMENT '정차지시건수',
+  PRIMARY KEY (`REP_ROUT_ID`,`ROUT_ID`,`NODE_ID`,`OPER_DT`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='정류소통계';
+
+
+CREATE TABLE `BRT_STTN_STOP_HIS` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `HIS_DT` date NOT NULL COMMENT '갱신일시',
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `NODE_SN` decimal(5,0) NOT NULL COMMENT '노드순번',
+  `ALLOC_NO` decimal(2,0) DEFAULT NULL COMMENT '배차번호',
+  `WAY_DIV` char(5) DEFAULT NULL COMMENT '상하행구분',
+  `REP_ROUT_NM` varchar(5) DEFAULT NULL COMMENT '대표노선명',
+  `ROUT_NM` varchar(5) DEFAULT NULL COMMENT '노선명',
+  `NODE_TYPE` char(5) DEFAULT NULL COMMENT '노드유형',
+  `VHC_ID` varchar(10) DEFAULT NULL COMMENT '차량아이디',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `PSG_CNT` decimal(3,0) DEFAULT NULL COMMENT '승차인원',
+  `GET_OFF_CNT` decimal(3,0) DEFAULT NULL COMMENT '하차인원',
+  `PL_ARRV_TM` char(5) DEFAULT NULL COMMENT '계획도착시간',
+  `ARRV_TM` char(5) DEFAULT NULL COMMENT '도착시간',
+  `ARRV_TM_GAP` char(5) DEFAULT NULL COMMENT '도착시간차이',
+  `PL_DPRT_TM` char(5) DEFAULT NULL COMMENT '계획출발시간',
+  `DPRT_TM` char(5) DEFAULT NULL COMMENT '출발시간',
+  `DPRT_TM_GAP` char(5) DEFAULT NULL COMMENT '출발시간차이',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`NODE_ID`,`HIS_DT`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='정류소정차이력';
+
+
+CREATE TABLE `BRT_VHC_OPER_STAT` (
+  `OPER_DT` date NOT NULL COMMENT '운행일',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `VHC_NO` varchar(9) NOT NULL COMMENT '차량번호',
+  `ALLOC_NO` decimal(2,0) DEFAULT NULL COMMENT '배차번호',
+  `OPER_ST_TM` char(5) DEFAULT NULL COMMENT '운행시작시간',
+  `OPER_ED_TM` char(5) DEFAULT NULL COMMENT '운행종료시간',
+  `OPER_LEN` decimal(3,3) DEFAULT NULL COMMENT '운행거리',
+  `AVRG_SPD` decimal(3,0) DEFAULT NULL COMMENT '평균속도',
+  `LINK_MAX_SPD` decimal(3,0) DEFAULT NULL COMMENT '링크최대속도',
+  `MAX_SPD_LINK_ID` varchar(10) DEFAULT NULL COMMENT '최대속도링크아이디',
+  `LINK_MIN_SPD` decimal(3,0) DEFAULT NULL COMMENT '링크최소속도',
+  `MIN_SPD_LINK_ID` varchar(10) DEFAULT NULL COMMENT '최소속도링크아이디',
+  `OPER_CNT` decimal(3,0) DEFAULT NULL COMMENT '차량운행횟수',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`OPER_DT`,`REP_ROUT_ID`,`ROUT_ID`,`VHC_NO`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='차량운행통계';
+
+
+CREATE TABLE `BRT_WEEK_OPER_ALLOC_PL_NODE_INFO` (
+  `YEAR` varchar(4) NOT NULL COMMENT '년',
+  `MONTH` varchar(2) NOT NULL COMMENT '월',
+  `WEEK` varchar(2) NOT NULL COMMENT '주',
+  `REP_ROUT_ID` varchar(10) NOT NULL COMMENT '대표노선아이디',
+  `DAY_DIV` varchar(5) NOT NULL COMMENT '요일구분',
+  `ROUT_ID` varchar(10) NOT NULL COMMENT '노선아이디',
+  `COR_ID` varchar(10) NOT NULL,
+  `OPER_SN` decimal(3,0) NOT NULL COMMENT '운행순번',
+  `NODE_ID` varchar(10) NOT NULL COMMENT '노드아이디',
+  `NODE_SN` decimal(5,0) NOT NULL COMMENT '노드순번',
+  `WAY_DIV` char(5) DEFAULT NULL COMMENT '상하행구분',
+  `ALLOC_NO` decimal(2,0) NOT NULL COMMENT '배차번호',
+  `NODE_TYPE` char(5) DEFAULT NULL COMMENT '노드유형',
+  `DPRT_TM` char(8) DEFAULT NULL COMMENT '출발시간',
+  `ARRV_TM` char(8) DEFAULT NULL COMMENT '도착시간',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`YEAR`,`MONTH`,`WEEK`,`REP_ROUT_ID`,`DAY_DIV`,`ROUT_ID`,`COR_ID`,`OPER_SN`,`NODE_ID`,`NODE_SN`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='주별운행배차계획노드정보';
+
+
+CREATE TABLE `PLF_DEV_CTL_HIS` (
+  `SYS_DTM` datetime NOT NULL COMMENT '시스템일시',
+  `DEV_ID` varchar(10) NOT NULL COMMENT '장치아이디',
+  `CTL_CD` varchar(10) NOT NULL COMMENT '제어코드',
+  `DEV_TYPE` decimal(6,0) DEFAULT NULL COMMENT '장치유형',
+  `CTL_VAL` varchar(30) DEFAULT NULL COMMENT '제어값',
+  `CTL_RST` decimal(6,0) DEFAULT NULL COMMENT '제어결과',
+  PRIMARY KEY (`SYS_DTM`,`DEV_ID`,`CTL_CD`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='플랫폼장치제어이력';
+
+
+CREATE TABLE `PLF_DEV_ROUTING_MST` (
+  `GRP_ID` decimal(6,0) NOT NULL DEFAULT 0 COMMENT '그룹아이디',
+  `DEV_SYS_ID` decimal(6,0) NOT NULL DEFAULT 0 COMMENT '시스템아이디',
+  `DEV_SVC_ID` decimal(6,0) NOT NULL DEFAULT 0 COMMENT '장치서비스아이디',
+  `GRP_NM` varchar(30) DEFAULT NULL COMMENT '그룹명',
+  `DEV_SYS_NM` varchar(30) DEFAULT NULL COMMENT '시스템명',
+  `DEV_SVC_NM` varchar(30) DEFAULT NULL COMMENT '장치서비스명',
+  PRIMARY KEY (`GRP_ID`,`DEV_SYS_ID`,`DEV_SVC_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='플랫폼장치라우팅마스터';
+
+
+CREATE TABLE `PLF_DEV_STS_HIS` (
+  `SYS_DTM` datetime NOT NULL COMMENT '시스템일시',
+  `DEV_ID` varchar(10) NOT NULL COMMENT '장치아이디',
+  `STS_CD` varchar(10) NOT NULL COMMENT '상태코드',
+  `DEV_TYPE` decimal(6,0) DEFAULT NULL COMMENT '장치유형',
+  `STS_VAL` decimal(6,0) DEFAULT NULL COMMENT '상태값',
+  PRIMARY KEY (`SYS_DTM`,`DEV_ID`,`STS_CD`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='플랫폼장치상태이력';
+
+
+CREATE TABLE `PLF_DEV_VER_INF` (
+  `DEV_ID` varchar(10) NOT NULL COMMENT '장치아이디',
+  `VER_CD` varchar(10) NOT NULL COMMENT '버전코드',
+  `DEV_TYPE` decimal(6,0) DEFAULT NULL COMMENT '장치유형',
+  `VER_VAL` varchar(20) DEFAULT NULL COMMENT '버전값',
+  `SYS_DTM` datetime DEFAULT NULL COMMENT '시스템일시',
+  PRIMARY KEY (`DEV_ID`,`VER_CD`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='플랫폼장치버전정보';
+
+
+CREATE TABLE `PLF_FILE_LOG_MST` (
+  `PLF_ID` varchar(10) NOT NULL COMMENT '플랫폼아이디',
+  `SVC_ID` varchar(10) NOT NULL COMMENT '서비스아이디',
+  `LOG_NM` varchar(50) DEFAULT NULL COMMENT '로그명',
+  `LOG_PATH` varchar(100) DEFAULT NULL COMMENT '로그경로',
+  `PRCS_TYPE` varchar(10) DEFAULT NULL COMMENT '프로세스유형',
+  `DEL_DAYS` decimal(6,0) DEFAULT NULL COMMENT '삭제일수',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  PRIMARY KEY (`PLF_ID`,`SVC_ID`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='플랫폼파일로그마스터';
+
+
+CREATE TABLE `PLF_FILE_TRANS_HIS` (
+  `PLF_ID` varchar(10) NOT NULL COMMENT '플랫폼아이디',
+  `IMP_ID` varchar(10) NOT NULL COMMENT '통합플랫폼아이디',
+  `FILE_NM` varchar(50) NOT NULL COMMENT '파일명',
+  `FILE_CD` varchar(10) DEFAULT NULL COMMENT '파일코드',
+  `SEND_TYPE` varchar(10) DEFAULT NULL COMMENT '송신유형',
+  `FILE_PATH` varchar(100) DEFAULT NULL COMMENT '파일경로',
+  `FILE_SIZE` decimal(10,0) DEFAULT NULL COMMENT '파일크기',
+  `FILE_PNT` decimal(11,0) DEFAULT NULL COMMENT '파일포인터',
+  `SEND_STAT` varchar(10) DEFAULT NULL COMMENT '송신상태',
+  `SEND_ST_DTM` datetime DEFAULT NULL COMMENT '송신시작일시',
+  `SEND_ED_DTM` datetime DEFAULT NULL COMMENT '송신종료일시',
+  `SYS_DTM` datetime DEFAULT NULL COMMENT '시스템일시',
+  PRIMARY KEY (`PLF_ID`,`IMP_ID`,`FILE_NM`) USING BTREE,
+  KEY `R/17` (`IMP_ID`),
+  CONSTRAINT `R/14` FOREIGN KEY (`PLF_ID`) REFERENCES `PLF_PLF_MAIN_MST` (`PLF_ID`) ON UPDATE CASCADE,
+  CONSTRAINT `R/17` FOREIGN KEY (`IMP_ID`) REFERENCES `PLF_IMP_DEV_MST` (`IMP_ID`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='플랫폼파일전송이력';
+
+
+CREATE TABLE `PLF_IMP_DEV_MST` (
+  `IMP_ID` varchar(10) NOT NULL COMMENT '통합플랫폼아이디',
+  `IMP_NM` varchar(50) DEFAULT NULL COMMENT '통합플랫폼명',
+  `IMP_TYPE` varchar(10) DEFAULT NULL COMMENT '통합플랫폼유형',
+  `OWN_COMP_NM` varchar(50) DEFAULT NULL COMMENT '소유회사명',
+  `COMP_ID` varchar(10) DEFAULT NULL COMMENT '운수사아이디',
+  `COMP_NM` varchar(50) DEFAULT NULL COMMENT '운수사명',
+  `VHC_ID` varchar(10) DEFAULT NULL COMMENT '차량아이디',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `REMARK` varchar(50) DEFAULT NULL COMMENT '비고',
+  PRIMARY KEY (`IMP_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='통합플랫폼장치마스터';
+
+
+CREATE TABLE `PLF_IMP_SCRT_HIS` (
+  `PLF_ID` varchar(10) NOT NULL COMMENT '플랫폼아이디',
+  `SEQ` int(11) NOT NULL AUTO_INCREMENT COMMENT '순서',
+  `IMP_ID` varchar(10) DEFAULT NULL COMMENT '통합플랫폼아이디',
+  `MSG` varchar(1024) DEFAULT NULL COMMENT '메시지',
+  `LOG_DTM` datetime DEFAULT NULL COMMENT '로그일시',
+  `CTG` varchar(10) DEFAULT NULL COMMENT '카테고리',
+  PRIMARY KEY (`SEQ`,`PLF_ID`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='통합플랫폼스크립트이력';
+
+
+CREATE TABLE `PLF_IMP_SESS_HIS` (
+  `REG_DTM` datetime NOT NULL COMMENT '등록일시',
+  `IMP_ID` varchar(10) NOT NULL COMMENT '통합플랫폼아이디',
+  `SESS_NM` varchar(30) DEFAULT NULL COMMENT '세션명',
+  `SESS_IP` varchar(30) DEFAULT NULL COMMENT '세션아이피',
+  `ACT_TYPE` varchar(10) DEFAULT NULL COMMENT '액션유형',
+  PRIMARY KEY (`REG_DTM`,`IMP_ID`),
+  KEY `R/19` (`IMP_ID`),
+  CONSTRAINT `R/19` FOREIGN KEY (`IMP_ID`) REFERENCES `PLF_IMP_DEV_MST` (`IMP_ID`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='통합플랫폼세션이력';
+
+
+CREATE TABLE `PLF_IMP_SESS_INFO` (
+  `PLF_ID` varchar(10) NOT NULL COMMENT '플랫폼아이디',
+  `SESS_ID` varchar(10) NOT NULL COMMENT '세션아이디',
+  `SESS_NM` varchar(30) DEFAULT NULL COMMENT '세션명',
+  `SESS_IP` varchar(30) DEFAULT NULL COMMENT '세션아이피',
+  `REMOTE_TYPE` varchar(10) DEFAULT NULL COMMENT '리모트유형',
+  `ELAPSED_TIME` decimal(11,0) DEFAULT NULL COMMENT '경과시간',
+  `IN_PACKET` decimal(11,0) DEFAULT NULL COMMENT '수신패킷',
+  `OUT_PACKET` decimal(11,0) DEFAULT NULL COMMENT '발신패킷',
+  `LOGIN_DTM` datetime DEFAULT NULL COMMENT '로그인일시',
+  `LOGOUT_DTM` datetime DEFAULT NULL COMMENT '로그아웃일시',
+  `LAST_DTM` datetime DEFAULT NULL COMMENT '종료일시',
+  PRIMARY KEY (`PLF_ID`,`SESS_ID`) USING BTREE,
+  KEY `R/12` (`SESS_ID`) USING BTREE,
+  CONSTRAINT `R/10` FOREIGN KEY (`PLF_ID`) REFERENCES `PLF_PLF_MAIN_MST` (`PLF_ID`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='플랫폼세션정보';
+
+
+CREATE TABLE `PLF_IMP_STS_HIS` (
+  `IMP_ID` varchar(10) NOT NULL COMMENT '통합플랫폼아이디',
+  `UPD_DTM` datetime NOT NULL COMMENT '갱신일시',
+  `MNG_ID` varchar(10) DEFAULT NULL COMMENT '관리아이디',
+  `COMP_ID` varchar(10) DEFAULT NULL COMMENT '운수사아이디',
+  `COMP_NM` varchar(50) DEFAULT NULL COMMENT '운수사명',
+  `VHC_ID` varchar(10) DEFAULT NULL COMMENT '차량아이디',
+  `VHC_NO` varchar(9) DEFAULT NULL COMMENT '차량번호',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  `REMARK` varchar(50) DEFAULT NULL COMMENT '비고',
+  `SESS_IP` varchar(30) DEFAULT NULL COMMENT '세션아이피',
+  `VOLT` varchar(5) DEFAULT NULL COMMENT '전압',
+  `IGN_STS` varchar(5) DEFAULT NULL COMMENT 'IGN상태',
+  `CAN_INFO` varchar(5) DEFAULT NULL COMMENT 'CAN정보',
+  `RPM` varchar(5) DEFAULT NULL COMMENT 'RPM',
+  `SPD` varchar(5) DEFAULT NULL COMMENT '속도',
+  `GPS_STS` varchar(5) DEFAULT NULL COMMENT 'GPS상태',
+  `GPS_X` decimal(12,6) DEFAULT NULL COMMENT 'GPS_X좌표',
+  `GPS_Y` decimal(12,6) DEFAULT NULL COMMENT 'GPS_Y좌표',
+  `TM_X` decimal(12,4) DEFAULT NULL COMMENT 'TM_X좌표',
+  `TM_Y` decimal(12,4) DEFAULT NULL COMMENT 'TM_Y좌표',
+  `DSP_CONN_STS` varchar(5) DEFAULT NULL COMMENT '운전자단말기연결상태',
+  `DSP_VER` varchar(20) DEFAULT NULL COMMENT '운전자단말기버전',
+  `DTG_RST_CNT` varchar(5) DEFAULT NULL COMMENT 'DTG리셋횟수',
+  `DB_VER` varchar(20) DEFAULT NULL COMMENT 'DB버전',
+  `OBD_STS` varchar(5) DEFAULT NULL COMMENT 'OBD상태',
+  `OBDVER` varchar(20) DEFAULT NULL COMMENT 'OBD버전',
+  PRIMARY KEY (`IMP_ID`,`UPD_DTM`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='통합플랫폼상태이력';
+
+
+CREATE TABLE `PLF_IMP_TRNSTN_HIS` (
+  `REG_DTM` datetime NOT NULL COMMENT '등록일시',
+  `PLF_ID` varchar(10) NOT NULL COMMENT '플랫폼아이디',
+  `IMP_ID` varchar(10) NOT NULL COMMENT '통합플랫폼아이디',
+  `PACKET_ID` decimal(6,0) NOT NULL COMMENT '패킷아이디',
+  `REMOTE_TYPE` varchar(10) DEFAULT NULL COMMENT '리모트유형',
+  `PAYLOAD_TYPE` varchar(30) DEFAULT NULL COMMENT 'PAYLOAD유형',
+  `ATTR_CNT` decimal(6,0) DEFAULT NULL COMMENT '속성수',
+  `ATTR_LIST` varchar(100) DEFAULT NULL COMMENT '속성목록',
+  `STR_DATA` mediumtext DEFAULT NULL COMMENT '문자열데이터',
+  `RETRY_CNT` decimal(6,0) DEFAULT NULL COMMENT '재시도횟수',
+  `SEND_STAT` varchar(10) DEFAULT NULL COMMENT '송신상태',
+  `SEND_DTM` datetime DEFAULT NULL COMMENT '송신일시',
+  `SYS_DTM` datetime DEFAULT NULL COMMENT '시스템일시',
+  PRIMARY KEY (`REG_DTM`,`PLF_ID`,`IMP_ID`,`PACKET_ID`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='플랫폼트랜잭션이력';
+
+
+CREATE TABLE `PLF_IMP_VER_INF` (
+  `IMP_ID` varchar(10) NOT NULL COMMENT '통합플랫폼아이디',
+  `PRCS_NM` varchar(50) NOT NULL COMMENT '프로세스명',
+  `PRCS_IDX` decimal(4,0) DEFAULT NULL COMMENT '프로세스색인',
+  `VER_HIGH` decimal(4,0) DEFAULT NULL COMMENT '버전상',
+  `VER_MID` decimal(4,0) DEFAULT NULL COMMENT '버전중',
+  `VER_LOW` decimal(4,0) DEFAULT NULL COMMENT '버전하',
+  `ST_DTM` datetime DEFAULT NULL COMMENT '시작일시',
+  `LAST_DTM` datetime DEFAULT NULL COMMENT '종료일시',
+  `BLD_DTM` datetime DEFAULT NULL COMMENT '빌드일시',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`IMP_ID`,`PRCS_NM`),
+  CONSTRAINT `R/20` FOREIGN KEY (`IMP_ID`) REFERENCES `PLF_IMP_DEV_MST` (`IMP_ID`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='통합플랫폼버전정보';
+
+
+CREATE TABLE `PLF_PLF_BK_MST` (
+  `PLF_ID` varchar(10) NOT NULL COMMENT '플랫폼아이디',
+  `PLF_TB_NM` varchar(30) DEFAULT NULL COMMENT '플랫폼테이블명',
+  `SVC_TB_NM` varchar(30) DEFAULT NULL COMMENT '서비스테이블명',
+  `FIELD_LIST` varchar(1024) DEFAULT NULL COMMENT '필드목록',
+  `BK_TYPE` varchar(10) DEFAULT NULL COMMENT '백업유형',
+  `BK_PERIOD` decimal(5,0) DEFAULT NULL COMMENT '백업주기',
+  `TABLE_KEY` varchar(100) DEFAULT NULL COMMENT '테이블키',
+  `LINK_MAPPER` varchar(30) DEFAULT NULL COMMENT '링크맵퍼',
+  `DEL_MAPPER` varchar(30) DEFAULT NULL COMMENT '삭제맵퍼',
+  `SELECT_WHERE` varchar(100) DEFAULT NULL COMMENT '셀렉트웨어',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  PRIMARY KEY (`PLF_ID`) USING BTREE,
+  CONSTRAINT `R/4` FOREIGN KEY (`PLF_ID`) REFERENCES `PLF_PLF_MAIN_MST` (`PLF_ID`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='플랫폼백업마스터';
+
+
+CREATE TABLE `PLF_PLF_CH_MST` (
+  `PLF_ID` varchar(10) NOT NULL COMMENT '플랫폼아이디',
+  `CH_NM` varchar(30) DEFAULT NULL COMMENT '채널명',
+  `CH_PORT` varchar(5) DEFAULT NULL COMMENT '채널포트',
+  `R_TIMEOUT` decimal(5,0) DEFAULT NULL COMMENT '읽기타임아웃',
+  `W_TIMEOUT` decimal(5,0) DEFAULT NULL COMMENT '쓰기타임아웃',
+  `HEADER_TYPE` varchar(10) DEFAULT NULL COMMENT '헤더유형',
+  `STR_TYPE` varchar(10) DEFAULT NULL COMMENT '언어유형',
+  `ENDIAN_TYPE` varchar(10) DEFAULT NULL COMMENT '엔디언유형',
+  `PRTL_VER` varchar(20) DEFAULT NULL COMMENT '프로토콜버전',
+  `INDICATOR` decimal(11,0) DEFAULT NULL COMMENT 'INDICATOR',
+  `MAX_SIZE` decimal(11,0) DEFAULT NULL COMMENT '최대크기',
+  `MAX_CNT` decimal(11,0) DEFAULT NULL COMMENT '최대수',
+  `APDU_OFFSET` decimal(6,0) DEFAULT NULL COMMENT 'APDU옵셋',
+  `OPT_RC` decimal(6,0) DEFAULT NULL COMMENT '옵션RC',
+  `OPT_TO` decimal(6,0) DEFAULT NULL COMMENT '옵션TO',
+  `OPT_TR` decimal(6,0) DEFAULT NULL COMMENT '옵션TR',
+  `OPT_CE` decimal(6,0) DEFAULT NULL COMMENT '옵션CE',
+  `OPT_RF` decimal(6,0) DEFAULT NULL COMMENT '옵션RF',
+  `OPT_LF` decimal(6,0) DEFAULT NULL COMMENT '옵션LF',
+  PRIMARY KEY (`PLF_ID`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='플랫폼채널마스터';
+
+
+CREATE TABLE `PLF_PLF_MAIN_MST` (
+  `PLF_ID` varchar(10) NOT NULL COMMENT '플랫폼아이디',
+  `INST_DT` date DEFAULT NULL COMMENT '설치일자',
+  `IP` varchar(16) DEFAULT NULL COMMENT '아이피',
+  `CITY` varchar(30) DEFAULT NULL COMMENT '도시',
+  `LANG_CD` varchar(10) DEFAULT NULL COMMENT '언어코드',
+  `TIME_ZONE` varchar(30) DEFAULT NULL COMMENT '타임존',
+  `DATETIME_FORMAT` varchar(30) DEFAULT NULL COMMENT '일시포맷',
+  `DATE_FORMAT` varchar(30) DEFAULT NULL COMMENT '일자포맷',
+  `TIME_FORMAT` varchar(30) DEFAULT NULL COMMENT '시간포맷',
+  `LOG_CD` varchar(10) DEFAULT NULL COMMENT '로그코드',
+  PRIMARY KEY (`PLF_ID`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='플랫폼메인마스터';
+
+
+CREATE TABLE `PLF_PLF_SCH_MST` (
+  `PLF_ID` varchar(10) NOT NULL COMMENT '플랫폼아이디',
+  `SVC_ID` varchar(10) NOT NULL COMMENT '서비스아이디',
+  `JOB_CLS` varchar(100) NOT NULL COMMENT 'JOB클래스',
+  `JOB_NM` varchar(30) DEFAULT NULL COMMENT 'JOB명',
+  `JOB_STS` varchar(30) DEFAULT NULL COMMENT 'JOB상태',
+  `JOB_ARGS` varchar(30) DEFAULT NULL COMMENT 'JOB인자',
+  `PERIOD` varchar(30) DEFAULT NULL COMMENT '주기',
+  `ST_DTM` datetime DEFAULT NULL COMMENT '시작일시',
+  `LAST_DTM` datetime DEFAULT NULL COMMENT '종료일시',
+  `NXT_DTM` datetime DEFAULT NULL COMMENT '다음일시',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  PRIMARY KEY (`PLF_ID`,`SVC_ID`,`JOB_CLS`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='플랫폼스케쥴마스터';
+
+
+CREATE TABLE `PLF_PLF_STS_INFO` (
+  `PLF_ID` varchar(10) NOT NULL COMMENT '플랫폼아이디',
+  `RUN_DTM` datetime DEFAULT NULL COMMENT '실행일시',
+  `ELAPSED_TIME` decimal(11,0) DEFAULT NULL COMMENT '경과시간',
+  `CPU_USAGE` varchar(30) DEFAULT NULL COMMENT 'CPU사용량',
+  `RAM_USAGE` varchar(30) DEFAULT NULL COMMENT '메모리사용량',
+  `HDD_USAGE` varchar(30) DEFAULT NULL COMMENT '하드사용량',
+  `JVM_USAGE` varchar(30) DEFAULT NULL COMMENT 'JVM사용량',
+  `UPD_DTM` datetime DEFAULT NULL COMMENT '갱신일시',
+  PRIMARY KEY (`PLF_ID`) USING BTREE,
+  CONSTRAINT `R/1` FOREIGN KEY (`PLF_ID`) REFERENCES `PLF_PLF_MAIN_MST` (`PLF_ID`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='플랫폼상태정보';
+
+
+CREATE TABLE `PLF_PLF_SVC_MST` (
+  `PLF_ID` varchar(10) NOT NULL COMMENT '플랫폼아이디',
+  `SVC_ID` varchar(10) NOT NULL COMMENT '서비스아이디',
+  `SVC_NM` varchar(30) DEFAULT NULL COMMENT '서비스명',
+  `VER` varchar(50) DEFAULT NULL COMMENT '버전',
+  `ATTR` varchar(100) DEFAULT NULL COMMENT '속성',
+  `SVC_STS` varchar(10) DEFAULT NULL COMMENT '서비스상태',
+  `ST_DTM` datetime DEFAULT NULL COMMENT '시작일',
+  `ED_DTM` datetime DEFAULT NULL COMMENT '종료일',
+  `CPU_USAGE` varchar(30) DEFAULT NULL COMMENT 'CPU사용량',
+  `RAM_USAGE` varchar(30) DEFAULT NULL COMMENT '메모리사용량',
+  `HDD_USAGE` varchar(30) DEFAULT NULL COMMENT '하드사용량',
+  `JVM_USAGE` varchar(30) DEFAULT NULL COMMENT 'JVM사용량',
+  `REMARK` varchar(50) DEFAULT NULL COMMENT '비고',
+  `USE_YN` char(1) DEFAULT NULL COMMENT '사용여부',
+  PRIMARY KEY (`PLF_ID`,`SVC_ID`) USING BTREE,
+  CONSTRAINT `R/6` FOREIGN KEY (`PLF_ID`) REFERENCES `PLF_PLF_MAIN_MST` (`PLF_ID`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='플랫폼서비스마스터';
+
+
+CREATE TABLE `PLF_PLF_SVR_MST` (
+  `PLF_ID` varchar(10) NOT NULL COMMENT '플랫폼아이디',
+  `GRP_ID` decimal(6,0) NOT NULL DEFAULT 0 COMMENT '그룹아이디',
+  `SVR_IP` varchar(16) DEFAULT NULL COMMENT '서비스아이피',
+  `SVR_PORT` varchar(5) DEFAULT NULL COMMENT '서비스포트',
+  `PRTL_TYPE` varchar(10) DEFAULT NULL COMMENT '프로토콜유형',
+  `USER_ID` varchar(20) DEFAULT NULL COMMENT '사용자아이디',
+  `USER_PW` varchar(20) DEFAULT NULL COMMENT '사용자패스워드',
+  PRIMARY KEY (`PLF_ID`,`GRP_ID`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='플랫폼서버마스터';
+
+
+CREATE TABLE `PLF_PLF_SYS_LOG` (
+  `PLF_ID` varchar(10) NOT NULL COMMENT '플랫폼아이디',
+  `LOG_DTM` datetime NOT NULL COMMENT '로그일시',
+  `SEQ` decimal(11,0) NOT NULL COMMENT '순서',
+  `CLASS` varchar(100) DEFAULT NULL COMMENT '클래스',
+  `METHOD` varchar(100) DEFAULT NULL COMMENT '함수',
+  `PARAM` varchar(1024) DEFAULT NULL COMMENT '파라미터',
+  `MSG` varchar(2000) DEFAULT NULL COMMENT '메시지',
+  `SYS_DTM` datetime DEFAULT NULL COMMENT '시스템일시',
+  PRIMARY KEY (`PLF_ID`,`LOG_DTM`,`SEQ`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='플랫폼시스템로그';
+
+
+CREATE TABLE `SEQ_BMS_ATTACH_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_AUTHORITY_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_BIT_VDO_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_BIT_VDO_ORGA_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_BIT_VDO_RSV_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_CRS_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_DESTI_RSV_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_DRV_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_DVC_HIS_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_DVC_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_ED_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_ED_RSV_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_EMAIL_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_EMER_CLSFCTN_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_EMER_MEMBER_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_FCLT_HIS_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_FCLT_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_FCLT_UPD_RSV_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_GRG_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_INNER_LED_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_LINK_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_MULTI_ATTACH_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_NEWS_CFG_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_NODE_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_NOTICE_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_ORG_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_REP_ROUT_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_REP_ROUT_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_ROUT_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_STTN_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_TRANSCOMP_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_TRANSFER_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_UPD_LOG_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_VDO_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_VDO_ORGA_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_VDO_RSV_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_VHC_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_VOC_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_VOC_INFO_1` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_VOC_INFO_2` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_VOC_INFO_3` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_VOC_ORGA_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BMS_VOC_RSV_INFO_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BRT_COR_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BRT_CPLNT_HIS_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BRT_INCDNT_SCNRO_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;
+
+
+CREATE TABLE `SEQ_BRT_OPER_INST_MSG_MST_0` (
+  `next_not_cached_value` bigint(21) NOT NULL,
+  `minimum_value` bigint(21) NOT NULL,
+  `maximum_value` bigint(21) NOT NULL,
+  `start_value` bigint(21) NOT NULL COMMENT 'start value when sequences is created or value if RESTART is used',
+  `increment` bigint(21) NOT NULL COMMENT 'increment value',
+  `cache_size` bigint(21) unsigned NOT NULL,
+  `cycle_option` tinyint(1) unsigned NOT NULL COMMENT '0 if no cycles are allowed, 1 if the sequence should begin a new cycle when maximum_value is passed',
+  `cycle_count` bigint(21) NOT NULL COMMENT 'How many cycles have been done'
+) ENGINE=InnoDB SEQUENCE=1;

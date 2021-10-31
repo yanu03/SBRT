@@ -4,22 +4,28 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import kr.tracom.cm.domain.OperPlan.OperPlanMapper;
 import kr.tracom.cm.support.ServiceSupport;
+import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.util.CommonUtil;
+import kr.tracom.util.Result;
 
 
 @Service
 public class AL0202Service extends ServiceSupport {
 
 	@Autowired
-	private AL0202Mapper al0304Mapper;
+	private AL0202Mapper al0202Mapper;
 	
+	@Autowired
+	private OperPlanMapper operPlanMapper;
 	
 	public List AL0202G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
-		List list = al0304Mapper.AL0202G0R0(map);
+		List list = al0202Mapper.AL0202G0R0(map);
 		
 		for (int i = 0; i < list.size(); i++) {
 			Map<String, Object> data = (Map<String, Object>)list.get(i);
@@ -40,21 +46,91 @@ public class AL0202Service extends ServiceSupport {
 	
 	public List AL0202G1R0() throws Exception {
 		Map param = getSimpleDataMap("dma_sub_search");
-		return al0304Mapper.AL0202G1R0(param);
+		return al0202Mapper.AL0202G1R0(param);
 	}
 	
 	public List AL0202G1CNT() throws Exception {
 		Map param = getSimpleDataMap("dma_sub_search");
-		return al0304Mapper.AL0202G1CNT(param);
+		return al0202Mapper.AL0202G1CNT(param);
 	}
 	
 	public List AL0202P0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return al0304Mapper.AL0202P0R0(map);
+		return al0202Mapper.AL0202P0R0(map);
 	}
 	
 	public List AL0202P0R1() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_param_AL0202P0R1");
-		return al0304Mapper.AL0202P1R0(map);
-	}		
+		return al0202Mapper.AL0202P1R0(map);
+	}
+	
+	public Map AL0202G1S0() throws Exception {
+		int iCnt = 0;
+		int uCnt = 0;
+		int dCnt = 0;		
+		Map type = getSimpleDataMap("dma_sub_search");
+		
+		List<Map<String, Object>> param = getSimpleList("dlt_OPER_ALLOC_PL_ROUT_INFO");
+		List<Map<String, Object>> param2 = getSimpleList("BRT_OPER_ALLOC_PL_COR_INFO");
+		try {
+			
+			if(param.size()>0&&"ALL".equals(type.get("TYPE"))){
+				al0202Mapper.AL0202G1DA0(param.get(0));
+			}
+			for (int i = 0; i < param.size(); i++) {
+				Map data = (Map) param.get(i);
+				
+				String rowStatus = (String) data.get("rowStatus");
+				if (rowStatus.equals("C")) {
+					iCnt += al0202Mapper.AL0202G1I0(data);
+					operPlanMapper.makeOperPl(data);
+				} else if (rowStatus.equals("U")) {
+					uCnt += al0202Mapper.AL0202G1U0(data);
+					operPlanMapper.makeOperPl(data);
+				} else if (rowStatus.equals("D")) {
+					dCnt += al0202Mapper.AL0202G1D0(data);
+				} 
+			}			
+		} catch(Exception e) {
+			if (e instanceof DuplicateKeyException)
+			{
+				throw new MessageException(Result.ERR_KEY, "중복된 키값의 데이터가 존재합니다.");
+			}
+			else
+			{
+				throw e;
+			}		
+		}
+		
+		try {
+			if(param2.size()>0&&"ALL".equals(type.get("TYPE"))){
+				al0202Mapper.AL0202G1DA1(param2.get(0));
+			}
+			for (int i = 0; i < param2.size(); i++) {
+				Map data = (Map) param2.get(i);
+				
+				String rowStatus = (String) data.get("rowStatus");
+				if (rowStatus.equals("C")) {
+					al0202Mapper.AL0202G1I1(data);
+				} else if (rowStatus.equals("U")) {
+					al0202Mapper.AL0202G1U1(data);
+				} else if (rowStatus.equals("D")) {
+					al0202Mapper.AL0202G1D1(data);
+				} 
+			}			
+		} catch(Exception e) {
+			if (e instanceof DuplicateKeyException)
+			{
+				throw new MessageException(Result.ERR_KEY, "중복된 키값의 데이터가 존재합니다.");
+			}
+			else
+			{
+				throw e;
+			}		
+		}
+
+		Map result = saveResult(iCnt, uCnt, dCnt);
+		
+		return result;		
+	}
 }
