@@ -240,9 +240,6 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,ARRV_TM
             ,DPRT_TM
             ,UPD_DTM
-            ,TEST
-            ,TEST2
-            ,TEST3
         )
         VALUES
         (
@@ -258,9 +255,6 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,#{ARRV_TM}
             ,#{DPRT_TM}
             ,NOW()
-            ,#{TEST}
-            ,#{TEST2}
-            ,#{TEST3}
         )
         ON DUPLICATE KEY UPDATE
             COR_ID = VALUES(COR_ID)
@@ -269,9 +263,6 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,ARRV_TM = VALUES(ARRV_TM)
             ,DPRT_TM = VALUES(DPRT_TM)
             ,UPD_DTM = VALUES(UPD_DTM)
-            ,TEST = VALUES(TEST)
-            ,TEST2 = VALUES(TEST2)
-            ,TEST3 = VALUES(TEST3);
     </insert>
 
 
@@ -292,9 +283,6 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,ARRV_TM
             ,DPRT_TM
             ,UPD_DTM
-            ,TEST
-            ,TEST2
-            ,TEST3
         )
         VALUES
         <foreach collection="ITEM_LIST" item="item" separator=",">
@@ -312,9 +300,6 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,#{item.ARRV_TM}
             ,#{item.DPRT_TM}
             ,NOW()
-            ,#{item.TEST}
-            ,#{item.TEST2}
-            ,#{item.TEST3}
         )
         </foreach>
     </insert>
