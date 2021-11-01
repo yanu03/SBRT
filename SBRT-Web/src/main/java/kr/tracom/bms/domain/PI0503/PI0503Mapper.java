@@ -12,7 +12,7 @@ public interface PI0503Mapper {
 	
 	public List PI0503SHI0();
 	
-	public List PI0503G1R0();
+	public List PI0503G1R0(Map param);
 	
 	public List PI0503G2R0(Map param);
 	

@@ -37,30 +37,29 @@
 
 	<select id="PI0902G1R0" resultType="Map">
 		SELECT
-					  IF(RST.COMPLETE_YN = 'N', '예약중', NULL) RSV_STATE
-					, VHC.VHC_ID
-				    , VHC.VHC_NO
-				    , DVC.DVC_KIND
-				    , DVC.MNG_ID
-				    , DATE_FORMAT(RSV.RSV_DT, '%Y%m%d') RSV_DT
-				    , RSV.RSV_ID
-				    , DVC.INST_LOC
-		FROM 		BMS_VHC_MST VHC
+			IF(RST.COMPLETE_YN = 'N', '예약중', NULL) RSV_STATE
+			, VHC.VHC_ID
+			, VHC.VHC_NO
+			, DVC.DVC_KIND
+			, DVC.MNG_ID
+			, DATE_FORMAT(RSV.RSV_DT, '%Y-%m-%d') RSV_DT
+			, RSV.RSV_ID
+			, DVC.INST_LOC
+		FROM 		
+			BMS_VHC_MST VHC
 		    LEFT JOIN BMS_DVC_INFO DVC ON VHC.VHC_ID = DVC.VHC_ID
 		    LEFT JOIN BMS_DL_CD_INFO DL ON DVC.DVC_KIND = DL.DL_CD AND DL.CO_CD = 'DVC_KIND'
 		    LEFT JOIN BMS_ED_RSV_RST_INFO RST ON DVC.MNG_ID = RST.MNG_ID AND COMPLETE_YN = 'N'
 			LEFT JOIN BMS_ED_RSV_INFO RSV ON RST.RSV_ID = RSV.RSV_ID
 		WHERE
-					VHC.USE_YN = 'Y'
-					AND
-					DVC.USE_YN = 'Y'
-					AND DVC.DVC_KIND = 'DK004'
-					OR	DVC.DVC_KIND = 'DK010'
-					AND DVC.MNG_ID IS NOT NULL
-
-		<if test="CONTENT != null and CONTENT != ''">
-		AND			VHC.VHC_NO LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
+			VHC.USE_YN = 'Y'
+			AND DVC.USE_YN = 'Y'
+			AND (DVC.DVC_KIND = 'DK004'
+			OR	DVC.DVC_KIND = 'DK010')
+			AND DVC.MNG_ID IS NOT NULL
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+				AND	VHC.VHC_NO LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
 		ORDER BY 	VHC.VHC_ID, DVC.MNG_ID
 						
 	</select>
@@ -136,8 +135,9 @@
 			LEFT JOIN  	BMS_ED_RSV_INFO RSV
 			ON			RST.RSV_ID = RSV.RSV_ID
 		WHERE		VHC.VHC_ID = #{VHC_ID}
-		AND 		DVC.DVC_KIND = 'DK004'
-		OR			DVC.DVC_KIND = 'DK010'
+		AND  		
+		(DVC.DVC_KIND = 'DK004'
+		OR			DVC.DVC_KIND = 'DK010') 
 			<if test="RSV_STATE == '예약중'">
 				AND RST.COMPLETE_YN = 'N'
 			</if>

@@ -41,24 +41,25 @@
 						,VHC.VHC_NO
 						,RSV.RSV_ID
 						,DVC.MNG_ID
-						,DATE_FORMAT(RSV_DT, '%Y-%m-%d') RSV_DT
+						,IF(RST.COMPLETE_YN = 'N' OR RST.PROCE_RST != 'PR008', DATE_FORMAT(RSV.RSV_DT, '%Y-%m-%d'), NULL) RSV_DT
 						,RSV.ORGA_ID
 						,DVC.DVC_KIND
 						,DVC.INST_LOC
 						,DVC.DVC_ID
 						,IF(RST.COMPLETE_YN = 'N', '예약중', NULL) RSV_STATE
-						
 		FROM BMS_DVC_INFO DVC 
 			LEFT JOIN BMS_VHC_MST VHC 
 			ON DVC.VHC_ID = VHC.VHC_ID
 			LEFT JOIN BMS_VDO_RSV_INFO RSV 
 			ON DVC.MNG_ID = RSV.MNG_ID
 			LEFT JOIN BMS_VDO_RSV_RST_INFO RST 
-			ON RST.MNG_ID = DVC.MNG_ID 
-		
-		WHERE			DVC_KIND = 'DK003'
-		OR				DVC_KIND = 'DK010'
-		ORDER BY 		DVC.VHC_ID			
+			ON DVC.MNG_ID = RST.MNG_ID
+		WHERE	(DVC.DVC_KIND = 'DK003' OR	DVC.DVC_KIND = 'DK010')
+		AND DVC.USE_YN = 'Y'
+		AND VHC.USE_YN = 'Y'
+		AND DVC.MNG_ID IS NOT NULL
+		GROUP BY DVC.MNG_ID
+		ORDER BY DVC.VHC_ID			
 	</select>
 	
 	<insert id="PI0503G1I0" parameterType="Map">	
@@ -84,11 +85,11 @@
 					#{ORGA_ID},
 					#{UPD_DTM},
 					#{SSN_USER_ID}
-				)
-	</insert>
+				);
+	<!-- </insert>
 	
 	
-	<insert id="PI0503G1I1" parameterType="Map">
+	<insert id="PI0503G1I1" parameterType="Map">-->
 		INSERT INTO
 			BMS_VDO_RSV_RST_INFO(
 				  RSV_ID
@@ -155,7 +156,7 @@
 	</delete> -->
 	
 	
-	<select id="makePlayList" parameterType="String" resultType="Map">
+	<!--  <select id="makePlayList" parameterType="String" resultType="Map">
 		SELECT
 			  IF(VINFO.FILE_TYPE = 'FT001', 'V', 'I') AS VIDEO_TYPE
 			, IF(VINFO.FILE_TYPE = 'FT001', CONCAT(VINFO.VDO_ID, '.mp4'), CONCAT(VINFO.VDO_ID, '.jpg')) AS VIDEO_FILE
@@ -168,7 +169,7 @@
 		WHERE
 			OLIST.ORGA_ID = #{orgaId}
 		ORDER BY OLIST.SN
-	</select>	
+	</select>	-->
 
 
 </mapper>
