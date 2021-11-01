@@ -347,11 +347,12 @@
 						<w2:key id="WAY_DIV" name="상하행구분" dataType="text"></w2:key>
 						<w2:key id="OPER_SN_LIST" name="운행순번목록" dataType="text"></w2:key>
 						<w2:key id="BRT_TARGET_COR_LIST" name="코스목록" dataType="text"></w2:key>
-						<w2:key id="TYPE" name="유형" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
-				<w2:dataMap baseNode="map" id="dma_param_AL0202P0">
-					<w2:keyInfo></w2:keyInfo>
+				<w2:dataMap baseNode="map" id="dma_save">
+					<w2:keyInfo>
+						<w2:key id="TYPE" name="유형" dataType="text"></w2:key>
+					</w2:keyInfo>
 				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
@@ -374,7 +375,9 @@
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0202G1CNT_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission> -->
-			<xf:submission id="sub_AL0202G1S0" ref='data:json,[{"id":"dlt_OPER_ALLOC_PL_ROUT_INFO","action":"modified"},{"id":"dlt_BRT_OPER_ALLOC_PL_COR_INFO","action":"modified"},"dma_sub_search"]' target="data:json,dma_result"
+			
+			<xf:submission id="sub_AL0202G1S0" ref='data:json,[{"id":"dlt_OPER_ALLOC_PL_ROUT_INFO","action":"modified"},{"id":"dlt_BRT_OPER_ALLOC_PL_COR_INFO","action":"modified"}
+													,{"id":"dlt_BRT_OPER_PL_MST","action":"modified"},dma_save]' target="data:json,dma_result"
 				action="/al/AL0202G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중 입니다..."
 				ev:submit="" ev:submitdone="scwin.sub_AL0202G1S0_submitdone" ev:submiterror="">
 			</xf:submission>
@@ -451,7 +454,7 @@
 			}
 		};
 		var mainOptions = {
-			ADD: {disp:"hide"}, DEL:{disp:"hide"}
+			ADD: {disp:"hide"}, DEL:{disp:"hide"}, SAVE : scwin.btn_save_onclick
 		};
 		
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions, mainOptions);
@@ -477,6 +480,19 @@
 
 	scwin.onpageunload = function() {
 
+	};
+
+	scwin.btn_save_onclick = function(){
+		var idx = dlt_OPER_ALLOC_PL_ROUT_INFO.getModifiedData().length;
+		if(idx>0){
+			var yesno_str = "배차편성 상세가 데이터가 저장됩니다. \n 진행하시겠습니까?";
+			
+			com.confirm(yesno_str, function(rtn) {
+				if (rtn) {
+					com.executeSubmission(sub_AL0202G1S0);
+				}
+			});
+		}
 	};
 
 	scwin.sub_AL0202G0R0_submitdone = function(e) {
@@ -1387,8 +1403,10 @@
 				}
 			}
 		}
-		dma_sub_search.TYPE = "ALL";
-		dlt_OPER_ALLOC_PL_ROUT_INFO.modifyAllStatus("I");
+		debugger;
+		dma_save.set("TYPE","ALL")
+		dlt_OPER_ALLOC_PL_ROUT_INFO.modifyAllStatus("C");
+		dlt_BRT_OPER_ALLOC_PL_COR_INFO.modifyAllStatus("C");
 		dlt_BRT_OPER_PL_ROUT_INFO_ASC.modifyAllStatus("R");
 		dlt_BRT_OPER_PL_ROUT_INFO_DESC.modifyAllStatus("R");
 		scwin.setGridExcelInfo(); //엑셀용 화면 및 데이터 구성

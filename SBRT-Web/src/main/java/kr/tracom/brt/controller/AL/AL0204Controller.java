@@ -33,31 +33,10 @@ public class AL0204Controller extends ControllerSupport{
 		return result.getResult();
 	}
 	
-	/*
-	
-	@RequestMapping("/al/AL0203SHI0")
-	public @ResponseBody Map<String, Object> AL0203SHI0() throws Exception {
-		result.setData("dlt_searchitem", al0203Service.AL0203SHI0());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/al/AL0203G1R0")
-	public @ResponseBody Map<String, Object> AL0203G1R0() throws Exception {
-		result.setData("dlt_BRT_OPER_ALLOC_PL_NODE_INFO", al0203Service.AL0203G1R0());
-		result.setData("dlt_BRT_OPER_ALLOC_PL_NODE_CNT", al0203Service.AL0203G1CNT());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/al/AL0203G0P1")
-	public @ResponseBody Map<String, Object> AL0203G0P1() throws Exception {
-		result.setData("dlt_BRT_OPER_ALLOC_PL_NODE_CNT", al0203Service.AL0203G1CNT());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/al/AL0203P0S0")
-	public @ResponseBody Map<String, Object> AL0203P0S0() throws Exception {
-		Map map = al0203Service.AL0203P0S0();
+	@RequestMapping("/al/AL0204G1S0")
+	public @ResponseBody Map<String, Object> AL0203G1S0() throws Exception {
+		Map map = al0204Service.AL0204G1S0();
 		result.setData("dma_result", map);
 		return result.getResultSave();
-	}	*/
+	}	
 }

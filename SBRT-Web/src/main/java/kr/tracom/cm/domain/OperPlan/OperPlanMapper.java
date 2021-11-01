@@ -76,4 +76,7 @@ public interface OperPlanMapper {
 
     //노드 운행계획 생성
 	public int makeOperPl(Map<String, Object> params);
+	
+	public int makeOperPl2(Map<String, Object> params);
+	
 }

@@ -6242,10 +6242,10 @@ com.closeTab = function(mainGrid, subGrid, yesno_str){
 
 com.recurMatchedIndex = function(data, indexs, column, value){
 
-	var retValue;
+	var retValue  = new Array();
 	for (var i = 0; i < indexs.length; i++) {
-		if(eval("data.getRowJSON(index)."+column)==value){
-			retValue.push(data.getMatchedIndex(column, value));
+		if(eval("data.getRowJSON(indexs[i])."+column)==value){
+			retValue.push(indexs[i]);
 		}
 	}
 	return retValue;

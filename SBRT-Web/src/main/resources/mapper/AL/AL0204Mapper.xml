@@ -34,12 +34,15 @@
 	GROUP BY
 		C.ROUT_ID, A.DAY_DIV
 	ORDER BY
-		A.REP_ROUT_ID, A.DAY_DIV, A.WAY_DIV
+		A.REP_ROUT_ID, A.DAY_DIV, A.WAY_DIV, C.ROUT_ID
 </select>
 
 <select id="AL0204G1R0" resultType="Map" parameterType="Map">
 	SELECT
-		A.REP_ROUT_ID
+		A.YEAR
+		,A.MONTH
+		,A.WEEK
+		,A.REP_ROUT_ID
 		,A.DAY_DIV
 		,A.WAY_DIV
 		,A.OPER_SN
@@ -67,7 +70,7 @@
 			AND C.NODE_TYPE = #{NODE_TYPE}
 	</if>
 	WHERE
-		A.DAY_DIV = #{DAY_DIV} AND C.ROUT_ID = #{ROUT_ID} AND A.MONTH = #{MONTH} AND A.WEEK = #{WEEK} AND A.YEAR = #{YEAR}
+		A.YEAR = #{YEAR} AND A.MONTH = #{MONTH} AND A.WEEK = #{WEEK} AND A.DAY_DIV = #{DAY_DIV} AND A.ROUT_ID = #{ROUT_ID} 
 	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 
 			AND A.OPER_SN = #{OPER_SN}
 	</if>
@@ -81,105 +84,19 @@
 			BRT_WEEK_OPER_ALLOC_PL_NODE_INFO A
 			INNER JOIN BRT_MAIN_ROUT_NODE_INFO B
 				ON	 A.ROUT_ID =  B.ROUT_ID AND A.NODE_ID = B.NODE_ID AND A.NODE_SN = B.NODE_SN AND B.NODE_TYPE ='NT002'
-		WHERE  A.DAY_DIV = #{DAY_DIV} AND B.ROUT_ID = #{ROUT_ID}
+		WHERE  A.YEAR = #{YEAR} AND A.MONTH = #{MONTH} AND A.WEEK = #{WEEK} AND A.DAY_DIV = #{DAY_DIV} AND A.ROUT_ID = #{ROUT_ID} 
 		GROUP BY 
 			OPER_SN 
 		ORDER BY 
 			OPER_SN
 </select>
 
-<!--  
 
-
-<select id="AL0203SHI0" resultType="Map">
-	SELECT			REP_ROUT_NM
-				,	ROUT_NM
-	FROM			BMS_ROUT_MST
-</select>
-
-<select id="AL0203G1R0" resultType="Map" parameterType="Map">
-	SELECT
-		A.REP_ROUT_ID
-		,A.DAY_DIV
-		,A.WAY_DIV
-		,A.OPER_SN
-		,A.NODE_ID
-		,A.NODE_SN
-		,A.ALLOC_NO
-		,A.COR_ID
-		,A.NODE_TYPE
-		,A.ARRV_TM
-		,A.DPRT_TM
-		,DATE_FORMAT(A.UPD_DTM, '%Y-%m-%d') UPD_DTM 
-		,B.REP_ROUT_NM
-		,B.WAY_ASC_NM
-		,B.WAY_DESC_NM
-		,C.ROUT_ID
-		,C.NODE_NM
-		,C.ACCRU_LEN
-	FROM
-		BRT_WEEK_OPER_ALLOC_PL_NODE_INFO A 
-		INNER JOIN BMS_REP_ROUT_MST B
-		ON	A.REP_ROUT_ID = B.REP_ROUT_ID 
-		INNER JOIN BMS_ROUT_NODE_CMPSTN C
-		ON	 A.ROUT_ID =  C.ROUT_ID AND A.NODE_ID = C.NODE_ID AND A.NODE_SN = C.NODE_SN
-	<if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">			 
-			AND C.NODE_TYPE = #{NODE_TYPE}
-	</if>
-	WHERE
-		A.DAY_DIV = #{DAY_DIV} AND C.ROUT_ID = #{ROUT_ID} AND A.MONTH = #{MONTH} AND A.WEEK = #{WEEK}
-	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 
-			AND A.OPER_SN = #{OPER_SN}
-	</if>
-	ORDER BY OPER_SN, NODE_SN
-</select>
-
-
-<select id="AL0203G1CNT" resultType="Map" parameterType="Map">
-		SELECT 
-			COUNT(*) CNT
-		FROM 
-			BRT_OPER_ALLOC_PL_NODE_INFO A
-			INNER JOIN BRT_MAIN_ROUT_NODE_INFO B
-				ON	 A.ROUT_ID =  B.ROUT_ID AND A.NODE_ID = B.NODE_ID AND A.NODE_SN = B.NODE_SN AND B.NODE_TYPE ='NT002'
-		WHERE  A.DAY_DIV = #{DAY_DIV} AND B.ROUT_ID = #{ROUT_ID}
-		GROUP BY 
-			OPER_SN 
-		ORDER BY 
-			OPER_SN
-</select>
-
-<insert id="AL0203P0I0" parameterType="Map">
-	INSERT INTO BRT_WEEK_OPER_ALLOC_PL_NODE_INFO(
-		MONTH
-		,WEEK
-		,REP_ROUT_ID
-		,ROUT_ID
-		,COR_ID
-		,OPER_SN
-		,NODE_ID
-		,NODE_SN
-		,ALLOC_NO
-		,NODE_TYPE
-		,DPRT_TM
-		,ARRV_TM
-		,UPD_DTM
-	)VALUES(
-		#{MONTH}
-		,#{WEEK}
-		,#{REP_ROUT_ID}
-		,#{ROUT_ID}
-		,#{COR_ID}
-		,#{OPER_SN}
-		,#{NODE_ID}
-		,#{NODE_SN}
-		,#{ALLOC_NO}
-		,#{NODE_TYPE}
-		,#{DPRT_TM}
-		,#{ARRV_TM}
-		,#{UPD_DTM}
-	)
-</insert>-->
-
+<update id="AL0204G0U0" parameterType="Map">
+	UPDATE BRT_WEEK_OPER_ALLOC_PL_NODE_INFO
+	SET ARRV_TM = #{ARRV_TM}, DPRT_TM = #{DPRT_TM}, UPD_DTM = #{UPD_DTM}
+	WHERE YEAR = #{YEAR} AND WEEK = #{WEEK} AND MONTH = #{MONTH} AND REP_ROUT_ID = #{REP_ROUT_ID} AND DAY_DIV = #{DAY_DIV} AND ROUT_ID = #{ROUT_ID} AND OPER_SN = #{OPER_SN} 
+	AND NODE_ID = #{NODE_ID} AND NODE_SN = #{NODE_SN}   
+</update>
 
 </mapper>
