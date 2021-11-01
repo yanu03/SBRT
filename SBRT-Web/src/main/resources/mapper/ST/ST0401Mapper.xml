@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ <mapper namespace="kr.tracom.brt.domain.ST0401.ST0401Mapper">
+  
+  <select id="ST0401G0R0" resultType="Map">
+		SELECT  		SUM(A.VIOLT_CNT) AS SUM_CNT
+			  		, 	DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+					,	A.REP_ROUT_ID
+					,	A.ROUT_ID
+					,	A.VHC_ID
+					,	A.DRV_ID
+					,	A.VIOLT_TYPE
+					,	A.STAT_H
+					,	A.VIOLT_CNT
+					,	A.JUDG_TYPE
+					,	A.JUDG_CNT
+					,	A.UPD_DTM
+		FROM	  	 	BRT_OPER_VIOLT_STAT A
+
+		<where>
+			<if test="(F_DATE != null and F_DATE != '') and (L_DATE == null or L_DATE == '')">
+				<![CDATA[A.OPER_DT >= #{F_DATE}]]>
+			</if>
+			<if test="(F_DATE == null or F_DATE == '') and L_DATE != null and L_DATE != '' ">
+				<![CDATA[A.OPER_DT <= #{L_DATE}]]>
+			</if>
+			<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
+				A.OPER_DT between #{F_DATE} and #{L_DATE}
+			</if>
+		</where>
+
+		GROUP BY		A.VIOLT_TYPE, A.OPER_DT
+		ORDER BY		A.OPER_DT, A.VIOLT_TYPE
+  </select>
+  	
+  <select id="ST0401G1R0" resultType="Map">
+		SELECT	  		 SUM(A.VIOLT_CNT) AS ALL_SUM_CNT
+					,	 A.VIOLT_TYPE
+							
+			
+		FROM	  		 BRT_OPER_VIOLT_STAT A
+
+		<where>
+			<if test="(F_DATE != null and F_DATE != '') and (L_DATE == null or L_DATE == '')">
+				<![CDATA[ A.OPER_DT >= #{F_DATE}]]>
+			</if>
+			<if test="(F_DATE == null or F_DATE == '') and L_DATE != null and L_DATE != '' ">
+				<![CDATA[ A.OPER_DT <= #{L_DATE}]]>
+			</if>
+			<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
+						  A.OPER_DT between #{F_DATE} and #{L_DATE}
+			</if>
+		</where>	
+		GROUP BY		 A.VIOLT_TYPE
+		ORDER BY		 A.OPER_DT, A.VIOLT_TYPE
+  </select>	
+	
+ </mapper>
