@@ -11,8 +11,18 @@
 				<data xmlns="" />
 			</xf:instance>
 			<w2:dataCollection baseNode="map">
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="ROUT_ID" name="name1" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="name2" dataType="text" defaultValue="ROUT_MODE"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_CUR_OPER_INFO" saveRemovedData="true">
 					<w2:columnInfo>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
+						<w2:column id="ALLOC_NO" name="배차번호" dataType="text"></w2:column>
+						<w2:column id="OPER_SN" name="운행순번" dataType="text"></w2:column>
 						<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
 						<w2:column id="OPER_STS" name="운행상태" dataType="text"></w2:column>
 						<w2:column id="NODE_NM" name="다음노드명" dataType="text"></w2:column>
@@ -30,6 +40,47 @@
 						<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
 						<w2:column id="DSPTCH_CONTS" name="전송 메시지" dataType="text"></w2:column>
 						<w2:column id="SEND_DATE" name="수신시간" dataType="date"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_OPER_EVENT_HIS" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="OPER_DT" name="운행일" dataType="text"></w2:column>
+						<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
+						<w2:column id="DRV_NM" name="운전자명" dataType="text"></w2:column>
+						<w2:column id="EVT_TYPE" name="이벤트유형" dataType="text"></w2:column>
+						<w2:column id="EVT_DATA" name="이벤트값" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
+						<w2:column id="NODE_TYPE" name="노드타입" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
+						<w2:column id="ORGA_NM" name="편성명" dataType="text"></w2:column>
+						<w2:column id="OCR_DTM" name="발생일시" dataType="text"></w2:column>
+						<w2:column id="VHC_ID" name="차량ID" dataType="text"></w2:column>
+						<w2:column id="CUR_SPD" name="현재속도" dataType="text"></w2:column>
+						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
+						<w2:column id="LINK_NM" name="링크명" dataType="text"></w2:column>
+						<w2:column id="OCR_DTM" name="발생시간" dataType="text"></w2:column>
+						<w2:column id="OPER_STS" name="운행상태" dataType="text"></w2:column>
+						<w2:column id="ALLOC_NO" name="배차" dataType="text"></w2:column>
+						<w2:column id="OPER_SN" name="운행순번" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN" saveRemovedData="true"><!-- 맵 노선 그리기용 -->
+					<w2:columnInfo>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
+						<w2:column id="NODE_SN" name="노드순번" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
+						<w2:column id="NODE_TYPE" name="노드유형" dataType="text"></w2:column>
+						<w2:column id="LINK_ID" name="링크ID" dataType="text"></w2:column>
+						<w2:column id="STTN_ID" name="정류소ID" dataType="text"></w2:column>
+						<w2:column id="STTN_NO" name="정류소번호" dataType="text"></w2:column>
+						<w2:column id="CRS_ID" name="교차로ID" dataType="text"></w2:column>
+						<w2:column id="GPS_X" name="경도" dataType="text"></w2:column>
+						<w2:column id="GPS_Y" name="위도" dataType="text"></w2:column>
+						<w2:column id="ROUT_LEN" name="노선거리" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="AREA" name="권역" dataType="text"></w2:column>
+						<w2:column id="MORN_STD" name="집중모니터링기준" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="list" repeatNode="map" id="dma_BRT_INCDNT_CNT" saveRemovedData="true">
@@ -67,6 +118,15 @@
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_brtMainF0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
+			<xf:submission id="sub_brtMainG2R0" ref="" target="data:json,dlt_BRT_OPER_EVENT_HIS" action="/br/brtMainG2" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="scwin.sub_brtMainG2R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_brtMainM1R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN"
+				action="/rout/selectNodeListByRepRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
+				errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_brtMainM1R0_submitdone"
+				ev:submiterror="" abortTrigger="">
+			</xf:submission>
 		</xf:model>
 		.brtMainG1 tbody tr td nobr {
 			word-wrap: break-word;
@@ -91,8 +151,9 @@
 			com.searchGrid(brtMainG0, sub_brtMainG0R0);
 		});
 		
-		$p.executeSubmission(sub_brtMainG1R0);
-		$p.executeSubmission(sub_brtMainF0R0);
+		com.executeSubmission(sub_brtMainG1R0);
+		com.executeSubmission(sub_brtMainF0R0);
+		com.executeSubmission(sub_brtMainG2R0);
 	};
 	
 	scwin.onpageunload = function() {
@@ -109,7 +170,7 @@
 			var operSts = dlt_BRT_CUR_OPER_INFO.getCellData(i, "OPER_STS");
 			
 			if(prvPlceNm != null && prvPlceNm != "" && nodeNm != null && nodeNm != "" && 
-					operSts == "OS001" && operSts == "OS002" && operSts == "OS003"){
+					(operSts == "OS001" || operSts == "OS002" || operSts == "OS003")){
 				dlt_BRT_CUR_OPER_INFO.setCellData(i, "CUR_PLCE_NM", prvPlceNm+"에서 "+nodeNm+"으로 운행중입니다.");
 			}else if(operSts == "OS005"){
 				dlt_BRT_CUR_OPER_INFO.setCellData(i, "CUR_PLCE_NM", "운행 종료되었습니다.");
@@ -119,16 +180,71 @@
 				dlt_BRT_CUR_OPER_INFO.setCellData(i, "CUR_PLCE_NM", "운행 중단되었습니다.");
 			}
 		}
-		//com.setFocusedCell(brtMainG0, "VHC_NO");
+		com.setFocusedCell(brtMainG0, "VHC_NO");
 	};
 	
 	scwin.sub_brtMainG1R0_submitdone = function(e) {
 		//com.setFocusedCell(brtMainG1, "VHC_NO");
 	};
 	
+	
+	scwin.sub_brtMainG2R0_submitdone = function(e) {
+		var eventType = "";
+		var eventMessage = "";
+		for (var i=0; i<dlt_BRT_OPER_EVENT_HIS.getDataLength(); i++) {
+			eventType = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "EVT_TYPE");
+			
+			switch(eventType) {
+				case "ET001":
+				eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "NODE_NM") + "에 도착하였습니다.";
+				break;
+				
+				case "ET002":
+				eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "NODE_NM") + "에서 출발하였습니다.";
+				break;
+				
+				case "ET003":
+				eventMessage = "기점에 도착하였습니다.";
+				break;
+				
+				case "ET004":
+				eventMessage = "기점에서 출발하였습니다.";
+				break;
+				
+				case "ET005":
+				eventMessage = "종점에 도착하였습니다.";
+				break;
+				
+				case "ET006":
+				eventMessage = "종점에서 출발하였습니다.";
+				break;
+				
+				case "ET007":
+				eventMessage = "현재속도 " + dlt_BRT_OPER_EVENT_HIS.getCellData(i, "CUR_SPD")+ "km/h, 평균 "+ 
+								dlt_BRT_OPER_EVENT_HIS.getCellData(i, "EVT_DATA") + "km/h 입니다.";
+				break;
+				
+				case "ET008":
+				//eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "ORGA_NM") + " 음성 방송 출력되었습니다.";
+				eventMessage = "음성 방송 출력되었습니다. " + "("+dlt_BRT_OPER_EVENT_HIS.getCellData(i, "EVT_DATA") +")";
+				break;
+				
+				case "ET009":
+				eventMessage = "버스 문이 열렸습니다.";
+				break;
+				
+				case "ET010":
+				eventMessage = "버스 문이 닫혔습니다.";
+				break;
+			}//end switch
+			
+			dlt_BRT_OPER_EVENT_HIS.setCellData(i, "EVT_DATA", eventMessage);
+		}//end for		
+	};
+	
 	scwin.brtMainG0_onrowindexchange = function(row,oldRow) {
-		routMap.showVehicle("map_brtMain", dlt_BRT_CUR_OPER_INFO.getAllJSON(),  
-							dlt_BRT_CUR_OPER_INFO.getCellData(brtMainG0.getFocusedRowIndex(), "VHC_ID"), brtMainG0);
+		dma_search.set("ROUT_ID", dlt_BRT_CUR_OPER_INFO.getCellData(brtMainG0.getFocusedRowIndex(), "ROUT_ID"));
+		com.executeSubmission(sub_brtMainM1R0);
 	};
 	
 	scwin.sub_brtMainF0R0_submitdone = function(e) {
@@ -139,6 +255,14 @@
 	
 	};
 	
+	scwin.sub_brtMainM1R0_submitdone = function(e) {
+		routMap.showRoute("map_brtMain", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), null, "ONLYLINE");
+		
+		var focusIdx = brtMainG0.getFocusedRowIndex();
+		
+		routMap.showVehicle("map_brtMain", dlt_BRT_CUR_OPER_INFO.getAllJSON(),  
+							dlt_BRT_CUR_OPER_INFO.getCellData(focusIdx, "VHC_ID"), brtMainG0);
+	};
 	
 	]]></script>
 	</head>
@@ -179,38 +303,56 @@
 										userData1="">
 										<w2:header style="" id="header1">
 											<w2:row style="" id="row1">
+												<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column14"
+													value="노선명" blockSelect="false" displayMode="label">
+												</w2:column>
+												<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column14"
+													value="배차번호" blockSelect="false" displayMode="label">
+												</w2:column>
+												<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column14"
+													value="운행순번" blockSelect="false" displayMode="label">
+												</w2:column>
 												<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column14"
 													value="차량번호" blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column10"
+												<!-- <w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column10"
 													value="차량상태" blockSelect="false" displayMode="label">
-												</w2:column>
-												<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column1"
+												</w2:column> -->
+												<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column1"
 													value="운행상태" blockSelect="false" displayMode="label">
 												</w2:column>
 												<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column16"
-													value="현재위치" blockSelect="false" displayMode="label">
+													value="차량정보" blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px" id="column17"
+												<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column17"
 													value="수신시간" blockSelect="false" displayMode="label">
 												</w2:column>
 											</w2:row>
 										</w2:header>
 										<w2:gBody style="" id="gBody1">
 											<w2:row style="" id="row2">
-												<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="VHC_NO"
+												<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_NM"
 													value="" blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="98" inputType="select" style="height:20px" id="BUS_STS"
+												<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ALLOC_NO"
 													value="" blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="98" inputType="select" style="height:20px" id="OPER_STS"
+												<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="OPER_SN"
 													value="" blockSelect="false" displayMode="label">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="154" inputType="text" style="height:20px" id="CUR_PLCE_NM" value=""
+												<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="VHC_NO"
+													value="" blockSelect="false" displayMode="label">
+												</w2:column>
+												<!-- <w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="BUS_STS"
+													value="" blockSelect="false" displayMode="label">
+												</w2:column> -->
+												<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="OPER_STS"
+													value="" blockSelect="false" displayMode="label">
+												</w2:column>
+												<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="CUR_PLCE_NM" value=""
 													blockSelect="false" displayMode="label"  textAlign="left">
 												</w2:column>
-												<w2:column removeBorderStyle="false" width="95" inputType="text" style="height:20px" id="UPD_DTM"
+												<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="UPD_DTM"
 													value="" blockSelect="false" displayMode="label">
 												</w2:column>
 											</w2:row>
@@ -228,17 +370,10 @@
 								</xf:group>
 								<xf:group></xf:group>
 								<xf:group id="" class="" style="">
-									<w2:gridView  alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle=""
-										class="cm_grid right brtMainG1" dataList="data:dlt_BRT_DSPTCH_LOG" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup=""
-										ev:onkeyup="" ev:onrowindexchange="" ev:ontextimageclick="" ev:onviewchange=""
+									<w2:gridView  autoFit="lastColumn" class="cm_grid right brtMainG1" dataList="data:dlt_BRT_DSPTCH_LOG" 
 										fixedColumnWithHidden="true" id="brtMainG1" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true"
-										rowStatusHeaderValue="" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true"
-										visibleRowNum="" wheelRows="" autoFitMinWidth="0" disabledScrollHidden="" editModeEvent="" editModeEventIcon=""
-										checkEditableInputClass="" keyMoveEditMode="" moveKeyEditMode="" moveKeyEditModeAll="" ignoreNonEditableCellTabEnter=""
-										readOnly="true" keepDefaultColumnWidth="" oddEvenColorDisplay="" rowNumWidth=""  summaryAuto=""
-										excludeDeletedRows="" useCtrlOnMultisort="" useFilterList="" useFilterListSync="" sortedIconPosition="" sortable=""
-										sortOrderReverse="" showSortableUseFilter="" focusMode="row" rowNumStatusUniqueId="" rowNumStatusResize="" ev:onbeforecolumnmove=""
-										userData1="">
+										rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true"
+										autoFitMinWidth="0" readOnly="true" focusMode="row" userData1="">
 										<w2:header style="" id="header1">
 											<w2:row style="" id="row1">
 												<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column14"
@@ -271,10 +406,41 @@
 							<xf:group></xf:group>
 							<xf:group id="" class="grdr_20_5_350" style="">
 								<xf:group class="defaultbox" id="" style="">
-									<w2:textbox class="df_tt fl" id="" label="정시성/돌발/위반" style=""></w2:textbox>
+									<w2:textbox class="df_tt fl" id="" label="이벤트" style=""></w2:textbox>
 								</xf:group>
 								<xf:group></xf:group>
-								<xf:group style="" id="" class="brt_cont">
+								<w2:gridView  autoFit="lastColumn" class="cm_grid right brtMainG2" dataList="data:dlt_BRT_OPER_EVENT_HIS" 
+										fixedColumnWithHidden="true" id="brtMainG2" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true"
+										rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true"
+										autoFitMinWidth="0" readOnly="true" focusMode="row" userData1="">
+										<w2:header style="" id="header1">
+											<w2:row style="" id="row1">
+												<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column14"
+													value="차량번호" blockSelect="false" displayMode="label">
+												</w2:column>
+												<w2:column removeBorderStyle="false" width="180" inputType="text" style="height:20px" id="column10"
+													value="이벤트내용" blockSelect="false" displayMode="label">
+												</w2:column>
+												<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column17"
+													value="수신시간" blockSelect="false" displayMode="label">
+												</w2:column>
+											</w2:row>
+										</w2:header>
+										<w2:gBody style="" id="gBody1">
+											<w2:row style="" id="row2">
+												<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="VHC_NO"
+													value="" blockSelect="false" displayMode="label">
+												</w2:column>
+												<w2:column removeBorderStyle="false" width="98" inputType="text" style="height:20px" id="EVT_DATA"
+													value="" blockSelect="false" displayMode="label"  textAlign="left">
+												</w2:column>
+												<w2:column removeBorderStyle="false" width="95" inputType="text" style="height:20px" id="OCR_DTM"
+													value="" blockSelect="false" displayMode="label">
+												</w2:column>
+											</w2:row>
+										</w2:gBody>
+									</w2:gridView>
+								<!-- <xf:group style="" id="" class="brt_cont">
 									<xf:group style="" id="" class="brt_cont_lst" tagname="ul">
 										<xf:group style="" id="" class="punct" tagname="li">
 											<xf:group tagname="ul">
@@ -343,7 +509,7 @@
 											</xf:group>
 										</xf:group>
 									</xf:group>
-								</xf:group>
+								</xf:group> -->
 							</xf:group>
 						</xf:group>
 					</xf:group>

@@ -43,8 +43,9 @@ util.rpad = function (str, padLen, padStr) {
     return str;
 }
 
-util.getCurrentDate = function() {
+util.getCurrentDate = function(day) {
 	var date = new Date();
+	if(com.isEmpty(day)==false)date.setDate(date.getDate()+day);
 	var year = date.getFullYear().toString();
 	
 	var month = date.getMonth() + 1;
@@ -111,4 +112,18 @@ util.datePlus2 = function(stTm, edTmSec){
 	var stTmSec = util.timeToSecond(stTm);
 	var result = edTmSec + stTmSec;
 	return result;
+}
+
+util.getCurrentDate2 = function(day){
+	var date = new Date();
+	if(com.isEmpty(day)==false)date.setDate(date.getDate()+day);
+	var year = date.getFullYear().toString();
+
+	var month = date.getMonth() + 1;
+	month = month < 10 ? '0' + month.toString() : month.toString();
+
+	var day = date.getDate();
+	day = day < 10 ? '0' + day.toString() : day.toString();
+
+	return year + month + day;
 }

@@ -26,9 +26,49 @@
 			,A.REP_ROUT_ID
 			,A.ROUT_ID
 			,CONCAT(A.STAT_H, '시') AS STAT_H
-			,A.AVRG_SPD
-			,A.MAX_SPD
-			,A.MIN_SPD
+			,AVG(AVRG_SPD) AS AVRG_SPD
+			,MAX_SPD
+			,MIN_SPD
+			,B.ROUT_NM
+		FROM
+			BRT_ROUT_AVER_OPER_SP_STAT A
+			LEFT JOIN BMS_ROUT_MST B
+			ON A.ROUT_ID = B.ROUT_ID
+		WHERE
+			A.ROUT_ID IN
+		<foreach collection="ROUT_ID" item="item" index="index"  open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+			<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
+				AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') BETWEEN #{F_DATE} AND #{L_DATE}
+			</if>
+			<if test="TYPE == 'OPER_SN'">
+				GROUP BY
+					A.ROUT_ID, A.OPER_SN
+			</if>
+			<if test="TYPE == 'ALLOC_NO'">
+				GROUP BY
+					A.ROUT_ID, A.ALLOC_NO
+			</if>
+			<if test="TYPE == 'REP_ROUT_ID'">
+				GROUP BY
+					A.REP_ROUT_ID
+			</if>
+		GROUP BY
+			OPER_DT, ROUT_ID, A.STAT_H
+		ORDER BY
+			OPER_DT, ROUT_ID, A.STAT_H
+  </select>
+  
+ <!--   <select id="ST0200G1R0" resultType="Map">
+  		SELECT
+  			DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+			,A.REP_ROUT_ID
+			,A.ROUT_ID
+			,CONCAT(A.STAT_H, '시') AS STAT_H
+			,AVG(AVRG_SPD) AS AVRG_SPD
+			,MAX(MAX_SPD) AS MAX_SPD
+			,MIN(MIN_SPD) AS MIN_SPD
 			,B.ROUT_NM
 		FROM
 			BRT_ROUT_AVER_OPER_SP_STAT A
@@ -46,187 +86,29 @@
 				<![CDATA[AND A.OPER_DT <= #{L_DATE}]]>
 			</if>
 			<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
-				AND A.OPER_DT between #{F_DATE} and #{L_DATE}
+				AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') BETWEEN #{F_DATE} AND #{L_DATE}
 			</if>
-			<if test="CONTENT == 'ROUT_ID'">
+			<if test="TYPE == 'ROUT_ID'">
 				GROUP BY
 					A.ROUT_ID
 			</if>
-			<if test="CONTENT == 'REP_ROUT_ID'">
+			<if test="TYPE == 'OPER_SN'">
+				GROUP BY
+					A.ROUT_ID, A.OPER_SN
+			</if>
+			<if test="TYPE == 'ALLOC_NO'">
+				GROUP BY
+					A.ROUT_ID, A.ALLOC_NO
+			</if>
+			<if test="TYPE == 'REP_ROUT_ID'">
 				GROUP BY
 					A.REP_ROUT_ID
 			</if>
 		ORDER BY
 			OPER_DT, A.ROUT_ID, A.STAT_H
-  </select>
+  </select>-->
   
-	<!--<select id="PI0503G0R0" resultType="Map">
-		SELECT  	 A.ORGA_ID
-					,A.ORGA_NM
-					,A.REMARK
-					,COUNT(A.ORGA_ID) VIDEO_COUNT
-					,SUM(C.PLAY_TM) TOTAL_TIME
-				
-		FROM 	 	 BMS_VDO_ORGA_INFO A
-		LEFT JOIN 	 BMS_VDO_ORGA_LIST B
-		ON		 	 A.ORGA_ID = B.ORGA_ID	
-		LEFT JOIN	 BMS_VDO_INFO C
-		ON   	     B.VDO_ID = C.VDO_ID
-		
-		
-
-		<where>
-			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-				AND A.ORGA_ID LIKE CONCAT('%',#{CONTENT},'%') || ORGA_NM LIKE CONCAT('%',#{CONTENT},'%') 
-			</if>
-			<if test="TYPE == 'ORGA_ID'">
-				AND A.ORGA_ID LIKE CONCAT('%',#{CONTENT},'%')
-			</if>
-			<if test="TYPE == 'ORGA_NM'">
-				AND A.ORGA_NM LIKE CONCAT('%',#{CONTENT},'%') 
-			</if>
-		</where>
-		GROUP BY A.ORGA_ID
-	</select>	
-
-	<select id="PI0503SHI0" resultType="Map">
-		SELECT  ORGA_ID, ORGA_NM
-		FROM BMS_VDO_ORGA_INFO
-	</select>
-
-	<select id="PI0503G1R0" resultType="Map">
-		SELECT			DVC.VHC_ID
-						,VHC.VHC_NO
-						,RSV.RSV_ID
-						,DVC.MNG_ID
-						,DATE_FORMAT(RSV_DT, '%Y-%m-%d') RSV_DT
-						,RSV.ORGA_ID
-						,DVC.DVC_KIND
-						,DVC.INST_LOC
-						,DVC.DVC_ID
-						,IF(RST.COMPLETE_YN = 'N', '예약중', NULL) RSV_STATE
-						
-		FROM BMS_DVC_INFO DVC 
-			LEFT JOIN BMS_VHC_MST VHC 
-			ON DVC.VHC_ID = VHC.VHC_ID
-			LEFT JOIN BMS_VDO_RSV_INFO RSV 
-			ON DVC.MNG_ID = RSV.MNG_ID
-			LEFT JOIN BMS_VDO_RSV_RST_INFO RST 
-			ON RST.MNG_ID = DVC.MNG_ID 
-		
-		WHERE			DVC_KIND = 'DK003'
-		OR				DVC_KIND = 'DK010'
-		ORDER BY 		DVC.VHC_ID			
-	</select>
 	
-	<insert id="PI0503G1I0" parameterType="Map">	
-	
-		<selectKey keyProperty="RSV_ID" resultType="String" order="BEFORE">
-    		SELECT CONCAT('VR', LPAD(NEXTVAL(SEQ_BMS_VDO_RSV_INFO_0), 8, '0')) AS RSV_ID
-    	</selectKey>
-	
-		INSERT INTO BMS_VDO_RSV_INFO
-				(
-					RSV_ID,
-					MNG_ID,
-					RSV_DT,
-					ORGA_ID,
-					UPD_DTM,
-					UPD_ID
-				)	
-				   
-		VALUES (
-					#{RSV_ID},
-					#{MNG_ID},
-					STR_TO_DATE(#{RSV_DT}, '%Y%m%d'),
-					#{ORGA_ID},
-					#{UPD_DTM},
-					#{SSN_USER_ID}
-				)
-	</insert>
-	
-	
-	<insert id="PI0503G1I1" parameterType="Map">
-		INSERT INTO
-			BMS_VDO_RSV_RST_INFO(
-				  RSV_ID
-				, MNG_ID
-				, COMPLETE_YN
-				)
-			VALUES(
-				#{RSV_ID}
-				, #{MNG_ID}
-				, 'N'
-			)
-	</insert>	
-
-	<select id="PI0503G2R0" resultType="Map">
-		SELECT 		VHC.VHC_ID
-					,VHC.VHC_NO
-					,DVC.MNG_ID
-					,RST.PROCE_RST
-					,DATE_FORMAT(RST.SEND_DTM, '%Y-%m-%d') SEND_DTM
-					,ORG.ORG_NM		
-					,DVC.DVC_KIND
-					,DVC.INST_LOC
-					,DATE_FORMAT(RSV.RSV_DT, '%Y-%m-%d') RSV_DT
-					,IF(RST.COMPLETE_YN = 'N', '예약중', '예약종료') RSV_STATE					
-		FROM	  		BMS_VDO_RSV_RST_INFO RST
-			INNER JOIN	BMS_VDO_RSV_INFO RSV
-			ON			RST.RSV_ID = RSV.RSV_ID
-			LEFT JOIN 	BMS_DVC_INFO DVC
-			ON		  	RST.MNG_ID = DVC.MNG_ID
-			LEFT JOIN	BMS_VHC_MST VHC
-			ON			VHC.VHC_ID = DVC.VHC_ID			
-			LEFT JOIN	BMS_ORG_MST ORG
-			ON			DVC.ORG_ID = ORG.ORG_ID AND ORG.ORG_DIV = 'OD008'
-			LEFT JOIN	BMS_DL_CD_INFO DL
-			ON			DVC.DVC_KIND = DL.DL_CD AND DL.CO_CD = 'DVC_KIND'
-			
-		WHERE		VHC.VHC_ID = #{VHC_ID}
-			<if test="RSV_STATE == '예약중'">
-				AND RST.COMPLETE_YN = 'N'
-			</if>
-			<if test="RSV_STATE == '예약종료'">
-				AND RST.COMPLETE_YN = 'Y'
-			</if>			
-			<if test="RSV_DT != null">
-				AND DATE_FORMAT(RSV.RSV_DT, '%Y%m') = ${RSV_DT}
-			</if>			
-		ORDER BY	RSV.RSV_DT
-	</select>
-
-	<update id="PI0503G1U0" parameterType="Map">
-		UPDATE		BMS_VDO_RSV_RST_INFO
-		SET			
-					PROCE_RST = 'PR008'
-				,	SEND_DTM = NOW()
-				,	COMPLETE_YN = 'Y'
-		WHERE		
-					RSV_ID = #{RSV_ID}
-	</update>
-	
- 	<delete id="PI0503G1D0" parameterType="Map">
-		delete
-		from BMS_VDO_RSV_INFO
-		where RSV_ID = #{RSV_ID}
-	</delete> 
-	
-	
-	<select id="makePlayList" parameterType="String" resultType="Map">
-		SELECT
-			  IF(VINFO.FILE_TYPE = 'FT001', 'V', 'I') AS VIDEO_TYPE
-			, IF(VINFO.FILE_TYPE = 'FT001', CONCAT(VINFO.VDO_ID, '.mp4'), CONCAT(VINFO.VDO_ID, '.jpg')) AS VIDEO_FILE
-			, DATE_FORMAT(VINFO.PLAY_ST_DT, '%Y-%m-%d') AS PLAY_ST_DT
-			, DATE_FORMAT(VINFO.PLAY_ED_DT, '%Y-%m-%d') AS PLAY_ED_DT
-			, VINFO.IMG_PLAY_TM AS RUN_TIME
-		FROM
-			BMS_VDO_ORGA_LIST OLIST
-			LEFT JOIN BMS_VDO_INFO VINFO ON OLIST.VDO_ID = VINFO.VDO_ID
-		WHERE
-			OLIST.ORGA_ID = #{orgaId}
-		ORDER BY OLIST.SN
-	</select>	-->
 
 
 </mapper>

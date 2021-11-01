@@ -14,13 +14,6 @@ public interface AL0204Mapper {
 	
 	public List AL0204G1CNT(Map param);
 	
-	/*
-	
-	public List AL0203SHI0();
-	
-	public List AL0203G1R0(Map param);
-	
-	public List AL0203G1CNT(Map param);
-	
-	public int AL0203P0I0(Map param);*/
+	public int AL0204G0U0(Map param);
+
 }

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  <mapper namespace="kr.tracom.brt.domain.ST0201.ST0201Mapper">
+  
+   <select id="ST0201G0R0" resultType="Map">
+		SELECT  ROUT_ID
+				,REP_ROUT_ID
+				,REP_ROUT_NM
+				,ROUT_NM
+				,ROUT_LEN
+		FROM 
+			BMS_ROUT_MST
+		WHERE 
+			DEL_YN != 'Y'
+			<if test="CONTENT != NULL">
+				AND REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		ORDER BY REP_ROUT_ID, ROUT_ID
+	</select>
+	
+	<select id="ST0201SHI1" resultType="Map">
+		SELECT
+			ROUT_ID
+			,NODE_ID
+			,NODE_SN
+			,NODE_NM
+		FROM
+			BMS_ROUT_NODE_CMPSTN 
+		WHERE
+			ROUT_ID = #{ROUT_ID} AND NODE_TYPE = 'NT002'
+		ORDER BY
+			NODE_SN
+	</select>
+  
+	<select id="ST0201G1R0" resultType="Map" parameterType="Map">
+		SELECT
+			A.LINK_SN AS ST_LINK_SN
+		FROM
+			BRT_ROUT_LINK_STAT A
+			INNER JOIN BMS_LINK_MST B ON A.LINK_ID = B.LINK_ID
+			AND A.ROUT_ID = #{ROUT_ID} AND B.ST_NODE_ID = #{ST_NODE_ID}
+		GROUP BY 
+			A.LINK_SN
+	</select>
+	
+	<select id="ST0201G1R1" resultType="Map" parameterType="Map">
+		SELECT
+			A.LINK_SN AS ED_LINK_SN
+		FROM
+			BRT_ROUT_LINK_STAT A
+			INNER JOIN BMS_LINK_MST B ON A.LINK_ID = B.LINK_ID
+			AND A.ROUT_ID = #{ROUT_ID} AND B.ED_NODE_ID = #{ED_NODE_ID}
+		GROUP BY 
+			A.LINK_SN
+	</select>
+	
+	<select id="ST0201G2R0" resultType="Map" parameterType="Map">
+		SELECT
+			DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+			,A.REP_ROUT_ID
+			,A.ROUT_ID
+			,A.LINK_ID
+			,CONCAT(A.STAT_H, '시') AS STAT_H
+			,A.LINK_SN
+			,AVG(A.LINK_AVRG_SPD) AS LINK_AVRG_SPD
+			,A.LINK_MAX_SPD
+			,A.LINK_MIN_SPD
+			,DATE_FORMAT(A.UPD_DTM, '%Y-%m-%d') UPD_DTM
+		FROM
+			BRT_ROUT_LINK_STAT A 
+<![CDATA[WHERE A.ROUT_ID = #{ROUT_ID} AND
+			A.LINK_SN >= #{ST_LINK_SN} AND A.LINK_SN <= #{ED_LINK_SN}
+    		AND	A.OPER_DT BETWEEN #{F_DATE} AND #{L_DATE}]]>
+    	GROUP BY ROUT_ID, STAT_H
+	</select>
+   <!--
+  <select id="ST0200G1R0" resultType="Map">
+  		SELECT
+  			DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+			,A.REP_ROUT_ID
+			,A.ROUT_ID
+			,CONCAT(A.STAT_H, '시') AS STAT_H
+			,A.AVRG_SPD
+			,A.MAX_SPD
+			,A.MIN_SPD
+			,B.ROUT_NM
+		FROM
+			BRT_ROUT_AVER_OPER_SP_STAT A
+			LEFT JOIN BMS_ROUT_MST B
+			ON A.ROUT_ID = B.ROUT_ID
+		WHERE
+			A.ROUT_ID IN
+		<foreach collection="ROUT_ID" item="item" index="index"  open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+			<if test="(F_DATE != null and F_DATE != '') and (L_DATE == null or L_DATE == '')">
+				<![CDATA[AND A.OPER_DT >= #{F_DATE}]]>
+			</if>
+			<if test="(F_DATE == null or F_DATE == '') and L_DATE != null and L_DATE != '' ">
+				<![CDATA[AND A.OPER_DT <= #{L_DATE}]]>
+			</if>
+			<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
+				AND A.OPER_DT between #{F_DATE} and #{L_DATE}
+			</if>
+			<if test="CONTENT == 'ROUT_ID'">
+				GROUP BY
+					A.ROUT_ID
+			</if>
+			<if test="CONTENT == 'REP_ROUT_ID'">
+				GROUP BY
+					A.REP_ROUT_ID
+			</if>
+		ORDER BY
+			OPER_DT, A.ROUT_ID, A.STAT_H
+  </select>-->
+  
+	
+
+
+</mapper>

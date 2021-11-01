@@ -35,6 +35,10 @@ public class MainService extends ServiceSupport {
 		return mainMapper.brtMainG1();
 	}
 	
+	public List<Map> brtMainG2() throws Exception{
+		return mainMapper.brtMainG2();
+	}
+	
 	public Map brtMainF0() throws Exception{
 		return mainMapper.brtMainF0();
 	}
