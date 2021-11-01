@@ -101,7 +101,7 @@ public class ActionRequest {
 	            		timeMin = timeMin.substring(11);
 	            		timeMax = timeMax.substring(11);
 	            		
-	            		List<Map<String, Object>> operPlanList = operPlanService.makeChgOperAllocPlNodeInfo(routId, operDt, operSn, stNodeSn, timeDiff, timeMin, timeMax, true);
+	            		List<Map<String, Object>> operPlanList = operPlanService.makeChgOperAllocPlNodeInfo(busId, routId, operDt, operSn, stNodeId, stNodeSn, timeDiff, timeMin, timeMax, true);
 	            		
             		} else {
             			//변경운행 데이터 오류
@@ -113,7 +113,7 @@ public class ActionRequest {
             		//logger.info("======== 변경운행 생성완료 : {}", operPlanList);
             		AtBrtAction brtRequest = new AtBrtAction();
 
-            		brtRequest.setTimeStamp(new AtTimeStamp(DateUtil.now("yyyyMMddHHmmss")));
+            		brtRequest.setTimeStamp(new AtTimeStamp(DateUtil.now("yyyyMMddHHmmssSSS")));
             		brtRequest.setActionCode(AtBrtAction.changeOperResponse);
             		brtRequest.setData("");
             		brtRequest.setReserved(actionData);

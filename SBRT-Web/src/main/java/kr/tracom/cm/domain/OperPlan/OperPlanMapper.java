@@ -74,4 +74,6 @@ public interface OperPlanMapper {
     
     public List<Map<String, Object>> selectOperAllocRealNode(Map<String, Object> params);
 
+    //노드 운행계획 생성
+	public int makeOperPl(Map<String, Object> params);
 }

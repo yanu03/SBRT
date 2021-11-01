@@ -122,11 +122,19 @@
 		com.setFocusedCell(ST0200G0, "chk");
 		ST0200G0.setCellChecked(ST0200G0.getFocusedRowIndex(), "chk", true);
 		
+
 		var chkJsonData = ST0200G0.getCheckedJSON("chk");
 		var chkCnt = chkJsonData.length;
 		var i = 0;
 		var routId = [];
+
+		com.setFocusedCell(ST0200G0, "REP_ROUT_ID");
 		
+		var date = new Date();
+		var year = date.getFullYear();
+		var month = date.getMonth()+1;
+		var day = date.getDate();
+
 		//체크 가져오기
 		for(i; i<chkCnt; i++){
 			routId.push(chkJsonData[i].ROUT_ID);
@@ -142,7 +150,7 @@
 	};
 	
 	scwin.ST0200G0_oncellclick = function(row,col,colId) {
-		debugger;
+		
 		if (col != "0"){
 		   if(ST0200G0.getCellChecked(row, 'chk')==0){
 		      ST0200G0.setCellChecked(row, 'chk', true);
@@ -250,7 +258,7 @@
 	var chart_ST0200 = null;
 	 
 	scwin.DrawChart = function(chkCnt){
-		debugger;
+		
 		var datasets = new Array();
 		var transData = new Array();
 		var i = 0;

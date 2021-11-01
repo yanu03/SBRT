@@ -26,7 +26,8 @@ public class RoutService extends ServiceSupport {
 	}
 	
 	public List<Map<String, Object>> selectRoutItem() throws Exception {
-		return routMapper.selectRoutItem();
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return routMapper.selectRoutItem(map);
 	}
 	
 	public List<Map<String, Object>> selectNodeListByRouts() throws Exception {

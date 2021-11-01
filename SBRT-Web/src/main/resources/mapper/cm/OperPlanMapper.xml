@@ -240,9 +240,6 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,ARRV_TM
             ,DPRT_TM
             ,UPD_DTM
-            ,TEST
-            ,TEST2
-            ,TEST3
         )
         VALUES
         (
@@ -258,9 +255,6 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,#{ARRV_TM}
             ,#{DPRT_TM}
             ,NOW()
-            ,#{TEST}
-            ,#{TEST2}
-            ,#{TEST3}
         )
         ON DUPLICATE KEY UPDATE
             COR_ID = VALUES(COR_ID)
@@ -269,9 +263,6 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,ARRV_TM = VALUES(ARRV_TM)
             ,DPRT_TM = VALUES(DPRT_TM)
             ,UPD_DTM = VALUES(UPD_DTM)
-            ,TEST = VALUES(TEST)
-            ,TEST2 = VALUES(TEST2)
-            ,TEST3 = VALUES(TEST3);
     </insert>
 
 
@@ -292,9 +283,6 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,ARRV_TM
             ,DPRT_TM
             ,UPD_DTM
-            ,TEST
-            ,TEST2
-            ,TEST3
         )
         VALUES
         <foreach collection="ITEM_LIST" item="item" separator=",">
@@ -312,9 +300,6 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,#{item.ARRV_TM}
             ,#{item.DPRT_TM}
             ,NOW()
-            ,#{item.TEST}
-            ,#{item.TEST2}
-            ,#{item.TEST3}
         )
         </foreach>
     </insert>
@@ -343,11 +328,12 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,ROUT_ID
             ,ALLOC_NO
             ,OPER_SN
-            <!--,VHC_ID
+            ,VHC_ID
             ,VHC_NO
-            ,OCR_LINK_ID
             ,OCR_NODE_ID
             ,OCR_NODE_TYPE
+            <!--,
+            ,OCR_LINK_ID
             ,GPS_X
             ,GPS_Y
             ,TM_X
@@ -363,7 +349,11 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,#{REP_ROUT_ID}
             ,#{ROUT_ID}
             ,#{ALLOC_NO}
-            ,#{OPER_SN}
+            ,#{OPER_SN}            
+            ,#{VHC_ID}
+            ,(SELECT VHC_NO FROM BMS_VHC_MST WHERE VHC_ID = #{VHC_ID})
+            ,#{OCR_NODE_ID}
+            ,(SELECT NODE_TYPE FROM BMS_NODE_MST WHERE NODE_ID = #{OCR_NODE_ID})            
             ,#{OCR_DTM}
             ,#{UPD_DTM}
         )
@@ -633,9 +623,10 @@ FROM BRT_OPER_ALLOC_PL_NODE_INFO A
 	</select>
 
 	<select id="selectCourseDtlList" resultType="Map">
+	SET @ROWNUM = 0;
 	SELECT	A.COR_ID
 			,	A.REST_TM
-			,	A.ROUT_SN
+			,	@ROWNUM:=@ROWNUM+1 AS ROUT_SN
 			,	A.COR_DTL_COLOR
 			,	B.COR_COLOR
 			,	B.COR_NM

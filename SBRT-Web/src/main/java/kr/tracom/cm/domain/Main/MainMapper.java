@@ -19,6 +19,8 @@ public interface MainMapper {
 	
 	public List<Map> brtMainG1();
 	
+	public List<Map> brtMainG2();
+	
 	public Map brtMainF0();
 	
 	public Map brtMainF1();

@@ -5,7 +5,7 @@
 
 <select id="VH0200G0R0" resultType="Map" parameterType="Map">
 SELECT
-	DATE_FORMAT(UPD_DTM, '%Y-%m-%d %H:%i:%s') UPD_DTM 
+	DATE_FORMAT(OPER_DT, '%Y-%m-%d') OPER_DT 
 	,DATE_FORMAT(OCR_DTM, '%Y-%m-%d %H:%i:%s') OCR_DTM 
 	,REP_ROUT_ID
 	,ROUT_ID
@@ -19,15 +19,28 @@ SELECT
 FROM
 	BRT_CUR_CHG_OPER_INFO_HIS
 	<where>
-		<if test="(CONTENT != null and CONTENT != '')">
-			<![CDATA[REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')]]>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT1)">
+				REP_ROUT_ID = #{CONTENT1}
 		</if>
-		<if test="(F_DATE != null and F_DATE != '')">
-			<![CDATA[AND DATE_FORMAT(OCR_DTM, '%Y%m%d') = #{F_DATE}]]>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT2)">
+				AND ROUT_ID = #{CONTENT2}
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT3)">
+				AND VHC_ID LIKE CONCAT('%', #{CONTENT3}, '%')
+		</if>
+		
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(F_DATE) and @kr.tracom.util.CommonUtil@empty(L_DATE)">
+			<![CDATA[AND DATE_FORMAT(OPER_DT, '%Y%m%d') >= #{F_DATE}]]>
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(L_DATE) and @kr.tracom.util.CommonUtil@empty(F_DATE)">
+			<![CDATA[AND DATE_FORMAT(OPER_DT, '%Y%m%d') <= #{L_DATE}]]>
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(F_DATE) and @kr.tracom.util.CommonUtil@notEmpty(L_DATE)">
+			AND DATE_FORMAT(OPER_DT, '%Y%m%d') BETWEEN #{F_DATE} AND #{L_DATE}
 		</if>
 	</where>
 ORDER BY
-	UPD_DTM DESC
+	OPER_DT DESC, OCR_DTM DESC
 </select>
 
 <select id="VH0200G1R0" resultType="Map" parameterType="Map">
