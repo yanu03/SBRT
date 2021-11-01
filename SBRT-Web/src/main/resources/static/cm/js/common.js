@@ -6264,7 +6264,6 @@ com.getMatchedIndex = function(data, keyColumn, keyValue){
 }
 
 com.setFocusedCell = function(grid, focusColumn) {
-	debugger;
 	try{
 		var gridInfo = gcm.GRID_INFO[grid.org_id];
 		if ((typeof gridInfo != "undefined") && (gridInfo!=null)){
@@ -6423,7 +6422,6 @@ com.setKeyGridInfo = function(grid){
   부모 그리드의 row 인덱스 위치가 바뀔때 마다 실행되며 프로그램코드에 해당하는 자식 그리드를 가져온다.
  */
 com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, focusOption, row, oldRow, subNm) {	
-	debugger;
 	var mainData = com.getGridViewDataList(mainGrid);
 	var subData = com.getGridViewDataList(subGrid);
 	

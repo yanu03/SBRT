@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ <mapper namespace="kr.tracom.brt.domain.ST0302.ST0302Mapper">
+  
+  <select id="ST0302G0R0" resultType="Map">
+		SELECT			SUM(A.INCDNT_CNT) AS SUM_CNT
+					, 	DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+					,	REP_ROUT_ID
+					,	ROUT_ID
+					,	VHC_ID
+					,	DRV_ID
+					,	STAT_H
+					,	INCDNT_TYPE
+					,	INCDNT_CNT
+					,	INCDNT_RES_TYPE
+					,	INCDNT_RES_CNT
+					,	UPD_DTM
+
+		FROM	  		BRT_INCDNT_STAT A
+
+
+		<where>
+			<if test="(F_DATE != null and F_DATE != '') and (L_DATE == null or L_DATE == '')">
+				<![CDATA[A.OPER_DT >= #{F_DATE}]]>
+			</if>
+			<if test="(F_DATE == null or F_DATE == '') and L_DATE != null and L_DATE != '' ">
+				<![CDATA[A.OPER_DT <= #{L_DATE}]]>
+			</if>
+			<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
+				A.OPER_DT between #{F_DATE} and #{L_DATE}
+			</if>
+		</where>
+
+		GROUP BY		A.INCDNT_TYPE, A.OPER_DT
+		ORDER BY		A.OPER_DT, INCDNT_TYPE
+  </select>
+  	
+  <select id="ST0302G1R0" resultType="Map">
+		SELECT		    SUM(B.INCDNT_CNT) AS ALL_SUM_CNT
+					,	B.OPER_DT					
+					,	B.INCDNT_TYPE
+							
+			
+		FROM			BRT_INCDNT_STAT B
+
+
+		<where>
+			<if test="(F_DATE != null and F_DATE != '') and (L_DATE == null or L_DATE == '')">
+				<![CDATA[ B.OPER_DT >= #{F_DATE}]]>
+			</if>
+			<if test="(F_DATE == null or F_DATE == '') and L_DATE != null and L_DATE != '' ">
+				<![CDATA[ B.OPER_DT <= #{L_DATE}]]>
+			</if>
+			<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
+						  B.OPER_DT between #{F_DATE} and #{L_DATE}
+			</if>
+		</where>	
+		GROUP BY		B.INCDNT_TYPE
+		ORDER BY		B.OPER_DT, B.INCDNT_TYPE
+  </select>	
+	
+ </mapper>

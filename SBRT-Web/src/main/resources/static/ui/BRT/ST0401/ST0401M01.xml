@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="/cm/css/all.css" type="text/css"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head meta_vertical_guides="" meta_horizontal_guides="">
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_MST" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="chk" name="선택" dataType="text" defaultValue="0"></w2:column>
+						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="name2" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="name3" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="F_DATE" name="name1" dataType="text"></w2:key>
+						<w2:key id="L_DATE" name="name2" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+
+				<w2:dataMap baseNode="map" id="dma_sub_search">
+					<w2:keyInfo>
+						<w2:key id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:key>
+						<w2:key id="ROUT_ID" name="노선아이디" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="F_DATE" name="name3" dataType="text"></w2:key>
+						<w2:key id="L_DATE" name="name3" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_OPER_VIOLT_STAT" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="OPER_DT" name="운행일" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
+						<w2:column id="VHC_ID" name="차량아이디" dataType="text"></w2:column>
+						<w2:column id="DRV_ID" name="운전자아이디" dataType="text"></w2:column>
+						<w2:column id="VIOLT_TYPE" name="위반유형" dataType="text"></w2:column>
+						<w2:column id="STAT_H" name="통계시간" dataType="text"></w2:column>
+						<w2:column id="VIOLT_CNT" name="위반건수" dataType="text"></w2:column>
+						<w2:column id="JUDG_TYPE" name="위반조치유형" dataType="text"></w2:column>
+						<w2:column id="JUDG_CNT" name="위반조치건수" dataType="text"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="text"></w2:column>
+						<w2:column id="SUM_CNT" name="총계" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_OPER_VIOLT_STAT2" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="ALL_SUM_CNT" name="사고별총계" dataType="text"></w2:column>
+						<w2:column id="VIOLT_TYPE" name="name2" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_ST0401G0R0" ref="data:json,dma_search" target="data:json,dlt_BRT_OPER_VIOLT_STAT" action="/st/ST0401G0R0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0401G0R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_ST0401G1R0" ref="data:json,dma_search" target="data:json,dlt_BRT_OPER_VIOLT_STAT2" action="/st/ST0401G1R0" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_ST0401G1R0_submitdone"
+				ev:submiterror="" abortTrigger="">
+			</xf:submission>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[ 
+	scwin.onpageload = function() {
+		var autoOptions = {
+			Main : { grid : ST0401G0, srchSbm : sub_ST0401G0R0, srchGrp : pgm_header}
+		 };
+		 				
+		var mainOptions = {
+			SEARCH:scwin.btn_search,
+			CNL:{}
+		};		 
+		
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions, mainOptions);
+		
+		/*var subOptions2 = {
+			SEARCH:[{cbFnc:scwin.openPopUpChart,nm:"노선별 비교 그래프 보기"}
+			]
+		}; 
+		
+		com.setSubBtn2(wfm_subBtn2, autoOptions, subOptions2);*/
+		
+		var date = new Date();
+		var year = date.getFullYear().toString();
+		var month = (date.getMonth()+1).toString();
+		var day = date.getDate().toString();
+		
+		var today = year+month+day;
+		var firstday = year+month+"01";
+		F_DATE.setValue(firstday);
+		L_DATE.setValue(today);		
+		
+		com.executeSubmission(sub_ST0401G0R0);
+		
+	
+	};
+	
+	var chart_ST0401 = null;
+	var chart_ST0401_2 = null;	
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	scwin.getRandomColor = function(_isAlpha) {
+		  var r = getRand(0, 255),
+		  g = getRand(0, 255),
+		  b = getRand(0, 255),
+		  a = getRand(0, 10) / 10;
+		
+		  var rgb = _isAlpha ? 'rgba' : 'rgb';
+		  rgb += '(' + r + ',' + g + ',' + b;
+		  rgb += _isAlpha ? ',' + a + ')' : ')';
+		
+		  return rgb;
+		
+		  // Return random number from in to max
+		  function getRand(min, max) {
+		    if (min >= max) return false;
+		    return ~~(Math.random() * (max - min + 1)) + min;
+		  };
+		};
+	
+	
+	var CharData = function(){
+		this.seriesname = {};
+		this.fill = {};
+		this.backgroundColor = {};
+		this.borderColor = {};
+		this.data = [];
+	}
+	
+	scwin.drawChart = function(dataList){
+		var datasets = new Array();
+		var transData = new Array();
+		
+		
+		var map = new Map();
+		var i = 0;
+		var j = 0;
+		var num = 0;
+	
+		var rowCount = dataList.getRowCount();
+		var jsonData = dataList.getAllJSON();
+	
+		var data = new Array();
+		//var color = new Array();
+		var color = ["rgb(226,85,81)","rgb(226,137,85)","rgb(226,207,83)","rgb(174,226,85)","rgb(104,226,85)","rgb(85,85,137)"
+			,"rgb(85,226,207)","rgb(85,174,226)","rgb(85,104,226)","rgb(137,85,226)","rgb(207,85,226)","rgb(226,85,151)"
+		];
+		var xLabel = new Array();
+		
+		for(var i = 0; i < dataList.getDataLength(); i++){
+
+			var label = dataList.getCellData(i,"VIOLT_TYPE");
+			var categoryJson = dataList.getCellData(i,"ALL_SUM_CNT");
+			var labelJson = dataList.getCellData(i,"VIOLT_TYPE");
+			var showType = "";
+			switch(labelJson){
+				case "VL001":
+					showType = "급가속";
+					break;
+				case "VL002":
+					showType = "급감속";
+					break;
+				case "VL003":
+					showType = "과속";
+					break;
+				case "VL004":
+					showType = "무정차통과";
+					break;					
+				case "VL005":
+					showType = "개문주행";
+					break;					
+				case "VL006":
+					showType = "급출발";
+					break;					
+				case "VL007":
+					showType = "노선이탈";
+					break;					
+				case "VL008":
+					showType = "급정지";
+					break;			
+			}			
+		var rgb = scwin.getRandomColor();			
+			xLabel.push(showType);
+			data.push(categoryJson);
+			color.push(rgb);
+			
+		};
+		
+		var charData = new CharData();		
+		//var rgb = scwin.getRandomColor();			
+		charData.data = data;
+		charData.borderColor = color;
+		charData.backgroundColor = color;		
+		charData.label = label;
+		datasets.push(charData);			
+			
+
+		transData = [];
+	
+		var ctx = document.getElementById('chart_ST0401');
+		var ctx2 = document.getElementById('chart_ST0401_2');
+		if(chart_ST0401 != null) {
+			chart_ST0401.destroy();	
+		}
+		if(chart_ST0401_2 != null) {
+			chart_ST0401_2.destroy();	
+		}
+		chart_ST0401 = new Chart(ctx, {
+			    type: 'bar',
+				data: {
+					labels:xLabel,
+					datasets
+				  },
+				options: {
+					tooltips: {
+						enabled: false					
+					},							
+					legend: {
+						display: false						
+					},
+					responsive:false,
+					scales: {
+						yAxes: [{
+								ticks: {
+									beginAtZero: true,
+									userCallback: function(label) {
+										if(Math.floor(label) === label) {
+										return label;	
+										}	
+									}	
+								}
+						}]	
+					}	
+					
+				}  //end options
+			});
+		chart_ST0401_2 = new Chart(ctx2, {
+			    type: 'doughnut',
+				data: {
+					labels:xLabel,
+					datasets
+				  },
+				options: {
+					responsive:false,
+					legend: {
+						position : 'right'						
+					}
+				}  
+			});
+	
+	}
+	
+	scwin.ST0401G0_onrefresh = function(options) {
+		$(".pivotemptycolheader").css({"border-right":"0px", "border-bottom":"0px"});
+		$(".type1.pvtAxisLabel.ui-sortable").css({"border-left":"0px", "border-bottom":"0px"});
+		$(".type5.pvtAxisLabel.ui-sortable").css({"border-top":"0px", "border-right":"0px"});
+		$(".pivotemptyrowheader").css({"border-left":"0px", "border-top":"0px"});
+		var incdntLength = $(".w2editablePivot_contentTable_header_TR").find(".pvtColLabel").length;
+		for (var i=0; i<incdntLength; i++) {
+			var incdntType = $(".w2editablePivot_contentTable_header_TR").find(".pvtColLabel")[i].innerHTML;
+			switch(incdntType.trim()) {
+				case "VL001":
+					showType = "급가속";
+					break;
+				case "VL002":
+					showType = "급감속";
+					break;
+				case "VL003":
+					showType = "과속";
+					break;
+				case "VL004":
+					showType = "무정차통과";
+					break;					
+				case "VL005":
+					showType = "개문주행";
+					break;					
+				case "VL006":
+					showType = "급출발";
+					break;					
+				case "VL007":
+					showType = "노선이탈";
+					break;					
+				case "VL008":
+					showType = "급정지";
+					break;					
+				
+			}
+			$(".w2editablePivot_contentTable_header_TR").find(".pvtColLabel")[i].innerHTML = showType;				
+		}
+		 
+	};
+		
+	scwin.utilNumbers = function(config) {
+	  var cfg = config || {};
+	  var min = cfg.min || 0;
+	  var max = cfg.min || 100;
+	  var from = cfg.from || [];
+	  var count = cfg.count || 8;
+	  var decimals = cfg.decimals || 8;
+	  var continuity = cfg.continuity || 1;
+	  var dfactor = Math.pow(10, decimals) || 0;
+	  var data = [];
+	  var i, value;
+	
+	  for (i = 0; i < count; ++i) {
+	    value = (from[i] || 0) + scwin.rand(min, max);
+	    if (scwin.rand() <= continuity) {
+	      data.push(Math.round(dfactor * value) / dfactor);
+	    } else {
+	      data.push(null);
+	    }
+	  }
+	
+	  return data;
+	}	
+	
+	scwin.rand = function(min, max) {
+	  min = min || 0;
+	  max = max || 0;
+	  var _seed = Date.now();
+	  _seed = (_seed * 9301 + 49297) % 233280;
+	  return min + (_seed / 233280) * (max - min);
+	}	
+
+	scwin.btn_search = function() {
+		com.executeSubmission(sub_ST0401G0R0);
+	}
+	scwin.F_DATE_onviewchange = function(info) {
+		com.executeSubmission(sub_ST0401G0R0);
+	};
+	
+	scwin.sub_ST0401G1R0_submitdone = function(e) {
+		scwin.drawChart(dlt_BRT_OPER_VIOLT_STAT2);		
+	};
+	
+	scwin.sub_ST0401G0R0_submitdone = function(e) {
+		com.executeSubmission(sub_ST0401G1R0);
+	};
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
+			<xf:group id="pgm_navi" class="pgm_navi" style="">
+				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
+			</xf:group>
+			<xf:group id="pgm_header" class="pgm_header" style="">
+				<xf:group id="" style="" class="gr_search">
+					<xf:group id="" style="" class="label">
+						<w2:span id="" class="" label="일시"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false" style="width:120px; margin-right: 10px; margin-top: 3px;" id="F_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate" ref="data:dma_search.F_DATE" ev:onviewchange="scwin.F_DATE_onviewchange">
+						</w2:inputCalendar>
+						<w2:span label="~" style="margin-right: 10px;margin-top: 5px;" id="">
+						</w2:span>
+						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false" style="width: 120px;margin-top: 3px;" id="L_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate" ref="data:dma_search.L_DATE" ev:onviewchange="scwin.L_DATE_onviewchange">
+						</w2:inputCalendar>
+					</xf:group>					
+					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="bottom: 8px;" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group><!-- pgm_header -->
+			<xf:group id="pgm_content" class="pgm_content grdc_870_20_a" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_400_20_a" style="">
+					<canvas id="chart_ST0401" width="870" height="380" style="position: absolute; ">
+					</canvas>
+					<xf:group id="">
+					</xf:group>
+					<!-- <xf:group style="" id="" class="label">
+						<w2:span label="단위 : [돌발건수:건]" style="float: left;margin-right: 3px; margin-top:5px;" id="">
+						</w2:span>
+					</xf:group> -->
+					<xf:group id="" class="" style="">
+						<w2:pivot style="position:absolute;width:870px;height:300px;" dataList="data:dlt_BRT_OPER_VIOLT_STAT" vals="SUM_CNT" rows="OPER_DT" cols="VIOLT_TYPE" defaultAggregator="Sum" valuesAxis="col" id="ST0401G0" renderMode="compact" autoFit="allColumn" grandTotalDisplayType="both" showZero="true" showGrandTotal="true" aggregatorName="Sum" allTotalName="총계" digitsAfterDecimal="0" useNumberFormat="true" scaler="1" grandTotalName="" suffix="건" prefix="" noResultMessageVisible="true" noResultMessage="데이터 없음" ev:onrefresh="scwin.ST0401G0_onrefresh" hiddenHeaderList="">
+							<w2:fieldInfo>
+								<w2:field id="REP_ROUT_ID" name="대표노선아이디">
+								</w2:field>
+								<w2:field id="ROUT_ID" name="노선아이디">
+								</w2:field>
+								<w2:field id="VHC_ID" name="차량아이디">
+								</w2:field>
+								<w2:field id="DRV_ID" name="운전자아이디">
+								</w2:field>
+								<w2:field id="STAT_H" name="통계시간">
+								</w2:field>
+								<w2:field id="VIOLT_TYPE" name="위반유형">
+								</w2:field>
+								<w2:field id="VIOLT_CNT" name="위반건수">
+								</w2:field>
+								<w2:field id="JUDGE_TYPE" name="위반조치유형">
+								</w2:field>
+								<w2:field id="JUDGE_CNT" name="위반조치건수">
+								</w2:field>
+								<w2:field id="UPD_DTM" name="갱신일시">
+								</w2:field>
+								<w2:field id="ROUT_NM" name="노선명">
+								</w2:field>
+								<w2:field id="VHC_NO" name="차량번호">
+								</w2:field>
+								<w2:field id="OPER_DT" name="운행일">
+								</w2:field>
+								<w2:field id="SUM_CNT" name="총계">
+								</w2:field>
+							</w2:fieldInfo>
+					</w2:pivot>
+					</xf:group>
+				</xf:group><!-- pgm_list -->
+				<xf:group id="" class="vertical_line"></xf:group>
+					<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_a" style="">
+						<canvas id="chart_ST0401_2" width="780" height="500" style="">
+						</canvas>				
+					</xf:group>								
+			</xf:group>
+		</xf:group>
+	</body>
+</html>
