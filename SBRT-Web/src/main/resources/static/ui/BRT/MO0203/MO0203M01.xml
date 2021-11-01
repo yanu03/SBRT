@@ -43,7 +43,7 @@
 						<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_routItem" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
@@ -74,13 +74,13 @@
 						<w2:row></w2:row>
 					</w2:data>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem2" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_routItem2" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="ORG_ID" name="기관ID" dataType="text"></w2:column>
 						<w2:column id="ORG_NM" name="기관명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem3" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_routItem3" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="CLSFCTN_ID" name="분류ID" dataType="text"></w2:column>
 						<w2:column id="CLSFCTN_NM" name="분류명" dataType="text"></w2:column>
@@ -115,15 +115,15 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_MO0203G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0203SHI0" ref="" target="data:json,dlt_searchitem" action="/rout/selectRoutItem" method="post"
+			<xf:submission id="sub_MO0203SHI0" ref="" target="data:json,dlt_routItem" action="/rout/selectRoutItem" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_MO0203SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0203SHI1" ref="" target="data:json,dlt_searchitem2" action="/mo/MO0203SHI1" method="post"
+			<xf:submission id="sub_MO0203SHI1" ref="" target="data:json,dlt_routItem2" action="/mo/MO0203SHI1" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0203SHI2" ref="" target="data:json,dlt_searchitem3" action="/mo/MO0203SHI2" method="post"
+			<xf:submission id="sub_MO0203SHI2" ref="" target="data:json,dlt_routItem3" action="/mo/MO0203SHI2" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -461,7 +461,7 @@
 							ev:onviewchange="scwin.TYPE_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE" optionOrder="false"
 							ref="data:dma_search.CONTENT1" class="search_type_100" style="" submenuSize="auto" textAlign="left">
 							<xf:choices>
-								<xf:itemset nodeset="data:dlt_searchitem">
+								<xf:itemset nodeset="data:dlt_routItem">
 									<xf:label ref="ROUT_NM"></xf:label>
 									<xf:value ref="ROUT_ID"></xf:value>
 								</xf:itemset>
@@ -470,10 +470,10 @@
 						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT2" placeholder="노드ID 또는 노드명"></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
 							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
-							id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT1" search="start" selectedData=""
+							id="autoChoiceBox" interactionMode="" noResult="" ref="data:dma_search.CONTENT1" search="start" selectedData=""
 							class="search_auto" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
 							<w2:choices>
-								<w2:itemset nodeset="data:dlt_searchitem">
+								<w2:itemset nodeset="data:dlt_routItem">
 									<w2:label ref="ROUT_NM"></w2:label>
 									<w2:value ref="ROUT_ID"></w2:value>
 								</w2:itemset>
@@ -579,13 +579,13 @@
 								<xf:group tagname="th" style="" class="w2tb_th">표준정류소ID</xf:group>
 								<xf:group tagname="td" style="" class="w2tb_td">
 									<xf:input adjustMaxLength="false" id="" style="width: 100px;height: 21px;"
-										ref="data:dlt_BMS_NODE_MST.MOCK_NODE_ID" maxlength="10" readOnly="true">
+										ref="data:dlt_BMS_NODE_MST.MOCK_NODE_ID" maxlength="10" readOnly="">
 									</xf:input>
 								</xf:group>
 								<xf:group style="" class="w2tb_th" tagname="th">영문정류소명</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
 									<xf:input adjustMaxLength="false" id="" style="width: 110px;height: 21px;"
-										ref="data:dlt_BMS_NODE_MST.NODE_ENM" maxlength="10" readOnly="true">
+										ref="data:dlt_BMS_NODE_MST.NODE_ENM" maxlength="20" readOnly="">
 									</xf:input>
 								</xf:group>
 							</xf:group>
@@ -616,7 +616,7 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:textarea id="DETAILS" style="width: 100%;height: 100%;" ref="data:dlt_BRT_OPER_VIOLT_HIS.JUDG_DESC"
-										maxlength="2000" readOnly="true">
+										maxlength="2000" readOnly="">
 									</xf:textarea>
 								</xf:group>
 							</xf:group>
@@ -648,7 +648,7 @@
 					<w2:span label="정류소명" style="color: white;font-size: 20px;text-align: center;" id=""
 						ref="data:dlt_BMS_NODE_MST.NODE_NM">
 					</w2:span>
-					<w2:span label="sample" style="color: white;font-size: 14px;text-align: center;" id=""
+					<w2:span label="DAEPYUNGDONG" style="color: white;font-size: 14px;text-align: center;" id=""
 						ref="">
 					</w2:span>
 					<w2:span label="NODE_ID" style="color: white;font-size: 14px;text-align: center;" id=""

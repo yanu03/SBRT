@@ -2222,8 +2222,6 @@ com._openPopup = function(url, opt, data) {
 	$p.openPopup(url, options);
 };
 
-
-
 /**
  * 그룹안에 포함된 컴포넌트의 입력 값에 대한 유효성을 검사한다.
  * 컴포넌트 속성 유효성 검사를 수행하고, valInfoArr 유효성 검사 옵션에 대해서 유효성 검사를 수행한다.
@@ -4439,7 +4437,6 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 						}
 					}
 					else if( type == gcm.DISP_TYPE.DUAL_GRID2){ //듀얼 그리드 에서 서브그리드만 저장
-						
 						if(i == gcm.BTN.SEARCH.nm){
 							item.cbFnc = function(){
 								var sub = autoOpt.Sub1;
@@ -5439,7 +5436,9 @@ com.searchDualGrid = function(mainGrid, subGrid, form, searchSbmObj,mainSaveSbmO
 	
 	
 	var modifiedMainCnt = mainGrid.getModifiedIndex().length;
-	var modifiedSubCnt = subGrid.getModifiedIndex().length;
+	var modifiedSubCnt = 0;
+	if((typeof subGrid.getModifiedIndex !== "undefined")&&(subGrid.getModifiedIndex !== null))
+		modifiedSubCnt = subGrid.getModifiedIndex().length;
 	
 	//저장하지 않고 조회할 경우
 	if ((modifiedMainCnt > 0) || (modifiedSubCnt > 0)) {
@@ -5633,6 +5632,8 @@ com.allVisibleGrid = function(grid){
 
 com.delUndoGrid = function(grid){
 	var data = com.getGridViewDataList(grid);
+	if((typeof data == "undefined")||(data == null))return;
+	
 	var deletedIdx = data.getDeletedIndex();
 	
 	if((deletedIdx.length!=0)&&(deletedIdx.length == data.getTotalRow())){

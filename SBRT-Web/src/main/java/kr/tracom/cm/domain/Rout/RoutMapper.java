@@ -15,7 +15,7 @@ public interface RoutMapper {
 	public int updateMainRoutNodeToAnotherRoute(Map param); //BRT_MAIN_ROUT_NODE_INFO에서 다른 route id의 정류소 위치 정보 갱신
 	public List<Map<String, Object>> selectRoutList(Map param);
 	public List<Map<String, Object>> selectRoutListByRepRout(Map param);
-	public List<Map<String, Object>> selectRoutItem();
+	public List<Map<String, Object>> selectRoutItem(Map param);
 	public List<Map<String, Object>> selectNodeListByRouts(Map param);
 	public List<Map<String, Object>> selectNodeListByRout(Map param);
 	public List<Map<String, Object>> selectNodeListByRepRout(Map param);

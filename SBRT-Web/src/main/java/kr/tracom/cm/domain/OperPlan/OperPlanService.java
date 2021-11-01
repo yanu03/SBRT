@@ -847,9 +847,9 @@ public class OperPlanService extends ServiceSupport {
 				insertParamMap.put("NODE_TYPE", node_type);
 				insertParamMap.put("ARRV_TM", arrv_tm);
 				insertParamMap.put("DPRT_TM", dprt_tm);
-				insertParamMap.put("TEST", link_len);
-				insertParamMap.put("TEST2", phase_remain_sec);
-				insertParamMap.put("TEST3", next_cross_id);
+				//insertParamMap.put("TEST", link_len);
+				//insertParamMap.put("TEST2", phase_remain_sec);
+				//insertParamMap.put("TEST3", next_cross_id);
 
 				operNodeList.add(insertParamMap);
 

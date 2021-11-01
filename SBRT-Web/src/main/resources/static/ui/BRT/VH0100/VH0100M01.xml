@@ -20,10 +20,14 @@
 						<w2:column id="GPS_Y" name="전송GPS_Y" dataType="text"></w2:column>
 						<w2:column id="DSPTCH_DIV" name="디스패치구분" dataType="text"></w2:column>
 						<w2:column id="DSPTCH_KIND" name="디스패치종류" dataType="text"></w2:column>
-						<w2:column id="DSPTCH_CONTS" name="디스패치내용" dataType="text"></w2:column>
+						<w2:column id="DSPTCH_CONTS" name="디스패치값" dataType="text"></w2:column>
+						<w2:column id="DSPTCH_" name="디스패치메시지" dataType="text"></w2:column>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 						<w2:column id="LINK_ID" name="링크ID" dataType="text"></w2:column>
+						<w2:column id="LINK_NM" name="링크명" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
+						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_TYPE" name="노드타입" dataType="text"></w2:column>
 					</w2:columnInfo>
@@ -33,14 +37,28 @@
 						<w2:key id="CONTENT1" name="name1" dataType="text"></w2:key>
 						<w2:key id="CONTENT2" name="name2" dataType="text"></w2:key>
 						<w2:key id="CONTENT3" name="name3" dataType="text"></w2:key>
-						<w2:key id="CONTENT4" name="name3" dataType="text"></w2:key>
 						<w2:key id="F_DATE" name="name4" dataType="date"></w2:key>
 						<w2:key id="L_DATE" name="name5" dataType="date"></w2:key>
+						<w2:key id="ROUT_ID" name="name6" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="name7" dataType="text" defaultValue="ROUT_MODE"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_vhcItem" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
+						<w2:column id="VHC_ID" name="차량ID" dataType="text"></w2:column>
+						<w2:column id="VHC_NO" name="차량명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_repRoutItem" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_routItem" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="ROUT_ID" name="name1" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="name2" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN" saveRemovedData="true"><!-- 맵 노선 그리기용 -->
@@ -63,18 +81,26 @@
 				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_VH0100G0R0" ref='data:json,["dma_search","dlt_searchitem"]' target="data:json,dlt_BRT_DSPTCH_LOG" action="/vh/VH0100G0R0"
+			<xf:submission id="sub_VH0100G0R0" ref='data:json,dma_search' target="data:json,dlt_BRT_DSPTCH_LOG" action="/vh/VH0100G0R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_VH0100G0R0_submitdone" ev:submiterror="" abortTrigger="">
-			</xf:submission>
-			<xf:submission id="sub_VH0100SHI0" ref="	" target="data:json,dlt_searchitem" action="/vh/VH0100SHI0" method="post"
-				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_VH0100G1R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN"
 				action="/rout/selectNodeListByRepRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
 				errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_VH0100G1R0_submitdone"
 				ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_repRoutItem" ref="" target="data:json,dlt_repRoutItem" action="/repRout/selectRepRoutItem" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="scwin.sub_repRoutItem_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_routItem" ref="data:json,dma_search" target="data:json,dlt_routItem" action="/rout/selectRoutItem" method="post" mediatype="application/json"
+				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
+				ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_vhcItem" ref="" target="data:json,dlt_vhcItem" action="/vhc/selectVhcItem" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
@@ -89,30 +115,37 @@
 						focusColumn : "SEND_DATE"}
 		 };
 		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
-				
+		com.setMainBtn2(wfm_mainBtn,
+		
+		gcm.DISP_TYPE.SINGLE_GRID, autoOptions);
+
+		dma_search.F_DATE = util.getCurrentDate2(-7);
+		F_DATE.setValue(util.getCurrentDate2(-7));
+		
+		dma_search.L_DATE = util.getCurrentDate2();
+		L_DATE.setValue(util.getCurrentDate2());
+		
 		routMap.initMap2("map_VH0100", 
 				{width:"100%"
 				, height:"100%"
 				, onClick: scwin.onClickMap
 		});
 		
-		var codeOptions = [ {code : "DISPATCH_DIV", compID : "VH0100G0:DSPTCH_DIV" }
+		var codeOptions = [ {code : "DISPATCH_DIV", compID : "VH0100G0:DSPTCH_DIV" },{code : "DISPATCH_KIND", compID : "VH0100G0:DSPTCH_KIND" }
 		 ];			
 		 
 		com.setCommonDtl(codeOptions, function() {
 			com.searchGrid(VH0100G0, sub_VH0100G0R0);
 		});
 
-		$p.executeSubmission(sub_VH0100SHI0);	
+		com.executeSubmission(sub_repRoutItem);
+		com.executeSubmission(sub_vhcItem);	
 		
 	};	
 	
 	scwin.VH0100G0_onrowindexchange = function(row,oldRow) {
-		dma_search.set("CONTENT1", dlt_BRT_DSPTCH_LOG.getCellData(VH0100G0.getFocusedRowIndex(), "REP_ROUT_ID"));
-		dma_search.set("CONTENT2", dlt_BRT_DSPTCH_LOG.getCellData(VH0100G0.getFocusedRowIndex(), "ROUT_ID"));
-		dma_search.set("CONTENT3", dlt_BRT_DSPTCH_LOG.getCellData(VH0100G0.getFocusedRowIndex(), "NODE_TYPE"));
-		
+
+		dma_search.set("ROUT_ID", dlt_BRT_DSPTCH_LOG.getCellData(VH0100G0.getFocusedRowIndex(), "ROUT_ID"));
 		$p.executeSubmission(sub_VH0100G1R0);
 		
 	};
@@ -120,9 +153,9 @@
 	scwin.sub_VH0100G0R0_submitdone = function(e) {
 		com.setFocusedCell(VH0100G0, "SEND_DATE");
 	};
-	
-	scwin.sub_VH0100SHI0_submitdone = function(e) {
-		com.searchGrid(VH0100G0, sub_VH0100G0R0);
+
+	scwin.sub_repRoutItem_submitdone = function(e) {
+		com.executeSubmission(sub_routItem);
 	};
 
 	scwin.sub_VH0100G1R0_submitdone = function(e) {
@@ -134,6 +167,14 @@
 		routMap.showVehicle3("map_VH0100", focusDataList,  VH0100G0);
 	};
 	
+	scwin.TYPE1_onviewchange = function(info) {	
+		com.executeSubmission(sub_routItem);
+		com.searchGrid(VH0100G0, sub_VH0100G0R0);
+	};
+	
+	scwin.TYPE2_onviewchange = function(info) {		
+		com.searchGrid(VH0100G0, sub_VH0100G0R0);
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -144,27 +185,69 @@
 			<xf:group class="pgm_header" id="pgm_header" style="">
 				<xf:group class="gr_search" id="" style="">
 					<xf:group class="label" id="" style="">
-						<w2:span class="" id="" label="전송 기간"></w2:span>
+						<w2:span class="" id="" label="대표 노선"></w2:span>
 					</xf:group>
 					<xf:group class="search" id="" style="">
-						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
-								style="width:120px; margin-right: 10px; float: left;margin-top: 3px;" id="" renderType="component" renderDiv="true"
-								calendarValueType="yearMonthDate" ref="data:dma_search.F_DATE">
-							</w2:inputCalendar>
-							<w2:span label="~" style="float: left;margin-right: 10px;margin-top: 5px;" id=""></w2:span>
-							<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
-								style="width: 120px;float: left;margin-top: 3px;" id="" renderType="component" renderDiv="true" calendarValueType="yearMonthDate" ref="data:dma_search.L_DATE">
-							</w2:inputCalendar>
-					<xf:group class="label" id="" style="">
-						<w2:span class="" id="" label="검색" style="margin-left: 10px;"></w2:span>
+						<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE1_onviewchange" id="TYPE1"
+							optionOrder="false" ref="data:dma_search.CONTENT1" class="search_type_100" style="" submenuSize="auto" textAlign="center"
+							chooseOptionLabel="-전체-">
+							<xf:choices>
+								<xf:itemset nodeset="data:dlt_repRoutItem">
+									<xf:label ref="REP_ROUT_NM"></xf:label>
+									<xf:value ref="REP_ROUT_ID"></xf:value>
+								</xf:itemset>
+							</xf:choices>
+						</xf:select1>
 					</xf:group>
-					<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT4" placeholder="차번"></xf:input>
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="노선"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE2_onviewchange" id="TYPE2" optionOrder="false"
+							ref="data:dma_search.CONTENT2" class="search_type_100" style="" submenuSize="auto" textAlign="center" chooseOptionLabel="-전체-">
+							<xf:choices>
+								<xf:itemset nodeset="data:dlt_routItem">
+									<xf:label ref="ROUT_NM"></xf:label>
+									<xf:value ref="ROUT_ID"></xf:value>
+								</xf:itemset>
+							</xf:choices>
+						</xf:select1>
+					</xf:group>
+					<xf:group class="search" id="" style="margin-left: 10px;">
+						<xf:group class="label" id="" style="">
+							<w2:span class="" id="" label="차량번호" style=""></w2:span>
+						</xf:group>
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
+							ev:onviewchange="" id="autoChoiceBox" interactionMode="" noResult="" ref="data:dma_search.CONTENT3" search="start"
+							selectedData="" style="" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="" nextTabByEnter=""
+							disableEdit="">
+							<w2:choices>
+								<w2:itemset nodeset="data:dlt_vhcItem">
+									<w2:label ref="VHC_NO"></w2:label>
+									<w2:value ref="VHC_ID"></w2:value>
+								</w2:itemset>
+							</w2:choices>
+						</w2:autoComplete>
+						<xf:group class="label" id="" style="margin-left: 10px;">
+							<w2:span class="" id="" label="기간"></w2:span>
+						</xf:group>
+						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
+							style="width:120px; margin-right: 10px; float: left;margin-top: 3px;" id="F_DATE" renderType="component" renderDiv="true"
+							calendarValueType="yearMonthDate" ref="data:dma_search.F_DATE">
+						</w2:inputCalendar>
+						<w2:span label="~" style="float: left;margin-right: 10px;margin-top: 5px;" id=""></w2:span>
+						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
+							style="width: 120px;float: left;margin-top: 3px;" id="L_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate" ref="data:dma_search.L_DATE">
+						</w2:inputCalendar>
 					</xf:group>
 					<w2:wframe class="" id="wfm_mainBtn" scope="true" src="/cm/common/wf_mainBtn.xml" style=""></w2:wframe>
 				</xf:group>
 			</xf:group>
-			<xf:group id="pgm_content" class="pgm_content grdc_800_20_a" style="" >
-				<xf:group id="pgm_list" class="pgm_list grdr_20_2_350_20_a" style="">
+			<xf:group id="pgm_content" class="pgm_content grdc_1200_20_a" style="" >
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 					<xf:group class="defaultbox" id="" style="">
 						<w2:textbox class="df_tt fl" id="" label="Dispatch 전송 이력" style=""></w2:textbox>
 					</xf:group>
@@ -184,27 +267,69 @@
 							<w2:caption style="" id="caption2" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header2">
 								<w2:row style="" id="row3">
-									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column61"
+									<w2:column removeBorderStyle="false" width="140" inputType="text" style="height:20px" id="column61"
 										value="전송일시" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column57"
+										value="노선명" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column57"
 										value="차량번호" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column56"
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column1"
+										value="경도" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column2"
+										value="위도" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px" id="column1"
+										value="노드명" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column2"
+										value="링크명" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:20px" id="column56"
+										value="단계" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column2"
 										value="사유" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column2"
+										value="디스패치 내용" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
 							</w2:header>
 							<w2:gBody style="" id="gBody2">
 								<w2:row style="" id="row4">
-									<w2:column removeBorderStyle="false" width="94" inputType="text" style="height:20px" id="SEND_DATE"
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="SEND_DATE"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="117" inputType="text" style="height:20px" id="VHC_NO"
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_NM"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="161" inputType="select" style="height:20px" id="DSPTCH_DIV"
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="VHC_NO"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="=" inputType="text" style="height:20px" id="GPS_X"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="GPS_Y"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="NODE_NM"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="LINK_NM"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="DSPTCH_KIND"
 										value="" blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="DSPTCH_DIV"
+										value="" blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="DSPTCH_CONTS"
+										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
@@ -218,7 +343,7 @@
 							</w2:footer>
 						</w2:gridView>
 					</xf:group>
-					<xf:group id="" class="horizontal_line">
+					<!-- <xf:group id="" class="horizontal_line">
 					</xf:group>
 					<xf:group id="pgm_subList" class="pgm_subList grdr_20_2_a" style="">
 						<xf:group class="defaultbox" id="" style="">
@@ -281,8 +406,8 @@
 								</w2:attributes>
 								<xf:textarea id="" style="width: 100%;height: 125px;" readOnly="true" ref="data:dlt_BRT_DSPTCH_LOG.DSPTCH_CONTS"></xf:textarea>
 							</xf:group></xf:group></xf:group>
-					</xf:group>											
-					</xf:group> <!-- end pgm_subList -->
+					</xf:group>	 
+					</xf:group>--> <!-- end pgm_subList -->
 				</xf:group><!-- pgm_list end -->
 
 				<xf:group id="" class="vertical_line"></xf:group>

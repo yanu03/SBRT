@@ -25,7 +25,7 @@ public class RoutController extends ControllerSupport {
 
 	@RequestMapping("/rout/selectRoutItem")
 	public @ResponseBody Map<String, Object> selectRoutItem() throws Exception {
-		result.setData("dlt_searchitem", routService.selectRoutItem());
+		result.setData("dlt_routItem", routService.selectRoutItem());
 		return result.getResult();
 	}
 
@@ -73,7 +73,7 @@ public class RoutController extends ControllerSupport {
 
 	@RequestMapping("/rout/selectSttnItem")
 	public @ResponseBody Map<String, Object> selectSttnItem() throws Exception {
-		result.setData("dlt_searchitem", routService.selectSttnItem());
+		result.setData("dlt_sttnItem", routService.selectSttnItem());
 		return result.getResult();
 	}
 }

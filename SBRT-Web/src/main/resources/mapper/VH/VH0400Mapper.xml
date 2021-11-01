@@ -31,7 +31,8 @@
 					,	B.NODE_TYPE
 					, 	C.ROUT_NM
 					,	D.ORGA_NM
-					
+					,	E.DRV_NM
+					,	F.LINK_NM
 	FROM				BRT_OPER_EVENT_HIS A
 	LEFT JOIN 			BMS_NODE_MST B
 	ON 					A.NODE_ID = B.NODE_ID	
@@ -39,22 +40,31 @@
 	ON					A.ROUT_ID = C.ROUT_ID
 	LEFT JOIN	  		BMS_VOC_ORGA_INFO D
 	ON					A.EVT_DATA = D.ORGA_ID
-	
-	WHERE				A.OPER_DT IS NOT NULL	
-	<if test="CONTENT4 != null and CONTENT4 != ''">
-		AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT4}, '%')
-	</if>
-	<if test="(F_DATE != null and F_DATE != '') and (L_DATE == null or L_DATE == '')">
-		<![CDATA[AND A.OPER_DT >= #{F_DATE}]]>
-	</if>
-	<if test="(F_DATE == null or F_DATE == '') and L_DATE != null and L_DATE != '' ">
-		<![CDATA[AND A.OPER_DT <= #{L_DATE}]]>
-	</if>
-	<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
-		AND A.OPER_DT between #{F_DATE} and #{L_DATE}
-		</if>			
-	ORDER BY			A.OPER_DT DESC
-	LIMIT				1000
+	LEFT JOIN	  		BMS_DRV_MST E
+	ON					A.DRV_ID = E.DRV_ID
+	LEFT JOIN	  		BMS_LINK_MST F
+	ON					A.LINK_ID = F.LINK_ID
+	WHERE				A.OPER_DT IS NOT NULL
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT1)">
+				AND A.REP_ROUT_ID = #{CONTENT1}
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT2)">
+				AND A.ROUT_ID = #{CONTENT2}
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT3)">
+				AND A.VHC_ID LIKE CONCAT('%', #{CONTENT3}, '%')
+		</if>
+		
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(F_DATE) and @kr.tracom.util.CommonUtil@empty(L_DATE)">
+			<![CDATA[AND A.OPER_DT >= #{F_DATE}]]>
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(L_DATE) and @kr.tracom.util.CommonUtil@empty(F_DATE)">
+			<![CDATA[AND A.OPER_DT <= #{L_DATE}]]>
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(F_DATE) and @kr.tracom.util.CommonUtil@notEmpty(L_DATE)">
+			AND A.OPER_DT between #{F_DATE} and #{L_DATE}
+		</if>
+	ORDER BY			A.OPER_DT DESC, A.OCR_DTM DESC
 </select>
 
 </mapper>

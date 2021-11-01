@@ -21,7 +21,7 @@ public class RepRoutController extends ControllerSupport {
 
 	@RequestMapping("/repRout/selectRepRoutItem")
 	public @ResponseBody Map<String, Object> selectRepRoutItem() throws Exception {
-		result.setData("dlt_searchitem", reproutService.selectRepRoutItem());
+		result.setData("dlt_repRoutItem", reproutService.selectRepRoutItem());
 		return result.getResult();
 	}
 

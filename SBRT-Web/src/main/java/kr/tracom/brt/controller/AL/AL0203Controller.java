@@ -44,6 +44,14 @@ public class AL0203Controller extends ControllerSupport{
 		return result.getResult();
 	}
 	
+
+	@RequestMapping("/al/AL0203G1S0")
+	public @ResponseBody Map<String, Object> AL0203G1S0() throws Exception {
+		Map map = al0203Service.AL0203G1S0();
+		result.setData("dma_result", map);
+		return result.getResultSave();
+	}	
+	
 	@RequestMapping("/al/AL0203P0S0")
 	public @ResponseBody Map<String, Object> AL0203P0S0() throws Exception {
 		Map map = al0203Service.AL0203P0S0();
