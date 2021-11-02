@@ -56,13 +56,14 @@ public class PI0603Service extends ServiceSupport {
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("U")) {
 					
-					data.put("ORGA_ID",map.get("ORGA_ID"));
+					//data.put("ORGA_ID",map.get("ORGA_ID"));
 					
-					int retCnt = pi0603Mapper.PI0603G1I0(data); //예약정보 insert
-					iCnt += retCnt;
-					
-					if(retCnt > 0) {
-						retCnt = pi0603Mapper.PI0603G1I1(data); //예약 결과정보 insert
+					iCnt = pi0603Mapper.PI0603G1I0(data); //예약정보 insert
+//					iCnt += retCnt;
+//					
+//					
+//					if(retCnt > 0) {
+//						retCnt = pi0603Mapper.PI0603G1I1(data); //예약 결과정보 insert
 						/*
 						String mngId = String.valueOf(data.get("MNG_ID"));
 						String impId = mngId.substring(0, Constants.IMP_ID_DIGIT);
@@ -96,7 +97,7 @@ public class PI0603Service extends ServiceSupport {
 				/*else if (rowStatus.equals("D")) {
 					dCnt += pi0603Mapper.PI0603G1D0(data);
 				}*/ 
-			}			
+//			}			
 		} catch(Exception e) {
 			if (e instanceof DuplicateKeyException)
 			{
