@@ -78,4 +78,45 @@ public class SI0600Service extends ServiceSupport {
 		Map<String, Object> map = getSimpleDataMap("dma_MEMBER_MST");
 		return si0600Mapper.SI0600P0R0(map);
 	}
+	
+	
+	
+	public Map SI0600G2S0() throws Exception {
+		int iCnt = 0;
+		int uCnt = 0;
+		int dCnt = 0;		
+		
+		List<Map<String, Object>> param = getSimpleList("dlt_EMER_MEMBER_INFO");
+		try {
+			for (int i = 0; i < param.size(); i++) {
+				Map data = (Map) param.get(i);
+				String rowStatus = (String) data.get("rowStatus");
+				if (rowStatus.equals("C")) {
+					iCnt += si0600Mapper.SI0600G2I0(data);
+				} 
+			/*	else if (rowStatus.equals("U")) {
+					uCnt += si0600Mapper.SI0600T0U0(data);
+				}*/
+				else if (rowStatus.equals("D")) {
+					dCnt += si0600Mapper.SI0600G2D0(data);
+				} 
+			}			
+		} catch(Exception e) {
+			if (e instanceof DuplicateKeyException)
+			{
+				throw new MessageException(Result.ERR_KEY, "중복된 키값의 데이터가 존재합니다.");
+			}
+			else
+			{
+				throw e;
+			}		
+		}
+
+		
+		Map result = saveResult(iCnt, uCnt, dCnt);
+		
+		return result;		
+		
+		
+	}
 }

@@ -37,13 +37,19 @@
          LEVEL,
          SORT,
          path
-      FROM CTE order by path
-
-         
-        
-         
-
-     		
+      FROM CTE 
+	  <where>
+		<if test="TYPE == 'ALL'">
+			AND (CLSFCTN_ID LIKE CONCAT('%',#{CONTENT},'%') || CLSFCTN_NM LIKE CONCAT('%',#{CONTENT},'%')) 
+		</if>
+		<if test="TYPE == 'CLSFCTN_ID'">
+			AND CLSFCTN_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'CLSFCTN_NM'">
+			AND CLSFCTN_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where> 	 	
+	order by path
 
 </select>
 
@@ -74,6 +80,45 @@
 			)
 </insert>
 
+
+<!-- <insert id="SI0702G0I0" parameterType="Map">
+	INSERT INTO BMS_EMER_MEMBER_INFO
+			(
+			MEMER_ID,
+			MEMER_NM,
+			PHONE,
+			FAX,
+			EMAIL,
+			REMARK,
+			UPD_DTM,
+			UPD_ID
+			)
+	VALUES		
+			(
+			#{MEMER_ID},
+			#{MEMER_NM},
+			#{PHONE},
+			#{FAX},
+			#{EMAIL},
+			#{REMARK},
+			#{UPD_DTM},
+			#{SSN_USER_ID}
+			)				
+</insert> -->
+
+<update id="SI0600G2I0" parameterType="Map">
+	UPDATE BMS_EMER_MEMBER_INFO
+	SET 	CLSFCTN_ID = #{CLSFCTN_ID}
+			
+	WHERE MEMER_ID = #{MEMER_ID}
+</update>
+
+<delete id="SI0600G2D0" parameterType="Map">
+	UPDATE BMS_EMER_MEMBER_INFO
+	SET 	CLSFCTN_ID = ""
+			
+	WHERE MEMER_ID = #{MEMER_ID}
+</delete>
 
 <update id="SI0600T0U0" parameterType="Map">
 	update BMS_EMER_CLSFCTN_MST
@@ -108,7 +153,8 @@
 			MEMER_DIV,
 			a.PHONE,
 			a.FAX,
-			a.EMAIL
+			a.EMAIL,
+			a.REMARK
 			
 	from	BMS_EMER_MEMBER_INFO a, BMS_ORG_MST b
 	where 	a.CLSFCTN_ID = #{CLSFCTN_ID}
@@ -119,22 +165,23 @@
 <select id="SI0600P0R0" resultType="Map">
 	select  MEMER_ID,
 			MEMER_NM,
-			b.ORG_NM,
+			ORG_NM,
 			MEMER_DIV,
-			a.PHONE,
-			a.FAX,
-			a.EMAIL
+			PHONE,
+			FAX,
+			EMAIL,
+			REMARK
 	
-	from 	BMS_MEMBER_INFO a INNER JOIN BMS_ORG_MST b ON a.ORG_ID = b.ORG_ID
+	from 	BMS_EMER_MEMBER_INFO
 	<where>
 		<if test="TYPE == 'ALL'">
-			AND MEMER_ID LIKE CONCAT('%',#{CONTENT},'%') || MEMBER_NM LIKE CONCAT('%',#{CONTENT},'%')
+			AND MEMER_ID LIKE CONCAT('%',#{CONTENT},'%') || MEMER_NM LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
 		<if test="TYPE == 'MEMER_ID'">
 			AND MEMER_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
 		<if test="TYPE == 'MEMBER_NM'">
-			AND MEMBER_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			AND MEMER_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
 	</where>		
 

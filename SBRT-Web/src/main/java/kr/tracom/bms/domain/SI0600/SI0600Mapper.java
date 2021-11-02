@@ -23,4 +23,8 @@ public interface SI0600Mapper {
 	public List SI0600G0R0(Map param);
 	
 	public List SI0600P0R0(Map param);
+	
+	public int SI0600G2I0(Map param);
+	
+	public int SI0600G2D0(Map param);
 }
