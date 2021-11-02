@@ -563,27 +563,23 @@ public class DateUtil {
 
 	}
 	
-	public static int diffTime(String tm1, String tm2, String pattern) {
+	public static int diffTime(String tm1, String tm2, String pattern) throws Exception {
 
 		// boolean bResult = false;
 		int result = 0;
 
-		try {
-			SimpleDateFormat transFormat = new SimpleDateFormat(pattern);
-			Date date1 = transFormat.parse(tm1);
-			Date date2 = transFormat.parse(tm2);
+		SimpleDateFormat transFormat = new SimpleDateFormat(pattern);
+		Date date1 = transFormat.parse(tm1);
+		Date date2 = transFormat.parse(tm2);
 
-			if (date1.after(date2)) {
-				result = 1;
-			} else if (date2.after(date1)) {
-				result = -1;
-			} else {
-				result = 0;
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (date1.after(date2)) {
+			result = 1;
+		} else if (date2.after(date1)) {
+			result = -1;
+		} else {
+			result = 0;
 		}
+
 
 		// logger.info("diffTime() >> {}, {}, {}", tm1, tm2, result);
 

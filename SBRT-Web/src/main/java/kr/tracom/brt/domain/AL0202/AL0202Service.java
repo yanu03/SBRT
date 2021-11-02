@@ -3,12 +3,15 @@ package kr.tracom.brt.domain.AL0202;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import kr.tracom.brt.domain.AL0201.AL0201Mapper;
 import kr.tracom.cm.domain.OperPlan.OperPlanMapper;
+import kr.tracom.cm.domain.OperPlan.OperPlanService;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.util.CommonUtil;
@@ -17,7 +20,13 @@ import kr.tracom.util.Result;
 
 @Service
 public class AL0202Service extends ServiceSupport {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ServiceSupport.class);
+	
 
+	@Autowired
+	private OperPlanService operPlanService;
+	
 	@Autowired
 	private AL0202Mapper al0202Mapper;
 	
@@ -88,12 +97,16 @@ public class AL0202Service extends ServiceSupport {
 				
 				String rowStatus = (String) data.get("rowStatus");
 					
+				String routId = data.get("ROUT_ID").toString();
+				String dayDiv = data.get("DAY_DIV").toString();
+				int operSn = Integer.valueOf(data.get("OPER_SN").toString());
+				
 				if (rowStatus.equals("C")) {
 					iCnt += al0202Mapper.AL0202G1I0(data);
-					operPlanMapper.makeOperPl2(data);
+					operPlanService.makeOperAllocPlNodeInfo(routId, dayDiv, operSn, true);
 				} else if (rowStatus.equals("U")) {
 					uCnt += al0202Mapper.AL0202G1U0(data);
-					operPlanMapper.makeOperPl2(data);
+					operPlanService.makeOperAllocPlNodeInfo(routId, dayDiv, operSn, true);
 				} else if (rowStatus.equals("D")) {
 					dCnt += al0202Mapper.AL0202G1D0(data);
 				} 

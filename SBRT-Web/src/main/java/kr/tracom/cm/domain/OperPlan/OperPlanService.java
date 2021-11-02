@@ -675,20 +675,27 @@ public class OperPlanService extends ServiceSupport {
 								//#SET stop_sec_peak = stop_sec_peak * 1.2;
 								//#SET stop_sec_none_peak = stop_sec_none_peak * 1.2;
 
-
-								if ( DateUtil.diffTime(arrv_tm, am_peak_st_tm, "HH:mm:ss") >= 0
-										&& DateUtil.diffTime(arrv_tm, am_peak_ed_tm, "HH:mm:ss") <=0 ) { //오전첨두시
-
-									dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, stop_sec_peak);
-
-								} else if (DateUtil.diffTime(arrv_tm, pm_peak_st_tm, "HH:mm:ss") >= 0
-										&& DateUtil.diffTime(arrv_tm, pm_peak_ed_tm, "HH:mm:ss") <=0 ) { //오후첨두시
-
-									dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, stop_sec_peak);
-
-								} else { //비첨두시
-									//dprt_tm = DATE_ADD(arrv_tm, INTERVAL stop_sec_none_peak SECOND);
-									dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, stop_sec_none_peak);
+								try {
+									if ( DateUtil.diffTime(arrv_tm, am_peak_st_tm, "HH:mm:ss") >= 0
+											&& DateUtil.diffTime(arrv_tm, am_peak_ed_tm, "HH:mm:ss") <=0 ) { //오전첨두시
+	
+										dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, stop_sec_peak);
+	
+									} else if (DateUtil.diffTime(arrv_tm, pm_peak_st_tm, "HH:mm:ss") >= 0
+											&& DateUtil.diffTime(arrv_tm, pm_peak_ed_tm, "HH:mm:ss") <=0 ) { //오후첨두시
+	
+										dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, stop_sec_peak);
+	
+									} else { //비첨두시
+										//dprt_tm = DATE_ADD(arrv_tm, INTERVAL stop_sec_none_peak SECOND);
+										dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, stop_sec_none_peak);
+									}
+									
+								} catch (Exception e) {
+									//필요정차시간이 없는 경우
+									//e.printStackTrace();
+									
+									dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, min_stop_sec); //최소정차시간 추가
 								}
 
 							} /*else //필요정차시간이 없는 경우
