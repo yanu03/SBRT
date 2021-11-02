@@ -18,6 +18,17 @@
 						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
+
+				<w2:dataMap baseNode="map" id="dma_resultG2" ev:onmodelchange="">
+					<w2:keyInfo>
+						<w2:key id="STATUS" name="STATUS" dataType="text"></w2:key>
+						<w2:key id="ICNT" name="입력건수" dataType="text"></w2:key>
+						<w2:key id="UCNT" name="수정건수" dataType="text"></w2:key>
+						<w2:key id="DCNT" name="삭제건수" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+
 				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_EMER_CLSFCTN_MST_0">
 					<w2:keyInfo>
 						<w2:key id="SEQ" name="SEQ" dataType="text"></w2:key>
@@ -59,15 +70,20 @@
 						<w2:column id="CLSFCTN_ID" name="분류ID" dataType="text"></w2:column>
 						<w2:column id="MEMER_ID" name="구성원ID" dataType="text"></w2:column>
 						<w2:column id="ORG_ID" name="기관ID" dataType="text"></w2:column>
+						<w2:column id="ORG_NM" name="기관명" dataType="text"></w2:column>
 						<w2:column id="SN" name="순번" dataType="text"></w2:column>
 						<w2:column id="MEMER_NM" name="구성원명" dataType="text"></w2:column>
 						<w2:column id="MEMER_DIV" name="구성원구분" dataType="text"></w2:column>
 						<w2:column id="PHONE" name="전화번호" dataType="text"></w2:column>
 						<w2:column id="FAX" name="팩스" dataType="text"></w2:column>
 						<w2:column id="EMAIL" name="메일" dataType="text"></w2:column>
-
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
-						<w2:column id="ORG_NM" name="기관명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dataList1" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="CLSFCTN_ID" name="name1" dataType="text"></w2:column>
+						<w2:column id="CLSFCTN_NM" name="name2" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 			</w2:dataCollection>
@@ -80,9 +96,9 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="scwin.sub_SI0600T0K0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_SI0600T0S0" ref="data:json,dlt_EMER_CLSFCTN_MST" target="data:json,dma_result" action="/si/SI0600T0S0" method="post" mediatype="application/json" encoding="UTF-8"
-				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장 중입니다..." ev:submit="" ev:submitdone="scwin.sub_SI0600T0S0_submitdone"
-				ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_SI0600T0S0" ref="data:json,dlt_EMER_CLSFCTN_MST" target="data:json,dma_result" action="/si/SI0600T0S0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="저장 중입니다..." ev:submit="" ev:submitdone="scwin.sub_SI0600T0S0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_SI0600G0R0" ref="data:json,dma_param_CLSFCTN" target="data:json,dlt_EMER_MEMBER_INFO"
 				action="/si/SI0600G0R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
@@ -91,6 +107,11 @@
 			<xf:submission id="sub_SI0600G0S0" ref="" target="" action="" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
 				ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_SI0600G2S0" ref='data:json,{"action":"modified","id":"dlt_EMER_MEMBER_INFO"}'
+				target="data:json,dma_resultG2" action="/si/SI0600G2S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
+				errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중입니다" ev:submit="" ev:submitdone="" ev:submiterror=""
+				abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
@@ -107,7 +128,7 @@
 		var autoOptions = {
 			Main : {grid : SI0600T0, frm : SI0600F0, srchGrp : pgm_header, srchSbm : sub_SI0600T0R0, keySbm : sub_SI0600T0K0, savSbm : sub_SI0600T0S0, 
 			keyColumn : "CLSFCTN_ID", focusColumn : "CLSFCTN_NM", name : "분류 목록", },
-			Sub1 : {grid : SI0600G0, srchSbm : sub_SI0600G0R0, savSbm : sub_SI0600G0S0, name : "담당자 목록"}
+			Sub1 : {grid : SI0600G0, srchSbm : sub_SI0600G0R0, savSbm : sub_SI0600G2S0, name : "담당자 목록"}
 			
 		 };		
 //		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions);
@@ -125,7 +146,7 @@
 		com.setMainBtn3(wfm_mainBtn, btnOptions);	
 		
 		var subOptions = {
-			ADD: scwin.btn_add2_onclick, DEL:{}, CNL:{}
+			ADD: scwin.btn_add2_onclick, DEL:{}, CNL:{}, SAVE:{} 
 		};
 		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
 	};
@@ -241,6 +262,8 @@
 	};
 	
 	scwin.btn_del_onclick = function() {
+	debugger;
+	var val = SI0600T0.getSelectedIndex() - 1;
 		dlt_EMER_CLSFCTN_MST.deleteRow(SI0600T0.getSelectedIndex() - 1);
 	}	
 	
@@ -264,6 +287,11 @@
 	scwin.btn_close_onclick = function() {
 		
 	};
+	
+	//here
+	scwin.btn_save2_onclick = function() {
+		com.executeSubmission(sub_SI0600G2S0);
+	}
 	
 	scwin.btn_add2_onclick = function() {
 		var focusRowIdx = SI0600T0.getSelectedIndex();
@@ -325,7 +353,23 @@
 	scwin.sub_SI0600T0S0_submitdone = function(e) {
 		com.executeSubmission(sub_SI0600T0R0);
 	};
-	]]></script>
+	
+	
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {
+		if (info.newValue == "ALL") {
+			acb_autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} else if (info.newValue == "CLSFCTN_ID") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_EMER_CLSFCTN_MST", "CLSFCTN_ID", "CLSFCTN_ID");
+			acb_autoChoiceBox.show("");
+		} else if (info.newValue == "CLSFCTN_NM") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_EMER_CLSFCTN_MST", "CLSFCTN_NM", "CLSFCTN_NM");
+			acb_autoChoiceBox.show("");
+		} 
+	};]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
@@ -338,7 +382,7 @@
 						<w2:span id="" class="" label="검색"></w2:span>
 					</xf:group>
 					<xf:group id="" style="" class="search">
-						<!-- <xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+						 <xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE"
 							optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" style="" submenuSize="auto"
 							textAlign="left">
@@ -348,19 +392,19 @@
 									<xf:value><![CDATA[ALL]]></xf:value>
 								</xf:item>
 								<xf:item>
-									<xf:label><![CDATA[운수사ID]]></xf:label>
-									<xf:value><![CDATA[COMP_ID]]></xf:value>
+									<xf:label><![CDATA[분류ID]]></xf:label>
+									<xf:value><![CDATA[CLSFCTN_ID]]></xf:value>
 								</xf:item>
 								<xf:item>
-									<xf:label><![CDATA[운수사명]]></xf:label>
-									<xf:value><![CDATA[COMP_NM]]></xf:value>
+									<xf:label><![CDATA[분류명]]></xf:label>
+									<xf:value><![CDATA[CLSFCTN_NM]]></xf:value>
 								</xf:item>
 							</xf:choices>
-						</xf:select1> -->
+						</xf:select1> 
 						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="분류 ID 또는 분류 명"></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
-							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
-							id="acb_autoChoiceBox" interactionMode="" noResult="" ref="data:dma_search.CONTENT" search="start" selectedData=""
+							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange="sbx_ChoiceBox_onviewchange"
+							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
 							class="search_auto" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
 							<w2:choices>
 								<w2:itemset nodeset="data:dlt_transcompSearchItem">
@@ -437,7 +481,7 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:input class="req" id=""  mandatory="" ref="data:dlt_EMER_CLSFCTN_MST.CLSFCTN_NM"
-										style="width:100%;height:21px;" disabled="true" adjustMaxLength="" maxlength="30">
+										style="width:100%;height:21px;"  adjustMaxLength="" maxlength="30">
 									</xf:input>
 								</xf:group>
 							</xf:group>
@@ -481,16 +525,22 @@
 										value="분류ID" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column58"
-										value="구성원ID" blockSelect="false" displayMode="label">
+										value="담당자ID" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column57"
 										value="기관명" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column55"
-										value="구성원명" blockSelect="false" displayMode="label">
+										value="담당자명" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="110" inputType="text" style="height:20px" id="column53"
 										value="전화번호" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column56"
+										value="팩스" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column61"
+										value="메일" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column50"
 										value="비고" blockSelect="false" displayMode="label">
@@ -512,6 +562,12 @@
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="PHONE" value=""
+										blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="FAX" value=""
+										blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="EMAIL" value=""
 										blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="REMARK"

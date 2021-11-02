@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.bms.domain.SI0702.SI0702Mapper">
+
+<select id="SI0702G0R0" resultType="Map">
+	SELECT MEMER_ID, MEMER_NM, PHONE, FAX, CLSFCTN_ID, ORG_NM, EMAIL, REMARK
+	FROM BMS_EMER_MEMBER_INFO
+	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND MEMER_ID LIKE CONCAT('%',#{CONTENT},'%') || MEMER_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'MEMER_ID'">
+			AND MEMER_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'MEMER_NM'">
+			AND MEMER_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+</select>
+ 
+<select id="SI0702SHI0" resultType="Map">
+	SELECT 	MEMER_ID, MEMER_NM
+	FROM BMS_EMER_MEMBER_INFO
+</select>
+
+<select id="SI0702G0K0" resultType="Map">
+	SELECT CONCAT('MM', LPAD(NEXTVAL(SEQ_BMS_EMER_MEMBER_INFO_0), 8, '0')) AS 'SEQ'
+</select>
+
+<insert id="SI0702G0I0" parameterType="Map">
+	INSERT INTO BMS_EMER_MEMBER_INFO
+			(
+			MEMER_ID,
+			MEMER_NM,
+			PHONE,
+			FAX,
+			ORG_NM,
+			EMAIL,
+			REMARK,
+			UPD_DTM,
+			UPD_ID
+			)
+	VALUES		
+			(
+			#{MEMER_ID},
+			#{MEMER_NM},
+			#{PHONE},
+			#{FAX},
+			#{ORG_NM},
+			#{EMAIL},
+			#{REMARK},
+			#{UPD_DTM},
+			#{SSN_USER_ID}
+			)				
+</insert>
+
+<update id="SI0702G0U0" parameterType="Map">
+	UPDATE BMS_EMER_MEMBER_INFO
+	SET 	MEMER_ID = #{MEMER_ID},
+			MEMER_NM = #{MEMER_NM},
+			ORG_NM = #{ORG_NM},
+			PHONE = #{PHONE},
+			FAX = #{FAX},
+			EMAIL = #{EMAIL},
+			REMARK = #{REMARK},
+			UPD_DTM = #{UPD_DTM},
+			UPD_ID = #{UPD_ID}
+	WHERE MEMER_ID = #{MEMER_ID}
+</update>
+
+<delete id="SI0702G0D0" parameterType="Map">
+	DELETE FROM BMS_EMER_MEMBER_INFO
+	WHERE MEMER_ID = #{MEMER_ID}
+</delete>
+
+
+<select id="SI0702P0R0" resultType="Map">
+	select  ORG_ID,
+			ORG_NM,
+			ORG_DIV,
+			PHONE,
+			EMAIL
+	
+	from 	BMS_ORG_MST
+	<where>
+		<if test="TYPE == 'ALL'">
+			AND ORG_ID LIKE CONCAT('%',#{CONTENT},'%') || ORG_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'ORG_ID'">
+			AND ORG_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'ORG_NM'">
+			AND ORG_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>		
+
+
+</select>
+
+</mapper>

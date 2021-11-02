@@ -127,3 +127,17 @@ util.getCurrentDate2 = function(day){
 
 	return year + month + day;
 }
+
+util.getCurrentDate3 = function(day){
+	var date = new Date();
+	if(com.isEmpty(day)==false)date.setDate(date.getDate()+day);
+	var year = date.getFullYear().toString();
+
+	var month = date.getMonth() + 1;
+	month = month < 10 ? '0' + month.toString() : month.toString();
+
+	var day = date.getDate();
+	day = day < 10 ? '0' + day.toString() : day.toString();
+
+	return year + "-" + month + "-" + day;
+}

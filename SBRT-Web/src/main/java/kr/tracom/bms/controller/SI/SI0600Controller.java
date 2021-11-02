@@ -54,4 +54,11 @@ public class SI0600Controller extends ControllerSupport {
 		result.setData("dlt_MEMBER_INFO", si0600Service.SI0600P0R0());
 		return result.getResult();
 	}
+	
+	@RequestMapping("/si/SI0600G2S0")
+	public @ResponseBody Map<String, Object> SI0600G2S0() throws Exception {
+		Map map = si0600Service.SI0600G2S0();
+		result.setData("dma_resultG2", map);
+		return result.getResultSave();
+	}
 }

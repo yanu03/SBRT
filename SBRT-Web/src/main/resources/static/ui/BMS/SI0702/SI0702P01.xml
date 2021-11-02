@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ev="http://www.w3.org/2001/xml-events"
+    xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+    <head>
+    	<w2:type>DEFAULT</w2:type>
+        <w2:buildDate/>
+        <xf:model>
+        	<xf:instance>
+        		<data xmlns="" />
+        	</xf:instance>
+        	<w2:dataCollection baseNode="map">
+        		<w2:dataMap baseNode="list" repeatNode="map" id="dma_ORG_MST" saveRemovedData="true">
+        			<w2:keyInfo>
+        				<w2:key id="ORG_ID" name="기관ID" dataType="text"></w2:key>
+        				<w2:key id="TYPE" name="name2" dataType="text"></w2:key>
+        				<w2:key id="CONTENT" name="name3" dataType="text"></w2:key>
+        			</w2:keyInfo>
+        		</w2:dataMap>
+        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_ORG_INFO" saveRemovedData="true">
+        			<w2:columnInfo>
+        				<w2:column id="chk" name="선택" dataType="text"></w2:column>
+        				<w2:column id="ORG_ID" name="기관ID" dataType="text"></w2:column>
+        				<w2:column id="ORG_DIV" name="기관구분" dataType="text"></w2:column>
+        				<w2:column id="ORG_NM" name="기관이름" dataType="text"></w2:column>
+        				<w2:column id="PHONE" name="전화번호" dataType="text"></w2:column>
+        				<w2:column id="EMAIL" name="이메일" dataType="text"></w2:column>
+        			</w2:columnInfo>
+        		</w2:dataList>
+        		<w2:dataMap baseNode="map" id="dma_search">
+        			<w2:keyInfo>
+        				<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+        				<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+        				<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+        			</w2:keyInfo>
+        		</w2:dataMap>
+        	</w2:dataCollection>
+        	<w2:workflowCollection></w2:workflowCollection>
+        	<xf:submission id="sub_SI0702P0R0" ref="data:json,dma_ORG_MST" target="data:json,dlt_ORG_INFO" action="/si/SI0702P0R0"
+        		method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
+        		mode="asynchronous" processMsg="저장중입니다" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+        	</xf:submission>
+        </xf:model>
+        <script type="text/javascript" lazy="false"><![CDATA[
+        
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+//		dma_ORG_MST.set("ORG_ID" , scwin.param.data.ORG_IDS);
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		var btnOptions = 
+		[
+			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
+		];
+		com.setMainBtn3(wfm_mainBtn, btnOptions);
+		com.executeSubmission(sub_SI0702P0R0);		
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	scwin.SI0702P0_oncellclick = function(row, col) {
+		if(col==0)return;
+		if(SI0702P0.getCellChecked(row,"chk")){
+			SI0702P0.setCellChecked(row,"chk",false)
+		}
+		else {
+			SI0702P0.setCellChecked(row,"chk",true)
+		}
+	}
+	
+	scwin.btn_search_onclick = function() {
+		com.executeSubmission(sub_SI0702P0R0);
+	};
+	
+	scwin.btn_confirm_onclick = function() {
+		var data = SI0702P0.getCheckedJSON("chk");
+		com.closePopup(scwin.closeCallbackFncName, data);
+	};
+		
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();
+	};
+	
+	
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
+		if (info.newValue == "ALL") {
+			search_input.setPlaceholder("기관ID 또는 기관명");
+		} else if (info.newValue == "ORG_ID") {
+			search_input.setPlaceholder("기관ID");
+		} else if (info.newValue == "ORG_NM") {
+			search_input.setPlaceholder("기관명");
+		}
+	};
+	]]></script>
+    </head>
+    <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+    	<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+    		<xf:group class="popup_header" id="popup_header" style="">
+    			<xf:group class="gr_search" id="" style="">
+    				<xf:group class="label" id="" style="">
+    					<w2:span class="" id="" label="검색항목"></w2:span>
+    				</xf:group>
+    				<xf:group class="search" id="" style="">
+    					<xf:select1 allOption="" appearance="minimal" chooseOption="" class="search_type" direction="auto" disabled="false"
+    						disabledClass="w2selectbox_disabled" displayMode="label" id="" optionOrder="false" ref="data:dma_ORG_MST.TYPE" style=""
+    						submenuSize="auto" textAlign="left" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange">
+    						<xf:choices>
+    							<xf:item>
+    								<xf:label><![CDATA[전체]]></xf:label>
+    								<xf:value><![CDATA[ALL]]></xf:value>
+    							</xf:item>
+    							<xf:item>
+    								<xf:label><![CDATA[기관ID]]></xf:label>
+    								<xf:value><![CDATA[ORG_ID]]></xf:value>
+    							</xf:item>
+    							<xf:item>
+    								<xf:label><![CDATA[기관명]]></xf:label>
+    								<xf:value><![CDATA[ORG_NM]]></xf:value>
+    							</xf:item>
+    						</xf:choices>
+    					</xf:select1>
+    					<xf:input class="search_input" id="search_input" numberMask="" placeholder="기관ID 또는 기관명"
+    						ref="data:dma_ORG_MST.CONTENT">
+    					</xf:input>
+    				</xf:group>
+    				<w2:wframe class="" id="wfm_mainBtn" scope="true" src="/cm/common/wf_mainBtn.xml" style=""></w2:wframe>
+    			</xf:group>
+    		</xf:group>
+    		<xf:group class="popup_content" id="" style="">
+    			<w2:gridView applyAllColumnStyle="" autoFit="lastColumn" class="cm_grid popup" dataList="data:dlt_ORG_INFO"
+    				ev:oncellclick="scwin.SI0702P0_oncellclick" fixedColumnWithHidden="true" id="SI0702P0" readOnly="true" scrollByColumn="false"
+    				style="width:775px" useShiftKey="false">
+    				<w2:caption id="caption1" style="" value="this is a grid caption."></w2:caption>
+    				<w2:header id="header1" style="">
+    					<w2:row id="row1" style="">
+    						<w2:column readOnlyClass="" removeBorderStyle="false" width="70" inputType="checkbox" readOnly="false"
+    							style="height:20px" id="chkHeader" value="선택" blockSelect="false" displayMode="label">
+    						</w2:column>
+    						<w2:column readOnlyClass="" removeBorderStyle="false" width="70" inputType="text" readOnly="false"
+    							style="height:20px" id="column10" value="기관ID" blockSelect="false" displayMode="label">
+    						</w2:column>
+    						<w2:column removeBorderStyle="false" width="136" inputType="text" style="height:20px" id="column8" value="기관구분"
+    							blockSelect="false" displayMode="label">
+    						</w2:column>
+    						<w2:column removeBorderStyle="false" width="94" inputType="text" style="height:20px" id="column6" value="기관이름"
+    							blockSelect="false" displayMode="label">
+    						</w2:column>
+    						<w2:column removeBorderStyle="false" width="143" inputType="text" style="height:20px" id="column7" value="전화번호"
+    							blockSelect="false" displayMode="label">
+    						</w2:column>
+    						<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column1" value="이메일"
+    							blockSelect="false" displayMode="label">
+    						</w2:column>
+    					</w2:row>
+    				</w2:header>
+    				<w2:gBody id="gBody1" style="">
+    					<w2:row id="row2" style="">
+    					
+    					<w2:column blockSelect="false" defaultValue="" falseValue="0" id="chk" inputType="checkbox" readOnly="false"
+								style="height:20px" trueValue="1" width="39" viewType="" typeGetter="">
+							</w2:column>
+    						<w2:column removeBorderStyle="false" width="136" inputType="text" style="height:20px" id="ORG_ID" value=""
+    							blockSelect="false" displayMode="label">
+    						</w2:column>
+    						<w2:column removeBorderStyle="false" width="136" inputType="text" style="height:20px" id="ORG_DIV" value=""
+    							blockSelect="false" displayMode="label">
+    						</w2:column>
+    						<w2:column removeBorderStyle="false" width="94" inputType="text" style="height:20px" id="ORG_NM" value=""
+    							blockSelect="false" displayMode="label">
+    						</w2:column>
+    						<w2:column removeBorderStyle="false" width="143" inputType="text" style="height:20px" id="PHONE" value=""
+    							blockSelect="false" displayMode="label">
+    						</w2:column>
+    						<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="EMAIL" value=""
+    							blockSelect="false" displayMode="label">
+    						</w2:column>
+    					</w2:row>
+    				</w2:gBody>
+    			</w2:gridView>
+    		</xf:group>
+    		<xf:group class="popup_bottom" id="" style="">
+    			<w2:anchor class="btn_cm" ev:onclick="scwin.btn_confirm_onclick" id="btn_confirm" style="">
+    				<xf:label><![CDATA[확인]]></xf:label>
+    			</w2:anchor>
+    			<w2:anchor class="btn_cm" ev:onclick="scwin.btn_cancel_onclick" id="btn_cancel" outerDiv="" style="">
+    				<xf:label><![CDATA[취소]]></xf:label>
+    			</w2:anchor>
+    		</xf:group>
+    	</xf:group>
+    </body>
+</html>
