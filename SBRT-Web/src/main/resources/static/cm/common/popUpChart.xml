@@ -99,7 +99,7 @@
 		//com.executeSubmission(sub_AL0203G0P0);
 		//scwin.drawChart(chkCnt);		
 		//scwin.testDrawChart(chkCnt);
-		scwin.testDrawChart2(chkCnt);
+		scwin.drawChart2(chkCnt);
 	};
 	
 	scwin.onpageunload = function() {
@@ -351,7 +351,7 @@
 		this.data = [];
 	}
 	
-	scwin.testDrawChart2 = function(chkCnt){
+	scwin.drawChart2 = function(chkCnt){
 		
 		var datasets = new Array();
 		var transData = new Array();
@@ -361,10 +361,9 @@
 
 		var rowCount = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowCount();
 		var jsonData = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
-		
+
 		for(i; i<chkCnt; i++){
 			var data = new Array();
-			
 			for(j; j<rowCount; j++){
 				if(jsonData[num].OPER_SN  ==  dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(j, "OPER_SN")){
 					transData.push(dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowJSON(j));
@@ -377,7 +376,8 @@
 			
 			for(var y = 0; y < transData.length; y++){
 				var label = transData[y].OPER_SN + "회차";
-				var updDtm = transData[y].UPD_DTM;
+				//var updDtm = transData[y].UPD_DTM;
+				var updDtm = util.getCurrentDate3();
 				var operSn = transData[y].OPER_SN;
 				var arrvTm = transData[y].ARRV_TM;
 				var dprtTm = transData[y].DPRT_TM;
