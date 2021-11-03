@@ -18,6 +18,23 @@
 		ON A.COMP_ID = B.COMP_ID
 </select>
 
+<select id="selectAllocVhcList" resultType="Map">
+	SELECT
+		C.VHC_ID
+		,A.VHC_NO
+		,A.AREA
+		,A.MAKER
+		,B.COMP_NM
+	FROM
+		BRT_REP_ROUT_VHC_CMPSTN C
+		LEFT JOIN BMS_VHC_MST A
+		ON A.VHC_ID = C.VHC_ID
+		LEFT JOIN BMS_TRANSCOMP_MST B
+		ON A.COMP_ID = B.COMP_ID
+	WHERE
+		C.REP_ROUT_ID = #{REP_ROUT_ID}
+</select>
+
 
 <select id="selectVhcDvcInfo" resultType="Map">
 	SELECT
