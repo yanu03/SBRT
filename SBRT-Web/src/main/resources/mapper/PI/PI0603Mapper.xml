@@ -43,9 +43,9 @@
 					,FCLT.FCLT_TYPE
 					,FCLT.INST_LOC
 					,FCLT.MNG_ID
-					,IF(RST.COMPLETE_YN = 'N', '예약중', NULL) RSV_STATE
+					,IF(RST.COMPLETE_YN = 'N' OR RST.PROCE_RST != 'PR008', '예약중', NULL) RSV_STATE
 					,RSV.RSV_ID
-					,DATE_FORMAT(RSV.RSV_DT, '%Y-%m-%d') RSV_DT
+					,IF(RST.COMPLETE_YN = 'N' OR RST.PROCE_RST != 'PR008', DATE_FORMAT(RSV.RSV_DT, '%Y-%m-%d'), NULL) RSV_DT
 		
 		FROM 		BMS_FCLT_INFO FCLT 
 		LEFT JOIN 	BMS_NODE_MST NODE
@@ -53,13 +53,14 @@
 		LEFT JOIN	BMS_BIT_VDO_RSV_INFO RSV
 		ON			FCLT.MNG_ID = RSV.MNG_ID
 		LEFT JOIN 	BMS_BIT_VDO_RSV_RST_INFO RST
-		ON			RSV.MNG_ID = RST.MNG_ID
+		ON			RSV.MNG_ID = RST.MNG_ID AND RST.COMPLETE_YN = 'N'
 		<where>
+			
 			<if test="CONTENT != null and CONTENT != ''">
-				NODE.NODE_NM LIKE CONCAT('%',#{CONTENT},'%')
+			AND	NODE.NODE_NM LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
 		</where>		
-		
+		GROUP BY 	FCLT.MNG_ID 
 		ORDER BY	FCLT.FCLT_ID, FCLT.NODE_ID		
 	</select>
 	
@@ -120,10 +121,10 @@
 					,#{ORGA_ID}
 					,#{UPD_DTM}
 					,#{SSN_USER_ID}
-				)
-	</insert>
+				);
+	<!-- </insert> -->
 	
-	<insert id="PI0603G1I1" parameterType="Map">
+	<!-- <insert id="PI0603G1I1" parameterType="Map"> -->
 		INSERT INTO
 		 	BMS_BIT_VDO_RSV_RST_INFO
 				(

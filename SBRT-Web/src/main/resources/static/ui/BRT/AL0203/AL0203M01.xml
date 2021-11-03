@@ -329,14 +329,11 @@
 			}
 		}
 		
-		
-		
-		
 		//gridView 정보 정의 
 		//xml 형식을 정의 하면 <w2:gridView 에 xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" 포함 합니다.
 		var gridStr = '<w2:gridView xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" dataList="dlt_VIEW_OPER_PL_NODE_INFO" ev:onafteredit="scwin.AL0203G1_onafteredit" '
 						+ 'scrollByColumn="true" ignoreCellClick="false"  fixedColumnWithHidden="true" id="AL0203G1" ev:onrowindexchange="scwin.AL0203G1_onrowindexchange" class ="cm_grid right" useShiftKey="false" '
-						+ 'mergeCells="byrestriccol" focusMode="row" mergeCol="OPER_SN, WAY_DIV" >'
+						+ ' ev:oncellclick="scwin.AL0203G1_oncellclick" mergeCells="byrestriccol" focusMode="row" mergeCol="OPER_SN, WAY_DIV" >'
 		+ '<w2:header id="header1" style="text-align:left">'
 		+ gridHeader
 		+'</w2:header>'
@@ -354,7 +351,7 @@
 
 		dlt_VIEW_OPER_PL_NODE_INFO.modifyAllStatus("R")
 	};
-        
+
 	scwin.dispEmptyGridView = function() {
 		
 		var gridHeader ="", gridBody="";
@@ -583,7 +580,11 @@
 			dlt_BRT_OPER_ALLOC_PL_NODE_INFO.setCellData(scwin.getIndexAllocPlNode(columnId), "ARRV_TM", value);
 		}
 	};
-	
+	scwin.AL0203G1_oncellclick = function(row,col) {
+		if(col==0){
+			dlt_VIEW_OPER_PL_NODE_INFO.modifyRowStatus(row, 'R');
+		}
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
