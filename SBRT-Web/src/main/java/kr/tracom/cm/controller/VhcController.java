@@ -30,6 +30,12 @@ public class VhcController extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/vhc/selectAllocVhcList")
+	public @ResponseBody Map<String, Object> selectAllocVhcList() throws Exception {
+		result.setData("dlt_BMS_VHC_MST", vhcService.selectAllocVhcList());
+		return result.getResult();
+	}
+	
 	@RequestMapping("/vhc/selectVhcItem")
 	public @ResponseBody Map<String, Object> selectVhcItem() throws Exception {
 		result.setData("dlt_vhcItem", vhcService.selectVhcItem());

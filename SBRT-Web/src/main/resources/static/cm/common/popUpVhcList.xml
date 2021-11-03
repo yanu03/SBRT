@@ -24,11 +24,12 @@
 						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
 						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
 						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+						<w2:key id="REP_ROUT_ID" name="name3" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_vhcList" ref='data:json,dma_search' target="data:json,dlt_BMS_VHC_MST" action="/vhc/selectVhcList" method="post"
+			<xf:submission id="sub_vhcList" ref='data:json,dma_search' target="data:json,dlt_BMS_VHC_MST" action="/vhc/selectAllocVhcList" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_vhcList_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -48,7 +49,8 @@
 		
 		var codeOptions = [{ code : "AREA", compID : "vhcListGrid:AREA"}
 						];
-						
+		
+		dma_search.set("REP_ROUT_ID", scwin.param.data);
 		com.setCommonDtl(codeOptions, function() {
 				com.searchGrid(vhcListGrid, sub_vhcList);
 		});
