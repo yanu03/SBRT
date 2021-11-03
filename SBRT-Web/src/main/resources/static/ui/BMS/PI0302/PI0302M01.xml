@@ -51,6 +51,13 @@
 						<w2:column id="CATEGORY" name="범주" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_LIVING_LOG" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
+						<w2:column id="MNG_ID" name="관리ID" dataType="text"></w2:column>
+						<w2:column id="SEND_DT" name="전송일시" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_PI0302G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_NEWS_INFO" action="/pi/PI0302G0R0"
@@ -68,6 +75,10 @@
 			<xf:submission id="sub_PI0302SHI0" ref="" target="data:json,dlt_searchitem" action="/pi/PI0302SHI0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_PI0302G1R0" ref="" target="data:json,dlt_BMS_LIVING_LOG" action="/pi/PI0302G1R0" method="post" mediatype="application/json"
+				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit=""
+				ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
@@ -90,6 +101,7 @@
 	
 	scwin.sub_PI0302G0R0_submitdone = function(e) {
 		com.setFocusedCell(PI0302G0, "CATEGORY");
+		$p.executeSubmission(sub_PI0302G1R0);
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
@@ -230,17 +242,17 @@
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="" style="">
-						<w2:gridView dataList="" defaultCellHeight="20" id="PI0302G01" rowNumVisible="true" useShiftKey="true" readOnly="" 
-							scrollByColumn="false" rowNumHeaderValue="순번" sortable="true"
-							rowStatusHeaderValue="상태"  overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
-							fixedColumnWithHidden="true" ignoreCellClick="false" style="width: 100%;height: 100%;" class="cm_grid" autoFit="lastColumn">
+						<w2:gridView dataList="data:dlt_BMS_LIVING_LOG" defaultCellHeight="20" id="PI0302G01" rowNumVisible="true"
+							useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태"
+							overflowX="hidden" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true" ignoreCellClick="false"
+							style="width: 100%;height: 100%;" class="cm_grid" autoFit="lastColumn">
 							<w2:header id="header1" style="">
 								<w2:row id="row1" style="">
 									<w2:column blockSelect="false" displayMode="label" id="" inputType="text" removeBorderStyle="false"
 										style="height:20px" value="차량번호" width="110">
 									</w2:column>
 									<w2:column blockSelect="false" displayMode="label" id="column4" inputType="text"
-										removeBorderStyle="false" style="height:20px" value="관리 ID" width="110">
+										removeBorderStyle="false" style="height:20px" value="관리ID" width="110">
 									</w2:column>
 									<w2:column blockSelect="false" displayMode="label" id="column3" inputType="text"
 										removeBorderStyle="false" style="height:20px" value="전송일시" width="174">
@@ -249,22 +261,22 @@
 							</w2:header>
 							<w2:gBody id="gBody1" style="">
 								<w2:row id="row2" style="">
-									<w2:column blockSelect="false" displayMode="label" id="column10" inputType="text"
+									<w2:column blockSelect="false" displayMode="label" id="VHC_NO" inputType="text"
 										removeBorderStyle="false" style="height:20px" value="" width="195">
 									</w2:column>
-									<w2:column blockSelect="false" displayMode="label" id="column9" inputType="text"
+									<w2:column blockSelect="false" displayMode="label" id="MNG_ID" inputType="text"
 										removeBorderStyle="false" style="height:20px" value="" width="133">
 									</w2:column>
-									<w2:column blockSelect="false" displayMode="label" id="column8" inputType="text"
+									<w2:column blockSelect="false" displayMode="label" id="SEND_DT" inputType="text"
 										removeBorderStyle="false" style="height:20px" value="" width="174">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
 							<w2:footer style="" id="footer2">
 								<w2:row style="" id="row3">
-									<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px; border-right:5px" id="column48" value=""
-										blockSelect="false" displayMode="label" colSpan="13" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('GRG_ID')"
-										textAlign="left">
+									<w2:column removeBorderStyle="false" width="NaN" inputType="expression"
+										style="height:20px; border-right:5px" id="column48" value="" blockSelect="false" displayMode="label" colSpan="13" rowSpan=""
+										expression="&quot;데이터 개수 : &quot; + COUNT('GRG_ID')" textAlign="left">
 									</w2:column>
 								</w2:row>
 							</w2:footer>

@@ -23,4 +23,19 @@
 						,NEWS_TITLE	
 		FROM			BMS_NEWS_INFO
 	</select>
+	
+	<select id="PI0302G1R0" resultType="Map">
+		SELECT
+			C.VHC_NO
+			,A.MNG_ID
+			,DATE_FORMAT(A.SEND_DT, '%Y-%m-%d %H:%i') SEND_DT
+		FROM
+			BMS_LIVING_LOG A
+			LEFT JOIN BMS_DVC_INFO B
+			ON A.MNG_ID = B.MNG_ID
+			LEFT JOIN BMS_VHC_MST C
+			ON B.VHC_ID = C.VHC_ID
+		ORDER BY
+			A.SEND_DT
+	</select>
 </mapper>
