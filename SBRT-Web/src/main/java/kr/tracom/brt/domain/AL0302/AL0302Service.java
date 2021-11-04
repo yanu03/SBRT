@@ -55,6 +55,7 @@ public class AL0302Service extends ServiceSupport {
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("U")) {
 					uCnt += al0302Mapper.AL0302G1U0(data);
+					uCnt += al0302Mapper.AL0302G1U1(data);
 				} 
 			}			
 		} catch(Exception e) {
