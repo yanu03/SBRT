@@ -130,79 +130,7 @@
 		
 	};
 	
-	scwin.fusionChart = function(chart){
-		dlt_BRT_CHART_INFO.removeAll();
-		
-		var old_open_sn = -1;
-
-		var chartindex = 0;
-		var rowCntArr = dlt_BRT_OPER_ALLOC_PL_NODE_CNT.getAllJSON();
-		var allData = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
-		var rowIndex = 0;
-		var rowCnt = 0;
-		var maxCnt = 0;
-		//var j = 0;
-		var rowCntLength = rowCntArr.length;
 	
-		for(var i = 0; i < 5; i++) {
-			if(maxCnt < rowCntArr[i].CNT)maxCnt = rowCntArr[i].CNT;
-			rowCnt =  rowCntArr[i].CNT;
-			
-			for(var j = 0; j < rowCnt; j++) {
-				if(j==0||j==rowCnt-1){
-					if(j==0)chartindex= 0;
-				 	var accruLen = allData[rowIndex+j].ACCRU_LEN;
-				 	var arrvTm = allData[rowIndex+j].ARRV_TM.substring(0,5);
-					var dprtTm = allData[rowIndex+j].DPRT_TM.substring(0,5);
-					var nodeNm = allData[rowIndex+j].NODE_NM + "(" + allData[rowIndex+j].OPER_SN + "회)";
-					var index = dlt_BRT_CHART_INFO.insertRow(rowIndex+j);
-					dlt_BRT_CHART_INFO.setCellData(index, "INDEX", chartindex);
-					dlt_BRT_CHART_INFO.setCellData(index, "ACCRU_LEN", accruLen);
-					dlt_BRT_CHART_INFO.setCellData(index, "ARRV_TM", arrvTm);
-					//dlt_BRT_CHART_INFO.setCellData(index, "DPRT_TM", dprtTm);
-					dlt_BRT_CHART_INFO.setCellData(index, "NODE_NM", nodeNm);
-					chartindex++;
-				}
-				else{
-					var accruLen = allData[rowIndex+j].ACCRU_LEN;
-					var arrvTm = allData[rowIndex+j].ARRV_TM.substring(0,5);
-					var dprtTm = allData[rowIndex+j].DPRT_TM.substring(0,5);
-					var nodeNm = allData[rowIndex+j].NODE_NM + "(" + allData[rowIndex+j].OPER_SN + "회)";
-					var index = dlt_BRT_CHART_INFO.insertRow(rowIndex+j);
-					dlt_BRT_CHART_INFO.setCellData(index, "INDEX", chartindex);
-					dlt_BRT_CHART_INFO.setCellData(index, "ACCRU_LEN", accruLen);
-					dlt_BRT_CHART_INFO.setCellData(index, "ARRV_TM", arrvTm);
-					//dlt_BRT_CHART_INFO.setCellData(index, "DPRT_TM", dprtTm);
-					dlt_BRT_CHART_INFO.setCellData(index, "NODE_NM", nodeNm);
-					chartindex++;
-				}
-			}
-			rowIndex += rowCnt;
-			if(i>=rowCntArr.length-1)break;
-		}
-		
-		var options = { 
-			labelStep:"7"		
-		    ,xAxisName:"시간"
-		    ,yAxisName:"노선"
-      		,labelDisplay: "wrap"
-      		,canvasPadding: "20"
-      		,xAxisValueDecimals: "5"
-      		//,numberSuffix: "/"+sttnNm
-      		,lineColor: "#f56363"
-      		,valuePadding: "50"
-      		,labelPadding: "20"
-		}
-		
-		
-		CHART.setChartAttribute(options);
-		//CHART.setChartColumnSimpleRef("data:dlt_BRT_CHART_INFO", "ARRV_TM", "OPER_SN", "ACCRU_LEN");
-		//CHART.draw();
-		
-		CHART.setJSONData(chart);
-        
-	
-	}
 	
 	scwin.sub_AL0203G0P0_submitdone = function(e) {
 	
@@ -218,226 +146,6 @@
        return a - b;
     };
 	
-	scwin.drawChart = function(){
-		
-		
-		var category = new Array();
-		var charArray = new Array();
-		var Adata = new Array();
-		var Bdata = new Array();
-		
-		var rowCount = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowCount();
-		
-		var plAllJson = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
-		var rlAllJson = dlt_BRT_OPER_ALLOC_RL_NODE_INFO.getAllJSON();
-		
-		var seriesname = "운행계획 : " + dma_sub_search.get("OPER_SN");
-		
-		for(var x = 0; x < rowCount; x++){
-			var arrvTm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(x, "ARRV_TM");
-			var dprtTm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(x, "DPRT_TM");
-			var arrvTmRl = dlt_BRT_OPER_ALLOC_RL_NODE_INFO.getCellData(x, "REAL_ARRV_TM");
-			var dprtTmRl = dlt_BRT_OPER_ALLOC_RL_NODE_INFO.getCellData(x, "REAL_DPRT_TM");
-			
-			/*var categoryJson = new Object();
-			categoryJson.label = arrvTm;
-			categoryJson = JSON.stringify(categoryJson);
-			category.push(JSON.parse(categoryJson));
-			
-			var categoryJson = new Object();
-			categoryJson.label = dprtTm;
-			categoryJson = JSON.stringify(categoryJson);
-			category.push(JSON.parse(categoryJson));
-			
-			var categoryJson = new Object();
-			categoryJson.label = arrvTmRl;
-			categoryJson = JSON.stringify(categoryJson);
-			category.push(JSON.parse(categoryJson));
-			
-			var categoryJson = new Object();
-			categoryJson.label = dprtTmRl;
-			categoryJson = JSON.stringify(categoryJson);
-			category.push(JSON.parse(categoryJson));*/
-			
-			category.push(arrvTm);
-			category.push(dprtTm);
-			category.push(arrvTmRl);
-			category.push(dprtTmRl);
-		};
-		
-		category.sort(date_ascending);
-		
-		for(var i = 0; i < rowCount; i++ ){
-			
-			var realData = new Object();
-			
-			var operSn = plAllJson[i].OPER_SN;
-			//var arrvTm = plAllJson[i].ARRV_TM;
-			//var dprtTm = plAllJson[i].DPRT_TM;
-			var accruLen = plAllJson[i].ACCRU_LEN;
-			var nodeType = plAllJson[i].NODE_TYPE;
-			
-			var operSnRl = rlAllJson[i].OPER_SN;
-			//var arrvTmRl = rlAllJson[i].REAL_ARRV_TM;
-			//var dprtTmRl = rlAllJson[i].REAL_DPRT_TM;
-			var accruLenRl = rlAllJson[i].ACCRU_LEN;
-			var nodeTypeRl = rlAllJson[i].NODE_TYPE;
-			
-			if(nodeType=='NT002'){
-				var categoryJson = new Object();
-				var dataJson = new Object();
-				/*categoryJson.label = arrvTm;
-				categoryJson = JSON.stringify(categoryJson);
-				category.push(JSON.parse(categoryJson));
-				
-				dataJson.value = accruLen;
-				dataJson = JSON.stringify(dataJson);
-				data.push(JSON.parse(dataJson));*/
-				
-				Adata.push(accruLen);
-			}
-			
-			if((nodeType=='NT002')&&(arrvTm!=dprtTm)){
-				var categoryJson = new Object();
-				var dataJson = new Object();
-				
-				/*categoryJson.label = dprtTm;
-				categoryJson = JSON.stringify(categoryJson);
-				category.push(JSON.parse(categoryJson));
-				
-				dataJson.value = accruLen;
-				dataJson = JSON.stringify(dataJson);
-				data.push(JSON.parse(dataJson));*/
-				
-				Adata.push(accruLen);
-			}
-			
-			if(nodeTypeRl=='NT002'){
-				var categoryJson = new Object();
-				var dataJson = new Object();
-				/*categoryJson.label = arrvTmRl;
-				categoryJson = JSON.stringify(categoryJson);
-				category.push(JSON.parse(categoryJson));
-				
-				dataJson.value = accruLenRl;
-				dataJson = JSON.stringify(dataJson);
-				data1.push(JSON.parse(dataJson));*/
-				
-				Bdata.push(accruLenRl);
-			}
-			
-			if((nodeTypeRl=='NT002')&&(arrvTm!=dprtTm)){
-				var categoryJson = new Object();
-				var dataJson = new Object();
-				
-				/*categoryJson.label = dprtTmRl;
-				categoryJson = JSON.stringify(categoryJson);
-				category.push(JSON.parse(categoryJson));
-				
-				dataJson.value = accruLenRl;
-				dataJson = JSON.stringify(dataJson);
-				data1.push(JSON.parse(dataJson));*/
-				
-				Bdata.push(accruLenRl);
-			}
-			
-		};
-		
-		var charData = new CharData();
-		
-		//charData.data = data;
-		//charData.seriesname = seriesname;
-		
-		//charArray.push(charData);
-		charArray.push(Adata);
-		charArray.push(Bdata);
-		
-		var charData = new CharData();
-		
-		//charData.data = data1;
-		//charData.seriesname = seriesname;
-		
-		//charArray.push(charData);
-		
-		
-	 	var chart = {
-		    "categories": [
-		        {
-		            category
-		        }
-		    ],
-		    "dataset": 
-		    		charArray
-		}		
-		
-		var options = {
-			labelStep:"3"		
-			,xAxisName:"시간"
-			,yAxisName:"거리"
-	      	,labelDisplay: "wrap"
-	      	//,canvasPadding: "20"
-	      	,lineColor: "#f56363"
-	      	//,valuePadding: "50"
-	      	//,labelPadding: "20"
-	      	,lineThickness: "2"
-	      	,flatScrollBars: "1"
-	        ,scrollheight: "6"
-	        ,numVisiblePlot: "60"
-		}
-			
-			setTimeout(function() {
-				//CHART.setSize(2500, 750);
-				CHART.setChartAttribute(options);
-				CHART.setJSONData(chart);
-			},100);
-			
-		/*var ctx = document.getElementById('myChart');
-		var myChart = new Chart(ctx, {
-		    type: 'line',
-		    data: {
-		        labels: [1,2,3,4,5],
-		        datasets: [{
-		            label: '# of Votes',
-		            data: {datasets : [
-		            	{
-		            		data:[5,10,15,20,25]
-		           		},
-		            	{
-		            		data:[30,35,40,45,50]
-		            	}
-		            ]},
-		            backgroundColor: [
-		                'rgba(255, 99, 132, 0.2)',
-		                'rgba(54, 162, 235, 0.2)',
-		                'rgba(255, 206, 86, 0.2)',
-		                'rgba(75, 192, 192, 0.2)',
-		                'rgba(153, 102, 255, 0.2)',
-		                'rgba(255, 159, 64, 0.2)'
-		            ],
-		            borderColor: [
-		                'rgba(255, 99, 132, 1)',
-		                'rgba(54, 162, 235, 1)',
-		                'rgba(255, 206, 86, 1)',
-		                'rgba(75, 192, 192, 1)',
-		                'rgba(153, 102, 255, 1)',
-		                'rgba(255, 159, 64, 1)'
-		            ],
-		            borderWidth: 1
-		        }]
-		    },
-		    options: {
-		        scales: {
-		            y: {
-		                beginAtZero: true
-		            },
-		            x: {
-		                type: 'timeseries'
-		            }
-		        }
-		    }
-		});*/
-			
-};
 
 	var CharData = function(){
 		this.seriesname = {};
@@ -462,7 +170,8 @@
 		var data = new Array();
 		for(var y = 0; y < jsonData.length; y++){
 			var label = jsonData[y].OPER_SN + "회차";
-			var updDtm = jsonData[y].UPD_DTM;
+			//var updDtm = jsonData[y].UPD_DTM;
+			var updDtm = util.getCurrentDate3();
 			var operSn = jsonData[y].OPER_SN;
 			var arrvTm = jsonData[y].ARRV_TM;
 			var dprtTm = jsonData[y].DPRT_TM;
@@ -501,7 +210,8 @@
 		var data = new Array();
 		for(var y = 0; y < rlAllJson.length; y++){
 			var label = rlAllJson[y].OPER_SN + "회차";
-			var updDtm = rlAllJson[y].UPD_DTM;
+			//var updDtm = rlAllJson[y].UPD_DTM;
+			var updDtm = util.getCurrentDate3();
 			var operSn = rlAllJson[y].OPER_SN;
 			var arrvTm = rlAllJson[y].REAL_ARRV_TM;
 			var dprtTm = rlAllJson[y].REAL_DPRT_TM;
