@@ -54,9 +54,7 @@
 			ON DVC.MNG_ID = RSV.MNG_ID
 			LEFT JOIN BMS_VDO_RSV_RST_INFO RST 
 			ON DVC.MNG_ID = RST.MNG_ID
-		WHERE	(DVC.DVC_KIND = 'DK003' OR	DVC.DVC_KIND = 'DK010')
-		AND DVC.USE_YN = 'Y'
-		AND VHC.USE_YN = 'Y'
+		WHERE	(DVC.DVC_KIND = 'DK003' OR DVC.DVC_KIND = 'DK010')
 		AND DVC.MNG_ID IS NOT NULL
 		GROUP BY DVC.MNG_ID
 		ORDER BY DVC.VHC_ID			
@@ -86,10 +84,12 @@
 					#{UPD_DTM},
 					#{SSN_USER_ID}
 				);
-	<!-- </insert>
+	  </insert>
 	
 	
-	<insert id="PI0503G1I1" parameterType="Map">-->
+	<insert id="PI0503G1I1" parameterType="Map"> 
+	
+	
 		INSERT INTO
 			BMS_VDO_RSV_RST_INFO(
 				  RSV_ID
@@ -156,7 +156,7 @@
 	</delete> -->
 	
 	
-	<!--  <select id="makePlayList" parameterType="String" resultType="Map">
+	  <select id="makePlayList" parameterType="String" resultType="Map">
 		SELECT
 			  IF(VINFO.FILE_TYPE = 'FT001', 'V', 'I') AS VIDEO_TYPE
 			, IF(VINFO.FILE_TYPE = 'FT001', CONCAT(VINFO.VDO_ID, '.mp4'), CONCAT(VINFO.VDO_ID, '.jpg')) AS VIDEO_FILE
@@ -169,7 +169,7 @@
 		WHERE
 			OLIST.ORGA_ID = #{orgaId}
 		ORDER BY OLIST.SN
-	</select>	-->
+	</select>	
 
 
 </mapper>

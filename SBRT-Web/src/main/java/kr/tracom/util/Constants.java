@@ -120,17 +120,25 @@ public class Constants {
     	public static final int CHG_TYPE_CHG_OPER = 1;
     	public static final int CHG_TYPE_MODIFY = 2;
 
+    	public static final int MAX_TRY_COUNT = 50;
+    	
     	public static final float MAX_SPEED_DEFAULT = 50.0f;
     	public static final float MAX_SPEED_LIMIT = 59.0f;
     	public static final float MIN_SPEED_LIMIT = 35.0f;
     	public static final int LIMIT_DIFF_SEC = 35;
     	public static final int MAX_DELAY_SEC = 20;
-
     	public static final float STD_AAC = 1.67f; //기준가속(1.67)
     	public static final float STD_DEC = -2.5f; //기준감속(-2.5)
-
-    	public static final int MAX_TRY_COUNT = 50;
     	
+    	
+    	public static final String DL_CD_MAX_SPEED_DEFAULT = "SS020";
+    	public static final String DL_CD_MAX_SPEED_LIMIT = "SS021";
+    	public static final String DL_CD_MIN_SPEED_LIMIT = "SS010"; //목표 표정속도
+    	public static final String DL_CD_LIMIT_DIFF_SEC = "SS022";
+    	public static final String DL_CD_MAX_DELAY_SEC = "SS023";
+    	public static final String DL_CD_STD_AAC = "SS024"; //기준가속
+    	public static final String DL_CD_STD_DEC = "SS025"; //기준감속
+
     }
     
     

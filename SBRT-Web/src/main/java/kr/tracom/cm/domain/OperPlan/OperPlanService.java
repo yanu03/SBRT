@@ -220,6 +220,51 @@ public class OperPlanService extends ServiceSupport {
 	) throws Exception {
 
 		final String TIME_PATTERN = "HH:mm:ss";
+		
+		
+		float MAX_SPEED_DEFAULT = OperPlanCalc.MAX_SPEED_DEFAULT; //50.0f;
+    	float MAX_SPEED_LIMIT = OperPlanCalc.MAX_SPEED_LIMIT;//59.0f;
+    	float MIN_SPEED_LIMIT = OperPlanCalc.MIN_SPEED_LIMIT;//35.0f;
+    	int LIMIT_DIFF_SEC = OperPlanCalc.LIMIT_DIFF_SEC;//35;
+    	int MAX_DELAY_SEC = OperPlanCalc.MAX_DELAY_SEC;//20;
+    	float STD_AAC = OperPlanCalc.STD_AAC;//1.67f; //기준가속(1.67)
+    	float STD_DEC = OperPlanCalc.STD_DEC;//-2.5f; //기준감속(-2.5)
+    	
+    	//기준값 가져오기
+    	Map<String, Object> param = new HashMap<>();
+		param.put("CO_CD", Constants.SYS_INFO);
+		List<Map<String, Object>> cdList = commonMapper.selectCommonDtlList(param);
+		
+		for(Map<String, Object> cd : cdList) {
+			
+			
+			try {
+				String dlCd =  String.valueOf(cd.get("DL_CD"));
+				String val =  String.valueOf(cd.get("TXT_VAL1"));
+				
+				if(OperPlanCalc.DL_CD_MAX_SPEED_DEFAULT.equals(dlCd)) {
+					MAX_SPEED_DEFAULT = Float.valueOf(val);
+				} else if(OperPlanCalc.DL_CD_MAX_SPEED_LIMIT.equals(dlCd)) {
+					MAX_SPEED_LIMIT = Float.valueOf(val);
+				} else if(OperPlanCalc.DL_CD_MIN_SPEED_LIMIT.equals(dlCd)) {
+					MIN_SPEED_LIMIT = Float.valueOf(val);
+				} else if(OperPlanCalc.DL_CD_LIMIT_DIFF_SEC.equals(dlCd)) {
+					LIMIT_DIFF_SEC = Integer.valueOf(val);
+				} else if(OperPlanCalc.DL_CD_MAX_DELAY_SEC.equals(dlCd)) {
+					MAX_DELAY_SEC = Integer.valueOf(val);
+				} else if(OperPlanCalc.DL_CD_STD_AAC.equals(dlCd)) {
+					STD_AAC = Float.valueOf(val);
+				} else if(OperPlanCalc.DL_CD_STD_DEC.equals(dlCd)) {
+					STD_DEC = Float.valueOf(val);
+				}
+				
+			} catch (Exception e) {
+				logger.error("{}", e);
+			}
+			
+		}
+    	
+		
 
 		//정류장 정보
 		List<Map<String, Object>> sttnList = null;
@@ -288,9 +333,9 @@ public class OperPlanService extends ServiceSupport {
 		int max_stop_sec = 0;	 //최대 정차시간(sec)
 		int stop_sec_peak = 0;	 //정류장 필요 정차시간(첨두시)
 		int stop_sec_none_peak = 0;	 //정류장 필요 정차시간(비첨두시)
-		float max_speed = OperPlanCalc.MAX_SPEED_DEFAULT;	 //최고 속도(km/h)
+		float max_speed = MAX_SPEED_DEFAULT;	 //최고 속도(km/h)
 		float max_speed_per_sec= 0;	 //최고 속도(m/s)
-		int max_delay_sec = OperPlanCalc.MAX_DELAY_SEC;	 //연장 최대 시간(초)
+		int max_delay_sec = MAX_DELAY_SEC;	 //연장 최대 시간(초)
 
 		float acc_avg;	 //출발 시 평균 가속도(m/s2)
 		float dec_avg;	 //정차 시 평균 감속도(m/s2)
@@ -367,8 +412,8 @@ public class OperPlanService extends ServiceSupport {
 
 
 		//변수 초기화
-		acc_avg = (OperPlanCalc.STD_AAC * 0.8f);//기준가속(1.67) 의 80%
-		dec_avg = (OperPlanCalc.STD_DEC * 0.8f); //기준감속(-2.5) 의 80%
+		acc_avg = (STD_AAC * 0.8f);//기준가속(1.67) 의 80%
+		dec_avg = (STD_DEC * 0.8f); //기준감속(-2.5) 의 80%
 		//acc_avg = 1.4f;  //기준가속(1.67) 의 80%
 		//dec_avg = -2.1f; //기준감속(-2.5) 의 80%
 
@@ -879,17 +924,17 @@ public class OperPlanService extends ServiceSupport {
 			} else {
 				logger.info("도착시각:{}, 기준도착시각:{}, 차이:{}초", arrv_tm, route_ed_tm, diffSec);
 
-				if (Math.abs(diffSec) > OperPlanCalc.LIMIT_DIFF_SEC) {
+				if (Math.abs(diffSec) > LIMIT_DIFF_SEC) {
 
 					//#도착시간이 빠른 경우
 					if (diffSec < 0) {
 
-						if (max_speed > OperPlanCalc.MIN_SPEED_LIMIT) {
+						if (max_speed > MIN_SPEED_LIMIT) {
 
-							if (Math.abs(Math.abs(diffSec) - OperPlanCalc.LIMIT_DIFF_SEC) <= 5) {
+							if (Math.abs(Math.abs(diffSec) - LIMIT_DIFF_SEC) <= 5) {
 								max_speed -= 0.2;
 								//max_speed--;
-							} else if (Math.abs(Math.abs(diffSec) - OperPlanCalc.LIMIT_DIFF_SEC) <= 10) {
+							} else if (Math.abs(Math.abs(diffSec) - LIMIT_DIFF_SEC) <= 10) {
 								max_speed -= 0.5;
 								//max_speed--;
 							} else {
@@ -909,7 +954,7 @@ public class OperPlanService extends ServiceSupport {
 							tryCount = 0;
 
 							//최대속도변경으로 안되는 경우
-							max_speed = OperPlanCalc.MAX_SPEED_DEFAULT; //최대속도 초기화
+							max_speed = MAX_SPEED_DEFAULT; //최대속도 초기화
 
 							//가속도 변경
 							
@@ -921,11 +966,11 @@ public class OperPlanService extends ServiceSupport {
 
 					} else { //#도착시간이 늦는 경우
 
-						if (max_speed < OperPlanCalc.MAX_SPEED_LIMIT) {
-							if (Math.abs(Math.abs(diffSec) - OperPlanCalc.LIMIT_DIFF_SEC) <= 5) {
+						if (max_speed < MAX_SPEED_LIMIT) {
+							if (Math.abs(Math.abs(diffSec) - LIMIT_DIFF_SEC) <= 5) {
 								max_speed += 0.2;
 								//max_speed++;
-							} else if (Math.abs(Math.abs(diffSec) - OperPlanCalc.LIMIT_DIFF_SEC) <= 10) {
+							} else if (Math.abs(Math.abs(diffSec) - LIMIT_DIFF_SEC) <= 10) {
 								max_speed += 0.5;
 								//max_speed++;
 							} else {
@@ -945,7 +990,7 @@ public class OperPlanService extends ServiceSupport {
 							tryCount = 0;
 
 							//최대속도변경으로 안되는 경우
-							max_speed = OperPlanCalc.MAX_SPEED_DEFAULT; //최대속도 초기화
+							max_speed = MAX_SPEED_DEFAULT; //최대속도 초기화
 
 							//가속도 변경
 							
