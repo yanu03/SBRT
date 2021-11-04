@@ -406,7 +406,7 @@
 		
 	};
 	scwin.setGridViewInfo = function() {
-		
+		debugger;
 		var gridHeader ="", gridBody="";
 		var rowData = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
 		var rowCntArr = dlt_BRT_OPER_ALLOC_PL_NODE_CNT.getAllJSON();
@@ -623,15 +623,11 @@
 	};
 	
 	scwin.sub_AL0203G1R0_submitdone = function(e) {
+		dma_sub_search.set("DAY_DIV", dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "DAY_DIV"));
+		dma_sub_search.set("ROUT_ID", dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "ROUT_ID"));
 		com.executeSubmission(sub_OPER_ALL_REAL_NODE);
 		scwin.setGridViewInfo();
 		com.setFocusedCell(AL0203G1, "OPER_SN");
-//		scwin.fusionChart(AL0203G1.getFocusedRowIndex());
-//		AL0203CHT0.configure({"ChartNoDataText" :"데이터가 없음."});
-//		var val_ROUT_ID = dlt_BRT_COR_DTL_INFO.getColData("ROUT_ID");
-//		dma_sub_search.set("ROUT_IDS", val_ROUT_ID);
-//		dma_sub_search.set("TYPE", "DISP_NODE");
-//		com.executeSubmission(sub_AL0203G2R0);
 	};
 	
 	scwin.AL0203G1_onrowindexchange = function(row,oldRow) {

@@ -60,9 +60,9 @@
         		mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_VH0300G0R0_submitdone" ev:submiterror=""
         		abortTrigger="">
         	</xf:submission>
-        	<xf:submission id="sub_VH0300G1R0" ref="data:json,dma_param_VH0300G1" target="data:json,dlt_dlt_BRT_ACRT_LOC_STOP_LOG"
+        	<xf:submission id="sub_VH0300G1R0" ref="data:json,dma_param_VH0300G1" target="data:json,dlt_BRT_ACRT_LOC_STOP_LOG"
         		action="/vh/VH0300G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-        		customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+        		customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_VH0300G1R0_submitdone" ev:submiterror="" abortTrigger="">
         	</xf:submission>
         	<xf:submission id="sub_VH0300G1S0" ref='data:json,{"action":"modified","id":"dlt_BRT_ACRT_LOC_STOP_LOG"}' target="data:json,dma_result"
         		action="/vh/VH0300G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
@@ -101,6 +101,7 @@
 		var codeOptions = [ {code : "AREA", compID : "VH0300G0:AREA" }
 							,{code : "VIOLT_TYPE", compID : "VH0300G1:VIOLT_TYPE" }
 							,{code : "JUDG_TYPE", compID : "VH0300G1:JUDG_TYPE" }
+							,{code : "LOC_STOP_DIV", compID : "VH0300G1:LOC_STOP_DIV" }
 						];		
 	
 		com.setCommonDtl(codeOptions, function() {
@@ -132,7 +133,7 @@
 		com.saveDone(VH0300G1, sub_VH0300G1R0);		
 	};
 	
-	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {
 		if (info.newValue == "ALL") {
 			acb_autoChoiceBox.hide();
 			search_input.setValue("");
@@ -149,6 +150,10 @@
 		
 	};
 	
+	
+	scwin.sub_VH0300G1R0_submitdone = function(e) {
+		com.setFocusedCell(VH0300G1, "VHC_NO");	
+	};
 	]]></script>
     </head>
     <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -266,24 +271,24 @@
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="정위치정차 이력" style=""></w2:textbox>
 						</xf:group>
-						<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
+						<w2:wframe id="wfm_subBtn" class="wfm_subBtn" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
 					</xf:group>
 					<xf:group></xf:group> <!-- margin-->												
 					<xf:group id="" class="" style="">
 						<w2:gridView ignoreCellClick="false" ev:onrowindexchange="" autoFit="lastColumn" rowNumHeaderValue="순번"
 							visibleRowNum="8" class="cm_grid right" fixedColumnWithHidden="true" rowNumVisible="true" dataList="data:dlt_BRT_ACRT_LOC_STOP_LOG"
 							id="VH0300G1" readOnly="" style="" useShiftKey="true" scrollByColumn="false" rowStatusVisible="false" rowStatusHeaderValue="상태"
-							ev:oncellclick="" focusMode="">
+							ev:oncellclick="" focusMode="row">
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
 									<w2:column removeBorderStyle="false" width="140" inputType="text" style="height:20px" id="column9"
 										value="일시" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="104" inputType="text" style="height:20px" id="column7"
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column7"
 										value="차량번호" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px" id="column8"
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column8"
 										value="정차위치" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column6"
@@ -296,13 +301,13 @@
 									<w2:column removeBorderStyle="false" width="106" inputType="text" style="height:20px" id="OCR_DTM"
 										value="" blockSelect="false" displayMode="label" readOnly="true">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="104" inputType="select" style="height:20px" id="VHC_NO"
+									<w2:column removeBorderStyle="false" width="104" inputType="text" style="height:20px" id="VHC_NO"
 										value="" blockSelect="false" displayMode="label" readOnly="false">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="DOOR_SN"
 										value="" blockSelect="false" displayMode="label" readOnly="false">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="LOC_STOP_DIV" value=""
+									<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="LOC_STOP_DIV" value=""
 										blockSelect="false" displayMode="label" readOnly="false">
 									</w2:column>
 								</w2:row>
