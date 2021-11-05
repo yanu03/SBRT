@@ -595,91 +595,93 @@
 		//console.log(payload.body);
 			try {
 				
-				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
-				
-				if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
-					dlt_BRT_OPER_EVENT_HIS.insertRow(0);
-					var today = new Date();   
-					var hours = today.getHours();
-					var minutes = today.getMinutes(); 
-					var seconds = today.getSeconds(); 
-					var timeResult = hours + ':' + minutes + ':' + seconds
+				setTimeout(function() {	
+
+					var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 					
-					dlt_BRT_OPER_EVENT_HIS.setCellData(0, "OCR_DTM", timeResult);
-					dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_TYPE", jsonObj.EVT_CODE);
-					dlt_BRT_OPER_EVENT_HIS.setCellData(0, "ROUT_NM", jsonObj.ROUT_NM);
-					dlt_BRT_OPER_EVENT_HIS.setCellData(0, "VHC_NO", jsonObj.VHC_NO);
-					//dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_CODE", jsonObj.EVT_CODE);
-					//var eventType = dlt_BRT_OPER_EVENT_HIS.getcellData(0, "EVT_CODE");
-					var eventCode = jsonObj.EVT_CODE;
-					var eventMessage = "";
-					
-					switch(eventCode) {
-						case "ET001":
-						eventMessage = jsonObj.NODE_NM + "에 도착하였습니다.";
-						break;
+					if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
+						dlt_BRT_OPER_EVENT_HIS.insertRow(0);
+						var today = new Date();   
+						var hours = today.getHours();
+						var minutes = today.getMinutes(); 
+						var seconds = today.getSeconds(); 
+						var timeResult = hours + ':' + minutes + ':' + seconds
 						
-						case "ET002":
-						eventMessage = jsonObj.NODE_NM + "에서 출발하였습니다.";
-						break;
+						dlt_BRT_OPER_EVENT_HIS.setCellData(0, "OCR_DTM", timeResult);
+						dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_TYPE", jsonObj.EVT_CODE);
+						dlt_BRT_OPER_EVENT_HIS.setCellData(0, "ROUT_NM", jsonObj.ROUT_NM);
+						dlt_BRT_OPER_EVENT_HIS.setCellData(0, "VHC_NO", jsonObj.VHC_NO);
+						//dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_CODE", jsonObj.EVT_CODE);
+						//var eventType = dlt_BRT_OPER_EVENT_HIS.getcellData(0, "EVT_CODE");
+						var eventCode = jsonObj.EVT_CODE;
+						var eventMessage = "";
 						
-						case "ET003":
-						eventMessage = "기점에 도착하였습니다.";
-						break;
+						switch(eventCode) {
+							case "ET001":
+							eventMessage = jsonObj.NODE_NM + "에 도착하였습니다.";
+							break;
+							
+							case "ET002":
+							eventMessage = jsonObj.NODE_NM + "에서 출발하였습니다.";
+							break;
+							
+							case "ET003":
+							eventMessage = "기점에 도착하였습니다.";
+							break;
+							
+							case "ET004":
+							eventMessage = "기점에서 출발하였습니다.";
+							break;
+							
+							case "ET005":
+							eventMessage = "종점에 도착하였습니다.";
+							break;
+							
+							case "ET006":
+							eventMessage = "종점에서 출발하였습니다.";
+							break;
+							
+							case "ET007":
+							eventMessage = "현재속도 " + jsonObj.SPEED+ "km/h, 평균 "+ 
+											jsonObj.EVT_DATA + "km/h 입니다.";						
+							break;
+							
+							case "ET008":
+							//eventMessage = jsonObj.EVT_DATA + " 음성 방송 출력되었습니다.";
+							eventMessage = "음성 방송 출력되었습니다. " + "("+jsonObj.EVT_DATA+")";						
+							break;
+							
+							case "ET009":
+							eventMessage = "버스 문이 열렸습니다.";
+							break;
+							
+							case "ET010":
+							eventMessage = "버스 문이 닫혔습니다.";
+							break;							
+						}
+						dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_DATA", eventMessage);
 						
-						case "ET004":
-						eventMessage = "기점에서 출발하였습니다.";
-						break;
+						routMap.mapInfo["map_MO0101_vehicle"].isEvent = "on";
+						dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
 						
-						case "ET005":
-						eventMessage = "종점에 도착하였습니다.";
-						break;
+						//정류장 도착
+						if(eventCode == "ET001") {
+							routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ET001";
+						}
+						//정류장 출발
+						else if(eventCode == "ET002") {
+							routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ET002";
+						}
 						
-						case "ET006":
-						eventMessage = "종점에서 출발하였습니다.";
-						break;
+						else{
+							routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ETC";	
+						}
+						routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
+						dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0);					
+						//나머지 필요하면 추가
 						
-						case "ET007":
-						eventMessage = "현재속도 " + jsonObj.SPEED+ "km/h, 평균 "+ 
-										jsonObj.EVT_DATA + "km/h 입니다.";						
-						break;
-						
-						case "ET008":
-						//eventMessage = jsonObj.EVT_DATA + " 음성 방송 출력되었습니다.";
-						eventMessage = "음성 방송 출력되었습니다. " + "("+jsonObj.EVT_DATA+")";						
-						break;
-						
-						case "ET009":
-						eventMessage = "버스 문이 열렸습니다.";
-						break;
-						
-						case "ET010":
-						eventMessage = "버스 문이 닫혔습니다.";
-						break;							
 					}
-					dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_DATA", eventMessage);
-					
-					routMap.mapInfo["map_MO0101_vehicle"].isEvent = "on";
-					dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
-					
-					//정류장 도착
-					if(eventCode == "ET001") {
-						routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ET001";
-					}
-					//정류장 출발
-					else if(eventCode == "ET002") {
-						routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ET002";
-					}
-					
-					else{
-						routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ETC";	
-					}
-					routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
-					dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0);					
-					//나머지 필요하면 추가
-					
-				}
-				
+				},100);				
 			} catch (e) {
 				console.log("[scwin.onMessageReceived] Exception :: " + e.message);					
 			}
@@ -696,21 +698,23 @@
 		
 		//content = jsonObj.VHC_ID + "," + jsonObj.GPS_X + ", " + jsonObj.GPS_Y;
 			try {
-				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+				setTimeout(function() {
 				
-				if(curIndexArr.length != 0) {
-					dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
+					var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 					
-					dataRowJson = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndexArr[0]);
-					//var rowData = dlt_BRT_CUR_OPER_INFO.getMatchedColumnData("VHC_ID", dataRowJson.VHC_ID, "VHC_ID");
-					//var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID");
-					
-					//routMap.showVehicle2("map_MO0101_vehicle", dataRowJson, rowData, MO0101G0, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
-					//routMap.showVehicleClickOverlay2("map_MO0101_vehicle", dataRowJson, rowData, MO0101G0, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
-					routMap.moveVehicle("map_MO0101_vehicle", dataRowJson, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
-					
-				}
-					
+					if(curIndexArr.length != 0) {
+						dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
+						
+						dataRowJson = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndexArr[0]);
+						//var rowData = dlt_BRT_CUR_OPER_INFO.getMatchedColumnData("VHC_ID", dataRowJson.VHC_ID, "VHC_ID");
+						//var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID");
+						
+						//routMap.showVehicle2("map_MO0101_vehicle", dataRowJson, rowData, MO0101G0, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
+						//routMap.showVehicleClickOverlay2("map_MO0101_vehicle", dataRowJson, rowData, MO0101G0, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
+						routMap.moveVehicle("map_MO0101_vehicle", dataRowJson, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
+						
+					}
+				},100);	
 			} catch (e) {
 				console.log("[scwin.onMessageReceived] Exception :: " + e.message);			
 			}	
@@ -724,76 +728,78 @@
 			//jsonObj.MESSAGE => 디스패치 메시지
 			
 			try {
-//				routMap.removeAllBusOverlay("map_MO0101_vehicle");				
-//				routMap.removeAllOverlay("map_MO0101_sttn");
-				routMap.removeAllOverlay("map_MO0101_crs");					
-				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
-				
-				if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
-					dlt_BRT_DSPTCH_LOG.insertRow(0);
+				setTimeout(function() {				
+	//				routMap.removeAllBusOverlay("map_MO0101_vehicle");				
+	//				routMap.removeAllOverlay("map_MO0101_sttn");
+					routMap.removeAllOverlay("map_MO0101_crs");					
+					var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 					
-					var today = new Date();   
-					var hours = today.getHours();
-					var minutes = today.getMinutes(); 
-					var seconds = today.getSeconds(); 
-					var timeResult = hours + ':' + minutes + ':' + seconds
-					dlt_BRT_DSPTCH_LOG.setCellData(0, "SEND_DATE", timeResult);
-					dlt_BRT_DSPTCH_LOG.setCellData(0, "ROUT_NM", jsonObj.ROUT_NM);
-					dlt_BRT_DSPTCH_LOG.setCellData(0, "VHC_NO", jsonObj.VHC_NO);
-					
-					dlt_BRT_DSPTCH_LOG.setCellData(0, "DSPTCH_DIV", jsonObj.DSPTCH_DIV);
-					
-					var dsptchDiv = jsonObj.DSPTCH_DIV;
-					var dsptchConts = jsonObj.MESSAGE;
-					var contsResult = "";
-					
-					var min = "";
-					var sec = "";
+					if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
+						dlt_BRT_DSPTCH_LOG.insertRow(0);
 						
-					if(parseInt(dsptchConts) != "undefined" && dsptchDiv != "DP001") {
-						if(Math.abs(parseInt(dsptchConts) >= 60)) {
-							 min = Math.abs(parseInt(dsptchConts/60)) + "분 ";
-						}
-						 sec = Math.abs(parseInt(dsptchConts%60)) + "초 ";
-						 
-						if(dsptchDiv == "DP002") {
-							if(parseInt(dsptchConts) > 0) {
-								contsResult = min + sec + "느립니다."; 
+						var today = new Date();   
+						var hours = today.getHours();
+						var minutes = today.getMinutes(); 
+						var seconds = today.getSeconds(); 
+						var timeResult = hours + ':' + minutes + ':' + seconds
+						dlt_BRT_DSPTCH_LOG.setCellData(0, "SEND_DATE", timeResult);
+						dlt_BRT_DSPTCH_LOG.setCellData(0, "ROUT_NM", jsonObj.ROUT_NM);
+						dlt_BRT_DSPTCH_LOG.setCellData(0, "VHC_NO", jsonObj.VHC_NO);
+						
+						dlt_BRT_DSPTCH_LOG.setCellData(0, "DSPTCH_DIV", jsonObj.DSPTCH_DIV);
+						
+						var dsptchDiv = jsonObj.DSPTCH_DIV;
+						var dsptchConts = jsonObj.MESSAGE;
+						var contsResult = "";
+						
+						var min = "";
+						var sec = "";
+							
+						if(parseInt(dsptchConts) != "undefined" && dsptchDiv != "DP001") {
+							if(Math.abs(parseInt(dsptchConts) >= 60)) {
+								 min = Math.abs(parseInt(dsptchConts/60)) + "분 ";
 							}
-							else if(parseInt(dsptchConts) < 0) {
-								contsResult = min + sec + "빠릅니다."; 
+							 sec = Math.abs(parseInt(dsptchConts%60)) + "초 ";
+							 
+							if(dsptchDiv == "DP002") {
+								if(parseInt(dsptchConts) > 0) {
+									contsResult = min + sec + "느립니다."; 
+								}
+								else if(parseInt(dsptchConts) < 0) {
+									contsResult = min + sec + "빠릅니다."; 
+								}
+								else if(parseInt(dsptchConts) == 0) {
+									contsResult = "정상 운행중입니다.";
+								}
 							}
-							else if(parseInt(dsptchConts) == 0) {
-								contsResult = "정상 운행중입니다.";
+							
+							else if(dsptchDiv == "DP003") {
+								contsResult = min + sec + "정차하세요.";	
 							}
+							dlt_BRT_DSPTCH_LOG.setCellData(0, "DSPTCH_CONTS", contsResult);			
+						} 
+						else if(parseInt(dsptchConts) == "undefined" || dsptchDiv == "DP001") {
+							dlt_BRT_DSPTCH_LOG.setCellData(0, "DSPTCH_CONTS", jsonObj.MESSAGE);	
 						}
 						
-						else if(dsptchDiv == "DP003") {
-							contsResult = min + sec + "정차하세요.";	
+						routMap.mapInfo["map_MO0101_vehicle"].isDsptch = "on";
+						dlt_BRT_CUR_OPER_INFO.setCellData(curIndexArr[0], "MESSAGE", jsonObj.MESSAGE);
+						
+						var dsptchDiv = jsonObj.DSPTCH_DIV;
+						
+						if (dsptchDiv == "DP001") { //일반메시지
+							routMap.mapInfo["map_MO0101_vehicle"].divDsptch = "DP001";
+						} else if (dsptchDiv == "DP002") { //운행중디스패치
+							routMap.mapInfo["map_MO0101_vehicle"].divDsptch = "DP002";
+						} else if (dsptchDiv == "DP003") { //정차중디스패치
+							routMap.mapInfo["map_MO0101_vehicle"].divDsptch = "DP003";
 						}
-						dlt_BRT_DSPTCH_LOG.setCellData(0, "DSPTCH_CONTS", contsResult);			
-					} 
-					else if(parseInt(dsptchConts) == "undefined" || dsptchDiv == "DP001") {
-						dlt_BRT_DSPTCH_LOG.setCellData(0, "DSPTCH_CONTS", jsonObj.MESSAGE);	
+							
+						routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
+						dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0);				
+						
 					}
-					
-					routMap.mapInfo["map_MO0101_vehicle"].isDsptch = "on";
-					dlt_BRT_CUR_OPER_INFO.setCellData(curIndexArr[0], "MESSAGE", jsonObj.MESSAGE);
-					
-					var dsptchDiv = jsonObj.DSPTCH_DIV;
-					
-					if (dsptchDiv == "DP001") { //일반메시지
-						routMap.mapInfo["map_MO0101_vehicle"].divDsptch = "DP001";
-					} else if (dsptchDiv == "DP002") { //운행중디스패치
-						routMap.mapInfo["map_MO0101_vehicle"].divDsptch = "DP002";
-					} else if (dsptchDiv == "DP003") { //정차중디스패치
-						routMap.mapInfo["map_MO0101_vehicle"].divDsptch = "DP003";
-					}
-						
-					routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
-					dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0);				
-					
-				}
+				},100);	
 			} catch (e) {
 				console.log("[scwin.onMessageReceived] Exception :: " + e.message);		
 			}
@@ -1477,7 +1483,7 @@
 //			sigTimeout = setTimeout(showSig, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
 //		}, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
 //	};
-//	]]></script>
+	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
