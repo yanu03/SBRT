@@ -29,6 +29,11 @@ public class VH0200Controller extends ControllerSupport{
 	@RequestMapping("/vh/VH0200G1R0")
 	public @ResponseBody Map<String, Object> VH0200G1R0() throws Exception {
 		result.setData("dlt_BRT_CUR_CHG_OPER_DTL_INFO_HIS", vh0200Service.VH0200G1R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/vh/VH0200G1CNT")
+	public @ResponseBody Map<String, Object> VH0200G1CNT() throws Exception {
 		result.setData("dlt_BRT_CUR_OPER_ALLOC_PL_NODE_INFO_HIS_CNT", vh0200Service.VH0200G1CNT());
 		return result.getResult();
 	}
