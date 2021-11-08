@@ -29,6 +29,8 @@
 						<w2:key id="CONTENT1" name="name1" dataType="text"></w2:key>
 						<w2:key id="CONTENT2" name="name2" dataType="text"></w2:key>
 						<w2:key id="CONTENT3" name="name2" dataType="text"></w2:key>
+						<w2:key id="VHC_ID" name="차량ID" dataType="text"></w2:key>
+						<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_sub_search">
@@ -92,7 +94,7 @@
 				action="/vd/VD0201G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_VD0201SHI0" ref="" target="data:json,dlt_repRoutItem" action="/repRout/selectRepRoutItem" method="post"
+			<xf:submission id="sub_VD0201SHI0" ref="data:json,dma_search" target="data:json,dlt_repRoutItem" action="/repRout/selectRepRoutItem" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_VD0201SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -258,7 +260,7 @@
 	
 	
 	scwin.sub_VD0201SHI0_submitdone = function(e) {
-		TYPE1.setValue("RR00000001");
+		TYPE1.setValue("RR00000002");
 		com.searchGrid(VD0201G0, sub_VD0201G0R0);
 		$p.executeSubmission(sub_VD0201SHI1);
 	};

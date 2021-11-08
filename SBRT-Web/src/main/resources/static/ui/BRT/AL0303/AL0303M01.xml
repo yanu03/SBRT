@@ -115,12 +115,12 @@
 		};
 		
 		//추가/삭제 버튼 감추기
-		var mainOptions = {
+		/*var mainOptions = {
 			ADD:{disp:"hide"},
 			DEL:{disp:"hide"}
-		};
+		};*/
 		
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions, mainOptions);
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
 		
 
 		var codeOptions = [{code : "INCDNT_TYPE", compID : "AL0303G0:INCDNT_TYPE"}
@@ -133,7 +133,7 @@
 		
 		 routMap.initMap("map_AL0303", {width:"100%"
 			, height:"100%"
-			, onClick: null
+			, onClick: scwin.onClickMap
 			, nodeChangeCb: null
 			, draggable: false
 		});
@@ -142,6 +142,10 @@
 		
 	};
 	
+	//맵 클릭 이벤트
+	scwin.onClickMap = function(e) {
+		routMap.changeLocVehicleByClick("map_AL0303", AL0303G0, AL0303G0.getFocusedRowIndex(),e);
+	}
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
 		if (info.newValue == "ALL") {

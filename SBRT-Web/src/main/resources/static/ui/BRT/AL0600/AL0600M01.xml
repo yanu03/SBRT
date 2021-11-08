@@ -361,7 +361,7 @@
 			</xf:submission>
 			<xf:submission id="sub_OPER_ALL_REAL_NODE" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_OPER_ALLOC_RL_NODE_INFO"
 				action="/operPlan/selectOperAllocRealNode" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
-				errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_OPER_ALL_REAL_NODE_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
@@ -406,7 +406,7 @@
 		
 	};
 	scwin.setGridViewInfo = function() {
-		
+
 		var gridHeader ="", gridBody="";
 		var rowData = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
 		var rowCntArr = dlt_BRT_OPER_ALLOC_PL_NODE_CNT.getAllJSON();
@@ -623,15 +623,10 @@
 	};
 	
 	scwin.sub_AL0203G1R0_submitdone = function(e) {
+		dma_sub_search.set("DAY_DIV", dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "DAY_DIV"));
+		dma_sub_search.set("ROUT_ID", dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "ROUT_ID"));
 		com.executeSubmission(sub_OPER_ALL_REAL_NODE);
-		scwin.setGridViewInfo();
 		com.setFocusedCell(AL0203G1, "OPER_SN");
-//		scwin.fusionChart(AL0203G1.getFocusedRowIndex());
-//		AL0203CHT0.configure({"ChartNoDataText" :"데이터가 없음."});
-//		var val_ROUT_ID = dlt_BRT_COR_DTL_INFO.getColData("ROUT_ID");
-//		dma_sub_search.set("ROUT_IDS", val_ROUT_ID);
-//		dma_sub_search.set("TYPE", "DISP_NODE");
-//		com.executeSubmission(sub_AL0203G2R0);
 	};
 	
 	scwin.AL0203G1_onrowindexchange = function(row,oldRow) {
@@ -647,83 +642,11 @@
 		scwin.dispEmptyGridView();
 	};
 
-	/*scwin.fusionChart = function(row){
-
-		dlt_BRT_CHART_INFO.removeAll();
-		var sttnNm = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getCellData(row, "NODE_NM");
-		
-		var old_open_sn = -1;
-
-		var chartindex = 0;
-		var rowCntArr = dlt_BRT_OPER_ALLOC_PL_NODE_CNT.getAllJSON();
-		var allData = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
-		var rowIndex = 0;
-		var rowCnt = 0;
-		var maxCnt = 0;
-		//var j = 0;
-		var rowCntLength = rowCntArr.length;
 	
-		for(var i = 0; i < 50; i++) {
-			if(maxCnt < rowCntArr[i].CNT)maxCnt = rowCntArr[i].CNT;
-			rowCnt =  rowCntArr[i].CNT;
-			
-			for(var j = 0; j < rowCnt; j++) {
-				if(j==0||j==rowCnt-1){
-					if(j==0)chartindex= 0;
-				 	var arrvTm = allData[rowIndex+j].ARRV_TM.substring(0,5);
-					var dprtTm = allData[rowIndex+j].DPRT_TM.substring(0,5);
-					var nodeNm = allData[rowIndex+j].NODE_NM + "(" + allData[rowIndex+j].OPER_SN + "회)";
-					var index = dlt_BRT_CHART_INFO.insertRow(rowIndex+j);
-					dlt_BRT_CHART_INFO.setCellData(index, "INDEX", chartindex);
-					dlt_BRT_CHART_INFO.setCellData(index, "ARRV_TM", arrvTm);
-					//dlt_BRT_CHART_INFO.setCellData(index, "DPRT_TM", dprtTm);
-					dlt_BRT_CHART_INFO.setCellData(index, "NODE_NM", nodeNm);
-					chartindex++;
-				}
-				else{
-					var arrvTm = allData[rowIndex+j].ARRV_TM.substring(0,5);
-					var dprtTm = allData[rowIndex+j].DPRT_TM.substring(0,5);
-					var nodeNm = allData[rowIndex+j].NODE_NM + "(" + allData[rowIndex+j].OPER_SN + "회)";
-					var index = dlt_BRT_CHART_INFO.insertRow(rowIndex+j);
-					dlt_BRT_CHART_INFO.setCellData(index, "INDEX", chartindex);
-					dlt_BRT_CHART_INFO.setCellData(index, "ARRV_TM", arrvTm);
-					//dlt_BRT_CHART_INFO.setCellData(index, "DPRT_TM", dprtTm);
-					dlt_BRT_CHART_INFO.setCellData(index, "NODE_NM", nodeNm);
-					chartindex++;
-				}
-			}
-			rowIndex += rowCnt;
-			if(i>=rowCntArr.length-1)break;
-		}
-		
-		var options = { 
-			labelStep:"50"		
-		    ,xAxisName:"시간"
-		    ,yAxisName:"노선"
-		    //,rotateLabels: "0"
-      		,labelDisplay: "wrap"
-      		,canvasPadding: "30"
-      		,xAxisValueDecimals: "5"
-      		//,numberSuffix: "/"+sttnNm
-      		,lineColor: "#f56363"
-      		,valuePadding: "50"
-      		,labelPadding: "20"
-      		//,showLegend: "1"
-		}
-		
 	
-		AL0203CHT0.setChartColumnSimpleRef("data:dlt_BRT_CHART_INFO", "ARRV_TM", null, "INDEX");
-		AL0203CHT0.setChartAttribute(options);		
-		
-		//AL0203CHT0.setChartColumnSimpleRef("data:dlt_BRT_OPER_ALLOC_PL_NODE_INFO", "ARRV_TM", null, "NODE_SN");
-		
-		
-		//AL0203CHT0.setChartColumnRef("data:dlt_BRT_OPER_ALLOC_PL_NODE_INFO", "ARRV_TM");
-		//AL0203CHT0.setJSONData();
-        //AL0203CHT0.draw();
-	
-	}*/
-	
+	scwin.sub_OPER_ALL_REAL_NODE_submitdone = function(e) {
+		scwin.setGridViewInfo();
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">

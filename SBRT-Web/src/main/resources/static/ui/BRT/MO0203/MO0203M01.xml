@@ -178,8 +178,64 @@
 		com.executeSubmission(sub_MO0203SCK);
 	}
 	
-	//60초 간격으로 MO0203SCK 실행
-	//setInterval(scwin.MO0203SCK, 60000);
+	//15초 간격으로 MO0203SCK 실행
+	setInterval(scwin.MO0203SCK, 15000);
+	
+	//BIT 빈 테이블 생성
+	MO0203T0_setTableEmpty = function(){
+		var tableStr = '';
+		var tableBody = '';
+		var talbeId = '';
+		var vhcImgSrc = '';
+		
+		//테이블 소스 시작
+		tableStr = '<table id="mf_tac_layout_contents_MN00090201_body_test123123" style="" class="w2group w2tb bit_tb">'
+					+'<caption id="mf_tac_layout_contents_MN00090201_body_wq_uuid_505" class="w2group "></caption>'
+					+'<colgroup id="mf_tac_layout_contents_MN00090201_body_wq_uuid_506" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_507" style="width:70.00%;" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_508" style="width:30.00%" class="w2group ">'
+					+'</colgroup>'
+					+'<tbody>';
+	
+
+		tableBody += '<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black;" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
+					+'</span>'
+					+'</td>'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black;text-align: right;" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
+					+'</span>'
+					+'</td>'
+					+'</tr>'
+					
+					+'<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
+					+'</span>'
+					+'</td>'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black; border-bottom-color:yellow; text-align: right;" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
+					+'</span>'
+					+'</td>'
+					+'</tr>'
+					
+					+'<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="2" rowspan="1">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
+					+"곧도착 : " + dlt_BMS_SOONETA_INFO.getCellData(0, "ROUT_NM");
+					+'</span>'
+					+'</td>'
+					+'</tr>';
+				
+							
+		
+		tableStr += tableBody + '</tbody></table>';
+		
+		//test123123.setGridStyle(WebSquare.xml.parse( tableStr , true ));
+		$("#mf_tac_layout_contents_MN00090201_body_test123123").html(tableStr);
+	}
+	
 	
 	//정류장별 차량 도착 정보 테이블 생성
 	MO0203T0_setTable = function(dataList){
@@ -196,31 +252,25 @@
 					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_508" style="width:30.00%" class="w2group ">'
 					+'</colgroup>'
 					+'<tbody>';
+					
+		if(dataList != null && dataList.length != 0){
 		
-		/*if(dataList != null && dataList.length != 0){
+			//순서 맞추기
+			dataList.sort(function(a,b) {
+
+				return parseFloat(a.REMAIN_TM) - parseFloat(b.REMAIN_TM);
+			
+			});
+
+			
 			for(var i = 0; i < dataList.length; i++){
 			
-				//VHC_TYPE에 따라 IMG변경(*이미지 변경 필요)
-				if(dataList[i].VHC_TYPE == 'VT001'){
-					vhcImgSrc = '/cm/images/tmap/bus_purple_selected.png';
-				}
-				else if(dataList[i].VHC_TYPE == 'VT002'){
-					vhcImgSrc = '/cm/images/tmap/bus_purple.png';
-				}
-				else if(dataList[i].VHC_TYPE == 'VT003'){
-					vhcImgSrc = '/cm/images/tmap/bus_purple.png';
-				}
-				
 				//초 -> 분으로 변경. 0분 이하면 잠시후 도착
-				var remainTmMin = parseInt((dataList[i].REMAIN_TM%3600)/60) + '분';
-				
+				dataList[i].REMAIN_TM = parseInt((dataList[i].REMAIN_TM%3600)/60) + '분';
 				
 				//곧도착으로 이동
-				if(remainTmMin == '0분'){
-					dlt_BMS_SOONETA_INFO.setCellData(i, "", data);
-				}else{
-					dlt_BMS_ETA_INFO.setCellData(i, "NODE_NM", dataList[i].NODE_NM);
-					dlt_BMS_ETA_INFO.setCellData(i, "REMAIN_TM", remainTmMin);
+				if(dataList[i].REMAIN_TM == '0분'){
+					dlt_BMS_SOONETA_INFO.setCellData(i, "ROUT_NM", dataList[i].ROUT_NM);
 				}
 				
 			}
@@ -228,12 +278,12 @@
 				tableBody += '<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
 							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black;" class="w2group w2tb_td w2tb_noTH">'
 							+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
-							+dataList[i].ROUT_NM
+							+dataList[0].ROUT_NM
 							+'</span>'
 							+'</td>'
 							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black;text-align: right;" class="w2group w2tb_td w2tb_noTH">'
 							+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
-							+remainTmMin
+							+dataList[0].REMAIN_TM
 							+'</span>'
 							+'</td>'
 							+'</tr>'
@@ -241,12 +291,12 @@
 							+'<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
 							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
 							+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
-							+dataList[i].ROUT_NM
+							+dataList[1].ROUT_NM
 							+'</span>'
 							+'</td>'
 							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black; border-bottom-color:yellow; text-align: right;" class="w2group w2tb_td w2tb_noTH">'
 							+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
-							+remainTmMin
+							+dataList[1].REMAIN_TM
 							+'</span>'
 							+'</td>'
 							+'</tr>'
@@ -254,14 +304,14 @@
 							+'<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
 							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="2" rowspan="1">'
 							+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
-							+"곧도착 : " + 
+							+"곧도착 : " + dlt_BMS_SOONETA_INFO.getCellData(0, "ROUT_NM");
 							+'</span>'
 							+'</td>'
 							+'</tr>';
 			
-		}*/
+		}
 				//디자이너 참고용		
-				tableBody += '<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
+				/*tableBody += '<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
 							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black;" class="w2group w2tb_td w2tb_noTH">'
 							+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
 							+"B0상(순환)"
@@ -293,12 +343,11 @@
 							+"곧도착 : B0상"
 							+'</span>'
 							+'</td>'
-							+'</tr>';
+							+'</tr>';*/
 							
 		
 		tableStr += tableBody + '</tbody></table>';
 		
-		//test123123.setGridStyle(WebSquare.xml.parse( tableStr , true ));
 		$("#mf_tac_layout_contents_MN00090201_body_test123123").html(tableStr);
 	}
 	
@@ -339,39 +388,12 @@
 		if(attrId == 2022){
 			MO0203T0_setTable(dataList);
 			
-			/*for(i=0; i<dataList.length; i++){
-				dlt_BMS_ETA_INFO.insertRow(i);
-				dlt_BMS_ETA_INFO.setCellData(i, "ROUT_ID", dataList[i].ROUT_ID);
-				dlt_BMS_ETA_INFO.setCellData(i, "ROUT_NM", dataList[i].ROUT_NM);
-				dlt_BMS_ETA_INFO.setCellData(i, "REMAIN_TM", dataList[i].REMAIN_TM);
-				dlt_BMS_ETA_INFO.setCellData(i, "REMAIN_STTN", dataList[i].REMAIN_STTN);
-				
-				//임시
-				if(i==0){
-					dma_VHC_ETA_INFO.set("REMAIN_TM", dlt_BMS_ETA_INFO.getCellData(0, "REMAIN_TM")+"분");
-					dma_VHC_ETA_INFO.set("ROUT_ID", dlt_BMS_ETA_INFO.getCellData(0, "ROUT_ID"));
-					dma_VHC_ETA_INFO.set("ROUT_NM", dlt_BMS_ETA_INFO.getCellData(0, "ROUT_NM"));
-					dma_VHC_ETA_INFO.set("REMAIN_STTN", dlt_BMS_ETA_INFO.getCellData(0, "REMAIN_STTN")+"정거장 전");
-				}else if(i==1){
-					dma_VHC_ETA_INFO2.set("REMAIN_TM", dlt_BMS_ETA_INFO.getCellData(1, "REMAIN_TM")+"분");
-					dma_VHC_ETA_INFO2.set("ROUT_ID", dlt_BMS_ETA_INFO.getCellData(1, "ROUT_ID"));
-					dma_VHC_ETA_INFO2.set("ROUT_NM", dlt_BMS_ETA_INFO.getCellData(1, "ROUT_NM"));
-					dma_VHC_ETA_INFO2.set("REMAIN_STTN", dlt_BMS_ETA_INFO.getCellData(1, "REMAIN_STTN")+"정거장 전");
-				}
-			}*/
-			
 		}
 		//attrId = 4014 : 실시간 차량 위치 정보
 		else if(attrId == 4014){
 			
 		}
 		
-		//console.log('Connected: ' + content);
-		/*var rowData2 = dlt_BRT_CUR_OPER_INFO.getCellData(MO0203G0.getFocusedRowIndex(), "VHC_ID")
-		var rowData = dlt_BRT_CUR_OPER_INFO.getAllJSON()[MO0203G0.getFocusedRowIndex()];
-		routMap.showVehicle2("map_MO0203", jsonObj, rowData2, MO0203G0, 0);	*/
-		
-		//showMessage(content);
 	}
 	
 	function showMessage(message) {
@@ -401,14 +423,14 @@
 		dma_NODE_ID.set("NODE_ID", "(정류소 ID : "+nodeId+")");
 		
 		//디자이너 참고용 임시
-		MO0203T0_setTable();
+		//MO0203T0_setTable();
+		
+		MO0203T0_setTableEmpty();
 			
 	};
 	
 	scwin.sub_MO0203G0R0_submitdone = function(e) {
 		com.setFocusedCell(MO0203G0, "NODE_ID");
-		
-		
 		
 		//시설물상태에 따라 클래스(백그라운드 색) 설정
 		for (i=0; i<dlt_BMS_NODE_MST.getDataLength(); i++) {
@@ -650,8 +672,8 @@
 					<w2:span label="정류소명" style="color: white;font-size: 15px;text-align: center;" id=""
 						ref="data:dlt_BMS_NODE_MST.NODE_NM">
 					</w2:span>
-					<w2:span label="DAEPYUNGDONG" style="color: white;font-size: 14px;text-align: center;" id=""
-						ref="">
+					<w2:span label="" style="color: white;font-size: 14px;text-align: center;" id=""
+						ref="data:dlt_BMS_NODE_MST.NODE_ENM">
 					</w2:span>
 					<w2:span label="NODE_ID" style="color: white;font-size: 14px;text-align: center;" id=""
 						ref="data:dma_NODE_ID.NODE_ID">

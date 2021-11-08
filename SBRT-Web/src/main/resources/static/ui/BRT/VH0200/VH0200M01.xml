@@ -352,13 +352,18 @@
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_repRoutItem_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_routItem" ref="data:json,dma_search" target="data:json,dlt_routItem" action="/rout/selectRoutItem" method="post" mediatype="application/json"
-				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
-				ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_routItem" ref="data:json,dma_search" target="data:json,dlt_routItem" action="/rout/selectRoutItem"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_vhcItem" ref="" target="data:json,dlt_vhcItem" action="/vhc/selectVhcItem" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_VH0200G1CNT" ref="data:json,dma_sub_search"
+				target="data:json,dlt_BRT_CUR_OPER_ALLOC_PL_NODE_INFO_HIS_CNT" action="/vh/VH0200G1CNT" method="post" mediatype="application/json"
+				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit=""
+				ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
@@ -408,7 +413,7 @@
 	};
 	
 	scwin.setGridViewInfo = function() {
-		
+		debugger;
 		var gridHeader ="", gridBody="";
 		var rowData = dlt_BRT_CUR_CHG_OPER_DTL_INFO_HIS.getAllJSON();
 		var rowCntArr = dlt_BRT_CUR_OPER_ALLOC_PL_NODE_INFO_HIS_CNT.getAllJSON();
@@ -617,41 +622,20 @@
 		
 		var ocrDtm = dlt_BRT_CUR_CHG_OPER_INFO_HIS.getCellData(row, "OCR_DTM");
 		
-		//var newOcrDtm = ocrDtm.slice(0, 10);
-		
 		dma_sub_search.set("ROUT_ID", dlt_BRT_CUR_CHG_OPER_INFO_HIS.getCellData(row, "ROUT_ID"));
 		dma_sub_search.set("OCR_DTM", ocrDtm);
+		com.executeSubmission(sub_VH0200G1CNT);
 		com.executeSubmission(sub_VH0200G1R0);
-		scwin.setGridViewInfo();
-		//com.executeSubmission(sub_VH0200G2R0);
 		
-		/*var week = ['일', '월', '화', '수', '목', '금', '토'];
-		var dayOfWeek = week[new Date(ocrDtm).getDay()];
-		
-		if(ocrDtm == "일" || ocrDtm == "토"){
-			dma_sub_search.set("DAY_DIV", "DY002");
-		}else{
-			dma_sub_search.set("DAY_DIV", "DY001");
-		}*/
-		
-		//var focusOption = {keyMap : dma_sub_search, keyMapColumn : "ROUT_ID,OCR_DTM"};
-		//com.changeDualGrid(VH0200G0, VH0200G1, null, sub_VH0200G1R0, focusOption, row, oldRow, "변경운행이력 상세");
 		
 	};
 	
 	scwin.sub_VH0200G1R0_submitdone = function(e) {
 		com.setFocusedCell(VH0200G1, "OPER_SN");
-//		com.executeSubmission(sub_OPER_ALL_REAL_NODE);
-//		scwin.fusionChart(VH0200G1.getFocusedRowIndex());
-//		VH0200CHT0.configure({"ChartNoDataText" :"데이터가 없음."});
-//		var val_ROUT_ID = dlt_BRT_COR_DTL_INFO.getColData("ROUT_ID");
-//		dma_sub_search.set("ROUT_IDS", val_ROUT_ID);
-//		dma_sub_search.set("TYPE", "DISP_NODE");
-//		com.executeSubmission(sub_VH0200G2R0);
+		scwin.setGridViewInfo();
 	};
 	
 	scwin.VH0200G1_onrowindexchange = function(row,oldRow) {
-		//scwin.fusionChart(row);
 	};
 	
 	scwin.sub_MAIN_ROUT_NODE_CPMSTN_submitdone = function(e) {
