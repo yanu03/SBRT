@@ -356,13 +356,37 @@
 		com.searchGrid(ST0200G0, sub_ST0200G0R0);
 	};
 	
+	
+
+
 	scwin.F_DATE_onviewchange = function(info) {
 		com.executeSubmission(sub_ST0200G1R0);
+		var ldate = L_DATE.getValue();
+		var fdate = F_DATE.getValue();
+		
+		if (fdate > ldate && ldate != "") {
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseF(info));
+			com.executeSubmission(sub_ST0200G1R0);
+		}
 	};
+	scwin.checkCloseF = function(info) {
+		F_DATE.setValue(info.oldValue);
+	}
 	
 	scwin.L_DATE_onviewchange = function(info) {
 		com.executeSubmission(sub_ST0200G1R0);
+		var ldate = L_DATE.getValue();
+		var fdate = F_DATE.getValue();
+		
+		if (fdate > ldate && ldate != "") {
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseL(info));
+			com.executeSubmission(sub_ST0200G1R0);
+		}
 	};
+	
+	scwin.checkCloseL = function(info) {
+		L_DATE.setValue(info.oldValue);
+	}
 	
 	
 	
