@@ -1632,8 +1632,8 @@
 		var columnStrArr1 = ["대표노선ID","대표노선명","요일구분","배차","방향구분"];
 		var columnWidthArr1 = ["0","0","70","70","75"];
 		var columnNmArr2 = ["INDEX","COR_ID","ROUT_NM","OPER_SN","OPER_INFO_1","OPER_INFO_2","OPER_INFO_3"];
-		var columnStrArr2 = ["인덱스","코스ID","노선명","운행순번","시작","종료","휴게"];
-		var columnWidthArr2 = ["0","0","0","0","40","40","40"];	
+		var columnStrArr2 = ["인덱스","코스ID","노선명","운행순번","시작(시분)","종료(시분)","휴게(분초)"];
+		var columnWidthArr2 = ["0","0","0","0","65","65","65"];	
 		var gridHeader ="", gridBody="";
 		var rowData = dlt_OPER_ALLOC_PL_ROUT_INFO.getAllJSON();
 		var rowCntArr = dlt_OPER_ALLOC_PL_ROUT_CNT.getAllJSON();
@@ -1646,7 +1646,7 @@
 				maxCnt = rowCntArr[i].CNT;
 		}
 		if(maxCnt <= 7){
-			columnWidthArr2 = ["0","0","0","0","55","55","55"];	
+			columnWidthArr2 = ["0","0","0","0","65","65","65"];	
 		}
 
 		gridHeader +='<w2:row style="" id="first_row">';
@@ -2124,6 +2124,9 @@
 				}
 				for(var x = 0; x < columnNmArr2.length; x++) {
 					var columnVal = scwin.getExlCellData(i, columnNmArr2[x],j);
+					if(x>3){
+						columnVal = util.getExlDateToMinSec(columnVal);
+					}
 					if(com.isEmpty(columnVal)){
 						isBreak = true;
 						break;
@@ -2369,8 +2372,8 @@
 									</w2:column>
 									<w2:column width="50" id="col_COR_ID" value="코스ID" rowSpan="" style="height:25px;" ></w2:column>
 									<w2:column width="50" id="col_ROUT_ID" value="노선ID" rowSpan="" style="height:25px;" ></w2:column>
-									<w2:column width="70" id="col_ROUT_ST_TM" value="시작" rowSpan="" style="height:25px;" ></w2:column>
-									<w2:column width="70" id="col_ROUT_ED_TM" value="종료" rowSpan="" style="height:25px;" ></w2:column>
+									<w2:column width="70" id="col_ROUT_ST_TM" value="시작(시분)" rowSpan="" style="height:25px;" ></w2:column>
+									<w2:column width="70" id="col_ROUT_ED_TM" value="종료(시분)" rowSpan="" style="height:25px;" ></w2:column>
 								</w2:row>
 							</w2:header>
 							<w2:gBody style="" id="gBody1">
@@ -2409,8 +2412,8 @@
 									<w2:column width="50" id="col_OPER_SN" value="운행순번" rowSpan="" style="height:25px;" ></w2:column>
 									<w2:column width="50" id="col_COR_ID" value="코스ID" rowSpan="" style="height:25px;" ></w2:column>
 									<w2:column width="50" id="col_ROUT_ID" value="노선ID" rowSpan="" style="height:25px;" ></w2:column>
-									<w2:column width="70" id="col_ROUT_ST_TM" value="시작" rowSpan="" style="height:25px;" ></w2:column>
-									<w2:column width="70" id="col_ROUT_ED_TM" value="종료" rowSpan="" style="height:25px;" ></w2:column>
+									<w2:column width="70" id="col_ROUT_ST_TM" value="시작(시분)" rowSpan="" style="height:25px;" ></w2:column>
+									<w2:column width="70" id="col_ROUT_ED_TM" value="종료(시분)" rowSpan="" style="height:25px;" ></w2:column>
 									
 								</w2:row>
 							</w2:header>
