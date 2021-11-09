@@ -141,3 +141,20 @@ util.getCurrentDate3 = function(day){
 
 	return year + "-" + month + "-" + day;
 }
+
+util.getExlDateToMinSec = function(exlDate) {
+	if(exlDate.length>5){
+		var date = new Date(exlDate);
+	
+		var hour = date.getHours();
+		hour = hour < 10 ? '0' + hour.toString() : hour.toString();
+		
+		var minites = date.getMinutes();
+		minites = minites < 10 ? '0' + minites.toString() : minites.toString();
+		
+		var seconds = date.getSeconds();
+		seconds = seconds < 10 ? '0' + seconds.toString() : seconds.toString();
+		
+		return minites + ":" + seconds;
+	}
+}
