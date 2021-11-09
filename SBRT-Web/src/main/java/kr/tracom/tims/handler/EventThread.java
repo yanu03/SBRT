@@ -243,14 +243,21 @@ public class EventThread extends Thread{
                 	 try {
                 		 //현재운행정보도 업데이트
                 		 insertCurOperInfo(busEventMap);
-                		 
-                		 historyMapper.insertEventHistory(busEventMap); //이력 insert                		 
-                		 
                 	 } catch (DuplicateKeyException e) {
                  		//e.printStackTrace();
                  	 }	catch (Exception e) {
                 		 e.printStackTrace();
                 	 }
+                	 
+                	 
+                	 try {
+                		//이력 insert            
+                		 historyMapper.insertEventHistory(busEventMap);     		 
+                	 } catch (DuplicateKeyException e) {
+                 		//e.printStackTrace();
+                 	 }	catch (Exception e) {
+                		 e.printStackTrace();
+                	 }                	 
                 	 
                 	 
 
