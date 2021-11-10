@@ -227,6 +227,31 @@
 	scwin.TYPE2_onviewchange = function(info) {		
 		com.searchGrid(VH0400G0, sub_VH0400G0R0);
 	};
+	
+	
+	
+	scwin.F_DATE_onviewchange = function(info) {
+		var ldate = L_DATE.getValue();
+		var fdate = F_DATE.getValue();
+		
+		if (fdate > ldate && ldate != ""){
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.",scwin.checkCLoseF(info));
+		}
+	};
+	scwin.checkCLoseF = function(info) {
+		F_DATE.setValue(info.oldValue);
+	}
+	scwin.checkCLoseL = function(info) {
+		L_DATE.setValue(info.oldValue);
+	}	
+	scwin.L_DATE_onviewchange = function(info) {
+		var ldate = L_DATE.getValue();
+		var fdate = F_DATE.getValue();
+		
+		if (fdate > ldate){
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.",scwin.checkCLoseL(info));
+		}
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -273,7 +298,7 @@
 						</xf:group>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
 							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
-							ev:onviewchange="" id="autoChoiceBox" interactionMode="" noResult="" ref="data:dma_search.CONTENT3" search="start"
+							ev:onviewchange="" id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT3" search="start"
 							selectedData="" style="" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="" nextTabByEnter=""
 							disableEdit="">
 							<w2:choices>
@@ -288,11 +313,11 @@
 						</xf:group>
 						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
 							style="width:120px; margin-right: 10px; float: left;margin-top: 3px;" id="F_DATE" renderType="component" renderDiv="true"
-							calendarValueType="yearMonthDate" ref="data:dma_search.F_DATE">
+							calendarValueType="yearMonthDate" ref="data:dma_search.F_DATE" ev:onviewchange="scwin.F_DATE_onviewchange">
 						</w2:inputCalendar>
 						<w2:span label="~" style="float: left;margin-right: 10px;margin-top: 5px;" id=""></w2:span>
 						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
-							style="width: 120px;float: left;margin-top: 3px;" id="L_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate" ref="data:dma_search.L_DATE">
+							style="width: 120px;float: left;margin-top: 3px;" id="L_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate" ref="data:dma_search.L_DATE" ev:onviewchange="scwin.L_DATE_onviewchange">
 						</w2:inputCalendar>
 					</xf:group>
 					<w2:wframe class="" id="wfm_mainBtn" scope="true" src="/cm/common/wf_mainBtn.xml" style=""></w2:wframe>
@@ -318,47 +343,47 @@
 							sortEvent="onclick">
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
-								<w2:row style="" id="row1">
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column4"
+								<w2:row style="overflow:scroll;" id="row1">
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column7"
 										value="운행일" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column5"
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column8"
 										value="노선명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="30" inputType="text" style="height:20px" id="column5"
+									<w2:column removeBorderStyle="false" width="30" inputType="text" style="height:20px" id="column9"
 										value="배차" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="30" inputType="text" style="height:20px" id="column5"
+									<w2:column removeBorderStyle="false" width="30" inputType="text" style="height:20px" id="column10"
 										value="순번" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column3"
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column11"
 										value="차량번호" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column6"
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column12"
 										value="발생시간" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column1"
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column13"
 										value="경도" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column2"
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column14"
 										value="위도" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column1"
+									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column15"
 										value="노드명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column2"
+									<w2:column removeBorderStyle="false" width="260" inputType="text" style="height:20px" id="column16"
 										value="링크명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column2"
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column17"
 										value="운행상태" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="30" inputType="text" style="height:20px" id="column2"
+									<w2:column removeBorderStyle="false" width="30" inputType="text" style="height:20px" id="column18"
 										value="헤딩" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column2"
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column19"
 										value="이벤트유형" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column1"
+									<w2:column removeBorderStyle="false" width="300" inputType="text" style="height:20px" id="column20"
 										value="이벤트값유형" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>

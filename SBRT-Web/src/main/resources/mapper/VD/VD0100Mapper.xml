@@ -26,6 +26,7 @@
 					,A.USE_YN
 					,A.REMARK
 					
+					
 	FROM			BMS_VHC_MST	A
 	LEFT JOIN	  	BMS_TRANSCOMP_MST B
 	ON				A.COMP_ID = B.COMP_ID 		
@@ -61,6 +62,7 @@
 					,A.DVC_ID
 					,A.ORG_ID
 					,A.DVC_KIND
+					,A.DVC_COORDS
 					,A.INST_LOC
 					,A.DVC_IP
 					,A.MNG_ID	
@@ -68,6 +70,7 @@
 					,A.DEV_SERIAL_NO
 					,A.MODEL_NM -->
 					,A.USE_YN
+					,A.CTR_YN
 					,A.REMARK
 					,B.ORG_NM
 					
@@ -89,6 +92,7 @@
 						,DVC_ID
 						,ORG_ID
 						,DVC_KIND
+						,DVC_COORDS
 						,INST_LOC
 						,DVC_IP
 						,MNG_ID						
@@ -99,22 +103,25 @@
 						,REMARK
 						,UPD_DTM
 						,UPD_ID
+						,CTR_YN
 					)
 	VALUES			(
 						#{VHC_ID}
 						,#{DVC_ID}
 						,#{ORG_ID}
 						,#{DVC_KIND}
+						,#{DVC_COORDS}
 						,#{INST_LOC}
 						,#{DVC_IP}
 						,#{MNG_ID}
 <!-- 					,#{MODEL_NM}
 						,#{DVC_TYPE}						
 						,#{DEV_SERIAL_NO} -->
-						,'Y'
+						,#{USE_YN}
 						,#{REMARK}
 						,#{UPD_DTM}
-						,#{SSN_USER_ID}					
+						,#{SSN_USER_ID}
+						,#{CTR_YN}					
 					)
 	
 	
@@ -126,10 +133,12 @@
 	SET				VHC_ID = #{VHC_ID}
 					,ORG_ID = #{ORG_ID}
 					,DVC_KIND = #{DVC_KIND}
+					,DVC_COORDS = #{DVC_COORDS}
 					,INST_LOC = #{INST_LOC}
 					,DVC_IP = #{DVC_IP}
 					,MNG_ID = #{MNG_ID}	
-					,USE_YN = 'Y'
+					,USE_YN = #{USE_YN}
+					,CTR_YN = #{CTR_YN}
 					,REMARK = #{REMARK}
 					,UPD_DTM = #{UPD_DTM}
 					,UPD_ID = #{SSN_USER_ID}

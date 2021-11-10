@@ -39,6 +39,11 @@
 			}
 			///////////////////////////////////////////////////////////////////////////////////////////////////
 	
+			var userInputId = getCookie("userInputId");
+			if(com.isEmpty(userInputId)==false){
+				id_save.checkAll(true);
+			}
+			ibx_userId.setValue(userInputId);
 			ibx_userId.focus();
 		};
 	
@@ -90,6 +95,14 @@
 			var result = resultData.rsMsg;
 			try {
 				if (result.statusCode == "S") {
+					
+					if(id_save.getSelectedIndex()=='0'){
+						var userInputId = ibx_userId.getValue();
+						setCookie("userInputId", userInputId, 7);
+					}
+					else {
+						deleteCookie("userInputId");
+					}
 					com.goHome();
 				} else {
 					com.alert(result.message);
@@ -98,29 +111,46 @@
 				com.alert("서버 통신 도중 오류가 발생하였습니다. 잠시후 다시 시도해주시기 바랍니다.");
 			}
 		};
+		
+		scwin.id_save_onviewchange = function(info) {
+			
+			if(info.checked == true){
+
+			}
+			else{
+				
+			}
+			
+		};
+		
+		function setCookie(cookieName, value, exdays){
+			var exdate = new Date();
+			exdate.setDate(exdate.getDate() + exdays);
+			var cookieValue = escape(value) + ((exdays==null) ? "" : "; expires=" + exdate.toGMTString());
+			document.cookie = cookieName + "=" + cookieValue;
+		}
+		 
+		function deleteCookie(cookieName){
+			var expireDate = new Date();
+			expireDate.setDate(expireDate.getDate() - 1);
+			document.cookie = cookieName + "= " + "; expires=" + expireDate.toGMTString();
+		}
+		 
+		function getCookie(cookieName) {
+			cookieName = cookieName + '=';
+			var cookieData = document.cookie;
+			var start = cookieData.indexOf(cookieName);
+			var cookieValue = '';
+			if(start != -1){
+				start += cookieName.length;
+				var end = cookieData.indexOf(';', start);
+				if(end == -1)end = cookieData.length;
+				cookieValue = cookieData.substring(start, end);
+			}
+			return unescape(cookieValue);
+		}
 	]]></script>
 	
-
-	<script type="javascript"><![CDATA[
-	    
-	        var filterbtn = $(".question li a");
-
-    filterbtn.on("click", function () {
-        $(this).parent().addClass("on");
-        $(this).parent().siblings().removeClass("on");
-
-        idx = $(this).parent().index();
-        if (idx == 1) {
-            $(this).parent().parent().addClass("right");
-        } else {
-            $(this).parent().parent().removeClass("right");
-        }
-    });
-
-
-
-
-	]]></script>
 </head>
 
 <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -174,7 +204,8 @@
 
                 <xf:group tagname="li">
                     <xf:group class="ofh" >
-                        <xf:select appearance="full" id=""  selectedindex="-1" cols="" rows="">
+                        <xf:select appearance="full" id="id_save"  selectedindex="-1" cols="" rows=""
+                        		ev:onviewchange="scwin.id_save_onviewchange">
                             <xf:choices>
                                 <xf:item>
                                     <xf:label>
