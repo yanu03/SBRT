@@ -23,6 +23,7 @@
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 						<w2:column id="OPER_STS" name="운행상태" dataType="text"></w2:column>
+						<w2:column id="VHC_KIND" name="차량종류" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
@@ -143,8 +144,8 @@
 
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);		
 
-		VD0202G0.mergeCol(2,false);
-		VD0202G0.mergeCells("byrestriccol");
+//		VD0202G0.mergeCol(2,false);
+//		VD0202G0.mergeCells("byrestriccol");
 		
 		com.executeSubmission(sub_VD0202SHI0);	
 		
@@ -221,7 +222,22 @@
 		com.changeDualGrid(VD0202G0, VD0202G1, null, sub_VD0202G1R0, focusOption, row, oldRow);	
 		var routID = dlt_BRT_CUR_OPER_INFO.getCellData(VD0202G0.getFocusedRowIndex(), "ROUT_ID");
 		dma_sub_search.set("ROUT_ID", routID);
-		com.executeSubmission(sub_VD0202G2R0);		 
+		com.executeSubmission(sub_VD0202G2R0);
+		
+		var param = com.getParameter();
+		var busClass = null;
+		var vhcKind = dlt_BRT_CUR_OPER_INFO.getCellData(row, "VHC_KIND");
+		if (vhcKind == "VK001") {
+			busClass = "brt_bus_img";	
+		} else if (vhcKind == "VK002") {
+			busClass = "woojin_bus_img";	
+		} else if (vhcKind == "VK003") {
+			busClass = "normal_bus_img";	
+		} else {
+			busClass = "normal_bus_img";	
+		}
+		var id = "#mf_tac_layout_contents_"+ param.menuCode+ "_body_busImage";
+		$("#mf_tac_layout_contents_"+ param.menuCode+ "_body_busImage").attr("class", busClass);				 
 //		routMap.initMapInfo("map_VD0202"); 
 		 			
 	};
@@ -234,7 +250,7 @@
 		else {
 			dma_sub_search.set("ROUT_ID", null);
 			dma_sub_search.set("VHC_ID", null);
-			$p.executeSubmission(sub_VD0202G1R0);
+			//$p.executeSubmission(sub_VD0202G1R0);
 			$p.executeSubmission(sub_VD0202G2R0);				
 		}
 	
@@ -266,7 +282,122 @@
 	
 	
 	scwin.VD0202G1_onrowindexchange = function(row,oldRow) {
-//		routMap.focusNode("map_VD0202",VD0202G1,row);			
+		var param = com.getParameter();
+		
+		var topCoords = null;
+		var leftCoords = null;
+		$("#mf_tac_layout_contents_"+ param.menuCode+ "_body_busImage").empty();
+				
+		for(var i=0; i<dlt_BMS_DVC_INFO.getDataLength(); i++) {
+			var imgSrc = null;
+			var ctr_yn = dlt_BMS_DVC_INFO.getCellData(i, "CTR_YN");
+			if (ctr_yn == "N") {
+				VD0202G1.setDisabled("cell", i, "DVC_CTR", true);
+				//제어 버튼 안보이게 처리
+				VD0202G1.setCellClass(i, "DVC_CTR", "hideData");
+			}
+
+			var dvc_kind = dlt_BMS_DVC_INFO.getCellData(i, "DVC_KIND");
+			switch (dvc_kind){
+				case "DK001":
+					imgSrc = "/cm/images/bms/OBE.png";
+					break;
+				case "DK002":
+					imgSrc = "/cm/images/bms/drvTerminal.png";
+					break;
+				case "DK003":
+					imgSrc = "/cm/images/bms/psgGuide.png";
+					break;
+				case "DK004":
+					imgSrc = "/cm/images/bms/routMap.png";
+					break;
+				case "DK005":
+					imgSrc = "/cm/images/bms/keyPad.png";
+					break;
+				
+				//행선지 정면
+				case ("DK006" || "DK007"):
+					imgSrc = "/cm/images/bms/desGuide.png";
+					break;
+				//행선지 측면	
+				case ("DK008" || "DK009" || "DK012"):
+					imgSrc = "/cm/images/bms/desGuide.png";
+					break;
+				//행선지 후면	
+				case ("DK013"):
+					imgSrc = "/cm/images/bms/desGuide.png";
+					break;
+				case "DK011":
+					imgSrc = "/cm/images/bms/green_cicle.png";
+					break;		
+			}
+			
+			if (imgSrc != "" || imgSrc != null){
+				
+				var coordsData = dlt_BMS_DVC_INFO.getCellData(i, "DVC_COORDS");
+				if(coordsData != null || coordsData != "") {
+					var coordsSplit = coordsData.split(",");
+					var topCoords = coordsSplit[0];
+					var leftCoords = coordsSplit[1];
+				}
+				var imgId = dlt_BMS_DVC_INFO.getCellData(i, "DVC_ID");
+				
+				var str = "";
+				str = "<div id='"+ imgId+ "' style='position:absolute; top:"+topCoords+ "px; left:"+leftCoords+"px;' class='w2group' onclick='imgOnclick(this.id);'>"
+				+ "<img xmlns='http://www.w3.org/1999/xhtml' src='"+ imgSrc+ "'>"
+				+ "</div>";
+				$("#mf_tac_layout_contents_"+ param.menuCode+ "_body_busImage").append(str);				
+			} // end if
+
+		} // end for
+      	
+	  var selectedDvcKind = dlt_BMS_DVC_INFO.getCellData(row, "DVC_KIND");
+	  switch (selectedDvcKind){
+			case "DK001":
+		//		selectImg = "/cm/images/bms/OBE.png";
+				selectImg = "/cm/images/bms/bad_icon.PNG";
+				break;
+			case "DK002":
+		//		selectImg = "/cm/images/bms/drvTerminal.png";
+				selectImg = "/cm/images/bms/bad_icon.PNG";
+				break;
+			case "DK003":
+		//		selectImg = "/cm/images/bms/psgGuide.png";
+				selectImg = "/cm/images/bms/bad_icon.PNG";
+				break;
+			case "DK004":
+		//		selectImg = "/cm/images/bms/routMap.png";
+				selectImg = "/cm/images/bms/bad_icon.PNG";
+				break;
+			case "DK005":
+		//		selectImg = "/cm/images/bms/keyPad.png";
+				selectImg = "/cm/images/bms/bad_icon.PNG";
+				break;
+			
+			//행선지 정면
+			case ("DK006" || "DK007"):
+		//		selectImg = "/cm/images/bms/desGuide.png";
+				selectImg = "/cm/images/bms/bad_icon.PNG";
+				break;
+			//행선지 측면	
+			case ("DK008" || "DK009" || "DK012"):
+		//		selectImg = "/cm/images/bms/desGuide.png";
+				selectImg = "/cm/images/bms/bad_icon.PNG";
+				break;
+			//행선지 후면	
+			case ("DK013"):
+		//		selectImg = "/cm/images/bms/desGuide.png";
+				selectImg = "/cm/images/bms/bad_icon.PNG";
+				break;
+			case "DK011":
+		//		selectImg = "/cm/images/bms/green_cicle.png";
+				selectImg = "/cm/images/bms/bad_icon.PNG";
+				break;		
+		}      
+		
+      //이미지 변경
+      var dvcId = dlt_BMS_DVC_INFO.getCellData(row, "DVC_ID");
+      $('#'+dvcId).children('img').attr("src", selectImg);		
 	};
 	
 	scwin.sub_VD0202G2R0_submitdone = function(e) {
@@ -291,13 +422,14 @@
 	};
 	
 	scwin.sub_VD0202G1R0_submitdone = function(e) {
-		
 		var param = com.getParameter();
-		var imgSrc = null;
+		
 		var topCoords = null;
 		var leftCoords = null;
+		$("#mf_tac_layout_contents_"+ param.menuCode+ "_body_busImage").empty();
 				
 		for(var i=0; i<dlt_BMS_DVC_INFO.getDataLength(); i++) {
+			var imgSrc = null;
 			var ctr_yn = dlt_BMS_DVC_INFO.getCellData(i, "CTR_YN");
 			if (ctr_yn == "N") {
 				VD0202G1.setDisabled("cell", i, "DVC_CTR", true);
@@ -307,12 +439,40 @@
 
 			var dvc_kind = dlt_BMS_DVC_INFO.getCellData(i, "DVC_KIND");
 			switch (dvc_kind){
+				case "DK001":
+					imgSrc = "/cm/images/bms/OBE.png";
+					break;
+				case "DK002":
+					imgSrc = "/cm/images/bms/drvTerminal.png";
+					break;
+				case "DK003":
+					imgSrc = "/cm/images/bms/psgGuide.png";
+					break;
+				case "DK004":
+					imgSrc = "/cm/images/bms/routMap.png";
+					break;
+				case "DK005":
+					imgSrc = "/cm/images/bms/keyPad.png";
+					break;
+				
+				//행선지 정면
+				case ("DK006" || "DK007"):
+					imgSrc = "/cm/images/bms/desGuide.png";
+					break;
+				//행선지 측면	
+				case ("DK008" || "DK009" || "DK012"):
+					imgSrc = "/cm/images/bms/desGuide.png";
+					break;
+				//행선지 후면	
+				case ("DK013"):
+					imgSrc = "/cm/images/bms/desGuide.png";
+					break;
 				case "DK011":
 					imgSrc = "/cm/images/bms/green_cicle.png";
 					break;		
 			}
 			
-			if (dvc_kind == "DK011"){
+			if (imgSrc != "" || imgSrc != null){
 				
 				var coordsData = dlt_BMS_DVC_INFO.getCellData(i, "DVC_COORDS");
 				if(coordsData != null || coordsData != "") {
@@ -323,12 +483,11 @@
 				var imgId = dlt_BMS_DVC_INFO.getCellData(i, "DVC_ID");
 				
 				var str = "";
-				str = "<div id='"+ imgId+ "' style='position:absolute; top:"+topCoords+ "px; left:"+leftCoords+"px;' class='w2group '>"
+				str = "<div id='"+ imgId+ "' style='position:absolute; top:"+topCoords+ "px; left:"+leftCoords+"px;' class='w2group' onclick='imgOnclick(this.id);'>"
 				+ "<img xmlns='http://www.w3.org/1999/xhtml' src='"+ imgSrc+ "'>"
 				+ "</div>";
-				//$("#mf_tac_layout_contents_"+ param.menuCode+ "_body_wq_uuid_683").append(str);				
-				$("#mf_tac_layout_contents_"+ param.menuCode).find(".brt_bus_img").append(str);				
-			} // end if 삭제해야됨
+				$("#mf_tac_layout_contents_"+ param.menuCode+ "_body_busImage").append(str);				
+			} // end if
 
 		} // end for
 		
@@ -360,7 +519,12 @@
 			com.openPopup(("/ui/BMS/VD0202/VD0202P01.xml"), options, data);						
 			}		
 	};
-	]]></script>
+	
+	function imgOnclick(id) {
+		var rowIndex = dlt_BMS_DVC_INFO.getMatchedIndex("DVC_ID", id);
+		VD0202G1.setFocusedCell(rowIndex, "DVC_ID", false);
+	}
+]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
@@ -466,16 +630,15 @@
 					</xf:group>			
 				</xf:group><!-- pgm_sublist end -->
 				<xf:group id="" class="vertical_line"></xf:group>				
-				<xf:group id="pgm_detail" class="pgm_detail grdr_20_300_20_a" style="">
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_230_20_a" style="">
 					<xf:group class="gr_map_header" id="" style="">
 						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="이미지 영역 라벨 뺄지 고민" style=""></w2:textbox>
+							<w2:textbox class="df_tt fl" id="" label="차내장치 상태" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
-					<xf:group class="brt_bus_img">
-						<!-- <xf:image id="image1" ref="" src="/cm/images/bms/CNG_bus.png"
-							style="margin-left:2px;margin-bottom:3px;float:left;width:100%" alt="" longdesc="" disabled="" tabIndex="" title="" usemap="">
-						</xf:image>	 -->
+					<!-- <xf:group class="brt_bus_img">
+					</xf:group> -->				
+					<xf:group id="busImage" class="woojin_bus_img">
 					</xf:group>				
 					<xf:group class="gr_map_header" id="" style="">
 						<xf:group class="defaultbox" id="" style="">
@@ -486,7 +649,7 @@
 								<w2:gridView id="VD0202G1" style="width:98%;height:98%" defaultCellHeight="20" rowNumVisible="true"
 								useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태"
 								overflowX="auto" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true" ignoreCellClick="false"
-								dataList="data:dlt_BMS_DVC_INFO" class="cm_grid" autoFit="lastColumn" fixedColumnScrollHidden="" ev:oncellclick="scwin.VD0201G1_oncellclick" ev:onscrolly="">
+								dataList="data:dlt_BMS_DVC_INFO" class="cm_grid" autoFit="lastColumn" fixedColumnScrollHidden="" ev:oncellclick="scwin.VD0201G1_oncellclick" ev:onscrolly="" ev:onrowindexchange="scwin.VD0202G1_onrowindexchange" focusMove="" focusMode="">
 								<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 								<w2:header style="" id="header1">
 									<w2:row style="" id="row1">

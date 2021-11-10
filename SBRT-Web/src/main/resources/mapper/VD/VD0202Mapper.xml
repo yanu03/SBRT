@@ -13,11 +13,14 @@
 						, A.OPER_STS
 						, B.REP_ROUT_NM
 						, B.ROUT_NM
-						
+						, C.VHC_KIND
 		
 		FROM  			BRT_CUR_OPER_INFO A
 		LEFT JOIN   	BMS_ROUT_MST	B
 		ON				A.ROUT_ID = B.ROUT_ID
+		LEFT JOIN		BMS_VHC_MST C
+		ON				A.VHC_ID = C.VHC_ID
+		
 		WHERE			A.OPER_DT = DATE_FORMAT(NOW(), '%Y/%m/%d')
 		AND				B.DEL_YN != 'Y'
 			<if test="CONTENT1 != null">
