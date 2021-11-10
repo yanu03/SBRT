@@ -214,7 +214,7 @@
 		var dataList = jsonObj.LIST;
 		
 		//정류장 시설물 상태 정보
-		if(attrId == ''){
+		if(attrId == '???'){
 			for(var i=0; i<dataList.length; i++){
 				var fcltId = dataList[i].FCLT_ID;
 				var fcltCond = dataList[i].FCLT_COND;
@@ -277,16 +277,17 @@
 		com.searchGrid(FM0202G0, sub_FM0202G0R0);
 	};
 	
+	
 	function imgOnclick(id){
-		var fcltId = $('#'+id).closest('div').attr('id');
-		var rowIndex = dlt_BMS_FCLT_INFO.getMatchedIndex("FCLT_ID", fcltId);
+		debugger;
+		//var fcltId = $('#'+id).closest('div').attr('id');
+		var rowIndex = dlt_BMS_FCLT_INFO.getMatchedIndex("FCLT_ID", id);
 		
 		FM0202G1.setFocusedCell(rowIndex, "FCLT_ID", false);
 		
 	}
 	
 	scwin.sub_FM0202G1R0_submitdone = function(e) {
-		debugger;
 		var str = ""
 		var imgSrc = ""
 		var imgId = ""
@@ -318,13 +319,13 @@
 			}else if(fcltKind == 'FK001' && fcltCond == 'FC021'){
 				imgSrc = "/cm/images/bms/BIT_RED_B.png";
 			}else if(fcltKind == 'FK004'){
-				imgSrc = "/cm/images/bms/AIRTUBE.jpg";
+				imgSrc = "/cm/images/bms/AIRTUBE.png";
 			}else if(fcltKind == 'FK005'){
 				imgSrc = "/cm/images/bms/AIRCON.webp";
 			}
 			
-			str += '<div id="'+fcltId+'"style="position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group ">';
-			str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'"id="'+fcltId+'img'+'" onclick="imgOnclick(this.id);">';
+			str += '<div id="'+fcltId+'"style="position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group " onclick="imgOnclick(this.id);">';
+			str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'">';
 			str += '</div>'
 			
 		}
@@ -332,7 +333,6 @@
 		$('#mf_tac_layout_contents_'+param.menuCode+'_body_STTN_IMG').html(str);
 		
 		
-		debugger;
 		var fclt_ctrindex = FM0202G1.getColumnIndex("FCLT_CTR");
 		var param = com.getParameter();
 		
@@ -340,11 +340,9 @@
 			var ctr_yn = dlt_BMS_FCLT_INFO.getCellData(i, "CTR_YN");
 			if(ctr_yn == 'N'){
 				
-				//var buttonParentId = "#mf_tac_layout_contents_" + param.menuCode + "_body_FM0202G1_cell_" +i+ "_" + fclt_ctrindex;
-           		//$(buttonParentId).find(":button").addClass("disabled");
-				
-				//FM0202G1.setCellDisabled(i, "CTR_YN", true);
 				FM0202G1.setDisabled("cell", i, "FCLT_CTR", true);
+	            //제어 버튼 안보이게 처리
+	            FM0202G1.setCellClass(i, "FCLT_CTR", "hideData");
 			}
 		}
 		
@@ -372,13 +370,13 @@
 			}else if(fcltKind == 'FK001' && fcltCond == 'FC021'){
 				imgSrc = "/cm/images/bms/BIT_RED_B.png";
 			}else if(fcltKind == 'FK004'){
-				imgSrc = "/cm/images/bms/AIRTUBE.jpg";
+				imgSrc = "/cm/images/bms/AIRTUBE.png";
 			}else if(fcltKind == 'FK005'){
 				imgSrc = "/cm/images/bms/AIRCON.webp";
 			}
 			
-			str += '<div id="'+fcltId+'"style="position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group ">';
-			str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'"id="'+fcltId+'img'+'" onclick="imgOnclick(this.id);">';
+			str += '<div id="'+fcltId+'"style="position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group " onclick="imgOnclick(this.id);">';
+			str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'">';
 			str += '</div>'
 			
 		}
@@ -387,7 +385,7 @@
 		
 		var fcltID = dlt_BMS_FCLT_INFO.getCellData(row, "FCLT_ID");
 		
-		//이미지 변경
+		//이미지 변경 - switch
 		$('#'+fcltID).children('img').attr("src", '/cm/images/bms/sample_chg.png');
 		
 	};
