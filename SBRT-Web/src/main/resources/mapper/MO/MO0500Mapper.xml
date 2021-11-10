@@ -31,7 +31,7 @@
 			ON A.COMP_NM = E.COMP_ID
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != NULL and CONTENT != ''">
-				AND E.COMP_NM LIKE CONCAT('%',#{CONTENT},'%') || A.VHC_TYPE LIKE CONCAT('%',#{CONTENT},'%') || D.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+				AND E.COMP_NM LIKE CONCAT('%',#{CONTENT},'%') ||  D.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') <!-- || A.VHC_TYPE LIKE CONCAT('%',#{CONTENT},'%') --> 
 			</if>
 			<if test="TYPE == 'COMP_NM'">
 				AND E.COMP_NM LIKE CONCAT('%',#{CONTENT},'%')
@@ -43,7 +43,7 @@
 				AND D.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 			<if test="OCR_DTM != NULL and OCR_DTM != ''">
-				AND A.OCR_DTM BETWEEN #{OCR_DTM} AND #{OCR_DTM}
+				AND A.OCR_DTM BETWEEN DATE_FORMAT(#{OCR_DTM}, '%Y-%m-%d 0:0:0') AND DATE_FORMAT(#{OCR_DTM}, '%Y-%m-%d 23:59:59')
 			</if>
 		</where>	
 		ORDER BY
