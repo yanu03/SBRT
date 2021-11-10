@@ -735,7 +735,7 @@ routMap.addMarkerAni = function(mapId, lat, lng, id) {
 			draggable: routMap.mapInfo[mapId].draggable, //Marker의 드래그 가능 여부.
 			animation: aniType, //Marker 애니메이션.
 			animationLength: 500, //애니메이션 길이.
-			//label: "정류장", //Marker의 라벨.
+			//label: "정류소", //Marker의 라벨.
 			title: id //Marker 타이틀.
 		});
 		marker.setMap(routMap.mapInfo[mapId].map); //Marker가 표시될 Map 설정.
@@ -1040,7 +1040,7 @@ routMap.showBubbleOverlay = function(mapId, data, marker, idx, focusIdx) {
 	else if(data.WAY_DIV == "WD003") wayDiv = "_왕복";
 	else if(data.WAY_DIV == "WD004") wayDiv = "_순환";
 	
-	//정류장 or 교차로
+	//정류소 or 교차로
 	if (typeof data.VHC_ID == "undefined") {
 		if(data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP){
 			 msg = "<div class = 'customoverlay busstop'>";
@@ -1074,7 +1074,6 @@ routMap.showBubbleOverlay = function(mapId, data, marker, idx, focusIdx) {
 		} else if (typeof data.RPC_VHC_NO != "undefined") {
 			overlayName = data.RPC_VHC_NO		
 		}
-		
 		msg = "<div class = 'busoverlay'>"
 			+ "<span class = 'map_title' style=''>" + overlayName + "</span>"
 			+ "</div>";
@@ -1167,7 +1166,7 @@ routMap.showClickOverlay = function(mapId, data, idx, focusIdx, marker, markerIm
 	
 	if(idx==focusIdx) {
 		
-		//정류장
+		//정류소
 		if(data.NODE_TYPE == 'NT002') {
 			clickOverlay = new kakao.maps.CustomOverlay({
 				content: clickMsg,
@@ -1611,7 +1610,7 @@ routMap.showCategory = function(mapId, list, focusIdx, grid, etcOnOff) {
 			}
 			else if(normalCheck == 0 && list[i].NODE_TYPE == routMap.NODE_TYPE.BUSSTOP){
 				categoryClass = "normal_busimg";
-				categoryName = "정류장";
+				categoryName = "정류소";
 				categoryContentNormal =	'<li class="'+ routMap.mapInfo[mapId].isShowNormal +'">' ;
 				categoryContentNormal +=	'<span class="' +categoryClass +'"></span>';
 				categoryContentNormal +=	categoryName;
@@ -1695,7 +1694,7 @@ routMap.showCategory = function(mapId, list, focusIdx, grid, etcOnOff) {
 	    	if (spanClassName == "crossimg") {
 	    		routMap.mapInfo[mapId].isShowCrs = "";
 	    	}
-	    	//정상 정류장
+	    	//정상 정류소
 	    	else if(spanClassName == "normal_busimg") {
 	    		routMap.mapInfo[mapId].isShowNormal = "";
 	    	}
@@ -1705,7 +1704,7 @@ routMap.showCategory = function(mapId, list, focusIdx, grid, etcOnOff) {
 	    	else if(spanClassName == "voicimg") {
 	    		routMap.mapInfo[mapId].isShowSound = "";
 	    	}
-	    	//비정상 정류장
+	    	//비정상 정류소
 	    	else if(spanClassName == "abnormal_busimg") {
 	    		routMap.mapInfo[mapId].isShowAbnormal = "";
 	    	}
@@ -1770,7 +1769,7 @@ routMap.showCategory2 = function(mapId, sttnMapId, crsMapId, sttnList, crsList, 
 	crossCheck = 1;
 	
 	categoryClass = "normal_busimg";
-	categoryName = "정류장";
+	categoryName = "정류소";
 	categoryContentNormal =	'<li class="'+ routMap.mapInfo[sttnMapId].isShowNormal +'">' ;
 	categoryContentNormal +=	'<span class="' +categoryClass +'"></span>';
 	categoryContentNormal +=	categoryName;
@@ -1778,7 +1777,7 @@ routMap.showCategory2 = function(mapId, sttnMapId, crsMapId, sttnList, crsList, 
 	normalCheck = 1;
 	
 	categoryClass = "abnormal_busimg"
-	categoryName = "고장정류장";
+	categoryName = "고장정류소";
 	categoryContentAbnormal =	'<li class="'+ routMap.mapInfo[sttnMapId].isShowAbnormal +'">' ;
 	categoryContentAbnormal +=	'<span class="' +categoryClass +'"></span>';
 	categoryContentAbnormal +=	categoryName;
@@ -1816,7 +1815,7 @@ routMap.showCategory2 = function(mapId, sttnMapId, crsMapId, sttnList, crsList, 
 					routMap.showMarker(crsMapId, crsList[i], i, focusIdx, grid);		
 				}				
 			}
-			//정상 정류장
+			//정상 정류소
 			else if(spanClassName == "normal_busimg") {
 				if (MO0101T1.hide) {
 					MO0101T0.hide();
@@ -1830,7 +1829,7 @@ routMap.showCategory2 = function(mapId, sttnMapId, crsMapId, sttnList, crsList, 
 					routMap.showMarker(sttnMapId, sttnList[i], i, focusIdx, grid);		
 				}						
 			}
-			//비정상 정류장
+			//비정상 정류소
 			else if(spanClassName == "abnormal_busimg") {
 				routMap.initNode(sttnMapId);
 				routMap.mapInfo[sttnMapId].isShowAbnormal = "";
@@ -2200,6 +2199,7 @@ routMap.showMarker2 = function(mapId, data, idx) {
 
 	var overlay = null;
 	var msg = "";
+	
 	if(data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP){
 		 msg = "<div class = 'customoverlay busstop'>";
 		 
@@ -3346,7 +3346,7 @@ routMap.drawRoute = function(mapId, grid, focusIdx) {
 				routMap.mapInfo[mapId].nodes.push(routMap.getDrawingNode(mapId,list[i].GPS_Y, list[i].GPS_X));
 			}*/
 			
-			// 노드 타입이 버스 정류장 마커 표시
+			// 노드 타입이 버스 정류소 마커 표시
 			if(list[i].NODE_TYPE == routMap.NODE_TYPE.BUSSTOP && routMap.mapInfo[mapId].dispCheck.indexOf(routMap.NODE_TYPE.BUSSTOP)>=0) {
 				routMap.addMarkerInter(mapId, list[i], grid, i, focusIdx);
 			}
@@ -3424,7 +3424,7 @@ routMap.drawRoute2 = function(mapId, list, focusIdx) {
 			/*if(list[i].NODE_TYPE != routMap.NODE_TYPE.VERTEX){
 				routMap.mapInfo[mapId].nodes.push(routMap.getDrawingNode(mapId,list[i].GPS_Y, list[i].GPS_X));
 			}*/
-			// 노드 타입이 버스 정류장 마커 표시
+			// 노드 타입이 버스 정류소 마커 표시
 			if(list[i].NODE_TYPE == routMap.NODE_TYPE.BUSSTOP && routMap.mapInfo[mapId].dispCheck.indexOf(routMap.NODE_TYPE.BUSSTOP)>=0) {
 				routMap.addMarkerInter(mapId, list[i], grid, i, focusIdx);
 			}
@@ -3508,7 +3508,7 @@ routMap.drawSound = function(mapId, grid, focusIdx) {
 				routMap.mapInfo[mapId].nodes.push(routMap.getDrawingNode(mapId,list[i].GPS_Y, list[i].GPS_X));
 			}*/
 			
-			// 노드 타입이 사운드, 버스, 정류장 마커 표시
+			// 노드 타입이 사운드, 버스, 정류소 마커 표시
 			if(list[i].NODE_TYPE == routMap.NODE_TYPE.SOUND) {
 				list[i].draggable = routMap.mapInfo[mapId].draggable;
 				routMap.addSoundMarkerInter(mapId, list[i], grid, i, focusIdx);
