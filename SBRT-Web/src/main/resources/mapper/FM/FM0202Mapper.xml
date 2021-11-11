@@ -36,8 +36,7 @@
 		  ON A.NODE_ID = D.NODE_ID		
 		LEFT JOIN BMS_STTN_MST H
 			ON A.NODE_ID = H.STTN_ID
-		WHERE			(A.NODE_TYPE = 'NT001'
-			OR				A.NODE_TYPE = 'NT002')
+		WHERE			(A.NODE_TYPE = 'NT002')
 		AND				G.DEL_YN != 'Y'
 			<if test="CONTENT1 != null">
 				AND G.REP_ROUT_ID = #{CONTENT1}			
@@ -51,7 +50,8 @@
 			<if test="CONTENT4 != ''">
 				AND A.NODE_TYPE = #{CONTENT4}				
 			</if>
-			
+		GROUP BY
+			A.NODE_ID
 		ORDER BY		E.NODE_SN					
 	</select>
 
@@ -92,6 +92,8 @@
 			ON			A.MNG_ID = B.MNG_ID		 	
 		WHERE
 						A.NODE_ID = #{NODE_ID}
+		ORDER BY
+			A.FCLT_KIND, A.FCLT_ID
 	</select>
 	
 	<select id="fm0202SHI0" resultType="Map">

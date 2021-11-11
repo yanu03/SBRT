@@ -315,13 +315,17 @@
 			var fcltCond = dlt_BMS_FCLT_INFO.getCellData(i, "FCLT_COND");
 			
 			if(fcltKind == 'FK001' && fcltCond == 'FC020'){
-				imgSrc = "/cm/images/bms/BIT_RED.png";
+				imgSrc = "/cm/images/bms/BIT_RED_normal.png";
 			}else if(fcltKind == 'FK001' && fcltCond == 'FC021'){
-				imgSrc = "/cm/images/bms/BIT_RED_B.png";
-			}else if(fcltKind == 'FK004'){
-				imgSrc = "/cm/images/bms/AIRTUBE.png";
-			}else if(fcltKind == 'FK005'){
-				imgSrc = "/cm/images/bms/AIRCON.webp";
+				imgSrc = "/cm/images/bms/BIT_RED_abnormal.png";
+			}else if(fcltKind == 'FK004' && fcltCond == 'FC020'){
+				imgSrc = "/cm/images/bms/AIRTUBE_normal.png";
+			}else if(fcltKind == 'FK004' && fcltCond == 'FC021'){
+				imgSrc = "/cm/images/bms/AIRTUBE_abnormal.png";
+			}else if(fcltKind == 'FK005' && fcltCond == 'FC020'){
+				imgSrc = "/cm/images/bms/AIRCON_normal.png";
+			}else if(fcltKind == 'FK005' && fcltCond == 'FC021'){
+				imgSrc = "/cm/images/bms/AIRCON_abnormal.png";
 			}
 			
 			str += '<div id="'+fcltId+'"style="position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group " onclick="imgOnclick(this.id);">';
@@ -366,13 +370,17 @@
 			var fcltCond = dlt_BMS_FCLT_INFO.getCellData(i, "FCLT_COND");
 			
 			if(fcltKind == 'FK001' && fcltCond == 'FC020'){
-				imgSrc = "/cm/images/bms/BIT_RED.png";
+				imgSrc = "/cm/images/bms/BIT_RED_normal.png";
 			}else if(fcltKind == 'FK001' && fcltCond == 'FC021'){
-				imgSrc = "/cm/images/bms/BIT_RED_B.png";
-			}else if(fcltKind == 'FK004'){
-				imgSrc = "/cm/images/bms/AIRTUBE.png";
-			}else if(fcltKind == 'FK005'){
-				imgSrc = "/cm/images/bms/AIRCON.webp";
+				imgSrc = "/cm/images/bms/BIT_RED_abnormal.png";
+			}else if(fcltKind == 'FK004' && fcltCond == 'FC020'){
+				imgSrc = "/cm/images/bms/AIRTUBE_normal.png";
+			}else if(fcltKind == 'FK004' && fcltCond == 'FC021'){
+				imgSrc = "/cm/images/bms/AIRTUBE_abnormal.png";
+			}else if(fcltKind == 'FK005' && fcltCond == 'FC020'){
+				imgSrc = "/cm/images/bms/AIRCON_normal.png";
+			}else if(fcltKind == 'FK005' && fcltCond == 'FC021'){
+				imgSrc = "/cm/images/bms/AIRCON_abnormal.png";
 			}
 			
 			str += '<div id="'+fcltId+'"style="position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group " onclick="imgOnclick(this.id);">';
@@ -384,8 +392,24 @@
 		$('#mf_tac_layout_contents_'+param.menuCode+'_body_STTN_IMG').html(str);
 		
 		var fcltID = dlt_BMS_FCLT_INFO.getCellData(row, "FCLT_ID");
+		var fcltKind = dlt_BMS_FCLT_INFO.getCellData(row, "FCLT_KIND");
 		
-		//이미지 변경 - switch
+		//이미지 변경
+		/*if(fcltKind == 'FK001' && fcltCond == 'FC020'){
+				$('#'+fcltID).children('img').attr("src", '/cm/images/bms/BIT_RED_normal_selected.png');
+			}else if(fcltKind == 'FK001' && fcltCond == 'FC021'){
+				$('#'+fcltID).children('img').attr("src", '/cm/images/bms/BIT_RED_abnormal_selected.png');
+			}else if(fcltKind == 'FK004' && fcltCond == 'FC020'){
+				$('#'+fcltID).children('img').attr("src", '/cm/images/bms/AIRTUBE_normal_selected.png');
+			}else if(fcltKind == 'FK004' && fcltCond == 'FC021'){
+				$('#'+fcltID).children('img').attr("src", '/cm/images/bms/AIRTUBE_abnormal_selected.png');
+			}else if(fcltKind == 'FK005' && fcltCond == 'FC020'){
+				$('#'+fcltID).children('img').attr("src", '/cm/images/bms/AIRCON_normal_selected.png');
+			}else if(fcltKind == 'FK005' && fcltCond == 'FC021'){
+				$('#'+fcltID).children('img').attr("src", '/cm/images/bms/AIRCON_abnormal_selected.png');
+			}*/
+		
+		//이미지 변경 임시
 		$('#'+fcltID).children('img').attr("src", '/cm/images/bms/sample_chg.png');
 		
 	};
@@ -462,7 +486,7 @@
 							</xf:choices>
 						</xf:select1>
 					</xf:group>
-					<xf:group class="label" id="" style="">
+					<!--  <xf:group class="label" id="" style="">
 						<w2:span class="" id="" label="노드타입"></w2:span>
 					</xf:group>
 					<xf:group class="search" id="" style="">
@@ -480,11 +504,11 @@
 								</xf:item>
 							</xf:choices>
 						</xf:select1>
-					</xf:group>
+					</xf:group>-->
 					<xf:group class="label" id="" style="">
 						<w2:span class="" id="" label="검색"></w2:span>
 					</xf:group>
-					<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT3" placeholder="노드ID 또는 노드명"></xf:input>
+					<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT3" placeholder="정류소ID 또는 정류소명"></xf:input>
 					</xf:group>
 					<w2:wframe class="" id="wfm_mainBtn" scope="true" src="/cm/common/wf_mainBtn.xml" style=""></w2:wframe>
 				</xf:group>
@@ -493,7 +517,7 @@
 			<xf:group id="pgm_content" class="pgm_content grdc_500_20_a" style="" >
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 					<xf:group class="defaultbox" id="" style="">
-						<w2:textbox class="df_tt fl" id="" label="정류소/교차로 목록" style=""></w2:textbox>
+						<w2:textbox class="df_tt fl" id="" label="정류소 목록" style=""></w2:textbox>
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="" class="" style="">
@@ -512,13 +536,13 @@
 							<w2:header style="" id="header2">
 								<w2:row style="" id="row3">
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column61"
-										value="노드ID" blockSelect="false" displayMode="label">
+										value="정류소ID" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column57"
+									<!--  <w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column57"
 										value="노드타입" blockSelect="false" displayMode="label">
-									</w2:column>
+									</w2:column>-->
 									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column56"
-										value="노드명" blockSelect="false" displayMode="label">
+										value="정류소명" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column58"
 										value="위도" blockSelect="false" displayMode="label" sortable="false">
@@ -536,9 +560,9 @@
 									<w2:column removeBorderStyle="false" width="94" inputType="text" style="height:20px" id="NODE_ID"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="117" inputType="select" style="height:20px" id="NODE_TYPE"
+									<!--  <w2:column removeBorderStyle="false" width="117" inputType="select" style="height:20px" id="NODE_TYPE"
 										value="" blockSelect="false" displayMode="label">
-									</w2:column>
+									</w2:column>-->
 									<w2:column removeBorderStyle="false" width="161" inputType="text" style="height:20px" id="NODE_NM"
 										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>

@@ -262,9 +262,26 @@
 		}
 	};
 	
+	//위치좌표 팝업
 	scwin.TEMP_COORDS_onclick = function(e) {
-		
+		var data = { FCLT_ID : dlt_BMS_FCLT_INFO.getCellData(FM0100G1.getFocusedRowIndex(), "FCLT_ID"),
+				   	 callbackFn : "scwin.searchCompCallback" };
+				   	 
+		var opt = { id : "FM0100P01", 
+					popupName : "시설물 위치 좌표 검색",
+					modal : true,  
+					width : 1350, height: 500 };
+		com.openPopup("/ui/BMS/FM0100/FM0100P01.xml", opt, data);
 	};
+	
+	//위치 좌표 버튼 콜백함수
+	scwin.searchCOORDSCallback = function(returnValue) {
+		COMP_NM.setValue(returnValue[0].COMP_NM);
+		dlt_BMS_VHC_MST.setCellData(SI0200G0.getFocusedRowIndex(), "COMP_ID", returnValue[0].COMP_ID);
+		dlt_BMS_VHC_MST.setCellData(SI0200G0.getFocusedRowIndex(), "AREA", returnValue[0].AREA);
+	};
+	
+	
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
