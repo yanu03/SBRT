@@ -24,6 +24,13 @@
 						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
+				<w2:dataMap baseNode="map" id="dma_searchitem">
+					<w2:keyInfo>
+						<w2:key id="FCLT_ID" name="시설물ID" dataType="text"></w2:key>
+						<w2:key id="FCLT_KIND" name="시설물유형" dataType="text"></w2:key>
+						<w2:key id="COORDS" name="좌표" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_SI0200P0R0" ref="data:json,dma_search" target="data:json,dlt_TRANSCOMP_MST" action="/si/SI0200P0R0" method="post"
@@ -35,24 +42,125 @@
         
 	scwin.onpageload = function() {
 		scwin.param = com.getParameter();
+		dma_searchitem.set("FCLT_ID", scwin.param.FCLT_ID);   
+		dma_searchitem.set("FCLT_KIND", scwin.param.FCLT_KIND);   
 		
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
 		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
-		/*var btnOptions = 
-		[
-			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
-		];*/
 		
-		var codeOptions = [{code : "AREA", compID : "SI0200P0:AREA" }];
-		com.setCommonDtl(codeOptions);	
+		/*var str = ""
 		
+		if(dma_searchitem.get('FCLT_KIND') == 'FK001'){
+			str += '<div id="testbit" style="position: absolute; top:100px; left:1100px" class="w2group " onclick="onclickBIT(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="BIT"></div>'
+			str += '<div id="testbit" style="position: absolute; top:100px; left:800px" class="w2group " onclick="onclickBIT(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="BIT"></div>'
+		}else if(dma_searchitem.get('FCLT_KIND') == 'FK004'){
+			str += '<div id="" style="position: absolute; top:120px; left:400px" class="w2group " onclick="onclickAIRTUBE(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="에어튜브"></div>'
+			str += '<div id="" style="position: absolute; top:120px; left:500px" class="w2group " onclick="onclickAIRTUBE(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="에어튜브"></div>'
+			str += '<div id="" style="position: absolute; top:120px; left:700px" class="w2group " onclick="onclickAIRTUBE(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="에어튜브"></div>'
+			str += '<div id="" style="position: absolute; top:120px; left:800px" class="w2group " onclick="onclickAIRTUBE(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="에어튜브"></div>'
+		}else if(dma_searchitem.get('FCLT_KIND') == 'FK005'){
+			str += '<div id="" style="position: absolute; top:20px; left:600px" class="w2group " onclick="onclickAIRCON(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="에어컨"></div>'
+		}
+	
+		$('#mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_STTN_IMG').html(str);
 		
-		//com.setMainBtn3(wfm_mainBtn, btnOptions);
-		com.setMainBtn3(wfm_mainBtn);
-		com.executeSubmission(sub_SI0200P0R0);		
-		
+		// 이벤트 등록
+        document.onmousedown = imgShow;
+        // 익명메서드 : 이벤트 취소
+        document.oncontextmenu = function () {
+            return false;
+        }*/
+        
 	};
 	
+	/*function imgShow(){
+		debugger;
+		var str = ''
+		if(event.button == 0){
+			//alert('h');
+			
+			//var img = document.createElement("img");
+			var imgPath = "/cm/images/bms/BIT_RED_normal.png";
+//			img.src = imgPath;
+//			img.className = "test";
+//			img.style.position = "absolte";
+//			img.style.left = event.clientX - 50 + "px";
+//			img.style.top = event.clientY - 50 + "px";
+//			document.body.appendChild(img);
+			
+			//var top = event.clientY - 50;
+			//var left = event.clientX - 50;
+			
+			var top = $('#mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_STTN_IMG').offset().top;
+			var left = $('#mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_STTN_IMG').offset().left;
+			
+			str += '<div id="" style="position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group ">';
+			str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgPath+'">';
+			str += '</div>'
+			
+			$('#mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_STTN_IMG').html(str);
+		}else if(event.button == 2){
+			$('#mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_STTN_IMG').empty();
+		}
+	}*/
+	
+	function clickImg(){
+		debugger;
+		var str = ''
+		var imgPath = ''
+		var left = event.offsetX;
+		var top = event.offsetY;
+		var fcltId = dma_searchitem.get("FCLT_ID") + '_popup';
+		var imgId = fcltId + 'img';
+		
+		if(dma_searchitem.get('FCLT_KIND') == 'FK001'){
+			imgPath = "/cm/images/bms/BIT_RED_normal.png";
+		}else if(dma_searchitem.get('FCLT_KIND') == 'FK004'){
+			imgPath = "/cm/images/bms/AIRTUBE_normal.png";
+		}else if(dma_searchitem.get('FCLT_KIND') == 'FK005'){
+			imgPath = "/cm/images/bms/AIRCON_normal.png";
+		}
+		
+		str += '<div id="'+fcltId+'" style="position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group " onmousedown="startDrag(event, this)">';
+		str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgPath+'" id="'+imgId+'"  >';
+		str += '</div>'
+		
+		$('#mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_STTN_IMG').html(str);
+ 		
+ 		$("#"+fcltId).on("click", function(e) {
+ 			e.stopPropagation();
+ 		});
+	}
+	
+	function moveDrag(e){ 
+		var e_obj = window.event? window.event : e;
+		var dmvx = parseInt(e_obj.clientX + img_L); 
+		var dmvy = parseInt(e_obj.clientY + img_T); 
+		targetObj.style.left = dmvx +"px";
+		targetObj.style.top = dmvy +"px"; 
+		return false; 
+	}
+	
+	function startDrag(e, obj){ 
+		targetObj = obj; 
+		var e_obj = window.event? window.event : e; 
+		img_L = getLeft(obj) - e_obj.clientX; 
+		img_T = getTop(obj) - e_obj.clientY; 
+		document.onmousemove = moveDrag; 
+		document.onmouseup = stopDrag; 
+		//com.alert(img_L);
+		if(e_obj.preventDefault)e_obj.preventDefault(); 
+	}
+	
+	function stopDrag(){ 
+		document.onmousemove = null; 
+		document.onmouseup = null; 
+	}
+	
+	function getLeft(o){ return parseInt(o.style.left.replace('px', '')); } 
+	function getTop(o){ return parseInt(o.style.top.replace('px', '')); }
+
+
 	scwin.onpageunload = function() {
 		
 	};
@@ -61,58 +169,97 @@
 		com.executeSubmission(sub_SI0200P0R0);
 	};
 	
+	//확인버튼
 	scwin.btn_confirm_onclick = function() {
-		var data = SI0200P0.getCheckedJSON("chk");
+		debugger;
+		var fcltId = dma_searchitem.get("FCLT_ID") + '_popup';
+		var top = $('#'+fcltId).css('top');
+		var left = $('#'+fcltId).css('left');
+		top = top.split('p');
+		left = left.split('p');
+		
+		var data = top[0] + ',' + left[0]
+		
 		com.closePopup(scwin.closeCallbackFncName, data);
 	};
-		
+	
+	//취소버튼
 	scwin.btn_cancel_onclick = function() {
 		com.closePopup();
 	};
 	
-	scwin.SI0200P0_onrowindexchange = function(row,oldRow) {
-		SI0200P0.setCellChecked(row,"chk",true);
-	}
-	
-	scwin.sub_SI0200P0R0_submitdone = function(e) {
-		var sCode = com.getResultCode(e);
-		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
-		
-		}
-	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
-		debugger;
 		var str = ""
 		var imgSrc = ""
 		var imgId = ""
 		
-		
 		if(info.newValue == 'ST003'){
 			document.getElementById('mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_STTN_IMG').className = "ST003_station";
 			
-			str += '<div id="mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_wq_uuid_2820" style="position: absolute; top:20px; left:600px" class="w2group "><input type="button" tabindex="0" id="mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_AIRCON_LOC" class="w2trigger " value="에어컨"></div>'
-			str += '<div id="mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_wq_uuid_2822" style="position: absolute; top:100px; left:1100px" class="w2group "><input type="button" tabindex="0" id="mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_BIT_LOC" class="w2trigger " value="BIT"></div>'
+			/*if(dma_searchitem.get("FCLT_KIND") == 'FK001'){
+				str += '<div id="" style="position: absolute; top:100px; left:100px" class="w2group " onclick="onclickBIT(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="BIT"></div>'
+			}else if(dma_searchitem.get("FCLT_KIND") == 'FK004'){
+				str += '<div id="" style="position: absolute; top:120px; left:400px" class="w2group " onclick="onclickAIRTUBE(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="에어튜브"></div>'
+				str += '<div id="" style="position: absolute; top:120px; left:500px" class="w2group " onclick="onclickAIRTUBE(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="에어튜브"></div>'
+				str += '<div id="" style="position: absolute; top:120px; left:700px" class="w2group " onclick="onclickAIRTUBE(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="에어튜브"></div>'
+				str += '<div id="" style="position: absolute; top:120px; left:800px" class="w2group " onclick="onclickAIRTUBE(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="에어튜브"></div>'
+			}else if(dma_searchitem.get("FCLT_KIND") == 'FK005'){
+				str += '<div id="" style="position: absolute; top:0px; left:600px" class="w2group " onclick="onclickAIRCON(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="에어컨"></div>'
+			}*/
 			
 		}else{
 			document.getElementById('mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_STTN_IMG').className = 'ST002_station';
 			
-			str += '<div id="mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_wq_uuid_2820" style="position: absolute; top:20px; left:600px" class="w2group "><input type="button" tabindex="0" id="mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_AIRCON_LOC" class="w2trigger " value="에어컨"></div>'
-			str += '<div id="mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_wq_uuid_2822" style="position: absolute; top:100px; left:1100px" class="w2group "><input type="button" tabindex="0" id="mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_BIT_LOC" class="w2trigger " value="BIT"></div>'
+			/*if(dma_searchitem.get("FCLT_KIND") == 'FK001'){
+				str += '<div id="" style="position: absolute; top:100px; left:1100px" class="w2group " onclick="onclickBIT(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="BIT"></div>'
+			}else if(dma_searchitem.get("FCLT_KIND") == 'FK004'){
+				str += '<div id="" style="position: absolute; top:120px; left:400px" class="w2group " onclick="onclickAIRTUBE(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="에어튜브"></div>'
+				str += '<div id="" style="position: absolute; top:120px; left:500px" class="w2group " onclick="onclickAIRTUBE(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="에어튜브"></div>'
+				str += '<div id="" style="position: absolute; top:120px; left:700px" class="w2group " onclick="onclickAIRTUBE(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="에어튜브"></div>'
+				str += '<div id="" style="position: absolute; top:120px; left:800px" class="w2group " onclick="onclickAIRTUBE(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="에어튜브"></div>'
+			}else if(dma_searchitem.get("FCLT_KIND") == 'FK005'){
+				str += '<div id="" style="position: absolute; top:20px; left:600px" class="w2group " onclick="onclickAIRCON(this.style.top, this.style.left)"><input type="radio" name="test" tabindex="0" id="" class="w2trigger " value="에어컨"></div>'
+			}*/
 		}
 		
 		$('#mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_STTN_IMG').html(str);
 	};
 	
-	//에어컨 클릭
-	scwin.AIRCON_LOC_onclick = function(e) {
+	//BIT클릭
+	/*function onclickBIT(top, left){
+		debugger;
+		//$('#testbit').attr('background-color', 'blue');
+		var top = top.split('p');
+		var left = left.split('p');
 		
-	};
+		var coords = top[0];
+		coords += ','+left[0];
+		
+		dma_searchitem.set("COORDS", coords);
+	}
 	
-	//BIT 클릭
-	scwin.BIT_LOC_onclick = function(e) {
+	//AIRTUBE클릭
+	function onclickAIRTUBE(top, left){
+		var top = top.split('p');
+		var left = left.split('p');
 		
-	};
+		var coords = top[0];
+		coords += ','+left[0];
+		
+		dma_searchitem.set("COORDS", coords);
+	}
+	
+	//AIRCON클릭
+	function onclickAIRCON(top, left){
+		var top = top.split('p');
+		var left = left.split('p');
+		
+		var coords = top[0];
+		coords += ','+left[0];
+		
+		dma_searchitem.set("COORDS", coords);
+	}*/
 	
 	]]></script>
 	</head>
@@ -121,7 +268,7 @@
 			<xf:group id="popup_header" style="" class="popup_header">
 				<xf:group class="gr_search" id="" style="">
 					<xf:group class="label" id="" style="">
-						<w2:span class="" id="" label="정류소 타입 설정"></w2:span>
+						<w2:span class="" id="" label="정류소 타입"></w2:span>
 					</xf:group>
 					<xf:group class="search" id="" style="">
 						<xf:select1 id="" disabledClass="w2selectbox_disabled" ref="data:dma_search.TYPE" appearance="minimal"
@@ -144,8 +291,8 @@
 					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
 			</xf:group>
-			<xf:group style="" id="STTN_IMG" class="ST002_station">
-				<xf:group style="position: absolute; top:20px; left:600px" id="">
+			<xf:group style="cursor:crosshair" id="STTN_IMG" class="ST002_station" ev:onclick="clickImg()">
+				<!--  <xf:group style="position: absolute; top:20px; left:600px" id="">
 					<xf:trigger type="button" style="" id="AIRCON_LOC"  ev:onclick="scwin.AIRCON_LOC_onclick">
 						<xf:label>에어컨</xf:label>
 					</xf:trigger>
@@ -154,7 +301,7 @@
 					<xf:trigger type="button" style="" id="BIT_LOC"  ev:onclick="scwin.BIT_LOC_onclick">
 						<xf:label>BIT</xf:label>
 					</xf:trigger>
-				</xf:group>
+				</xf:group>-->
 			</xf:group>
 			<xf:group id="" style="" class="popup_bottom">
 				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">

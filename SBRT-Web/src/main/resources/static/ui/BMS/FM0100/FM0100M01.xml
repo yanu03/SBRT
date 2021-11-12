@@ -264,21 +264,27 @@
 	
 	//위치좌표 팝업
 	scwin.TEMP_COORDS_onclick = function(e) {
+		debugger;
 		var data = { FCLT_ID : dlt_BMS_FCLT_INFO.getCellData(FM0100G1.getFocusedRowIndex(), "FCLT_ID"),
-				   	 callbackFn : "scwin.searchCompCallback" };
+						FCLT_KIND : dlt_BMS_FCLT_INFO.getCellData(FM0100G1.getFocusedRowIndex(), "FCLT_KIND"),
+				   	 	callbackFn : "scwin.searchCOORDSCallback" };
 				   	 
 		var opt = { id : "FM0100P01", 
-					popupName : "시설물 위치 좌표 검색",
+					popupName : "시설물 위치 좌표 설정",
 					modal : true,  
-					width : 1350, height: 500 };
-		com.openPopup("/ui/BMS/FM0100/FM0100P01.xml", opt, data);
+					width : 1400, height: 450 };
+					
+		if(data.FCLT_KIND != null && data.FCLT_KIND != ''){
+			com.openPopup("/ui/BMS/FM0100/FM0100P01.xml", opt, data);
+		}else{
+			alert('시설물 유형을 선택해주세요.');
+		}
 	};
 	
 	//위치 좌표 버튼 콜백함수
 	scwin.searchCOORDSCallback = function(returnValue) {
-		COMP_NM.setValue(returnValue[0].COMP_NM);
-		dlt_BMS_VHC_MST.setCellData(SI0200G0.getFocusedRowIndex(), "COMP_ID", returnValue[0].COMP_ID);
-		dlt_BMS_VHC_MST.setCellData(SI0200G0.getFocusedRowIndex(), "AREA", returnValue[0].AREA);
+		dlt_BMS_FCLT_INFO.setCellData(FM0100G1.getFocusedRowIndex(), "FCLT_COORDS", returnValue);
+		
 	};
 	
 	
@@ -365,7 +371,7 @@
 										value="위도" blockSelect="false" displayMode="label" sortable="false">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column59"
-										value="경도" blockSelect="false" displayMode="label" sortable="false">
+										value="경도" blockSelect="false" displayMode="label" sortable="false" adaptiveStyle="">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column55"
 										value="비고" blockSelect="false" displayMode="label" sortable="false">
@@ -734,27 +740,18 @@
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" class="w2tb_th">위치 좌표</xf:group>
+								<xf:group tagname="th" class="w2tb_th">위치 좌표(X,Y)</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes>
-										<w2:colspan>1</w2:colspan>
+										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:group>
 										<xf:input adjustMaxLength="" class="" dataType="text" disabled="false" id="FCLT_COORDS" mandatory=""
-											maxlength="20" ref="data:dlt_BMS_FCLT_INFO.FCLT_COORDS" style="width:100%;height:21px;" initValue="">
+											maxlength="20" ref="data:dlt_BMS_FCLT_INFO.FCLT_COORDS" style="width:100px;height:21px;margin-right:5px" initValue="">
 										</xf:input>
-									</xf:group>
-								</xf:group>
-								<xf:group tagname="th" class="w2tb_th">임시 좌표</xf:group>
-								<xf:group tagname="td" class="w2tb_td">
-									<w2:attributes>
-										<w2:colspan>1</w2:colspan>
-										<w2:rowspan>1</w2:rowspan>
-									</w2:attributes>
-									<xf:group>
 										<xf:trigger type="button" style="width: 80px;height: 23px;" id="TEMP_COORDS" ev:onclick="scwin.TEMP_COORDS_onclick">
-											<xf:label></xf:label>
+											<xf:label>좌표</xf:label>
 										</xf:trigger>
 									</xf:group>
 								</xf:group>
