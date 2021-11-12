@@ -147,9 +147,15 @@
 		 var autoOptions = {
 			Main : { grid : MO0203G0, srchSbm : sub_MO0203G0R0, keyColumn : "NODE_ID", srchGrp : pgm_header, name : "정류장 목록",
 						focusColumn : "NODE_NM"}
+					
 		 };
 		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions);
+		 var mainOptions = {
+		 	SEARCH: scwin.btn_sub_move,
+		 	CNL:{}
+		 };
+		 
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions, mainOptions);
 				
 		routMap.initMap2("map_MO0203", {width:"100%"
 				, height:"100%"
@@ -161,9 +167,10 @@
 						
 		 ];			
 		 
-		com.setCommonDtl(codeOptions, function(){
+		com.setCommonDtl(codeOptions//, function(){
 			//com.searchGrid(MO0203G0, sub_MO0203G0R0);
-		});	
+		// }
+		);	
 
 		MO0203G0.mergeCol(2,false);
 		MO0203G0.mergeCells("byrestriccol");
@@ -174,12 +181,16 @@
 		
 	};	
 	
+	scwin.btn_sub_move = function(){
+		com.gridMove(MO0203G0,"NODE_ID", dma_search.get("CONTENT2"), MO0203G0.getFocusedRowIndex());
+	}
+	
 	scwin.MO0203SCK = function () {
 		com.executeSubmission(sub_MO0203SCK);
 	}
 	
 	//15초 간격으로 MO0203SCK 실행
-	setInterval(scwin.MO0203SCK, 15000);
+	//setInterval(scwin.MO0203SCK, 15000);
 	
 	//BIT 빈 테이블 생성
 	MO0203T0_setTableEmpty = function(){
@@ -416,7 +427,7 @@
 	};
 	
 	scwin.sub_MO0203G0R0_submitdone = function(e) {
-		com.setFocusedCell(MO0203G0, "NODE_ID");
+	
 		
 		//시설물상태에 따라 클래스(백그라운드 색) 설정
 		for (i=0; i<dlt_BMS_NODE_MST.getDataLength(); i++) {
@@ -439,6 +450,8 @@
 		routMap.showMarkerList("map_MO0203", allDataList, focusIdx, MO0203G0); 	
 		//카테고리 뿌리기
 		routMap.showCategory("map_MO0203", allDataList, focusIdx, MO0203G0);
+		
+		com.setFocusedCell(MO0203G0, "NODE_ID");
 	};
 	
 	scwin.sub_MO0203SHI0_submitdone = function(e) {

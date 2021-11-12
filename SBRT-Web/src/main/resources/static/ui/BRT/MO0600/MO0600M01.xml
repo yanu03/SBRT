@@ -150,7 +150,12 @@
 			Main : { grid : MO0600G0, srchSbm : sub_MO0600G0R0, keyColumn : "VHC_ID", srchGrp : pgm_header, name : "차량 목록"}
 		 };
 		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions);
+		 var mainOptions = {
+		 	SEARCH: scwin.btn_sub_move,
+		 	CNL:{}
+		 };
+		 
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions, mainOptions);
 				
 		var map = routMap.initMap2("map_MO0600", 
 				{width:"100%"
@@ -212,6 +217,10 @@
 		});
 		
 	};	
+	
+	scwin.btn_sub_move = function(){
+		com.gridMove(MO0600G0, "VHC_NO", dma_search.get("CONTENT3"), MO0600G0.getFocusedRowIndex());
+	}
 	
 	scwin.sub_selectNodeListByRepRout_submitdone = function(e) {
 		routMap.showRoute("map_MO0600", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), null, "ONLYLINE");
