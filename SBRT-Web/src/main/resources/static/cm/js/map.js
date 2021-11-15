@@ -1430,9 +1430,9 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 	var sec = "";
 	
 	if(data.NODE_TYPE == "NT001") {
-		prevNodeType = "교차로";
+		nodeType = "교차로";
 	} else if(data.NODE_TYPE == "NT002"){
-		prevNodeType = "정류소";
+		nodeType = "정류소";
 	}
 	
 	if(data.NEXT_NODE_TYPE == "NT001") {
@@ -1463,9 +1463,9 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 		eventMsg += '</colgroup>' 
 		eventMsg += '<tbody id="overlay_tbody">' 
 		eventMsg += '<tr>'
-		eventMsg += '<th style="font-size: 10px;">이전 '+prevNodeType+'</th>' 
+		eventMsg += '<th style="font-size: 10px;">현재 '+nodeType+'</th>' 
 		eventMsg += '<td style="font-size: 10px; padding: 5px; white-space: break-spaces;" colspan="4" id="">'
-		eventMsg +=  '<div style="width: 80px">'+data.PREV_NODE_NM+'</div></td>' 
+		eventMsg +=  '<div style="width: 80px">'+data.NODE_NM+'</div></td>' 
 		eventMsg += '<th style="font-size: 10px;">다음 '+nextNodeType+'</th>' 
 		eventMsg += '<td style="font-size: 10px; padding: 5px; white-space: break-spaces;" colspan="4" id="">'
 		eventMsg +=  '<div style="width: 80px">'+data.NEXT_NODE_NM+'</div></td>' 

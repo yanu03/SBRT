@@ -79,7 +79,7 @@
 						<w2:column id="USE_YN" name="사용여부" dataType="text" defaultValue="Y"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
 						<w2:column id="ORG_NM" name="기관명" dataType="text"></w2:column>
-						<w2:column id="CTR_YN" name="제어여부" dataType="text" defaultValue=""></w2:column>
+						<w2:column id="CTR_YN" name="제어여부" dataType="text" defaultValue="N"></w2:column>
 						<w2:column id="DVC_COORDS" name="장치좌표" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
@@ -227,9 +227,11 @@
 	
 	//위치좌표 팝업
 	scwin.DVC_COORDS_onclick = function(e) {
-		var data = { DVC_ID : dlt_BMS_DVC_INFO.getCellData(VD0100G1.getFocusedRowIndex(), "DVC_ID"),
-						DVC_KIND : dlt_BMS_DVC_INFO.getCellData(VD0100G1.getFocusedRowIndex(), "DVC_KIND"),
-				   	 	callbackFn : "scwin.searchCOORDSCallback" };
+		var data = { VHC_KIND : dlt_BMS_VHC_MST.getCellData(VD0100G0.getFocusedRowIndex(), "VHC_KIND"), 
+					 DVC_ID : dlt_BMS_DVC_INFO.getCellData(VD0100G1.getFocusedRowIndex(), "DVC_ID"),
+					 DVC_KIND : dlt_BMS_DVC_INFO.getCellData(VD0100G1.getFocusedRowIndex(), "DVC_KIND"),
+					 DVC_COORDS : dlt_BMS_DVC_INFO.getCellData(VD0100G1.getFocusedRowIndex(), "DVC_COORDS"),
+				   	 callbackFn : "scwin.searchCOORDSCallback" };
 				   	 
 		var opt = { id : "FM0100P01", 
 					popupName : "시설물 위치 좌표 설정",
@@ -238,7 +240,7 @@
 					
 		if(data.DVC_KIND != null && data.DVC_KIND != ''){
 			com.openPopup("/ui/BMS/VD0100/VD0100P01.xml", opt, data);
-		}else{
+		}else if (data.DVC_KIND == null){
 			alert('장치 유형을 선택해주세요.');
 		}		
 	};
