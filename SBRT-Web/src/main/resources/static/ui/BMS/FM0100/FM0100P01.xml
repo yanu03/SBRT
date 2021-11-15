@@ -30,6 +30,7 @@
 						<w2:key id="FCLT_KIND" name="시설물유형" dataType="text"></w2:key>
 						<w2:key id="COORDS" name="좌표" dataType="text"></w2:key>
 						<w2:key id="STTN_FCLT_TYPE" name="정류소유형" dataType="text"></w2:key>
+						<w2:key id="FCLT_COORDS" name="시설물좌표" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 			</w2:dataCollection>
@@ -46,6 +47,7 @@
 		dma_searchitem.set("FCLT_ID", scwin.param.FCLT_ID);   
 		dma_searchitem.set("FCLT_KIND", scwin.param.FCLT_KIND);   
 		dma_searchitem.set("STTN_FCLT_TYPE", scwin.param.STTN_FCLT_TYPE);   
+		dma_searchitem.set("FCLT_COORDS", scwin.param.FCLT_COORDS);   
 		
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
 		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
@@ -57,6 +59,35 @@
 		}else{
 			document.getElementById('mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_STTN_IMG').className = "ST002_station";
 		}
+		
+		if(dma_searchitem.get("FCLT_COORDS") != ''){
+			var coord = dma_searchitem.get("FCLT_COORDS").split(',');
+			var top = coord[0];
+			var left = coord[1];
+			var fcltKind = dma_searchitem.get("FCLT_KIND");
+			var fcltId = dma_searchitem.get("FCLT_ID") + '_popup';
+			var str = ""
+			var imgSrc = ""
+			
+			if(fcltKind == 'FK001'){
+				imgSrc = "/cm/images/bms/BIT_RED_normal.png";
+			}else if(fcltKind == 'FK004'){
+				imgSrc = "/cm/images/bms/AIRTUBE_normal.png";
+			}else if(fcltKind == 'FK005'){
+				imgSrc = "/cm/images/bms/AIRCON_normal.png";
+			}
+			
+			str += '<div id="'+fcltId+'"style="position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group " onmousedown="startDrag(event, this)">';
+			str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'">';
+			str += '</div>'
+		
+		$('#mf_tac_layout_contents_MN00060101_body_FM0100P01_wframe_STTN_IMG').html(str);
+		
+		$("#"+fcltId).on("click", function(e) {
+ 			e.stopPropagation();
+ 		});
+	}
+			
 		
 		/*var str = ""
 		

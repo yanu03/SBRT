@@ -11,8 +11,9 @@
 		FROM		 	BRT_INCDNT_STAT A
 		LEFT JOIN	  BMS_ROUT_MST B
 			ON 		  A.ROUT_ID = B.ROUT_ID
+	<where>
 		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-			AND REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
 		<if test="TYPE == 'REP_ROUT_NM'">
 			AND REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
@@ -20,6 +21,7 @@
 		<if test="TYPE == 'ROUT_NM'">
 			AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>			
+	</where>
 		GROUP BY 	  A.ROUT_ID	
 		ORDER BY REP_ROUT_NM
 	</select> 
