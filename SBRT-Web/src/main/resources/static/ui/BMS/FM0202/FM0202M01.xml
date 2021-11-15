@@ -420,7 +420,16 @@
 		
 		if (gridColumn == "FCLT_CTR") {
 				var param = FM0202G1.getDataRow(row).FCLT_ID;
-				alert("전원종료, 리셋 팝업 필요");
+				var fcltKind = dlt_BMS_FCLT_INFO.getCellData(row, "FCLT_KIND");
+				
+				if(fcltKind == 'FK001'){
+					scwin.openMenu("BIT 제어","/ui/BMS/SI0102/SI0102M01.xml", "MN00010102");
+				}else if(fcltKind == 'FK004'){
+					scwin.openMenu("에어튜브 제어","/ui/BMS/SI0102/SI0102M01.xml", "MN00010102");
+				}else if(fcltKind == 'FK005'){
+					scwin.openMenu("에어컨 제어","/ui/BMS/SI0102/SI0102M01.xml", "MN00010102");
+				}
+				
 				//컨트롤러 api추가 필요. 
 				
 			}else if(gridColumn == "FCLT_RESET"){
@@ -447,6 +456,99 @@
 		com.searchGrid(FM0202G0, sub_FM0202G0R0);
 	};
 	
+	//오픈메뉴
+	scwin.openMenu = function(menuNm, url, menuCode, paramObj, menuType) {
+
+		// client에서 url 숨기기 메뉴일 경우에는 새 창으로 띄우기 적용 
+		if (url == "/") {
+			var url = document.location.href + "/";
+			window.open(url, "", "width=1200, height=700, left=450, top=100");
+		} else {
+			menuCode = menuCode || "";
+			var layout = $p.top().scwin.getLayoutId();
+			var tmpUrl;
+			var menuCodeParm = menuCode;
+			var frameMode;	// "wframe", "iframe"
+			var favStatus;
+			var data;
+
+			if (url.indexOf("/") !== 0) {
+				url = "/" + url;
+			}
+			url = gcm.CONTEXT_PATH + url;
+			
+			if ((typeof paramObj !== "undefined") && (paramObj !== null)) {
+				data = paramObj;
+			} else {
+				data = {};
+			}
+			
+			data.menuNm = menuNm;
+			data.menuCode = menuCode;
+			data.favStatus = favStatus;
+			data.menuType = menuType;
+			
+			var _closable = true;
+			
+			var frameMode = "";
+			if (layout == "T") {
+				var tabObj = { closable : _closable, //main 페이지를 제외하고 탭 닫기 기능 제공
+							   openAction : "select", // exist 는 기존 탭을 갱신, new 는 항상 새로, select는 동일 id 가 존재하면 선택, last: 기존 tab을 마지막 tab으로 이동후 선택
+							   label : menuNm };
+				
+				if (com.getFrameMode()  === "wframe") {
+					frameMode = "wframePreload";
+				} else {
+					frameMode = "iframe";
+				}
+				
+				var contObj = {
+					frameMode : frameMode,
+					scope : true,
+					src : url,
+					alwaysDraw : false,
+					title : menuNm,
+					dataObject : {
+						type : "json", 
+						name : "param", 
+						data : data
+					}
+				};
+				var tabComp = $w.getComponentById("mf_tac_layout");
+				tabComp.addTab(menuCode, tabObj, contObj);
+
+				// tabObj의 openAction의 last값의 동작 특이 사항으로 선택이 되지 않은 경우 선택하는 로직 추가
+				if (tabComp.getSelectedTabID() !== menuCode) {
+					var tabIndex = tabComp.getTabIndex(menuCode);
+					if (tabIndex) {
+						tabComp.setSelectedTabIndex(tabIndex);
+					}
+				}
+			} else if (layout == "M") {
+				if (com.getFrameMode() === "wframe") {
+					frameMode = "wframe";
+				} else {
+					frameMode = "iframe";
+				}
+				
+				var options = {
+					title : menuNm,
+					src : url,
+					windowTitle : menuNm,
+					windowId : menuCode,
+					openAction : "existWindow",
+					frameMode : frameMode,
+					dataObject : { 
+						type : "json", 
+						name : "param", 
+						data : data
+					}
+				}
+				var wdcComp = $w.getComponentById("mf_wdc_main");
+				wdcComp.createWindow(options);
+			}
+		}
+	};
 	
 	]]></script>
 	</head>
@@ -595,15 +697,6 @@
 						<w2:textbox class="df_tt fl" id="" label="시설물 모니터링" style=""></w2:textbox>
 					</xf:group>
 					<xf:group style="" id="STTN_IMG" class="">
-						<!--  <xf:group style="position: absolute; top: 100px; left: 1100px;" id="BIT">
-							<img style="" src="/cm/images/bms/BIT_RED.png"></img>
-						</xf:group>
-						<xf:group style="position: absolute; top: 100px; left: 330px;" id="AIRTUBE">
-							<img style="" src="/cm/images/bms/AIRTUBE.jpg"></img>
-						</xf:group>
-						<xf:group style="position: absolute; top: 20px; left: 600px;" id="AIRCON">
-							<img style="" src="/cm/images/bms/AIRCON.webp"></img>
-						</xf:group>-->
 					</xf:group>
 					<xf:group class="defaultbox" id="" style="">
 						<w2:textbox class="df_tt fl" id="" label="시설물 상태 및 제어" style=""></w2:textbox>

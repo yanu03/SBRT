@@ -20,6 +20,12 @@ public class FM0100Service extends ServiceSupport {
 	@Autowired
 	private FM0100Mapper fm0100Mapper;
 	
+	public List FM0100G0R0() throws Exception {
+		// TODO Auto-generated method stub
+		Map param = getSimpleDataMap("dma_search");
+		return fm0100Mapper.FM0100G0R0(param);
+	}
+	
 	public List FM0100G1R0() throws Exception {
 		// TODO Auto-generated method stub
 		Map param = getSimpleDataMap("dma_subsearch");
