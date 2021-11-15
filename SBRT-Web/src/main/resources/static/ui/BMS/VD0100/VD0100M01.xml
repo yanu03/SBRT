@@ -225,7 +225,29 @@
 		com.setFocusedCell(VD0100G1, "DVC_ID");		
 	};
 	
-]]></script>
+	//위치좌표 팝업
+	scwin.DVC_COORDS_onclick = function(e) {
+		var data = { DVC_ID : dlt_BMS_DVC_INFO.getCellData(VD0100G1.getFocusedRowIndex(), "DVC_ID"),
+						DVC_KIND : dlt_BMS_DVC_INFO.getCellData(VD0100G1.getFocusedRowIndex(), "DVC_KIND"),
+				   	 	callbackFn : "scwin.searchCOORDSCallback" };
+				   	 
+		var opt = { id : "FM0100P01", 
+					popupName : "시설물 위치 좌표 설정",
+					modal : true,  
+					width : 1400, height: 450 };
+					
+		if(data.DVC_KIND != null && data.DVC_KIND != ''){
+			com.openPopup("/ui/BMS/VD0100/VD0100P01.xml", opt, data);
+		}else{
+			alert('장치 유형을 선택해주세요.');
+		}		
+	};
+	
+	//위치 좌표 버튼 콜백함수
+	scwin.searchCOORDSCallback = function(returnValue) {
+		dlt_BMS_DVC_INFO.setCellData(VD0100G1.getFocusedRowIndex(), "DVC_COORDS", returnValue);
+	};
+	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
@@ -606,15 +628,18 @@
 										</xf:choices>
 									</xf:select1>
 								</xf:group></xf:group><xf:group tagname="tr" style=""><xf:group tagname="th" class="w2tb_th">위치좌표<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
-	<xf:group tagname="td" class="w2tb_td">
-		<w2:attributes>
-			<w2:colspan>3</w2:colspan>
-			<w2:rowspan>1</w2:rowspan>
-		</w2:attributes>
-		<xf:input allowChar="" customModelFormatter="" dataType="text" displayFormatter="" displaymessage="" id="DVC_COORDS" maxByteLength=""
-			maxlength="16" ref="data:dlt_BMS_DVC_INFO.DVC_COORDS" style="width:255px;height: 21px;">
-		</xf:input>
-	</xf:group></xf:group><xf:group tagname="tr" style="">
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:input allowChar="" customModelFormatter="" dataType="text" displayFormatter="" displaymessage="" id="DVC_COORDS" maxByteLength=""
+										maxlength="16" ref="data:dlt_BMS_DVC_INFO.DVC_COORDS" style="width:255px;height: 21px;">
+									</xf:input>
+									<xf:trigger type="button" style="width:79px;height:23px;" id="btn_DVC_COORDS" ev:onclick="scwin.DVC_COORDS_onclick">
+										<xf:label>좌표</xf:label>
+									</xf:trigger>									
+								</xf:group></xf:group><xf:group tagname="tr" style="">
 								<xf:group tagname="th" class="w2tb_th" style="height: 70px; vertical-align: top;" id="" tabIndex="" >
 									비고
 									<w2:attributes>

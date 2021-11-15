@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.bms.domain.VD0301.VD0301Mapper">
+
+	<select id="VD0301G0R0" resultType="Map" parameterType="Map">
+		SELECT 			A.VHC_ID
+						,A.DVC_ID
+						,A.ORG_ID
+						,A.DVC_KIND
+						,A.DVC_COORDS
+						,A.INST_LOC
+						,A.DVC_IP
+						,A.MNG_ID	
+						,A.DVC_TYPE
+						,A.DEV_SERIAL_NO
+						,A.MODEL_NM
+						,A.USE_YN
+						,A.CTR_YN						
+						,A.REMARK
+						,B.ORG_NM
+						,C.DVC_COND
+						,DATE_FORMAT(C.SEND_DATE, '%Y-%m-%d %H:%i:%s') AS SEND_DATE
+						
+		FROM			BMS_DVC_INFO A	
+		LEFT JOIN	  	BMS_ORG_MST	B
+			ON			A.ORG_ID = B.ORG_ID
+		LEFT JOIN	  	BMS_DVC_COND_INFO C
+			ON			A.MNG_ID = C.MNG_ID	
+		
+		WHERE			A.DVC_KIND = "DK001"
+		AND				A.USE_YN = 'Y'
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND A.DVC_ID LIKE CONCAT('%',#{CONTENT},'%') || A.MNG_ID LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'DVC_ID'">
+				AND A.DVC_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'MNG_ID'">
+				AND A.MNG_ID LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>		
+	</select>
+	
+	<select id="VD0301SHI0" resultType="Map">
+		SELECT			DVC_ID, MNG_ID
+		FROM			BMS_DVC_INFO
+		ORDER BY		DVC_ID
+	</select>		
+	
+</mapper>
