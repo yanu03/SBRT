@@ -20,7 +20,7 @@
 					<w2:keyInfo>
 						<w2:key id="DVC_ID" name="시설물ID" dataType="text"></w2:key>
 						<w2:key id="DVC_KIND" name="시설물유형" dataType="text"></w2:key>
-						<w2:key id="COORDS" name="좌표" dataType="text"></w2:key>
+						<w2:key id="DVC_COORDS" name="좌표" dataType="text"></w2:key>
 						<w2:key id="VHC_KIND" name="차량유형" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
@@ -34,6 +34,7 @@
 		dma_searchitem.set("DVC_ID", scwin.param.DVC_ID);   
 		dma_searchitem.set("DVC_KIND", scwin.param.DVC_KIND); 
 		dma_searchitem.set("VHC_KIND", scwin.param.VHC_KIND); 
+		dma_searchitem.set("DVC_COORDS", scwin.param.DVC_COORDS); 
 		
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
 		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
@@ -51,6 +52,65 @@
 		} else {
 			$(backGroundid).attr("class", "normal_bus_img");
 		}
+        
+         var coord = dma_searchitem.get("DVC_COORDS").split(',');
+         var top = coord[0];
+         var left = coord[1];
+         var dvc_kind = dma_searchitem.get("DVC_KIND");
+         var dvcId = dma_searchitem.get("DVC_ID") + '_popup';
+         var str = "";
+         var imgSrc = "";
+         
+		switch (dvc_kind){
+			case "DK001":
+				imgSrc = "/cm/images/bms/OBE_normal.png";
+				break;
+			case "DK002":
+				imgSrc = "/cm/images/bms/drvTerminal_normal.png";
+				break;
+			case "DK003":
+				imgSrc = "/cm/images/bms/psgGuide_normal.png";
+				break;
+			case "DK004":
+				imgSrc = "/cm/images/bms/routMap_normal.png";
+				break;
+			case "DK005":
+				imgSrc = "/cm/images/bms/keyPad_normal.png";
+				break;
+			
+			//행선지 정면
+			case "DK006":
+			case "DK007":
+				imgSrc = "/cm/images/bms/desGuide_normal.png";
+				break;
+			//행선지 측면	
+			case "DK008":
+			case "DK009":
+			case "DK012":
+				imgSrc = "/cm/images/bms/desGuide_normal.png";
+				break;
+			//행선지 후면	
+			case "DK013":
+				imgSrc = "/cm/images/bms/desGuide_normal.png";
+				break;
+			//태그리스	
+			case "DK011":
+				imgSrc = "/cm/images/bms/green_circle.png";
+				break;				
+		}		
+         
+         
+         str += '<div id="'+dvcId+'"style="position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group " onmousedown="startDrag(event, this)">';
+         str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'">';
+         str += '</div>'
+         
+      	if(dma_searchitem.get("DVC_COORDS") != "")
+			$(backGroundid).html(str);
+      
+	     $("#"+dvcId).on("click", function(e) {
+	         e.stopPropagation();
+	     });       
+        
         
 	};
 	
