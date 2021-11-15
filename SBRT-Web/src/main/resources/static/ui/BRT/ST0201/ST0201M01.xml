@@ -45,7 +45,8 @@
 					</w2:columnInfo>
 				</w2:dataList>
 
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
+				
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_repRoutItem" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
@@ -54,7 +55,7 @@
 
 				<w2:dataMap baseNode="map" id="dma_search">
 					<w2:keyInfo>
-						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="name1" dataType="text" defaultValue="ROUT_ID"></w2:key>
 						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
 						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
 					</w2:keyInfo>
@@ -94,7 +95,7 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0201G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_ST0201SHI0" ref="" target="data:json,dlt_searchitem" action="/repRout/selectRepRoutItem" method="post"
+			<xf:submission id="sub_ST0201SHI0" ref="" target="data:json,dlt_repRoutItem" action="/repRout/selectRepRoutItem" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_ST0201SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -138,6 +139,11 @@
 		var year = date.getFullYear().toString();
 		var month = (date.getMonth()+1).toString();
 		var day = date.getDate().toString();
+		var zero = 0;
+		
+		if(day.length == 1){
+			day = zero + day;
+		}
 		
 		var today = year+month+day;
 		
@@ -355,21 +361,40 @@
 	};
 	
 	
+
+	
 	scwin.F_DATE_onviewchange = function(info) {
 		com.executeSubmission(sub_ST0201G1R0);
 		com.executeSubmission(sub_ST0201G1R1);
+		var ldate = L_DATE.getValue();
+		var fdate = F_DATE.getValue();
+		
+		if (fdate > ldate && ldate != "") {
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseF(info));
+			com.executeSubmission(sub_ST0201G1R0);
+			com.executeSubmission(sub_ST0201G1R1);
+		}
 	};
+	scwin.checkCloseF = function(info) {
+		F_DATE.setValue(info.oldValue);
+	}
 	
 	scwin.L_DATE_onviewchange = function(info) {
-		com.executeSubmission(sub_ST0201G1R0);
-		com.executeSubmission(sub_ST0201G1R1);
+			com.executeSubmission(sub_ST0201G1R0);
+			com.executeSubmission(sub_ST0201G1R1);
+		var ldate = L_DATE.getValue();
+		var fdate = F_DATE.getValue();
+		
+		if (fdate > ldate && ldate != "") {
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseL(info));
+			com.executeSubmission(sub_ST0201G1R0);
+			com.executeSubmission(sub_ST0201G1R1);
+		}
 	};
 	
-	
-	
-	
-	
-	
+	scwin.checkCloseL = function(info) {
+		L_DATE.setValue(info.oldValue);
+	}
 	
 	]]></script>
 	</head>
@@ -388,7 +413,7 @@
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE10_onviewchange" id="TYPE10" optionOrder="false"
 							ref="data:dma_search.CONTENT" class="search_type_100" style="" submenuSize="auto" textAlign="left" chooseOptionLabel="-전체-">
 							<xf:choices>
-								<xf:itemset nodeset="data:dlt_searchitem">
+								<xf:itemset nodeset="data:dlt_repRoutItem">
 									<xf:label ref="REP_ROUT_NM"></xf:label>
 									<xf:value ref="REP_ROUT_ID"></xf:value>
 								</xf:itemset>
@@ -401,7 +426,7 @@
 							ref="data:dma_search.CONTENT" search="start" selectedData="" style="display:none" submenuSize="auto" textAlign="left"
 							useKeywordHighlight="false" visibleRowNum="" nextTabByEnter="" disableEdit="">
 							<w2:choices>
-								<w2:itemset nodeset="data:dlt_searchitem">
+								<w2:itemset nodeset="data:dlt_repRoutItem">
 									<w2:label ref="ORGA_ID"></w2:label>
 									<w2:value ref="ORGA_ID"></w2:value>
 								</w2:itemset>
@@ -491,7 +516,6 @@
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="통계 상세 정보" style=""></w2:textbox>
-
 							<w2:span label="일시" style="margin-right: 3px; margin-left: 15px; margin-top:5px;" id=""></w2:span>
 							<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
 								style="width:120px; margin-right: 10px; margin-top: 3px;" id="F_DATE" renderType="component" renderDiv="true"
