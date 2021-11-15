@@ -598,16 +598,16 @@
 		//console.log(payload.body);
 			try {
 				
-				setTimeout(function() {	
+		//		setTimeout(function() {	
 
 					var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 					
 					if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
 						dlt_BRT_OPER_EVENT_HIS.insertRow(0);
 						var today = new Date();   
-						var hours = today.getHours();
-						var minutes = today.getMinutes(); 
-						var seconds = today.getSeconds(); 
+						var hours = leadingZeros(today.getHours(), 2);
+						var minutes = leadingZeros(today.getMinutes(), 2); 
+						var seconds = leadingZeros(today.getSeconds(), 2); 
 						var timeResult = hours + ':' + minutes + ':' + seconds
 						
 						dlt_BRT_OPER_EVENT_HIS.setCellData(0, "OCR_DTM", timeResult);
@@ -679,12 +679,13 @@
 						else{
 							routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ETC";	
 						}
+						debugger;
 						routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
 						dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0);					
 						//나머지 필요하면 추가
 						
 					}
-				},100);				
+		//		},100);				
 			} catch (e) {
 				console.log("[scwin.onMessageReceived] Exception :: " + e.message);					
 			}
@@ -701,7 +702,7 @@
 		
 		//content = jsonObj.VHC_ID + "," + jsonObj.GPS_X + ", " + jsonObj.GPS_Y;
 			try {
-				setTimeout(function() {
+		//		setTimeout(function() {
 				
 					var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 					
@@ -717,7 +718,7 @@
 						routMap.moveVehicle("map_MO0101_vehicle", dataRowJson, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
 						
 					}
-				},100);	
+		//		},100);	
 			} catch (e) {
 				console.log("[scwin.onMessageReceived] Exception :: " + e.message);			
 			}	
@@ -731,7 +732,7 @@
 			//jsonObj.MESSAGE => 디스패치 메시지
 			
 			try {
-				setTimeout(function() {				
+	//			setTimeout(function() {				
 	//				routMap.removeAllBusOverlay("map_MO0101_vehicle");				
 	//				routMap.removeAllOverlay("map_MO0101_sttn");
 					routMap.removeAllOverlay("map_MO0101_crs");					
@@ -741,9 +742,9 @@
 						dlt_BRT_DSPTCH_LOG.insertRow(0);
 						
 						var today = new Date();   
-						var hours = today.getHours();
-						var minutes = today.getMinutes(); 
-						var seconds = today.getSeconds(); 
+						var hours = leadingZeros(today.getHours(), 2);
+						var minutes = leadingZeros(today.getMinutes(), 2); 
+						var seconds = leadingZeros(today.getSeconds(), 2); 
 						var timeResult = hours + ':' + minutes + ':' + seconds
 						dlt_BRT_DSPTCH_LOG.setCellData(0, "SEND_DATE", timeResult);
 						dlt_BRT_DSPTCH_LOG.setCellData(0, "ROUT_NM", jsonObj.ROUT_NM);
@@ -802,7 +803,7 @@
 						dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0);				
 						
 					}
-				},100);	
+	//			},100);	
 			} catch (e) {
 				console.log("[scwin.onMessageReceived] Exception :: " + e.message);		
 			}
@@ -1475,6 +1476,18 @@
 			clearInterval(sigTimeout);	
 		}
 	}
+	
+	function leadingZeros(n, digits) {
+	  var zero = '';
+	  n = n.toString();
+	
+	  if (n.length < digits) {
+	    for (i = 0; i < digits - n.length; i++)
+	      zero += '0';
+	  }
+	  return zero + n;
+	}
+
 	
 //	scwin.sub_selectSigOper_submitdone = function(e) {
 //		if(sigTimeout) {
