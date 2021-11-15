@@ -71,9 +71,9 @@
 			<if test="CONTENT2 != ''">
 				AND A.ROUT_ID = #{CONTENT2}
 			</if>
-			<if test="CONTENT3 != null and CONTENT3 != ''">
+			<!-- <if test="CONTENT3 != null and CONTENT3 != ''">
 				AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
-			</if>
+			</if> -->
 		ORDER BY		A.REP_ROUT_ID, A.ROUT_ID, VHC_ID	
 	</select>
 	
@@ -110,16 +110,16 @@
 		LEFT JOIN	  	BMS_VHC_MST B
 			ON			A.VHC_ID = B.VHC_ID
 		
-		WHERE			OPER_DT = DATE_FORMAT(NOW(), '%Y/%m/%d')
+		WHERE			A.OPER_DT = DATE_FORMAT(NOW(), '%Y/%m/%d')
 		<if test="CONTENT1 != null">
 			AND A.REP_ROUT_ID = #{CONTENT1}
 		</if>
 		<if test="CONTENT2 != ''">
 			AND A.ROUT_ID = #{CONTENT2}
 		</if>
-		<if test="CONTENT3 != null and CONTENT3 != ''">
+		<!-- <if test="CONTENT3 != null and CONTENT3 != ''">
 			AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
-		</if>
+		</if> -->
 		ORDER BY		A.OPER_DT DESC, A.OCR_DTM DESC						
 	
 	</select>
@@ -127,7 +127,7 @@
 	<select id="MO0700SHI1" resultType="Map">
 		SELECT			ROUT_ID, ROUT_NM
 		FROM			BMS_ROUT_MST	
-		<where>
+		  <where>
 			<if test="CONTENT1 != null">
 				REP_ROUT_ID = #{CONTENT1}	
 			</if>

@@ -36,6 +36,7 @@
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
 						<w2:column id="NODE_TYPE" name="노드타입" dataType="text"></w2:column>
 						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
+						<w2:column id="STTN_FCLT_TYPE" name="정류소시설유형" dataType="text"></w2:column>
 						<w2:column id="GPS_Y" name="위도" dataType="bigDecimal"></w2:column>
 						<w2:column id="GPS_X" name="경도" dataType="bigDecimal"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
@@ -54,10 +55,11 @@
 						<w2:column id="MODEL_NM" name="모델명" dataType="text"></w2:column>
 						<w2:column id="BUY_DT" name="구매일" dataType="date" defaultValue=""></w2:column>
 						<w2:column id="INST_DT" name="설치일" dataType="date"></w2:column>
-						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
-						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+						<w2:column id="USE_YN" name="사용여부" dataType="text" defaultValue="Y"></w2:column>
+						<w2:column id="CTR_YN" name="제어여부" dataType="text" defaultValue="Y"></w2:column><w2:column id="REMARK" name="비고" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
 						<w2:column id="MNG_ID" name="관리아이디" dataType="text"></w2:column>
+						<w2:column id="FCLT_COORDS" name="시설물위치정보" dataType="text"></w2:column>
 						<w2:column id="FCLT_IP" name="시설IP" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
@@ -88,7 +90,7 @@
 				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_FM0100G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_NODE_MST" action="/node/selectNodeList"
+			<xf:submission id="sub_FM0100G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_NODE_MST" action="/fm/FM0100G0R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_FM0100G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -260,6 +262,34 @@
 			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseINST(info));
 		}
 	};
+	
+	//위치좌표 팝업
+	scwin.TEMP_COORDS_onclick = function(e) {
+		debugger;
+		var data = { FCLT_ID : dlt_BMS_FCLT_INFO.getCellData(FM0100G1.getFocusedRowIndex(), "FCLT_ID"),
+						FCLT_KIND : dlt_BMS_FCLT_INFO.getCellData(FM0100G1.getFocusedRowIndex(), "FCLT_KIND"),
+						STTN_FCLT_TYPE : dlt_BMS_NODE_MST.getCellData(FM0100G0.getFocusedRowIndex(), "STTN_FCLT_TYPE"),
+				   	 	callbackFn : "scwin.searchCOORDSCallback" };
+				   	 
+		var opt = { id : "FM0100P01", 
+					popupName : "시설물 위치 좌표 설정",
+					modal : true,  
+					width : 1400, height: 450 };
+					
+		if(data.FCLT_KIND != null && data.FCLT_KIND != ''){
+			com.openPopup("/ui/BMS/FM0100/FM0100P01.xml", opt, data);
+		}else{
+			alert('시설물 유형을 선택해주세요.');
+		}
+	};
+	
+	//위치 좌표 버튼 콜백함수
+	scwin.searchCOORDSCallback = function(returnValue) {
+		dlt_BMS_FCLT_INFO.setCellData(FM0100G1.getFocusedRowIndex(), "FCLT_COORDS", returnValue);
+		
+	};
+	
+	
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -343,7 +373,7 @@
 										value="위도" blockSelect="false" displayMode="label" sortable="false">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column59"
-										value="경도" blockSelect="false" displayMode="label" sortable="false">
+										value="경도" blockSelect="false" displayMode="label" sortable="false" adaptiveStyle="">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column55"
 										value="비고" blockSelect="false" displayMode="label" sortable="false">
@@ -625,7 +655,7 @@
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes></w2:attributes>
 									<xf:input adjustMaxLength="" class="" dataType="text" disabled="false" id="MNG_ID" mandatory=""
-										maxlength="20" ref="data:dlt_BMS_FCLT_INFO.MNG_ID" style="width:100%;height:21px;" readOnly="true">
+										maxlength="20" ref="data:dlt_BMS_FCLT_INFO.MNG_ID" style="width:100%;height:21px;" readOnly="false">
 									</xf:input>
 								</xf:group>
 								<xf:group tagname="th" class="w2tb_th">
@@ -664,19 +694,14 @@
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" class="w2tb_th">
-									사용여부
-									<w2:attributes>
-										<w2:scope>row</w2:scope>
-									</w2:attributes>
-								</xf:group>
+								<xf:group tagname="th" class="w2tb_th">사용여부</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes>
-										<w2:colspan>3</w2:colspan>
+										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:group>
-										<xf:select1 id="USE_YN" selectedIndex="-1" appearance="full"
+										<xf:select1 id="USE_YN" selectedIndex="0" appearance="full"
 											style="width: 150px;height: 21px;margin-left: 20px;" cols="" rows="1" ref="data:dlt_BMS_FCLT_INFO.USE_YN" visibleColumn=""
 											value="">
 											<xf:choices>
@@ -692,7 +717,48 @@
 										</xf:select1>
 									</xf:group>
 								</xf:group>
+								<xf:group tagname="th" class="w2tb_th">제어여부</xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes>
+										<w2:colspan>1</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:group>
+										<xf:select1 id="CTR_YN" selectedIndex="-1" appearance="full"
+											style="width: 150px;height: 21px;margin-left: 20px;" cols="" rows="1" ref="data:dlt_BMS_FCLT_INFO.CTR_YN" visibleColumn=""
+											value="">
+											<xf:choices>
+												<xf:item>
+													<xf:label><![CDATA[예]]></xf:label>
+													<xf:value><![CDATA[Y]]></xf:value>
+												</xf:item>
+												<xf:item>
+													<xf:label><![CDATA[아니요]]></xf:label>
+													<xf:value><![CDATA[N]]></xf:value>
+												</xf:item>
+											</xf:choices>
+										</xf:select1>
+									</xf:group>
+								</xf:group>
 							</xf:group>
+							<xf:group tagname="tr" style="">
+								<xf:group tagname="th" class="w2tb_th">위치 좌표(X,Y)</xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:group>
+										<xf:input adjustMaxLength="" class="" dataType="text" disabled="false" id="FCLT_COORDS" mandatory=""
+											maxlength="20" ref="data:dlt_BMS_FCLT_INFO.FCLT_COORDS" style="width:100px;height:21px;margin-right:5px" initValue="">
+										</xf:input>
+										<xf:trigger type="button" style="width: 80px;height: 23px;" id="TEMP_COORDS" ev:onclick="scwin.TEMP_COORDS_onclick">
+											<xf:label>좌표</xf:label>
+										</xf:trigger>
+									</xf:group>
+								</xf:group>
+							</xf:group>
+							
 							<xf:group tagname="tr" style="">
 								<xf:group tagname="th" class="w2tb_th" style="height: 70px;vertical-align: top" id="" tabIndex="">
 									비고

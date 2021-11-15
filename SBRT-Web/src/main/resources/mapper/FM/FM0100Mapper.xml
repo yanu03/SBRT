@@ -3,6 +3,40 @@
 
 <mapper namespace="kr.tracom.bms.domain.FM0100.FM0100Mapper">
 
+<select id="FM0100G0R0" resultType="Map" parameterType="Map">
+		SELECT 			A.NODE_ID
+					,	A.MOCK_NODE_ID
+					,	A.NODE_NM
+					,	A.NODE_ENM
+					,	A.NODE_TYPE
+					,	A.GPS_X
+					,	A.GPS_Y
+					,	A.ENTRY_RECOG_RADS
+					,	A.ADVNC_RECOG_RADS
+					,	A.USE_YN
+					,	A.UPD_DTM
+					,	A.UPD_ID
+					,	B.STTN_FCLT_TYPE
+					
+		FROM			BMS_NODE_MST A
+		LEFT JOIN BMS_STTN_MST B
+		ON A.NODE_ID = B.STTN_ID
+		WHERE			(NODE_TYPE = 'NT001'
+		OR				NODE_TYPE = 'NT002')
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+				<if test="TYPE == 'ALL' || TYPE == ''">
+					AND (NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || NODE_NM LIKE CONCAT('%',#{CONTENT},'%'))
+				</if>
+				<if test="TYPE == 'NODE_ID'">
+					AND NODE_ID LIKE CONCAT('%',#{CONTENT},'%')
+				</if>
+				<if test="TYPE == 'NODE_NM'">
+					AND NODE_NM LIKE CONCAT('%',#{CONTENT},'%') 
+				</if>
+			</if>
+			
+	</select>
+
 <select id="FM0100G1R0" resultType="Map">
 	SELECT 
 					FCLT_ID
@@ -13,7 +47,9 @@
 					,MODEL_NM
 					,DATE_FORMAT(BUY_DT, '%Y%m%d') BUY_DT
 					,DATE_FORMAT(INST_DT, '%Y%m%d') INST_DT
+					,FCLT_COORDS
 					,USE_YN
+					,CTR_YN
 					,REMARK
 					,NODE_ID
 					,MNG_ID
@@ -53,6 +89,7 @@
 						,FCLT_TYPE
 						,INST_LOC
 						,MNG_ID
+						,FCLT_COORDS
 						,GPS_X
 						,GPS_Y
 						,TM_X
@@ -66,6 +103,7 @@
 						,BUY_DT
 						,CCTV_URL
 						,USE_YN
+						,CTR_YN
 						,REMARK
 						,UPD_DTM
 						,UPD_ID
@@ -79,6 +117,7 @@
 						,#{FCLT_TYPE}
 						,#{INST_LOC}
 						,#{MNG_ID}
+						,#{FCLT_COORDS}
 						,#{GPS_X}
 						,#{GPS_Y}
 						,#{TM_X}
@@ -92,6 +131,7 @@
 						,STR_TO_DATE(#{BUY_DT}, '%Y%m%d')
 						,#{CCTV_URL}
 						,#{USE_YN}
+						,#{CTR_YN}
 						,#{REMARK}
 						,#{UPD_DTM}
 						,#{UPD_ID}	
@@ -106,7 +146,10 @@
 					,INST_LOC = #{INST_LOC}
 					,MODEL_NM = #{MODEL_NM}
 					,MRO_ID = #{MRO_ID}	
+					,MNG_ID = #{MNG_ID}	
+					,FCLT_COORDS = #{FCLT_COORDS}	
 					,USE_YN = #{USE_YN}	
+					,CTR_YN = #{CTR_YN}	
 					,REMARK = #{REMARK}
 					,INST_DT = STR_TO_DATE(#{INST_DT}, '%Y%m%d')
 					,BUY_DT = STR_TO_DATE(#{BUY_DT}, '%Y%m%d')

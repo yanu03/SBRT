@@ -133,7 +133,7 @@
 			</xf:submission>
 			<xf:submission id="sub_MO0203SCK" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ETA_INFO" action="/mo/MO0203SCK" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				ev:submit="" ev:submitdone="scwin.sub_MO0203SCK_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
@@ -147,9 +147,15 @@
 		 var autoOptions = {
 			Main : { grid : MO0203G0, srchSbm : sub_MO0203G0R0, keyColumn : "NODE_ID", srchGrp : pgm_header, name : "정류장 목록",
 						focusColumn : "NODE_NM"}
+					
 		 };
 		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions);
+		 var mainOptions = {
+		 	SEARCH: scwin.btn_sub_move,
+		 	CNL:{}
+		 };
+		 
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions, mainOptions);
 				
 		routMap.initMap2("map_MO0203", {width:"100%"
 				, height:"100%"
@@ -161,9 +167,10 @@
 						
 		 ];			
 		 
-		com.setCommonDtl(codeOptions, function(){
+		com.setCommonDtl(codeOptions//, function(){
 			//com.searchGrid(MO0203G0, sub_MO0203G0R0);
-		});	
+		// }
+		);	
 
 		MO0203G0.mergeCol(2,false);
 		MO0203G0.mergeCells("byrestriccol");
@@ -174,12 +181,17 @@
 		
 	};	
 	
+	scwin.btn_sub_move = function(){
+		com.gridMove(MO0203G0,"NODE_ID", dma_search.get("CONTENT2"), MO0203G0.getFocusedRowIndex());
+	}
+	
 	scwin.MO0203SCK = function () {
 		com.executeSubmission(sub_MO0203SCK);
 	}
 	
 	//15초 간격으로 MO0203SCK 실행
-	setInterval(scwin.MO0203SCK, 15000);
+	//setInterval(scwin.MO0203SCK, 5000);
+	//setInterval(scwin.MO0203SCK, 15000);
 	
 	//BIT 빈 테이블 생성
 	MO0203T0_setTableEmpty = function(){
@@ -243,6 +255,7 @@
 		var tableBody = '';
 		var talbeId = '';
 		var vhcImgSrc = '';
+		var nodeId = dlt_BMS_NODE_MST.getCellData(MO0203G0.getFocusedRowIndex(), "NODE_ID");
 		
 		//테이블 소스 시작
 		tableStr = '<table id="mf_tac_layout_contents_MN00090201_body_test123123" style="" class="w2group w2tb bit_tb">'
@@ -253,62 +266,75 @@
 					+'</colgroup>'
 					+'<tbody>';
 					
-		if(dataList != null && dataList.length != 0){
-		
+		if(dataList.length != 0  && nodeId == jsonObj.STTN_ID){
 			//순서 맞추기
 			dataList.sort(function(a,b) {
-
 				return parseFloat(a.REMAIN_TM) - parseFloat(b.REMAIN_TM);
-			
 			});
 
-			
 			for(var i = 0; i < dataList.length; i++){
-			
 				//초 -> 분으로 변경. 0분 이하면 잠시후 도착
 				dataList[i].REMAIN_TM = parseInt((dataList[i].REMAIN_TM%3600)/60) + '분';
 				
 				//곧도착으로 이동
-				if(dataList[i].REMAIN_TM == '0분'){
-					dlt_BMS_SOONETA_INFO.setCellData(i, "ROUT_NM", dataList[i].ROUT_NM);
-				}
-				
-			}
-
-				tableBody += '<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
-							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black;" class="w2group w2tb_td w2tb_noTH">'
-							+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
-							+dataList[0].ROUT_NM
-							+'</span>'
-							+'</td>'
-							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black;text-align: right;" class="w2group w2tb_td w2tb_noTH">'
-							+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
-							+dataList[0].REMAIN_TM
-							+'</span>'
-							+'</td>'
-							+'</tr>'
-							
-							+'<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
+				if(dataList[i].REMAIN_TM != '0분'){
+					tableBody += '<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
 							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
 							+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
-							+dataList[1].ROUT_NM
+							+dataList[i].ROUT_NM
 							+'</span>'
 							+'</td>'
 							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black; border-bottom-color:yellow; text-align: right;" class="w2group w2tb_td w2tb_noTH">'
 							+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
-							+dataList[1].REMAIN_TM
+							+dataList[i].REMAIN_TM
 							+'</span>'
 							+'</td>'
 							+'</tr>'
-							
-							+'<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
-							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="2" rowspan="1">'
-							+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
-							+"곧도착 : " + dlt_BMS_SOONETA_INFO.getCellData(0, "ROUT_NM");
-							+'</span>'
-							+'</td>'
-							+'</tr>';
+				}else if(dataList[i].REMAIN_TM == '0분'){
+					dlt_BMS_SOONETA_INFO.insertRow();
+					dlt_BMS_SOONETA_INFO.setCellData(i, "ROUT_NM", dataList[i].ROUT_NM);
+				}
+				
+			}
 			
+			tableBody +='<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
+						+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow;" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="2" rowspan="1">'
+						+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
+						+"곧도착 : " + dlt_BMS_SOONETA_INFO.getCellData(0, "ROUT_NM");
+						+'</span>'
+						+'</td>'
+						+'</tr>';
+			
+		}else if(dataList.length == 0){
+			tableBody += '<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black;" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
+					+'</span>'
+					+'</td>'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black;text-align: right;" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
+					+'</span>'
+					+'</td>'
+					+'</tr>'
+					
+					+'<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
+					+'</span>'
+					+'</td>'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black; border-bottom-color:yellow; text-align: right;" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
+					+'</span>'
+					+'</td>'
+					+'</tr>'
+					
+					+'<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="2" rowspan="1">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
+					+"곧도착 : "
+					+'</span>'
+					+'</td>'
+					+'</tr>';
 		}
 				//디자이너 참고용		
 				/*tableBody += '<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
@@ -351,6 +377,59 @@
 		$("#mf_tac_layout_contents_MN00090201_body_test123123").html(tableStr);
 	}
 	
+	//빈 테이블 그리기
+	MO0203T0_setEmptyTable = function(){
+		var tableStr = '';
+		var tableBody = '';
+		var talbeId = '';
+		var vhcImgSrc = '';
+		var nodeId = dlt_BMS_NODE_MST.getCellData(MO0203G0.getFocusedRowIndex(), "NODE_ID");
+		
+		//테이블 소스 시작
+		tableStr = '<table id="mf_tac_layout_contents_MN00090201_body_test123123" style="" class="w2group w2tb bit_tb">'
+					+'<caption id="mf_tac_layout_contents_MN00090201_body_wq_uuid_505" class="w2group "></caption>'
+					+'<colgroup id="mf_tac_layout_contents_MN00090201_body_wq_uuid_506" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_507" style="width:70.00%;" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_508" style="width:30.00%" class="w2group ">'
+					+'</colgroup>'
+					+'<tbody>';
+					
+		
+			tableBody += '<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black;" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
+					+'</span>'
+					+'</td>'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black;text-align: right;" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
+					+'</span>'
+					+'</td>'
+					+'</tr>'
+					
+					+'<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
+					+'</span>'
+					+'</td>'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black; border-bottom-color:yellow; text-align: right;" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
+					+'</span>'
+					+'</td>'
+					+'</tr>'
+					
+					+'<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="2" rowspan="1">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
+					+"곧도착 : "
+					+'</span>'
+					+'</td>'
+					+'</tr>';
+					
+		tableStr += tableBody + '</tbody></table>';
+		
+		$("#mf_tac_layout_contents_MN00090201_body_test123123").html(tableStr);
+	}
+	
 	
 	scwin.connect = function() {
 		var socket = new SockJS('/websocket');
@@ -378,6 +457,7 @@
 	}	
 	
 	scwin.onMessageReceived = function(payload) {
+		dlt_BMS_SOONETA_INFO.removeAll();
 		var jsonObj = JSON.parse(payload.body);
 		
 		var attrId = jsonObj.ATTR_ID;
@@ -387,7 +467,8 @@
 		//attrId = 2022 : 정류장별 차량 도착 정보
 		if(attrId == 2022){
 			MO0203T0_setTable(dataList);
-			
+		}else if(attrId == '' || attrId == null){
+			MO0203T0_setEmptyTable();
 		}
 		//attrId = 4014 : 실시간 차량 위치 정보
 		else if(attrId == 4014){
@@ -401,7 +482,7 @@
 	}	
 	
 	scwin.MO0203G0_onrowindexchange = function(row,oldRow) {
-		
+		dlt_BMS_SOONETA_INFO.removeAll();
 		dma_sub_search.set("NODE_ID", dlt_BMS_NODE_MST.getCellData(row, "NODE_ID"));
 		
 		var allDataList = dlt_BMS_NODE_MST.getAllJSON();
@@ -414,23 +495,21 @@
 		//카테고리 뿌리기
 		routMap.showCategory("map_MO0203", allDataList, focusIdx, MO0203G0);
 				
-		setTimeout(function() {
-			com.executeSubmission(sub_MO0203SCK);	
-		},100);
-		
+		com.executeSubmission(sub_MO0203SCK);
 		
 		var nodeId = dlt_BMS_NODE_MST.getCellData(MO0203G0.getFocusedRowIndex(), "NODE_ID");
 		dma_NODE_ID.set("NODE_ID", "(정류소 ID : "+nodeId+")");
 		
-		//디자이너 참고용 임시
-		//MO0203T0_setTable();
-		
-		MO0203T0_setTableEmpty();
-			
 	};
 	
+	/*scwin.sub_MO0203SCK_submitdone = function(e) {
+		if(dlt_BMS_ETA_INFO.getAllJSON() == ''){
+			MO0203T0_setEmptyTable();
+		}
+	};*/
+	
 	scwin.sub_MO0203G0R0_submitdone = function(e) {
-		com.setFocusedCell(MO0203G0, "NODE_ID");
+	
 		
 		//시설물상태에 따라 클래스(백그라운드 색) 설정
 		for (i=0; i<dlt_BMS_NODE_MST.getDataLength(); i++) {
@@ -453,6 +532,8 @@
 		routMap.showMarkerList("map_MO0203", allDataList, focusIdx, MO0203G0); 	
 		//카테고리 뿌리기
 		routMap.showCategory("map_MO0203", allDataList, focusIdx, MO0203G0);
+		
+		com.setFocusedCell(MO0203G0, "NODE_ID");
 	};
 	
 	scwin.sub_MO0203SHI0_submitdone = function(e) {
@@ -468,7 +549,9 @@
 		com.searchGrid(MO0203G0, sub_MO0203G0R0);
 	};
 
-]]></script>
+
+	
+	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
@@ -491,7 +574,7 @@
 								</xf:itemset>
 							</xf:choices>
 						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT2" placeholder="노드ID 또는 노드명"></xf:input>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT2" placeholder="정류소ID 또는 정류소명"></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
 							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
 							id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT1" search="start" selectedData=""
