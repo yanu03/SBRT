@@ -227,9 +227,10 @@
 	
 	//위치좌표 팝업
 	scwin.DVC_COORDS_onclick = function(e) {
-		var data = { DVC_ID : dlt_BMS_DVC_INFO.getCellData(VD0100G1.getFocusedRowIndex(), "DVC_ID"),
-						DVC_KIND : dlt_BMS_DVC_INFO.getCellData(VD0100G1.getFocusedRowIndex(), "DVC_KIND"),
-				   	 	callbackFn : "scwin.searchCOORDSCallback" };
+		var data = { VHC_KIND : dlt_BMS_VHC_MST.getCellData(VD0100G0.getFocusedRowIndex(), "VHC_KIND"), 
+					 DVC_ID : dlt_BMS_DVC_INFO.getCellData(VD0100G1.getFocusedRowIndex(), "DVC_ID"),
+					 DVC_KIND : dlt_BMS_DVC_INFO.getCellData(VD0100G1.getFocusedRowIndex(), "DVC_KIND"),
+				   	 callbackFn : "scwin.searchCOORDSCallback" };
 				   	 
 		var opt = { id : "FM0100P01", 
 					popupName : "시설물 위치 좌표 설정",
@@ -238,7 +239,7 @@
 					
 		if(data.DVC_KIND != null && data.DVC_KIND != ''){
 			com.openPopup("/ui/BMS/VD0100/VD0100P01.xml", opt, data);
-		}else{
+		}else if (data.DVC_KIND == null){
 			alert('장치 유형을 선택해주세요.');
 		}		
 	};

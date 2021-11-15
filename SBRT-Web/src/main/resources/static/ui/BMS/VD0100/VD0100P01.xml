@@ -21,6 +21,7 @@
 						<w2:key id="DVC_ID" name="시설물ID" dataType="text"></w2:key>
 						<w2:key id="DVC_KIND" name="시설물유형" dataType="text"></w2:key>
 						<w2:key id="COORDS" name="좌표" dataType="text"></w2:key>
+						<w2:key id="VHC_KIND" name="차량유형" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 			</w2:dataCollection>
@@ -31,11 +32,25 @@
 	scwin.onpageload = function() {
 		scwin.param = com.getParameter();
 		dma_searchitem.set("DVC_ID", scwin.param.DVC_ID);   
-		dma_searchitem.set("DVC_KIND", scwin.param.DVC_KIND);   
+		dma_searchitem.set("DVC_KIND", scwin.param.DVC_KIND); 
+		dma_searchitem.set("VHC_KIND", scwin.param.VHC_KIND); 
 		
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
 		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
 		
+		var backGroundid = "#mf_tac_layout_contents_MN00050101_body_FM0100P01_wframe_busImg";
+        vhc_kind = dma_searchitem.get("VHC_KIND");
+		if(vhc_kind == 'VK001'){
+			$(backGroundid).attr("class", "brt_bus_img");
+		}
+		else if (vhc_kind == "VK002"){
+			$(backGroundid).attr("class", "woojin_bus_img");
+		}
+		else if (vhc_kind == "VK003"){
+			$(backGroundid).attr("class", "normal_bus_img");
+		} else {
+			$(backGroundid).attr("class", "normal_bus_img");
+		}
         
 	};
 	
@@ -177,7 +192,7 @@
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
 			<xf:group id="popup_header" style="" class="popup_header">
-				<xf:group class="gr_search" id="" style="">
+				<!-- <xf:group class="gr_search" id="" style="">
 					<xf:group class="label" id="" style="">
 						<w2:span class="" id="" label="차량 타입"></w2:span>
 					</xf:group>
@@ -200,10 +215,10 @@
 								</xf:item>
 							</xf:choices>
 						</xf:select1>
-						<!--  <xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="운수사ID 또는 운수사명"></xf:input>-->
+						 <xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="운수사ID 또는 운수사명"></xf:input>
 					</xf:group>
 					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
-				</xf:group>
+				</xf:group> -->
 			</xf:group>
 			<xf:group style="cursor:crosshair" id="busImg" class="woojin_bus_img" ev:onclick="clickImg()">
 			</xf:group>

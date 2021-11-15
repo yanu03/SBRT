@@ -291,7 +291,7 @@
 		for(var i=0; i<dlt_BMS_DVC_INFO.getDataLength(); i++) {
 			var imgSrc = null;
 			var ctr_yn = dlt_BMS_DVC_INFO.getCellData(i, "CTR_YN");
-			if (ctr_yn == "N") {
+			if (ctr_yn == "N" || ctr_yn == "") {
 				VD0202G1.setDisabled("cell", i, "DVC_CTR", true);
 				//제어 버튼 안보이게 처리
 				VD0202G1.setCellClass(i, "DVC_CTR", "hideData");
@@ -483,7 +483,7 @@
 		for(var i=0; i<dlt_BMS_DVC_INFO.getDataLength(); i++) {
 			var imgSrc = null;
 			var ctr_yn = dlt_BMS_DVC_INFO.getCellData(i, "CTR_YN");
-			if (ctr_yn == "N") {
+			if (ctr_yn == "N" || ctr_yn == "") {
 				VD0202G1.setDisabled("cell", i, "DVC_CTR", true);
 				//제어 버튼 안보이게 처리
 				VD0202G1.setCellClass(i, "DVC_CTR", "hideData");
@@ -570,34 +570,17 @@
 
 	scwin.VD0201G1_oncellclick = function(row,col,colId) {
 		var dvc_ctrIndex = VD0202G1.getColumnIndex("DVC_CTR");
+		var dvc_kind = dlt_BMS_DVC_INFO.getCellData(row, "DVC_KIND");
 		var mngId = dlt_BMS_DVC_INFO.getCellData(row, "MNG_ID");
 		var param = com.getParameter();
 		var buttonParentId = "#mf_tac_layout_contents_" + param.menuCode + "_body_VD0202G1_cell_" + row+ "_" + dvc_ctrIndex;
 		var dataDisabled = $(buttonParentId).hasClass("hideData");	
-		
+			
 		
 		var gridColumn = VD0202G1.getColumnID(col);
 		
-		if (gridColumn == "DVC_CTR" && dataDisabled == false) {
+		if (gridColumn == "DVC_CTR" && dataDisabled == false && dvc_kind == "DK001") {
 			
-			//컨트롤러 api추가 필요.
-			/* 	
-			//var param = VD0202G1.getDataRow(row).DVC_ID;
-			var options = {
-				id : "VD0202P01",
-				popupName : "제어",
-				modal : true,
-				width : 400,
-				height : 120
-			};
-			var data = {
-						ROW_INDEX : row,
-						mngId : mngId,
-						callbackFn : "scwin.insertCool"
-			};
-			
-			com.openPopup(("/ui/BMS/VD0202/VD0202P01.xml"), options, data);
-			*/
 			scwin.openMenu("OBE 제어관리","/ui/BMS/VD0301/VD0301M01.xml", "MN00050301", dlt_BMS_DVC_INFO.getCellData(row, "DVC_ID"));				
 		}		
 	};
