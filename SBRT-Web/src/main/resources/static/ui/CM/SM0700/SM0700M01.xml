@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+	
+	<head meta_vertical_guides="" meta_horizontal_guides="">	  
+<!-- 	<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=31aa62fb189294413e43c24caeb82419"></script>
+	<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?autoload=false"></script>
+	<script type="text/javascript">
+	kakao.maps.load(function() {
+		// v3가 모두 로드된 후, 이 콜백 함수가 실행됩니다.
+		var map = new kakao.maps.Map(node, options);
+	});
+	</script>  -->	   
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate/>
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataMap baseNode="map" id="dma_result">
+					<w2:keyInfo>
+						<w2:key id="STATUS" name="STATUS" dataType="text"></w2:key>
+						<w2:key id="ICNT" name="입력건수" dataType="text"></w2:key>
+						<w2:key id="UCNT" name="수정건수" dataType="text"></w2:key>
+						<w2:key id="DCNT" name="삭제건수" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
+					</w2:keyInfo>
+					<w2:data></w2:data>
+				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_GRG_RDS_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="GRG_ID" name="차고지ID" dataType="text"></w2:column>
+						<w2:column id="GPS_X" name="GPS_X" dataType="text"></w2:column>
+						<w2:column id="GPS_Y" name="GPS_Y" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_INTG_MST_0">
+					<w2:keyInfo>
+						<w2:key id="SEQ" name="SEQ" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchItem" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="INTG_ID" name="연계ID" dataType="text"></w2:column>
+						<w2:column id="INTG_NM" name="연계명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+
+				<w2:dataMap baseNode="map" id="dma_sub_search">
+					<w2:keyInfo>
+						<w2:key id="GRG_ID" name="차고지ID" dataType="text"></w2:key>
+						<w2:key id="GRG_NM" name="차고지명" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_INTG_MST" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="INTG_ID" name="연계아이디" dataType="text"></w2:column>
+						<w2:column id="INTG_NM" name="연계명" dataType="text"></w2:column>
+						<w2:column id="INTG_ENM" name="연계영문명" dataType="text"></w2:column>
+						<w2:column id="INTG_TYPE" name="연계유형" dataType="text"></w2:column>
+						<w2:column id="INTG_URL" name="연계URL" dataType="text"></w2:column>
+						<w2:column id="INTG_API_KEY" name="연계API키" dataType="text"></w2:column>
+						<w2:column id="ID" name="아이디" dataType="text"></w2:column>
+						<w2:column id="PWD" name="패스워드" dataType="text"></w2:column>
+						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="date"></w2:column>
+						<w2:column id="UPD_ID" name="갱신아이디" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_SM0700G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_INTG_MST" action='/sm/SM0700G0R0' method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_SM0700G0R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_SM0700G0S0" ref='data:json,{"action":"modified","id":"dlt_BMS_INTG_MST"}' target="data:json,dma_result" action="/sm/SM0700G0S0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="저장 중입니다.." ev:submit="" ev:submitdone="scwin.sub_SM0700G0S0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_SM0700G0K0" ref="" target="data:json,dma_SEQ_BMS_INTG_MST_0" action="/sm/SM0700G0K0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_SM0700G0K0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_SM0700SHI0" ref="" target="data:json,dlt_searchItem" action="/sm/SM0700SHI0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+		</xf:model>
+
+		<script type="text/javascript"><![CDATA[
+	scwin.onpageload = function() {
+		var autoOptions = {
+			Main : { grid : SM0700G0, srchSbm : sub_SM0700G0R0, savSbm : sub_SM0700G0S0, keySbm : sub_SM0700G0K0 
+					,srchGrp : pgm_header, keyColumn : "INTG_ID", focusColumn : "INTG_NM", name :  "외부연계정보 목록"}
+		};
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions);
+		
+		var codeOptions = [ {code : "INTG_TYPE", compID : "SM0700G0:INTG_TYPE" } ];
+		
+		com.setCommonDtl(codeOptions, function(){
+			com.searchGrid(SM0700G0, sub_SM0700G0R0);
+		});			
+		
+		$p.executeSubmission(sub_SM0700SHI0);
+
+		
+	};
+
+	scwin.onpageunload = function() {
+
+	};
+
+	//validation 처리를 위한 옵션
+	//mandatory : 필수 체크, valFunc : 콜백 함수
+	//var valInfo = [ { id : "GRG_NM", mandatory : true},
+	//				{ id : "OWNER_TYPE", mandatory : true}
+	//			  ];
+					
+	
+	scwin.sub_SM0700G0R0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+			com.setFocusedCell(SM0700G0, "INTG_NM");
+		}
+		
+		for(var i=0; i<dlt_BMS_INTG_MST.getDataLength(); i++){
+			var intgType = dlt_BMS_INTG_MST.getCellData(i, "INTG_TYPE");
+			if(intgType != 'IT005'){
+				
+				SM0700G0.setDisabled("cell", i, "CREATE_KEY", true);
+	            //키생성 버튼 안보이게 처리
+	            SM0700G0.setCellClass(i, "CREATE_KEY", "hideData");
+			}
+		}
+	};
+	
+	/**
+	 * 프로그램관리 저장 버튼의 콜백메소드
+	 */
+	scwin.sub_SM0700G0S0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+			com.saveDone(SM0700G0,sub_SM0700G0R0);
+		}
+	};
+
+	scwin.btn_add_onclick = function() {
+		$p.executeSubmission(sub_SM0700G0K0);
+	};
+
+	scwin.sub_SM0700G0K0_submitdone = function(e) {
+		var insertIndex = com.addGrid(SM0700G0,dma_SEQ_BMS_INTG_MST_0,"INTG_ID","INTG_NM");
+	};
+
+	scwin.btn_del_onclick = function() {
+		com.delGrid(SM0700G0);
+	};
+	
+	scwin.btn_cancel_onclick = function() {
+		com.cancelGrid(SM0700G0);
+	};
+	
+	scwin.btn_excel_onclick = function() {
+		com.exlGrid(SM0700G0);
+	};
+
+	/**	 
+	 * 엑셀의 데이터를 그리드뷰로 업로드 한다.
+	 * 필요한 옵션이 있다면 options배열에 옵션을 넣는다.
+	 */
+	scwin.btn_uploadExcel_onclick = function() {
+		com.exlUploadGrid(SM0700G0);
+	};
+	
+	
+	/**
+	 * 그리드 Excel 포맷을 다운로드 하는 기능 ( 업로드용  Excel 포맷 )
+	 */
+	scwin.btn_excelForm_onclick = function() {
+		com.exlFrmGrid(SM0700G0);	
+	};
+	
+	scwin.btn_close_onclick = function() {
+		com.closeTab(SM0700G0);
+	};
+
+	
+	scwin.SM0700G0_oncellclick = function(row, col, colId) {
+		
+		var gridColumn = SM0700G0.getColumnID(col);
+		var uuid = self.crypto.randomUUID().replaceAll("-", "");
+		
+		if (gridColumn == "CREATE_KEY") {
+			dlt_BMS_INTG_MST.setCellData(SM0700G0.getFocusedRowIndex(), "INTG_API_KEY", uuid);
+		}
+		
+	};
+	
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
+		if (info.newValue == "ALL") {
+			acb_autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} else if (info.newValue == "INTG_ID") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchItem", "INTG_ID", "INTG_ID");
+			acb_autoChoiceBox.show("");
+		} else if (info.newValue == "INTG_NM") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchItem", "INTG_NM", "INTG_NM");
+			acb_autoChoiceBox.show("");
+		}
+	};
+	
+	scwin.SM0700G0_onrowindexchange = function(row, oldRow) {
+		com.changeSingleGrid(SM0700G0, row, oldRow);
+	};
+]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
+			<xf:group id="pgm_navi" class="pgm_navi" style="">
+				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
+			</xf:group>
+			<xf:group id="pgm_header" class="pgm_header" style="">
+				<xf:group id="" style="" class="gr_search">
+					<xf:group id="" style="" class="label">
+							<w2:span id="" class="" label="검색 항목"></w2:span>
+					</xf:group>
+					<xf:group id="" style="" class="search">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
+							optionOrder="false" ref="data:dma_search.TYPE" style="" class="search_type" submenuSize="auto"
+							textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[연계ID]]></xf:label>
+									<xf:value><![CDATA[INTG_ID]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[연계명]]></xf:label>
+									<xf:value><![CDATA[INTG_NM]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="연계ID 또는 연계명"></xf:input>
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
+							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
+							style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false"
+							visibleRowNum="">
+							<w2:choices>
+								<w2:itemset nodeset="data:dlt_searchItem">
+									<w2:label ref="INTG_ID"></w2:label>
+									<w2:value ref="INTG_ID"></w2:value>
+								</w2:itemset>
+							</w2:choices>
+						</w2:autoComplete>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group>
+			<xf:group id="pgm_content" class="pgm_content grdc_a" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
+					<xf:group id="" class="" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="외부연계정보 목록" style=""></w2:textbox>
+						</xf:group>
+					</xf:group>
+					<xf:group></xf:group>
+					<xf:group id="" class="" style="">							
+						<w2:gridView id="SM0700G0" rowNumVisible="true"
+							useShiftKey="true" scrollByColumn="false" owNumHeaderValue="순번" sortable="true" 
+							rowStatusHeaderValue="상태" overflowX="scroll" overflowY="scroll" rowStatusVisible="false"
+							 fixedColumnWithHidden="true" ignoreCellClick="false" dataList="data:dlt_BMS_INTG_MST" class="cm_grid left" autoFit="lastColumn" 
+							ev:oncellclick="scwin.SM0700G0_oncellclick"  ev:onrowindexchange="scwin.SM0700G0_onrowindexchange" rowNumHeaderValue="순번">
+							<w2:header style="" id="header1">
+								<w2:row style="" id="row1">
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:22px;" id="column16" value="연계ID"
+										blockSelect="false" displayMode="label" class="req">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:22px;" id="column15" value="연계명"
+										blockSelect="false" displayMode="label" class="req">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:22px;" id="column14" value="연계타입"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="380" inputType="text" style="height:22px;" id="column13" value="연계URL"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="380" inputType="text" style="height:22px;" id="column49" value="연계 API키"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:22px;" id="column50" value="키생성"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:22px;" id="column12" value="ID"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:22px;" id="column11" value="PWD"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="380" inputType="text" style="height:22px;" id="column3" value="비고"
+										blockSelect="false" displayMode="label">
+									</w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody style="" id="gBody1">
+								<w2:row style="" id="row2">
+									<w2:column removeBorderStyle="false" width="136" inputType="text" style="height:20px" id="INTG_ID" value=""
+										blockSelect="false" displayMode="label" userData1="M" class="req" readOnly = "true">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="186" inputType="text" style="height:20px" id="INTG_NM" value=""
+										blockSelect="false" displayMode="label" userData1="M" textAlign="left" class="req" maxLength="30">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="64" inputType="select" style="height:20px" id="INTG_TYPE" value=""
+										blockSelect="false" displayMode="label" userData1="M">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="230" inputType="text" style="height:20px" id="INTG_URL" value=""
+										blockSelect="false" displayMode="label" textAlign="left" maxLength="200">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="INTG_API_KEY" value=""
+										blockSelect="false" displayMode="label" textAlign="left" maxLength="200">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="button" style="height:20px" id="CREATE_KEY" value="키생성"
+										blockSelect="false" displayMode="label" dataType="" class="" calendarClass="" autocomplete="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="103" inputType="text" style="height:20px" id="ID" value=""
+										blockSelect="false" displayMode="label" maxLength="200" >
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="104" inputType="text" style="height:20px" id="PWD" value=""
+										blockSelect="false" displayMode="label" maxLength="128">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="REMARK" value=""
+										blockSelect="false" displayMode="label" textAlign="left" maxLength="200">
+									</w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer style="" id="footer1">
+								<w2:row style="" id="row3">
+									<w2:column removeBorderStyle="false" width="" inputType="expression" style="height:20px;" id="column48" value=""
+										blockSelect="false" displayMode="label" colSpan="13" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('GRG_ID')"
+										textAlign="left">
+									</w2:column>
+								</w2:row>
+							</w2:footer>
+						</w2:gridView>
+					</xf:group>
+				</xf:group>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.bms.domain.SM0700.SM0700Mapper">
+
+  <select id="SM0700G0R0" resultType="Map">
+	SELECT A.INTG_ID,
+	       A.INTG_NM,
+	       A.INTG_ENM,
+	       A.INTG_TYPE,
+	       A.INTG_URL,
+	       A.INTG_API_KEY,
+	       A.ID,
+	       A.PWD,
+	       A.REMARK,
+	       A.UPD_DTM,
+	       A.UPD_ID
+  FROM BMS_INTG_MST A
+	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND INTG_ID LIKE CONCAT('%',#{CONTENT},'%') || INTG_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'INTG_ID'">
+			AND INTG_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'INTG_NM'">
+			AND INTG_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+	ORDER BY
+		A.INTG_ID
+</select>
+
+ <insert id="SM0700G0I0" parameterType="Map">
+	insert into BMS_INTG_MST(
+			INTG_ID
+			,INTG_NM
+			,INTG_ENM
+			,INTG_TYPE
+			,INTG_URL
+			,INTG_API_KEY
+			,ID
+			,PWD
+			,REMARK
+			,UPD_DTM
+			,UPD_ID)
+	values(
+			#{INTG_ID}
+			,#{INTG_NM}
+			,#{INTG_ENM}
+			,#{INTG_TYPE}
+			,#{INTG_URL}
+			,#{INTG_API_KEY}
+			,#{ID}
+			,#{PWD}
+			,#{REMARK}
+			,#{UPD_DTM}
+			,#{SSN_USER_ID}
+		)
+</insert>
+
+<update id="SM0700G0U0" parameterType="Map">
+ update BMS_INTG_MST
+	set	
+		INTG_ID = #{INTG_ID}
+		,INTG_NM = #{INTG_NM}
+		,INTG_ENM = #{INTG_ENM}
+		,INTG_TYPE = #{INTG_TYPE}
+		,INTG_URL = #{INTG_URL}
+		,INTG_API_KEY = #{INTG_API_KEY}
+		,ID = #{ID}
+		,PWD = #{PWD}
+		,REMARK = #{REMARK}
+		,UPD_DTM = #{UPD_DTM}
+		,UPD_ID = #{SSN_USER_ID}
+		
+	where INTG_ID = #{INTG_ID}
+</update>
+
+<select id="SM0700G0K0" resultType="Map">
+	SELECT CONCAT('IT', LPAD(NEXTVAL(SEQ_BMS_INTG_MST_0), 8, '0')) AS 'SEQ'
+</select>
+
+<select id="SM0700SHI0" resultType="Map">
+	select INTG_ID, INTG_NM
+	from BMS_INTG_MST
+</select>
+
+
+<delete id="SM0700G0D0" parameterType="Map">
+	delete
+	from BMS_INTG_MST
+	where INTG_ID = #{INTG_ID}
+
+</delete>
+
+
+
+</mapper>

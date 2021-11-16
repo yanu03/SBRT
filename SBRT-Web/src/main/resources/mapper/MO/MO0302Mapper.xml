@@ -32,16 +32,16 @@
 				AND b.PROG_DIV LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 			<if test="(CLCT_DT != null and CLCT_DT != '') and (CLOSE_DT == null or CLOSE_DT == '')">
-				<![CDATA[AND OCR_DTM >= #{CLCT_DT}]]>
+				<![CDATA[AND a.OCR_DTM >= #{CLCT_DT}]]>
 			</if>
 			<if test="(CLCT_DT == null or CLCT_DT == '') and CLOSE_DT != null and CLOSE_DT != '' ">
-				<![CDATA[AND CLOSE_DTM <= #{CLOSE_DT}]]>
+				<![CDATA[AND b.CLOSE_DTM <= #{CLOSE_DT}]]>
 			</if>
 			<if test="CLCT_DT != null and CLCT_DT != '' and CLOSE_DT != null and CLOSE_DT != '' ">
-				AND OCR_DTM between #{CLCT_DT} and #{CLOSE_DT}
-				AND CLOSE_DTM between #{CLCT_DT} and #{CLOSE_DT}
+				AND a.OCR_DTM between DATE_FORMAT(#{CLCT_DT}, '%Y-%m-%d 0:0:0') and DATE_FORMAT(#{CLOSE_DT}, '%Y-%m-%d 23:59:00')
+				AND b.CLOSE_DTM between DATE_FORMAT(#{CLCT_DT}, '%Y-%m-%d 0:0:0') and DATE_FORMAT(#{CLOSE_DT}, '%Y-%m-%d 23:59:00')
 			</if>
-		</where>	
+		</where>
 		ORDER BY
 			OCR_DTM
 	</select>
