@@ -5,8 +5,8 @@
 	<select id="AL0202G0R0" resultType="Map">
 		SELECT A.REP_ROUT_ID,
 				A.DAY_DIV,
-				A.OPER_CNT,
-				A.ALLOC_CNT,
+				SUM(A.OPER_CNT) AS OPER_CNT,
+				MAX(A.ALLOC_CNT) AS ALLOC_CNT,
 				B.WAY_ASC_NM,
 				B.WAY_DESC_NM,
 				(SELECT STTN_NM FROM BMS_STTN_MST WHERE STTN_ID = A.ST_STTN_ID AND DEL_YN!='Y') ST_STTN_NM,
@@ -79,28 +79,28 @@
 
 	
 	<select id="AL0202P0R0" resultType="Map">
-	    select  COR_ID,
+	    SELECT  COR_ID,
 				REP_ROUT_ID,
 				COR_NM
 	
-	      from   BRT_COR_MST
-<!-- 	      on      a.REP_ROUT_ID = b.REP_ROUT_ID INNER JOIN BMS_ROUT_MST c
-	      on      a.ROUT_ID = c.ROUT_ID 
-	      where   a.REP_ROUT_ID = #{REP_ROUT_ID}
-	      and     a.DAY_DIV = #{DAY_DIV} -->
+	      FROM   BRT_COR_MST
+<!-- 	      ON      A.REP_ROUT_ID = B.REP_ROUT_ID INNER JOIN BMS_ROUT_MST C
+	      ON      A.ROUT_ID = C.ROUT_ID 
+	      WHERE   A.REP_ROUT_ID = #{REP_ROUT_ID}
+	      AND     A.DAY_DIV = #{DAY_DIV} -->
 	</select>	
 	
 	<select id="AL0202P1R0" resultType="Map">
-		select  a.REP_ROUT_ID,
-				a.ROUT_ID,
-				b.ROUT_NM,
-				a.OPER_SN,
-				a.ROUT_ST_TM,
-				a.ROUT_ED_TM
+		SELECT  A.REP_ROUT_ID,
+				A.ROUT_ID,
+				B.ROUT_NM,
+				A.OPER_SN,
+				A.ROUT_ST_TM,
+				A.ROUT_ED_TM
 				
-		from	BRT_OPER_PL_ROUT_INFO a INNER JOIN BMS_ROUT_MST b
-		on		a.REP_ROUT_ID = b.REP_ROUT_ID
-		where	b.REP_ROUT_ID = #{REP_ROUT_ID}
+		FROM	BRT_OPER_PL_ROUT_INFO A INNER JOIN BMS_ROUT_MST B
+		ON		A.REP_ROUT_ID = B.REP_ROUT_ID
+		WHERE	B.REP_ROUT_ID = #{REP_ROUT_ID}
 	</select>
 	
 	<insert id="AL0202G1I0" parameterType="Map">
