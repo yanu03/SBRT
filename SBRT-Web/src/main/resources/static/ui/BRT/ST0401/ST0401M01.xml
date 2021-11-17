@@ -84,9 +84,9 @@
 		 };
 		 				
 		var mainOptions = {
-			SEARCH:scwin.btn_search,
-			CNL:{}
-		};		 
+			EXL:scwin.btn_excel_onclick,
+			CLOSE:scwin.btn_close_onclick
+		};
 		
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions, mainOptions);
 		
@@ -118,6 +118,16 @@
 	scwin.onpageunload = function() {
 		
 	};
+	
+	scwin.btn_excel_onclick = function() {
+		var excelOpt = {};  //excel download 옵션 
+		excelOpt.fileName = "위반 날짜별 통계.xls";    //또는 xlsx 확장자 사용 
+		ST0401G0.pivotExcelDownload(excelOpt);
+	};
+	
+	scwin.btn_close_onclick = function() {
+		com.tabClose();
+	}
 	
 	scwin.getRandomColor = function(_isAlpha) {
 		  var r = getRand(0, 255),
@@ -345,9 +355,6 @@
 	scwin.btn_search = function() {
 		com.executeSubmission(sub_ST0401G0R0);
 	}
-	scwin.F_DATE_onviewchange = function(info) {
-		com.executeSubmission(sub_ST0401G0R0);
-	};
 	
 	scwin.sub_ST0401G1R0_submitdone = function(e) {
 		scwin.drawChart(dlt_BRT_OPER_VIOLT_STAT2);		
@@ -356,6 +363,37 @@
 	scwin.sub_ST0401G0R0_submitdone = function(e) {
 		com.executeSubmission(sub_ST0401G1R0);
 	};
+	
+	
+	
+	scwin.F_DATE_onviewchange = function(info) {
+		com.executeSubmission(sub_ST0401G0R0);
+		var ldate = L_DATE.getValue();
+		var fdate = F_DATE.getValue();
+		
+		if (fdate > ldate && ldate != "") {
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseF(info));
+			com.executeSubmission(sub_ST0302G0R0);
+		}
+	};
+	scwin.checkCloseF = function(info) {
+		F_DATE.setValue(info.oldValue);
+	}
+	
+	scwin.L_DATE_onviewchange = function(info) {
+		com.executeSubmission(sub_ST0401G0R0);
+		var ldate = L_DATE.getValue();
+		var fdate = F_DATE.getValue();
+		
+		if (fdate > ldate && ldate != "") {
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseL(info));
+			com.executeSubmission(sub_ST0401G0R0);
+		}
+	};
+	
+	scwin.checkCloseL = function(info) {
+		L_DATE.setValue(info.oldValue);
+	}
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -366,16 +404,14 @@
 			<xf:group id="pgm_header" class="pgm_header" style="">
 				<xf:group id="" style="" class="gr_search">
 					<xf:group id="" style="" class="label">
-						<w2:span id="" class="" label="일시"></w2:span>
-					</xf:group>
-					<xf:group class="search" id="" style="">
-						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false" style="width:120px; margin-right: 10px; margin-top: 3px;" id="F_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate" ref="data:dma_search.F_DATE" ev:onviewchange="scwin.F_DATE_onviewchange">
+						<w2:span id="" class="" label="일시  " style="margin-bottom: 5px;"></w2:span>
+						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false" style="width:120px; margin-right: 10px; margin-bottom: 5px;" id="F_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate" ref="data:dma_search.F_DATE" ev:onviewchange="scwin.F_DATE_onviewchange">
 						</w2:inputCalendar>
-						<w2:span label="~" style="margin-right: 10px;margin-top: 5px;" id="">
+						<w2:span label="~" style="margin-right: 10px;margin-bottom: 5px;" id="">
 						</w2:span>
-						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false" style="width: 120px;margin-top: 3px;" id="L_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate" ref="data:dma_search.L_DATE" ev:onviewchange="scwin.L_DATE_onviewchange">
+						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false" style="width:120px; margin-right: 10px; margin-bottom: 5px;" id="L_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate" ref="data:dma_search.L_DATE" ev:onviewchange="scwin.L_DATE_onviewchange">
 						</w2:inputCalendar>
-					</xf:group>					
+					</xf:group>				
 					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="bottom: 8px;" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
 			</xf:group><!-- pgm_header -->

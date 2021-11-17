@@ -34,7 +34,7 @@ public class AL0202Service extends ServiceSupport {
 	private OperPlanMapper operPlanMapper;
 	
 	@Autowired
-	private AL0201Mapper AL0201Mapper;
+	private AL0201Mapper al0201Mapper;
 	
 	public List AL0202G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
@@ -99,13 +99,16 @@ public class AL0202Service extends ServiceSupport {
 					
 				String routId = data.get("ROUT_ID").toString();
 				String dayDiv = data.get("DAY_DIV").toString();
+				if(CommonUtil.empty(data.get("OPER_SN")))break;
 				int operSn = Integer.valueOf(data.get("OPER_SN").toString());
 				
 				if (rowStatus.equals("C")) {
 					iCnt += al0202Mapper.AL0202G1I0(data);
+					al0201Mapper.AL0201G1I0(data);
 					operPlanService.makeOperAllocPlNodeInfo(routId, dayDiv, operSn, true);
 				} else if (rowStatus.equals("U")) {
 					uCnt += al0202Mapper.AL0202G1U0(data);
+					al0201Mapper.AL0201G1I0(data);
 					operPlanService.makeOperAllocPlNodeInfo(routId, dayDiv, operSn, true);
 				} else if (rowStatus.equals("D")) {
 					dCnt += al0202Mapper.AL0202G1D0(data);
@@ -150,17 +153,17 @@ public class AL0202Service extends ServiceSupport {
 			}		
 		}
 		
-		try {
+		/*try {
 			for (int i = 0; i < param3.size(); i++) {
 				Map data = (Map) param3.get(i);
 				
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("C")) {
-					AL0201Mapper.AL0201G0I0(data);
+					al0201Mapper.AL0201G0I0(data);
 				} else if (rowStatus.equals("U")) {
-					AL0201Mapper.AL0201G0U0(data);
+					al0201Mapper.AL0201G0U0(data);
 				} else if (rowStatus.equals("D")) {
-					AL0201Mapper.AL0201G0D0(data);
+					al0201Mapper.AL0201G0D0(data);
 				} 
 			}			
 		} catch(Exception e) {
@@ -172,7 +175,7 @@ public class AL0202Service extends ServiceSupport {
 			{
 				throw e;
 			}		
-		}
+		}*/
 
 
 		Map result = saveResult(iCnt, uCnt, dCnt);

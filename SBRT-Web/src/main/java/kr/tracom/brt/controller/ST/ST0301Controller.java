@@ -36,4 +36,10 @@ public class ST0301Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/st/ST0301SHI0")
+	public @ResponseBody Map<String, Object> ST0301SHI0() throws Exception {
+		result.setData("dlt_repRoutItem", st0301Service.ST0301SHI0());
+		return result.getResult();
+	}
+	
 }
