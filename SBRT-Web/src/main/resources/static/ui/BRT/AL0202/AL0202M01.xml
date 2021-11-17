@@ -528,6 +528,9 @@
 		dlt_EXL_OPER_PL_ROUT_INFO.removeAll();
 		dlt_BRT_OPER_ALLOC_PL_COR_DTL_INFO.removeAll();
 		
+		ALLOC_CNT.setValue(dlt_BRT_OPER_PL_MST.getCellData(AL0202G0.getFocusedRowIndex(), "ALLOC_CNT"));
+		OPER_CNT.setValue(dlt_BRT_OPER_PL_MST.getCellData(AL0202G0.getFocusedRowIndex(), "OPER_CNT"));
+		
 		var focusOption = {keyMap : dma_sub_search, keyMapColumn : "REP_ROUT_ID,DAY_DIV"};
 		com.changeDualGrid(AL0202G0, AL0202G3, sub_AL0202G1S0,
 					sub_AL0202G1R0, focusOption , row, oldRow, "배차순위 상세");
@@ -860,7 +863,7 @@
 	
 	
 	scwin.setCourse = function(focusIndex, colViewIndex, data){
-		
+
 		var index = parseInt(focusIndex/2);
 		var rIndex = scwin.getOperAllocIndexByView2(focusIndex, colViewIndex);
 		var allocOperCnt = scwin.getAllocCntData(index);
@@ -894,24 +897,30 @@
 					value = data[i].ROUT_NM;
 					for(var j = 1; j <=3; j++){
 						scwin.setViewCellData(focusIndex, "OPER_INFO_"+j, colViewIndex, value);
-						scwin.setViewCellData(focusIndex, "empty_"+j, colViewIndex, value);
-						AL0202G1.setCellColor(focusIndex, "OPER_INFO_"+j+"_"+colViewIndex, color);
-						AL0202G1.setCellColor(focusIndex+1, "OPER_INFO_"+j+"_"+colViewIndex, color);
+						
 						if(j==3){
 							scwin.setViewCellData(focusIndex+1, "OPER_INFO_"+j, colViewIndex, data[i].REST_TM);
 						}
+						else {
+							scwin.setViewCellData(focusIndex, "empty_"+j, colViewIndex, value);
+						}
+						AL0202G1.setCellColor(focusIndex, "OPER_INFO_"+j+"_"+colViewIndex, color);
+						AL0202G1.setCellColor(focusIndex+1, "OPER_INFO_"+j+"_"+colViewIndex, color);
 					}
 				}
 				else {
 					value = data[i].ROUT_NM +"("+operSn+")";
 					for(var j = 1; j <=3; j++){
 						scwin.setViewCellData(focusIndex, "OPER_INFO_"+j, colViewIndex, value);
-						scwin.setViewCellData(focusIndex, "empty_"+j, colViewIndex, value);
+						
+						if(j==3){
+							scwin.setViewCellData(focusIndex+1, "OPER_INFO_"+j, colViewIndex, data[i].REST_TM);
+						}
+						else {
+							scwin.setViewCellData(focusIndex, "empty_"+j, colViewIndex, value);
+						}
 						AL0202G1.setCellColor(focusIndex, "OPER_INFO_"+j+"_"+colViewIndex, color);
 						AL0202G1.setCellColor(focusIndex+1, "OPER_INFO_"+j+"_"+colViewIndex, color);
-						if(j==3){
-							scwin.setViewCellData(focusIndex, "OPER_INFO_"+j, colViewIndex, data[i].REST_TM);
-						}
 					}	
 				}
 				
@@ -1285,13 +1294,13 @@
 	
 	//화면 재구성
 	scwin.reConstruction = function() {
-		
+
 		var dltBrtOperPlRoutInfoAsc = dlt_BRT_OPER_PL_ROUT_INFO_ASC.getAllJSON();
 		var dltBrtOperPlRoutInfoDesc = dlt_BRT_OPER_PL_ROUT_INFO_DESC.getAllJSON();
 		var dltBrtCorDtl = dlt_BRT_OPER_ALLOC_PL_COR_DTL_INFO.getAllJSON();
 		g_rowOperAllocIndex = 0;
 		
-		if(dltBrtOperPlRoutInfoAsc.length==0&&dltBrtOperPlRoutInfoAsc.length==0){
+		if(dltBrtOperPlRoutInfoAsc.length==0&&dltBrtOperPlRoutInfoDesc.length==0){
 			scwin.emptyInit();
 			return;
 		}
@@ -1340,8 +1349,8 @@
 				var wayDiv = corDtlData!=null?corDtlData.WAY_DIV:'';
 				if(wayDiv=='WD001'){
 					if(dltBrtOperPlRoutInfoAsc[ascIndex].rowStatus == "D")continue;
-					var routId = dltBrtOperPlRoutInfoAsc[ascIndex].ROUT_ID;
-					var routNm = dltBrtOperPlRoutInfoAsc[ascIndex].ROUT_NM;
+					var routId = corDtlData.ROUT_ID;
+					var routNm = corDtlData.ROUT_NM;
 					var operSn = dltBrtOperPlRoutInfoAsc[ascIndex].OPER_SN;
 					var routStTm = dltBrtOperPlRoutInfoAsc[ascIndex].ROUT_ST_TM;
 					var routEdTm = dltBrtOperPlRoutInfoAsc[ascIndex].ROUT_ED_TM;
@@ -1376,8 +1385,8 @@
 				}
 				else if(wayDiv=='WD002'){
 					if(dltBrtOperPlRoutInfoDesc[descIndex].rowStatus == "D")continue;
-					var routId = dltBrtOperPlRoutInfoDesc[descIndex].ROUT_ID;
-					var routNm = dltBrtOperPlRoutInfoDesc[descIndex].ROUT_NM;
+					var routId = corDtlData.ROUT_ID;
+					var routNm = corDtlData.ROUT_NM;
 					var operSn = dltBrtOperPlRoutInfoDesc[descIndex].OPER_SN;
 					var routStTm = dltBrtOperPlRoutInfoDesc[descIndex].ROUT_ST_TM;
 					var routEdTm = dltBrtOperPlRoutInfoDesc[descIndex].ROUT_ED_TM;
@@ -1460,8 +1469,8 @@
 				
 				//이전 노선죵료시간과 휴게시간을 더한 값보다 큰 노선시작시간 세팅함
 				if(util.dateMinus(compVal + ":00", routStTm + ":00")>0){ 
-					var routId = dltBrtOperPlRoutInfoAsc[i].ROUT_ID;
-					var routNm = dltBrtOperPlRoutInfoAsc[i].ROUT_NM;
+					var routId = scwin.getCorDtlRowJsonData(g_rowOperAllocIndex).ROUT_ID;
+					var routNm = scwin.getCorDtlRowJsonData(g_rowOperAllocIndex).ROUT_NM;
 					var operSn = dltBrtOperPlRoutInfoAsc[i].OPER_SN;
 					var routEdTm = dltBrtOperPlRoutInfoAsc[i].ROUT_ED_TM;
 					var wayDiv = dltBrtOperPlRoutInfoAsc[i].WAY_DIV;
@@ -1514,8 +1523,8 @@
 				
 				//이전 노선죵료시간과 휴게시간을 더한 값보다 큰 노선시작시간 세팅함
 				if(util.dateMinus(compVal, routStTm + ":00")>0){ 
-					var routId = dltBrtOperPlRoutInfoDesc[i].ROUT_ID;
-					var routNm = dltBrtOperPlRoutInfoDesc[i].ROUT_NM;
+					var routId = scwin.getCorDtlRowJsonData(g_rowOperAllocIndex).ROUT_ID;
+					var routNm = scwin.getCorDtlRowJsonData(g_rowOperAllocIndex).ROUT_NM;
 					var operSn = dltBrtOperPlRoutInfoDesc[i].OPER_SN;
 					var routEdTm = dltBrtOperPlRoutInfoDesc[i].ROUT_ED_TM;
 					var wayDiv = dltBrtOperPlRoutInfoDesc[i].WAY_DIV;
@@ -1610,12 +1619,14 @@
 					scwin.setOperAllocRowJsonData(operAllocIndex,rowData);
 					scwin.setCorDtlRowJsonData(operAllocIndex, rowData);
 					operIndex ++;
-					if(operIndex>=operCnt)break;
+					if(operIndex>=operCnt){
+						j++;
+						break;
+					}
 				}
 				scwin.setAllocCntData((allocNO-1), j);
 				allocNO++;
 				if(operIndex>=operCnt){
-					j++;
 					break;
 				}
 			}
@@ -1730,9 +1741,11 @@
 			var allocVal ="";
 			if(dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rowIndex,"WAY_DIV") == "WD001"){
 				wayVal = dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rowIndex, "WAY_ASC_NM");
+				if(com.isEmpty(wayVal))wayVal="상행";
 			}
 			else if(dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rowIndex, "WAY_DIV") == "WD002"){
 				wayVal = dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rowIndex, "WAY_DESC_NM");
+				if(com.isEmpty(wayVal))wayVal="하행";
 			}
 	
 			allocVal =dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rowIndex, "ALLOC_NO");
