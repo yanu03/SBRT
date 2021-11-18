@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+	<w2:type>DEFAULT</w2:type>
+	<w2:buildDate />
+	<xf:model>
+		<xf:instance>
+			<data xmlns="" />
+		</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="COMP_ECPT_ID" name="운수사제외ID" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataMap baseNode="map" id="dma_result">
+					<w2:keyInfo>
+						<w2:key id="STATUS" name="STATUS" dataType="text"></w2:key>
+						<w2:key id="ICNT" name="입력건수" dataType="text"></w2:key>
+						<w2:key id="UCNT" name="수정건수" dataType="text"></w2:key>
+						<w2:key id="DCNT" name="삭제건수" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
+					</w2:keyInfo>
+					<w2:data></w2:data>
+				</w2:dataMap>
+			</w2:dataCollection>
+		<w2:workflowCollection></w2:workflowCollection>
+	</xf:model>
+	<script type="text/javascript" lazy="false"><![CDATA[
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	scwin.btn_confirm_onclick = function() {
+		debugger;
+		var data = AL0203C0.getValue();
+		var data1 = AL0203C1.getValue();
+		
+		/*var week = ['일', '월', '화', '수', '목', '금', '토']; 
+		
+		var newDate = data.slice(0,4) + '-' + data.slice(4, 6) + '-' + data.slice(6,8)
+		var newDate2 = data1.slice(0,4) + '-' + data1.slice(4, 6) + '-' + data1.slice(6,8)
+		
+		var dayOfWeek = week[new Date(newDate).getDay()];
+		var dayOfWeek2 = week[new Date(newDate2).getDay()];*/
+		
+		var date = data + data1;
+		
+		com.closePopup(scwin.closeCallbackFncName, date);
+		
+	};
+	
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();		
+	};
+	
+	scwin.AL0203C0_ondateselect = function(dateStr,dateObj) {
+		debugger;
+		var date = new Date();
+		var year = date.getFullYear().toString();
+		var month = (date.getMonth()+1).toString();
+		var day = date.getDate().toString();
+		var zero = 0;
+		
+		if(day.length == 1){
+			day = zero + day;
+		}
+		
+		var today = year+month+day;
+		
+		var dayDiv = scwin.param.DAYDIV;
+		var week = ['일', '월', '화', '수', '목', '금', '토']; 
+		var dayOfWeek = week[new Date(dateObj).getDay()];
+		
+		if(dayDiv == 'DY001'){
+			if(dayOfWeek == '토' || dayOfWeek == '일'){
+				com.messagBox("alert", "평일을 선택해주세요.");
+				AL0203C0.disableDate(dateStr);
+				AL0203C0.gotoCalendar(today);
+			}else{
+				
+			}
+		}else if(dayDiv == 'DY002'){
+			if(dayOfWeek != '토' && dayOfWeek != '일'){
+				com.messagBox("alert", "휴일을 선택해주세요.");
+				AL0203C0.disableDate(dateStr);
+				AL0203C0.gotoCalendar(today);
+			}else{
+			
+			}
+		}
+	};
+	
+	scwin.AL0203C1_ondateselect = function(dateStr,dateObj) {
+		debugger;
+		var date = new Date();
+		var year = date.getFullYear().toString();
+		var month = (date.getMonth()+1).toString();
+		var day = date.getDate().toString();
+		var zero = 0;
+		
+		if(day.length == 1){
+			day = zero + day;
+		}
+		
+		var today = year+month+day;
+		
+		var dayDiv = scwin.param.DAYDIV;
+		var week = ['일', '월', '화', '수', '목', '금', '토']; 
+		var dayOfWeek = week[new Date(dateObj).getDay()];
+		
+		if(dayDiv == 'DY001'){
+			if(dayOfWeek == '토' || dayOfWeek == '일'){
+				com.messagBox("alert", "평일을 선택해주세요.");
+				AL0203C1.disableDate(dateStr);
+				AL0203C1.gotoCalendar(today);
+			}else{
+				
+			}
+		}else if(dayDiv == 'DY002'){
+			if(dayOfWeek != '토' && dayOfWeek != '일'){
+				com.messagBox("alert", "휴일을 선택해주세요.");
+				AL0203C1.disableDate(dateStr);
+				AL0203C1.gotoCalendar(today);
+			}else{
+			
+			}
+		}
+	};
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_25_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+				<w2:span label="시작일" style="margin-left: 85px;" id=""></w2:span>
+				<w2:span label="종료일" style="margin-left:190px;" id=""></w2:span>
+			</xf:group>
+			<xf:group style="display: flex;" id="" class="popup_content">
+				<w2:calendar footerDiv="false" id="AL0203C0" style="width: auto;height: auto;" useYearSelect=""
+					highlightSelectedWeek="false" calendarValueType="yearMonthDate" ev:ondateselect="scwin.AL0203C0_ondateselect">
+				</w2:calendar>
+				<w2:span label="~" style="margin-right: 5px;margin-left: 5px;margin-top: 80px;" id=""></w2:span>
+				<w2:calendar footerDiv="false" id="AL0203C1" style="width: auto;height: auto;" useYearSelect=""
+					highlightSelectedWeek="false" calendarValueType="yearMonthDate" ev:ondateselect="scwin.AL0203C1_ondateselect">
+				</w2:calendar>
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

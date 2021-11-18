@@ -9,6 +9,7 @@
 		,A.DAY_DIV
 		,(SELECT STTN_NM FROM BMS_STTN_MST WHERE STTN_ID = A.ST_STTN_ID AND DEL_YN!='Y') ST_STTN_NM
 		,(SELECT STTN_NM FROM BMS_STTN_MST WHERE STTN_ID = A.ED_STTN_ID AND DEL_YN!='Y') ED_STTN_NM
+		,A.WAY_DIV
 		,B.REP_ROUT_NM
 	FROM
 		BRT_OPER_PL_MST A
@@ -40,6 +41,7 @@
 <select id="AL0302G1R0" resultType="Map">
 	SELECT A.REP_ROUT_ID
 	       ,A.DAY_DIV
+	       ,A.WAY_DIV
 	       ,A.ALLOC_NO
 	       ,B.VHC_ID
 	       ,D.VHC_NO
@@ -64,40 +66,71 @@
 		ON D.COMP_ID = E.COMP_ID
 		LEFT JOIN BRT_DRV_ALLOC_INFO F
 		ON A.REP_ROUT_ID = F.REP_ROUT_ID AND A.ALLOC_NO = F.ALLOC_NO 
+		LEFT JOIN BRT_REP_ROUT_DRV_CMPSTN G
+		ON F.DRV_ID = G.DRV_ID
 	WHERE
 		A.REP_ROUT_ID = #{REP_ROUT_ID}
 	AND 
 		A.DAY_DIV = #{DAY_DIV}
+	AND 
+		A.WAY_DIV = #{WAY_DIV}
 	GROUP BY
 		A.ALLOC_NO
 	ORDER BY
 		A.ALLOC_NO
 </select>
 
-<select id="AL0302P0R0" resultType="Map">
-	SELECT
-		A.VHC_ID
-		,A.VHC_NO
-		,B.COMP_NM
-	FROM
-		BMS_VHC_MST A
-		INNER JOIN BRT_REP_ROUT_VHC_CMPSTN C
-		ON A.VHC_ID = C.VHC_ID
-		LEFT JOIN BMS_TRANSCOMP_MST B
-		ON A.COMP_ID = B.COMP_ID
-</select>
+<insert id="AL0302G1U0" parameterType="Map">
+	INSERT INTO BRT_ALLOC_PL_MST(
+		REP_ROUT_ID
+		,DAY_DIV
+		,ALLOC_NO
+		,WAY_DIV
+		,VHC_ID
+		,UPD_DTM
+		,UPD_ID
+	)VALUES(
+		#{REP_ROUT_ID}
+		,#{DAY_DIV}
+		,#{ALLOC_NO}
+		,#{WAY_DIV}
+		,#{VHC_ID}
+		,#{UPD_DTM}
+		,#{SSN_USER_ID}
+	)ON DUPLICATE KEY UPDATE
+		VHC_ID = VALUES(VHC_ID)
+		,UPD_DTM = VALUES(UPD_DTM)
+		,UPD_ID	 = VALUES(UPD_ID)
+</insert>
 
-<select id="AL0302P1R0" resultType="Map">
-	SELECT
-		A.DRV_ID
-		,A.DRV_NM
-	FROM
-		BMS_DRV_MST A
-		INNER JOIN BRT_REP_ROUT_DRV_CMPSTN B
-		ON A.DRV_ID = B.DRV_ID
-</select>
+<insert id="AL0302G1U1" parameterType="Map">
+	INSERT INTO BRT_DRV_ALLOC_INFO(
+		REP_ROUT_ID
+		,ALLOC_NO
+		,DAY_DIV
+		,DRV_ID
+		,SEC_DRV_ID
+		,THR_DRV_ID
+		,SEC_TRAN_TM
+		,THR_TRAN_TM
+	)VALUES(
+		#{REP_ROUT_ID}
+		,#{ALLOC_NO}
+		,#{DAY_DIV}
+		,#{DRV_ID}
+		,#{SEC_DRV_ID}
+		,#{THR_DRV_ID}
+		,#{SEC_TRAN_TM}
+		,#{THR_TRAN_TM}
+	)ON DUPLICATE KEY UPDATE
+		DRV_ID = VALUES(DRV_ID)
+		,SEC_DRV_ID = VALUES(SEC_DRV_ID)
+		,THR_DRV_ID = VALUES(THR_DRV_ID)
+		,SEC_TRAN_TM = VALUES(SEC_TRAN_TM)
+		,THR_TRAN_TM = VALUES(THR_TRAN_TM)
+</insert>
 
-<update id="AL0302G1U0" parameterType="Map">
+<!--  <update id="AL0302G1U0" parameterType="Map">
 	UPDATE
 		BRT_ALLOC_PL_MST
 	SET
@@ -110,8 +143,6 @@
 		DAY_DIV = #{DAY_DIV}
 	AND
 		ALLOC_NO = #{ALLOC_NO};
-		
-	
 </update>
 
 <update id="AL0302G1U1" parameterType="Map">
@@ -127,67 +158,122 @@
 		REP_ROUT_ID = #{REP_ROUT_ID}
 	AND
 		ALLOC_NO = #{ALLOC_NO};
-</update>
+</update>-->
 
-
- 
-<!-- 
-<select id="SI0502SHI0" resultType="Map">
-	SELECT STTN_ID, STTN_NM, STTN_NO
-	FROM BMS_STTN_MST WHERE DEL_YN!='Y'
-	ORDER BY STTN_ID
-</select>
-
-<select id="SI0502G1K0" resultType="Map">
-	SELECT CONCAT('TR', LPAD(NEXTVAL(SEQ_BMS_STTN_MST_0), 8, '0')) AS 'SEQ'
-</select>
-
-<insert id="SI0502G1I0" parameterType="Map">
-	insert into BMS_TRANSFER_INFO
-			(STTN_ID,
-			TRNS_ID,
-			TRNS_DIV,
-			TRNS_NM,
-			GPS_X,
-			GPS_Y,
-			TM_Y,
-			TM_X,
-			USE_YN,
-			REMARK,
-			UPD_DTM,
-			UPD_ID
-			)
-	values (#{STTN_ID},
-			#{TRNS_ID},
-			#{TRNS_DIV},
-			#{TRNS_NM},
-			#{GPS_X},
-			#{GPS_Y},
-			0,
-			0,
-			#{USE_YN},
-			#{REMARK},
-			#{UPD_DTM},
-			#{SSN_USER_ID}
-			)		
-
+<insert id="AL0302G1I0" parameterType="Map">
+	INSERT INTO BRT_CUR_ALLOC_PL_INFO(
+		OPER_DT
+		,REP_ROUT_ID
+		,WAY_DIV
+		,ALLOC_NO
+		,VHC_ID
+		,UPD_DTM
+	)VALUES(
+		#{OPER_DT}
+		,#{REP_ROUT_ID}
+		,#{WAY_DIV}
+		,#{ALLOC_NO}
+		,#{VHC_ID}
+		,#{UPD_DTM}
+	)
 </insert>
 
-<update id="SI0502G1U0" parameterType="Map">
-	update BMS_TRANSFER_INFO
-	set		STTN_ID = #{STTN_ID},
-			TRNS_DIV = #{TRNS_DIV},
-			TRNS_NM = #{TRNS_NM},
-			GPS_X = #{GPS_X},
-			GPS_Y = #{GPS_Y},
-			USE_YN = #{USE_YN},
-			REMARK = #{REMARK}
-	where	TRNS_ID = #{TRNS_ID}		
+<insert id="AL0302G1I1" parameterType="Map">
+	INSERT INTO BRT_CUR_DRV_ALLOC_INFO(
+		OPER_DT
+		,REP_ROUT_ID
+		,ALLOC_NO
+		,DAY_DIV
+		,DRV_ID
+		,SEC_DRV_ID
+		,THR_DRV_ID
+		,SEC_TRAN_TM
+		,THR_TRAN_TM
+	)VALUES(
+		#{OPER_DT}
+		,#{REP_ROUT_ID}
+		,#{ALLOC_NO}
+		,#{DAY_DIV}
+		,#{DRV_ID}
+		,#{SEC_DRV_ID}
+		,#{THR_DRV_ID}
+		,#{SEC_TRAN_TM}
+		,#{THR_TRAN_TM}
+	)
+</insert>
+
+<update id="AL0302G2U0" parameterType="Map">
+	UPDATE
+		BRT_CUR_ALLOC_PL_INFO
+	SET
+		VHC_ID = #{VHC_ID}
+		,UPD_DTM = #{UPD_DTM}
+	WHERE
+		REP_ROUT_ID = #{REP_ROUT_ID}
+	AND
+		ALLOC_NO = #{ALLOC_NO}
+	AND
+		OPER_DT = #{OPER_DT}
 </update>
 
-<delete id="SI0502G1D0" parameterType="Map">
-	delete from BMS_TRANSFER_INFO
-	where TRNS_ID = #{TRNS_ID}
-</delete>-->
+<update id="AL0302G2U1" parameterType="Map">
+	UPDATE
+		BRT_CUR_DRV_ALLOC_INFO
+	SET
+		DRV_ID = #{DRV_ID}
+		,SEC_DRV_ID = #{SEC_DRV_ID}
+		,THR_DRV_ID = #{THR_DRV_ID}
+		,SEC_TRAN_TM = #{SEC_TRAN_TM}
+		,THR_TRAN_TM = #{THR_TRAN_TM}
+	WHERE
+		REP_ROUT_ID = #{REP_ROUT_ID}
+	AND
+		ALLOC_NO = #{ALLOC_NO}
+	AND
+		DAY_DIV = #{DAY_DIV}
+	AND
+		OPER_DT = #{OPER_DT}
+</update>
+
+<select id="AL0302G2R0" resultType="Map">
+	SELECT A.REP_ROUT_ID
+	       ,A.DAY_DIV
+	       ,A.ALLOC_NO
+	       ,B.VHC_ID
+	       ,DATE_FORMAT(B.OPER_DT, '%Y-%m-%d') OPER_DT
+	       ,D.VHC_NO
+	       ,E.COMP_NM
+	       ,H.DRV_ID
+			,H.SEC_DRV_ID
+			,H.THR_DRV_ID
+			,(SELECT DRV_NM FROM BMS_DRV_MST WHERE DRV_ID = H.DRV_ID) DRV_NM
+			,(SELECT DRV_NM FROM BMS_DRV_MST WHERE DRV_ID = H.SEC_DRV_ID) SEC_DRV_NM
+			,(SELECT DRV_NM FROM BMS_DRV_MST WHERE DRV_ID = H.THR_DRV_ID) THR_DRV_NM
+			,H.SEC_TRAN_TM
+			,H.THR_TRAN_TM
+	FROM 
+		BRT_OPER_ALLOC_PL_ROUT_INFO A
+		LEFT JOIN BRT_CUR_ALLOC_PL_INFO B
+		ON A.REP_ROUT_ID = B.REP_ROUT_ID AND A.ALLOC_NO = B.ALLOC_NO
+		LEFT JOIN BMS_VHC_MST D
+		ON B.VHC_ID = D.VHC_ID
+		LEFT JOIN BMS_TRANSCOMP_MST E
+		ON D.COMP_ID = E.COMP_ID
+		LEFT JOIN BRT_DRV_ALLOC_INFO F
+		ON A.REP_ROUT_ID = F.REP_ROUT_ID AND A.ALLOC_NO = F.ALLOC_NO
+		LEFT JOIN BRT_CUR_DRV_ALLOC_INFO H
+		ON A.REP_ROUT_ID = H.REP_ROUT_ID AND A.ALLOC_NO = H.ALLOC_NO  
+	WHERE
+		A.REP_ROUT_ID = #{REP_ROUT_ID}
+	AND 
+		A.DAY_DIV = #{DAY_DIV}
+	AND
+		B.OPER_DT = #{OPER_DT}
+
+	GROUP BY
+		A.ALLOC_NO
+	ORDER BY
+		A.ALLOC_NO
+</select>
 
 </mapper>

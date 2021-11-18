@@ -18,8 +18,19 @@ public interface AL0302Mapper {
 	
 	public List AL0302P1R0(Map param);
 	
+	public int AL0302G1I0(Map param);
+	
+	public int AL0302G1I1(Map param);
+	
 	public int AL0302G1U0(Map param);
+	
 	public int AL0302G1U1(Map param);
+	
+	public int AL0302G2U0(Map param);
+	
+	public int AL0302G2U1(Map param);
+	
+	public List AL0302G2R0(Map param);
 	
 	/*
 	public List SI0502SHI0();
