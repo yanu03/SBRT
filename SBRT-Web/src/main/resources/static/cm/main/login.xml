@@ -78,12 +78,12 @@
 	
 	
 		scwin.btn_bms_check = function() {
-			bg_img.removeClass("bg_img_bis");
+			bg_img.addClass("bg_img_bis");
 			dma_loginCheck.set("SYSTEM_BIT",1);
 		}
 		
 		scwin.btn_brt_check = function() {
-			bg_img.addClass("bg_img_bis");
+			bg_img.removeClass("bg_img_bis");
 			dma_loginCheck.set("SYSTEM_BIT",2);
 		}
 	
@@ -168,11 +168,26 @@
 		
 	]]></script>
 	
+	<script type="javascript"><![CDATA[
+		var filterbtn = $(".question li a");
+
+		filterbtn.on("click", function () {
+			$(this).parent().addClass("on");
+			$(this).parent().siblings().removeClass("on");
+		
+			idx = $(this).parent().index();
+			if (idx == 1) {
+				$(this).parent().parent().addClass("right");
+			} else {
+			$(this).parent().parent().removeClass("right");
+			}
+		});
+	]]></script>
 </head>
 
 <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
     <xf:group class="login_wrap">
-        <xf:group class="bg_img" id="bg_img">
+        <xf:group class="bg_img bg_img_bis" id="bg_img">
             <xf:group class="bg_logo" style=""></xf:group>
             <xf:group class="box" tagname="ul">
 
@@ -181,14 +196,14 @@
 			<xf:group tagname="li" class="system">
 				<xf:group class="question" tagname="ul">
 					<xf:group tagname="li" class="system_inner01 on">
-						<w2:anchor outerDiv="false" class="system01" ev:onclick="scwin.btn_bms_check()">
+						<w2:anchor outerDiv="false" class="system01" ev:onclick="scwin.btn_bms_check">
 							<xf:label>
 								<![CDATA[통합운영관리]]>
 							</xf:label>
 						</w2:anchor>
 					</xf:group>
 					<xf:group tagname="li" class="system_inner02">
-						<w2:anchor outerDiv="false" class="system02" ev:onclick="scwin.btn_brt_check()">
+						<w2:anchor outerDiv="false" class="system02" ev:onclick="scwin.btn_brt_check">
 							<xf:label>
 								<![CDATA[차량운행관리]]>
 							</xf:label>

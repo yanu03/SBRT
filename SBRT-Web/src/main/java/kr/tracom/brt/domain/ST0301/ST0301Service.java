@@ -33,4 +33,9 @@ public class ST0301Service extends ServiceSupport {
 		map.put("ROUT_ID", temp);
 		return st0301Mapper.ST0301G2R0(map);
 	}
+	
+	public List ST0301SHI0() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return st0301Mapper.ST0301SHI0(map);
+	}
 }

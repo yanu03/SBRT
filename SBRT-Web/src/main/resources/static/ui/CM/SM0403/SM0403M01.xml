@@ -86,6 +86,17 @@
 			com.searchGrid(SM0403G0, sub_SM0403G0R0);
 		});
 		
+		
+		var date = new Date();
+		var year = date.getFullYear().toString();
+		var month = (date.getMonth()+1).toString();
+		var day = date.getDate().toString();
+		
+		var today = year+month+day;
+		var firstday = year+month+"01";
+		F_DATE.setValue(firstday);
+		L_DATE.setValue(today);		
+		
 //		$p.executeSubmission(sub_SI0101SHI0);
 		$p.executeSubmission(sub_SM0403SHI0);
 
@@ -115,6 +126,38 @@
 	scwin.sub_SM0403G0R0_submitdone = function(e) {
 		com.setFocusedCell(SM0403G0, "OCR_DTM");		
 	};
+	
+	
+	
+	
+	scwin.F_DATE_onviewchange = function(info) {
+		com.executeSubmission(sub_SM0403G0R0);
+		var ldate = L_DATE.getValue();
+		var fdate = F_DATE.getValue();
+		
+		if (fdate > ldate && ldate != "") {
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseF(info));
+			com.executeSubmission(sub_SM0403G0R0);
+		}
+	};
+	scwin.checkCloseF = function(info) {
+		F_DATE.setValue(info.oldValue);
+	}
+	
+	scwin.L_DATE_onviewchange = function(info) {
+		com.executeSubmission(sub_SM0403G0R0);
+		var ldate = L_DATE.getValue();
+		var fdate = F_DATE.getValue();
+		
+		if (fdate > ldate && ldate != "") {
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseL(info));
+			com.executeSubmission(sub_SM0403G0R0);
+		}
+	};
+	
+	scwin.checkCloseL = function(info) {
+		L_DATE.setValue(info.oldValue);
+	}
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -163,12 +206,12 @@
 						</w2:autoComplete>
 						<xf:group id="" style="">
 							<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
-								style="width:150px; height:23px; margin-right: 10px; float: left;" id="" renderType="component" renderDiv="true"
-								calendarValueType="yearMonthDate" ref="data:dma_search.F_DATE">
+								style="width:150px; height:23px; margin-right: 10px; float: left;" id="F_DATE" renderType="component" renderDiv="true"
+								calendarValueType="yearMonthDate" ref="data:dma_search.F_DATE" ev:onviewchange="scwin.F_DATE_onviewchange">
 							</w2:inputCalendar>
 							<w2:span label="~" style="float: left;margin-right: 10px;" id=""></w2:span>
 							<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
-								style="width: 150px;height: 23px;float: left;" id="" renderType="component" renderDiv="true" calendarValueType="yearMonthDate" ref="data:dma_search.L_DATE">
+								style="width: 150px;height: 23px;float: left;" id="L_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate" ref="data:dma_search.L_DATE" nextTabID="" ev:onviewchange="scwin.L_DATE_onviewchange">
 							</w2:inputCalendar>
 						</xf:group>
 					</xf:group>
