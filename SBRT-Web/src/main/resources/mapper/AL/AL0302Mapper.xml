@@ -16,16 +16,18 @@
 		LEFT JOIN BMS_REP_ROUT_MST B
 		ON A.REP_ROUT_ID = B.REP_ROUT_ID
 	<where>
-		<if test="CONTENT1 != null">
+		<if test="CONTENT1 == 'all'">
+			A.REP_ROUT_ID LIKE CONCAT('%',#{CONTENT3},'%')
+		</if>
+		<if test="CONTENT1 != 'all'">
 			AND A.REP_ROUT_ID = #{CONTENT1}
 		</if>
 		<if test="CONTENT2 != ''">
 			AND A.DAY_DIV = #{CONTENT2}
 		</if>
-		<if test="CONTENT3 != null and CONTENT3 != ''">
-			AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
-		</if>
 	</where>
+	ORDER BY
+		B.REP_ROUT_NM, A.DAY_DIV, A.WAY_DIV DESC
 </select>
 
 <select id="AL0302SHI1" resultType="Map">

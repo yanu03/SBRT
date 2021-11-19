@@ -12,6 +12,7 @@
 			<w2:dataCollection baseNode="map">
 				<w2:dataMap baseNode="map" id="dma_search">
 					<w2:keyInfo>
+						<w2:key id="TYPE" name="name4" dataType="text"></w2:key>
 						<w2:key id="CONTENT1" name="name1" dataType="text"></w2:key>
 						<w2:key id="CONTENT2" name="name2" dataType="text"></w2:key>
 						<w2:key id="CONTENT3" name="name3" dataType="text"></w2:key>
@@ -177,7 +178,7 @@
 		var today = year+month+day;
 		
 		OPERDATE.setValue(today);
-	
+		
 		com.setCommonDtl(codeOptions, function() {
 			com.searchGrid(AL0302G0, sub_AL0302G0R0);
 		});	
@@ -233,7 +234,7 @@
 	scwin.AL0302P0_callbackFn = function(data){
 		debugger;
 		var week = ['일', '월', '화', '수', '목', '금', '토']; 
-		
+		var dayDiv = dlt_BRT_OPER_PL_MST.getCellData(AL0302G0.getFocusedRowIndex(), "DAY_DIV");
 		var startDateValue = data.toString().substring(0, 8);
 		var lastDateValue = data.toString().substring(8);
 		
@@ -247,8 +248,21 @@
 		while(curDate <= new Date(lastDate)) {
 			var dayOfWeek = week[new Date(curDate).getDay()];
 			
-			relDt.push(curDate.toISOString().split("T")[0]);
-			curDate.setDate(curDate.getDate() + 1);
+			if(dayDiv == 'DY001'){
+				if(dayOfWeek != '토' && dayOfWeek != '일'){
+					relDt.push(curDate.toISOString().split("T")[0]);
+					curDate.setDate(curDate.getDate() + 1);
+				}else{
+					curDate.setDate(curDate.getDate() + 1);
+				}
+			}else if(dayDiv == 'DY002'){
+				if(dayOfWeek == '토' || dayOfWeek == '일'){
+					relDt.push(curDate.toISOString().split("T")[0]);
+					curDate.setDate(curDate.getDate() + 1);
+				}else{
+					curDate.setDate(curDate.getDate() + 1);
+				}
+			}
 		}
 		dma_param_AL0302G1.set("relDt", relDt);
 		
@@ -265,23 +279,26 @@
 	}
 	
 	scwin.sub_AL0302G0R0_submitdone = function(e) {
-		com.setFocusedCell(AL0302G0, "REP_ROUT_NM");		
+		debugger;
+		com.setFocusedCell(AL0302G0, "DAY_DIV");
 	};
 	
 	scwin.sub_AL0302G1R0_submitdone = function(e) {
+		debugger;
 		com.setFocusedCell(AL0302G1, "VHC_NO");	
 	};
 	
 	scwin.AL0302G0_onrowindexchange = function(row,oldRow) {
+		debugger;
 		dma_param_AL0302G1.set("REP_ROUT_ID", dlt_BRT_OPER_PL_MST.getCellData(row, "REP_ROUT_ID"));
 		dma_param_AL0302G1.set("DAY_DIV", dlt_BRT_OPER_PL_MST.getCellData(row, "DAY_DIV"));
 		dma_param_AL0302G1.set("WAY_DIV", dlt_BRT_OPER_PL_MST.getCellData(row, "WAY_DIV"));
 		dma_param_AL0302G1.set("OPER_DT", OPERDATE.getValue());
 		
-		//com.executeSubmission(sub_AL0302G1R0);
 		var focusOption = {keyMap : dma_param_AL0302G1};
 		com.changeDualGrid(AL0302G0, AL0302G1, sub_AL0302G1S0, sub_AL0302G1R0, focusOption, row, oldRow, "차량 배차(배포)");
 		com.changeDualGrid(AL0302G0, AL0302G2, sub_AL0302G2S0, sub_AL0302G2R0, focusOption, row, oldRow, "차량 배차(수정)");
+		//com.executeSubmission(sub_AL0302G1R0);
 	};
 	
 	scwin.sub_AL0302G1S0_submitdone = function(e) {
@@ -455,37 +472,30 @@
 	};
 	
 	scwin.sub_AL0302SHI0_submitdone = function(e) {
-		TYPE1.setValue("RR00000002");		
-		$p.executeSubmission(sub_AL0302SHI1);
+		debugger;
+		//com.setFocusedCell(AL0302G0, "DAY_DIV");
 	};
 	
 	scwin.TYPE1_onviewchange = function(info) {
-		startMarker = 1;		
-		$p.executeSubmission(sub_AL0302SHI1);
+		//startMarker = 1;
+		debugger;
+		com.executeSubmission(sub_AL0302G0R0);
 	};
 	
 	scwin.sub_AL0302SHI1_submitdone = function(e) {
-		com.searchGrid(AL0302G0, sub_AL0302G0R0);
-		com.searchGrid(AL0302G1, sub_AL0302G1R0);
+		debugger;
+		com.executeSubmission(sub_AL0302G0R0);
 	};
 	
 	scwin.TYPE2_onviewchange = function(info) {
-		startMarker = 1;
-		com.searchGrid(AL0302G0, sub_AL0302G0R0);
-		com.searchGrid(AL0302G1, sub_AL0302G1R0);
-	};
-	
-	/*scwin.REL_DATE_F_onviewchange = function(info) {
 		debugger;
-		for(var i=0; i<dlt_BRT_ALLOC_PL_MST.getRowCount(); i++){
-			dlt_BRT_ALLOC_PL_MST.setCellData(i, "OPER_DT", info.newValue);
-			dlt_BRT_ALLOC_PL_MST.setCellData(i, "rowStatus", "C");
-		}
-	};*/
+		//startMarker = 1;
+		com.executeSubmission(sub_AL0302SHI1);
+	};
 	
 	scwin.OPERDATE_onviewchange = function(info) {
 		dma_param_AL0302G1.set("OPER_DT", info.newValue);
-		com.searchGrid(AL0302G2, sub_AL0302G2R0);
+		com.executeSubmission(sub_AL0302G2R0);
 	};
 	
 	scwin.sub_AL0302G2R0_submitdone = function(e) {
@@ -512,7 +522,7 @@
 						<w2:span class="" id="" label="대표 노선"></w2:span>
 					</xf:group>
 					<xf:group class="search" id="" style="">
-						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+						<xf:select1 allOption="true" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE1_onviewchange" id="TYPE1" optionOrder="false"
 							ref="data:dma_search.CONTENT1" class="search_type_100" style="" submenuSize="auto" textAlign="left" chooseOptionLabel="전체">
 							<xf:choices>
@@ -528,7 +538,7 @@
 						<xf:group class="search" id="" style="">
 							<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
 								disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE2_onviewchange" id="TYPE2" optionOrder="false"
-								ref="data:dma_search.CONTENT2" class="search_type_100" style="" submenuSize="auto" textAlign="left" chooseOptionLabel="전체">
+								ref="data:dma_search.CONTENT2" class="search_type_100" style="" submenuSize="auto" textAlign="left" chooseOptionLabel="-전체-">
 								<xf:choices>
 									<xf:item>
 										<xf:label><![CDATA[평일]]></xf:label>
@@ -549,7 +559,7 @@
 					</xf:group>
 				</xf:group>
 			</xf:group><!-- pgm_header -->
-			<xf:group id="pgm_content" class="pgm_content grdc_a_20_900_minmax" style="">
+			<xf:group id="pgm_content" class="pgm_content grdc_800_20_a" style="">
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 					<xf:group id="" class="" style="">
 						<xf:group class="defaultbox" id="" style="">
@@ -572,13 +582,13 @@
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column22"
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column22"
 										value="대표노선명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column20"
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column20"
 										value="요일구분" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column12"
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column12"
 										value="상하행" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column17"
@@ -645,14 +655,14 @@
 					</xf:group>
 					<xf:group></xf:group><!-- margin-->
 					<xf:group id="" class="" style="">
-						<w2:gridView ignoreCellClick="false" ev:onrowindexchange="" autoFit="lastColumn" rowNumHeaderValue="순번"
+						<w2:gridView ignoreCellClick="false" ev:onrowindexchange="" autoFit="allColumn" rowNumHeaderValue="순번"
 							visibleRowNum="" class="cm_grid right" fixedColumnWithHidden="true" rowNumVisible="false" dataList="data:dlt_BRT_ALLOC_PL_MST"
 							id="AL0302G1" readOnly="false" style="" useShiftKey="true" scrollByColumn="false" rowStatusVisible="false" rowStatusHeaderValue="상태"
 							ev:oncellclick="" focusMode="cell" ev:ontextimageclick="scwin.AL0302G1_ontextimageclick">
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row3">
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:40px;" id="column19"
+									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:40px;" id="column19"
 										value="배차번호" blockSelect="false" displayMode="label" colSpan="" rowSpan="2">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:40px;" id="column18"
@@ -691,7 +701,7 @@
 							</w2:header>
 							<w2:gBody style="" id="gBody1">
 								<w2:row style="" id="row2">
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="ALLOC_NO"
+									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="ALLOC_NO"
 										value="" blockSelect="false" displayMode="label" readOnly="" disabled="true">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="100" inputType="textImage" style="height:20px" id="VHC_NO"
@@ -737,7 +747,7 @@
 						<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
 					</xf:group>
 					<xf:group id="" class="" style="">
-						<w2:gridView ignoreCellClick="false" ev:onrowindexchange="" autoFit="lastColumn" rowNumHeaderValue="순번"
+						<w2:gridView ignoreCellClick="false" ev:onrowindexchange="" autoFit="allColumn" rowNumHeaderValue="순번"
 							visibleRowNum="" class="cm_grid right" fixedColumnWithHidden="true" rowNumVisible="false"
 							dataList="data:dlt_BRT_OPER_DT_ALLOC_PL_MST" id="AL0302G2" readOnly="false" style="" useShiftKey="true" scrollByColumn="false"
 							rowStatusVisible="false" rowStatusHeaderValue="상태" ev:oncellclick="" focusMode="cell"
@@ -745,7 +755,7 @@
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row3">
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:40px;" id="column19"
+									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:40px;" id="column19"
 										value="배차번호" blockSelect="false" displayMode="label" colSpan="" rowSpan="2">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:40px;" id="column18"
