@@ -2199,7 +2199,6 @@ routMap.showMarker2 = function(mapId, data, idx) {
 
 	var overlay = null;
 	var msg = "";
-	
 	if(data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP){
 		 msg = "<div class = 'customoverlay busstop'>";
 		 
@@ -3327,6 +3326,7 @@ routMap.drawRoute = function(mapId, grid, focusIdx) {
 	routMap.initDisplay(mapId);
 	
 	if(list != null && list.length != 0) {
+		var oldMornStd = "";
 		for(var i = 0; i < list.length; i++) {
 			
 			/**드래그이벤트**/
@@ -3361,14 +3361,18 @@ routMap.drawRoute = function(mapId, grid, focusIdx) {
 				routMap.addMarkerInter(mapId, list[i], grid, i, focusIdx);
 			}
 			
-			
-			
 			if(i < list.length -1){
+				var mornStd = list[i].MORN_STD;
+				if(com.isEmpty(mornStd)){
+					mornStd = oldMornStd;
+				}
+				oldMornStd = list[i].MORN_STD;
+				
 				var color = "#3396ff";
-				if(list[i].MORN_STD=='MS002'){
+				if(mornStd=='MS002'){
 					color = "#cd6c15";
 				}
-				else if(list[i].MORN_STD=='MS003'){
+				else if(mornStd=='MS003'){
 					color = "#FF005E";
 				}
 
@@ -3406,6 +3410,7 @@ routMap.drawRoute2 = function(mapId, list, focusIdx) {
 	routMap.initDisplay(mapId);
 	
 	if(list != null && list.length != 0) {
+		var oldMornStd = "";
 		for(var i = 0; i < list.length; i++) {
 			
 			/**드래그이벤트**/
@@ -3440,11 +3445,17 @@ routMap.drawRoute2 = function(mapId, list, focusIdx) {
 			}
 			
 			if(i < list.length -1){
+				var mornStd = list[i].MORN_STD;
+				if(com.isEmpty(mornStd)){
+					mornStd = oldMornStd;
+				}
+				oldMornStd = list[i].MORN_STD;
+				
 				var color = "#3396ff";
-				if(list[i].MORN_STD=='MS002'){
+				if(mornStd=='MS002'){
 					color = "#cd6c15";
 				}
-				else if(list[i].MORN_STD=='MS003'){
+				else if(mornStd=='MS003'){
 					color = "#FF005E";
 				}
 				
@@ -3484,6 +3495,7 @@ routMap.drawSound = function(mapId, grid, focusIdx) {
 	routMap.initDisplay(mapId);
 	
 	if(list != null && list.length != 0) {
+		var oldMornStd = "";
 		for(var i = 0; i < list.length; i++) {
 			
 			/**드래그이벤트**/
@@ -3523,11 +3535,17 @@ routMap.drawSound = function(mapId, grid, focusIdx) {
 			}
 
 			if(i < list.length -1){
+				var mornStd = list[i].MORN_STD;
+				if(com.isEmpty(mornStd)){
+					mornStd = oldMornStd;
+				}
+				oldMornStd = list[i].MORN_STD;
+				
 				var color = "#3396ff";
-				if(list[i].MORN_STD=='MS002'){
+				if(mornStd=='MS002'){
 					color = "#cd6c15";
 				}
-				else if(list[i].MORN_STD=='MS003'){
+				else if(mornStd=='MS003'){
 					color = "#FF005E";
 				}
 
@@ -3553,6 +3571,7 @@ routMap.showRoute = function(mapId, list, id, type) {
 	var focusIdx = -1;
 	routMap.initDisplay(mapId);
 	if(list != null && list.length != 0) {
+		var oldMornStd = "";
 		for(var i = 0; i < list.length; i++) {
 			list[i].index = i;
 			
@@ -3579,13 +3598,20 @@ routMap.showRoute = function(mapId, list, id, type) {
 			}
 			
 			if(i < list.length -1){
+				var mornStd = list[i].MORN_STD;
+				if(com.isEmpty(mornStd)){
+					mornStd = oldMornStd;
+				}
+				oldMornStd = list[i].MORN_STD;
+				
 				var color = "#3396ff";
-				if(list[i].MORN_STD=='MS002'){
+				if(mornStd=='MS002'){
 					color = "#cd6c15";
 				}
-				else if(list[i].MORN_STD=='MS003'){
+				else if(mornStd=='MS003'){
 					color = "#FF005E";
 				}
+				
 				if(list[i].ROUT_ID == list[i+1].ROUT_ID) //동일 노선끼리만 선 연결 되도록 함
 					routMap.drawLine(mapId, list[i], list[i+1], color);
 			}
@@ -3606,6 +3632,7 @@ routMap.showRoute = function(mapId, list, id, type) {
 routMap.showRoute2 = function(mapId, list, focusIdx, grid) {
 	routMap.initDisplay(mapId);
 	if(list != null && list.length != 0) {
+		var oldMornStd = "";
 		for(var i = 0; i < list.length; i++) {
 			list[i].index = i;
 			
@@ -3620,13 +3647,20 @@ routMap.showRoute2 = function(mapId, list, focusIdx, grid) {
 				routMap.showOnlyMarker(mapId, list[i], i, focusIdx, grid);
 			
 			if(i < list.length -1){
+				var mornStd = list[i].MORN_STD;
+				if(com.isEmpty(mornStd)){
+					mornStd = oldMornStd;
+				}
+				oldMornStd = list[i].MORN_STD;
+				
 				var color = "#3396ff";
-				if(list[i].MORN_STD=='MS002'){
+				if(mornStd=='MS002'){
 					color = "#cd6c15";
 				}
-				else if(list[i].MORN_STD=='MS003'){
+				else if(mornStd=='MS003'){
 					color = "#FF005E";
 				}
+				
 				if(list[i].ROUT_ID == list[i+1].ROUT_ID) //동일 노선끼리만 선 연결 되도록 함
 					routMap.drawLine(mapId, list[i], list[i+1], color);
 			}
