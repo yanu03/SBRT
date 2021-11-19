@@ -157,4 +157,5 @@ util.getExlDateToMinSec = function(exlDate) {
 		
 		return minites + ":" + seconds;
 	}
+	else return exlDate;
 }

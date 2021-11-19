@@ -37,26 +37,31 @@ public class AL0302Controller extends ControllerSupport {
 		return result.getResultSave();
 	}
 	
+	@RequestMapping("/al/AL0302G1S1")
+	public @ResponseBody Map<String, Object> AL0302G1S1() throws Exception {
+		Map map = al0302Service.AL0302G1S1();
+		result.setData("dma_result", map);
+		return result.getResultSave();
+	}
+	
 	@RequestMapping("/al/AL0302SHI1")
 	public @ResponseBody Map<String, Object> AL0302SHI1() throws Exception {
 		result.setData("dlt_searchitem2", al0302Service.AL0302SHI1());
 		return result.getResult();
 	}
 	
-	/*
-	@RequestMapping("/al/AL0302SHI0")
-	public @ResponseBody Map<String, Object> SI0502G0R2() throws Exception {
-		result.setData("dlt_searchitem", al0302Service.SI0502SHI0());
-		return result.getResult();
-	}
-
-	@RequestMapping("/al/AL0302G1K0")
-	public @ResponseBody Map<String, Object> SI0502G1K0() throws Exception {
-		result.setData("dma_SEQ_BMS_TRANSFER_INFO_0", al0302Service.SI0502G1K0());
+	@RequestMapping("/al/AL0302G2R0")
+	public @ResponseBody Map<String, Object> AL0302G2R0() throws Exception {
+		result.setData("dlt_BRT_OPER_DT_ALLOC_PL_MST", al0302Service.AL0302G2R0());
 		return result.getResult();
 	}
 	
-		*/
+	@RequestMapping("/al/AL0302G2S0")
+	public @ResponseBody Map<String, Object> AL0302G2S0() throws Exception {
+		Map map = al0302Service.AL0302G2S0();
+		result.setData("dma_result", map);
+		return result.getResultSave();
+	}
 	
 	@RequestMapping("/al/AL0302P0R0")
 	public @ResponseBody Map<String, Object> AL0302P0R0() throws Exception {

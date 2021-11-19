@@ -961,7 +961,7 @@ public class FTPHandler {
 					    			+ orgaVoc.get("VOC_ID") + Constants.VoiceTypes.EN + ".wav" + Constants.CSVForms.COMMA 
 					    			+ orgaVoc.get("START_DATE") + Constants.CSVForms.COMMA 
 					    			+ orgaVoc.get("EXPIRE_DATE") + Constants.CSVForms.COMMA
-					    			+ orgaVoc.get("TEXT") + Constants.CSVForms.COMMA
+					    			+ orgaVoc.get("EN_TEXT") + Constants.CSVForms.COMMA
 			    					+ setIldID(orgaVoc.get("VOC_ID") + Constants.VoiceTypes.EN));
 			    		} else {
 			    			// 기타 다른음성들

@@ -20,6 +20,7 @@ import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,9 @@ import kr.tracom.util.Result;
 @Service
 public class PI0206Service extends ServiceSupport {
 
+	@Value("${api.gateway.url}")
+	private String apiGatewayUrl;
+	
 	@Autowired
 	private PI0206Mapper pi0206Mapper;
 	
@@ -322,8 +326,46 @@ public class PI0206Service extends ServiceSupport {
 		return resultList;
 	}
 	
+	
 	/** rest 요청 jh **/
 	public String getLocation(String x, String y, String authKey) {
+		
+		HttpURLConnection conn = null;
+		String result = "";
+
+		//좌표로 동네이름 가져오기 (api gateway 로 요청)
+		String api = apiGatewayUrl + "/getLocation?x=" + x + "&y=" + y + "&authKey=" + authKey.replace(" ", "%20");
+
+		try {
+			URL url = new URL(api);
+			try {
+				conn = (HttpURLConnection)url.openConnection();
+				conn.setRequestMethod("GET");
+				
+				BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				StringBuilder sb = new StringBuilder();
+				String line = "";
+				while((line = br.readLine()) != null) {
+					sb.append(line);
+				}
+				try {
+					result = sb.toString();
+				} catch (Exception e) {
+					logger.error("error");
+				}
+			} catch (IOException e) {
+				logger.error("IOException");
+			}			
+		} catch (MalformedURLException e) {
+			logger.error("MalformedURLException");
+		}
+		
+		return result;
+	}
+	
+	
+	//좌표로 동네이름 가져오기 (api gateway 에서 처리하도록 옮겨감)
+	public String getLocation_old(String x, String y, String authKey) {
 		
 		HttpURLConnection conn = null;
 		JSONObject response = null;
