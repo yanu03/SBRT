@@ -515,6 +515,7 @@ public class EventThread extends Thread{
     	curOperInfo.put("ROUT_NM", realNodeInfo.get("ROUT_NM"));
     	curOperInfo.put("NODE_TYPE", realNodeInfo.get("NODE_TYPE"));
     	curOperInfo.put("NODE_NM", realNodeInfo.get("NODE_NM"));
+    	curOperInfo.put("NODE_SN", realNodeInfo.get("NODE_SN"));
     	
     	Map<String, Object> nextNodeInfo = timsMapper.selectNextSttnCrsInfo(curOperInfo);
     	
