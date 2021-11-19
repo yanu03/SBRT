@@ -89,6 +89,7 @@
 					<w2:columnInfo>
 						<w2:column id="ROUT_ID" name="name1" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="name2" dataType="text"></w2:column>
+						<w2:column id="VHC_KIND" name="name3" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 			</w2:dataCollection>
@@ -135,6 +136,7 @@
 //		});
 		
 		var codeOptions = [ {code : "OPER_STS", compID : "VD0202G0:OPER_STS"},
+							{code : "VHC_KIND", compID : "VD0202G0:VHC_KIND, TYPE1"},
 							{code : "DVC_KIND", compID : "VD0202G1:DVC_KIND"},
 							{code : "INST_LOC", compID : "VD0202G1:INST_LOC"},
 							{code : "DVC_COND", compID : "VD0202G1:DVC_COND"}
@@ -243,10 +245,23 @@
 	};
 	
 	scwin.sub_VD0202G0R0_submitdone = function(e) {
-		//com.setFocusedCell(VD0202G0, "REP_ROUT_NM");
 		if(dlt_BRT_CUR_OPER_INFO.getAllJSON().length > 0) {
-			VD0202G0.setFocusedCell(0, "REP_ROUT_NM");
-		}
+			VD0202G0.setFocusedCell(0, "VHC_ID");
+			debugger;
+			for(var i=0; i<dlt_BRT_CUR_OPER_INFO.getDataLength(); i++) {
+				oper_sts = dlt_BRT_CUR_OPER_INFO.getCellData(i, "OPER_STS");
+				
+				switch(oper_sts) {
+					case "OS001":
+						VD0202G0.setCellClass(i, "OPER_STS", "cond_normal");
+						break;	
+					case "":
+						dlt_BRT_CUR_OPER_INFO.setCellData(i, "OPER_STS", "운행종료");
+						break;	
+					}	//end switch
+					
+			} //end for
+		} //end if
 		else {
 			dma_sub_search.set("ROUT_ID", null);
 			dma_sub_search.set("VHC_ID", null);
@@ -254,18 +269,20 @@
 			$p.executeSubmission(sub_VD0202G2R0);				
 		}
 	
-		$(function () {
-			$( "#connect" ).click(function() { connect(); });
-			$( "#disconnect" ).click(function() { disconnect(); });
-			
-			$("form").on('submit', function (e) {
-				e.preventDefault();
-			});
-			$( "#send" ).click(function() { sendMessage(); });
 		
-			connect();
-		
-		});			
+	
+//		$(function () {
+//			$( "#connect" ).click(function() { connect(); });
+//			$( "#disconnect" ).click(function() { disconnect(); });
+//			
+//			$("form").on('submit', function (e) {
+//				e.preventDefault();
+//			});
+//			$( "#send" ).click(function() { sendMessage(); });
+//		
+//			connect();
+//		
+//		});			
 			
 //		var list = com.getGridDispJsonData(
 //		routMap.showRoute("map_VD0202", dlt_BRT_CUR_OPER_INFO.getAllJSON());		
@@ -275,7 +292,6 @@
 	
 	
 	scwin.sub_VD0202SHI0_submitdone = function(e) {
-		TYPE1.setValue("RR00000002");
 		com.searchGrid(VD0202G0, sub_VD0202G0R0);
 		$p.executeSubmission(sub_VD0202SHI1);
 	};
@@ -349,9 +365,9 @@
 					break;
 				//태그리스	
 				case "DK011":
-					imgSrc = "/cm/images/bms/green_circle.png";
+					imgSrc = "/cm/images/bms/tag_normal.png";
 					if(dvc_cond == "DC021")
-						imgSrc = "/cm/images/bms/red_circle.png";
+						imgSrc = "/cm/images/bms/tag_abnormal.png";
 					break;				
 			}
 			
@@ -408,31 +424,34 @@
 				break;
 			
 			//행선지 정면
-			case ("DK006" || "DK007"):
-				selectImg = "/cm/images/bms/desGuide_normal.png";
+			case "DK006":
+			case "DK007":
+				selectImg = "/cm/images/bms/desGuide_normal_selected.png";
 		//		selectImg = "/cm/images/bms/bad_icon.PNG";
 				if(dvc_cond == "DC021")
 					selectImg = "/cm/images/bms/desGuide_abnormal_selected.png";
 				break;
 			//행선지 측면	
-			case ("DK008" || "DK009" || "DK012"):
+			case "DK008":
+			case "DK009":
+			case "DK012":
 				selectImg = "/cm/images/bms/desGuide_normal_selected.png";
 		//		selectImg = "/cm/images/bms/bad_icon.PNG";
 				if(dvc_cond == "DC021")
 					selectImg = "/cm/images/bms/desGuide_abnormal_selected.png";
 				break;
 			//행선지 후면	
-			case ("DK013"):
+			case "DK013":
 				selectImg = "/cm/images/bms/desGuide_normal_selected.png";
 		//		selectImg = "/cm/images/bms/bad_icon.PNG";
 				if(dvc_cond == "DC021")
 					selectImg = "/cm/images/bms/desGuide_abnormal_selected.png";
 				break;
 			case "DK011":
-				selectImg = "/cm/images/bms/green_circle_selected.png";
+				selectImg = "/cm/images/bms/tag_normal_selected.png";
 		//		selectImg = "/cm/images/bms/bad_icon.PNG";
 				if(dvc_cond == "DC021")
-					selectImg = "/cm/images/bms/red_circle_selected.png";
+					selectImg = "/cm/images/bms/tag_abnoraml_selected.png";
 				break;		
 		}      
 		
@@ -451,12 +470,13 @@
 	};
 	
 	scwin.TYPE1_onviewchange = function(info) {
-		$p.executeSubmission(sub_VD0202SHI1);
+//		$p.executeSubmission(sub_VD0202SHI1);
+		com.executeSubmission(sub_VD0202G0R0);
 	};
 	
-	scwin.TYPE2_onviewchange = function(info) {
-		com.searchGrid(VD0202G0, sub_VD0202G0R0);		
-	};
+//	scwin.TYPE2_onviewchange = function(info) {
+//		com.searchGrid(VD0202G0, sub_VD0202G0R0);		
+//	};
 	
 	scwin.sub_VD0202SHI1_submitdone = function(e) {
 		com.searchGrid(VD0202G0, sub_VD0202G0R0);		
@@ -541,9 +561,9 @@
 					break;
 				//태그리스	
 				case "DK011":
-					imgSrc = "/cm/images/bms/green_circle.png";
+					imgSrc = "/cm/images/bms/tag_normal.png";
 					if(dvc_cond == "DC021")
-						imgSrc = "/cm/images/bms/red_circle.png";
+						imgSrc = "/cm/images/bms/tag_abnormal.png";
 					break;				
 			}
 			
@@ -700,25 +720,24 @@
 			<xf:group class="pgm_header" id="pgm_header" style="">
 				<xf:group class="gr_search" id="" style="">
 					<xf:group class="label" id="" style="">
-						<w2:span class="" id="" label="대표 노선"></w2:span>
+						<w2:span class="" id="" label="차량 종류"></w2:span>
 					</xf:group>
 					<xf:group class="search" id="" style="">
-						<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
-							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE1_onviewchange" id="TYPE1"
-							optionOrder="false" ref="data:dma_search.CONTENT1" class="search_type_100" style="" submenuSize="auto" textAlign="left"
-							chooseOptionLabel="-선택-">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false" 
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE1_onviewchange" id="TYPE1" optionOrder="false"
+							ref="data:dma_search.CONTENT1" class="search_type_100" style="width: 200px;" submenuSize="auto" textAlign="center" chooseOptionLabel="-전체-">
 							<xf:choices>
-								<xf:itemset nodeset="data:dlt_repRoutItem">
-									<xf:label ref="REP_ROUT_NM"></xf:label>
-									<xf:value ref="REP_ROUT_ID"></xf:value>
+								<xf:itemset nodeset="data:dlt_searchitem2">
+									<xf:label ref="VHC_KIND"></xf:label>
+									<xf:value ref="VHC_KIND"></xf:value>
 								</xf:itemset>
 							</xf:choices>
 						</xf:select1>
 						<xf:group class="label" id="" style="">
-						<w2:span class="" id="" label="노선"></w2:span>
+						<!-- <w2:span class="" id="" label="노선"></w2:span> -->
 					</xf:group>
 					<xf:group class="search" id="" style="">
-						<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
+						<!-- <xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE2_onviewchange" id="TYPE2"
 							optionOrder="false" ref="data:dma_search.CONTENT2" class="search_type_100" style="" submenuSize="auto" textAlign="left"
 							chooseOptionLabel="-선택-">
@@ -728,7 +747,7 @@
 									<xf:value ref="ROUT_ID"></xf:value>
 								</xf:itemset>
 							</xf:choices>
-						</xf:select1>
+						</xf:select1> -->
 					</xf:group>
 					<xf:group class="label" id="" style="">
 						<w2:span class="" id="" label="검색"></w2:span>
@@ -754,29 +773,29 @@
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column7"
-										value="대표노선명" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column7"
+										value="차량ID" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column6"
-										value="노선명" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column5"
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column6"
 										value="차량번호" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column5"
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column8"
+										value="차량종류" blockSelect="false" displayMode="label">
+									</w2:column>								
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column5"
 										value="운행상태" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
 							</w2:header>
 							<w2:gBody style="" id="gBody1">
 								<w2:row style="" id="row2">
-									<w2:column removeBorderStyle="false" width="132" inputType="text" style="height:20px" id="REP_ROUT_NM"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="138" inputType="text" style="height:20px" id="ROUT_NM"
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="VHC_ID"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="VHC_NO"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="VHC_KIND"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="OPER_STS"
