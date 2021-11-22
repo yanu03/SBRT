@@ -188,8 +188,8 @@
 		com.executeSubmission(sub_MO0203SCK);
 	}
 	
-	//15초 간격으로 MO0203SCK 실행
-	//setInterval(scwin.MO0203SCK, 15000);
+	//5초 간격으로 MO0203SCK 실행
+	setInterval(scwin.MO0203SCK, 5000);
 	
 	//정류장별 차량 도착 정보 테이블 생성
 	MO0203T0_setTable = function(dataList){
@@ -203,8 +203,9 @@
 		tableStr = '<table id="mf_tac_layout_contents_MN00090201_body_MO0203T0" style="" class="w2group w2tb bit_tb">'
 					+'<caption id="mf_tac_layout_contents_MN00090201_body_wq_uuid_505" class="w2group "></caption>'
 					+'<colgroup id="mf_tac_layout_contents_MN00090201_body_wq_uuid_506" class="w2group ">'
-					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_507" style="width:70.00%;" class="w2group ">'
-					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_508" style="width:30.00%" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_507" style="width:50.00%;" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_508" style="width:25.00%" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_508" style="width:25.00%" class="w2group ">'
 					+'</colgroup>'
 					+'<tbody>';
 		
@@ -222,6 +223,7 @@
 					dlt_BMS_ETA_INFO.insertRow();
 					dlt_BMS_ETA_INFO.setCellData(i, "ROUT_NM", dataList[i].ROUT_NM);
 					dlt_BMS_ETA_INFO.setCellData(i, "REMAIN_TM", dataList[i].REMAIN_TM);
+					dlt_BMS_ETA_INFO.setCellData(i, "REMAIN_STTN", dataList[i].REMAIN_STTN  + '전');
 				}else if(dataList[i].REMAIN_TM == '0분'){
 					dlt_BMS_SOONETA_INFO.insertRow();
 					dlt_BMS_SOONETA_INFO.setCellData(i, "ROUT_NM", dataList[i].ROUT_NM);
@@ -236,6 +238,11 @@
 					+dlt_BMS_ETA_INFO.getCellData(0, "ROUT_NM")
 					+'</span>'
 					+'</td>'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px; color: yellow;" class="w2span ">'
+					+dlt_BMS_ETA_INFO.getCellData(0, "REMAIN_STTN")
+					+'</span>'
+					+'</td>'
 					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black;  text-align: right;" class="w2group w2tb_td w2tb_noTH">'
 					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
 					+dlt_BMS_ETA_INFO.getCellData(0, "REMAIN_TM")
@@ -249,6 +256,11 @@
 
 					+'</span>'
 					+'</td>'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_513" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_516" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
+
+					+'</span>'
+					+'</td>'
 					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black; border-bottom-color:yellow; text-align: right;" class="w2group w2tb_td w2tb_noTH">'
 					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
 
@@ -257,7 +269,7 @@
 					+'</tr>'
 			
 				tableBody +='<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
-							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow;" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="2" rowspan="1">'
+							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow;" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="3" rowspan="1">'
 							+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
 							+"곧도착 : " + dlt_BMS_SOONETA_INFO.getCellData(0, "ROUT_NM");
 							+'</span>'
@@ -272,6 +284,11 @@
 					+dlt_BMS_ETA_INFO.getCellData(0, "ROUT_NM")
 					+'</span>'
 					+'</td>'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px; color: yellow;" class="w2span ">'
+					+dlt_BMS_ETA_INFO.getCellData(0, "REMAIN_STTN") + '전'
+					+'</span>'
+					+'</td>'
 					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black;  text-align: right;" class="w2group w2tb_td w2tb_noTH">'
 					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
 					+dlt_BMS_ETA_INFO.getCellData(0, "REMAIN_TM")
@@ -283,6 +300,11 @@
 					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_513" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
 					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_516" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
 					+dlt_BMS_ETA_INFO.getCellData(1, "ROUT_NM")
+					+'</span>'
+					+'</td>'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_513" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_516" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
+					+dlt_BMS_ETA_INFO.getCellData(1, "REMAIN_STTN") + '전'
 					+'</span>'
 					+'</td>'
 					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black; border-bottom-color:yellow; text-align: right;" class="w2group w2tb_td w2tb_noTH">'
@@ -305,17 +327,22 @@
 				for(var i = 0; i < dataList.length; i++){
 					if(dataList[i].REMAIN_TM != '0분'){
 						tableBody += '<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
-								+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
-								+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
-								+dataList[i].ROUT_NM
-								+'</span>'
-								+'</td>'
-								+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black; border-bottom-color:yellow; text-align: right;" class="w2group w2tb_td w2tb_noTH">'
-								+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
-								+dataList[i].REMAIN_TM
-								+'</span>'
-								+'</td>'
-								+'</tr>'
+									+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
+									+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
+									+dlt_BMS_ETA_INFO.getCellData(0, "ROUT_NM")
+									+'</span>'
+									+'</td>'
+									+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
+									+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px; color: yellow;" class="w2span ">'
+									+dlt_BMS_ETA_INFO.getCellData(0, "REMAIN_STTN") + '전'
+									+'</span>'
+									+'</td>'
+									+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black;  text-align: right;" class="w2group w2tb_td w2tb_noTH">'
+									+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
+									+dlt_BMS_ETA_INFO.getCellData(0, "REMAIN_TM")
+									+'</span>'
+									+'</td>'
+									+'</tr>'
 					}else if(dataList[i].REMAIN_TM == '0분'){
 						dlt_BMS_SOONETA_INFO.insertRow();
 						dlt_BMS_SOONETA_INFO.setCellData(i, "ROUT_NM", dataList[i].ROUT_NM);
@@ -335,11 +362,15 @@
 		//데이터가 없다면 빈 테이블 그리기
 		else if(dataList.length == 0){
 			tableBody += '<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
-					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black;" class="w2group w2tb_td w2tb_noTH">'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
 					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
 					+'</span>'
 					+'</td>'
-					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black;text-align: right;" class="w2group w2tb_td w2tb_noTH">'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px; color: yellow;" class="w2span ">'
+					+'</span>'
+					+'</td>'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black;  text-align: right;" class="w2group w2tb_td w2tb_noTH">'
 					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
 					+'</span>'
 					+'</td>'
@@ -350,14 +381,15 @@
 					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
 					+'</span>'
 					+'</td>'
+					
 					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black; border-bottom-color:yellow; text-align: right;" class="w2group w2tb_td w2tb_noTH">'
 					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
 					+'</span>'
 					+'</td>'
 					+'</tr>'
 					
-					+'<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
-					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="2" rowspan="1">'
+			tableBody +='<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow;" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="3" rowspan="1">'
 					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
 					+"곧도착 : "
 					+'</span>'
@@ -380,8 +412,9 @@
 		tableStr = '<table id="mf_tac_layout_contents_MN00090201_body_MO0203T0" style="" class="w2group w2tb bit_tb">'
 					+'<caption id="mf_tac_layout_contents_MN00090201_body_wq_uuid_505" class="w2group "></caption>'
 					+'<colgroup id="mf_tac_layout_contents_MN00090201_body_wq_uuid_506" class="w2group ">'
-					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_507" style="width:70.00%;" class="w2group ">'
-					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_508" style="width:30.00%" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_507" style="width:50.00%;" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_508" style="width:25.00%" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00090201_body_wq_uuid_508" style="width:25.00%" class="w2group ">'
 					+'</colgroup>'
 					+'<tbody>';
 					
@@ -458,9 +491,7 @@
 		
 		//attrId = 2022 : 정류장별 차량 도착 정보
 		if(attrId == 2022 && nodeId == jsonObj.STTN_ID){
-			MO0203T0_setTable(dataList, jsonObj.STTN_ID);
-		}else if(attrId == '' || attrId == null){
-			MO0203T0_setEmptyTable();
+			MO0203T0_setTable(dataList);
 		}
 		//attrId = 4014 : 실시간 차량 위치 정보
 		else if(attrId == 4014){
@@ -475,7 +506,7 @@
 	
 	scwin.MO0203G0_onrowindexchange = function(row,oldRow) {
 		debugger;
-		MO0203T0_setEmptyTable();
+		//MO0203T0_setEmptyTable();
 		dlt_BMS_SOONETA_INFO.removeAll();
 		dma_sub_search.set("NODE_ID", dlt_BMS_NODE_MST.getCellData(row, "NODE_ID"));
 		

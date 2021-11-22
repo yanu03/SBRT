@@ -78,7 +78,7 @@ public class AL0203Service extends ServiceSupport {
 		int uCnt = 0;
 		int dCnt = 0;		
 		
-		List<Map<String, Object>> param = getSimpleList("dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO");
+		List<Map<String, Object>> param = getSimpleList("dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO");
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
