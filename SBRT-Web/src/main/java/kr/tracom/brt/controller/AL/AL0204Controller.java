@@ -28,8 +28,8 @@ public class AL0204Controller extends ControllerSupport{
 	
 	@RequestMapping("/al/AL0204G1R0")
 	public @ResponseBody Map<String, Object> AL0204G1R0() throws Exception {
-		result.setData("dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO", al0204Service.AL0204G1R0());
-		result.setData("dlt_BRT_WEEK_OPER_ALLOC_PL_NODE_INFO_CNT", al0204Service.AL0204G1CNT());
+		result.setData("dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO", al0204Service.AL0204G1R0());
+		result.setData("dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO_CNT", al0204Service.AL0204G1CNT());
 		return result.getResult();
 	}
 	
