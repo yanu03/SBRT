@@ -884,6 +884,7 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx, busGrid) {
 
 /**클릭 오버레이가 다른 showBusMarker **/
 routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid) {
+	
 	// 마커 이미지의 이미지 크기 입니다
 	var imageSize = new kakao.maps.Size(35, 35); 
 	var markerImage = null;
@@ -1085,7 +1086,6 @@ routMap.showBubbleOverlay = function(mapId, data, marker, idx, focusIdx) {
 		position: marker.getPosition(),
 		zIndex : zIndex
 	});
-
 	if (typeof data.VHC_ID == "undefined" && data.NODE_TYPE =="NT002") {
 		overlay.setMap(routMap.mapInfo[mapId].map);
 	}
@@ -1405,16 +1405,20 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 	
 	if(routMap.mapInfo[mapId].dsptchOverArr.length != 0 && routMap.mapInfo[mapId].eventOverArr.length == 0) {
 		setTimeout(function() {
-			routMap.mapInfo[mapId].dsptchOverArr[0].setMap(null);
-			routMap.mapInfo[mapId].dsptchOverArr[0] = null;
+			if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
+				routMap.mapInfo[mapId].dsptchOverArr[0].setMap(null);
+				routMap.mapInfo[mapId].dsptchOverArr[0] = null;
+			}
 		},5000);
 	} 
 	else if(routMap.mapInfo[mapId].dsptchOverArr.length != 0 && routMap.mapInfo[mapId].eventOverArr.length != 0) {
 		$(".busInfoPopup").hide();
 		setTimeout(function() {
 			$(".busInfoPopup").show();
-			routMap.mapInfo[mapId].dsptchOverArr[0].setMap(null);
-			routMap.mapInfo[mapId].dsptchOverArr[0] = null;
+			if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
+				routMap.mapInfo[mapId].dsptchOverArr[0].setMap(null);
+				routMap.mapInfo[mapId].dsptchOverArr[0] = null;
+			}			
 		},2000);		
 	}
 	
@@ -1505,14 +1509,16 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 				$(".dsptchMessagePopup").hide();
 			}
 			
-			if(routMap.mapInfo[mapId].divEvent == "ET001"){
+		/*	if(routMap.mapInfo[mapId].divEvent == "ET001"){
 				$("#event_type").text(data.EVT_TYPE);
-			}
+			}*/
 			
 			setTimeout(function() {
 				clearInterval(addStopTime);
-				routMap.mapInfo[mapId].eventOverArr[0].setMap(null);
-				routMap.mapInfo[mapId].eventOverArr[0] = null;		
+				if (routMap.mapInfo[mapId].eventOverArr[0] != null) {
+					routMap.mapInfo[mapId].eventOverArr[0].setMap(null);
+					routMap.mapInfo[mapId].eventOverArr[0] = null;		
+				}
 			},1500);
 			
 		}		
@@ -2199,7 +2205,6 @@ routMap.showMarker2 = function(mapId, data, idx) {
 
 	var overlay = null;
 	var msg = "";
-	
 	if(data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP){
 		 msg = "<div class = 'customoverlay busstop'>";
 		 
@@ -2594,7 +2599,7 @@ routMap.removeAllOverlay = function(mapId){
 }
 
 routMap.removeAllBusOverlay = function(mapId){
-	if(routMap.mapInfo[mapId].busOverArr != null){
+	if(routMap.mapInfo[mapId].busOverArr.length != 0){
 		for(var i=0; i<routMap.mapInfo[mapId].busOverArr.length; i++){
 			routMap.mapInfo[mapId].busOverArr[i].setMap(null);
 			routMap.mapInfo[mapId].busOverArr[i] = null;
@@ -2602,7 +2607,7 @@ routMap.removeAllBusOverlay = function(mapId){
 		routMap.mapInfo[mapId].busOverArr = [];
 	}
 	
-	if(routMap.mapInfo[mapId].busClickOverArr != null){
+	if(routMap.mapInfo[mapId].busClickOverArr.length != 0){
 		for(var i=0; i<routMap.mapInfo[mapId].busClickOverArr.length; i++){
 			routMap.mapInfo[mapId].busClickOverArr[i].setMap(null);
 			routMap.mapInfo[mapId].busClickOverArr[i] = null;
@@ -2610,10 +2615,12 @@ routMap.removeAllBusOverlay = function(mapId){
 		routMap.mapInfo[mapId].busClickOverArr = [];
 	}
 	
-	if(routMap.mapInfo[mapId].dsptchOverArr != null){
+	if(routMap.mapInfo[mapId].dsptchOverArr.length != 0){
 		for(var i=0; i<routMap.mapInfo[mapId].dsptchOverArr.length; i++){
-			routMap.mapInfo[mapId].dsptchOverArr[i].setMap(null);
-			routMap.mapInfo[mapId].dsptchOverArr[i] = null;
+			if(routMap.mapInfo[mapId].dsptchOverArr[i] != null) {
+				routMap.mapInfo[mapId].dsptchOverArr[i].setMap(null);
+				routMap.mapInfo[mapId].dsptchOverArr[i] = null;
+			}
 		}
 		routMap.mapInfo[mapId].dsptchOverArr = [];
 	}
@@ -3327,6 +3334,7 @@ routMap.drawRoute = function(mapId, grid, focusIdx) {
 	routMap.initDisplay(mapId);
 	
 	if(list != null && list.length != 0) {
+		var oldMornStd = "";
 		for(var i = 0; i < list.length; i++) {
 			
 			/**드래그이벤트**/
@@ -3361,14 +3369,18 @@ routMap.drawRoute = function(mapId, grid, focusIdx) {
 				routMap.addMarkerInter(mapId, list[i], grid, i, focusIdx);
 			}
 			
-			
-			
 			if(i < list.length -1){
+				var mornStd = list[i].MORN_STD;
+				if(com.isEmpty(mornStd)){
+					mornStd = oldMornStd;
+				}
+				oldMornStd = list[i].MORN_STD;
+				
 				var color = "#3396ff";
-				if(list[i].MORN_STD=='MS002'){
+				if(mornStd=='MS002'){
 					color = "#cd6c15";
 				}
-				else if(list[i].MORN_STD=='MS003'){
+				else if(mornStd=='MS003'){
 					color = "#FF005E";
 				}
 
@@ -3406,6 +3418,7 @@ routMap.drawRoute2 = function(mapId, list, focusIdx) {
 	routMap.initDisplay(mapId);
 	
 	if(list != null && list.length != 0) {
+		var oldMornStd = "";
 		for(var i = 0; i < list.length; i++) {
 			
 			/**드래그이벤트**/
@@ -3440,11 +3453,17 @@ routMap.drawRoute2 = function(mapId, list, focusIdx) {
 			}
 			
 			if(i < list.length -1){
+				var mornStd = list[i].MORN_STD;
+				if(com.isEmpty(mornStd)){
+					mornStd = oldMornStd;
+				}
+				oldMornStd = list[i].MORN_STD;
+				
 				var color = "#3396ff";
-				if(list[i].MORN_STD=='MS002'){
+				if(mornStd=='MS002'){
 					color = "#cd6c15";
 				}
-				else if(list[i].MORN_STD=='MS003'){
+				else if(mornStd=='MS003'){
 					color = "#FF005E";
 				}
 				
@@ -3484,6 +3503,7 @@ routMap.drawSound = function(mapId, grid, focusIdx) {
 	routMap.initDisplay(mapId);
 	
 	if(list != null && list.length != 0) {
+		var oldMornStd = "";
 		for(var i = 0; i < list.length; i++) {
 			
 			/**드래그이벤트**/
@@ -3523,11 +3543,17 @@ routMap.drawSound = function(mapId, grid, focusIdx) {
 			}
 
 			if(i < list.length -1){
+				var mornStd = list[i].MORN_STD;
+				if(com.isEmpty(mornStd)){
+					mornStd = oldMornStd;
+				}
+				oldMornStd = list[i].MORN_STD;
+				
 				var color = "#3396ff";
-				if(list[i].MORN_STD=='MS002'){
+				if(mornStd=='MS002'){
 					color = "#cd6c15";
 				}
-				else if(list[i].MORN_STD=='MS003'){
+				else if(mornStd=='MS003'){
 					color = "#FF005E";
 				}
 
@@ -3553,6 +3579,7 @@ routMap.showRoute = function(mapId, list, id, type) {
 	var focusIdx = -1;
 	routMap.initDisplay(mapId);
 	if(list != null && list.length != 0) {
+		var oldMornStd = "";
 		for(var i = 0; i < list.length; i++) {
 			list[i].index = i;
 			
@@ -3579,13 +3606,20 @@ routMap.showRoute = function(mapId, list, id, type) {
 			}
 			
 			if(i < list.length -1){
+				var mornStd = list[i].MORN_STD;
+				if(com.isEmpty(mornStd)){
+					mornStd = oldMornStd;
+				}
+				oldMornStd = list[i].MORN_STD;
+				
 				var color = "#3396ff";
-				if(list[i].MORN_STD=='MS002'){
+				if(mornStd=='MS002'){
 					color = "#cd6c15";
 				}
-				else if(list[i].MORN_STD=='MS003'){
+				else if(mornStd=='MS003'){
 					color = "#FF005E";
 				}
+				
 				if(list[i].ROUT_ID == list[i+1].ROUT_ID) //동일 노선끼리만 선 연결 되도록 함
 					routMap.drawLine(mapId, list[i], list[i+1], color);
 			}
@@ -3606,6 +3640,7 @@ routMap.showRoute = function(mapId, list, id, type) {
 routMap.showRoute2 = function(mapId, list, focusIdx, grid) {
 	routMap.initDisplay(mapId);
 	if(list != null && list.length != 0) {
+		var oldMornStd = "";
 		for(var i = 0; i < list.length; i++) {
 			list[i].index = i;
 			
@@ -3620,13 +3655,20 @@ routMap.showRoute2 = function(mapId, list, focusIdx, grid) {
 				routMap.showOnlyMarker(mapId, list[i], i, focusIdx, grid);
 			
 			if(i < list.length -1){
+				var mornStd = list[i].MORN_STD;
+				if(com.isEmpty(mornStd)){
+					mornStd = oldMornStd;
+				}
+				oldMornStd = list[i].MORN_STD;
+				
 				var color = "#3396ff";
-				if(list[i].MORN_STD=='MS002'){
+				if(mornStd=='MS002'){
 					color = "#cd6c15";
 				}
-				else if(list[i].MORN_STD=='MS003'){
+				else if(mornStd=='MS003'){
 					color = "#FF005E";
 				}
+				
 				if(list[i].ROUT_ID == list[i+1].ROUT_ID) //동일 노선끼리만 선 연결 되도록 함
 					routMap.drawLine(mapId, list[i], list[i+1], color);
 			}
@@ -3848,10 +3890,8 @@ routMap.showVehicle3 = function(mapId, json, grid) {
 routMap.showVehicleClickOverlay = function(mapId, list, vhc_id, grid) {
 	var focusIdx = -1;
 	
-
 	routMap.initBus(mapId);
 
-	
 	if(list != null && list.length != 0) {
 		for(var i = 0; i < list.length; i++) {
 			list[i].index = i;

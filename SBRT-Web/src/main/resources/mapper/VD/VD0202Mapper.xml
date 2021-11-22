@@ -3,7 +3,7 @@
 <mapper namespace="kr.tracom.bms.domain.VD0202.VD0202Mapper">
 
 	<select id="VD0202G0R0" resultType="Map" parameterType="Map">
-		SELECT 			 A.OPER_DT 
+		<!-- SELECT 			 A.OPER_DT 
 				  		, A.REP_ROUT_ID
 						, A.VHC_ID
 						, A.ROUT_ID
@@ -16,23 +16,42 @@
 						, C.VHC_KIND
 		
 		FROM  			BRT_CUR_OPER_INFO A
-		LEFT JOIN   	BMS_ROUT_MST	B
+		LEFT JOIN   	BMS_ROUT_MST B
 		ON				A.ROUT_ID = B.ROUT_ID
 		LEFT JOIN		BMS_VHC_MST C
 		ON				A.VHC_ID = C.VHC_ID
 		
 		WHERE			A.OPER_DT = DATE_FORMAT(NOW(), '%Y/%m/%d')
-		AND				B.DEL_YN != 'Y'
-			<if test="CONTENT1 != null">
-				AND A.REP_ROUT_ID = #{CONTENT1}
-			</if>
-			<if test="CONTENT2 != ''">
-				AND A.ROUT_ID = #{CONTENT2}
+		AND				B.DEL_YN != 'Y' -->
+		SELECT 			DATE_FORMAT( A.OPER_DT, '%Y-%m-%d') AS OPER_DT
+				  		, A.REP_ROUT_ID
+						, C.VHC_ID
+						, A.ROUT_ID
+						, C.VHC_NO
+						, A.GPS_X
+						, A.GPS_Y
+						, IFNULL(A.OPER_STS, "OS005") AS OPER_STS
+						, B.REP_ROUT_NM
+						, B.ROUT_NM
+						, C.VHC_KIND
+						, B.DEL_YN
+		
+		FROM	  		BMS_VHC_MST C	
+		LEFT JOIN  		BRT_CUR_OPER_INFO A
+		ON				C.VHC_ID = A.VHC_ID
+		LEFT JOIN   	BMS_ROUT_MST B
+		ON				A.ROUT_ID = B.ROUT_ID
+		
+		<where>
+			<if test="CONTENT1 != ''">
+				AND C.VHC_KIND = #{CONTENT1}
 			</if>
 			<if test="CONTENT3 != null and CONTENT3 != ''">
-				AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
+				AND	C.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
 			</if>
-		ORDER BY		A.REP_ROUT_ID, A.ROUT_ID
+		</where>	
+		<!-- ORDER BY		A.REP_ROUT_ID, A.ROUT_ID -->
+		ORDER BY		C.VHC_ID
 	</select>
 	
 	<select id="VD0202G1R0" resultType="Map" parameterType="Map">
@@ -67,13 +86,16 @@
 	</select>
 	
 	<select id="VD0202SHI1" resultType="Map">
-		SELECT			ROUT_ID, ROUT_NM
+<!-- 		SELECT			ROUT_ID, ROUT_NM
 		FROM			BMS_ROUT_MST	
 		<where>
 			<if test="CONTENT1 != null and CONTENT1 != ''">
 				REP_ROUT_ID = #{CONTENT1}	
 			</if>
-		</where>
+		</where> -->
+		
+		SELECT			VHC_KIND
+		FROM			BMS_VHC_MST
 
 	</select>		
 	

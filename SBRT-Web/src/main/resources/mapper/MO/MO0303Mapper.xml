@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.brt.domain.MO0303.MO0303Mapper">
+
+<select id="MO0303G0R0" resultType="Map">
+	SELECT			DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') AS OPER_DT
+				,	A.REP_ROUT_ID
+				,	A.VHC_ID
+				,	A.INCDNT_TYPE
+				,	A.ROUT_ID
+				,	A.ALLOC_NO
+				,	A.INCDNT_DETAIL
+				,	A.OPER_SN
+				,	A.COR_ID
+				,	DATE_FORMAT(A.OCR_DTM, '%Y-%m-%d') AS OCR_DTM
+				,	A.VHC_NO
+				,	A.DRV_ID
+				,	A.REP_ROUT_NM
+				,	A.ROUT_NM
+				,	A.LINK_ID
+				,	A.NODE_ID
+				,	A.GPS_X
+				,	A.GPS_Y
+				,	A.TM_X
+				,	A.TM_Y
+				,	A.REMARK
+				,	A.UPD_DTM
+				,	B.ROUT_NM
+				,	C.REP_ROUT_NM
+				,	D.COR_NM
+				,	E.DRV_NM
+				
+	FROM			BRT_INCDNT_INFO A
+	LEFT JOIN		BMS_ROUT_MST B
+		ON			A.ROUT_ID = B.ROUT_ID
+	LEFT JOIN	  	BMS_REP_ROUT_MST C
+		ON			A.REP_ROUT_ID = C.REP_ROUT_ID
+	LEFT JOIN		BRT_COR_MST D
+		ON			A.COR_ID = D.COR_ID	
+	LEFT JOIN		BMS_DRV_MST E
+		ON			A.DRV_ID = E.DRV_ID					
+					
+	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND B.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || C.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'ORGA_ID'">
+			AND B.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'ORGA_NM'">
+			AND C.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+</select>
+	
+<select id="MO0303G0K0" resultType="Map">
+	SELECT CONCAT('OA', LPAD(NEXTVAL(SEQ_BMS_BIT_VDO_ORGA_INFO_0), 8, '0')) AS 'SEQ'
+</select>
+
+<select id="MO0303SHI0" resultType="Map">
+	select ORGA_ID, ORGA_NM
+	from BMS_BIT_VDO_ORGA_INFO
+	order by ORGA_NM
+</select>
+
+<insert id="MO0303G0I0" parameterType="Map">
+	insert into BMS_BIT_VDO_ORGA_INFO
+			(
+				ORGA_ID,
+				ORGA_NM,
+				REMARK,
+				UPD_DTM,
+				UPD_ID
+			)
+	values 
+			(
+				#{ORGA_ID},
+				#{ORGA_NM},
+				#{REMARK},
+				#{UPD_DTM},
+				#{SSN_USER_ID}				
+			)
+</insert>
+
+<update id="MO0303G0U0" parameterType="Map">
+	update BMS_BIT_VDO_ORGA_INFO
+	set 	ORGA_NM = #{ORGA_NM},
+			REMARK = #{REMARK},
+			UPD_DTM = #{UPD_DTM},
+			UPD_ID = #{SSN_USER_ID}
+	where	ORGA_ID = #{ORGA_ID}		
+</update>
+
+<delete id="MO0303G0D0" parameterType="Map">
+	delete
+	from BMS_BIT_VDO_ORGA_INFO
+	where ORGA_ID = #{ORGA_ID};
+	
+	DELETE FROM BMS_BIT_VDO_ORGA_LIST 
+	WHERE ORGA_ID = #{ORGA_ID}
+</delete>
+
+<select id="MO0303G1R0" resultType="Map">
+	SELECT 		 	A.VHC_ID
+				,	A.COMP_ID
+				,	A.AREA
+				,	A.VHC_NO
+				,	A.CHAS_NO
+				,	A.MAKER
+				,	A.RELS_DT
+				,	A.MODEL_NM
+				,	A.VHC_KIND
+				,	A.ROUT_TYPE
+				,	A.VHC_TYPE
+				,	A.VHC_FUEL
+				,	A.VHC_STS
+				,	A.PSG_CNT
+				,	A.SPARE_YN
+				,	A.SCRAP_YN
+				,	A.APPL_ST_DT
+				,	A.APPL_ED_DT
+				,	A.USE_YN
+				,	A.REMARK
+				,	A.UPD_DTM
+				,	A.UPD_ID
+				,	B.COMP_NM
+				
+	FROM	  		BMS_VHC_MST A
+	LEFT JOIN	  	BMS_TRANSCOMP_MST B
+		ON			A.COMP_ID = B.COMP_ID		
+	WHERE			USE_YN = 'Y'			
+</select>
+
+<select id="MO0303G2R0" resultType="Map">
+	select a.ORGA_ID,
+		  	a.VDO_ID,
+		  	a.SN,
+		  	a.SN AS OLD_SN,
+		  	b.VDO_NM,
+		  	b.FILE_TYPE,
+		  	b.PLAY_TM,
+		  	DATE_FORMAT(PLAY_ST_DT, '%Y%m%d') PLAY_ST_DT,
+		  	DATE_FORMAT(PLAY_ED_DT, '%Y%m%d') PLAY_ED_DT
+	
+	from BMS_BIT_VDO_ORGA_LIST a  INNER JOIN BMS_BIT_VDO_INFO b ON a.VDO_ID = b.VDO_ID
+	where a.ORGA_ID = #{ORGA_ID}
+	order by a.SN
+</select>
+
+<insert id="MO0303G2I0" parameterType="Map">
+	insert into BMS_BIT_VDO_ORGA_LIST
+			(
+				ORGA_ID,
+				VDO_ID,
+				SN
+			)	
+	values 
+			(
+				#{ORGA_ID},
+				#{VDO_ID},
+				#{SN}
+			)
+</insert>
+
+<update id="MO0303G2U0" parameterType="Map"> 
+	update BMS_BIT_VDO_ORGA_LIST
+	set SN = #{SN}
+	where ORGA_ID = #{ORGA_ID}
+	and	VDO_ID = #{VDO_ID}
+	and SN = #{OLD_SN}
+</update>
+
+<delete id="MO0303G2D0" parameterType="Map">
+	DELETE FROM BMS_BIT_VDO_ORGA_LIST 
+	WHERE ORGA_ID = #{ORGA_ID}
+	AND VDO_ID = #{VDO_ID}
+	AND SN = #{OLD_SN}
+</delete>
+
+
+</mapper>
