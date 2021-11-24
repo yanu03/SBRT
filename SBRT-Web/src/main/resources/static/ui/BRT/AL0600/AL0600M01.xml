@@ -319,10 +319,10 @@
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_sub_search">
 					<w2:keyInfo>
-
 						<w2:key id="DAY_DIV" name="요일구분" dataType="text"></w2:key>
 						<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
 						<w2:key id="NODE_TYPE" name="노드유형" dataType="text"></w2:key>
+						<w2:key id="OPER_DT" name="운행일" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_OPER_ALLOC_PL_NODE_CNT" saveRemovedData="true">
@@ -332,27 +332,18 @@
 				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_AL0203G0R0" ref="data:json,dma_search" target='data:json,dlt_BMS_ROUT_MST' action="/al/AL0203G0R0"
+			<xf:submission id="sub_AL0600G0R0" ref="data:json,dma_search" target='data:json,dlt_BMS_ROUT_MST' action="/al/AL0600G0R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0203G0R0_submitdone" ev:submiterror="" abortTrigger="">
+				processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0600G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_AL0203G0S0" ref='data:json,{"action":"modified","id":"dlt_BRT_COR_MST"}' target="data:json,dma_result"
-				action="/al/AL0203G0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0203G0S0_submitdone" ev:submiterror=""
-				abortTrigger="">
-			</xf:submission>
-			<xf:submission id="sub_AL0203SHI0" ref="" target="data:json,dlt_searchitem" action="/al/AL0203SHI0" method="post"
+			<xf:submission id="sub_AL0600SHI0" ref="" target="data:json,dlt_searchitem" action="/al/AL0600SHI0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_AL0203G1R0" ref="data:json,dma_sub_search"
-				target='data:json,["dlt_BRT_OPER_ALLOC_PL_NODE_INFO","dlt_BRT_OPER_ALLOC_PL_NODE_CNT"]' action="/al/AL0203G1R0" method="post"
+			<xf:submission id="sub_AL0600G1R0" ref="data:json,dma_sub_search"
+				target='data:json,["dlt_BRT_OPER_ALLOC_PL_NODE_INFO","dlt_BRT_OPER_ALLOC_PL_NODE_CNT"]' action="/al/AL0600G1R0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0203G1R0_submitdone" ev:submiterror="" abortTrigger="">
-			</xf:submission>
-			<xf:submission id="sub_AL0203G1S0" ref="data:json,dlt_BRT_COR_DTL_INFO" target="data:json,dma_result" action="/al/AL0203G1S0"
-				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0203G1S0_submitdone" ev:submiterror="" abortTrigger="">
+				processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0600G1R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_MAIN_ROUT_NODE_CPMSTN" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_MAIN_ROUT_NODE_INFO"
 				action="/rout/selectMainNodeListByRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
@@ -370,9 +361,9 @@
 
 	scwin.onpageload = function() {
 		autoOptions = {
-			Main : { grid : AL0203G0, srchSbm : sub_AL0203G0R0, savSbm : sub_AL0203G0S0, 
+			Main : { grid : AL0600G0, srchSbm : sub_AL0600G0R0,
 					 srchGrp : pgm_header , keyColumn : "DAY_DIV,ROUT_ID", focusColumn : "ROUT_ID", name : "운행계획 목록"},
-			Sub1 : { grid : AL0203G1, srchSbm : sub_AL0203G1R0, keyColumn : "OPER_SN", savSbm : sub_AL0203G1S0, name : "운행계획 상세" }	
+			Sub1 : { grid : AL0600G1, srchSbm : sub_AL0600G1R0, keyColumn : "OPER_SN", name : "운행계획 상세" }	
 		 };
 		 
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions);
@@ -385,20 +376,33 @@
 		com.setSubBtn2(wfm_subBtn2, autoOptions, subOptions2);
 		
 		var codeOptions = [ 
-							{code : "WAY_DIV", compID : "AL0203G0:WAY_DIV" },
-							{code : "DAY_DIV", compID : "AL0203G0:DAY_DIV" },
-							{code : "ROUT_TYPE", compID : "AL0203G0:ROUT_TYPE" }
-													
+							{code : "WAY_DIV", compID : "AL0600G0:WAY_DIV" },
+							{code : "DAY_DIV", compID : "AL0600G0:DAY_DIV" },
+							{code : "ROUT_TYPE", compID : "AL0600G0:ROUT_TYPE" }
 						];		
 	
+		var date = new Date();
+		var year = date.getFullYear().toString();
+		var month = (date.getMonth()+1).toString();
+		var day = date.getDate().toString();
+		var zero = 0;
+		
+		if(day.length == 1){
+			day = zero + day;
+		}
+		
+		var today = year+month+day;
+		
+		DAYSEARCH.setValue(today);
+		dma_sub_search.set("OPER_DT", today);
+	
 		com.setCommonDtl(codeOptions, function() {
-			com.searchGrid(AL0203G0, sub_AL0203G0R0);
+			com.searchGrid(AL0600G0, sub_AL0600G0R0);
 		});	
 		
+		AL0600G0.mergeCells("byrestriccol");
 		
-		AL0203G0.mergeCells("byrestriccol");
-		
-		com.executeSubmission(sub_AL0203SHI0);
+		com.executeSubmission(sub_AL0600SHI0);
 		
 	};
 	
@@ -491,7 +495,7 @@
 		//gridView 정보 정의 
 		//xml 형식을 정의 하면 <w2:gridView 에 xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" 포함 합니다.
 		var gridStr = '<w2:gridView xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" dataList="dlt_VIEW_OPER_PL_NODE_INFO" '
-						+ 'scrollByColumn="true" id="AL0203G1" ev:onrowindexchange="scwin.AL0203G1_onrowindexchange" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" readOnly="true" mergeCol="OPER_SN, WAY_DIV" >'
+						+ 'scrollByColumn="true" id="AL0600G1" ev:onrowindexchange="scwin.AL0600G1_onrowindexchange" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" readOnly="true" mergeCol="OPER_SN, WAY_DIV" >'
 		+ '<w2:header id="header1" style="text-align:left">'
 		+ gridHeader
 		+'</w2:header>'
@@ -502,9 +506,9 @@
 		+'</w2:gBody>'
 		+'</w2:gridView>' ;
 		
-		AL0203G1.setGridStyle(WebSquare.xml.parse( gridStr , true ));
-		autoOptions.Sub1.grid = AL0203G1;
-		AL0203G1.setFixedColumn(1);
+		AL0600G1.setGridStyle(WebSquare.xml.parse( gridStr , true ));
+		autoOptions.Sub1.grid = AL0600G1;
+		AL0600G1.setFixedColumn(1);
 		
 
 		dlt_VIEW_OPER_PL_NODE_INFO.modifyAllStatus("R")
@@ -542,7 +546,7 @@
 		//gridView 정보 정의 
 		//xml 형식을 정의 하면 <w2:gridView 에 xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" 포함 합니다.
 		var gridStr = '<w2:gridView xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" dataList="dlt_VIEW_OPER_PL_NODE_INFO" '
-						+ 'scrollByColumn="true" id="AL0203G1" ev:onrowindexchange="scwin.AL0203G1_onrowindexchange" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" mergeCol="OPER_SN, WAY_DIV" >'
+						+ 'scrollByColumn="true" id="AL0600G1" ev:onrowindexchange="scwin.AL0600G1_onrowindexchange" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" mergeCol="OPER_SN, WAY_DIV" >'
 		+ '<w2:header id="header1" style="text-align:left">'
 		+ gridHeader
 		+'</w2:header>'
@@ -553,32 +557,30 @@
 		+'</w2:gBody>'
 		+'</w2:gridView>' ;
 		
-		AL0203G1.setGridStyle(WebSquare.xml.parse( gridStr , true ));
-		autoOptions.Sub1.grid = AL0203G1;
-		AL0203G1.setFixedColumn(1);
+		AL0600G1.setGridStyle(WebSquare.xml.parse( gridStr , true ));
+		autoOptions.Sub1.grid = AL0600G1;
+		AL0600G1.setFixedColumn(1);
 	};
 	
 	scwin.openPopUpChart = function(){
-		
-		
 		var jsonData = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
 		var transData = new Array();
 		var realData = new Array();
 		
 		for(var j=0; j<dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowCount(); j++){
-			if(jsonData[j].OPER_SN  == dlt_VIEW_OPER_PL_NODE_INFO.getCellData(AL0203G1.getFocusedRowIndex(), "OPER_SN")){
+			if(jsonData[j].OPER_SN  == dlt_VIEW_OPER_PL_NODE_INFO.getCellData(AL0600G1.getFocusedRowIndex(), "OPER_SN")){
 				transData.push(dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowJSON(j));
 				realData.push(dlt_BRT_OPER_ALLOC_RL_NODE_INFO.getRowJSON(j));
 			}
 		}
 	
-		var routId = dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "ROUT_ID");
-		var dayDiv = dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "DAY_DIV");
-		var routNm = dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "ROUT_NM");
-		var operSn = dlt_VIEW_OPER_PL_NODE_INFO.getCellData(AL0203G1.getFocusedRowIndex(), "OPER_SN");
+		var routId = dlt_BMS_ROUT_MST.getCellData(AL0600G0.getFocusedRowIndex(), "ROUT_ID");
+		var dayDiv = dlt_BMS_ROUT_MST.getCellData(AL0600G0.getFocusedRowIndex(), "DAY_DIV");
+		var routNm = dlt_BMS_ROUT_MST.getCellData(AL0600G0.getFocusedRowIndex(), "ROUT_NM");
+		var operSn = dlt_VIEW_OPER_PL_NODE_INFO.getCellData(AL0600G1.getFocusedRowIndex(), "OPER_SN");
 		
 		 var data = { data : routId, data2 : dayDiv, data3 : routNm, data4 : operSn, data5:transData, data6:realData, callbackFn : "" };
-         var options = { id : "AL0203P0",
+         var options = { id : "AL0600P0",
          				 width : "1600px",
          				 height : "900px",
                          popupName : "운행 결과 비교 시공도", 
@@ -587,16 +589,8 @@
 		com.openPopup("/cm/common/popUpCompareChart.xml", options, data);
 	};
 	
-	scwin.sub_AL0203G0R0_submitdone = function(e) {
-		com.setFocusedCell(AL0203G0, "REP_ROUT_NM");
-	};
-	
-	scwin.sub_AL0203G0S0_submitdone = function(e) {
-		
-		var sCode = com.getResultCode(e);
-		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
-			com.saveDone(AL0203G0,sub_AL0203G0R0);
-		}
+	scwin.sub_AL0600G0R0_submitdone = function(e) {
+		com.setFocusedCell(AL0600G0, "REP_ROUT_NM");
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
@@ -616,34 +610,36 @@
 		}
 	};
 	
-	scwin.AL0203G0_onrowindexchange = function(row,oldRow) {
+	scwin.AL0600G0_onrowindexchange = function(row,oldRow) {
 		var focusOption = {keyMap : dma_sub_search, keyMapColumn : "DAY_DIV,ROUT_ID"};
-		com.changeDualGrid(AL0203G0, AL0203G1, null, sub_AL0203G1R0, focusOption, row, oldRow, "운행계획 상세");
+		com.changeDualGrid(AL0600G0, AL0600G1, null, sub_AL0600G1R0, focusOption, row, oldRow, "운행계획 상세");
 		
 	};
 	
-	scwin.sub_AL0203G1R0_submitdone = function(e) {
-		dma_sub_search.set("DAY_DIV", dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "DAY_DIV"));
-		dma_sub_search.set("ROUT_ID", dlt_BMS_ROUT_MST.getCellData(AL0203G0.getFocusedRowIndex(), "ROUT_ID"));
+	scwin.sub_AL0600G1R0_submitdone = function(e) {
+		dma_sub_search.set("DAY_DIV", dlt_BMS_ROUT_MST.getCellData(AL0600G0.getFocusedRowIndex(), "DAY_DIV"));
+		dma_sub_search.set("ROUT_ID", dlt_BMS_ROUT_MST.getCellData(AL0600G0.getFocusedRowIndex(), "ROUT_ID"));
 		com.executeSubmission(sub_OPER_ALL_REAL_NODE);
-		com.setFocusedCell(AL0203G1, "OPER_SN");
+		com.setFocusedCell(AL0600G1, "OPER_SN");
 	};
 	
-	scwin.AL0203G1_onrowindexchange = function(row,oldRow) {
+	scwin.AL0600G1_onrowindexchange = function(row,oldRow) {
 		//scwin.fusionChart(row);
 	};
 	
-	scwin.sub_AL0203G1S0_submitdone = function(e) {
-		com.saveDone(AL0203G1, sub_AL0203G1R0);		
-	};
-	
-
 	scwin.sub_MAIN_ROUT_NODE_CPMSTN_submitdone = function(e) {
 		scwin.dispEmptyGridView();
 	};
 	
 	scwin.sub_OPER_ALL_REAL_NODE_submitdone = function(e) {
 		scwin.setGridViewInfo();
+	};
+	
+	scwin.DAYSEARCH_onviewchange = function(info) {
+		var newDate = info.newValue;
+		dma_sub_search.set("OPER_DT", newDate);
+		
+		com.executeSubmission(sub_AL0600G1R0);
 	};
 	]]></script>
 	</head>
@@ -690,11 +686,14 @@
 								</w2:itemset>
 							</w2:choices>
 						</w2:autoComplete>
-						<w2:span class="" id="" label="일별 검색" style="margin-left: 10px;"></w2:span>
-						<w2:inputCalendar footerDiv="false" id="" style="width: 120px;height: 23px;margin-left: 5px;margin-top: 1px;" renderDiv="true" focusOnDateSelect="false"
-							calendarValueType="yearMonthDate" rightAlign="false" renderType="component">
-						</w2:inputCalendar>
 					</xf:group>
+						<xf:group style="" id="" class="label">
+							<w2:span class="" id="" label="일별 검색" style="margin-left: 10px;"></w2:span>
+						</xf:group>
+						<w2:inputCalendar class="search_calendar" footerDiv="false" id="DAYSEARCH"
+							style="width: 120px;height: 23px;margin-left: 5px;margin-top: 1px;" renderDiv="true" focusOnDateSelect="false"
+							calendarValueType="yearMonthDate" rightAlign="false" renderType="component" ev:onviewchange="scwin.DAYSEARCH_onviewchange">
+						</w2:inputCalendar>
 					<w2:wframe class="" id="wfm_mainBtn" scope="true" src="/cm/common/wf_mainBtn.xml" style=""></w2:wframe>
 				</xf:group>
 			</xf:group>
@@ -707,8 +706,8 @@
 					<xf:group id="" class="" style="">
 						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid left"
 							dataList="data:dlt_BMS_ROUT_MST" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup="" ev:onkeyup=""
-							ev:onrowindexchange="scwin.AL0203G0_onrowindexchange" ev:ontextimageclick="" ev:onviewchange="" fixedColumnWithHidden="true"
-							id="AL0203G0" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true" rowStatusHeaderValue=""
+							ev:onrowindexchange="scwin.AL0600G0_onrowindexchange" ev:ontextimageclick="" ev:onviewchange="" fixedColumnWithHidden="true"
+							id="AL0600G0" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true" rowStatusHeaderValue=""
 							rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true" visibleRowNum="" wheelRows=""
 							autoFitMinWidth="0" disabledScrollHidden="" editModeEvent="" editModeEventIcon="" checkEditableInputClass="" keyMoveEditMode=""
 							moveKeyEditMode="" moveKeyEditModeAll="" ignoreNonEditableCellTabEnter="" readOnly="true" keepDefaultColumnWidth=""
@@ -796,9 +795,9 @@
 					<xf:group id="" class="" style="">
 						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" autoFitMinWidth="0" captionTitle=""
 							checkEditableInputClass="" class="cm_grid right" dataList="data:dlt_BRT_OPER_ALLOC_PL_NODE_INFO" fixedColumnWithHidden="true"
-							focusMode="row" id="AL0203G1" ignoreCellClick="false" rowNumHeaderValue="순번" rowNumVisible="false" rowStatusVisible="false"
+							focusMode="row" id="AL0600G1" ignoreCellClick="false" rowNumHeaderValue="순번" rowNumVisible="false" rowStatusVisible="false"
 							rowStatusWidth="40" scrollByColumn="false" useShiftKey="true" fixedRow="0" fixedColumn="0"
-							ev:onrowindexchange="scwin.AL0203G1_onrowindexchange" readOnly="true">
+							ev:onrowindexchange="scwin.AL0600G1_onrowindexchange" readOnly="true">
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row3">
@@ -839,7 +838,7 @@
 						<w2:textbox class="df_tt fl" id="" label="시공도" style=""></w2:textbox>
 						</xf:group>
 						<w2:fusionchart accessibility="false" drawType="javascript" runflashAt="IE6,IE7,IE8" seriesType="simple"
-						chartType="MSLine" style="width: auto; height: 290px;" id="AL0203CHT0" ref="" 
+						chartType="MSLine" style="width: auto; height: 290px;" id="AL0600CHT0" ref="" 
 						labelNode="" valueNode="" seriesNode="">
 						</w2:fusionchart>
 						</xf:group>

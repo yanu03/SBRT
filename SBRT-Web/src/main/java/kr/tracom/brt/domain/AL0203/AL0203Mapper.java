@@ -20,5 +20,6 @@ public interface AL0203Mapper {
 	
 	public int AL0203G0U0(Map param);
 	
+	public List AL0203P0R0(Map param);
 
 }

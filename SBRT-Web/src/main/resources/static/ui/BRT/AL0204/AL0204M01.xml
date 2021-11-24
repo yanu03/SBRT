@@ -317,15 +317,6 @@
 							{code : "ROUT_TYPE", compID : "AL0204G0:ROUT_TYPE" }
 													
 						];		
-	
-		com.setCommonDtl(codeOptions, function() {
-			com.searchGrid(AL0204G0, sub_AL0204G0R0);
-		});	
-		
-		
-		AL0204G0.mergeCells("byrestriccol");
-		
-		//com.executeSubmission(sub_AL0204SHI0);
 		
 		var date = new Date();
 		var year = date.getFullYear().toString();
@@ -340,7 +331,15 @@
 		var today = year+month+day;
 		
 		DAYSEARCH.setValue(today);
+		dma_sub_search.set("OPER_DT", today);
+		com.setCommonDtl(codeOptions, function() {
+			com.searchGrid(AL0204G0, sub_AL0204G0R0);
+		});	
 		
+		
+		AL0204G0.mergeCells("byrestriccol");
+		
+		//com.executeSubmission(sub_AL0204SHI0);
 	};
 	
 	scwin.onpageunload = function() {
@@ -501,8 +500,6 @@
 	};
 	
 	scwin.openPopUpChart = function(){
-		
-
 		var jsonData = AL0204G1.getCheckedJSON("chk");
 		var chkCnt = jsonData.length;
 		
@@ -533,40 +530,6 @@
 	
 	scwin.sub_AL0204G0R0_submitdone = function(e) {
 		com.setFocusedCell(AL0204G0, "REP_ROUT_NM");
-		
-		var date = new Date();
-		
-		var year = date.getFullYear();
-		var month = date.getMonth() + 1;
-		var day = date.getDate();
-		
-		var firstDate = new Date(year, month, 1);
-		var lastDate = new Date(year, month+1, 0);
-		var firstDayOfWeek = firstDate.getDay() === 0 ? 7 : firstDate.getDay();
-		var lastDayOfweek = lastDate.getDay();
-		
-		var lastDay = lastDate.getDate();
-		
-		var firstWeekCheck = firstDayOfWeek === 5 || firstDayOfWeek === 6 || firstDayOfWeek === 7;
-		var lastWeekCheck = lastDayOfweek === 1 || lastDayOfweek === 2 || lastDayOfweek === 3;
-		
-		var lastWeekNo = Math.ceil((firstDayOfWeek - 1 + lastDay) / 7);
-		
-		var weekNo = Math.ceil((firstDayOfWeek - 1 + day) / 7);
-		
-		if(weekNo === 1 && firstWeekCheck){
-			weekNo = 'prev';
-		} 
-		else if(weekNo === lastWeekNo && lastWeekCheck){
-			weekNo = 'next';
-		} 
-		else if(firstWeekCheck){
-			weekNo = weekNo -1;
-		}
-		
-		SYEAR.setValue(year);
-		SMONTH.setValue(month);
-		SWEEK.setValue(weekNo);
 	};
 	
 	scwin.sub_AL0204G0S0_submitdone = function(e) {
@@ -598,7 +561,7 @@
 		var focusOption = {keyMap : dma_sub_search, keyMapColumn : "DAY_DIV,ROUT_ID"};
 		com.changeDualGrid(AL0204G0, AL0204G1, null, sub_AL0204G1R0, focusOption, row, oldRow, "운행계획 상세");
 		
-		com.executeSubmission(sub_AL0204G1R0);
+		//com.executeSubmission(sub_AL0204G1R0);
 	};
 	
 	scwin.sub_AL0204G1R0_submitdone = function(e) {
@@ -668,23 +631,23 @@
 						<w2:span class="" id="" label="검색 항목"></w2:span>
 					</xf:group>
 					<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
-							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
-							optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" submenuSize="auto" textAlign="left">
-							<xf:choices>
-								<xf:item>
-									<xf:label><![CDATA[-전체-]]></xf:label>
-									<xf:value><![CDATA[ALL]]></xf:value>
-								</xf:item>
-								<xf:item>
-									<xf:label><![CDATA[대표노선명]]></xf:label>
-									<xf:value><![CDATA[REP_ROUT_NM]]></xf:value>
-								</xf:item>
-								<xf:item>
-									<xf:label><![CDATA[노선명]]></xf:label>
-									<xf:value><![CDATA[ROUT_NM]]></xf:value>
-								</xf:item>
-							</xf:choices>
-						</xf:select1>
+						disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
+						optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" submenuSize="auto" textAlign="left">
+						<xf:choices>
+							<xf:item>
+								<xf:label><![CDATA[-전체-]]></xf:label>
+								<xf:value><![CDATA[ALL]]></xf:value>
+							</xf:item>
+							<xf:item>
+								<xf:label><![CDATA[대표노선명]]></xf:label>
+								<xf:value><![CDATA[REP_ROUT_NM]]></xf:value>
+							</xf:item>
+							<xf:item>
+								<xf:label><![CDATA[노선명]]></xf:label>
+								<xf:value><![CDATA[ROUT_NM]]></xf:value>
+							</xf:item>
+						</xf:choices>
+					</xf:select1>
 					<xf:group class="search" id="" style="">
 						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="대표노선명 또는 노선명"></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
@@ -699,11 +662,14 @@
 								</w2:itemset>
 							</w2:choices>
 						</w2:autoComplete>
-						<w2:span class="" id="" label="일별 검색" style="margin-left: 10px;"></w2:span>
-						<w2:inputCalendar footerDiv="false" id="DAYSEARCH" style="width: 120px;height: 23px;margin-left: 5px;margin-top: 1px;" renderDiv="true" focusOnDateSelect="false"
-							calendarValueType="yearMonthDate" rightAlign="false" renderType="component" ev:onviewchange="scwin.DAYSEARCH_onviewchange">
-						</w2:inputCalendar>
 					</xf:group>
+					<xf:group style="" id="" class="label">
+						<w2:span class="" id="" label="일별 검색" style="margin-left: 10px;"></w2:span>
+					</xf:group>
+					<w2:inputCalendar class="search_calendar" footerDiv="false" id="DAYSEARCH"
+						style="width: 120px;height: 23px;margin-left: 5px;margin-top: 1px;" renderDiv="true" focusOnDateSelect="false"
+						calendarValueType="yearMonthDate" rightAlign="false" renderType="component" ev:onviewchange="scwin.DAYSEARCH_onviewchange">
+					</w2:inputCalendar>
 					<w2:wframe class="" id="wfm_mainBtn" scope="true" src="/cm/common/wf_mainBtn.xml" style=""></w2:wframe>
 				</xf:group>
 			</xf:group>

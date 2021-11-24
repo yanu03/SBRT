@@ -13,8 +13,6 @@ public interface PI0302Mapper {
 	public List PI0302SHI0();
 	public Map PI0302G0K0();
 	
-	public int PI0302G0I0(Map param);
-	public int PI0302G0D0(Map param);
 	public int PI0302G0U0(Map param);
 
 }

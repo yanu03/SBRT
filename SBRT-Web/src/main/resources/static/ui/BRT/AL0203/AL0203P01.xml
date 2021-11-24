@@ -45,22 +45,62 @@
 					<w2:column id="UPD_DTM" name="갱신일시" dataType="date"></w2:column>
 				</w2:columnInfo>
 			</w2:dataList>
+			<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_OPER_ALLOC_PL_NODE_INFO" saveRemovedData="true">
+				<w2:columnInfo>
+					<w2:column id="OPER_DT" name="운행일" dataType="text"></w2:column>
+					<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
+					<w2:column id="DAY_DIV" name="요일구분" dataType="text"></w2:column>
+					<w2:column id="WAY_DIV" name="상하행구분" dataType="text"></w2:column>
+					<w2:column id="OPER_SN" name="운행순번" dataType="text"></w2:column>
+					<w2:column id="NODE_ID" name="노드아이디" dataType="text"></w2:column>
+					<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
+					<w2:column id="NODE_SN" name="노드순번" dataType="text"></w2:column>
+					<w2:column id="ALLOC_NO" name="배차번호" dataType="text"></w2:column>
+					<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
+					<w2:column id="COR_ID" name="코스아이디" dataType="text"></w2:column>
+					<w2:column id="NODE_TYPE" name="노드유형" dataType="text"></w2:column>
+					<w2:column id="ARRV_TM" name="도착시간" dataType="text"></w2:column>
+					<w2:column id="DPRT_TM" name="출발시간" dataType="text"></w2:column>
+					<w2:column id="UPD_DTM" name="갱신일시" dataType="date"></w2:column>
+					<w2:column id="UPD_ID" name="갱신아이디" dataType="text"></w2:column>
+					<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+					<w2:column id="WAY_ASC_NM" name="상행명" dataType="text"></w2:column>
+					<w2:column id="WAY_DESC_NM" name="하행명" dataType="text"></w2:column>
+					<w2:column id="ACCRU_LEN" name="누적길이" dataType="text"></w2:column>
+				</w2:columnInfo>
+			</w2:dataList>
 			<w2:dataList baseNode="list" repeatNode="map" id="dlt_OPER_DT" saveRemovedData="true">
 				<w2:columnInfo>
 					<w2:column id="OPER_DT" name="운행일" dataType="text"></w2:column>
 				</w2:columnInfo>
 			</w2:dataList>
+			<w2:dataMap baseNode="map" id="dma_searchItem">
+				<w2:keyInfo>
+					<w2:key id="DAY_DIV" name="요일구분" dataType="text"></w2:key>
+					<w2:key id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:key>
+				</w2:keyInfo>
+			</w2:dataMap>
 		</w2:dataCollection>
 		<w2:workflowCollection></w2:workflowCollection>
-		<xf:submission id="sub_AL0203P0S0" ref='data:json,{"action":"modified","id":"dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO"}' target="data:json,dma_search" action="/al/AL0203P0S0" method="post"
-			mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중입니다..."
-			ev:submit="" ev:submitdone="scwin.sub_AL0203P0S0_submitdone" ev:submiterror="" abortTrigger="">
+		<xf:submission id="sub_AL0203P0S0" ref='data:json,{"action":"modified","id":"dlt_BRT_OPER_ALLOC_PL_NODE_INFO"}'
+			target="data:json,dma_search" action="/al/AL0203P0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
+			errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0203P0S0_submitdone"
+			ev:submiterror="" abortTrigger="">
+		</xf:submission>
+		<xf:submission id="sub_AL0203P0R0" ref="data:json,dma_searchItem" target="data:json,dlt_BRT_OPER_ALLOC_PL_NODE_INFO"
+			action="/al/AL0203P0R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+			customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 		</xf:submission>
 	</xf:model>
 	<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
 		scwin.param = com.getParameter();
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		
+		dma_searchItem.set("DAY_DIV", scwin.param.DAYDIV);
+		dma_searchItem.set("REP_ROUT_ID", scwin.param.REPROUTID);
+		
+		com.executeSubmission(sub_AL0203P0R0);
 	};
 	
 	scwin.onpageunload = function() {
@@ -69,7 +109,8 @@
 	
 	scwin.btn_confirm_onclick = function() {
 		debugger;
-		var cnt = scwin.param.data.length;
+		//var cnt = scwin.param.data.length;
+		var cnt = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowCount();
 		var dayDiv = scwin.param.DAYDIV;
 		var startDateValue = AL0302C0.getValue();
 		var lastDateValue = AL0302C1.getValue();
@@ -108,9 +149,9 @@
 		
 		for(var x=0; x<dlt_OPER_DT.getRowCount(); x++){
 			for(var i=0; i<cnt; i++){
-				dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO.insertRow(i);
-				dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "OPER_DT", dlt_OPER_DT.getCellData(x, "OPER_DT"));
-				dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "REP_ROUT_ID", scwin.param.data[i].REP_ROUT_ID);
+				//dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO.insertRow(i);
+				dlt_BRT_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "OPER_DT", dlt_OPER_DT.getCellData(x, "OPER_DT"));
+				/*dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "REP_ROUT_ID", scwin.param.data[i].REP_ROUT_ID);
 				dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "ROUT_ID", scwin.param.data[i].ROUT_ID);
 				dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "DAY_DIV", scwin.param.data[i].DAY_DIV);
 				dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "WAY_DIV", scwin.param.data[i].WAY_DIV);
@@ -121,12 +162,9 @@
 				dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "ALLOC_NO", scwin.param.data[i].ALLOC_NO);
 				dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "NODE_TYPE", scwin.param.data[i].NODE_TYPE);
 				dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "DPRT_TM", scwin.param.data[i].DPRT_TM);
-				dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "ARRV_TM", scwin.param.data[i].ARRV_TM);
+				dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO.setCellData(i, "ARRV_TM", scwin.param.data[i].ARRV_TM);*/
 			}
 		}
-		
-		
-		var rowCnt = dlt_BRT_DAY_OPER_ALLOC_PL_NODE_INFO.getRowCount();
 		
 		com.executeSubmission(sub_AL0203P0S0);
 		
@@ -139,6 +177,8 @@
 	};
 	
 	scwin.AL0302C0_ondateselect = function(dateStr,dateObj) {
+		AL0302C1.disableBeforeDate(dateStr);
+		
 		var date = new Date();
 		var year = date.getFullYear().toString();
 		var month = (date.getMonth()+1).toString();
@@ -205,6 +245,8 @@
 	scwin.sub_AL0203P0S0_submitdone = function(e) {
 		com.closePopup();
 	};
+	
+	
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
