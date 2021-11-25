@@ -55,6 +55,7 @@ public interface OperPlanMapper {
     //운행배차계획 생성
 	public int insertOperAllocPlNodeInfo(Map<String, Object> params);
 	public int insertOperAllocPlNodeInfoList(Map<String, Object> params);
+	public int updateOperAllocPlNodeInfoList(Map<String, Object> params);
 	public void deleteOperPl(Map<String, Object> params);
 
 	public List<Map<String, Object>> selectOperPlanRout(Map<String, Object> params);

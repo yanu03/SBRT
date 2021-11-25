@@ -8,29 +8,11 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface AL0600Mapper {
 	
-	/*public List AL0203G0R0(Map param);
+	public List AL0600G0R0(Map param);
 	
-	public List AL0203SHI0();
+	public List AL0600SHI0();
 	
-	public List AL0203G1R0(Map param);
+	public List AL0600G1R0(Map param);
 	
-	public List AL0203G1CNT(Map param);*/
-	/*
-	public List AL0103P0R0(Map param);
-	
-	public int AL0103G0I0(Map param);
-	
-	public int AL0103G0D0(Map param);
-	
-	public int AL0103G0U0(Map param);
-	
-	public int AL0103G1I0(Map param);
-	
-	public int AL0103G1D0(Map param);
-	
-	public int AL0103G1U0(Map param);
-	
-	public List AL0103P01R0(Map param);
-	
-	public List AL0103P1SH(Map param);*/
+	public List AL0600G1CNT(Map param);
 }

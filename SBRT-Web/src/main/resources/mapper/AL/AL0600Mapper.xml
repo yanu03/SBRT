@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.tracom.brt.domain.AL0203.AL0203Mapper">
+<mapper namespace="kr.tracom.brt.domain.AL0600.AL0600Mapper">
 
-<!--  <select id="AL0203G0R0" resultType="Map">
+<select id="AL0600G0R0" resultType="Map">
 	SELECT			
 		A.REP_ROUT_ID
 		,A.DAY_DIV
@@ -33,19 +33,20 @@
 	GROUP BY
 		C.ROUT_ID, A.DAY_DIV
 	ORDER BY
-		A.REP_ROUT_ID, A.DAY_DIV, A.WAY_DIV
+		A.REP_ROUT_ID, A.DAY_DIV, A.WAY_DIV, C.ROUT_ID
 </select>
 
 
-<select id="AL0203SHI0" resultType="Map">
+<select id="AL0600SHI0" resultType="Map">
 	SELECT			REP_ROUT_NM
 				,	ROUT_NM
 	FROM			BMS_ROUT_MST
 </select>
 
-<select id="AL0203G1R0" resultType="Map" parameterType="Map">
+<select id="AL0600G1R0" resultType="Map" parameterType="Map">
 	SELECT
-		A.REP_ROUT_ID
+		DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT 
+		,A.REP_ROUT_ID
 		,A.DAY_DIV
 		,A.WAY_DIV
 		,A.OPER_SN
@@ -56,37 +57,49 @@
 		,A.NODE_TYPE
 		,A.ARRV_TM
 		,A.DPRT_TM
-		,A.UPD_DTM
-		,A.UPD_ID
+		<!--  ,LEFT(A.ARRV_TM, 5) AS ARRV_TM
+		,LEFT(A.DPRT_TM, 5) AS DPRT_TM-->
+		,DATE_FORMAT(A.UPD_DTM, '%Y-%m-%d') UPD_DTM 
 		,B.REP_ROUT_NM
 		,B.WAY_ASC_NM
 		,B.WAY_DESC_NM
 		,C.ROUT_ID
-		,C.NODE_NM	
+		,C.NODE_NM
+		,C.ACCRU_LEN
 	FROM
-		BRT_OPER_ALLOC_PL_NODE_INFO A 
+		BRT_DAY_OPER_ALLOC_PL_NODE_INFO A 
 		INNER JOIN BMS_REP_ROUT_MST B
-			ON	A.REP_ROUT_ID = B.REP_ROUT_ID 
-		RIGHT OUTER JOIN BRT_MAIN_ROUT_NODE_INFO C
-			ON	 A.ROUT_ID =  C.ROUT_ID AND A.NODE_ID = C.NODE_ID AND A.NODE_SN = C.NODE_SN AND C.NODE_TYPE ='NT002'
+		ON	A.REP_ROUT_ID = B.REP_ROUT_ID 
+		INNER JOIN BMS_ROUT_NODE_CMPSTN C
+		ON	 A.ROUT_ID =  C.ROUT_ID AND A.NODE_ID = C.NODE_ID AND A.NODE_SN = C.NODE_SN
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">			 
+			AND C.NODE_TYPE = #{NODE_TYPE}
+	</if>
 	WHERE
-		A.DAY_DIV = #{DAY_DIV} AND C.ROUT_ID = #{ROUT_ID}
+		A.OPER_DT = #{OPER_DT} AND A.DAY_DIV = #{DAY_DIV} AND C.ROUT_ID = #{ROUT_ID} AND A.NODE_TYPE = 'NT002'
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 
+			AND A.OPER_SN = #{OPER_SN}
+	</if>
 	ORDER BY OPER_SN, NODE_SN
 </select>
 
 
-<select id="AL0203G1CNT" resultType="Map" parameterType="Map">
+<select id="AL0600G1CNT" resultType="Map" parameterType="Map">
 		SELECT 
 			COUNT(*) CNT
 		FROM 
 			BRT_OPER_ALLOC_PL_NODE_INFO A
-			RIGHT OUTER JOIN BRT_MAIN_ROUT_NODE_INFO B
-				ON	 A.ROUT_ID =  B.ROUT_ID AND A.NODE_ID = B.NODE_ID AND A.NODE_SN = B.NODE_SN AND B.NODE_TYPE ='NT002'
-		WHERE  A.DAY_DIV = #{DAY_DIV} AND B.ROUT_ID = #{ROUT_ID}
+			INNER JOIN BMS_ROUT_NODE_CMPSTN B
+				ON	 A.ROUT_ID =  B.ROUT_ID AND A.NODE_ID = B.NODE_ID AND A.NODE_SN = B.NODE_SN
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">			 
+				AND B.NODE_TYPE = #{NODE_TYPE}
+		</if>
+		WHERE  A.DAY_DIV = #{DAY_DIV} AND B.ROUT_ID = #{ROUT_ID} AND A.NODE_TYPE = 'NT002'
 		GROUP BY 
 			OPER_SN 
 		ORDER BY 
 			OPER_SN
-</select>-->
+</select>
+
 
 </mapper>

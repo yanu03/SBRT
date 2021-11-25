@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.brt.domain.AL0105.AL0105Mapper">
+
+<select id="AL0105G1R0" resultType="Map">
+
+	SELECT		  	A.DRV_ID
+				,	A.DRV_NM
+				,	CONVERT(AES_DECRYPT(A.PHONE, HEX(SHA2('TRACOM', 512))) USING UTF8) PHONE
+				,	DATE_FORMAT(A.EPLY_DATE1, '%Y-%m-%d') EPLY_DATE1
+				,	A.BUS_DIV
+				,	B.COMP_NM
+							
+	FROM  			BMS_DRV_MST A
+	LEFT JOIN	  	BMS_TRANSCOMP_MST B
+		ON			A.COMP_ID = B.COMP_ID	
+					
+</select>
+
+<select id="AL0105G2R0" resultType="Map" parameterType="Map">
+	SELECT			A.REP_ROUT_ID
+				,	A.DRV_ID
+				,	B.DRV_NM
+				,	CONVERT(AES_DECRYPT(B.PHONE, HEX(SHA2('TRACOM', 512))) USING UTF8) PHONE
+				,	DATE_FORMAT(B.EPLY_DATE1, '%Y-%m-%d') EPLY_DATE1
+				,	B.BUS_DIV
+				,	C.COMP_NM
+			
+	FROM	  		BRT_REP_ROUT_DRV_CMPSTN	A
+	LEFT JOIN	  	BMS_DRV_MST B
+		ON			A.DRV_ID = B.DRV_ID
+	LEFT JOIN	  	BMS_TRANSCOMP_MST C
+		ON			B.COMP_ID = C.COMP_ID
+	WHERE A.REP_ROUT_ID = #{REP_ROUT_ID}
+</select>
+<insert id="AL0105G2I0" parameterType="Map">
+	insert into BRT_REP_ROUT_DRV_CMPSTN( REP_ROUT_ID,DRV_ID )
+	values (#{REP_ROUT_ID},#{DRV_ID})
+</insert>
+
+<delete id="AL0105G2D0" parameterType="Map">
+	DELETE FROM BRT_REP_ROUT_DRV_CMPSTN 
+	WHERE REP_ROUT_ID = #{REP_ROUT_ID}
+	AND DRV_ID = #{DRV_ID}
+</delete>
+
+</mapper>

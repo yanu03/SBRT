@@ -141,8 +141,8 @@
 	scwin.onpageload = function() {
 		var autoOptions = {
 			Main : { grid : AL0302G0, srchSbm : sub_AL0302G0R0, srchGrp : pgm_header , keyColumn : "REP_ROUT_ID", focusColumn : "REP_ROUT_NM", name : "운행계획 목록"},
-			Sub1 : { grid : AL0302G1, srchSbm : sub_AL0302G1R0, keyColumn : "ALLOC_NO", savSbm : sub_AL0302G1S0, name : "차량 배차(배포)" },
-			Sub2 : { grid : AL0302G2, srchSbm : sub_AL0302G2R0, keyColumn : "ALLOC_NO", savSbm : sub_AL0302G2S0, name : "차량 배차(일)" }	
+			Sub2 : { grid : AL0302G1, srchSbm : sub_AL0302G1R0, keyColumn : "ALLOC_NO", savSbm : sub_AL0302G1S0, name : "차량 배차(배포)" },
+			Sub1 : { grid : AL0302G2, srchSbm : sub_AL0302G2R0, keyColumn : "ALLOC_NO", savSbm : sub_AL0302G2S0, name : "차량 배차(일)" }	
 		 };
 		 		
 		 var mainOptions = {
@@ -306,7 +306,9 @@
 	};
 	
 	scwin.AL0302G1_ontextimageclick = function(row,col) {
-		var repRoutId = dlt_BRT_ALLOC_PL_MST.getCellData(AL0302G0.getFocusedRowIndex(), "REP_ROUT_ID");
+		debugger;
+		var repRoutId = dma_param_AL0302G1.get("REP_ROUT_ID");
+		//var repRoutId = dlt_BRT_ALLOC_PL_MST.getCellData(AL0302G0.getFocusedRowIndex(), "REP_ROUT_ID");
 		if(col == 1){
 			var data = { data: repRoutId,callbackFn : "scwin.searchVhcCallback" };
 					   	 
@@ -319,7 +321,7 @@
 				
 		}
 		else if(col == 3){
-			var data = { callbackFn : "scwin.searchDrvCallback" };
+			var data = { data:repRoutId, callbackFn : "scwin.searchDrvCallback" };
 					   	 
 			var opt = { id : "popUpDrvList", 
 						popupName : "운전자 검색",
@@ -329,7 +331,7 @@
 			com.openPopup("/cm//common/popUpDrvList.xml", opt, data);
 		}
 		else if(col == 4){
-			var data = { callbackFn : "scwin.searchDrv2Callback" };
+			var data = { data:repRoutId, callbackFn : "scwin.searchDrv2Callback" };
 					   	 
 			var opt = { id : "popUpDrvList", 
 						popupName : "운전자 검색",
@@ -339,7 +341,7 @@
 			com.openPopup("/cm//common/popUpDrvList.xml", opt, data);
 		}
 		else if(col == 6){
-			var data = { callbackFn : "scwin.searchDrv3Callback" };
+			var data = { data:repRoutId, callbackFn : "scwin.searchDrv3Callback" };
 					   	 
 			var opt = { id : "popUpDrvList", 
 						popupName : "운전자 검색",
@@ -389,7 +391,8 @@
 	};
 	
 	scwin.AL0302G2_ontextimageclick = function(row,col) {
-		var repRoutId = dlt_BRT_OPER_DT_ALLOC_PL_MST.getCellData(AL0302G0.getFocusedRowIndex(), "REP_ROUT_ID");
+		var repRoutId = dma_param_AL0302G1.get("REP_ROUT_ID");
+		//var repRoutId = dlt_BRT_OPER_DT_ALLOC_PL_MST.getCellData(AL0302G0.getFocusedRowIndex(), "REP_ROUT_ID");
 		if(col == 1){
 			var data = { data: repRoutId,callbackFn : "scwin.searchVhcCallbackG2" };
 					   	 
@@ -402,7 +405,7 @@
 				
 		}
 		else if(col == 3){
-			var data = { callbackFn : "scwin.searchDrvCallbackG2" };
+			var data = { data:repRoutId, callbackFn : "scwin.searchDrvCallbackG2" };
 					   	 
 			var opt = { id : "popUpDrvList", 
 						popupName : "운전자 검색",
@@ -412,7 +415,7 @@
 			com.openPopup("/cm//common/popUpDrvList.xml", opt, data);
 		}
 		else if(col == 4){
-			var data = { callbackFn : "scwin.searchDrv2CallbackG2" };
+			var data = { data:repRoutId, callbackFn : "scwin.searchDrv2CallbackG2" };
 					   	 
 			var opt = { id : "popUpDrvList", 
 						popupName : "운전자 검색",
@@ -422,7 +425,7 @@
 			com.openPopup("/cm//common/popUpDrvList.xml", opt, data);
 		}
 		else if(col == 6){
-			var data = { callbackFn : "scwin.searchDrv3CallbacG2" };
+			var data = { data:repRoutId, callbackFn : "scwin.searchDrv3CallbackG2" };
 					   	 
 			var opt = { id : "popUpDrvList", 
 						popupName : "운전자 검색",

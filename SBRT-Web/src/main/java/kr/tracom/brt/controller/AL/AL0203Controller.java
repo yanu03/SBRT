@@ -59,5 +59,11 @@ public class AL0203Controller extends ControllerSupport{
 		return result.getResultSave();
 	}	
 	
+	@RequestMapping("/al/AL0203P0R0")
+	public @ResponseBody Map<String, Object> AL0203P0R0() throws Exception {
+		result.setData("dlt_BRT_OPER_ALLOC_PL_NODE_INFO", al0203Service.AL0203P0R0());
+		return result.getResult();
+	}
+	
 	
 }
