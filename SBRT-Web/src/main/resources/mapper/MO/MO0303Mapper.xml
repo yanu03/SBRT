@@ -3,16 +3,23 @@
 <mapper namespace="kr.tracom.brt.domain.MO0303.MO0303Mapper">
 
 <select id="MO0303G0R0" resultType="Map">
-	SELECT			DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') AS OPER_DT
+	SELECT			A.INCDNT_ID	
+				,	DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') AS OPER_DT
+				<!-- ,	DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') AS OLD_OPER_DT -->
 				,	A.REP_ROUT_ID
+				<!-- ,	A.REP_ROUT_ID AS OLD_REP_ROUT_ID -->
 				,	A.VHC_ID
+				<!-- ,	A.VHC_ID AS OLD_VHC_ID -->
 				,	A.INCDNT_TYPE
+				<!-- ,	A.INCDNT_TYPE AS OLD_INCDNT_TYPE -->
+				,	DATE_FORMAT(A.OCR_DTM, '%Y-%m-%d %H:%i:%s') AS OCR_DTM
+				<!-- ,	DATE_FORMAT(A.OCR_DTM, '%Y-%m-%d %H:%i:%s') AS OLD_OCR_DTM -->
 				,	A.ROUT_ID
+				<!-- ,	A.ROUT_ID AS OLD_ROUT_ID -->
 				,	A.ALLOC_NO
 				,	A.INCDNT_DETAIL
 				,	A.OPER_SN
 				,	A.COR_ID
-				,	DATE_FORMAT(A.OCR_DTM, '%Y-%m-%d') AS OCR_DTM
 				,	A.VHC_NO
 				,	A.DRV_ID
 				,	A.REP_ROUT_NM
@@ -29,6 +36,8 @@
 				,	C.REP_ROUT_NM
 				,	D.COR_NM
 				,	E.DRV_NM
+				,	F.LINK_NM
+				,	G.NODE_NM
 				
 	FROM			BRT_INCDNT_INFO A
 	LEFT JOIN		BMS_ROUT_MST B
@@ -38,144 +47,320 @@
 	LEFT JOIN		BRT_COR_MST D
 		ON			A.COR_ID = D.COR_ID	
 	LEFT JOIN		BMS_DRV_MST E
-		ON			A.DRV_ID = E.DRV_ID					
+		ON			A.DRV_ID = E.DRV_ID
+	LEFT JOIN		BMS_LINK_MST F
+		ON			A.LINK_ID = F.LINK_ID
+	LEFT JOIN		BMS_NODE_MST G
+		ON			A.NODE_ID = G.NODE_ID	
 					
 	<where>
 		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-			AND B.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || C.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			AND A.VHC_NO LIKE CONCAT('%',#{CONTENT},'%') || A.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
-		<if test="TYPE == 'ORGA_ID'">
-			AND B.ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
+		<if test="TYPE == 'VHC_NO'">
+			AND A.VHC_NO LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
-		<if test="TYPE == 'ORGA_NM'">
-			AND C.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		<if test="TYPE == 'REP_ROUT_NM'">
+			AND A.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
 	</where>
-</select>
 	
-<select id="MO0303G0K0" resultType="Map">
-	SELECT CONCAT('OA', LPAD(NEXTVAL(SEQ_BMS_BIT_VDO_ORGA_INFO_0), 8, '0')) AS 'SEQ'
+	ORDER BY		A.OPER_DT DESC
 </select>
 
+<select id="MO0303G0K0" resultType="Map">
+	SELECT CONCAT('IC', LPAD(NEXTVAL(SEQ_BRT_INCDNT_INFO_0), 8, '0')) AS 'SEQ'
+</select>
+
+	
 <select id="MO0303SHI0" resultType="Map">
-	select ORGA_ID, ORGA_NM
-	from BMS_BIT_VDO_ORGA_INFO
-	order by ORGA_NM
+	SELECT			INCDNT_ID
+			,		VHC_NO
+				
+	FROM			BRT_INCDNT_INFO
 </select>
 
 <insert id="MO0303G0I0" parameterType="Map">
-	insert into BMS_BIT_VDO_ORGA_INFO
+	INSERT	INTO BRT_INCDNT_INFO
 			(
-				ORGA_ID,
-				ORGA_NM,
-				REMARK,
-				UPD_DTM,
-				UPD_ID
+				INCDNT_ID
+			,	OPER_DT
+			,	REP_ROUT_ID
+			,	VHC_ID
+			,	INCDNT_TYPE
+			,	ROUT_ID
+			<if test = "@kr.tracom.util.CommonUtil@notEmpty(ALLOC_NO)">			
+				,	ALLOC_NO
+			</if>	
+			,	INCDNT_DETAIL
+			<if test = "@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">
+			,	OPER_SN
+			</if>
+			,	COR_ID
+			,	OCR_DTM
+			,	VHC_NO
+			,	DRV_ID
+			,	REP_ROUT_NM
+			,	ROUT_NM
+			,	LINK_ID
+			,	NODE_ID
+			,	GPS_X
+			,	GPS_Y
+			,	REMARK
+			,	UPD_DTM
 			)
-	values 
-			(
-				#{ORGA_ID},
-				#{ORGA_NM},
-				#{REMARK},
-				#{UPD_DTM},
-				#{SSN_USER_ID}				
-			)
+			
+	VALUES	(
+				#{INCDNT_ID}
+			,	DATE_FORMAT(#{OPER_DT}, '%Y%m%d')
+			,	#{REP_ROUT_ID}
+			,	#{VHC_ID}
+			,	#{INCDNT_TYPE}
+			,	#{ROUT_ID}
+			<if test = "@kr.tracom.util.CommonUtil@notEmpty(ALLOC_NO)">			
+			,	#{ALLOC_NO}
+			</if>			
+			,	#{INCDNT_DETAIL}
+			<if test = "@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">
+			,	#{OPER_SN}
+			</if>			
+			,	#{COR_ID}
+			,	DATE_FORMAT(#{OCR_DTM}, '%Y-%m-%d %H:%i:%s')
+			,	#{VHC_NO}
+			,	#{DRV_ID}
+			,	#{REP_ROUT_NM}
+			,	#{ROUT_NM}
+			,	#{LINK_ID}
+			,	#{NODE_ID}
+			,	#{GPS_X}
+			,	#{GPS_Y}
+			,	#{REMARK}
+			,	#{UPD_DTM}	
+			)			
 </insert>
 
 <update id="MO0303G0U0" parameterType="Map">
-	update BMS_BIT_VDO_ORGA_INFO
-	set 	ORGA_NM = #{ORGA_NM},
-			REMARK = #{REMARK},
-			UPD_DTM = #{UPD_DTM},
-			UPD_ID = #{SSN_USER_ID}
-	where	ORGA_ID = #{ORGA_ID}		
+	UPDATE		BRT_INCDNT_INFO
+	
+	SET			OPER_DT = DATE_FORMAT(#{OPER_DT}, '%Y-%m-%d')	
+			,	REP_ROUT_ID = #{REP_ROUT_ID}
+			,	VHC_ID = #{VHC_ID}
+			,	INCDNT_TYPE = #{INCDNT_TYPE}
+			<if test = "@kr.tracom.util.CommonUtil@notEmpty(ALLOC_NO)">
+			,	ALLOC_NO = #{ALLOC_NO}
+			</if>
+			,	ROUT_ID = #{ROUT_ID}
+			,	INCDNT_DETAIL = #{INCDNT_DETAIL}
+			<if test = "@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">
+			,	OPER_SN = #{OPER_SN}
+			</if>			
+			,	COR_ID = #{COR_ID}
+			,	OCR_DTM = DATE_FORMAT(#{OCR_DTM}, '%Y-%m-%d %H:%i:%s')
+			,	VHC_NO = #{VHC_NO}
+			,	DRV_ID = #{DRV_ID}
+			,	REP_ROUT_NM = #{REP_ROUT_NM}
+			,	ROUT_NM = #{ROUT_NM}
+			,	LINK_ID = #{LINK_ID}
+			,	NODE_ID = #{NODE_ID}
+			,	GPS_X = #{GPS_X}
+			,	GPS_Y = #{GPS_Y}
+			,	REMARK = #{REMARK}
+			,	UPD_DTM = #{UPD_DTM}
+	
+	WHERE		INCDNT_ID = #{INCDNT_ID}		
+	<!-- WHERE		OPER_DT = STR_TO_DATE(#{OLD_OPER_DT}, '%Y-%m-%d')	
+	AND			REP_ROUT_ID = #{OLD_REP_ROUT_ID}
+	AND			VHC_ID = #{OLD_VHC_ID}
+	AND			INCDNT_TYPE = #{OLD_INCDNT_TYPE}
+	AND			ROUT_ID = #{OLD_ROUT_ID}
+	AND			OCR_DTM = STR_TO_DATE(#{OLD_OCR_DTM}, '%Y-%m-%d %H:%i:%s')	 -->
+
 </update>
 
 <delete id="MO0303G0D0" parameterType="Map">
-	delete
-	from BMS_BIT_VDO_ORGA_INFO
-	where ORGA_ID = #{ORGA_ID};
+	DELETE 
+	FROM		BRT_INCDNT_INFO
+	WHERE		INCDNT_ID = #{INCDNT_ID}
 	
-	DELETE FROM BMS_BIT_VDO_ORGA_LIST 
-	WHERE ORGA_ID = #{ORGA_ID}
+	<!-- WHERE		OPER_DT = STR_TO_DATE(#{OLD_OPER_DT}, '%Y-%m-%d')	
+	AND			REP_ROUT_ID = #{OLD_REP_ROUT_ID}
+	AND			VHC_ID = #{OLD_VHC_ID}
+	AND			INCDNT_TYPE = #{OLD_INCDNT_TYPE}
+	AND			ROUT_ID = #{OLD_ROUT_ID}
+	AND			OCR_DTM = #{OLD_OCR_DTM} -->	
 </delete>
 
 <select id="MO0303G1R0" resultType="Map">
-	SELECT 		 	A.VHC_ID
-				,	A.COMP_ID
-				,	A.AREA
+	SELECT			INCDNT_RES_ID		 		 	
+				,	DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') AS OPER_DT
+				,	A.REP_ROUT_ID
+				,	A.VHC_ID
+				,	A.INCDNT_TYPE
+				,	A.ROUT_ID
+				,	A.COR_ID
+				,	DATE_FORMAT(A.CLOSE_DTM, '%Y-%m-%d %H:%i:%s') AS CLOSE_DTM
+				,	A.GRP_ROUT_NM
+				,	A.ROUT_NM
 				,	A.VHC_NO
-				,	A.CHAS_NO
-				,	A.MAKER
-				,	A.RELS_DT
-				,	A.MODEL_NM
-				,	A.VHC_KIND
-				,	A.ROUT_TYPE
-				,	A.VHC_TYPE
-				,	A.VHC_FUEL
-				,	A.VHC_STS
-				,	A.PSG_CNT
-				,	A.SPARE_YN
-				,	A.SCRAP_YN
-				,	A.APPL_ST_DT
-				,	A.APPL_ED_DT
-				,	A.USE_YN
+				,	A.LINK_ID
+				,	A.NODE_ID
+				,	A.INCDNT_RES_TYPE
+				,	A.REMARK
+				,	A.PROG_DIV
+				,	A.CLSFCTN_ID
+				,	A.UPD_DTM
+				,	A.UPD_ID
+				,	B.ROUT_NM
+				,	C.REP_ROUT_NM
+				,	D.COR_NM
+				,	F.LINK_NM
+				,	G.NODE_NM
+				,	H.CLSFCTN_NM
+				,	H.PHONE
+				
+	FROM	  		BRT_INCDNT_RES_INFO A
+	LEFT JOIN		BMS_ROUT_MST B
+		ON			A.ROUT_ID = B.ROUT_ID
+	LEFT JOIN	  	BMS_REP_ROUT_MST C
+		ON			A.REP_ROUT_ID = C.REP_ROUT_ID
+	LEFT JOIN		BRT_COR_MST D
+		ON			A.COR_ID = D.COR_ID	
+	LEFT JOIN		BMS_LINK_MST F
+		ON			A.LINK_ID = F.LINK_ID
+	LEFT JOIN		BMS_NODE_MST G
+		ON			A.NODE_ID = G.NODE_ID
+	LEFT JOIN		BMS_EMER_CLSFCTN_MST H
+		ON			A.CLSFCTN_ID = H.CLSFCTN_ID	
+		
+
+	WHERE			A.OPER_DT = #{OPER_DT}
+	AND				A.REP_ROUT_ID = #{REP_ROUT_ID}
+	AND				A.VHC_ID = #{VHC_ID}
+	AND				A.INCDNT_TYPE = #{INCDNT_TYPE}
+	AND				A.ROUT_ID = #{ROUT_ID}		
+</select>
+
+<select id="MO0303G1K0" resultType="Map">
+	SELECT CONCAT('IR', LPAD(NEXTVAL(SEQ_BRT_INCDNT_RES_INFO_0), 8, '0')) AS 'SEQ'
+</select>
+
+<insert id="MO0303G1I0" parameterType="Map">
+	INSERT	INTO BRT_INCDNT_RES_INFO
+				(
+					INCDNT_RES_ID
+				,	OPER_DT
+				,	REP_ROUT_ID
+				,	VHC_ID
+				,	INCDNT_TYPE
+				,	ROUT_ID
+				,	COR_ID
+				<if test = "@kr.tracom.util.CommonUtil@notEmpty(CLOSE_DTM)">
+				,	CLOSE_DTM
+				</if>
+				,	GRP_ROUT_NM
+				,	ROUT_NM
+				,	VHC_NO
+				,	LINK_ID
+				,	NODE_ID
+				,	INCDNT_RES_TYPE
+				,	CLSFCTN_ID
+				,	REMARK
+				,	PROG_DIV
+				,	UPD_DTM
+				,	UPD_ID
+				)
+				
+		VALUES	(
+					#{INCDNT_RES_ID}
+				,	DATE_FORMAT(#{OPER_DT}, '%Y-%m-%d')
+				,	#{REP_ROUT_ID}
+				,	#{VHC_ID}
+				,	#{INCDNT_TYPE}
+				,	#{ROUT_ID}
+				,	#{COR_ID}
+				<if test = "@kr.tracom.util.CommonUtil@notEmpty(CLOSE_DTM)">			
+				,	DATE_FORMAT(#{CLOSE_DTM}, '%Y-%m-%d %H:%i:%s')
+				</if>				
+				,	#{GRP_ROUT_NM}
+				,	#{ROUT_NM}
+				,	#{VHC_NO}
+				,	#{LINK_ID}
+				,	#{NODE_ID}
+				,	#{INCDNT_RES_TYPE}
+				,	#{CLSFCTN_ID}
+				,	#{REMARK}
+				,	#{PROG_DIV}
+				,	#{UPD_DTM}
+				,	#{SSN_USER_ID}
+				)		
+</insert>
+
+<update id="MO0303G1U0" parameterType="Map"> 
+	UPDATE 			BRT_INCDNT_RES_INFO
+	SET				
+					REP_ROUT_ID = #{REP_ROUT_ID}
+				,	VHC_ID = #{VHC_ID}
+				,	INCDNT_TYPE = #{INCDNT_TYPE}
+				,	ROUT_ID = #{ROUT_ID}
+				,	COR_ID = #{COR_ID}
+				<if test = "@kr.tracom.util.CommonUtil@notEmpty(CLOSE_DTM)">			
+				,	CLOSE_DTM = DATE_FORMAT(#{CLOSE_DTM}, '%Y-%m-%d %H:%i:%s')
+				</if>
+				,	GRP_ROUT_NM = #{GRP_ROUT_NM}
+				,	ROUT_NM = #{ROUT_NM}
+				,	VHC_NO = #{VHC_NO}
+				,	LINK_ID = #{LINK_ID}
+				,	NODE_ID = #{NODE_ID}
+				,	INCDNT_RES_TYPE = #{INCDNT_RES_TYPE}
+				,	CLSFCTN_ID = #{CLSFCTN_ID}
+				,	REMARK = #{REMARK}
+				,	PROG_DIV = #{PROG_DIV}
+				,	UPD_DTM = #{UPD_DTM}
+				,	UPD_ID = #{SSN_USER_ID}
+								
+	WHERE			INCDNT_RES_ID = #{INCDNT_RES_ID}
+	AND				OPER_DT = #{OPER_DT}
+</update>
+
+<delete id="MO0303G1D0" parameterType="Map">
+	DELETE 
+	FROM			BRT_INCDNT_RES_INFO 
+	WHERE			INCDNT_RES_ID = #{INCDNT_RES_ID}
+	AND				OPER_DT = #{OPER_DT}
+</delete>
+
+<select id="MO0303P2R0" resultType="Map">
+	SELECT 			A.SCNRO_ID
+				,	A.SCNRO_NM
+				,	A.INCDNT_TYPE
+				,	A.INCDNT_RES_TYPE
+				,	A.RES_SCNRO
+				,	A.CLSFCTN_ID
 				,	A.REMARK
 				,	A.UPD_DTM
 				,	A.UPD_ID
-				,	B.COMP_NM
+				,	B.CLSFCTN_NM
+				,	B.PHONE
 				
-	FROM	  		BMS_VHC_MST A
-	LEFT JOIN	  	BMS_TRANSCOMP_MST B
-		ON			A.COMP_ID = B.COMP_ID		
-	WHERE			USE_YN = 'Y'			
+	FROM			BRT_INCDNT_SCNRO_MST A
+	LEFT JOIN		BMS_EMER_CLSFCTN_MST B
+		ON			A.CLSFCTN_ID = B.CLSFCTN_ID
+	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND A.SCNRO_ID LIKE CONCAT('%',#{CONTENT},'%') || A.SCNRO_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'SCNRO_ID'">
+			AND A.SCNRO_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'SCNRO_NM'">
+			AND A.SCNRO_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>		
 </select>
 
-<select id="MO0303G2R0" resultType="Map">
-	select a.ORGA_ID,
-		  	a.VDO_ID,
-		  	a.SN,
-		  	a.SN AS OLD_SN,
-		  	b.VDO_NM,
-		  	b.FILE_TYPE,
-		  	b.PLAY_TM,
-		  	DATE_FORMAT(PLAY_ST_DT, '%Y%m%d') PLAY_ST_DT,
-		  	DATE_FORMAT(PLAY_ED_DT, '%Y%m%d') PLAY_ED_DT
-	
-	from BMS_BIT_VDO_ORGA_LIST a  INNER JOIN BMS_BIT_VDO_INFO b ON a.VDO_ID = b.VDO_ID
-	where a.ORGA_ID = #{ORGA_ID}
-	order by a.SN
+<select id="MO0303SHI1" resultType="Map">
+	SELECT 			SCNRO_ID, SCNRO_NM
+	FROM 			BRT_INCDNT_SCNRO_MST
 </select>
-
-<insert id="MO0303G2I0" parameterType="Map">
-	insert into BMS_BIT_VDO_ORGA_LIST
-			(
-				ORGA_ID,
-				VDO_ID,
-				SN
-			)	
-	values 
-			(
-				#{ORGA_ID},
-				#{VDO_ID},
-				#{SN}
-			)
-</insert>
-
-<update id="MO0303G2U0" parameterType="Map"> 
-	update BMS_BIT_VDO_ORGA_LIST
-	set SN = #{SN}
-	where ORGA_ID = #{ORGA_ID}
-	and	VDO_ID = #{VDO_ID}
-	and SN = #{OLD_SN}
-</update>
-
-<delete id="MO0303G2D0" parameterType="Map">
-	DELETE FROM BMS_BIT_VDO_ORGA_LIST 
-	WHERE ORGA_ID = #{ORGA_ID}
-	AND VDO_ID = #{VDO_ID}
-	AND SN = #{OLD_SN}
-</delete>
-
 
 </mapper>
