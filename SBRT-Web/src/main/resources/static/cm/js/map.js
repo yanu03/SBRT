@@ -884,7 +884,6 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx, busGrid) {
 
 /**클릭 오버레이가 다른 showBusMarker **/
 routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid) {
-	
 	// 마커 이미지의 이미지 크기 입니다
 	var imageSize = new kakao.maps.Size(35, 35); 
 	var markerImage = null;
@@ -1029,6 +1028,99 @@ routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid
 	
 }
 
+/**버스마커 이번트 처리 안되는 경우에만 사용하세요...**/
+routMap.showBusMarkerNotEvent = function(mapId, data, idx, focusIdx, busGrid) {
+	// 마커 이미지의 이미지 크기 입니다
+	var imageSize = new kakao.maps.Size(35, 35); 
+	var markerImage = null;
+	var markerOverImage = null;
+	var markerSelImage = null;
+	
+	var zIndex= 5;
+	if(data.VHC_KIND == "VHK01"){
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/bus_red.png", imageSize);
+		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/bus_red_selected.png", imageSize);
+	}
+
+	else {
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/bus_red.png", imageSize);
+		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/bus_red_selected.png", imageSize);
+	}
+	
+	var marker = null;
+	if(idx==focusIdx) {
+		zIndex = 6;
+		// 마커 이미지를 생성합니다    
+		marker = new kakao.maps.Marker({
+			position : new kakao.maps.LatLng(data.GPS_Y, data.GPS_X), // Marker의 중심좌표 // 설정.
+			//title : data.label, // Marker의 라벨.
+			image : markerSelImage,
+			draggable : data.draggable,
+			zIndex: zIndex
+		});
+		routMap.mapInfo[mapId].selectedBusMarker = marker;
+	}
+	else {
+		// 마커 이미지를 생성합니다    
+		marker = new kakao.maps.Marker({
+			position : new kakao.maps.LatLng(data.GPS_Y, data.GPS_X), // Marker의 중심좌표 // 설정.
+			//title : data.label, // Marker의 라벨.
+			image : markerImage,
+			draggable : data.draggable,
+			zIndex: zIndex
+		});
+	}
+
+	marker.normalImage = markerImage;
+	
+	var overlayName = null;
+	var overlay = null;
+	
+	if (typeof data.VHC_NO != "undefined") {
+		overlayName = data.VHC_NO
+	} else if (typeof data.RPC_VHC_NO != "undefined") {
+		overlayName = data.RPC_VHC_NO		
+	}
+	
+	
+	var msg = "<div class = 'busoverlay'>"
+			+ "<span class = 'map_title' style=''>" + overlayName + "</span>"
+			+ "</div>";
+	
+	if(typeof data.BUS_STS != "undefined" && data.BUS_STS == "BS002") {
+		msg = "<div class = 'busoverlay conderror'>"
+			+ "<span class = 'map_title' style=''>" + overlayName + "</span>"
+			+ "</div>";			
+	}
+	
+	
+	overlay = new kakao.maps.CustomOverlay({
+		content: msg,
+		position: marker.getPosition(),
+		zIndex : zIndex
+	});
+	//routMap.mapInfo[mapId].infoWindow.setMap(routMap.mapInfo[mapId].map); 
+	routMap.mapInfo[mapId].busOverlay = overlay;
+
+	
+	if(idx<routMap.mapInfo[mapId].busOverArr.length){
+		routMap.mapInfo[mapId].busOverArr[idx] = routMap.mapInfo[mapId].busOverlay;
+	}
+	else{
+		routMap.mapInfo[mapId].busOverArr.push(routMap.mapInfo[mapId].busOverlay);
+	}
+	if(idx == focusIdx) {
+		routMap.mapInfo[mapId].busOverArr[focusIdx].setMap(routMap.mapInfo[mapId].map);
+	}
+	
+	marker.setMap(routMap.mapInfo[mapId].map); //Marker가 표시될 Map 설정.
+	if(idx<routMap.mapInfo[mapId].busMarkers.length){
+		routMap.mapInfo[mapId].busMarkers[idx] = marker;
+	}
+	else{
+		routMap.mapInfo[mapId].busMarkers.push(marker);
+	}
+}
 routMap.showBubbleOverlay = function(mapId, data, marker, idx, focusIdx) {
 	var zIndex= 2;
 	var overlayName = null;
@@ -3812,6 +3904,40 @@ routMap.showVehicle2 = function(mapId, json, cur_vhc_id, grid, index, focusIdx) 
 	}
 }
 
+/*이번트 처리 안되는 경우에만 사용하세요...*/
+routMap.showVehicleNotEvent = function(mapId, list, vhc_id, grid) {
+
+	var focusIdx = -1;
+	routMap.initBus(mapId);
+	
+	if(list != null && list.length != 0) {
+		for(var i = 0; i < list.length; i++) {
+			list[i].index = i;
+			
+			/**드래그이벤트**/
+			list[i].draggable = routMap.mapInfo[mapId].draggable;
+			
+			
+			if(list[i].VHC_ID == vhc_id){
+				focusIdx = i;
+				routMap.showBusMarkerNotEvent(mapId, list[i], i, focusIdx, grid);
+			}
+			else {
+				routMap.showBusMarkerNotEvent(mapId, list[i], i, focusIdx, grid);
+			}
+			
+		}
+
+		if(list.length>0){
+			if(focusIdx!=-1){
+				routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+			}
+			else {
+				routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
+			}
+		}
+	}
+}
 //클릭 오버레이 다른 showVehicle2
 routMap.showVehicleClickOverlay2 = function(mapId, json, cur_vhc_id, grid, index, focusIdx) {
 	//주석 빼기
