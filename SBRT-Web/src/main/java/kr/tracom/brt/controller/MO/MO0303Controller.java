@@ -25,11 +25,11 @@ public class MO0303Controller extends ControllerSupport{
 	}
 	
 	@RequestMapping("/mo/MO0303G0K0")
-	public @ResponseBody Map<String, Object> MO0303G0R1() throws Exception {
-		result.setData("dma_SEQ_BMS_VDO_ORGA_INFO_0", mo0303Service.MO0303G0K0());
+	public @ResponseBody Map<String, Object> MO0303G0K0() throws Exception {
+		result.setData("dma_SEQ_BRT_INCDNT_INFO_0", mo0303Service.MO0303G0K0());
 		return result.getResult();
-	}
-
+	}	
+	
 	@RequestMapping("/mo/MO0303SHI0")
 	public @ResponseBody Map<String, Object> MO0303G0R2() throws Exception {
 		result.setData("dlt_searchitem", mo0303Service.MO0303SHI0());
@@ -38,9 +38,15 @@ public class MO0303Controller extends ControllerSupport{
 	
 	@RequestMapping("/mo/MO0303G1R0")
 	public @ResponseBody Map<String, Object> MO0303G1R0() throws Exception {
-		result.setData("dlt_BMS_VHC_MST", mo0303Service.MO0303G1R0());
+		result.setData("dlt_BRT_INCDNT_RES_INFO", mo0303Service.MO0303G1R0());
 		return result.getResult();
 	}
+	
+	@RequestMapping("/mo/MO0303G1K0")
+	public @ResponseBody Map<String, Object> MO0303G1K0() throws Exception {
+		result.setData("dma_SEQ_BRT_INCDNT_RES_INFO_0", mo0303Service.MO0303G1K0());
+		return result.getResult();
+	}	
 	
 	@RequestMapping("/mo/MO0303G0S0")
 	public @ResponseBody Map<String, Object> MO0303G0S0() throws Exception {
@@ -49,17 +55,22 @@ public class MO0303Controller extends ControllerSupport{
 		return result.getResultSave();
 	}
 	
-	@RequestMapping("/mo/MO0303G2R0")
-	public @ResponseBody Map<String, Object> MO0303G2R0() throws Exception {
-		result.setData("dlt_VDO_ORGA_LIST", mo0303Service.MO0303G2R0());
-		return result.getResult();
-	}	
-	
-	@RequestMapping("/mo/MO0303G2S0")
+	@RequestMapping("/mo/MO0303G1S0")
 	public @ResponseBody Map<String, Object> MO0303G2S0() throws Exception {
-		Map map = mo0303Service.MO0303G2S0();
+		Map map = mo0303Service.MO0303G1S0();
 		result.setData("dma_result", map);
 		return result.getResultSave();
 	}
 	
+	@RequestMapping("/mo/MO0303P2R0")
+	public @ResponseBody Map<String, Object> MO0303P0R0() throws Exception {
+		result.setData("dlt_BRT_INCDNT_SCNRO_MST", mo0303Service.MO0303P2R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/mo/MO0303SHI1")
+	public @ResponseBody Map<String, Object> MO0303SHI1() throws Exception {
+		result.setData("dlt_searchitem", mo0303Service.MO0303SHI1());
+		return result.getResult();
+	}	
 }
