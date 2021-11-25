@@ -68,4 +68,9 @@ public class RoutService extends ServiceSupport {
 	public List<Map<String, Object>> selectSttnItem() throws Exception {
 		return routMapper.selectSttnItem();
 	}
+	
+	public List<Map<String, Object>> selectSttnCrsList() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return routMapper.selectSttnCrsList(map);
+	}
 }
