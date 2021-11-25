@@ -35,6 +35,77 @@
 		C.REP_ROUT_ID = #{REP_ROUT_ID}
 </select>
 
+<select id="selectCurOperVhcList" resultType="Map">
+	SELECT			A.OPER_DT
+				,	A.REP_ROUT_ID
+				,	A.VHC_ID
+				,	A.ROUT_ID
+				,	A.ALLOC_NO
+				,	A.OPER_SN
+				,	A.NODE_ID
+				,	A.COR_ID
+				,	A.VHC_NO
+				,	A.DRV_ID
+				,	A.GPS_X
+				,	A.GPS_Y
+				,	A.TM_X
+				,	A.TM_Y
+				,	A.OPER_STS
+				,	A.BUS_STS
+				,	A.OBE_STS
+				,	A.SNSTVTY
+				,	A.DRV_ANGLE
+				,	A.CUR_SPD
+				,	A.ACLRTN_YN
+				,	A.DCLRTN_YN
+				,	A.CUR_STOP_TM
+				,	A.OPER_LEN
+				,	A.NODE_SN
+				,	A.NODE_TYPE
+				,	A.ARRV_TM
+				,	A.DPRT_TM
+				,	A.LINK_ID
+				,	A.LINK_SN
+				,	A.LINK_SPD
+				,	A.PRV_PLCE_NM
+				,	A.GET_OFF_CNT
+				,	A.PSG_CNT
+				,	A.NEXT_NODE_ID
+				,	A.NEXT_NODE_ARRV_TM
+				,	A.DOOR_CD
+				,	A.DOOR_TM
+				,	A.UPD_DTM
+				,	B.REP_ROUT_NM
+				,	C.ROUT_NM
+				,	D.DRV_NM
+				,	E.LINK_NM
+				,	F.NODE_NM
+				
+	FROM			BRT_CUR_OPER_INFO A 
+	LEFT JOIN		BMS_REP_ROUT_MST B
+		ON	A.REP_ROUT_ID = B.REP_ROUT_ID
+	LEFT JOIN		BMS_ROUT_MST C
+		ON	A.ROUT_ID = C.ROUT_ID
+	LEFT JOIN		BMS_DRV_MST D
+		ON	A.DRV_ID = D.DRV_ID	
+	LEFT JOIN		BMS_LINK_MST E
+		ON	A.LINK_ID = E.LINK_ID
+	LEFT JOIN		BMS_NODE_MST F
+		ON	A.NODE_ID = F.NODE_ID			
+		
+	WHERE
+		OPER_DT = DATE_FORMAT(NOW(), '%Y/%m/%d')
+	<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+		AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+	</if>
+	<if test="TYPE == 'VHC_ID'">
+		AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%')
+	</if>
+	<if test="TYPE == 'VHC_NO'">
+		AND VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+	</if>		
+</select>
+
 
 <select id="selectVhcDvcInfo" resultType="Map">
 	SELECT
