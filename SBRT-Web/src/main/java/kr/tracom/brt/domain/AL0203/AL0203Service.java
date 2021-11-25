@@ -8,6 +8,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import kr.tracom.brt.domain.AL0103.AL0103Mapper;
+import kr.tracom.cm.domain.OperPlan.OperPlanService;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.util.Result;
@@ -15,6 +16,9 @@ import kr.tracom.util.Result;
 @Service
 public class AL0203Service extends ServiceSupport {
 
+	@Autowired
+	OperPlanService operPlanService;
+	
 	@Autowired
 	private AL0203Mapper al0203Mapper;
 	
@@ -51,7 +55,8 @@ public class AL0203Service extends ServiceSupport {
 				
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("C")) {
-				} else if (rowStatus.equals("U")) {
+				} else if (rowStatus.equals("U")) {					
+					operPlanService.changeOperAllocPlNodeInfo(data); //노드별 출도착시각 변경		
 					uCnt += al0203Mapper.AL0203G0U0(data);
 				} else if (rowStatus.equals("D")) {
 				} 
