@@ -36,6 +36,7 @@
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_RPC_VHC_INFO" saveRemovedData="true">
 					<w2:columnInfo>
+						<w2:column id="RPC_ID" name="대체ID" dataType="text"></w2:column>
 						<w2:column id="OCR_DTM" name="발생일시" dataType="text"></w2:column>
 						<w2:column id="OPER_DT" name="운행일" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
@@ -54,8 +55,6 @@
 						<w2:column id="RPC_TM" name="대체시간" dataType="text"></w2:column>
 						<w2:column id="GPS_X" name="GPS_X좌표" dataType="text"></w2:column>
 						<w2:column id="GPS_Y" name="GPS_Y좌표" dataType="text"></w2:column>
-						<w2:column id="TM_X" name="TM_X좌표" dataType="text"></w2:column>
-						<w2:column id="TM_Y" name="TM_Y좌표" dataType="text"></w2:column>
 						<w2:column id="DETAILS" name="상세내역" dataType="text"></w2:column>
 						<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
 						<w2:column id="INCDNT_TYPE" name="돌발유형" dataType="text"></w2:column>
@@ -86,9 +85,11 @@
 						<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
-				<w2:dataList baseNode="list" repeatNode="map" id="dataList1" saveRemovedData="true">
-					<w2:columnInfo></w2:columnInfo>
-				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_SEQ_BRT_RPC_VHC_INFO_0">
+					<w2:keyInfo>
+						<w2:key id="SEQ" name="SEQ" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_AL0303G0R0" ref='data:json,dma_search' target="data:json,dlt_BRT_RPC_VHC_INFO" action="/al/AL0303G0R0"
@@ -105,7 +106,12 @@
 			</xf:submission>
 			<xf:submission id="sub_AL0303G1R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN"
 				action="/rout/selectNodeListByRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0303G1R0_submitdone" ev:submiterror="" abortTrigger="">
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0303G1R0_submitdone" ev:submiterror=""
+				abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_AL0303G0K0" ref="" target="data:json,dma_SEQ_BRT_RPC_VHC_INFO_0" action="/al/AL0303G0K0" method="post" mediatype="application/json"
+				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0303G0K0_submitdone"
+				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
@@ -113,8 +119,8 @@
 //		com.executeSubmission(sub_AL0303G0R0);
 		
 		var autoOptions = {
-			Main : { grid : AL0303G0, frm : AL0303F0, srchSbm : sub_AL0303G0R0, savSbm : sub_AL0303G0S0,  
-								srchGrp : pgm_header, keyColumn : "OCR_DTM", focusColumn : "OCR_DTM", name :  "대체차량 운행 목록"}
+			Main : { grid : AL0303G0, frm : AL0303F0, srchSbm : sub_AL0303G0R0, savSbm : sub_AL0303G0S0,  keySbm : sub_AL0303G0K0, 
+								srchGrp : pgm_header, keyColumn : "RPC_ID", focusColumn : "RPC_ID", name :  "대체차량 운행 목록"}
 		};
 		
 		//추가/삭제 버튼 감추기
@@ -167,7 +173,7 @@
 	};
 	
 	scwin.sub_AL0303G0R0_submitdone = function(e) {
-		com.setFocusedCell(AL0303G0, "RPC_VHC_ID");
+		com.setFocusedCell(AL0303G0, "RPC_ID");
 	};
 	
 	
@@ -301,6 +307,10 @@
 			RPC_TM.setValue(info.oldValue);
 		}
 	};
+	
+	scwin.sub_AL0303G0K0_submitdone = function(e) {
+		com.addGridForm(AL0303G0, AL0303F0, dma_SEQ_BRT_RPC_VHC_INFO_0, "RPC_ID", "RPC_ID");
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -316,8 +326,7 @@
 					<xf:group class="search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE"
-							optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" submenuSize="auto"
-							textAlign="left">
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" submenuSize="auto" textAlign="left">
 							<xf:choices>
 								<xf:item>
 									<xf:label><![CDATA[-전체-]]></xf:label>
@@ -368,7 +377,7 @@
 							class="cm_grid" tooltipPositionY="" focusMode="row">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row2">
-									<w2:column width="100" style="height:25px;" inputType="text" id="column1" value="대체차량ID"
+									<w2:column width="100" style="height:25px;" inputType="text" id="column1" value="대체ID"
 										blockSelect="false" displayMode="label" userData1="" userData2="" class="req">
 									</w2:column>
 									<w2:column width="140" style="height:20px;" inputType="text" id="column2" value="일시" blockSelect="false"
@@ -405,14 +414,14 @@
 							</w2:header>
 							<w2:gBody width="40" style="" id="gBody4">
 								<w2:row style="" id="row5">
-									<w2:column width="118" style="height:20px;" inputType="text" id="RPC_VHC_ID" blockSelect="false"
+									<w2:column width="118" style="height:20px;" inputType="text" id="RPC_ID" blockSelect="false"
 										displayMode="label" readOnly="true" userData1="M" userData2="">
 									</w2:column>
 									<w2:column width="159" style="height:20px;" inputType="text" id="OCR_DTM" blockSelect="false"
 										displayMode="label" readOnly="true" userData1="M">
 									</w2:column>
-									<w2:column textAlign="center" width="80" style="height:20px;" inputType="text" id="REP_ROUT_NM" blockSelect="false"
-										displayMode="label" readOnly="true" userData1="">
+									<w2:column textAlign="center" width="80" style="height:20px;" inputType="text" id="REP_ROUT_NM"
+										blockSelect="false" displayMode="label" readOnly="true" userData1="">
 									</w2:column>
 									<w2:column width="159" style="height:20px;" inputType="select" id="INCDNT_TYPE" blockSelect="false"
 										displayMode="label" readOnly="true">
@@ -453,7 +462,7 @@
 				</xf:group><!-- pgm_list -->
 
 				<xf:group id="" class="vertical_line"></xf:group>
-				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_250_20_20_2_a" style="">
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_280_20_20_2_a" style="">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="대체차량 상세 정보" style=""></w2:textbox>
@@ -472,33 +481,46 @@
 								<xf:group style="" tagname="col"></xf:group>
 							</xf:group>
 							<xf:group style="" tagname="tr">
-								<xf:group style="" class="w2tb_th req" tagname="th">대체차량 ID</xf:group>
+								<xf:group style="" class="w2tb_th req" tagname="th">대체ID</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
 									<w2:attributes>
-										<w2:colspan>3</w2:colspan>
+										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input adjustMaxLength="false" id="" style="width: 144px;height: 21px;" ref="data:dlt_BRT_RPC_VHC_INFO.RPC_VHC_ID" disabled="true"></xf:input>
+									<xf:input adjustMaxLength="false" id="" style="width: 144px;height: 21px;"
+										ref="data:dlt_BRT_RPC_VHC_INFO.RPC_ID" disabled="true">
+									</xf:input>
 								</xf:group>
-							</xf:group>
-							<xf:group style="" tagname="tr">
-								<xf:group style="" class="w2tb_th req" tagname="th">대표노선명</xf:group>
+								<xf:group style="" class="w2tb_th req" tagname="th">노선명</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
-									<!-- <w2:attributes>
-										<w2:colspan>3</w2:colspan>
+									<w2:attributes>
+										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
-										</w2:attributes> -->
-									<xf:input id="REP_ROUT_NM" class="req" chooseOption="true" style="width: 148px;height: 21px;"
+									</w2:attributes>
+									<xf:input id="REP_ROUT_NM" class="req" chooseOption="true" style="width: 100px;height: 21px;"
 										allOption="" disabled="" ev:onfocus="scwin.REP_ROUT_NM_onfocus" ref="data:dlt_BRT_RPC_VHC_INFO.REP_ROUT_NM">
 									</xf:input>
 									<xf:image class="btn" ev:onclick="scwin.REP_ROUT_NM_SEARCH_onclick" id="REP_ROUT_NM_SEARCH" longdesc=""
 										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
 									</xf:image>
-									<xf:group class="w2tb_th req" style="" tagname="th">일시</xf:group>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group style="" class="w2tb_th req" tagname="th">운행일</xf:group>
+								<xf:group style="" class="w2tb_td" tagname="td">
+									<!-- <w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+										</w2:attributes> -->
+									<w2:inputCalendar footerDiv="false" id="" style="width: 150px;height: 23px;" renderDiv="true"
+										focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component"
+										ref="data:dlt_BRT_RPC_VHC_INFO.OPER_DT">
+									</w2:inputCalendar>
+									<xf:group class="w2tb_th req" style="" tagname="th">발생일시</xf:group>
 									<xf:group class="w2tb_td" style="" tagname="td">
-										<w2:inputCalendar calendarValueType="yearMonthDateTimeSec" focusOnDateSelect="false" footerDiv="false" class ="req"
-											id="" ref="data:dlt_BRT_RPC_VHC_INFO.OCR_DTM" renderDiv="true" renderType="component" rightAlign="false"
-											style="width: 150px;height: 23px;">
+										<w2:inputCalendar calendarValueType="yearMonthDateTimeSec" focusOnDateSelect="false"
+											footerDiv="false" class="req" id="" ref="data:dlt_BRT_RPC_VHC_INFO.OCR_DTM" renderDiv="true" renderType="component"
+											rightAlign="false" style="width: 150px;height: 23px;">
 										</w2:inputCalendar>
 									</xf:group>
 								</xf:group>
@@ -514,56 +536,104 @@
 									<xf:image class="btn" ev:onclick="scwin.GRP_VHC_NO_onclick" id="GRP_VHC_NO_SEARCH" longdesc=""
 										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
 									</xf:image>
-								<xf:group style="" class="w2tb_th req" tagname="th">대체차량</xf:group>
-								<xf:group style="" class="w2tb_td" tagname="td">
+									<xf:group style="" class="w2tb_th req" tagname="th">원운전자</xf:group>
+									<xf:group style="" class="w2tb_td" tagname="td">
+										<xf:input adjustMaxLength="" class="req" disabled="" ev:oneditenter=""
+											ev:onfocus="scwin.RPC_VHC_NO_onfocus" fireEventOnInvalid="" id="RPC_VHC_NO" invalidMessageFunc="" mandatory="" readOnly=""
+											ref="data:dlt_BRT_RPC_VHC_INFO.GRP_DRV_NM" style="width:80%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
+											validator="">
+										</xf:input>
+										<xf:image class="btn" ev:onclick="scwin.RPC_VHC_NO_onclick" id="RPC_VHC_NO_SEARCH" longdesc=""
+											src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
+										</xf:image>
+									</xf:group>
+								</xf:group>
+							</xf:group>
+							<xf:group tagname="tr" style="">
+								<xf:group tagname="th" style="" class="w2tb_th req">대체차량</xf:group>
+								<xf:group tagname="td" style="" class="w2tb_td">
 									<xf:input adjustMaxLength="" class="req" disabled="" ev:oneditenter=""
-										ev:onfocus="scwin.RPC_VHC_NO_onfocus" fireEventOnInvalid="" id="RPC_VHC_NO" invalidMessageFunc="" mandatory="" readOnly=""
+										ev:onfocus="scwin.RPC_DRV_NM_onfocus" fireEventOnInvalid="" id="RPC_VHC_NM" invalidMessageFunc="" mandatory="" readOnly=""
 										ref="data:dlt_BRT_RPC_VHC_INFO.RPC_VHC_NO" style="width:80%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
 										validator="">
 									</xf:input>
-									<xf:image class="btn" ev:onclick="scwin.RPC_VHC_NO_onclick" id="RPC_VHC_NO_SEARCH" longdesc=""
+									<xf:image class="btn" ev:onclick="scwin.RPC_DRV_NM_onclick" id="RPC_VHC_NM_SEARCH" longdesc=""
 										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
-									</xf:image>								
-								</xf:group>
-								</xf:group>
-							</xf:group>
-							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" style="" class="w2tb_th req">대체운전자</xf:group>
-								<xf:group tagname="td" style="" class="w2tb_td">
-									<xf:input adjustMaxLength="" class="req" disabled="" ev:oneditenter=""
-										ev:onfocus="scwin.RPC_DRV_NM_onfocus" fireEventOnInvalid="" id="RPC_DRV_NM" invalidMessageFunc="" mandatory="" readOnly=""
-										ref="data:dlt_BRT_RPC_VHC_INFO.RPC_DRV_NM" style="width:80%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
-										validator="">
-									</xf:input>
-									<xf:image class="btn" ev:onclick="scwin.RPC_DRV_NM_onclick" id="RPC_DRV_NM_SEARCH" longdesc=""
-										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
-									</xf:image>	
-								<xf:group style="" class="w2tb_th" tagname="th">대체일자</xf:group>
-								<xf:group style="" class="w2tb_td" tagname="td">
-									<w2:inputCalendar footerDiv="false" id="" style="width: 150px;height: 23px;" renderDiv="true"
-											focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component" ref="data:dlt_BRT_RPC_VHC_INFO.RPC_DT">
-									</w2:inputCalendar>
-								</xf:group>
-								</xf:group>
-							</xf:group>
-							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" style="" class="w2tb_th">발생시간</xf:group>
-								<xf:group tagname="td" style="" class="w2tb_td">
-									<xf:input adjustMaxLength="false" id="OCR_TM" style="width: 144px;height: 21px;" ref="data:dlt_BRT_RPC_VHC_INFO.OCR_TM" ev:onchange="scwin.OCR_TM_onchange" allowChar="0-9" ev:onviewchange="scwin.OCR_TM_onviewchange"></xf:input>
-									<xf:group style="" class="w2tb_th" tagname="th">대체시간</xf:group>
+									</xf:image>
+									<xf:group style="" class="w2tb_th" tagname="th">대체운전자</xf:group>
 									<xf:group style="" class="w2tb_td" tagname="td">
-										<xf:input adjustMaxLength="false" id="RPC_TM" style="width: 144px;height: 21px;" ref="data:dlt_BRT_RPC_VHC_INFO.RPC_TM" allowChar="0-9" ev:onviewchange="scwin.RPC_TM_onviewchange"></xf:input>
+										<xf:input adjustMaxLength="" class="req" disabled="" ev:oneditenter=""
+											ev:onfocus="scwin.RPC_DRV_NM_onfocus" fireEventOnInvalid="" id="RPC_DRV_NM" invalidMessageFunc="" mandatory="" readOnly=""
+											ref="data:dlt_BRT_RPC_VHC_INFO.RPC_DRV_NM" style="width:80%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
+											validator="">
+										</xf:input>
+										<xf:image class="btn" ev:onclick="scwin.RPC_DRV_NM_onclick" id="RPC_DRV_NM_SEARCH" longdesc=""
+											src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
+										</xf:image>
 									</xf:group>
 								</xf:group>
+							</xf:group>
+							<xf:group tagname="tr" style="">
+								<xf:group tagname="th" style="" class="w2tb_th">대체일</xf:group>
+								<xf:group tagname="td" style="" class="w2tb_td">
+									<w2:inputCalendar footerDiv="false" id="" style="width: 150px;height: 23px;" renderDiv="true"
+										focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component"
+										ref="data:dlt_BRT_RPC_VHC_INFO.RPC_DT">
+									</w2:inputCalendar>
+									<xf:group style="" class="w2tb_th" tagname="th">돌발유형</xf:group>
+									<xf:group style="" class="w2tb_td" tagname="td">
+										<xf:select1 id="" chooseOption="" style="width: 144px;height: 21px;" submenuSize="auto" allOption=""
+										disabled="false" direction="auto" appearance="minimal" disabledClass="w2selectbox_disabled"
+										ref="data:dlt_BRT_RPC_VHC_INFO.INCDNT_TYPE">
+										<xf:choices>
+											<xf:item>
+												<xf:label><![CDATA[사고]]></xf:label>
+												<xf:value><![CDATA[IC001]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[낙하]]></xf:label>
+												<xf:value><![CDATA[IC002]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[고장]]></xf:label>
+												<xf:value><![CDATA[IC003]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[기타]]></xf:label>
+												<xf:value><![CDATA[IC004]]></xf:value>
+											</xf:item>
+										</xf:choices>
+									</xf:select1>
+									</xf:group>
+									
+								</xf:group>
+							</xf:group>
+							<xf:group tagname="tr" style="">
+								<xf:group tagname="th" style="" class="w2tb_th">대체시간</xf:group>
+								<xf:group tagname="td" style="" class="w2tb_td">
+									<xf:input adjustMaxLength="false" id="" style="width: 144px;height: 21px;"
+										ref="data:dlt_BRT_RPC_VHC_INFO.RPC_TM" allowChar="0-9.">
+									</xf:input>
+								</xf:group>
+								<xf:group style="" class="w2tb_th" tagname="th">발생시간</xf:group>
+									<xf:group style="" class="w2tb_td" tagname="td">
+										<xf:input adjustMaxLength="false" id="RPC_TM" style="width: 144px;height: 21px;"
+											ref="data:dlt_BRT_RPC_VHC_INFO.OCR_TM" allowChar="0-9" ev:onviewchange="scwin.RPC_TM_onviewchange">
+										</xf:input>
+									</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
 								<xf:group tagname="th" style="" class="w2tb_th">위도</xf:group>
 								<xf:group tagname="td" style="" class="w2tb_td">
-									<xf:input adjustMaxLength="false" id="" style="width: 144px;height: 21px;" ref="data:dlt_BRT_RPC_VHC_INFO.GPS_X" allowChar="0-9."></xf:input>
-									<xf:group style="" class="w2tb_th" tagname="th">경도</xf:group>
-									<xf:group style="" class="w2tb_td" tagname="td">
-										<xf:input adjustMaxLength="false" id="" style="width: 144px;height: 21px;" ref="data:dlt_BRT_RPC_VHC_INFO.GPS_Y" allowChar="0-9."></xf:input>
-									</xf:group>
+									<xf:input adjustMaxLength="false" id="" style="width: 144px;height: 21px;"
+											ref="data:dlt_BRT_RPC_VHC_INFO.GPS_X" allowChar="0-9.">
+									</xf:input>
+								</xf:group>
+								<xf:group tagname="th" style="" class="w2tb_th">경도</xf:group>
+								<xf:group tagname="td" style="" class="w2tb_td">
+									<xf:input adjustMaxLength="false" id="" style="width: 144px;height: 21px;"
+										ref="data:dlt_BRT_RPC_VHC_INFO.GPS_Y" allowChar="0-9.">
+									</xf:input>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
@@ -583,15 +653,13 @@
 							</xf:group>
 						</xf:group>
 					</xf:group>
-					<xf:group id="" class="horizontal_line">
-					</xf:group>
+					<xf:group id="" class="horizontal_line"></xf:group>
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="지도" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
-					<xf:group class="" id="" style="">
-					</xf:group>
+					<xf:group class="" id="" style=""></xf:group>
 					<xf:group id="" class="" style="">
 						<div id="map_AL0303" style="overflow:hidden;"></div>
 						<!-- <xf:group id="map_SI0402" style="overflow:hidden;"></xf:group>  -->

@@ -34,6 +34,10 @@ public class AL0303Service extends ServiceSupport{
 		return AL0303Mapper.AL0303SHI1();
 	}
 	
+	public Map AL0303G0K0() throws Exception {
+		return AL0303Mapper.AL0303G0K0(); 
+	}
+	
 	public Map AL0303G0S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
