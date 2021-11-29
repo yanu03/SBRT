@@ -106,7 +106,7 @@ public class EventThread extends Thread{
 				Thread.sleep(1);
 				
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.error("", e);
 			}
 		}
 		
@@ -148,6 +148,9 @@ public class EventThread extends Thread{
 
             switch(attrId){
                 case BrtAtCode.BUS_INFO: //정주기 버스 정보
+                	
+                	logger.debug("Received BrtAtCode.BUS_INFO >> {}", atMessage);
+                	
                     
                 	AtBusInfo busInfo = (AtBusInfo)atMessage.getAttrData();
                 	
@@ -157,9 +160,9 @@ public class EventThread extends Thread{
                 	try {
                 		insertCurOperInfo(busInfoMap);
                 	} catch (DuplicateKeyException e) {
-                		//e.printStackTrace();
+                		//logger.error("", e);
                 	} catch (Exception e) {
-						e.printStackTrace();
+                		logger.error("", e);
 					}
                 	
                 	
@@ -189,6 +192,9 @@ public class EventThread extends Thread{
                     
                     
             	case BrtAtCode.BUS_ARRIVAL_INFO: //차량 도착정보
+            		
+            		logger.info("Received BrtAtCode.BUS_ARRIVAL_INFO >> {}", atMessage);
+            		
                 	
                 	AtBusArrivalInfo busArrivalInfo = (AtBusArrivalInfo)atMessage.getAttrData();            	
                 	
@@ -229,6 +235,10 @@ public class EventThread extends Thread{
                     
                     
                 case BrtAtCode.BUS_OPER_EVENT: //운행 이벤트 정보
+                	
+                	logger.info("Received BrtAtCode.BUS_OPER_EVENT >> {}", atMessage);
+                	
+                	
                 	//이벤트 이력정보에 insert
                 	
                 	 //String eventData = "";
@@ -244,9 +254,9 @@ public class EventThread extends Thread{
                 		 //현재운행정보도 업데이트
                 		 insertCurOperInfo(busEventMap);
                 	 } catch (DuplicateKeyException e) {
-                 		//e.printStackTrace();
+                 		//logger.error("", e);
                  	 }	catch (Exception e) {
-                		 e.printStackTrace();
+                 		logger.error("", e);
                 	 }
                 	 
                 	 
@@ -254,9 +264,9 @@ public class EventThread extends Thread{
                 		//이력 insert            
                 		 historyMapper.insertEventHistory(busEventMap);     		 
                 	 } catch (DuplicateKeyException e) {
-                 		//e.printStackTrace();
+                 		//logger.error("", e);
                  	 }	catch (Exception e) {
-                		 e.printStackTrace();
+                 		logger.error("", e);
                 	 }                	 
                 	 
                 	 
@@ -322,7 +332,7 @@ public class EventThread extends Thread{
                         	 
                     		 historyMapper.insertOperVioltHistory(busEventMap); //운행위반이력 insert                    		 
                     	 } catch (Exception e) {
-                    		 e.printStackTrace();
+                    		 logger.error("", e);
                     	 }
                          
                          
@@ -353,7 +363,7 @@ public class EventThread extends Thread{
                         	 
                     		 curInfoMapper.insertIncidentInfo(busEventMap); //돌발정보 insert                    		 
                     	 } catch (Exception e) {
-                    		 e.printStackTrace();
+                    		 logger.error("", e);
                     	 }
                          
                          break;
@@ -468,9 +478,9 @@ public class EventThread extends Thread{
 	                	
 	                	
                 	} catch (DuplicateKeyException e) {
-                		//e.printStackTrace();
+                		//logger.error("", e);
                 	} catch (Exception e) {
-						e.printStackTrace();
+                		logger.error("", e);
 					}
                 	
                 	

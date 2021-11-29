@@ -44,6 +44,8 @@ public class ActionRequest {
 
     public Map<String, Object> handle(TimsMessage timsMessage, String sessionId){
     	
+    	logger.info("<== PlCode.OP_ACTION_REQ message:{}, sessionId:{}", timsMessage, sessionId);
+    	
     	Map<String, Object> resultMap = null;
     	
         PlActionRequest request = (PlActionRequest) timsMessage.getPayload();
