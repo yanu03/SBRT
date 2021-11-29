@@ -21,5 +21,6 @@ public interface RoutMapper {
 	public List<Map<String, Object>> selectNodeListByRepRout(Map param);
 	public List<Map<String, Object>> selectMainNodeListByRout(Map param);
 	public List<Map<String, Object>> selectSttnList(Map param);
+	public List<Map<String, Object>> selectSttnCrsList(Map param);
 	public List<Map<String, Object>> selectSttnItem();
 }

@@ -4,16 +4,22 @@
 
 	<select id="MO0301G0R0" resultType="Map" parameterType="Map">
 		SELECT
-			SCNRO_ID
-			,SCNRO_NM
-			,INCDNT_TYPE
-			,INCDNT_RES_TYPE
-			,RES_SCNRO
-			,REMARK
-			,UPD_DTM
-			,UPD_ID
-		FROM
-			BRT_INCDNT_SCNRO_MST
+						A.SCNRO_ID
+			,			A.SCNRO_NM
+			,			A.INCDNT_TYPE
+			,			A.INCDNT_RES_TYPE
+			,			A.RES_SCNRO
+			,			A.REMARK
+			,			A.UPD_DTM
+			,			A.UPD_ID
+			,			A.CLSFCTN_ID
+			,			B.CLSFCTN_NM
+			,			B.PHONE
+			
+		FROM			BRT_INCDNT_SCNRO_MST A
+		LEFT JOIN		BMS_EMER_CLSFCTN_MST B
+			ON			A.CLSFCTN_ID = B.CLSFCTN_ID			
+			
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 				AND SCNRO_ID LIKE CONCAT('%',#{CONTENT},'%') || INCDNT_TYPE LIKE CONCAT('%',#{CONTENT},'%') 
@@ -46,6 +52,7 @@
 			,REMARK = #{REMARK}
 			,UPD_DTM = #{UPD_DTM}
 			,UPD_ID = #{UPD_ID}
+			,CLSFCTN_ID = #{CLSFCTN_ID}
 		WHERE 
 			SCNRO_ID = #{SCNRO_ID}
 	</update>
@@ -64,6 +71,7 @@
 			,REMARK
 			,UPD_DTM
 			,UPD_ID
+			,CLSFCTN_ID
 			) 
 		VALUES (
 			#{SCNRO_ID}
@@ -74,6 +82,7 @@
 			,#{REMARK}
 			,#{UPD_DTM}
 			,#{UPD_ID}
+			,#{CLSFCTN_ID}
 			)
 	</insert>
 		

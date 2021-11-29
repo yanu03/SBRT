@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataMap baseNode="map" id="dma_BRT_INCDNT_INFO">
+					<w2:keyInfo>
+						<w2:key id="GPS_X" name="name1" dataType="text"></w2:key>
+						<w2:key id="GPS_Y" name="name2" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+			</w2:dataCollection>
+			<w2:workflowCollection>
+			</w2:workflowCollection>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+	var map = null;
+	var marker = null;
+	
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		
+		var mapContainer = document.getElementById('map_MO0303P01');
+		var mapOptions = {
+			center : new kakao.maps.LatLng(scwin.param.GPS_Y, scwin.param.GPS_X),
+			level : 3
+		};
+		
+		map = new kakao.maps.Map(mapContainer, mapOptions); //지도 생성 및 객체 리턴
+
+		// 마커가 표시될 위치입니다 
+		var markerPosition  = new kakao.maps.LatLng(scwin.param.GPS_Y, scwin.param.GPS_X); 
+		var imageSize = new kakao.maps.Size(19, 28); 
+		var markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/incdnt.png", imageSize);
+
+		// 마커를 생성합니다
+		marker = new kakao.maps.Marker({
+    		position: markerPosition,
+    		image : markerImage
+		});
+
+		// 마커가 지도 위에 표시되도록 설정합니다
+		marker.setMap(map);
+
+		kakao.maps.event.addListener(map, 'click', function(e) {
+			scwin.onClickMap(e);
+		});		
+	};
+
+	scwin.onpageunload = function() {
+
+	};
+
+	scwin.onClickMap = function(e) {
+		marker.setMap(null);
+		
+		//routMap.initDisplay("map_MO0303P01");
+		
+		var lonlat = e.latLng;
+	
+		dma_BRT_INCDNT_INFO.set("GPS_Y", util.getDispGps(lonlat.Ma,7));
+		dma_BRT_INCDNT_INFO.set("GPS_X", util.getDispGps(lonlat.La,7));
+		var gps_x = dma_BRT_INCDNT_INFO.get("GPS_X");
+		var gps_y = dma_BRT_INCDNT_INFO.get("GPS_Y");
+		
+		// 마커가 표시될 위치입니다 
+		var markerPosition  = new kakao.maps.LatLng(gps_y, gps_x); 
+		var imageSize = new kakao.maps.Size(19, 28); 
+		var markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/incdnt.png", imageSize);
+
+		// 마커를 생성합니다
+		marker = new kakao.maps.Marker({
+    		position: markerPosition,
+    		image : markerImage
+		});
+
+		// 마커가 지도 위에 표시되도록 설정합니다
+		marker.setMap(map);	
+		map.setCenter(markerPosition);	
+}
+	
+	scwin.btn_confirm_onclick = function() {
+		var gps_x = dma_BRT_INCDNT_INFO.get("GPS_X");
+		var gps_y = dma_BRT_INCDNT_INFO.get("GPS_Y");
+		
+		var data = [{"GPS_X" : gps_x, "GPS_Y" : gps_y}];	
+		com.closePopup(scwin.closeCallbackFncName, data);			
+	};
+	
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();
+	};
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<!-- <div id="map_MO0303P01" style="width:890px;height:600px;"></div> -->
+
+		<xf:group class="popup_container grdr_41_36_a" id="popup_container" style="">
+			
+			<xf:group style="" id="" class="popup_content">
+				<div id="map_MO0303P01" style="width:870px;height:490px;"></div>
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+		
+	</body>
+</html>

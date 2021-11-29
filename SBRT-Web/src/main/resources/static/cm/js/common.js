@@ -4629,7 +4629,11 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 								if ((typeof main.keySbm !== "undefined")&&(main.keySbm !== null)){
 									$p.executeSubmission(main.keySbm);
 								}
-							}
+								else {
+									com.addGrid2(main.grid,main.focusColumn);
+									
+								}	
+							} 
 						}
 						else if(i == gcm.BTN.DEL.nm){
 							item.cbFnc = function(){

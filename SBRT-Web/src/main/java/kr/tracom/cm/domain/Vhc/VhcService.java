@@ -25,6 +25,11 @@ public class VhcService extends ServiceSupport {
 		return vhcMapper.selectAllocVhcList(map);
 	}
 	
+	public List<Map<String, Object>> selectCurOperVhcList() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return vhcMapper.selectCurOperVhcList(map);
+	}
+	
 	public List<Map<String, Object>> selectVhcItem() throws Exception {
 		return vhcMapper.selectVhcItem();
 	}

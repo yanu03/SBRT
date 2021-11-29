@@ -43,6 +43,9 @@
 						<w2:column id="REMARK" name="갱신일시" dataType="text"></w2:column>
 						<w2:column id="UPD_DTM" name="갱신아이디" dataType="text"></w2:column>
 						<w2:column id="SCNRO_NM" name="시나리오명" dataType="text"></w2:column>
+						<w2:column id="CLSFCTN_ID" name="비상연락망아이디" dataType="text"></w2:column>
+						<w2:column id="PHONE" name="연락처" dataType="text"></w2:column>
+						<w2:column id="CLSFCTN_NM" name="비상연락처" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_SEQ_BRT_INCDNT_SCNRO_MST_0">
@@ -137,7 +140,27 @@
 	scwin.sub_MO0301G0S0_submitdone = function(e) {
 		com.saveDone(MO0301G0, sub_MO0301G0R0);
 	};
-	]]></script>
+	
+	scwin.CLSFCTN_NM_onfocus = function(e) {
+		scwin.CLSFCTN_NM_SEARCH_onclick();
+	};
+	
+   scwin.CLSFCTN_NM_SEARCH_onclick = function(e) {
+      var data = {callbackFn : "scwin.CLSFCTN_NM_SEARCH_callback" };
+      var options = { id : "popUpEmerList",
+                  popupName : "비상연락처 목록", 
+                  modal : true};
+      com.openPopup("/cm/common/popUpEmerList.xml", options, data);
+   };	
+	
+	
+	scwin.CLSFCTN_NM_SEARCH_callback = function(obj) {
+		dlt_BRT_INCDNT_SCNRO_MST.setCellData(MO0301G0.getFocusedRowIndex(), "CLSFCTN_ID", obj[0].CLSFCTN_ID);
+		dlt_BRT_INCDNT_SCNRO_MST.setCellData(MO0301G0.getFocusedRowIndex(), "CLSFCTN_NM", obj[0].CLSFCTN_NM);
+		dlt_BRT_INCDNT_SCNRO_MST.setCellData(MO0301G0.getFocusedRowIndex(), "PHONE", obj[0].PHONE);
+	}	
+	
+]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group class="pgm_container grdr_41_36_a" id="pgm_container" style="">
@@ -348,7 +371,27 @@
 									</xf:select1>
 								</xf:group>
 							</xf:group>
-							<xf:group style="" tagname="tr">
+							<xf:group tagname="tr" style=""><xf:group tagname="th" class="w2tb_th">비상연락처<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes></w2:attributes>
+									<xf:input adjustMaxLength="" class="" disabled="" ev:oneditenter=""
+										ev:onfocus="scwin.CLSFCTN_NM_onfocus" fireEventOnInvalid="" id="CLSFCTN_NM" invalidMessageFunc="" mandatory="" maxlength=""
+										readOnly="" ref="data:dlt_BRT_INCDNT_SCNRO_MST.CLSFCTN_NM" style="width:150px;height:21px;" validateOnCheckMaxByteLength=""
+										validateOnInput="" validator="">
+									</xf:input>
+									<xf:image class="btn" ev:onclick="scwin.CLSFCTN_NM_SEARCH_onclick" id="CLSFCTN_NM_SEARCH" longdesc=""
+										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
+									</xf:image>
+								</xf:group>
+								<xf:group tagname="td" class="w2tb_th">전화번호<w2:attributes></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes></w2:attributes>
+									<xf:input adjustMaxLength="" class="" disabled="true" ev:oneditenter=""
+										ev:onfocus="" fireEventOnInvalid="" id="PHONE" invalidMessageFunc="" mandatory="" maxlength=""
+										readOnly="" ref="data:dlt_BRT_INCDNT_SCNRO_MST.PHONE" style="width:150px;height:21px;" validateOnCheckMaxByteLength=""
+										validateOnInput="" validator="">
+									</xf:input>
+								</xf:group></xf:group><xf:group style="" tagname="tr">
 								<xf:group style="" class="w2tb_th" tagname="th">시나리오명</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
 									<w2:attributes>

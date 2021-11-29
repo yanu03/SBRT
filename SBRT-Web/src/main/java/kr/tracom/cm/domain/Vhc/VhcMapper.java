@@ -13,6 +13,8 @@ public interface VhcMapper {
 	
 	public List<Map<String, Object>> selectAllocVhcList(Map param);
 	
+	public List<Map<String, Object>> selectCurOperVhcList(Map param);
+	
 	public Map<String, Object> selectVhcDvcInfo(Map param);
 	
 	public List<Map<String, Object>> selectVhcItem();

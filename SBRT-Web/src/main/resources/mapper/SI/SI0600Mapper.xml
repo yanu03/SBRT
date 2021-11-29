@@ -12,6 +12,7 @@
          a.PARENT_ID,
          a.LEVEL,
          a.SORT,
+         a.PHONE,
          CONCAT(a.LEVEL,a.SORT) path
        FROM	   BMS_EMER_CLSFCTN_MST a
        WHERE   a.PARENT_ID = ""
@@ -23,6 +24,7 @@
           b.PARENT_ID,
           b.LEVEL,
           b.SORT,
+          b.PHONE,
           CONCAT(c.path,b.LEVEL,b.SORT) path 
        FROM    CTE c
        INNER   JOIN BMS_EMER_CLSFCTN_MST b
@@ -36,7 +38,8 @@
          IFNULL(PARENT_ID, 0) AS PARENT_ID,
          LEVEL,
          SORT,
-         path
+         path,
+         PHONE
       FROM CTE 
 	  <where>
 		<if test="TYPE == 'ALL'">
@@ -66,7 +69,8 @@
 				LEVEL,
 				SORT,
 				UPD_DTM,
-				UPD_ID
+				UPD_ID,
+				PHONE
 			)
 	values
 			(
@@ -76,7 +80,8 @@
 				#{LEVEL},
 				#{SORT},
 				#{UPD_DTM},
-				#{SSN_USER_ID}			
+				#{SSN_USER_ID},
+				#{PHONE}			
 			)
 </insert>
 
@@ -127,7 +132,8 @@
 			LEVEL = #{LEVEL},
 			SORT = #{SORT},
 			UPD_DTM = #{UPD_DTM},
-			UPD_ID = #{UPD_ID}
+			UPD_ID = #{UPD_ID},
+			PHONE = #{PHONE}
 			
 	where 	CLSFCTN_ID = #{CLSFCTN_ID}			
 	

@@ -25,7 +25,7 @@ public class MO0303Service extends ServiceSupport {
 
 	public Map MO0303G0K0() throws Exception {
 		return mo0303Mapper.MO0303G0K0(); 
-	}
+	}	
 	
 	public List MO0303SHI0() throws Exception {
 		return mo0303Mapper.MO0303SHI0();
@@ -36,7 +36,7 @@ public class MO0303Service extends ServiceSupport {
 		int uCnt = 0;
 		int dCnt = 0;		
 		
-		List<Map<String, Object>> param = getSimpleList("dlt_BIT_VDO_ORGA_INFO");
+		List<Map<String, Object>> param = getSimpleList("dlt_BRT_INCDNT_INFO");
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
@@ -70,32 +70,31 @@ public class MO0303Service extends ServiceSupport {
 	
 	public List MO0303G1R0() throws Exception {
 		// TODO Auto-generated method stub
-		return mo0303Mapper.MO0303G1R0();
-	}
-	
-	
-	public List MO0303G2R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_subsearch");
-		return mo0303Mapper.MO0303G2R0(map);
+		return mo0303Mapper.MO0303G1R0(map);
 	}
 	
-	public Map MO0303G2S0() throws Exception {
+	public Map MO0303G1K0() throws Exception {
+		return mo0303Mapper.MO0303G1K0(); 
+	}
+	
+	public Map MO0303G1S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;		
 		
-		List<Map<String, Object>> param = getSimpleList("dlt_BIT_VDO_ORGA_LIST");
+		List<Map<String, Object>> param = getSimpleList("dlt_BRT_INCDNT_RES_INFO");
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("C")) {
-					iCnt += mo0303Mapper.MO0303G2I0(data);
+					iCnt += mo0303Mapper.MO0303G1I0(data);
 				} else if (rowStatus.equals("U")) {
-					uCnt += mo0303Mapper.MO0303G2U0(data);
+					uCnt += mo0303Mapper.MO0303G1U0(data);
 				}
 				else if (rowStatus.equals("D")) {
-					dCnt += mo0303Mapper.MO0303G2D0(data);
+					dCnt += mo0303Mapper.MO0303G1D0(data);
 				} 
 			}			
 		} catch(Exception e) {
@@ -115,7 +114,13 @@ public class MO0303Service extends ServiceSupport {
 		return result;	
 	}
 
+	public List MO0303P2R0() throws Exception {
+		// TODO Auto-generated method stub
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return mo0303Mapper.MO0303P2R0(map);
+	}	
 
-	
-	
+	public List MO0303SHI1() throws Exception {
+		return mo0303Mapper.MO0303SHI1();
+	}	
 }

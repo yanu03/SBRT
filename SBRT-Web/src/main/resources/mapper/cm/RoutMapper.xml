@@ -519,4 +519,40 @@
 	FROM BMS_STTN_MST WHERE DEL_YN!='Y'
 	ORDER BY STTN_ID
 </select>
+
+<select id="selectSttnCrsList" resultType="Map">
+	SELECT  		A.NODE_ID
+				,	A.MOCK_NODE_ID
+				,	A.NODE_NM
+				,	A.NODE_ENM
+				,	A.NODE_TYPE
+				,	A.GPS_X
+				,	A.GPS_Y
+				,	A.TM_X
+				,	A.TM_Y
+				,	A.ENTRY_RECOG_RADS
+				,	A.ADVNC_RECOG_RADS
+				,	A.USE_YN
+				,	A.UPD_DTM
+				,	A.UPD_ID
+				
+		FROM BMS_NODE_MST A
+		
+		WHERE		NODE_TYPE = 'NT001'
+		OR			NODE_TYPE = 'NT002'
+		
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+				<if test="TYPE == 'ALL' || TYPE == ''">
+					AND (A.NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || A.NODE_NM LIKE CONCAT('%',#{CONTENT},'%'))
+				</if>
+				<if test="TYPE == 'NODE_ID'">
+					AND A.NODE_ID LIKE CONCAT('%',#{CONTENT},'%')
+				</if>
+				<if test="TYPE == 'NODE_NM'">
+					AND A.NODE_NM LIKE CONCAT('%',#{CONTENT},'%') 
+				</if>
+			</if>
+		
+</select>
+	
 </mapper>

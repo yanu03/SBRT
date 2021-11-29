@@ -305,6 +305,10 @@ public class OperPlanService extends ServiceSupport {
 		String arrv_tm = "00:00:00";
 		String dprt_tm = "00:00:00";
 		String prev_dprt_tm = "00:00:00"; //이전 노드 출발 시각
+		
+		String arrv_tm_temp = "00:00:00"; //정류소 출도착시각 변경용
+		int prev_diff_sec_temp = 0; //이전 노드에서부터 걸리는 시간(초) //정류소 출도착시각 변경용
+		boolean bSuccess = false; //정류소 출도착시각 변경용
 
 		String link_id;
 		int link_len = 0;
@@ -347,6 +351,7 @@ public class OperPlanService extends ServiceSupport {
 		int dec_len;	 //도착 시 감속 거리(m)
 		int drv_len;	 //최고속도 주행 거리(m)
 
+		
 
 		//리스트에 담아서 한 번에 insert
 		List<Map<String, Object>> operNodeList = new ArrayList<>();
@@ -666,11 +671,19 @@ public class OperPlanService extends ServiceSupport {
 							arrv_tm = stNodeArrvTm;
 							dprt_tm = stNodeDprtTm;
 						} else if(node_sn == edNodeSn) {
-							arrv_tm = prev_dprt_tm;
-							dprt_tm = arrv_tm; //출발시각=도착시각
+							
+							arrv_tm = edNodeArrvTm;
+							dprt_tm = edNodeDprtTm;
+							
+							arrv_tm_temp = DateUtil.addSeconds2(prev_dprt_tm, TIME_PATTERN, prev_diff_sec); //이전 노드 출발시각 + 현재노드까지 걸리는 시간
+							//arrv_tm_temp = DateUtil.addSeconds2(arrv_tm_temp, TIME_PATTERN, add_arrv_sec); //신호가 걸려 추가된 시간
+							
+							prev_diff_sec_temp = prev_diff_sec;
+							
+							
 						} else {
 							arrv_tm = DateUtil.addSeconds2(prev_dprt_tm, TIME_PATTERN, prev_diff_sec); //이전 노드 출발시각 + 현재노드까지 걸리는 시간
-							arrv_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, add_arrv_sec); //신호가 걸려 추가된 시간
+							//arrv_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, add_arrv_sec); //신호가 걸려 추가된 시간
 						}
 
 					} else {
@@ -747,7 +760,11 @@ public class OperPlanService extends ServiceSupport {
 							    dprt_tm = DATE_ADD(arrv_tm, INTERVAL min_stop_sec SECOND); --최소정차시간 추가
 							}*/
 
-						} //if(chgType != CHG_TYPE_MODIFY)
+						} //if(chgType != CHG_TYPE_MODIFY)		
+						else   { //OperPlanCalc.CHG_TYPE_MODIFY
+							
+						}
+						
 
 					} else {
 						dprt_tm = arrv_tm;
@@ -800,8 +817,13 @@ public class OperPlanService extends ServiceSupport {
 								paramMap.put("PHASE_NUM", enter_phase_no1);
 								paramMap.put("DAY_DIV", day_div);
 
-								phase_remain_sec = operPlanMapper.selectPhaseRemainTm(paramMap);
-
+								
+								if(chgType == OperPlanCalc.CHG_TYPE_CHG_OPER) { //변경운행 생성 시에는 신호 고려
+									phase_remain_sec = operPlanMapper.selectPhaseRemainTm(paramMap);
+								} else { //CHG_TYPE_NONE, CHG_TYPE_MODIFY 
+									phase_remain_sec = 0; //운행계획 생성, 수정 시에는 모든신호 통과
+								}
+								
 
 								if(enter_phase_no2 != 0) {
 
@@ -811,7 +833,13 @@ public class OperPlanService extends ServiceSupport {
 										phase_remain_sec_tmp = 0;
 
 										paramMap.put("PHASE_NUM", enter_phase_no2);
-										phase_remain_sec_tmp = operPlanMapper.selectPhaseRemainTm(paramMap);
+										
+										if(chgType == OperPlanCalc.CHG_TYPE_CHG_OPER) { //변경운행 생성 시에는 신호 고려
+											phase_remain_sec_tmp = operPlanMapper.selectPhaseRemainTm(paramMap);
+										} else { //CHG_TYPE_NONE, CHG_TYPE_MODIFY 
+											phase_remain_sec_tmp = 0; //운행계획 생성, 수정 시에는 모든신호 통과
+										}
+										
 
 										if (phase_remain_sec_tmp > 0) {
 											phase_remain_sec = phase_remain_sec_tmp;
@@ -826,7 +854,12 @@ public class OperPlanService extends ServiceSupport {
 											phase_remain_sec_tmp = 0;
 
 											paramMap.put("PHASE_NUM", enter_phase_no3);
-											phase_remain_sec_tmp = operPlanMapper.selectPhaseRemainTm(paramMap);
+											
+											if(chgType == OperPlanCalc.CHG_TYPE_CHG_OPER) { //변경운행 생성 시에는 신호 고려
+												phase_remain_sec_tmp = operPlanMapper.selectPhaseRemainTm(paramMap);
+											} else { //CHG_TYPE_NONE, CHG_TYPE_MODIFY 
+												phase_remain_sec_tmp = 0; //운행계획 생성, 수정 시에는 모든신호 통과
+											}
 
 											if (phase_remain_sec_tmp > 0) {
 												phase_remain_sec = phase_remain_sec_tmp;
@@ -917,14 +950,39 @@ public class OperPlanService extends ServiceSupport {
 			//시간 비교
 
 			int diffSec = DateUtil.diffSeconds(arrv_tm, route_ed_tm, "HH:mm:ss");
-
+			
+			
 			if(chgType == OperPlanCalc.CHG_TYPE_MODIFY) {
-				// TODO: 2021-09-29 0029 화면에서 특정 정류장 출도착 시간만 변경 시 처리
-
+				diffSec = DateUtil.diffSeconds(arrv_tm_temp, edNodeArrvTm, "HH:mm:ss");
+				
+				logger.info("도착시각:{}, 기준도착시각:{}, 차이:{}초, 이전노드부터차이:{}초", arrv_tm_temp, edNodeArrvTm, diffSec, prev_diff_sec_temp);
+				
+				
+				String prevDprtTm =  DateUtil.addSeconds2(arrv_tm_temp, "HH:mm:ss", -prev_diff_sec_temp);
+				if(DateUtil.diffTime(edNodeArrvTm, prevDprtTm, "HH:mm:ss") <= 0) {
+					//fail
+					bSuccess = false;
+				} else {
+					bSuccess = true;
+				}
+				
+				
+				
 			} else {
 				logger.info("도착시각:{}, 기준도착시각:{}, 차이:{}초", arrv_tm, route_ed_tm, diffSec);
+			}
+			
 
-				if (Math.abs(diffSec) > LIMIT_DIFF_SEC) {
+			/*if(chgType == OperPlanCalc.CHG_TYPE_MODIFY) {
+				isDone = true;
+				tryCount = 0;
+			} else*/
+			{
+				
+
+				if ( (chgType != OperPlanCalc.CHG_TYPE_MODIFY && (Math.abs(diffSec) > LIMIT_DIFF_SEC)) ||
+						(chgType == OperPlanCalc.CHG_TYPE_MODIFY && (bSuccess == false)) 
+				) {
 
 					//#도착시간이 빠른 경우
 					if (diffSec < 0) {
@@ -994,10 +1052,7 @@ public class OperPlanService extends ServiceSupport {
 
 							//가속도 변경
 							
-							
 							return null; //bhmin tmp //변경운행 생성 실패
-
-
 
 						}						
 						
@@ -1014,14 +1069,26 @@ public class OperPlanService extends ServiceSupport {
 
 
 		if(bSave) {
-			//insert 전 delete
-			paramMap.put("REP_ROUT_ID", rep_route_id);
-			operPlanMapper.deleteOperPl(paramMap);
-
-			//리스트 한 번에 insert
-			Map<String, Object> insertMap = new HashMap<>();
-			insertMap.put("ITEM_LIST", operNodeList);
-			operPlanMapper.insertOperAllocPlNodeInfoList(insertMap);
+			
+			
+			if(chgType == OperPlanCalc.CHG_TYPE_NONE) {
+			
+				//insert 전 delete
+				paramMap.put("REP_ROUT_ID", rep_route_id);
+				operPlanMapper.deleteOperPl(paramMap);
+	
+				//리스트 한 번에 insert
+				Map<String, Object> insertMap = new HashMap<>();
+				insertMap.put("ITEM_LIST", operNodeList);
+				operPlanMapper.insertOperAllocPlNodeInfoList(insertMap);
+				
+			} else if(chgType == OperPlanCalc.CHG_TYPE_MODIFY) { //정류소출도착 시각 변경인 경우
+				//update
+				//리스트 한 번에 insert
+				Map<String, Object> updateMap = new HashMap<>();
+				updateMap.put("ITEM_LIST", operNodeList);
+				operPlanMapper.updateOperAllocPlNodeInfoList(updateMap);
+			}
 		}
 
 
@@ -1115,6 +1182,163 @@ public class OperPlanService extends ServiceSupport {
 		return chgPlList;
 		
 	}
+	
+
+	
+	/**
+	 * 특정 정류소 출도착 시각 변경
+	 */	
+	public List changeOperAllocPlNodeInfo(Map data) {	
+		
+		List operPlList = null;
+		
+		try {			
+			boolean bSave = true;
+			
+			String routId = data.get("ROUT_ID").toString();
+			String dayDiv = data.get("DAY_DIV").toString();
+			int operSn = Integer.valueOf(data.get("OPER_SN").toString());
+			int nodeSn = Integer.valueOf(data.get("NODE_SN").toString()); //변경할 정류소 노드 순번
+			String chgArrvTm = data.get("ARRV_TM").toString(); //변경된 도착시각
+			String chgDprtTm =  data.get("DPRT_TM").toString();	//변경된 출발시각 
+			
+			
+			int stNodeSn = nodeSn;
+			int edNodeSn= nodeSn;
+			String stNodeArrvTm = chgArrvTm;
+			String stNodeDprtTm = chgDprtTm;
+			String edNodeArrvTm = chgArrvTm;
+			String edNodeDprtTm = chgDprtTm;
+			
+			
+			
+			//원래 계획되어 있던 운행계획이랑 비교해서 도착시각이 변경되었는지 출발시각이 변경되었는지 확인
+			Map<String, Object> params = new HashMap<>();
+			params.put("ROUT_ID", routId);
+			params.put("DAY_DIV", dayDiv);
+			params.put("OPER_SN", operSn);
+			params.put("NODE_SN", nodeSn);
+			
+			List<Map<String, Object>> plNodeList = operPlanMapper.selectOperAllocPlanNode(params);
+			
+			if(plNodeList == null) {
+				return null;
+			}
+			
+			params.put("NODE_SN", null);
+			params.put("NODE_TYPE", Constants.NODE_TYPE_BUSSTOP);
+			List<Map<String, Object>> plSttnList = operPlanMapper.selectOperAllocPlanNode(params);
+			
+			
+			Map<String, Object> chgNodeInfo = plNodeList.get(0);
+			
+			boolean bFoundStNode = false;
+			
+			
+			//도착시각이 변경된 경우와 출발시각이 변경된 경우 각각 처리	
+			//도착시각이 변경된경우 : 이전 정류소의 다음 노드 도착시각부터 해당 정류소 도착시각까지 계획 수정
+			String arrvTmOrigin = String.valueOf(chgNodeInfo.get("ARRV_TM"));
+			if(DateUtil.diffTime(arrvTmOrigin, chgArrvTm, "HH:mm:ss") != 0) {
+				
+				stNodeSn = nodeSn;
+				
+				//변경시작노드 찾기
+				for(int i = plSttnList.size()-1; i>=0; i--) { //노드순번 오름차순으로 리스트가 구성되어 있으므로 거꾸로 내려오면서 노드순번이 낮은걸 찾는다.
+					Map<String, Object> sttn = plSttnList.get(i);
+					
+					int sttnNodeSn = Integer.valueOf(sttn.get("NODE_SN").toString());
+					
+					if(sttnNodeSn < stNodeSn) {
+						stNodeSn = sttnNodeSn;
+						stNodeArrvTm = sttn.get("ARRV_TM").toString();
+						stNodeDprtTm = sttn.get("DPRT_TM").toString(); 
+						
+						bFoundStNode = true;
+						break;
+					}
+				}
+				
+				//이전 정류소가 없는경우 //첫 정류소인 경우
+				if(bFoundStNode == false) {
+					//do nothing
+				}
+				
+								
+				edNodeSn= nodeSn;
+				edNodeArrvTm = chgArrvTm;
+				edNodeDprtTm = chgDprtTm;
+				
+				
+				if(stNodeSn == edNodeSn) {
+					return null;
+				}
+				
+				
+				operPlList = makeOperAllocPlNodeInfo(routId, dayDiv, operSn, bSave,
+						stNodeSn, edNodeSn,
+						0, null, null, 
+						stNodeArrvTm, stNodeDprtTm, edNodeArrvTm, edNodeDprtTm, OperPlanCalc.CHG_TYPE_MODIFY);				
+			} 
+			
+			
+			//출발시각이 변경된경우 : 해당 정류소 출발부터 다음 정류소의 이전 노드 출발시각까지 계획 수정
+			String dprtTmOrigin = String.valueOf(chgNodeInfo.get("DPRT_TM"));
+			if(DateUtil.diffTime(dprtTmOrigin, chgDprtTm, "HH:mm:ss") != 0) {
+				//변경종료노드 찾기
+				edNodeSn = nodeSn;
+				
+				
+				boolean bFoundEdNode = false;
+				for(Map<String, Object> sttn : plSttnList) { //노드순번 오름차순으로 리스트가 구성되어 있으므로 차례로 올라가면서 노드순번이 높은걸 찾는다.
+					
+					int sttnNodeSn = Integer.valueOf(sttn.get("NODE_SN").toString());
+					
+					if(sttnNodeSn > edNodeSn) {
+						edNodeSn = sttnNodeSn;
+						edNodeArrvTm = sttn.get("ARRV_TM").toString();
+						edNodeDprtTm = sttn.get("DPRT_TM").toString(); 
+						
+						bFoundEdNode = true;
+						break;
+					}
+				}
+				
+				
+				//다음 정류소가 없는경우 //마지막 정류소인 경우
+				if(bFoundEdNode == false) {
+					//do nothing
+				}
+				
+				
+				stNodeSn= nodeSn;
+				stNodeArrvTm = chgArrvTm;
+				stNodeDprtTm = chgDprtTm;
+				
+				
+				if(stNodeSn == edNodeSn) {
+					return null;
+				}
+				
+				operPlList = makeOperAllocPlNodeInfo(routId, dayDiv, operSn, bSave,
+						stNodeSn, edNodeSn,
+						0, null, null, 
+						stNodeArrvTm, stNodeDprtTm, edNodeArrvTm, edNodeDprtTm, OperPlanCalc.CHG_TYPE_MODIFY);
+				
+			} 		
+						
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		//logger.info("정류소출도착시각변경결과 : {}", operPlList);
+		
+		return operPlList;			
+		
+	}
+	
+	
+	
 	public List<Map<String, Object>> selectOperPlanRout() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
 		return operPlanMapper.selectOperPlanRout(map);

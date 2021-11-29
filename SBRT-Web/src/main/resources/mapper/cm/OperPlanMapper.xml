@@ -308,6 +308,23 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
     </insert>
 
 
+	<!-- 운행계획 수정(정류소 출도착시각 변경) -->
+	<update id="updateOperAllocPlNodeInfoList" parameterType="HashMap">
+		<foreach collection="ITEM_LIST" item="item" separator=";">
+			UPDATE BRT_OPER_ALLOC_PL_NODE_INFO
+			SET
+				ARRV_TM = #{item.ARRV_TM},
+				DPRT_TM = #{item.DPRT_TM},
+				UPD_DTM = NOW()
+			WHERE ROUT_ID = #{item.ROUT_ID}
+				AND DAY_DIV = #{item.DAY_DIV}
+				AND OPER_SN = #{item.OPER_SN}
+				AND NODE_ID = #{item.NODE_ID}
+				AND NODE_SN = #{item.NODE_SN}
+		</foreach>
+	</update>
+
+
 
     <delete id="deleteOperPl" parameterType="HashMap">
         DELETE
@@ -480,6 +497,9 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
 		A.DAY_DIV = #{DAY_DIV} AND C.ROUT_ID = #{ROUT_ID}
 	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 
 			AND A.OPER_SN = #{OPER_SN}
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_SN)">			 
+			AND A.NODE_SN = #{NODE_SN}
 	</if>
 	ORDER BY OPER_SN, NODE_SN
 </select>
