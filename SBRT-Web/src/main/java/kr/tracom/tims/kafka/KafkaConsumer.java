@@ -63,11 +63,11 @@ public class KafkaConsumer {
     @KafkaListener(topics = "#{'${kafka.topic.member}'.split(',')}")
     public void processResult(ConsumerRecord<String, KafkaMessage> record) throws Exception {
     	
-    	logger.info("================ Received Kafka message");
-    	
     	Map<String, Object> map = null;
 //    	WsMessage wsMessage = null;
     	KafkaMessage kafkaMessage = record.value();
+    	
+    	//logger.debug("======= Received Kafka message:{}", kafkaMessage);
     	
         if(kafkaMessage != null) {
         	

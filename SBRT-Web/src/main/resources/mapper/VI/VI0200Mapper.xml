@@ -5,64 +5,66 @@
 
 	<select id="VI0200G0R0" resultType="Map">
 		SELECT
-			CPLNT_ID
-			,DATE_FORMAT(OCR_DTM, '%Y-%m-%d %H:%i:%s') AS OCR_DTM
-			,ROUT_NM
+			a.CPLNT_ID
+			,DATE_FORMAT(a.OCR_DTM, '%Y-%m-%d %H:%i:%s') AS OCR_DTM
+			,a.ROUT_NM
 			,c.COMP_NM
-			,VHC_NO
-			,CPLNT_TYPE
+			,a.VHC_NO
+			,a.CPLNT_TYPE
 			,a.GPS_X
 			,a.GPS_Y
 			,a.VHC_ID
 			,a.NODE_ID
 			,a.ROUT_ID
-			,CPLNT_CONTS
-			,JUDGE
-			,JUDG_ORG
-			,JUDG_TYPE
-			,JUDG_DESC
+			,a.JUDGE
+			,a.JUDG_ORG
+			,a.JUDG_TYPE
+			,a.JUDG_DESC
 			,DATE_FORMAT(a.UPD_DTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTM
+			,DATE_FORMAT(a.OPER_DT, '%Y-%m-%d') AS OPER_DT
+			,DATE_FORMAT(a.JUDG_DTM, '%Y-%m-%d') AS JUDG_DTM
+			,a.ALLOC_NO
+			,a.OPER_SN
+			,a.CPLNT_CONTS
+			,a.CPLNT_NM
+			,CONVERT(AES_DECRYPT(a.CPLNT_PHONE, HEX(SHA2('TRACOM', 512))) USING UTF8) CPLNT_PHONE
 			,d.NODE_NM
 		FROM
 			BRT_CPLNT_HIS a
-			LEFT JOIN BMS_ROUT_COMP_CMPSTN b
-			ON a.ROUT_ID = b.ROUT_ID
+			LEFT JOIN BMS_VHC_MST b
+			ON a.VHC_ID = b.VHC_ID
 			LEFT JOIN BMS_TRANSCOMP_MST c
 			ON b.COMP_ID = c.COMP_ID
 			LEFT JOIN BMS_NODE_MST d
 			ON a.NODE_ID = d.NODE_ID
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-				AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || CPLNT_TYPE LIKE CONCAT('%',#{CONTENT},'%') 
-			</if>
-			<if test="TYPE == 'COMP_NM'">
-				AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%')
+				AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || a.VHC_NO LIKE CONCAT('%',#{CONTENT},'%') || a.CPLNT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 			<if test="TYPE == 'ROUT_NM'">
 				AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
-			<if test="TYPE == 'CPLNT_TYPE'">
-				AND CPLNT_TYPE LIKE CONCAT('%',#{CONTENT},'%') 
+			<if test="TYPE == 'VHC_NO'">
+				AND a.VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'CPLNT_NM'">
+				AND a.CPLNT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 			<if test="OCR_DTM != NULL and OCR_DTM != ''">
-				AND OCR_DTM between #{OCR_DTM} and #{OCR_DTM}
+				AND DATE_FORMAT(OCR_DTM, '%Y%m%d') between #{OCR_DTM} and #{OCR_DTM}
 			</if>
 		</where>	
 		ORDER BY
-			CPLNT_ID
+			a.CPLNT_ID
 	</select>
 
 	<select id="VI0200SHI0" resultType="Map" parameterType="Map">
 		SELECT  
-			c.COMP_NM
-			,a.ROUT_NM
-			,a.CPLNT_TYPE
+			ROUT_NM
+			,VHC_NO
+			,CPLNT_NM
 		FROM 	
-			sbrt.BRT_CPLNT_HIS a
-			LEFT JOIN sbrt.BMS_ROUT_COMP_CMPSTN b
-			ON a.ROUT_ID = b.ROUT_ID
-			LEFT JOIN sbrt.BMS_TRANSCOMP_MST c
-			ON b.COMP_ID = c.COMP_ID
+			BRT_CPLNT_HIS
 	</select>
 	
 	<select id="VI0200G0K0" resultType="Map">
@@ -99,6 +101,8 @@
 		SELECT
 			ROUT_ID
 			,ROUT_NM
+			,REP_ROUT_ID
+			,REP_ROUT_NM
 		FROM
 			BMS_ROUT_MST
 		<where>
@@ -118,10 +122,13 @@
 	
 	<select id="VI0200P3R0" resultType="Map">
 		SELECT
-			VHC_ID
-			,VHC_NO
+			A.VHC_ID
+			,A.VHC_NO
+			,B.COMP_NM
 		FROM
-			BMS_VHC_MST
+			BMS_VHC_MST A
+			LEFT OUTER JOIN BMS_TRANSCOMP_MST B
+			ON A.COMP_ID = B.COMP_ID
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 				AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
@@ -148,36 +155,56 @@
 				CPLNT_ID
 				,ROUT_ID
 				,NODE_ID
+				,REP_ROUT_ID
+				,REP_ROUT_NM
 				,OCR_DTM
 				,ROUT_NM
 				,VHC_NO
 				,CPLNT_TYPE
-				,GPS_X
-				,GPS_Y
+				<!--  ,GPS_X
+				,GPS_Y-->
 				,CPLNT_CONTS
 				,JUDGE
 				,JUDG_ORG
 				,JUDG_TYPE
 				,JUDG_DESC	
-				,UPD_DTM	
+				,UPD_DTM
+				,OPER_DT
+				,ALLOC_NO
+				,OPER_SN
+				,CPLNT_NM
+				,CPLNT_PHONE
+				,JUDG_DTM
+				,VHC_ID
+				
 			)
 		VALUES
 			(
 				#{CPLNT_ID}
 				,#{ROUT_ID}
 				,#{NODE_ID}
+				,#{REP_ROUT_ID}
+				,#{REP_ROUT_NM}
 				,#{OCR_DTM}
 				,#{ROUT_NM}
 				,#{VHC_NO}
 				,#{CPLNT_TYPE}
-				,#{GPS_X}
-				,#{GPS_Y}
+				<!--  ,#{GPS_X}
+				,#{GPS_Y}-->
 				,#{CPLNT_CONTS}
 				,#{JUDGE}
 				,#{JUDG_ORG}
 				,#{JUDG_TYPE}
 				,#{JUDG_DESC}
-				,NOW()
+				,#{UPD_DTM}
+				,STR_TO_DATE(#{OPER_DT}, '%Y%m%d')
+				,#{ALLOC_NO}
+				,#{OPER_SN}
+				,#{CPLNT_NM}
+				,AES_ENCRYPT(#{CPLNT_PHONE}, HEX(SHA2('TRACOM', 512)))	
+				,STR_TO_DATE(#{JUDG_DTM}, '%Y%m%d')
+				,#{VHC_ID}
+				
 			)
 	</insert>
 	
@@ -188,17 +215,26 @@
 			OCR_DTM = #{OCR_DTM}
 			,ROUT_NM = #{ROUT_NM}
 			,ROUT_ID = #{ROUT_ID}
+			,REP_ROUT_NM = #{REP_ROUT_NM}
+			,REP_ROUT_ID = #{REP_ROUT_ID}
 			,NODE_ID = #{NODE_ID}
 			,VHC_NO = #{VHC_NO}
+			,VHC_ID = #{VHC_ID}
 			,CPLNT_TYPE = #{CPLNT_TYPE}
-			,GPS_X = #{GPS_X}
-			,GPS_Y = #{GPS_Y}
+			<!--  ,GPS_X = #{GPS_X}
+			,GPS_Y = #{GPS_Y}-->
 			,CPLNT_CONTS = #{CPLNT_CONTS}
 			,JUDGE = #{JUDGE}
 			,JUDG_ORG = #{JUDG_ORG}
 			,JUDG_TYPE = #{JUDG_TYPE}
 			,JUDG_DESC = #{JUDG_DESC}
-			,UPD_DTM = NOW()
+			,UPD_DTM = #{UPD_DTM}
+			,OPER_DT = #{OPER_DT}
+			,ALLOC_NO = #{ALLOC_NO}
+			,OPER_SN = #{OPER_SN}
+			,CPLNT_NM = #{CPLNT_NM}
+			,CPLNT_PHONE = AES_ENCRYPT(#{CPLNT_PHONE}, HEX(SHA2('TRACOM', 512)))
+			,JUDG_DTM = #{JUDG_DTM}
 		WHERE
 			CPLNT_ID = #{CPLNT_ID}
 	</update>
