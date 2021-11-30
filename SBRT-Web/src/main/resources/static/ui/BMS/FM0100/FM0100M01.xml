@@ -50,7 +50,7 @@
 						<w2:column id="FCLT_ID" name="시설물ID" dataType="text"></w2:column>
 						<w2:column id="MAKER" name="제조사" dataType="text"></w2:column>
 						<w2:column id="FCLT_KIND" name="시설물유형" dataType="text"></w2:column>
-						<w2:column id="MRO_ID" name="유지보수기관" dataType="text"></w2:column>
+						<w2:column id="CLSFCTN_ID" name="유지보수기관" dataType="text"></w2:column>
 						<w2:column id="INST_LOC" name="장착위치" dataType="text"></w2:column>
 						<w2:column id="MODEL_NM" name="모델명" dataType="text"></w2:column>
 						<w2:column id="BUY_DT" name="구매일" dataType="date" defaultValue=""></w2:column>
@@ -61,6 +61,7 @@
 						<w2:column id="MNG_ID" name="관리아이디" dataType="text"></w2:column>
 						<w2:column id="FCLT_COORDS" name="시설물위치정보" dataType="text"></w2:column>
 						<w2:column id="FCLT_IP" name="시설IP" dataType="text"></w2:column>
+						<w2:column id="CLSFCTN_NM" name="분류명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem2" saveRemovedData="true">
@@ -290,6 +291,26 @@
 		
 	};
 	
+	scwin.btn_searchMro_onclick = function(e) {
+	
+		var data = { callbackFn : "scwin.searchMroCallback" };
+				   	 
+		var opt = { id : "FM0100P01", 
+					popupName : "유지보수 기관 검색",
+					width : 650,
+					height : 500,
+					modal : true};
+		com.openPopup("/cm/common/popUpEmerClsfctn.xml", opt, data);		
+	};
+	
+	scwin.searchMroCallback = function(returnValue) {
+		CLSFCTN_ID.setValue(returnValue.CLSFCTN_NM);
+		dlt_BMS_FCLT_INFO.setCellData(FM0100G1.getFocusedRowIndex(), "CLSFCTN_ID", returnValue.CLSFCTN_ID);
+	};
+	
+	scwin.CLSFCTN_ID_onfocus = function(e) {
+		scwin.btn_searchMro_onclick();		
+	};
 	
 	]]></script>
 	</head>
@@ -483,7 +504,7 @@
 									<w2:column removeBorderStyle="false" width="109" inputType="select" style="height:20px" id="FCLT_KIND" 
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column id="MRO_ID" blockSelect="false" readOnly="true" style="height:20px;" width="" inputType="select"
+									<w2:column id="CLSFCTN_ID" blockSelect="false" readOnly="true" style="height:20px;" width="" inputType="select"
 										displayMode="label" textAlign="center" chooseOption="false" chooseOptionLabel="" checkboxLabelFormatter="" allOption=""
 										ref="">
 										<w2:choices>
@@ -608,9 +629,9 @@
 										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="-선택-"
+									<!--  <xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="-선택-"
 										direction="auto" disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="CLSFCTN_NM" labelWidthAuto=""
-										mandatory="true" optionOrder="" ref="data:dlt_BMS_FCLT_INFO.MRO_ID" renderType="component" style="height:24px;width: 160px;"
+										mandatory="true" optionOrder="" ref="data:dlt_BMS_FCLT_INFO.CLSFCTN_ID" renderType="component" style="height:24px;width: 160px;"
 										submenuSize="auto">
 										<xf:choices>
 											<xf:itemset nodeset="data:dlt_searchitem3">
@@ -618,7 +639,14 @@
 												<xf:value ref="CLSFCTN_ID"></xf:value>
 											</xf:itemset>
 										</xf:choices>
-									</xf:select1>
+									</xf:select1>-->
+									<xf:input adjustMaxLength="" class="" disabled="" fireEventOnInvalid="" id="CLSFCTN_ID"
+										invalidMessageFunc="" mandatory="" readOnly="" ref="data:dlt_BMS_FCLT_INFO.CLSFCTN_NM" style="width: 130px;height: 21px;"
+										validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:oneditenter="" ev:onfocus="scwin.CLSFCTN_ID_onfocus">
+									</xf:input>
+									<xf:image class="btn" ev:onclick="scwin.btn_searchMro_onclick" id="btn_searchMro" longdesc=""
+										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
+									</xf:image>
 								</xf:group>
 							</xf:group>
 							<xf:group style="" tagname="tr">

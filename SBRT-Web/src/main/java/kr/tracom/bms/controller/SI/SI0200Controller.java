@@ -48,4 +48,10 @@ public class SI0200Controller extends ControllerSupport{
 		result.setData("dlt_vhcSearchItem", si0200Service.SI0200SHI0());
 		return result.getResult();
 	}
+	
+	@RequestMapping("/si/SI0200SHI1")
+	public @ResponseBody Map<String, Object> SI0200SHI1() throws Exception {
+		result.setData("dlt_searchitem", si0200Service.SI0200SHI1());
+		return result.getResult();
+	}
 }

@@ -22,4 +22,9 @@ public class EmerService extends ServiceSupport{
 	public List<Map<String, Object>> selectEmerItem() throws Exception {
 		return emerMapper.selectEmerItem();
 	}	
+	
+	public List selectTreeEmerList() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return emerMapper.selectTreeEmerList(map);		
+	}
 }

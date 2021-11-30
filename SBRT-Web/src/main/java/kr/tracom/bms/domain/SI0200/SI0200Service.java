@@ -71,4 +71,8 @@ public class SI0200Service extends ServiceSupport {
 		
 		
 	}
+	
+	public List SI0200SHI1() throws Exception {
+		return si0200Mapper.SI0200SHI1();
+	}
 }

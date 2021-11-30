@@ -64,6 +64,12 @@
 						<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="ORG_ID" name="기관ID" dataType="text"></w2:column>
+						<w2:column id="ORG_NM" name="기관명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_SI0200G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_VHC_MST" action="/si/SI0200G0R0" method="post"
@@ -81,6 +87,10 @@
 			<xf:submission id="sub_SI0200SHI0" ref="" target="data:json,dlt_vhcSearchItem" action="/si/SI0200SHI0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_SI0200SHI1" ref="" target="data:json,dlt_searchitem" action="/si/SI0200SHI1" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
@@ -101,10 +111,13 @@
 		
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
 				
+		com.executeSubmission(sub_SI0200SHI0);	
+		com.executeSubmission(sub_SI0200SHI1);
+				
 		com.setCommonDtl(codeOptions, function() {
 			com.searchGrid(SI0200G0, sub_SI0200G0R0);
 		});
-		$p.executeSubmission(sub_SI0200SHI0);	
+		
 	};
 	
 	scwin.onpageunload = function() {
@@ -118,16 +131,16 @@
 		var rowCount = dlt_BMS_VHC_MST.getRowCount();
 		var data = dlt_BMS_VHC_MST.getCellData(SI0200G0.getFocusedRowIndex(), "VHC_NO");
 		var test2 = dlt_BMS_VHC_MST.getDataRow(1);
-		test2.getData("VHC_NO");
+		/*test2.getData("VHC_NO");
 		for (var i = 0; i<rowCount; i++) {
 			if (dlt_BMS_VHC_MST.getDataRow(i) === data){
 				com.alert("overrap");
 			} else {
 			}
-		}
+		}*/
 		
-		//com.setFocusedCell(SI0200G0, "VHC_ID");
-
+		com.setFocusedCell(SI0200G0, "VHC_ID");
+		
 	};
 	
 	scwin.sub_SI0200G0K0_submitdone = function(e) {
@@ -291,8 +304,14 @@
 									<w2:column removeBorderStyle="false" width="146" inputType="text" style="height:20px" id="CHAS_NO" value=""
 										blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="118" inputType="text" style="height:20px" id="MAKER" value=""
+									<w2:column removeBorderStyle="false" width="118" inputType="select" style="height:20px" id="MAKER" value=""
 										blockSelect="false" displayMode="label" textAlign="left">
+										<w2:choices>
+											<w2:itemset nodeset="data:dlt_searchitem">
+												<w2:label ref="ORG_NM"></w2:label>
+												<w2:value ref="ORG_ID"></w2:value>
+											</w2:itemset>
+										</w2:choices>
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="114" inputType="calendar" style="height:20px" id="RELS_DT" value=""
 										blockSelect="false" displayMode="label" dataType="date" displayFormatFunc="" displayFormatter="">
@@ -398,9 +417,20 @@
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes></w2:attributes>
-									<xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="MAKER" initValue="" mandatory=""
+									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="-선택-"
+										direction="auto" disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="" labelWidthAuto=""
+										mandatory="true" optionOrder="" ev:onchange="scwin.ORG_NM_onchange" ref="data:dlt_BMS_VHC_MST.MAKER" renderType="component"
+										style="height:24px;width: 160px;" submenuSize="auto">
+										<xf:choices>
+											<xf:itemset nodeset="data:dlt_searchitem">
+												<xf:label ref="ORG_NM"></xf:label>
+												<xf:value ref="ORG_ID"></xf:value>
+											</xf:itemset>
+										</xf:choices>
+									</xf:select1>
+									<!--  <xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="MAKER" initValue="" mandatory=""
 										ref="data:dlt_BMS_VHC_MST.MAKER" style="width:100%;height:21px;" validateOnInput="false" validator="" maxlength="30">
-									</xf:input>
+									</xf:input>-->
 								</xf:group>
 							</xf:group>
 							<xf:group style="" tagname="tr">
