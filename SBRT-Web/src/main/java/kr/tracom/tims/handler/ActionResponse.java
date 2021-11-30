@@ -18,6 +18,8 @@ public class ActionResponse {
 
     public Map<String, Object> handle(TimsMessage timsMessage, String sessionId){
     	
+    	logger.info("<== PlCode.OP_ACTION_RES message:{}, sessionId:{}", timsMessage, sessionId);
+    	
     	Map<String, Object> resultMap = null;
     	
     	PlActionResponse response = (PlActionResponse)timsMessage.getPayload();

@@ -44,6 +44,9 @@ public class EventRequest {
 		//thread 로 하나씩 돌리기
 		String sessionId = kafkaMessage.getSessionId();
 		
+		logger.debug("<== PlCode.OP_EVENT_REQ message:{}, sessionId:{}", kafkaMessage.getTimsMessage(), sessionId);
+		
+		
 		//sessionId 에 따라
 		EventThread eventThread = threadManager.getEventThread(sessionId);
 		eventThread.addKafkaMessage(kafkaMessage);

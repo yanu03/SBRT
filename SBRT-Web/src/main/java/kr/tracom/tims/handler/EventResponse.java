@@ -21,6 +21,8 @@ public class EventResponse {
 
     public Map<String, Object> handle(TimsMessage timsMessage, String sessionId){
     	
+    	logger.info("<== PlCode.OP_EVENT_RES message:{}, sessionId:{}", timsMessage, sessionId);
+    	
     	Map<String, Object> resultMap = null;
     	
         boolean bResult = true;
