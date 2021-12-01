@@ -414,9 +414,16 @@ routMap.addMarkerInter = function(mapId, data, grid, idx, focusIdx, isOverLayHid
 		}
 		if(data.draggable){
 			
-			msg += "<span class = 'map_title' style=''>" + data.NODE_NM
+			if(data.NODE_TYPE == routMap.NODE_TYPE.CROSS){
+				msg += "<span class = 'map_title' style=''>" + data.NODE_NM
+					+ "&nbsp;<a href='javascript:void(0);' onclick='routMap.nodeChange(\"" + mapId+"\","+ idx + ");' style='color:#90f4f9' target='_self'>변경</a> </span>"
+					+ "</div>";	
+			}
+			else {
+				msg += "<span class = 'map_title' style=''>" + data.NODE_NM
 				+ "&nbsp;<a href='javascript:void(0);' onclick='routMap.nodeChange(\"" + mapId+"\","+ idx + ");' style='color:blue' target='_self'>변경</a> </span>"
 				+ "</div>";	
+			}
 				//+ "<span class = '' style='font-size: 12px; margin-left:2px; margin-bottom:2px; display:block;'>"+ data.GPS_Y + "," + data.GPS_X +"</span>"
 		}
 		else {
