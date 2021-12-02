@@ -29,4 +29,10 @@ public class EmerController extends ControllerSupport{
 		result.setData("dlt_BMS_EMER_CLSFCTN_MST", emerService.selectEmerList());
 		return result.getResult();
 	}
+	
+	@RequestMapping("/emer/selectTreeEmerList")
+	public @ResponseBody Map<String, Object> selectTreeEmerList() throws Exception {
+		result.setData("dlt_EMER_CLSFCTN_MST", emerService.selectTreeEmerList());
+		return result.getResult();
+	}
 }

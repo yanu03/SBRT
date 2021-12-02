@@ -1,4 +1,4 @@
-package kr.tracom.brt.domain.VI0200;
+package kr.tracom.brt.domain.VI0201;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,45 +13,25 @@ import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.util.Result;
 
 @Service
-public class VI0200Service extends ServiceSupport{
+public class VI0201Service extends ServiceSupport{
 	
 	@Autowired
-	private VI0200Mapper vi0200Mapper;
+	private VI0201Mapper vi0201Mapper;
 	
-	public List VI0200G0R0() throws Exception {
+	public List VI0201G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return vi0200Mapper.VI0200G0R0(map);
+		return vi0201Mapper.VI0201G0R0(map);
 	}
 	
-	public List VI0200P0R0() throws Exception {
-		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return vi0200Mapper.VI0200P0R0(map);
-	}
-	
-	public List VI0200P1R0() throws Exception {
-		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return vi0200Mapper.VI0200P1R0(map);
-	}
-	
-	public List VI0200P2R0() throws Exception {
-		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return vi0200Mapper.VI0200P2R0(map);
-	}
-	
-	public List VI0200P3R0() throws Exception {
-		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return vi0200Mapper.VI0200P3R0(map);
-	}
-	
-	public List VI0200SHI0() throws Exception {
-		return vi0200Mapper.VI0200SHI0();
+	public List VI0201SHI0() throws Exception {
+		return vi0201Mapper.VI0201SHI0();
 	}	
 	
-	public Map VI0200G0K0() throws Exception {
-		return vi0200Mapper.VI0200G0K0();
+	public Map VI0201G0K0() throws Exception {
+		return vi0201Mapper.VI0201G0K0();
 	}
 	
-	public Map VI0200G0S0() throws Exception {
+	public Map VI0201G0S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;
@@ -64,19 +44,19 @@ public class VI0200Service extends ServiceSupport{
 				
 				if (rowStatus.equals("C")) {
 
-					uCnt += vi0200Mapper.VI0200G0I0(data);
+					uCnt += vi0201Mapper.VI0201G0I0(data);
 
 				}
 				
 				else if (rowStatus.equals("U")) {
 
-					uCnt += vi0200Mapper.VI0200G0U0(data);
+					uCnt += vi0201Mapper.VI0201G0U0(data);
 
 				}
 				
 				else if (rowStatus.equals("D")) { 
 					
-					dCnt += vi0200Mapper.VI0200G0D0(data); 
+					dCnt += vi0201Mapper.VI0201G0D0(data); 
 					
 				}
 				 
@@ -96,12 +76,12 @@ public class VI0200Service extends ServiceSupport{
 	}
 	
 	
-	/*public List VI0200P0R0() throws Exception {
+	/*public List VI0201P0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return vi0200Mapper.VI0200P0R0(map);
+		return vi0201Mapper.VI0201P0R0(map);
 	}
 	
-	public Map VI0200P0S0() throws Exception {
+	public Map VI0201P0S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;
 		int dCnt = 0;		
@@ -110,7 +90,7 @@ public class VI0200Service extends ServiceSupport{
 		
 		if(param.size()>0) {
 			Map data = (Map) param.get(0);
-			vi0200Mapper.VI0200P0DA0(data);
+			vi0201Mapper.VI0201P0DA0(data);
 		}
 		
 		for (int i = 0; i < param.size(); i++) {
@@ -119,11 +99,11 @@ public class VI0200Service extends ServiceSupport{
 			//data.put("SN", i+1);
 			String rowStatus = (String) data.get("rowStatus");
 			if (rowStatus.equals("C")) {
-				iCnt += vi0200Mapper.VI0200P0I0(data);
+				iCnt += vi0201Mapper.VI0201P0I0(data);
 			} else if (rowStatus.equals("U")) {
-				uCnt += vi0200Mapper.VI0200P0U0(data);
+				uCnt += vi0201Mapper.VI0201P0U0(data);
 			} else if (rowStatus.equals("D")) {
-				dCnt += vi0200Mapper.VI0200P0D0(data);
+				dCnt += vi0201Mapper.VI0201P0D0(data);
 			}
 		}
 		Map result = saveResult(iCnt, uCnt, dCnt);

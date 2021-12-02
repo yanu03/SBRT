@@ -30,4 +30,57 @@
 		FROM			BMS_EMER_CLSFCTN_MST
 	</select>
 	
+<select id="selectTreeEmerList" resultType="Map">
+   with recursive CTE AS (
+      SELECT 
+         a.CLSFCTN_ID,
+         a.CLSFCTN_NM,
+         a.CLSFCTN_ENM,
+         a.PARENT_ID,
+         a.LEVEL,
+         a.SORT,
+         a.PHONE,
+         CONCAT(a.LEVEL,a.SORT) path
+       FROM	   BMS_EMER_CLSFCTN_MST a
+       WHERE   a.PARENT_ID = ""
+       UNION   ALL
+       SELECT 
+          b.CLSFCTN_ID,
+          b.CLSFCTN_NM,
+          b.CLSFCTN_ENM,
+          b.PARENT_ID,
+          b.LEVEL,
+          b.SORT,
+          b.PHONE,
+          CONCAT(c.path,b.LEVEL,b.SORT) path 
+       FROM    CTE c
+       INNER   JOIN BMS_EMER_CLSFCTN_MST b
+       ON      c.CLSFCTN_ID = b.PARENT_ID
+       )
+
+       
+       SELECT CLSFCTN_ID,
+         CLSFCTN_NM,
+         CLSFCTN_ENM,
+         IFNULL(PARENT_ID, 0) AS PARENT_ID,
+         LEVEL,
+         SORT,
+         path,
+         PHONE
+      FROM CTE 
+	  <where>
+		<if test="TYPE == 'ALL'">
+			AND (CLSFCTN_ID LIKE CONCAT('%',#{CONTENT},'%') || CLSFCTN_NM LIKE CONCAT('%',#{CONTENT},'%')) 
+		</if>
+		<if test="TYPE == 'CLSFCTN_ID'">
+			AND CLSFCTN_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'CLSFCTN_NM'">
+			AND CLSFCTN_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where> 	 	
+	order by path
+
+</select>
+	
 </mapper>

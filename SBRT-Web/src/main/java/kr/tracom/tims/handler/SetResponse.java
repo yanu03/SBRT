@@ -21,6 +21,9 @@ public class SetResponse {
 
     public Map<String, Object> handle(TimsMessage timsMessage, String sessionId){
     	
+    	logger.info("<== PlCode.OP_SET_RES message:{}, sessionId:{}", timsMessage, sessionId);
+    	
+    	
     	Map<String, Object> resultMap = null;
     	
     	boolean bResponse = true;

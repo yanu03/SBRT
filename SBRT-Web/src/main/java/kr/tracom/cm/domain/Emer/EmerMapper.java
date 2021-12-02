@@ -11,4 +11,6 @@ public interface EmerMapper {
 	public List<Map<String, Object>> selectEmerList(Map param);
 	
 	public List<Map<String, Object>> selectEmerItem();
+	
+	public List selectTreeEmerList(Map param);
 }

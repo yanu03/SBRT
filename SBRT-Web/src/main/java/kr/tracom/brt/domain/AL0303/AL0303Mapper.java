@@ -21,6 +21,8 @@ public interface AL0303Mapper {
 	
 	public List AL0303P2R0(Map param);
 	
+	public Map AL0303G0K0();
+	
 	
 	/*
 	public List<Map> PI0205G0R0(Map param);

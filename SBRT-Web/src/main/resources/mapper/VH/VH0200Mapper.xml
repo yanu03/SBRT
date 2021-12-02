@@ -25,9 +25,11 @@ FROM
 	ON A.REP_ROUT_ID = B.REP_ROUT_ID
 	LEFT OUTER JOIN BMS_ROUT_MST C
 	ON A.ROUT_ID = C.ROUT_ID
+	
 	<where>
+	A.OCR_NODE_TYPE = 'NT002'
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT1)">
-				A.REP_ROUT_ID = #{CONTENT1}
+				AND A.REP_ROUT_ID = #{CONTENT1}
 		</if>
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT2)">
 				AND A.ROUT_ID = #{CONTENT2}
@@ -45,6 +47,7 @@ FROM
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(F_DATE) and @kr.tracom.util.CommonUtil@notEmpty(L_DATE)">
 			AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') BETWEEN #{F_DATE} AND #{L_DATE}
 		</if>
+		
 	</where>
 ORDER BY
 	A.OPER_DT DESC, A.OCR_DTM DESC

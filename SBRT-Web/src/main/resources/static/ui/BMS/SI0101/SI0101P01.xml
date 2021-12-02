@@ -52,13 +52,9 @@
 			ADD:{nm:"편집시작", class: "add", cbFnc: scwin.editClick},
 			CNL:scwin.btn_cancel_onclick,
 			SAVE:scwin.btn_save_onclick,
-			CLOSE:{}
+			CLOSE:scwin.btn_close_onclick
 		}
 				
-		var mainOptions = {
-			ADD : scwin.btn_add_onclick
-		};
-		
 		com.setPopupBtn(wfm_mainBtn, btnOptions);
 		
 
@@ -152,8 +148,19 @@
 		}
 	}
 
-	scwin.btn_confirm_onclick = function() {
-		com.closePopup();		
+	scwin.btn_close_onclick = function() {
+		var idx = dlt_GRG_RDS_INFO.getModifiedIndex().length;
+		if (idx > 0) {
+			var str = "저장하지 않은 데이터가 있습니다. 닫으시겠습니까?";
+			com.confirm(str, function(rtn) {
+				if (rtn) {
+					com.closePopup();
+				}
+			});
+		}
+		else {
+			com.closePopup();
+		}	
 	};
 ]]></script>
 	</head>

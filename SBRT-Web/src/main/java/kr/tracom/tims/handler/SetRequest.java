@@ -18,6 +18,8 @@ public class SetRequest {
 
 
     public Map<String, Object> handle(TimsMessage timsMessage, String sessionId){
+    	
+    	logger.info("<== PlCode.OP_SET_REQ message:{}, sessionId:{}", timsMessage, sessionId);
 
     	Map<String, Object> resultMap = null;
     	
