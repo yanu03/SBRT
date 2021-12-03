@@ -11,6 +11,7 @@
 			,a.REP_ROUT_ID
 			,a.ALLOC_NO
 			,a.COR_ID
+			,a.INCDNT_ID
 			,a.GRP_VHC_ID
 			,a.GRP_VHC_NO
 			,a.GRP_DRV_ID
@@ -18,9 +19,7 @@
 			,a.RPC_VHC_NO
 			,a.RPC_DRV_ID
 			,a.RPC_DRV_NM
-			,DATE_FORMAT(a.RPC_DT, '%Y-%m-%d') AS RPC_DT
-			,a.OCR_TM
-			,a.RPC_TM
+			,DATE_FORMAT(a.RPC_DTM, '%Y-%m-%d %H:%i:%s') AS RPC_DTM
 			,a.GPS_X
 			,a.GPS_Y
 			,a.TM_X
@@ -28,11 +27,16 @@
 			,a.DETAILS
 			,a.ROUT_ID
 			,b.INCDNT_TYPE
-			,b.REP_ROUT_NM
+			,c.REP_ROUT_NM
+			,d.ROUT_NM
 		FROM
 			BRT_RPC_VHC_INFO a 
 			LEFT JOIN BRT_INCDNT_INFO b 
 			ON a.OPER_DT = b.OPER_DT AND a.GRP_VHC_ID = b.VHC_ID
+			LEFT OUTER JOIN BMS_REP_ROUT_MST c
+			ON a.REP_ROUT_ID = c.REP_ROUT_ID
+			LEFT OUTER JOIN BMS_ROUT_MST d
+			ON a.ROUT_ID = d.ROUT_ID
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 				AND OCR_DTM LIKE CONCAT('%',#{CONTENT},'%') || RPC_VHC_ID LIKE CONCAT('%',#{CONTENT},'%') 
@@ -62,18 +66,71 @@
 		select  DATE_FORMAT(OPER_DT, '%Y-%m-%d') AS OPER_DT, GRP_VHC_ID
 		from 	BRT_RPC_VHC_INFO
 	</select>
-
+	
+	<insert id="AL0303G0I0" parameterType="Map">
+		INSERT INTO
+			BRT_RPC_VHC_INFO(
+				RPC_ID
+				,INCDNT_ID
+				,OCR_DTM
+				,OPER_DT
+				,REP_ROUT_ID
+				,ALLOC_NO
+				,GRP_VHC_ID
+				,GRP_VHC_NO
+				,GRP_DRV_ID
+				,GRP_DRV_NM
+				,RPC_VHC_ID
+				,RPC_VHC_NO
+				,RPC_DRV_ID
+				,RPC_DRV_NM
+				,RPC_DTM
+				<if test="@kr.tracom.util.CommonUtil@notEmpty(GPS_X)">	
+				,GPS_X
+				</if>
+				<if test="@kr.tracom.util.CommonUtil@notEmpty(GPS_Y)">	
+				,GPS_Y
+				</if>
+				,DETAILS
+				,ROUT_ID
+			)
+			VALUES(
+				#{RPC_ID}
+				,#{INCDNT_ID}
+				,#{OCR_DTM}
+				,#{OPER_DT}
+				,#{REP_ROUT_ID}
+				,#{ALLOC_NO}
+				,#{GRP_VHC_ID}
+				,#{GRP_VHC_NO}
+				,#{GRP_DRV_ID}
+				,#{GRP_DRV_NM}
+				,#{RPC_VHC_ID}
+				,#{RPC_VHC_NO}
+				,#{RPC_DRV_ID}
+				,#{RPC_DRV_NM}
+				,#{RPC_DTM}
+				<if test="@kr.tracom.util.CommonUtil@notEmpty(GPS_X)">	
+				,#{GPS_X}
+				</if>
+				<if test="@kr.tracom.util.CommonUtil@notEmpty(GPS_Y)">	
+				,#{GPS_Y}
+				</if>
+				,#{DETAILS}
+				,#{ROUT_ID}
+			)
+	</insert>
+	
 	<update id="AL0303G0U0" parameterType="Map">
 		UPDATE 
 			BRT_RPC_VHC_INFO
 		SET 
-			GRP_VHC_NO = #{GRP_VHC_NO}
+			INCDNT_ID = #{INCDNT_ID}
+			,GRP_VHC_NO = #{GRP_VHC_NO}
 			,RPC_VHC_NO = #{RPC_VHC_NO}
 			,RPC_DRV_NM = #{RPC_DRV_NM}
 			,RPC_DRV_ID = #{RPC_DRV_ID}
-			,RPC_DT = #{RPC_DT}
-			,OCR_TM = #{OCR_TM}
-			,RPC_TM = #{RPC_TM}
+			,RPC_DTM = #{RPC_DTM}
 			<if test="@kr.tracom.util.CommonUtil@notEmpty(GPS_X)">			
 			,GPS_X = #{GPS_X}
 			</if>
@@ -83,14 +140,31 @@
 			,DETAILS = #{DETAILS}
 			,GRP_VHC_ID = #{GRP_VHC_ID}
 			,RPC_VHC_ID = #{RPC_VHC_ID}
+			,ROUT_ID = #{ROUT_ID}
+			,REP_ROUT_ID = #{REP_ROUT_ID}
+			,ALLOC_NO = #{ALLOC_NO}
 		WHERE 
-			OCR_DTM = #{OCR_DTM}
+			RPC_ID = #{RPC_ID}
 	</update>
+	
+	<delete id="AL0303G0D0" parameterType="Map">
+		DELETE FROM BRT_RPC_VHC_INFO WHERE RPC_ID = #{RPC_ID}
+	</delete>
 
 
 	<select id="AL0303P1R0" resultType="Map">
-		select VHC_ID, VHC_NO
-		from BMS_VHC_MST
+		SELECT 
+			A.VHC_ID
+			,A.VHC_NO
+			,A.DRV_ID
+			,A.ALLOC_NO
+			,A.GPS_X
+			,A.GPS_Y
+			,B.DRV_NM
+		FROM 
+			BRT_CUR_OPER_INFO A
+			LEFT OUTER JOIN BMS_DRV_MST B
+			ON A.DRV_ID = B.DRV_ID
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 				AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
@@ -102,11 +176,16 @@
 				AND VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 		</where>
+		ORDER BY
+			A.VHC_ID
 	</select>
 	
 	<select id="AL0303P2R0" resultType="Map">
-		select DRV_ID, DRV_NM
-		from BMS_DRV_MST
+		SELECT 
+			DRV_ID
+			,DRV_NM
+		FROM
+			BMS_DRV_MST
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 				AND DRV_ID LIKE CONCAT('%',#{CONTENT},'%') || DRV_NM LIKE CONCAT('%',#{CONTENT},'%') 
@@ -118,6 +197,65 @@
 				AND DRV_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 		</where>
+		ORDER BY
+			DRV_ID
+	</select>
+	
+	<select id="AL0303P3R0" resultType="Map">
+		SELECT 
+			VHC_ID
+			,VHC_NO
+		FROM 
+			BMS_VHC_MST
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'VHC_ID'">
+				AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'VHC_NO'">
+				AND VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>
+		ORDER BY
+			VHC_ID
+	</select>
+	
+	<select id="AL0303P4R0" resultType="Map">
+		SELECT 
+			A.INCDNT_ID
+			,DATE_FORMAT(A.OCR_DTM, '%Y-%m-%d %H:%i:%s') AS OCR_DTM
+			,DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') AS OPER_DT
+			,A.REP_ROUT_ID
+			,A.REP_ROUT_NM
+			,A.VHC_ID
+			,A.DRV_ID
+			,A.INCDNT_TYPE
+			,A.ROUT_ID
+			,A.ROUT_NM
+			,A.ALLOC_NO
+			,A.VHC_NO
+			,A.GPS_X
+			,A.GPS_Y
+			,B.DRV_NM
+		FROM 
+			BRT_INCDNT_INFO A
+			LEFT OUTER JOIN BMS_DRV_MST B
+			ON A.DRV_ID = B.DRV_ID
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'VHC_ID'">
+				AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'VHC_NO'">
+				AND VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>
+		ORDER BY
+			INCDNT_ID DESC
 	</select>
 
 

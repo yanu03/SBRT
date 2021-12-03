@@ -48,13 +48,13 @@ public class AL0303Service extends ServiceSupport{
 			for (int i = 0; i < param.size(); i++) {
 				Map<String, Object> data = param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
-				if (rowStatus.equals("U")) {
-
+				if(rowStatus.equals("C")) {
+					iCnt += AL0303Mapper.AL0303G0I0(data);
+				}else if (rowStatus.equals("U")) {
 					uCnt += AL0303Mapper.AL0303G0U0(data);
-
+				}else if (rowStatus.equals("D")) { 
+					dCnt += AL0303Mapper.AL0303G0D0(data); 
 				}
-				
-				// else if (rowStatus.equals("D")) { dCnt += pi0503Mapper.PI0503G1D0(data); }
 				 
 			}
 		} catch (Exception e) {
@@ -79,6 +79,16 @@ public class AL0303Service extends ServiceSupport{
 	public List AL0303P2R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_BMS_DRV_MST");
 		return AL0303Mapper.AL0303P2R0(map);
+	}
+	
+	public List AL0303P3R0() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_VHC_INFO");
+		return AL0303Mapper.AL0303P3R0(map);
+	}
+	
+	public List AL0303P4R0() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_VHC_INFO");
+		return AL0303Mapper.AL0303P4R0(map);
 	}
 	
 	/*

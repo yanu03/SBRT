@@ -15,11 +15,6 @@
         				<w2:column id="chk" name="선택" dataType="text"></w2:column>
         				<w2:column id="VHC_ID" name="차량ID" dataType="date"></w2:column>
         				<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
-        				<w2:column id="DRV_ID" name="운전자ID" dataType="text"></w2:column>
-        				<w2:column id="DRV_NM" name="운전자명" dataType="text"></w2:column>
-        				<w2:column id="ALLOC_NO" name="배차번호" dataType="text"></w2:column>
-        				<w2:column id="GPS_X" name="현재GPS_X좌표" dataType="text"></w2:column>
-        				<w2:column id="GPS_Y" name="현재GPS_Y좌표" dataType="text"></w2:column>
         			</w2:columnInfo>
         		</w2:dataList>
         		<w2:dataMap baseNode="map" id="dma_VHC_INFO">
@@ -31,7 +26,7 @@
         		</w2:dataMap>
         	</w2:dataCollection>
         	<w2:workflowCollection></w2:workflowCollection>
-        	<xf:submission id="sub_AL0303P1R0" ref="data:json,dma_VHC_INFO" target="data:json,dlt_VHC_INFO" action="/al/AL0303P1R0"
+        	<xf:submission id="sub_AL0303P3R0" ref="data:json,dma_VHC_INFO" target="data:json,dlt_VHC_INFO" action="/al/AL0303P3R0"
         		method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
         		mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
         	</xf:submission>
@@ -47,7 +42,7 @@
 			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
 		];
 		com.setMainBtn3(wfm_mainBtn, btnOptions);
-		com.executeSubmission(sub_AL0303P1R0);				
+		com.executeSubmission(sub_AL0303P3R0);				
 	};
 	
 	scwin.onpageunload = function() {
@@ -56,11 +51,11 @@
 	
 	
 	scwin.btn_search_onclick = function() {
-		$p.executeSubmission(sub_AL0303P1R0);
+		$p.executeSubmission(sub_AL0303P3R0);
 	};
 	
 	scwin.btn_confirm_onclick = function() {
-		var data = AL0303P1.getCheckedJSON("chk");
+		var data = AL0303P3.getCheckedJSON("chk");
 		com.closePopup(scwin.closeCallbackFncName, data);		
 	};
 	
@@ -68,13 +63,13 @@
 		com.closePopup();		
 	};
 
-	scwin.AL0303P1_onrowindexchange = function(row,oldRow) {
+	scwin.AL0303P3_onrowindexchange = function(row,oldRow) {
 	
-		if(AL0303P1.getCellChecked(row,"chk")){
-			AL0303P1.setCellChecked(row,"chk",false)
+		if(AL0303P3.getCellChecked(row,"chk")){
+			AL0303P3.setCellChecked(row,"chk",false)
 		}
 		else {
-			AL0303P1.setCellChecked(row,"chk",true)
+			AL0303P3.setCellChecked(row,"chk",true)
 		}
 	}
 
@@ -126,16 +121,13 @@
 			
 			<xf:group style="" id="" class="popup_content">
 				<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_VHC_INFO" useShiftKey="false" readOnly="true"
-					style="width:775px" scrollByColumn="false" id="AL0303P1" autoFit="allColumn" class="cm_grid popup"
-					ev:onrowindexchange="scwin.AL0303P1_onrowindexchange">
+					style="width:775px" scrollByColumn="false" id="AL0303P3" autoFit="allColumn" class="cm_grid popup"
+					ev:onrowindexchange="scwin.AL0303P3_onrowindexchange">
 					<w2:header style="" id="header1">
 							<w2:row id="row1" style="">
 								<w2:column width="39" inputType="radio" style="height:20px" id="chkHeader" value="선택" blockSelect="false"></w2:column>
 								<w2:column width="70" id="column2" value="차량ID"></w2:column>
 								<w2:column width="70" id="column3" value="차량번호"></w2:column>
-								<w2:column width="70" id="column4" value="운전자ID"></w2:column>
-								<w2:column width="70" id="column5" value="운전자명"></w2:column>
-								<w2:column width="70" id="column6" value="배차번호"></w2:column>
 							</w2:row>
 						</w2:header>
 						<w2:gBody id="gBody1" style="">
@@ -145,9 +137,6 @@
 								</w2:column>
 								<w2:column width="70" id="VHC_ID"></w2:column>
 								<w2:column width="70" id="VHC_NO"></w2:column>
-								<w2:column width="70" id="DRV_ID"></w2:column>
-								<w2:column width="70" id="DRV_NM"></w2:column>
-								<w2:column width="70" id="ALLOC_NO"></w2:column>
 						</w2:row>
 					</w2:gBody>
 				</w2:gridView>
