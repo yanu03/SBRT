@@ -755,6 +755,7 @@
 						
 						var dsptchDiv = jsonObj.DSPTCH_DIV;
 						var dsptchConts = jsonObj.MESSAGE;
+						var dsptchKind = jsonObj.DSPTCH_KIND;
 						var contsResult = "";
 						
 						var min = "";
@@ -767,15 +768,24 @@
 							 sec = Math.abs(parseInt(dsptchConts%60)) + "초 ";
 							 
 							if(dsptchDiv == "DP002") {
-								if(parseInt(dsptchConts) > 0) {
-									contsResult = min + sec + "느립니다."; 
-								}
-								else if(parseInt(dsptchConts) < 0) {
-									contsResult = min + sec + "빠릅니다."; 
-								}
-								else if(parseInt(dsptchConts) == 0) {
+								if(dsptchKind == "DK001") {
 									contsResult = "정상 운행중입니다.";
 								}
+								else if(dsptchKind == "DK002") {
+									contsResult = min + sec + "느립니다."; 
+								}
+								else if(dsptchKind == "DK003") {
+									contsResult = min + sec + "빠릅니다."; 
+								}
+//								if(parseInt(dsptchConts) > 0) {
+//									contsResult = min + sec + "느립니다."; 
+//								}
+//								else if(parseInt(dsptchConts) < 0) {
+//									contsResult = min + sec + "빠릅니다."; 
+//								}
+//								else if(parseInt(dsptchConts) == 0) {
+//									contsResult = "정상 운행중입니다.";
+//								}
 							}
 							
 							else if(dsptchDiv == "DP003") {

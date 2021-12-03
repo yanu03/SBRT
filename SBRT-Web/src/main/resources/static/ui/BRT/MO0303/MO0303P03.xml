@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_VHC_MST" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="chk" name="선택" dataType="text"></w2:column>
+						<w2:column id="VHC_ID" name="차량ID" dataType="text"></w2:column>
+						<w2:column id="VHC_NO" name="차량명" dataType="text"></w2:column>
+						<w2:column id="AREA" name="권역" dataType="text"></w2:column>
+						<w2:column id="MAKER" name="제조사" dataType="text"></w2:column>
+						<w2:column id="COMP_NM" name="운수사명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+						<w2:key id="MSG_CONTS" name="메시지내용" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_vhcItem" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
+						<w2:column id="VHC_ID" name="차량ID" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_vhcList" ref='data:json,dma_search' target="data:json,dlt_BMS_VHC_MST" action="/vhc/selectVhcList"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_vhcList_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_vhcItem" ref="" target="data:json,dlt_vhcItem" action="/vhc/selectVhcItem" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+        
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		var btnOptions = 
+		[
+			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
+		];
+		com.setMainBtn3(wfm_mainBtn, btnOptions);
+		
+		var codeOptions = [{ code : "AREA", compID : "vhcListGrid:AREA"}
+						];
+		
+		dma_search.set("REP_ROUT_ID", scwin.param.data);
+		com.setCommonDtl(codeOptions, function() {
+				com.searchGrid(vhcListGrid, sub_vhcList);
+		});
+		
+		//com.executeSubmission(sub_vhcList);			
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	scwin.btn_search_onclick = function() {
+		com.executeSubmission(sub_vhcList);
+	};
+	
+	scwin.btn_confirm_onclick = function() {
+		var data = vhcListGrid.getCheckedJSON("chk");
+		
+		if(data == null || data == ''){
+			var nullData = [{"VHC_ID" : '', "VHC_NO" : '', "COMP_NM" : ''}];
+			
+			com.closePopup(scwin.closeCallbackFncName, nullData);
+		}
+		else{
+			com.closePopup(scwin.closeCallbackFncName, data);
+		}
+		
+		com.executeSubmission(sub_MO0101SCK1);
+	};
+		
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();
+	};
+	
+	scwin.vhcListGrid_onrowindexchange = function(row,oldRow) {
+		vhcListGrid.setCellChecked(row,"chk",true);
+	};
+	
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
+		
+		if (info.newValue == "ALL") {
+			acb_autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} 
+		else if (info.newValue == "VHC_NO") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_vhcItem", "VHC_NO", "VHC_NO");
+			acb_autoChoiceBox.show("");
+		}
+		else if (info.newValue == "VHC_ID") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_vhcItem", "VHC_ID", "VHC_ID");
+			acb_autoChoiceBox.show("");
+		}		
+	};
+	
+	scwin.sub_vhcList_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+		
+		}
+	};
+	
+	scwin.NullData_onviewchange = function(info) {
+	
+		if(info.checked == true){
+			com.executeSubmission(sub_vhcList);
+			vhcListGrid.setDisabled("grid", true);
+			vhcListGrid.setDisabled("column","chk",true);
+		}
+		else{
+			vhcListGrid.setDisabled("grid", false);
+			vhcListGrid.setDisabled("column","chk",false);
+		}
+		
+	};
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+				<xf:group class="gr_search" id="" style="">
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="검색항목"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<xf:select1 id="" disabledClass="w2selectbox_disabled" ref="data:dma_search.TYPE" appearance="minimal"
+							style="width: 100px;" class="search_type" direction="auto" chooseOption="" displayMode="label" allOption=""
+							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" optionOrder="false" submenuSize="auto" disabled="false" textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[차량ID]]></xf:label>
+									<xf:value><![CDATA[VHC_ID]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[차량번호]]></xf:label>
+									<xf:value><![CDATA[VHC_NO]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="차량ID 또는 차량번호"
+							style="width: 150px;">
+						</xf:input>
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange"
+							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
+							selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="" nextTabByEnter=""
+							disableEdit="">
+							<w2:choices>
+								<w2:itemset nodeset="data:dlt_vhcItem">
+									<w2:label ref="VHC_NO"></w2:label>
+									<w2:value ref="VHC_NO"></w2:value>
+								</w2:itemset>
+							</w2:choices>
+						</w2:autoComplete>						
+						<xf:select id="NullData" selectedIndex="-1" appearance="full" style="margin-left: 10px;float: left;margin-top: 2px;"
+							ev:onviewchange="scwin.NullData_onviewchange" cols="" rows="" ref="">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[데이터없음]]></xf:label>
+									<xf:value><![CDATA[Y]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group>
+			<xf:group style="" id="" class="popup_content">
+				<w2:gridView fixedColumnWithHidden="true" dataList="data:dlt_BMS_VHC_MST" useShiftKey="false" readOnly="true" style=""
+					scrollByColumn="false" id="vhcListGrid" autoFit="" class="cm_grid popup" ev:onrowindexchange="scwin.vhcListGrid_onrowindexchange">
+					<w2:header style="" id="header1">
+						<w2:row style="" id="row1">
+							<w2:column blockSelect="true" id="chkHeader" inputType="checkbox" style="height:20px" value="선택" width="39">
+							</w2:column>
+							<w2:column blockSelect="false" id="column7" inputType="text" style="height:20px" value="차량ID" width="100">
+							</w2:column>
+							<w2:column blockSelect="false" id="column1" inputType="text" style="height:20px" value="차량번호" width="200">
+							</w2:column>
+							<w2:column blockSelect="false" id="column3" inputType="text" style="height:20px" value="제조사" width="200">
+							</w2:column>
+							<w2:column blockSelect="false" id="column5" inputType="text" style="height:20px" value="운수사명" width="200">
+							</w2:column>
+						</w2:row>
+					</w2:header>
+					<w2:gBody id="gBody1" style="">
+						<w2:row id="row2" style="">
+							<w2:column blockSelect="false" defaultValue="" falseValue="0" id="chk" inputType="checkbox" readOnly="false"
+								style="height:20px" trueValue="1" width="39" viewType="" typeGetter="">
+							</w2:column>
+							<w2:column blockSelect="false" id="VHC_ID" inputType="text" style="height:20px" width="101">
+							</w2:column>
+							<w2:column blockSelect="false" id="VHC_NO" inputType="text" style="height:20px" width="101">
+							</w2:column>
+							<w2:column blockSelect="false" id="MAKER" inputType="text" style="height:20px" width="90" textAlign="">
+							</w2:column>
+							<w2:column blockSelect="false" id="COMP_NM" inputType="text" style="height:20px" width="90" textAlign="left">
+							</w2:column>
+						</w2:row>
+					</w2:gBody>
+				</w2:gridView>
+	 			<xf:textarea id="messageText" style="width: 100%;height: 100px;margin-top: 20px;margin-bottom: 10px;" maxlength="2000" placeholder="전송할 메시지를 입력하세요."></xf:textarea>
+	 			<xf:select1 id="messageSelect" chooseOption="true" style="width: 100%;height: 21px;" submenuSize="auto" allOption="" disabled="false"
+	 				direction="auto" appearance="minimal" disabledClass="w2selectbox_disabled" chooseOptionLabel="직접입력" ref="" ev:onchange="scwin.messageSelect_onchange">
+	 				<xf:choices>
+	 					<xf:itemset nodeset="data:dlt_BRT_OPER_INST_MSG_MST">
+	 						<xf:label ref="MSG_CONTS"></xf:label>
+	 						<xf:value ref="MSG_CONTS"></xf:value>
+	 					</xf:itemset>
+	 				</xf:choices>
+	 			</xf:select1>				
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+	 			<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_com">
+	 				<xf:label><![CDATA[메시지 전송]]></xf:label>
+	 			</w2:anchor>
+	 			<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_com" outerDiv="">
+	 				<xf:label><![CDATA[취소]]></xf:label>
+	 			</w2:anchor>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

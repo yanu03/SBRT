@@ -81,6 +81,8 @@
 						<w2:column id="ORG_NM" name="기관명" dataType="text"></w2:column>
 						<w2:column id="CTR_YN" name="제어여부" dataType="text" defaultValue="N"></w2:column>
 						<w2:column id="DVC_COORDS" name="장치좌표" dataType="text"></w2:column>
+						<w2:column id="CLSFCTN_ID" name="비상연락망아이디" dataType="text"></w2:column>
+						<w2:column id="CLSFCTN_NM" name="비상연락처" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_subsearch">
@@ -249,6 +251,23 @@
 	scwin.searchCOORDSCallback = function(returnValue) {
 		dlt_BMS_DVC_INFO.setCellData(VD0100G1.getFocusedRowIndex(), "DVC_COORDS", returnValue);
 	};
+	
+	scwin.CLSFCTN_NM_onfocus = function(e) {
+		scwin.CLSFCTN_NM_SEARCH_onclick();
+	};
+	
+	scwin.CLSFCTN_NM_SEARCH_onclick = function(e) {
+	     var data = {callbackFn : "scwin.CLSFCTN_NM_SEARCH_callback" };
+	     var options = { id : "popUpEmerList",
+	                  popupName : "유지보수기관 목록", 
+	                  modal : true};
+	     com.openPopup("/cm/common/popUpEmerList.xml", options, data);			
+	};
+	
+	scwin.CLSFCTN_NM_SEARCH_callback = function(obj) {
+		dlt_BMS_DVC_INFO.setCellData(VD0100G1.getFocusedRowIndex(), "CLSFCTN_ID", obj[0].CLSFCTN_ID);
+		dlt_BMS_DVC_INFO.setCellData(VD0100G1.getFocusedRowIndex(), "CLSFCTN_NM", obj[0].CLSFCTN_NM);
+	}	
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -632,15 +651,28 @@
 								</xf:group></xf:group><xf:group tagname="tr" style=""><xf:group tagname="th" class="w2tb_th">위치좌표<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes>
-										<w2:colspan>3</w2:colspan>
+										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input allowChar="" customModelFormatter="" dataType="text" displayFormatter="" displaymessage="" id="DVC_COORDS" maxByteLength=""
-										maxlength="16" ref="data:dlt_BMS_DVC_INFO.DVC_COORDS" style="width:255px;height: 21px;">
+									<xf:input allowChar="" customModelFormatter="" dataType="text" displayFormatter="" displaymessage=""
+										id="DVC_COORDS" maxByteLength="" maxlength="16" ref="data:dlt_BMS_DVC_INFO.DVC_COORDS" style="width:160px;height: 21px;">
 									</xf:input>
-									<xf:trigger type="button" style="width:79px;height:23px;" id="btn_DVC_COORDS" ev:onclick="scwin.DVC_COORDS_onclick">
+									<xf:trigger type="button" style="width:79px;height:23px;margin-left: 10px;" id="btn_DVC_COORDS"
+										ev:onclick="scwin.DVC_COORDS_onclick">
 										<xf:label>좌표</xf:label>
-									</xf:trigger>									
+									</xf:trigger>
+								</xf:group>
+								<xf:group tagname="td" class="w2tb_th">유지보수기관<w2:attributes></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes></w2:attributes>
+									<xf:input adjustMaxLength="" class="" disabled="" ev:oneditenter=""
+										ev:onfocus="scwin.CLSFCTN_NM_onfocus" fireEventOnInvalid="" id="CLSFCTN_NM" invalidMessageFunc="" mandatory="" maxlength=""
+										readOnly="" ref="data:dlt_BMS_DVC_INFO.CLSFCTN_NM" style="width:150px;height:21px;" validateOnCheckMaxByteLength=""
+										validateOnInput="" validator="">
+									</xf:input>
+									<xf:image class="btn" ev:onclick="scwin.CLSFCTN_NM_SEARCH_onclick" id="CLSFCTN_NM_SEARCH" longdesc=""
+										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
+									</xf:image>
 								</xf:group></xf:group><xf:group tagname="tr" style="">
 								<xf:group tagname="th" class="w2tb_th" style="height: 70px; vertical-align: top;" id="" tabIndex="" >
 									비고

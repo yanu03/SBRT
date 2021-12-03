@@ -71,12 +71,16 @@
 					,A.MODEL_NM -->
 					,A.USE_YN
 					,A.CTR_YN
+					,A.CLSFCTN_ID
 					,A.REMARK
 					,B.ORG_NM
+					,C.CLSFCTN_NM
 					
 	FROM			BMS_DVC_INFO A	
 	LEFT JOIN	  	BMS_ORG_MST	B
 	ON				A.ORG_ID = B.ORG_ID
+	LEFT JOIN		BMS_EMER_CLSFCTN_MST C
+	ON				A.CLSFCTN_ID = C.CLSFCTN_ID
 	
 	WHERE			A.VHC_ID = #{VHC_ID}
 </select>
@@ -104,6 +108,7 @@
 						,UPD_DTM
 						,UPD_ID
 						,CTR_YN
+						,CLSFCTN_ID						
 					)
 	VALUES			(
 						#{VHC_ID}
@@ -121,7 +126,8 @@
 						,#{REMARK}
 						,#{UPD_DTM}
 						,#{SSN_USER_ID}
-						,#{CTR_YN}					
+						,#{CTR_YN}
+						,#{CLSFCTN_ID}					
 					)
 	
 	
@@ -142,6 +148,7 @@
 					,REMARK = #{REMARK}
 					,UPD_DTM = #{UPD_DTM}
 					,UPD_ID = #{SSN_USER_ID}
+					,CLSFCTN_ID	= #{CLSFCTN_ID}
 					
 	WHERE			DVC_ID = #{DVC_ID}							 	
 </update>

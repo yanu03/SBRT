@@ -177,8 +177,15 @@
 		var subOptions2 = {
         	SAVE:[{cbFnc:scwin.btn_scnro_onclick, nm:"시나리오 불러오기",class:"add"}
                ]
-		};
+           };
       	com.setSubBtn2(wfm_subBtn2, autoOptions, subOptions2);
+               
+               
+		var subOptions3 = {
+        	SAVE:[{cbFnc:scwin.btn_message_onclick,nm:"메시지 전송",class:"share"} 
+               ]
+		};
+		com.setSubBtn2(wfm_subBtn3, autoOptions, subOptions3);
 	
 		com.executeSubmission(sub_MO0303SHI0);		 
 		com.executeSubmission(sub_MO0303G1R0);		 
@@ -443,6 +450,14 @@
 		dlt_BRT_INCDNT_INFO.setCellData(MO0303G0.getFocusedRowIndex(), "NODE_ID", obj[0].NODE_ID);
 		dlt_BRT_INCDNT_INFO.setCellData(MO0303G0.getFocusedRowIndex(), "NODE_NM", obj[0].NODE_NM);
 	}
+	
+	scwin.btn_message_onclick = function() {
+      var data = {callbackFn : "scwin.btn_message_callback" };
+      var options = { id : "MO0303P03",
+                  popupName : "메시지 전송", 
+                  modal : true};
+      com.openPopup("/ui/BRT/MO0303/MO0303P03.xml", options, data);			
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -585,10 +600,14 @@
 						</w2:gridView>
 					</xf:group>
 					<xf:group id="" class="horizontal_line"></xf:group>				
-					<xf:group id="pgm_subList" class="pgm_list grdr_20_a" style="">
+					<xf:group id="pgm_subList" class="pgm_list grdr_20_2_a" style="">
+						<xf:group id="" class="gr_sub_header" style="">
 							<xf:group class="defaultbox" id="" style="">
 								<w2:textbox class="df_tt fl" id="" label="돌발상황 상세 정보" style=""></w2:textbox>
 							</xf:group>
+							<w2:wframe id="wfm_subBtn3" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
+						</xf:group>
+						<xf:group></xf:group>					
 							<xf:group id="" class="" style="">
 								<xf:group adaptive="layout" class="w2tb tb" id="MO0303F0" style="" tagname="table">
 								<w2:attributes>

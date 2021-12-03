@@ -12,10 +12,19 @@
 		,B.COMP_NM
 	FROM
 		BMS_VHC_MST A
-		INNER JOIN BRT_REP_ROUT_VHC_CMPSTN C
-		ON A.VHC_ID = C.VHC_ID
 		LEFT JOIN BMS_TRANSCOMP_MST B
 		ON A.COMP_ID = B.COMP_ID
+	<where>	
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'VHC_ID'">
+			AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'VHC_NO'">
+			AND VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>			
 </select>
 
 <select id="selectAllocVhcList" resultType="Map">
