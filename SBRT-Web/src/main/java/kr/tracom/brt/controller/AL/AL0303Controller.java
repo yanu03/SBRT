@@ -59,6 +59,18 @@ public class AL0303Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/al/AL0303P3R0")
+	public @ResponseBody Map<String, Object> AL0303P3R0() throws Exception {
+		result.setData("dlt_VHC_INFO", AL0303Service.AL0303P3R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/al/AL0303P4R0")
+	public @ResponseBody Map<String, Object> AL0303P4R0() throws Exception {
+		result.setData("dlt_BRT_INCDNT_INFO", AL0303Service.AL0303P4R0());
+		return result.getResult();
+	}
+	
 	@RequestMapping("/al/AL0303G0K0")
 	public @ResponseBody Map<String, Object> AL0303G0K0() throws Exception {
 		result.setData("dma_SEQ_BRT_RPC_VHC_INFO_0", AL0303Service.AL0303G0K0());
