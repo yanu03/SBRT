@@ -1009,9 +1009,9 @@ routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid
 	
 		rightClickMsg += '<div class="rightclickoverlay" style="cursor: default;">'
 		rightClickMsg += '<div class="contextWrap">'
-		rightClickMsg += '    <a data-id="here" href="javascript:void(0)" class="busInfo" onclick="">'
+		/*rightClickMsg += '    <a data-id="here" href="javascript:void(0)" class="busInfo" onclick="">'
 		rightClickMsg += '	            <span class="text">버스 상세정보</span>'
-		rightClickMsg += '     </a>'
+		rightClickMsg += '     </a>'*/
 		rightClickMsg += '      <a data-id="newplace" href="javascript:void(0)" class="dispatchMessage">'
 		rightClickMsg += '         <span class="text">메시지 전송</span>'
 		rightClickMsg += '      </a>'
@@ -1439,14 +1439,23 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 			showMessage = data.MESSAGE;
 		}	
 		else if (routMap.mapInfo[mapId].divDsptch == "DP002") {
-			
-			if(parseInt(data.MESSAGE) > 0) {
+/*			if(parseInt(data.MESSAGE) > 0) {
 				showMessage = min+ sec+ "느립니다.";
 			} else if(parseInt(data.MESSAGE) < 0){
 				showMessage = min+ sec +"빠릅니다.";
 			} else if(parseInt(data.MESSAGE) == 0) {
 				showMessage = "정상 운행중입니다.";
+			}*/
+			var dsptchKind = data.DSPTCH_KIND;
+			if(dsptchKind == "DK001") {
+				showMessage = "정상 운행중입니다.";
 			}
+			else if(dsptchKind == "DK002") {
+				showMessage = min + sec + "느립니다."; 
+			}
+			else if(dsptchKind == "DK003") {
+				showMessage = min + sec + "빠릅니다."; 
+			}			
 			
 		}	
 		var dsptchMsg = "";

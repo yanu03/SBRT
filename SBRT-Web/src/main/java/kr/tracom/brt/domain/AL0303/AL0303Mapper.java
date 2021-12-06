@@ -15,11 +15,17 @@ public interface AL0303Mapper {
 
 	public List AL0303SHI1();
 	
+	public int AL0303G0I0(Map param);
 	public int AL0303G0U0(Map param);
+	public int AL0303G0D0(Map param);
 	
 	public List AL0303P1R0(Map param);
 	
 	public List AL0303P2R0(Map param);
+	
+	public List AL0303P3R0(Map param);
+	
+	public List AL0303P4R0(Map param);
 	
 	public Map AL0303G0K0();
 	

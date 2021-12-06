@@ -10,16 +10,24 @@
         		<data xmlns="" />
         	</xf:instance>
         	<w2:dataCollection baseNode="map">
-        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_VHC_INFO" saveRemovedData="true">
+        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_INCDNT_INFO" saveRemovedData="true">
         			<w2:columnInfo>
         				<w2:column id="chk" name="선택" dataType="text"></w2:column>
-        				<w2:column id="VHC_ID" name="차량ID" dataType="date"></w2:column>
-        				<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
-        				<w2:column id="DRV_ID" name="운전자ID" dataType="text"></w2:column>
+        				<w2:column id="INCDNT_ID" name="돌발ID" dataType="text"></w2:column>
+        				<w2:column id="OCR_DTM" name="발생일시" dataType="date"></w2:column>
+        				<w2:column id="OPER_DT" name="운행일" dataType="date"></w2:column>
+        				<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
+        				<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+        				<w2:column id="VHC_ID" name="차량아이디" dataType="text"></w2:column>
+        				<w2:column id="DRV_ID" name="운전자아이디" dataType="text"></w2:column>
         				<w2:column id="DRV_NM" name="운전자명" dataType="text"></w2:column>
+        				<w2:column id="INCDNT_TYPE" name="돌발유형" dataType="text"></w2:column>
+        				<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
+        				<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
         				<w2:column id="ALLOC_NO" name="배차번호" dataType="text"></w2:column>
-        				<w2:column id="GPS_X" name="현재GPS_X좌표" dataType="text"></w2:column>
-        				<w2:column id="GPS_Y" name="현재GPS_Y좌표" dataType="text"></w2:column>
+        				<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
+        				<w2:column id="GPS_X" name="돌발GPS_X좌표" dataType="text"></w2:column>
+        				<w2:column id="GPS_Y" name="돌발GPS_Y좌표" dataType="text"></w2:column>
         			</w2:columnInfo>
         		</w2:dataList>
         		<w2:dataMap baseNode="map" id="dma_VHC_INFO">
@@ -31,7 +39,7 @@
         		</w2:dataMap>
         	</w2:dataCollection>
         	<w2:workflowCollection></w2:workflowCollection>
-        	<xf:submission id="sub_AL0303P1R0" ref="data:json,dma_VHC_INFO" target="data:json,dlt_VHC_INFO" action="/al/AL0303P1R0"
+        	<xf:submission id="sub_AL0303P4R0" ref="data:json,dma_VHC_INFO" target="data:json,dlt_BRT_INCDNT_INFO" action="/al/AL0303P4R0"
         		method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
         		mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
         	</xf:submission>
@@ -42,12 +50,22 @@
 		scwin.param = com.getParameter();
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
 		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		
 		var btnOptions = 
 		[
 			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
 		];
+		
+		var codeOptions = [{code : "INCDNT_TYPE", compID : "AL0303P4:INCDNT_TYPE"}
+		
+						];			
+		//코드옵션 실행	
+		com.setCommonDtl(codeOptions, function(){
+			com.searchGrid(AL0303P4, sub_AL0303P4R0);
+		});	
+		
 		com.setMainBtn3(wfm_mainBtn, btnOptions);
-		com.executeSubmission(sub_AL0303P1R0);				
+		//com.executeSubmission(sub_AL0303P4R0);				
 	};
 	
 	scwin.onpageunload = function() {
@@ -56,11 +74,11 @@
 	
 	
 	scwin.btn_search_onclick = function() {
-		$p.executeSubmission(sub_AL0303P1R0);
+		$p.executeSubmission(sub_AL0303P4R0);
 	};
 	
 	scwin.btn_confirm_onclick = function() {
-		var data = AL0303P1.getCheckedJSON("chk");
+		var data = AL0303P4.getCheckedJSON("chk");
 		com.closePopup(scwin.closeCallbackFncName, data);		
 	};
 	
@@ -68,23 +86,23 @@
 		com.closePopup();		
 	};
 
-	scwin.AL0303P1_onrowindexchange = function(row,oldRow) {
+	scwin.AL0303P4_onrowindexchange = function(row,oldRow) {
 	
-		if(AL0303P1.getCellChecked(row,"chk")){
-			AL0303P1.setCellChecked(row,"chk",false)
+		if(AL0303P4.getCellChecked(row,"chk")){
+			AL0303P4.setCellChecked(row,"chk",false)
 		}
 		else {
-			AL0303P1.setCellChecked(row,"chk",true)
+			AL0303P4.setCellChecked(row,"chk",true)
 		}
 	}
 
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
 		if (info.newValue == "ALL") {
 			search_input.setValue("");
-			search_input.setPlaceholder("차량ID 또는 차량명");
-		} else if (info.newValue == "VHC_ID") {
+			search_input.setPlaceholder("돌발ID 또는 차량번호");
+		} else if (info.newValue == "INCDNT_ID") {
 			search_input.setValue("");
-			search_input.setPlaceholder("차량ID");
+			search_input.setPlaceholder("돌발ID");
 		} else if (info.newValue == "VHC_NO") {
 			search_input.setValue("");
 			search_input.setPlaceholder("차량명");
@@ -109,8 +127,8 @@
 									<xf:value><![CDATA[ALL]]></xf:value>
 								</xf:item>
 								<xf:item>
-									<xf:label><![CDATA[차량ID]]></xf:label>
-									<xf:value><![CDATA[VHC_ID]]></xf:value>
+									<xf:label><![CDATA[돌발ID]]></xf:label>
+									<xf:value><![CDATA[INCDNT_ID]]></xf:value>
 								</xf:item>
 								<xf:item>
 									<xf:label><![CDATA[차량번호]]></xf:label>
@@ -118,24 +136,27 @@
 								</xf:item>
 							</xf:choices>
 						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_VHC_INFO.CONTENT" placeholder="차량ID 또는 차량번호"></xf:input>
+						<xf:input id="search_input" class="search_input" ref="data:dma_VHC_INFO.CONTENT" placeholder="돌발ID 또는 차량번호"></xf:input>
 					</xf:group>
 					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
 			</xf:group>
 			
 			<xf:group style="" id="" class="popup_content">
-				<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_VHC_INFO" useShiftKey="false" readOnly="true"
-					style="width:775px" scrollByColumn="false" id="AL0303P1" autoFit="allColumn" class="cm_grid popup"
-					ev:onrowindexchange="scwin.AL0303P1_onrowindexchange">
+				<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BRT_INCDNT_INFO" useShiftKey="false" readOnly="true"
+					style="width:775px" scrollByColumn="false" id="AL0303P4" autoFit="allColumn" class="cm_grid popup"
+					ev:onrowindexchange="scwin.AL0303P4_onrowindexchange">
 					<w2:header style="" id="header1">
 							<w2:row id="row1" style="">
 								<w2:column width="39" inputType="radio" style="height:20px" id="chkHeader" value="선택" blockSelect="false"></w2:column>
-								<w2:column width="70" id="column2" value="차량ID"></w2:column>
-								<w2:column width="70" id="column3" value="차량번호"></w2:column>
-								<w2:column width="70" id="column4" value="운전자ID"></w2:column>
-								<w2:column width="70" id="column5" value="운전자명"></w2:column>
+								<w2:column width="70" id="column2" value="돌발ID"></w2:column>
+								<w2:column width="140" id="column3" value="발생일시"></w2:column>
+								<w2:column width="90" id="column4" value="차량번호"></w2:column>
+								<w2:column width="70" id="column9" value="운전자명"></w2:column>
+								<w2:column width="70" id="column1" value="대표노선명"></w2:column>
+								<w2:column width="70" id="column5" value="노선명"></w2:column>
 								<w2:column width="70" id="column6" value="배차번호"></w2:column>
+								<w2:column width="70" id="column7" value="돌발유형" ></w2:column>
 							</w2:row>
 						</w2:header>
 						<w2:gBody id="gBody1" style="">
@@ -143,11 +164,14 @@
 								<w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px"
 									inputType="radio" id="chk" blockSelect="false">
 								</w2:column>
-								<w2:column width="70" id="VHC_ID"></w2:column>
+								<w2:column width="70" id="INCDNT_ID"></w2:column>
+								<w2:column width="70" id="OCR_DTM"></w2:column>
 								<w2:column width="70" id="VHC_NO"></w2:column>
-								<w2:column width="70" id="DRV_ID"></w2:column>
 								<w2:column width="70" id="DRV_NM"></w2:column>
+								<w2:column width="70" id="REP_ROUT_NM"></w2:column>
+								<w2:column width="70" id="ROUT_NM"></w2:column>
 								<w2:column width="70" id="ALLOC_NO"></w2:column>
+								<w2:column width="70" id="INCDNT_TYPE" inputType="select"></w2:column>
 						</w2:row>
 					</w2:gBody>
 				</w2:gridView>

@@ -84,21 +84,29 @@ public class AL0203Service extends ServiceSupport {
 		int dCnt = 0;		
 		
 		List<Map<String, Object>> param = getSimpleList("dlt_BRT_OPER_ALLOC_PL_NODE_INFO");
-		try {
-			for (int i = 0; i < param.size(); i++) {
-				Map data = (Map) param.get(i);
+		Map<String, Object> map = getSimpleDataMap("dma_relDt");
+		String temp[] = map.get("relDt").toString().replace("[","").replace("]","").replace(" ","").split(",");
+		
+		for(int j=0; j<temp.length; j++) {
+			try {
+				for (int i = 0; i < param.size(); i++) {
+					Map data = (Map) param.get(i);
+					data.put("OPER_DT", temp[j]);
 					iCnt += al0203Mapper.AL0203P0I0(data);
-			}			
-		} catch(Exception e) {
-			if (e instanceof DuplicateKeyException)
-			{
-				throw new MessageException(Result.ERR_KEY, "중복된 키값의 데이터가 존재합니다.");
+				}			
+			} catch(Exception e) {
+				if (e instanceof DuplicateKeyException)
+				{
+					throw new MessageException(Result.ERR_KEY, "중복된 키값의 데이터가 존재합니다.");
+				}
+				else
+				{
+					throw e;
+				}		
 			}
-			else
-			{
-				throw e;
-			}		
+			
 		}
+		
 
 		Map result = saveResult(iCnt, uCnt, dCnt);
 		
