@@ -78,6 +78,7 @@
 				<w2:dataMap baseNode="map" id="dma_sub_search">
 					<w2:keyInfo>
 						<w2:key id="ROUT_ID" name="ROUT_ID" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 			</w2:dataCollection>
@@ -127,7 +128,8 @@
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions, mainOptions);
 	
 		var subOptions = {
-			DEL:scwin.btn_sub_del, SEARCH: {mode:"auto"}
+			DEL:scwin.btn_sub_del
+			, SEARCH: scwin.btn_sub_move
 		};
 		
 		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
@@ -215,7 +217,7 @@
 				PI0202G1.setFocusedCell( PI0202G1.getFocusedRowIndex(), "NODE_ID");
 			}
 		}
-				
+		scwin.btn_sub_move();
 		//routMap.drawRoute("map_PI0202", PI0202G1, -1, true);
 	};
 	
@@ -345,6 +347,13 @@
 		else
 		com.delGrid(PI0202G1);
 	};
+	
+	scwin.btn_sub_move = function() {
+		if(com.isEmpty(dma_sub_search.get("CONTENT"))==false){
+			com.gridMove(PI0202G1, "NODE_ID,NODE_NM", dma_sub_search.get("CONTENT"), PI0202G1.getFocusedRowIndex());
+		}
+	};
+	
 	scwin.addSoundClick = function(){
 		if(isSoundAdd) {
 			isSoundAdd = false;
