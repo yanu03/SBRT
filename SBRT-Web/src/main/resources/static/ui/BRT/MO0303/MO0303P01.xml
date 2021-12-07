@@ -22,6 +22,7 @@
 		<script type="text/javascript" lazy="false"><![CDATA[
 	var map = null;
 	var marker = null;
+	var circle = null;
 	
 	scwin.onpageload = function() {
 		scwin.param = com.getParameter();
@@ -30,7 +31,7 @@
 		var mapContainer = document.getElementById('map_MO0303P01');
 		var mapOptions = {
 			center : new kakao.maps.LatLng(scwin.param.GPS_Y, scwin.param.GPS_X),
-			level : 3
+			level : 7
 		};
 		
 		map = new kakao.maps.Map(mapContainer, mapOptions); //지도 생성 및 객체 리턴
@@ -48,6 +49,19 @@
 
 		// 마커가 지도 위에 표시되도록 설정합니다
 		marker.setMap(map);
+		
+		circle = new kakao.maps.Circle({
+		    center : new kakao.maps.LatLng(scwin.param.GPS_Y, scwin.param.GPS_X),  // 원의 중심좌표 입니다 
+		    radius: 3000, // 미터 단위의 원의 반지름입니다 
+		    strokeWeight: 5, // 선의 두께입니다 
+		    strokeColor: '#75B8FA', // 선의 색깔입니다
+		    strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+		    strokeStyle: 'dashed', // 선의 스타일 입니다
+		    fillColor: '#CFE7FF', // 채우기 색깔입니다
+		    fillOpacity: 0.7  // 채우기 불투명도 입니다   
+		}); 
+		
+		circle.setMap(map);
 
 		kakao.maps.event.addListener(map, 'click', function(e) {
 			scwin.onClickMap(e);
@@ -60,6 +74,7 @@
 
 	scwin.onClickMap = function(e) {
 		marker.setMap(null);
+		circle.setMap(null);
 		
 		//routMap.initDisplay("map_MO0303P01");
 		
@@ -80,10 +95,21 @@
     		position: markerPosition,
     		image : markerImage
 		});
+		
+		circle = new kakao.maps.Circle({
+		    center : markerPosition,  // 원의 중심좌표 입니다 
+		    radius: 3000, // 미터 단위의 원의 반지름입니다 
+		    strokeWeight: 5, // 선의 두께입니다 
+		    strokeColor: '#75B8FA', // 선의 색깔입니다
+		    strokeOpacity: 1, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+		    strokeStyle: 'dashed', // 선의 스타일 입니다
+		    fillColor: '#CFE7FF', // 채우기 색깔입니다
+		    fillOpacity: 0.7  // 채우기 불투명도 입니다   
+		}); 		
 
 		// 마커가 지도 위에 표시되도록 설정합니다
 		marker.setMap(map);	
-		map.setCenter(markerPosition);	
+		circle.setMap(map);
 }
 	
 	scwin.btn_confirm_onclick = function() {

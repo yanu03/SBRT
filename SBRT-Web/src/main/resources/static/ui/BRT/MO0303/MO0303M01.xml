@@ -452,12 +452,23 @@
 	}
 	
 	scwin.btn_message_onclick = function() {
-      var data = {callbackFn : "scwin.btn_message_callback" };
+      var data = { callbackFn : "scwin.btn_message_callback",
+     	incdnt_gps_x : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "GPS_X"),
+     	incdnt_gps_y : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "GPS_Y"),
+     	incdnt_rep_rout_id : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "REP_ROUT_ID")
+  }
+      
       var options = { id : "MO0303P03",
-                  popupName : "메시지 전송", 
+                  popupName : "메시지 전송",
+                  width : 1500,
+                  height : 600, 
                   modal : true};
       com.openPopup("/ui/BRT/MO0303/MO0303P03.xml", options, data);			
 	};
+	
+	scwin.btn_message_callback = function(obj) {
+		
+	}
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
