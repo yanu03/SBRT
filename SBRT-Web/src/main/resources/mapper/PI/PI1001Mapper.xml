@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.bms.domain.PI1001.PI1001Mapper">
+
+	<select id="PI1001G0R0" resultType="Map" parameterType="Map">
+		SELECT NOTICE_ID, (SELECT GROUP_CONCAT(VHC_NO SEPARATOR ',') FROM BMS_VHC_MST WHERE VHC_ID IN (SELECT VHC_ID FROM BMS_NOTICE_VHC_CMPSTN NV WHERE NV.NOTICE_ID = N.NOTICE_ID)) VHC_NO, TITLE, SEND_DIV, 
+		SEND_STS, DATE_FORMAT(REG_DTM, '%Y%m%d%H%i') REG_DTM, DATE_FORMAT(RSV_DTM, '%Y%m%d%H%i') RSV_DTM, DATE_FORMAT(SEND_DTM, '%Y%m%d%H%i') SEND_DTM, DATE_FORMAT(UPD_DTM, '%Y%m%d%H%i') UPD_DTM, CONTENTS, UPD_ID FROM BMS_NOTICE_MST N
+		<where>
+			<if test="CONTENT != ''">
+				NOTICE_ID LIKE CONCAT('%',#{CONTENT},'%') OR TITLE LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>
+	</select>
+	
+	<select id="PI1001SHI0" resultType="Map">
+	SELECT			NOTICE_ID
+					,TITLE	
+	FROM			BMS_NOTICE_MST
+</select>
+	
+	<select id="PI1001G1R0" resultType="Map" parameterType="Map">
+		SELECT V.VHC_ID, V.VHC_NO, V.CHAS_NO, V.COMP_ID, T.COMP_NM, V.AREA, DATE_FORMAT(N.REG_DTM, '%Y%m%d%H%i') REG_DTM, 
+		DATE_FORMAT(N.RSV_DTM, '%Y%m%d%H%i') RSV_DTM, DATE_FORMAT(N.SEND_DTM, '%Y%m%d%H%i') SEND_DTM, 
+		DATE_FORMAT(N.UPD_DTM, '%Y%m%d%H%i') UPD_DTM, N.CONTENTS, N.UPD_ID, N.NOTICE_ID 
+		FROM BMS_NOTICE_MST N
+		LEFT OUTER JOIN BMS_NOTICE_VHC_CMPSTN NV ON N.NOTICE_ID = NV.NOTICE_ID 
+		LEFT OUTER JOIN BMS_VHC_MST V ON V.VHC_ID = NV.VHC_ID 
+		LEFT OUTER JOIN  BMS_TRANSCOMP_MST T ON V.COMP_ID = T.COMP_ID
+		<where>
+			N.NOTICE_ID = #{NOTICE_ID}
+		</where>
+		ORDER BY V.VHC_ID
+	</select>
+	
+	<select id="PI1001G2R0" resultType="Map" parameterType="Map">
+		SELECT C.STTN_ID, C.STTN_NM, C.STTN_NO, C.REMARK, C.GPS_X, C.GPS_Y, A.NOTICE_ID 
+		FROM BMS_NOTICE_MST A 
+		LEFT OUTER JOIN BMS_NOTICE_STTN_CMPSTN B ON A.NOTICE_ID = B.NOTICE_ID 
+		INNER JOIN BMS_STTN_MST C ON C.STTN_ID = B.STTN_ID AND C.DEL_YN!='Y'
+		<!-- LEFT OUTER JOIN BMS_NODE_MST D ON C.NODE_ID = D.NODE_ID -->
+		<where>
+			A.NOTICE_ID = #{NOTICE_ID}
+		</where>
+		ORDER BY C.STTN_ID
+	</select>
+
+	<select id="PI1001P0R0" resultType="Map" parameterType="Map">
+		SELECT VHC_ID, VHC_NO, CHAS_NO, COMP_NM, V.AREA 
+		FROM BMS_VHC_MST V, BMS_TRANSCOMP_MST T 
+		WHERE V.COMP_ID = T.COMP_ID
+		<if test="CONTENT != ''">
+			<if test="TYPE == 'ALL'">
+				AND (VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || VHC_NO LIKE CONCAT('%',#{CONTENT},'%'))
+			</if>
+			<if test="TYPE == 'VHC_ID'">
+				AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'VHC_NO'">
+				AND VHC_NO LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+		</if>
+		ORDER BY VHC_ID		
+	</select>
+	
+	<select id="PI1001P1R0" resultType="Map" parameterType="Map">
+		SELECT STTN_ID, STTN_NM, STTN_NO, GPS_X, GPS_Y FROM BMS_STTN_MST
+		<!-- WHERE STTN_ID
+		NOT IN (SELECT STTN_ID FROM BMS_STTN_MST WHERE 
+		<foreach collection="STTN_ECPT_IDS" item="item" separator=" OR "> STTN_ID = #{item}</foreach>
+		) -->
+		WHERE  DEL_YN!='Y'
+		<if test="CONTENT != ''">
+			<if test="TYPE == 'ALL'">
+				AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%') || STTN_NO LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'STTN_NM'">
+				AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'STTN_NO'">
+				AND STTN_NO LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+		</if>
+		
+		ORDER BY STTN_ID
+	</select>
+
+	<select id="PI1001G0K0" resultType="Map">
+		SELECT CONCAT('NO', LPAD(NEXTVAL(SEQ_BMS_NOTICE_MST_0), 8, '0')) AS 'SEQ'
+	</select>	
+
+	<insert id="PI1001G0I0" parameterType="Map">	
+		INSERT INTO BMS_NOTICE_MST(NOTICE_ID, TITLE, SEND_DIV, SEND_STS, REG_DTM, RSV_DTM, SEND_DTM, UPD_DTM, CONTENTS, UPD_ID) 
+		VALUES (#{NOTICE_ID}, #{TITLE}, #{SEND_DIV}, #{SEND_STS}, STR_TO_DATE(#{REG_DTM}, '%Y%m%d%H%i'), STR_TO_DATE(#{RSV_DTM}, '%Y%m%d%H%i'), STR_TO_DATE(#{SEND_DTM}, '%Y%m%d%H%i'), #{UPD_DTM}, #{CONTENTS}, #{UPD_ID})
+	</insert>
+
+	<delete id="PI1001G0D0" parameterType="Map">
+		DELETE FROM BMS_NOTICE_MST WHERE NOTICE_ID = #{NOTICE_ID};
+		DELETE FROM BMS_NOTICE_VHC_CMPSTN WHERE NOTICE_ID = #{NOTICE_ID};
+		DELETE FROM BMS_NOTICE_STTN_CMPSTN WHERE NOTICE_ID = #{NOTICE_ID};
+	</delete>
+	
+	<update id="PI1001G0U0" parameterType="Map">
+		UPDATE BMS_NOTICE_MST SET TITLE = #{TITLE}, SEND_DIV = #{SEND_DIV}, 
+		SEND_STS = #{SEND_STS}, REG_DTM = STR_TO_DATE(#{REG_DTM}, '%Y%m%d%H%i'), RSV_DTM = STR_TO_DATE(#{RSV_DTM}, '%Y%m%d%H%i'), SEND_DTM = STR_TO_DATE(#{SEND_DTM}, '%Y%m%d%H%i'), UPD_DTM = #{UPD_DTM}, CONTENTS = #{CONTENTS}, UPD_ID = #{UPD_ID}
+		WHERE NOTICE_ID = #{NOTICE_ID}
+	</update>
+	
+	<insert id="PI1001G1I0" parameterType="Map">
+		INSERT INTO BMS_NOTICE_VHC_CMPSTN(NOTICE_ID, VHC_ID) 
+		VALUES (#{NOTICE_ID}, #{VHC_ID})
+	</insert>
+	<delete id="PI1001G1D0" parameterType="Map">
+		DELETE FROM BMS_NOTICE_VHC_CMPSTN WHERE NOTICE_ID = #{NOTICE_ID} AND VHC_ID = #{VHC_ID}
+	</delete>
+
+	<insert id="PI1001G2I0" parameterType="Map">
+		INSERT INTO BMS_NOTICE_STTN_CMPSTN(NOTICE_ID, STTN_ID) 
+		VALUES (#{NOTICE_ID}, #{STTN_ID})
+	</insert>
+	<delete id="PI1001G2D0" parameterType="Map">
+		DELETE FROM BMS_NOTICE_STTN_CMPSTN WHERE NOTICE_ID = #{NOTICE_ID} AND STTN_ID = #{STTN_ID}
+	</delete>	
+</mapper>
