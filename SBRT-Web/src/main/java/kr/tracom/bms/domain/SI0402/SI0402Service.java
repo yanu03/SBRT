@@ -132,6 +132,7 @@ public class SI0402Service extends ServiceSupport {
 							Map delParam = new HashMap();
 							delParam.put("ROUT_ID", data.get("ROUT_ID"));
 							delParam.put("NODE_ID", data.get("OLD_NODE_ID"));
+							delParam.put("OLD_NODE_SN", data.get("OLD_NODE_SN"));
 							si0402Mapper.SI0402G1D0(delParam);
 							uCnt += si0402Mapper.SI0402G1I0(data);
 						}

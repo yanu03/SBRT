@@ -1889,7 +1889,7 @@
 	}
 	
 	scwin.setGridExcelInfo = function() {
-		
+
 		var column = {};
 		var columnNmArr1 = ["REP_ROUT_ID","REP_ROUT_NM","DAY_DIV","WAY_DIV","ALLOC_NO"];
 		var columnStrArr1 = ["대표노선ID","대표노선명","요일구분","방향구분","배차번호"];
@@ -1918,15 +1918,24 @@
 		}
 		
 		if(rowData.length == 0 ) {
-			for(var i = 0; i < columnNmArr2.length; i++) {
+			/*for(var i = 0; i < columnNmArr2.length; i++) {
 				//gridView의 컬럼 정보 정의
 				gridHeader +='<w2:column blockSelect="false" id="'+'header'+columnNmArr2[i]+'" style="height:25px; " textAlign="" inputType="text" width="'+columnWidthArr2[i]+'" value="'+columnStrArr2[i]+'"></w2:column>';
+			}*/
+			for(var i = 0; i < 30; i++) {
+				for(var j = 0; j < columnNmArr2.length; j++) {
+					//gridView의 컬럼 정보 정의
+					gridHeader +='<w2:column blockSelect="false" id="'+'header'+columnNmArr2[j]+'_'+i+'" style="height:25px; " textAlign="" inputType="text" width="'+columnWidthArr2[j]
+								+'" value="'+columnStrArr2[j]+'"></w2:column>';
+					gridBody += '<w2:column blockSelect="false" id="'+columnNmArr2[j]+'_'+i+'" style="height:20px" inputType="text" width=""></w2:column>'
+				}
+				
 			}
 			
 			var gridStr = '<w2:gridView xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" dataList="dlt_EXL_OPER_PL_ROUT_INFO" '
 							+ 'scrollByColumn="true" id="AL0202G2" class ="" style="height:0px" fixedColumnWithHidden="true" useShiftKey="false" '
 							+ 'ev:onfilereadend="scwin.AL0202G2_onfilereadend" mergeCells="byrestriccol" mergeCol="ALLOC_NO,WAY_DIV">'
-			+ '<w2:header id="header1" style="height:0px">'
+			+ '<w2:header id="header1" >'
 			+ '<w2:row id="row1" style="">'
 			+ gridHeader
 			+ '</w2:row>'
@@ -1947,7 +1956,7 @@
 		
 		dlt_EXL_OPER_PL_ROUT_INFO.removeAll();
 
-		for(var i = 0; i < maxCnt; i++) {
+		for(var i = 0; i < 30; i++) {
 			for(var j = 0; j < columnNmArr2.length; j++) {
 				//gridView의 컬럼 정보 정의
 				gridHeader +='<w2:column blockSelect="false" id="'+'header'+columnNmArr2[j]+'_'+i+'" style="height:25px; " textAlign="" inputType="text" width="'+columnWidthArr2[j]
@@ -2106,6 +2115,7 @@
 	
 	scwin.AL0202G2_onfilereadend = function(value) {
 		
+
 		dlt_OPER_ALLOC_PL_ROUT_INFO.removeAll();
 		dlt_OPER_ALLOC_PL_ROUT_CNT.removeAll();
 		dlt_VIEW_OPER_PL_ROUT_INFO.removeAll();
@@ -2113,7 +2123,7 @@
 		var isEnd = false;
 		var index = 0;
 		for(var i=0;i<dlt_EXL_OPER_PL_ROUT_INFO.getRowCount();i++){
-			var columnNmArr1 = ["WAY_DIV","ALLOC_NO","REP_ROUT_ID","REP_ROUT_NM","DAY_DIV", "WAY_ASC_NM","WAY_DESC_NM"];
+			var columnNmArr1 = ["WAY_DIV","ALLOC_NO","REP_ROUT_ID","REP_ROUT_NM","DAY_DIV"/*, "WAY_ASC_NM","WAY_DESC_NM"*/];
 			var columnNmArr2 = ["COR_ID","ROUT_ID","ROUT_NM","OPER_SN","ROUT_ST_TM","ROUT_ED_TM","REST_TM"];
 			
 			for(var j=0;j<30;j++){
@@ -2140,7 +2150,7 @@
 					if(x>3){
 						columnVal = util.getExlDateToMinSec(columnVal);
 					}
-					if(com.isEmpty(columnVal)){
+					if(x<(columnNmArr2.length-1)&&com.isEmpty(columnVal)){
 						isBreak = true;
 						break;
 					}

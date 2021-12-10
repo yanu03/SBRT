@@ -1752,7 +1752,7 @@ com.downLoadExcel = function(grdObj, options, infoArr) {
 	var options = {
 		fileName : options.fileName || "excel.xlsx", // String, [defalut: excel.xlsx] 다운로드하려는 파일의 이름으로 필수 입력 값이다.
 		sheetName : options.sheetName || "sheet", // String, [defalut: sheet] excel의 sheet의 이름
-		type : options.type || "0", // String, [defalut: 0] type이 0인 경우 실제 데이터 1인 경우 눈에 보이는 데이터를 2이면 들어가 있는 data 그대로(filter무시 expression 타입의
+		type : options.type || "1", // String, [defalut: 0] type이 0인 경우 실제 데이터 1인 경우 눈에 보이는 데이터를 2이면 들어가 있는 data 그대로(filter무시 expression 타입의
 		// 셀은 나오지 않음)
 		removeColumns : options.removeColumns || "", // String, [defalut: 없음] 다운로드시 excel에서 삭제하려는 열의 번호(여러 개일 경우 ,로 구분)
 		removeHeaderRows : options.removeHeaderRows || "", // String, [defalut: 없음] 다운로드시 excel에서 삭제하려는 Header의 row index(여러 개일 경우 ,로 구분)
@@ -6265,7 +6265,6 @@ com.saveGridForm = function(grid,form,sbmObj,searchSbmObj,yesno_str,str){
 
 //엑셀 다운로드
 com.exlGrid = function(grid,str){
-
 	if(	(typeof str == "undefined") || (str.trim() == ""))
 		str = com.getParameter().menuNm;
 

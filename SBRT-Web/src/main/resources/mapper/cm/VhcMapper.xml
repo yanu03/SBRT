@@ -126,6 +126,21 @@
 		AND USE_YN = 'Y'
 	LIMIT 1;
 </select>
+
+<select id="selectVhcDvcInfoList" resultType="Map">
+	SELECT
+		VHC_ID,
+		MNG_ID
+	FROM
+		BMS_DVC_INFO
+	WHERE VHC_ID IN (
+        <foreach collection="VHC_IDS" item="VHC_ID" index="index" separator=",">
+            ${VHC_ID}
+        </foreach>
+		)
+		AND DVC_KIND = 'DK001'
+		AND USE_YN = 'Y'		
+</select>
 	
 <select id="selectVhcItem" resultType="Map">
 	SELECT 
