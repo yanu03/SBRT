@@ -53,7 +53,7 @@ public class VI0200Controller extends ControllerSupport {
 	
 	@RequestMapping("/vi/VI0200P1R0")
 	public @ResponseBody Map<String, Object> VI0200P1R0() throws Exception {
-		result.setData("dlt_BMS_TRANSCOMP_MST", vi0200Service.VI0200P1R0());
+		result.setData("dlt_BMS_LINK_MST", vi0200Service.VI0200P1R0());
 		return result.getResult();
 	}
 	
@@ -66,6 +66,12 @@ public class VI0200Controller extends ControllerSupport {
 	@RequestMapping("/vi/VI0200P3R0")
 	public @ResponseBody Map<String, Object> VI0200P3R0() throws Exception {
 		result.setData("dlt_BMS_VHC_MST", vi0200Service.VI0200P3R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/vi/VI0200P4R0")
+	public @ResponseBody Map<String, Object> VI0200P4R0() throws Exception {
+		result.setData("dlt_BMS_DRV_MST", vi0200Service.VI0200P4R0());
 		return result.getResult();
 	}
 	

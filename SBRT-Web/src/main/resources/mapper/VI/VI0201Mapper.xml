@@ -9,6 +9,7 @@
 			,DATE_FORMAT(a.OCR_DTM, '%Y-%m-%d %H:%i:%s') AS OCR_DTM
 			,DATE_FORMAT(a.APPL_DTM, '%Y-%m-%d %H:%i:%s') AS APPL_DTM
 			,a.ROUT_NM
+			,a.CPLNT_DIV
 			,c.COMP_NM
 			,a.VHC_NO
 			,a.CPLNT_TYPE
@@ -21,6 +22,7 @@
 			,a.JUDG_ORG
 			,a.JUDG_TYPE
 			,a.JUDG_DESC
+			,a.JUDG_RLT
 			,DATE_FORMAT(a.UPD_DTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTM
 			,DATE_FORMAT(a.OPER_DT, '%Y-%m-%d') AS OPER_DT
 			,DATE_FORMAT(a.JUDG_DTM, '%Y-%m-%d %H:%i:%s') AS JUDG_DTM
@@ -40,13 +42,13 @@
 			ON a.NODE_ID = d.NODE_ID
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-				AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || a.VHC_NO LIKE CONCAT('%',#{CONTENT},'%') || a.CPLNT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+				AND CPLNT_DIV LIKE CONCAT('%',#{CONTENT},'%') || a.JUDG_RLT LIKE CONCAT('%',#{CONTENT},'%') || a.CPLNT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
-			<if test="TYPE == 'ROUT_NM'">
-				AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			<if test="TYPE == 'CPLNT_DIV'">
+				AND CPLNT_DIV LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
-			<if test="TYPE == 'VHC_NO'">
-				AND a.VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+			<if test="TYPE == 'JUDG_RLT'">
+				AND a.JUDG_RLT LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 			<if test="TYPE == 'CPLNT_NM'">
 				AND a.CPLNT_NM LIKE CONCAT('%',#{CONTENT},'%') 
@@ -61,8 +63,8 @@
 
 	<select id="VI0201SHI0" resultType="Map" parameterType="Map">
 		SELECT  
-			ROUT_NM
-			,VHC_NO
+			CPLNT_DIV
+			,JUDG_RLT
 			,CPLNT_NM
 		FROM 	
 			BRT_CPLNT_HIS
@@ -156,6 +158,7 @@
 			,CPLNT_NM = #{CPLNT_NM}
 			,CPLNT_PHONE = AES_ENCRYPT(#{CPLNT_PHONE}, HEX(SHA2('TRACOM', 512)))
 			,JUDG_DTM = #{JUDG_DTM}
+			,JUDG_RLT = #{JUDG_RLT}
 		WHERE
 			CPLNT_ID = #{CPLNT_ID}
 	</update>

@@ -9,11 +9,11 @@
 				<data xmlns="" />
 			</xf:instance>
 			<w2:dataCollection baseNode="map">
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_LINK_MST" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_DRV_MST" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="chk" name="선택" dataType="text"></w2:column>
-						<w2:column id="LINK_ID" name="운수사ID" dataType="text"></w2:column>
-						<w2:column id="LINK_NM" name="운수사명" dataType="text"></w2:column>
+						<w2:column id="DRV_ID" name="운전자아이디" dataType="text"></w2:column>
+						<w2:column id="DRV_NM" name="운전자명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
@@ -25,9 +25,9 @@
 				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_VI0200P1R0" ref="data:json,dma_search" target="data:json,dlt_BMS_LINK_MST" action="/vi/VI0200P1R0" method="post"
+			<xf:submission id="sub_VI0200P4R0" ref="data:json,dma_search" target="data:json,dlt_BMS_DRV_MST" action="/vi/VI0200P4R0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="scwin.sub_VI0200P1R0_submitdone" ev:submiterror="" abortTrigger="">
+				ev:submit="" ev:submitdone="scwin.sub_VI0200P4R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
@@ -42,7 +42,7 @@
 			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
 		];
 		com.setMainBtn3(wfm_mainBtn, btnOptions);
-		com.executeSubmission(sub_VI0200P1R0);			
+		com.executeSubmission(sub_VI0200P4R0);			
 	};
 	
 	scwin.onpageunload = function() {
@@ -50,11 +50,11 @@
 	};
 	
 	scwin.btn_search_onclick = function() {
-		com.executeSubmission(sub_VI0200P1R0);
+		com.executeSubmission(sub_VI0200P4R0);
 	};
 	
 	scwin.btn_confirm_onclick = function() {
-		var data = VI0200P1.getCheckedJSON("chk");
+		var data = VI0200P5.getCheckedJSON("chk");
 		com.closePopup(scwin.closeCallbackFncName, data);
 	};
 		
@@ -62,24 +62,24 @@
 		com.closePopup();
 	};
 	
-	scwin.VI0200P1_onrowindexchange = function(row,oldRow) {
-		VI0200P1.setCellChecked(row,"chk",true);
-	};
-	
-	scwin.sub_VI0100P1R0_submitdone = function(e) {
-		var sCode = com.getResultCode(e);
-		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
-		
-		}
+	scwin.VI0200P5_onrowindexchange = function(row,oldRow) {
+		VI0200P5.setCellChecked(row,"chk",true);
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
 		if (info.newValue == "ALL") {
-			search_input.setPlaceholder("링크ID 또는 링크명");
-		} else if (info.newValue == "LINK_ID") {
-			search_input.setPlaceholder("링크ID");
-		} else if (info.newValue == "LINK_NM") {
-			search_input.setPlaceholder("링크명");
+			search_input.setPlaceholder("운전자ID 또는 운전자명");
+		} else if (info.newValue == "DRV_ID") {
+			search_input.setPlaceholder("운전자ID");
+		} else if (info.newValue == "DRV_NM") {
+			search_input.setPlaceholder("운전자명");
+		}
+	};
+	
+	scwin.sub_VI0200P4R0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+		
 		}
 	};
 	]]></script>
@@ -102,34 +102,32 @@
 									<xf:value><![CDATA[ALL]]></xf:value>
 								</xf:item>
 								<xf:item>
-									<xf:label><![CDATA[링크ID]]></xf:label>
-									<xf:value><![CDATA[LINK_ID]]></xf:value>
+									<xf:label><![CDATA[운전자ID]]></xf:label>
+									<xf:value><![CDATA[DRV_ID]]></xf:value>
 								</xf:item>
 								<xf:item>
-									<xf:label><![CDATA[링크명]]></xf:label>
-									<xf:value><![CDATA[LINK_NM]]></xf:value>
+									<xf:label><![CDATA[운전자명]]></xf:label>
+									<xf:value><![CDATA[DRV_NM]]></xf:value>
 								</xf:item>
 							</xf:choices>
 						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="링크ID 또는 링크명"></xf:input>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="운전자ID 또는 운전자명"></xf:input>
 					</xf:group>
 					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
 			</xf:group>
 			<xf:group style="" id="" class="popup_content">
-				<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BMS_LINK_MST" useShiftKey="false" readOnly="true"
-					style="" scrollByColumn="false" id="VI0200P1" autoFit="" class="cm_grid popup"
-					ev:onrowindexchange="scwin.VI0200P1_onrowindexchange">
+				<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BMS_DRV_MST" useShiftKey="false" readOnly="true"
+					style="" scrollByColumn="false" id="VI0200P5" autoFit="" class="cm_grid popup"
+					ev:onrowindexchange="scwin.VI0200P5_onrowindexchange">
 					<w2:header style="" id="header1">
 						<w2:row style="" id="row1">
 							<w2:column blockSelect="true" id="chkHeader" inputType="radio" style="height:20px" value="선택" width="39">
 							</w2:column>
-							<w2:column blockSelect="false" id="column7" inputType="text" style="height:20px" value="링크ID"
+							<w2:column blockSelect="false" id="column7" inputType="text" style="height:20px" value="운전자ID"
 								width="100">
 							</w2:column>
-							<w2:column blockSelect="false" id="column7" inputType="text" style="height:20px" value="링크명"
-								width="100">
-							</w2:column>
+							<w2:column blockSelect="false" id="column5" inputType="text" style="height:20px" value="운전자명" width="200"></w2:column>
 						</w2:row>
 					</w2:header>
 					<w2:gBody id="gBody1" style="">
@@ -137,8 +135,8 @@
 							<w2:column blockSelect="false" defaultValue="" falseValue="0" id="chk" inputType="radio" readOnly="false"
 								style="height:20px" trueValue="1" width="39" viewType="" typeGetter="">
 							</w2:column>
-							<w2:column blockSelect="false" id="LINK_ID" inputType="text" style="height:20px" width="101"></w2:column>
-							<w2:column blockSelect="false" id="LINK_NM" inputType="text" style="height:20px" width="101"></w2:column>
+							<w2:column blockSelect="false" id="DRV_ID" inputType="text" style="height:20px" width="101"></w2:column>
+							<w2:column blockSelect="false" id="DRV_NM" inputType="text" style="height:20px" width="90" textAlign=""></w2:column>
 						</w2:row>
 					</w2:gBody>
 				</w2:gridView>

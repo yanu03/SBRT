@@ -26,6 +26,24 @@
 		ORDER BY A.CO_CD, A.SORT
 	</select>
 	
+	<!-- 코드 테이블의 전체 데이타 읽어오기  USE_YN = 'Y' -->
+	<select id="selectCodeList2" resultType="Map" parameterType="Map">
+		SELECT A.CO_CD, A.DL_CD, A.DL_CD_NM, A.SORT 
+		  FROM BMS_DL_CD_INFO A, BMS_CO_CD_INFO B
+		 WHERE B.CO_CD = A.CO_CD 
+		   AND B.USE_YN = 'Y' 
+		   AND A.USE_YN = 'Y' 
+		   AND A.CO_CD IN
+		<foreach collection="CODE" item="item" index="index"  open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+		AND A.DL_CD LIKE
+		<foreach collection="DLCD" item="item" index="index"  open="(" close=")" separator=",">
+			CONCAT('%',#{item},'%')
+		</foreach>
+		ORDER BY A.CO_CD, A.SORT
+	</select>
+	
 	<!-- 코드 테이블의 데이타 읽어오기 CO_CD = ? -->
 	<select id="selectCommonDtlList" resultType="Map">
 		SELECT CO_CD, DL_CD, DL_CD_NM, SORT, USE_YN, TXT_VAL1, TXT_VAL2, TXT_VAL3, REMARK, NUM_VAL4, NUM_VAL5, NUM_VAL6

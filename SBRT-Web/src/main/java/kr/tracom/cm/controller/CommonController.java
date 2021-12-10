@@ -190,6 +190,54 @@ public class CommonController extends ControllerSupport {
 	}
 	
 	/**
+	 * GetCodeList - 공통코드 조회 dma_commonDtl : {CO_CD:"02,01", DATA_PREFIX:"dlt_code"} <String> CO_CD : 코드값,코드값 <String> DATA_PREFIX :
+	 * "Data객체의 ID prefix 없을 경우 dlt_commonDtl_"
+	 * 
+	 * @date 2017.12.22
+	 * @param param {dma_commonDtl : {CO_CD:"02,01", DATA_PREFIX:"dlt_code"}}
+	 * @author InswaveSystems
+	 * @example
+	 */
+	@RequestMapping("/common/selectCodeList2")
+	public @ResponseBody Map<String, Object> selectCodeList2() throws Exception {
+
+		Map commonDtl = getSimpleDataMap("dma_commonDtl");
+		String dataIdPrefix = dataIdPrefix = (String) commonDtl.get("DATA_PREFIX");
+
+		String prefix = (String) commonDtl.get("DL_CD");
+		
+		if (dataIdPrefix == null) {
+			dataIdPrefix = "dlt_commonDtl_";
+		}
+		
+		List codeList = commonService.selectCodeList2();
+		
+		int size = codeList.size();
+		String preCode = "";
+		List codeCoList = null;
+		for (int i = 0; i < size; i++) {
+			Map codeMap = (Map) codeList.remove(0);
+			String grp_cd = (String) codeMap.get("CO_CD");
+			if (!preCode.equals(grp_cd)) {
+				if (codeCoList != null) {
+					result.setData(dataIdPrefix + preCode, codeCoList);
+				}
+				preCode = grp_cd;
+				codeCoList = new ArrayList();
+				codeCoList.add(codeMap);
+			} else {
+				codeCoList.add(codeMap);
+			}
+
+			if (i == size - 1) {
+				result.setData(prefix+dataIdPrefix + preCode, codeCoList);
+			}
+		}
+
+		return result.getResult();
+	}
+	
+	/**
 	 * GetCodeList - 시스템코드 조회 dma_commonDtl : {CO_CD:"02,01", DATA_PREFIX:"dlt_code"} <String> CO_CD : 코드값,코드값 <String> DATA_PREFIX :
 	 * "Data객체의 ID prefix 없을 경우 dlt_systemCode_"
 	 * 

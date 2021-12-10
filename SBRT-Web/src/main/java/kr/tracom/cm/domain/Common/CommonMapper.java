@@ -41,6 +41,9 @@ public interface CommonMapper {
 	// 공통코드
 	public List<Map> selectCodeList(Map param);
 	
+	// 공통코드
+	public List<Map> selectCodeList2(Map param);
+	
 	//시스템코드
 	public List<Map> selectSystemList(Map param);
 

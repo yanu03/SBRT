@@ -83,6 +83,28 @@ public class CommonService extends ServiceSupport {
 		param.put("CODE", selectCodeList);
 		return commonMapper.selectCodeList(param);
 	}
+	
+	/**
+	 * 공통코드 조회
+	 * 
+	 * @param param Client 전달한 데이터 맵 객체
+	 */
+
+	public List<Map> selectCodeList2() throws Exception {
+
+		String[] selectCodeList;
+		String[] selectCodeList2;
+		Map param = getSimpleDataMap("dma_commonDtl");
+		String CO_CD = (String) param.get("CO_CD");
+		String DL_CD = (String) param.get("DL_CD");
+
+
+		selectCodeList = CO_CD.split(",");
+		selectCodeList2 = DL_CD.split(",");
+		param.put("CODE", selectCodeList);
+		param.put("DLCD", selectCodeList2);
+		return commonMapper.selectCodeList2(param);
+	}
 
 	/**
 	 * 시스템코드 조회
