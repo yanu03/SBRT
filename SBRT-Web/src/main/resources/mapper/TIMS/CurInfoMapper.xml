@@ -108,7 +108,8 @@
 	<!--돌발 정보-->
 	<insert id="insertIncidentInfo" parameterType="Map">
 		INSERT INTO BRT_INCDNT_INFO (
-			OPER_DT
+			INCDNT_ID
+			,OPER_DT
 			,REP_ROUT_ID
 			,VHC_ID
 			,INCDNT_TYPE
@@ -128,7 +129,8 @@
 			,UPD_DTM
 		) 
 		VALUES (
-			#{OPER_DT}
+			(SELECT CONCAT('IC', LPAD(NEXTVAL(SEQ_BRT_INCDNT_INFO_0), 8, '0')) AS 'INCDNT_ID')		
+			,#{OPER_DT}
 			,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})			
 			,(SELECT VHC_ID FROM BMS_VHC_MST WHERE VHC_NO = #{BUS_NO})
 			,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'INCDNT_TYPE' AND NUM_VAL4 = #{EVENT_CD}) <!-- 운행위반유형  -->
