@@ -13,6 +13,7 @@
 					<w2:columnInfo>
 						<w2:column id="chk" name="chk" dataType="text"></w2:column>
 						<w2:column id="STTN_ID" name="정류소ID" dataType="text"></w2:column>
+						<w2:column id="AREA" name="권역" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
 						<w2:column id="STTN_NM" name="정류소명" dataType="text"></w2:column>
 						<w2:column id="STTN_ENM" name="정류소영문명" dataType="text"></w2:column>
@@ -36,16 +37,6 @@
 						<w2:column id="UPD_ID" name="갱신ID" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_DVC_INFO" saveRemovedData="true">
-					<w2:columnInfo>
-						<w2:column id="chk" name="chk" dataType="text"></w2:column>
-						<w2:column id="VHC_ID" name="차량아이디" dataType="text"></w2:column>
-						<w2:column id="DVC_ID" name="장치아이디" dataType="text"></w2:column>
-						<w2:column id="DVC_KIND" name="장치종류" dataType="text"></w2:column>
-						<w2:column id="MNG_ID" name="관리아이디" dataType="text"></w2:column>
-						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
-					</w2:columnInfo>
-				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
 					<w2:keyInfo>
 						<w2:key id="STTN_ECPT_IDS" name="정류소제외ID" dataType="text"></w2:key>
@@ -56,11 +47,11 @@
 				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_PI1001P1R0" ref='data:json,dma_search' target='data:json,dlt_BMS_STTN_MST' action="/pi/PI1001P1R0"
+			<xf:submission id="sub_PI1002P1R0" ref='data:json,dma_search' target='data:json,dlt_BMS_STTN_MST' action="/pi/PI1002P1R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI1001P1R0_submitdone" ev:submiterror="" abortTrigger="">
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI1002P1R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_PI1001P2R0" ref="data:json,dma_search" target="data:json,dlt_BMS_DVC_INFO" action="/pi/PI1001P2R0"
+			<xf:submission id="sub_PI1002P2R0" ref="data:json,dma_search" target="data:json,dlt_BMS_DVC_INFO" action="/pi/PI1002P2R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -69,7 +60,7 @@
 	scwin.onpageload = function() {
 		scwin.param = com.getParameter();
 		dma_search.set("STTN_ECPT_IDS" , scwin.param.data.STTN_IDS);
-		dma_search.set("VHC_ID" , scwin.param.data.VHC_ID);
+		//dma_search.set("VHC_ID" , scwin.param.data.VHC_ID);
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
 		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
 		
@@ -78,34 +69,34 @@
 			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick},
 		];
 		com.setMainBtn3(wfm_mainBtn, btnOptions);
-		//com.executeSubmission(sub_PI1001P1R0);
-		com.executeSubmission(sub_PI1001P2R0);
+		com.executeSubmission(sub_PI1002P1R0);
+		//com.executeSubmission(sub_PI1002P2R0);
 		
-		var codeOptions = [{code : "DVC_KIND", compID : "PI1001P1:DVC_KIND"}];
+		var codeOptions = [{code : "DVC_KIND", compID : "PI1002P1:DVC_KIND"}];
 		com.setCommonDtl(codeOptions);
 	};
 				
 	scwin.btn_search_onclick = function() {
-		com.executeSubmission(sub_PI1001P1R0);
+		com.executeSubmission(sub_PI1002P1R0);
 	};
 		
 	scwin.btn_confirm_onclick = function() {
-		var data = PI1001P1.getCheckedJSON( "chk" );
+		var data = PI1002P1.getCheckedJSON( "chk" );
 		com.closePopup(scwin.closeCallbackFncName, data);
 	};
 
 	scwin.btn_cancel_onclick = function() {
 		com.closePopup();
 	};
-	scwin.PI1001P1_onrowindexchange = function(row,oldRow) {
-		PI1001P1.setCellChecked(row,"chk",true);
+	scwin.PI1002P1_onrowindexchange = function(row,oldRow) {
+		PI1002P1.setCellChecked(row,"chk",true);
 	}
 	
-	scwin.sub_PI1001P1R0_submitdone = function(e) {
+	scwin.sub_PI1002P1R0_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
 			var ids=dma_search.get("STTN_ECPT_IDS");
-			com.excludeItemsByGrid(PI1001P1, ids, "STTN_ID");
+			com.excludeItemsByGrid(PI1002P1, ids, "STTN_ID");
 		}
 	};
 	
@@ -161,19 +152,21 @@
 			</xf:group>
 			
 			<xf:group style="" id="" class="popup_content">
-				<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BMS_DVC_INFO" useShiftKey="false" readOnly="true"
-					style="" scrollByColumn="false" id="PI1001P1" autoFit="allColumn" class="cm_grid popup" ev:onrowindexchange="scwin.PI1001P1_onrowindexchange">
+				<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BMS_STTN_MST" useShiftKey="false" readOnly="true"
+					style="" scrollByColumn="false" id="PI1002P1" autoFit="allColumn" class="cm_grid popup" ev:onrowindexchange="scwin.PI1002P1_onrowindexchange">
 					<w2:header style="" id="header1">
 						<w2:row style="" id="row1">
 							<w2:column width="39" style="height:20px" inputType="checkbox" id="chkHeader" value="선택" blockSelect="false"></w2:column>
-							<w2:column removeBorderStyle="false" width="93" inputType="text" style="height:20px" id="column8" value="장치ID"
+							<w2:column removeBorderStyle="false" width="93" inputType="text" style="height:20px" id="column8" value="정류소ID"
 								blockSelect="false" displayMode="label">
 							</w2:column>
-							<w2:column width="101" style="height:20px" inputType="text" id="column7" value="장치유형" blockSelect="false"></w2:column>
-							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column9" value="관리ID"
+							<w2:column width="101" style="height:20px" inputType="text" id="column7" value="정류소명" blockSelect="false"></w2:column>
+							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column9" value="정류소번호"
 								blockSelect="false" displayMode="label">
 							</w2:column>
-							<w2:column width="123" style="height:20px" inputType="text" id="column3" value="비고" blockSelect="false"></w2:column>
+							<w2:column width="123" style="height:20px" inputType="text" id="column3" value="위도" blockSelect="false"></w2:column>
+							<w2:column width="123" style="height:20px" inputType="text" id="column4" value="경도" blockSelect="false"></w2:column>
+							<w2:column width="123" style="height:20px" inputType="text" id="column6" value="비고" blockSelect="false"></w2:column>
 						</w2:row>
 					</w2:header>
 					<w2:gBody style="" id="gBody1">
@@ -181,13 +174,15 @@
 							<w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px" inputType="checkbox"
 								id="chk" blockSelect="false">
 							</w2:column>
-							<w2:column removeBorderStyle="false" width="93" inputType="text" style="height:20px" id="DVC_ID" value=""
+							<w2:column removeBorderStyle="false" width="93" inputType="text" style="height:20px" id="STTN_ID" value=""
 								blockSelect="false" displayMode="label">
 							</w2:column>
-							<w2:column width="101" style="height:20px" inputType="select" id="DVC_KIND" blockSelect="false"></w2:column>
-							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="MNG_ID" value=""
+							<w2:column width="101" style="height:20px" inputType="text" id="STTN_NM" blockSelect="false"></w2:column>
+							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="STTN_NO" value=""
 								blockSelect="false" displayMode="label">
 							</w2:column>
+							<w2:column width="123" style="height:20px" inputType="text" id="GPS_X" blockSelect="false"></w2:column>
+							<w2:column width="123" style="height:20px" inputType="text" id="GPS_Y" blockSelect="false"></w2:column>
 							<w2:column width="123" style="height:20px" inputType="text" id="REMARK" blockSelect="false"></w2:column>
 						</w2:row>
 					</w2:gBody>

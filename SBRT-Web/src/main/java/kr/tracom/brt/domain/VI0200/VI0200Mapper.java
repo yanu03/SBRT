@@ -27,6 +27,7 @@ public interface VI0200Mapper {
 	public List VI0200P2R0(Map param);
 	
 	public List VI0200P3R0(Map param);
+	public List VI0200P4R0(Map param);
 	
 	/*public List VI0200P0R0(Map param);
 	

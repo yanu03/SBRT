@@ -11,6 +11,8 @@ public abstract interface PI1001Mapper {
 	public abstract Map PI1001G0K0();
 
 	public abstract List PI1001SHI0();
+	
+	public abstract List PI1001SHI1();
 
 	public abstract List<Map> PI1001G1R0(Map paramMap);
 
@@ -19,6 +21,10 @@ public abstract interface PI1001Mapper {
 	public abstract List<Map> PI1001P0R0(Map paramMap);
 
 	public abstract List<Map> PI1001P1R0(Map paramMap);
+	
+	public abstract List<Map> PI1001P2R0(Map paramMap);
+	
+	public abstract List<Map> PI1001P3R0(Map paramMap);
 
 	public abstract int PI1001G0I0(Map paramMap);
 

@@ -968,6 +968,132 @@ com.setCommonDtl = function(codeOptions, callbackFunc) {
 	}
 	;
 };
+									
+com.setCommonSubDtl = function(codeOptions, prefix, callbackFunc) {
+	var codeOptionsLen = 0;
+
+	if (codeOptions) {
+		codeOptionsLen = codeOptions.length;
+	} else {
+		$p.log("=== com.setCommonDtl Parameter Type Error ===\nex) com.setCommonDtl([{\"code:\":\"04\",\"compID\":\"sbx_Gender\"}],\"scwin.callbackFunction\")\n===================================");
+		return;
+	}
+
+	var i, j, codeObj, dltId, dltIdArr = [], paramCode = "", compArr, compArrLen, tmpIdArr;
+	var dataListOption = _getCodeDataListOptions(gcm.COMMON_CODE_INFO.FILED_ARR);
+
+	for (i = 0; i < codeOptionsLen; i++) {
+		codeObj = codeOptions[i];
+
+		try {
+			dltId = prefix + gcm.DATA_PREFIX + codeObj.code;
+			if (typeof $p.top().scwin.commonDtlList[dltId] === "undefined") {
+				dltIdArr.push(dltId);
+
+				if (i > 0) {
+					paramCode += ",";
+				}
+				paramCode += codeObj.code;
+				dataListOption.id = dltId;
+				$p.data.create(dataListOption); // 동일한 id의 DataCollection이 존재할 경우, 삭제 후 재생성함
+			}
+			else
+			{
+				dataListOption.id = dltId;
+				$p.data.create(dataListOption);
+				var dataListObj = $p.getComponentById(dataListOption.id);
+				dataListObj.setJSON(com.getJSON($p.top().scwin.commonDtlList[dltId]));
+			}
+
+			if (codeObj.compID) {
+				compArr = (codeObj.compID).replaceAll(" ", "").split(",");
+				compArrLen = compArr.length;
+				
+				//dataListOption.id = dltId+"2";
+				//$p.data.create(dataListOption);
+				
+				for (j = 0; j < compArrLen; j++) {
+					tmpIdArr = compArr[j].split(":");
+					// 기본 컴포넌트에 대한 Node Setting 설정
+					if (tmpIdArr.length === 1) {
+						var comp = $p.getComponentById(tmpIdArr[0]);
+						/*for(var x=0; x<comp.allItemArr.length; x++){
+							if(comp.allItemArr[x].value.lastIndexOf(prefix) === 0){
+								
+							}
+						}*/
+						comp.setNodeSet("data:" + dltId, gcm.COMMON_CODE_INFO.LABEL, gcm.COMMON_CODE_INFO.VALUE);
+						
+						// gridView 컴포넌트에 대한 Node Setting 설정
+					} else {
+						var gridObj = $p.getComponentById(tmpIdArr[0]);
+						gridObj.setColumnNodeSet(tmpIdArr[1], "data:" + dltId, gcm.COMMON_CODE_INFO.LABEL, gcm.COMMON_CODE_INFO.VALUE);
+					}
+				}
+			}
+		} catch (ex) {
+			$p.log("com.setCommonDtl Error");
+			$p.log(JSON.stringify(codeObj));
+			$p.log(ex);
+			continue;
+		}
+	}
+	
+	
+	var searchCodeCoOption = {
+		id : "sbm_searchCode",
+		action : "/common/selectCodeList2",
+		target : "data:json," + com.strSerialize(dltIdArr),
+		isShowMeg : false
+	};
+
+	searchCodeCoOption.submitDoneHandler = function(e) {
+		for (codeGrpDataListId in e.responseJSON) {
+			if (codeGrpDataListId.indexOf(gcm.DATA_PREFIX) > -1) {
+				$p.top().scwin.commonDtlList[codeGrpDataListId] = com.strSerialize(e.responseJSON[codeGrpDataListId]);
+			}
+		}
+
+		if (typeof callbackFunc === "function") {
+			callbackFunc();
+		}
+	}
+
+	//데이터 가져오는 submission
+	if (paramCode !== "") {
+		com.executeSubmission_dynamic(searchCodeCoOption, {
+			"dma_commonDtl" : {
+				"CO_CD" : paramCode,
+				"DL_CD" : prefix,
+				"DATA_PREFIX" : gcm.DATA_PREFIX
+			}
+		});
+	} else {
+		if (typeof callbackFunc === "function") {
+			callbackFunc();
+		}
+	}
+
+	// dataList를 동적으로 생성하기 위한 옵션 정보를 반환한다.
+	function _getCodeDataListOptions(infoArr) {
+		var option = {
+			"type" : "dataList",
+			"option" : {
+				"baseNode" : "list",
+				"repeatNode" : "map"
+			},
+			"columnInfo" : []
+		};
+
+		for ( var idx in infoArr) {
+			option.columnInfo.push({
+				"id" : infoArr[idx]
+			});
+		}
+		return option;
+	}
+	;
+};
 
 /**
  * 시스템 코드 데이터와 컴포넌트의 nodeSet(아이템 리스트)연동 기능을 제공한다.

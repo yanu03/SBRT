@@ -9,10 +9,12 @@
 			,DATE_FORMAT(a.OCR_DTM, '%Y-%m-%d %H:%i:%s') AS OCR_DTM
 			,DATE_FORMAT(a.APPL_DTM, '%Y-%m-%d %H:%i:%s') AS APPL_DTM
 			,a.ROUT_NM
+			,a.CPLNT_DIV
 			,a.REP_ROUT_ID
 			,a.REP_ROUT_NM
 			,c.COMP_NM
 			,a.VHC_NO
+			,a.DRV_ID
 			,a.CPLNT_TYPE
 			,a.GPS_X
 			,a.GPS_Y
@@ -23,6 +25,7 @@
 			,a.JUDG_ORG
 			,a.JUDG_TYPE
 			,a.JUDG_DESC
+			,a.JUDG_RLT
 			,DATE_FORMAT(a.UPD_DTM, '%Y-%m-%d %H:%i:%s') AS UPD_DTM
 			,DATE_FORMAT(a.OPER_DT, '%Y-%m-%d') AS OPER_DT
 			,DATE_FORMAT(a.JUDG_DTM, '%Y-%m-%d %H:%i:%s') AS JUDG_DTM
@@ -32,6 +35,9 @@
 			,a.CPLNT_NM
 			,CONVERT(AES_DECRYPT(a.CPLNT_PHONE, HEX(SHA2('TRACOM', 512))) USING UTF8) CPLNT_PHONE
 			,d.NODE_NM
+			,e.DRV_NM
+			,f.LINK_ID
+			,f.LINK_NM
 		FROM
 			BRT_CPLNT_HIS a
 			LEFT JOIN BMS_VHC_MST b
@@ -40,18 +46,22 @@
 			ON b.COMP_ID = c.COMP_ID
 			LEFT JOIN BMS_NODE_MST d
 			ON a.NODE_ID = d.NODE_ID
+			LEFT JOIN BMS_DRV_MST e
+			ON a.DRV_ID = e.DRV_ID
+			LEFT JOIN BMS_LINK_MST f
+			ON a.LINK_ID = f.LINK_ID
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-				AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || a.VHC_NO LIKE CONCAT('%',#{CONTENT},'%') || a.CPLNT_NM LIKE CONCAT('%',#{CONTENT},'%') 
-			</if>
-			<if test="TYPE == 'ROUT_NM'">
-				AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+				AND a.VHC_NO LIKE CONCAT('%',#{CONTENT},'%') || a.CPLNT_NM LIKE CONCAT('%',#{CONTENT},'%') || a.CPLNT_DIV LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 			<if test="TYPE == 'VHC_NO'">
 				AND a.VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 			<if test="TYPE == 'CPLNT_NM'">
 				AND a.CPLNT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'CPLNT_DIV'">
+				AND a.CPLNT_DIV LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 			<if test="OCR_DTM != NULL and OCR_DTM != ''">
 				AND DATE_FORMAT(OCR_DTM, '%Y%m%d') between #{OCR_DTM} and #{OCR_DTM}
@@ -63,9 +73,9 @@
 
 	<select id="VI0200SHI0" resultType="Map" parameterType="Map">
 		SELECT  
-			ROUT_NM
-			,VHC_NO
+			VHC_NO
 			,CPLNT_NM
+			,CPLNT_DIV
 		FROM 	
 			BRT_CPLNT_HIS
 	</select>
@@ -94,28 +104,23 @@
 	
 	<select id="VI0200P1R0" resultType="Map">
 		SELECT 
-			a.COMP_ID
-			,a.COMP_NM
-			,b.ROUT_ID
+			LINK_ID
+			,LINK_NM
 		FROM 
-			BMS_TRANSCOMP_MST a
-			LEFT JOIN BMS_ROUT_COMP_CMPSTN b
-			ON a.COMP_ID = b.COMP_ID
+			BMS_LINK_MST
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-				AND COMP_ID LIKE CONCAT('%',#{CONTENT},'%') || COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
+				AND LINK_ID LIKE CONCAT('%',#{CONTENT},'%') || LINK_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
-			<if test="TYPE == 'COMP_ID'">
-				AND COMP_ID LIKE CONCAT('%',#{CONTENT},'%')
+			<if test="TYPE == 'LINK_ID'">
+				AND LINK_ID LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
-			<if test="TYPE == 'COMP_NM'">
-				AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			<if test="TYPE == 'LINK_NM'">
+				AND LINK_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 		</where>
-		GROUP BY
-			a.COMP_ID
 		ORDER BY
-			a.COMP_ID
+			LINK_ID
 	</select>
 	
 	<select id="VI0200P2R0" resultType="Map">
@@ -165,6 +170,27 @@
 			VHC_ID
 	</select>
 	
+	<select id="VI0200P4R0" resultType="Map">
+		SELECT
+			DRV_ID
+			,DRV_NM
+		FROM
+			BMS_DRV_MST
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND DRV_ID LIKE CONCAT('%',#{CONTENT},'%') || DRV_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'DRV_ID'">
+				AND DRV_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'DRV_NM'">
+				AND DRV_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>
+		ORDER BY
+			DRV_ID
+	</select>
+	
 	<insert id="VI0200G0I0" parameterType="Map">
 	
 		<selectKey keyProperty="CPLNT_ID" resultType="String" order="BEFORE">
@@ -198,7 +224,10 @@
 				,JUDG_DTM
 				,VHC_ID
 				,APPL_DTM
-				
+				,DRV_ID
+				,CPLNT_DIV
+				,JUDG_RLT
+				,LINK_ID
 			)
 		VALUES
 			(
@@ -207,7 +236,7 @@
 				,#{NODE_ID}
 				,#{REP_ROUT_ID}
 				,#{REP_ROUT_NM}
-				,#{OCR_DTM}
+				,STR_TO_DATE(#{OCR_DTM}, '%Y%m%d')
 				,#{ROUT_NM}
 				,#{VHC_NO}
 				,#{CPLNT_TYPE}
@@ -227,7 +256,10 @@
 				,STR_TO_DATE(#{JUDG_DTM}, '%Y%m%d')
 				,#{VHC_ID}
 				,#{UPD_DTM}
-				
+				,#{DRV_ID}
+				,#{CPLNT_DIV}
+				,'JR002'
+				,#{LINK_ID}
 			)
 	</insert>
 	
@@ -258,6 +290,9 @@
 			,CPLNT_NM = #{CPLNT_NM}
 			,CPLNT_PHONE = AES_ENCRYPT(#{CPLNT_PHONE}, HEX(SHA2('TRACOM', 512)))
 			,JUDG_DTM = #{JUDG_DTM}
+			,CPLNT_DIV = #{CPLNT_DIV}
+			,DRV_ID = #{DRV_ID}
+			,LINK_ID = #{LINK_ID}
 		WHERE
 			CPLNT_ID = #{CPLNT_ID}
 	</update>

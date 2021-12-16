@@ -37,19 +37,26 @@ public class PI1001Controller extends ControllerSupport {
 		this.result.setData("dlt_searchitem", this.PI1001Service.PI1001SHI0());
 		return this.result.getResult();
 	}
+	
+	@RequestMapping({ "/pi/PI1001SHI1" })
+	@ResponseBody
+	public Map<String, Object> PI1001SHI1() throws Exception {
+		this.result.setData("dlt_searchitem", this.PI1001Service.PI1001SHI1());
+		return this.result.getResult();
+	}
 
 	@RequestMapping({ "/pi/PI1001G2R0" })
 	@ResponseBody
 	public Map<String, Object> PI1001G2R0() throws Exception {
-		this.result.setData("dlt_BMS_STTN_MST", this.PI1001Service.PI1001G2R0());
+		this.result.setData("dlt_BMS_DVC_INFO", this.PI1001Service.PI1001G2R0());
 		return this.result.getResult();
 	}
 
-	@RequestMapping({ "/pi/PI1001G0S0" })
-	@ResponseBody
-	public Map<String, Object> PI1001G0S0() throws Exception {
-		this.result.setData("result", this.PI1001Service.PI1001G0S0());
-		return this.result.getResultSave();
+	@RequestMapping("/pi/PI1001G0S0" )
+	public @ResponseBody Map<String, Object> PI1001G0S0() throws Exception {
+		Map map = PI1001Service.PI1001G0S0();
+		result.setData("dma_result", map);
+		return result.getResultSave();
 	}
 
 	@RequestMapping({ "/pi/PI1001G0K0" })
@@ -84,6 +91,20 @@ public class PI1001Controller extends ControllerSupport {
 	@ResponseBody
 	public Map<String, Object> PI1001P1R0() throws Exception {
 		this.result.setData("dlt_BMS_STTN_MST", this.PI1001Service.PI1001P1R0());
+		return this.result.getResult();
+	}
+	
+	@RequestMapping({ "/pi/PI1001P2R0" })
+	@ResponseBody
+	public Map<String, Object> PI1001P2R0() throws Exception {
+		this.result.setData("dlt_BMS_DVC_INFO", this.PI1001Service.PI1001P2R0());
+		return this.result.getResult();
+	}
+	
+	@RequestMapping({ "/pi/PI1001P3R0" })
+	@ResponseBody
+	public Map<String, Object> PI1001P3R0() throws Exception {
+		this.result.setData("dlt_BMS_NOTICE_SCNRO_MST", this.PI1001Service.PI1001P3R0());
 		return this.result.getResult();
 	}
 }

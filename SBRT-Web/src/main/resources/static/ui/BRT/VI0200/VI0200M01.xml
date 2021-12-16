@@ -25,13 +25,19 @@
 						<w2:column id="OCR_DTM" name="발생일시" dataType="date"></w2:column>
 						<w2:column id="OPER_DT" name="운행일" dataType="date"></w2:column>
 						<w2:column id="APPL_DTM" name="접수일시" dataType="date"></w2:column>
+						<w2:column id="JUDG_RLT" name="조치결과" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
+						<w2:column id="CPLNT_DIV" name="민원구분" dataType="text"></w2:column>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 						<w2:column id="COMP_NM" name="운수사명" dataType="text"></w2:column>
 						<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
 						<w2:column id="VHC_ID" name="차량ID" dataType="text"></w2:column>
+						<w2:column id="LINK_ID" name="링크ID" dataType="text"></w2:column>
+						<w2:column id="LINK_NM" name="링크명" dataType="text"></w2:column>
+						<w2:column id="DRV_ID" name="운전자ID" dataType="text"></w2:column>
+						<w2:column id="DRV_NM" name="운전자명" dataType="text"></w2:column>
 						<w2:column id="CPLNT_TYPE" name="민원유형" dataType="text"></w2:column>
 						<w2:column id="ALLOC_NO" name="배차번호" dataType="text"></w2:column>
 						<w2:column id="OPER_SN" name="운행순번" dataType="text"></w2:column>
@@ -70,9 +76,9 @@
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_grgSearchItem" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 						<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
 						<w2:column id="CPLNT_NM" name="민원자명" dataType="text"></w2:column>
+						<w2:column id="CPLNT_DIV" name="민원구분" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_SEQ_BRT_CPLNT_HIS_0">
@@ -115,8 +121,10 @@
 		
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions);
 		
-		var codeOptions = [ {code : "CPLNT_TYPE", compID : "CPLNT_TYPE, VI0200G0:CPLNT_TYPE" } 
+		var codeOptions = [ {code : "CPLNT_TYPE", compID : "VI0200G0:CPLNT_TYPE" } 
 							,{code : "JUDG_TYPE", compID : "VI0200G0:JUDG_TYPE" }
+							,{code : "JUDG_RLT", compID : "VI0200G0:JUDG_RLT" }
+							,{code : "CPLNT_DIV", compID : "CPLNT_DIV, VI0200G0:CPLNT_DIV" }
 					];
 					
 		com.executeSubmission(sub_VI0200SHI0);
@@ -153,6 +161,57 @@
 	
 	scwin.VI0200G0_onrowindexchange = function(row,oldRow) {
 		var jsonObj = dlt_BRT_CPLNT_HIS.getRowJSON(row);
+		
+		var cplntDiv = dlt_BRT_CPLNT_HIS.getCellData(row, "CPLNT_DIV");
+		
+		if(cplntDiv == ''){
+			ROUT_TR_ID.hide();
+			VHC_TR_ID.hide();
+		}else if(cplntDiv == 'CD003'){
+			VHC_TR_ID.hide();
+		}else if(cplntDiv == 'CD004'){
+			VHC_TR_ID.hide();
+		}else if(cplntDiv == 'CD005'){
+			VHC_TR_ID.hide();
+		}else if(cplntDiv == 'CD007'){
+			ROUT_TR_ID.hide();
+			VHC_TR_ID.hide();
+		}else if(cplntDiv == 'CD008'){
+			ROUT_TR_ID.hide();
+			VHC_TR_ID.hide();
+		}else if(cplntDiv == 'CD009'){
+			ROUT_TR_ID.hide();
+			VHC_TR_ID.hide();
+		}else{
+			ROUT_TR_ID.show("");
+			VHC_TR_ID.show("");
+		}
+		
+		if(cplntDiv == ''){
+			VHC_NO.setDisabled(true);
+			COMP_NM.setDisabled(true);
+			DRV_NM.setDisabled(true);
+			ROUT_NM.setDisabled(true);
+			btn_searchVno.setDisabled(true);
+			btn_searchDrv.setDisabled(true);
+			btn_searchRout.setDisabled(true);
+		}else{
+			VHC_NO.setDisabled(false);
+			COMP_NM.setDisabled(false);
+			DRV_NM.setDisabled(false);
+			ROUT_NM.setDisabled(false);
+			btn_searchVno.setDisabled(false);
+			btn_searchDrv.setDisabled(false);
+			btn_searchRout.setDisabled(false);
+		}
+		
+		var judgRlt = dlt_BRT_CPLNT_HIS.getCellData(row, "JUDG_RLT");
+		
+		if(judgRlt != ''){
+			CPLNT_DIV.setDisabled(true);
+		}else{
+			CPLNT_DIV.setDisabled(false);
+		}
 		
 		//차량 단일 마커
 		//routMap.showVehicle3("map_VI0200", jsonObj, VI0200G0);
@@ -191,13 +250,13 @@
 		scwin.btn_searchNode_onclick();		
 	};
 	
-	/*scwin.btn_searchComp_onclick = function(e) {
+	scwin.btn_searchLink_onclick = function(e) {
 	
 		var data = { ROUT_ID : dlt_BRT_CPLNT_HIS.getCellData(VI0200G0.getFocusedRowIndex(), "ROUT_ID"),
-				   	 callbackFn : "scwin.searchCompCallback" };
+				   	 callbackFn : "scwin.searchLinkCallback" };
 				   	 
 		var opt = { id : "VI0200P02", 
-					popupName : "운수사 검색",
+					popupName : "링크명 검색",
 					width : 600,
 					height : 500,
 					modal : true};
@@ -205,15 +264,16 @@
 	};
 	
 	//찾기 버튼 콜백함수
-	scwin.searchCompCallback = function(returnValue) {
+	scwin.searchLinkCallback = function(returnValue) {
 	
-		COMP_NM.setValue(returnValue[0].COMP_NM);
-		//dlt_BRT_CPLNT_HIS.setCellData(VI0200G0.getFocusedRowIndex(), "ROUT_ID", returnValue[0].ROUT_ID);
+		LINK_NM.setValue(returnValue[0].LINK_NM);
+		dlt_BRT_CPLNT_HIS.setCellData(VI0200G0.getFocusedRowIndex(), "LINK_ID", returnValue[0].LINK_ID);
+		dlt_BRT_CPLNT_HIS.setCellData(VI0200G0.getFocusedRowIndex(), "LINK_NM", returnValue[0].LINK_NM);
 	};
 	
-	scwin.COMP_NM_onfocus = function(e) {
-		scwin.btn_searchComp_onclick();		
-	};*/
+	scwin.LINK_NM_onfocus = function(e) {
+		scwin.btn_searchLink_onclick();		
+	};
 	
 	scwin.btn_searchRout_onclick = function(e) {
 	
@@ -274,10 +334,6 @@
 			acb_autoChoiceBox.hide();
 			search_input.setValue("");
 			search_input.show("");
-		} else if (info.newValue == "ROUT_NM") {
-			search_input.hide();
-			acb_autoChoiceBox.setNodeSet("data:dlt_grgSearchItem", "ROUT_NM", "ROUT_NM");
-			acb_autoChoiceBox.show("");
 		} else if (info.newValue == "VHC_NO") {
 			search_input.hide();
 			acb_autoChoiceBox.setNodeSet("data:dlt_grgSearchItem", "VHC_NO", "VHC_NO");
@@ -286,11 +342,100 @@
 			search_input.hide();
 			acb_autoChoiceBox.setNodeSet("data:dlt_grgSearchItem", "CPLNT_NM", "CPLNT_NM");
 			acb_autoChoiceBox.show("");
+		} else if (info.newValue == "CPLNT_DIV") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_grgSearchItem", "CPLNT_DIV", "CPLNT_DIV");
+			var codeOptions = [ {code : "CPLNT_DIV", compID : "acb_autoChoiceBox" } ];
+			com.setCommonDtl(codeOptions);
+			acb_autoChoiceBox.show("");
 		} 
 	};
 	
 	scwin.sub_VI0200SHI0_submitdone = function(e) {
 		com.searchGrid(VI0200G0, sub_VI0200G0R0);
+	};
+	
+	scwin.CPLNT_DIV_onviewchange = function(info) {
+		debugger;
+		var cplntDiv = info.newValue;
+		
+		if(cplntDiv == ''){
+			ROUT_TR_ID.hide();
+			VHC_TR_ID.hide();
+		}else if(cplntDiv == 'CD003'){
+			ROUT_TR_ID.show("");
+			VHC_TR_ID.show("");
+			VHC_TR_ID.hide();
+		}else if(cplntDiv == 'CD004'){
+			ROUT_TR_ID.show("");
+			VHC_TR_ID.show("");
+			VHC_TR_ID.hide();
+		}else if(cplntDiv == 'CD005'){
+			ROUT_TR_ID.show("");
+			VHC_TR_ID.show("");
+			VHC_TR_ID.hide();
+		}else if(cplntDiv == 'CD007'){
+			ROUT_TR_ID.show("");
+			VHC_TR_ID.show("");
+			ROUT_TR_ID.hide();
+			VHC_TR_ID.hide();
+		}else if(cplntDiv == 'CD008'){
+			ROUT_TR_ID.show("");
+			VHC_TR_ID.show("");
+			ROUT_TR_ID.hide();
+			VHC_TR_ID.hide();
+		}else if(cplntDiv == 'CD009'){
+			ROUT_TR_ID.show("");
+			VHC_TR_ID.show("");
+			ROUT_TR_ID.hide();
+			VHC_TR_ID.hide();
+		}else{
+			ROUT_TR_ID.show("");
+			VHC_TR_ID.show("");
+		}
+		
+		if(cplntDiv == ''){
+			VHC_NO.setDisabled(true);
+			COMP_NM.setDisabled(true);
+			DRV_NM.setDisabled(true);
+			ROUT_NM.setDisabled(true);
+			btn_searchVno.setDisabled(true);
+			btn_searchDrv.setDisabled(true);
+			btn_searchRout.setDisabled(true);
+		}else{
+			VHC_NO.setDisabled(false);
+			COMP_NM.setDisabled(false);
+			DRV_NM.setDisabled(false);
+			ROUT_NM.setDisabled(false);
+			btn_searchVno.setDisabled(false);
+			btn_searchDrv.setDisabled(false);
+			btn_searchRout.setDisabled(false);
+		}
+		
+	};
+	
+	scwin.btn_searchDrv_onclick = function(e) {
+	
+		var data = {callbackFn : "scwin.searchDrvCallback" };
+				   	 
+		var opt = { id : "VI0200P05", 
+					popupName : "운전자 검색",
+					width : 600,
+					height : 500,
+					modal : true};
+		com.openPopup("/ui/BRT/VI0200/VI0200P05.xml", opt, data);		
+		
+	};
+	
+	//찾기 버튼 콜백함수
+	scwin.searchDrvCallback = function(returnValue) {
+		DRV_NM.setValue(returnValue[0].DRV_NM);
+		dlt_BRT_CPLNT_HIS.setCellData(VI0200G0.getFocusedRowIndex(), "DRV_ID", returnValue[0].DRV_ID);
+		dlt_BRT_CPLNT_HIS.setCellData(VI0200G0.getFocusedRowIndex(), "DRV_NM", returnValue[0].DRV_NM);
+	};
+	
+	scwin.DRV_NM_onfocus = function(e) {
+		scwin.btn_searchDrv_onclick();		
 	};
 	]]></script>
 	</head>
@@ -314,8 +459,8 @@
 									<xf:value><![CDATA[ALL]]></xf:value>
 								</xf:item>
 								<xf:item>
-									<xf:label><![CDATA[노선명]]></xf:label>
-									<xf:value><![CDATA[ROUT_NM]]></xf:value>
+									<xf:label><![CDATA[민원구분]]></xf:label>
+									<xf:value><![CDATA[CPLNT_DIV]]></xf:value>
 								</xf:item>
 								<xf:item>
 									<xf:label><![CDATA[차량번호]]></xf:label>
@@ -327,7 +472,7 @@
 								</xf:item>
 							</xf:choices>
 						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="노선명 또는 차량번호 또는 민원자명" style=""></xf:input>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="민원구분 또는 차량번호 또는 민원자명" style=""></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
 							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
 							ev:onviewchange="" id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
@@ -365,8 +510,14 @@
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
-									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:22px;" id="column17"
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:22px;" id="column18"
 										value="민원ID" blockSelect="false" displayMode="label" class="req">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:22px;" id="column17"
+										value="민원구분" blockSelect="false" displayMode="label" class="req">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:22px;" id="column50"
+										value="민원자명" blockSelect="false" displayMode="label" class="req">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:22px;" id="column15"
 										value="노선명" blockSelect="false" displayMode="label">
@@ -374,20 +525,20 @@
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:22px;" id="column13"
 										value="차량번호" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:22px;" id="column14"
+									<!--  <w2:column removeBorderStyle="false" width="120" inputType="text" style="height:22px;" id="column14"
 										value="운수사명" blockSelect="false" displayMode="label">
-									</w2:column>
+									</w2:column>-->
 									<w2:column removeBorderStyle="false" width="136" inputType="text" style="height:22px;" id="column16"
 										value="발생일시" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:22px;" id="column50"
-										value="민원자명" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:22px;" id="column49"
+									<!--  <w2:column removeBorderStyle="false" width="100" inputType="text" style="height:22px;" id="column49"
 										value="민원유형" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:22px;" id="column12"
+									</w2:column>-->
+									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:22px;" id="column20"
 										value="민원위치" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:22px;" id="column12"
+										value="진행상태" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="300" inputType="text" style="height:22px;" id="column9"
 										value="민원내용" blockSelect="false" displayMode="label">
@@ -399,26 +550,33 @@
 									<w2:column removeBorderStyle="false" width="186" inputType="text" style="height:20px" id="CPLNT_ID"
 										value="" blockSelect="false" displayMode="label" userData1="M">
 									</w2:column>
+									<w2:column removeBorderStyle="false" width="186" inputType="select" style="height:20px" id="CPLNT_DIV"
+										value="" blockSelect="false" displayMode="label" userData1="M">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="103" inputType="text" style="height:20px" id="CPLNT_NM"
+										value="" blockSelect="false" displayMode="label" textAlign="" userData1="M">
+									</w2:column>
 									<w2:column removeBorderStyle="false" width="186" inputType="text" style="height:20px" id="ROUT_NM"
 										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="230" inputType="text" style="height:20px" id="VHC_NO"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="COMP_NM"
+									<!--  <w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="COMP_NM"
 										value="" blockSelect="false" displayMode="label" textAlign="left">
-									</w2:column>
+									</w2:column>-->
 									<w2:column removeBorderStyle="false" width="136" inputType="text" style="height:20px" id="OCR_DTM"
-										value="" blockSelect="false" displayMode="label" userData1="M">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="103" inputType="text" style="height:20px" id="CPLNT_NM"
-										value="" blockSelect="false" displayMode="label" textAlign="">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="CPLNT_TYPE"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
+									
+									<!--  <w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="CPLNT_TYPE"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>-->
 									<w2:column removeBorderStyle="false" width="103" inputType="text" style="height:20px" id="NODE_NM"
 										value="" blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="103" inputType="select" style="height:20px" id="JUDG_RLT"
+										value="" blockSelect="false" displayMode="label" textAlign="">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="CPLNT_CONTS"
 										value="" blockSelect="false" displayMode="label" textAlign="left">
@@ -468,13 +626,28 @@
 										style="width:100%;height:21px;" disabled="true" adjustMaxLength="">
 									</xf:input>
 								</xf:group>
-								<xf:group class="w2tb_th" style="" tagname="th">민원자명</xf:group>
+								<xf:group class="w2tb_th req" style="" tagname="th">민원구분</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<w2:attributes>
+										<w2:colspan>1</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto"
+										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="CPLNT_DIV" labelWidthAuto="" mandatory="true"
+										optionOrder="" ref="data:dlt_BRT_CPLNT_HIS.CPLNT_DIV" renderType="component" style="width:160px; height:24px;" submenuSize="auto" ev:onchange="scwin.CPLNT_DIV_onchange" ev:onviewchange="scwin.CPLNT_DIV_onviewchange">
+										<xf:choices></xf:choices>
+									</xf:select1>
+								</xf:group>
+								<xf:group class="w2tb_th req" style="" tagname="th">민원자명</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<xf:input allowChar="" customModelFormatter="" customModelUnformatter="" dataType="text" disabled=""
 										displayFormatter="com.transPhone" id="CPLNT_NM" maskFormat="" maxlength="10" minByteLength=""
 										ref="data:dlt_BRT_CPLNT_HIS.CPLNT_NM" style="width:100%;height: 21px;" validator="" maxByteLength="">
 									</xf:input>
 								</xf:group>
+							</xf:group>
+							
+							<xf:group style="" tagname="tr">
 								<xf:group class="w2tb_th" style="" tagname="th">민원자전화번호</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<xf:input allowChar="0-9-" customModelFormatter="" customModelUnformatter="" dataType="text" disabled=""
@@ -482,34 +655,12 @@
 										ref="data:dlt_BRT_CPLNT_HIS.CPLNT_PHONE" style="width:100%;height: 21px;" validator="" maxByteLength="">
 									</xf:input>
 								</xf:group>
-							</xf:group>
-							
-							<xf:group style="" tagname="tr">
-								<xf:group class="w2tb_th" style="" tagname="th">민원유형</xf:group>
+								<xf:group class="w2tb_th" style="" tagname="th">접수일시</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
-									<w2:attributes>
-										<w2:colspan>1</w2:colspan>
-										<w2:rowspan>1</w2:rowspan>
-									</w2:attributes>
-									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto"
-										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="CPLNT_TYPE" labelWidthAuto="" mandatory="true"
-										optionOrder="" ref="data:dlt_BRT_CPLNT_HIS.CPLNT_TYPE" renderType="component" style="height:24px;" submenuSize="auto">
-										<xf:choices></xf:choices>
-									</xf:select1>
-								</xf:group>
-								<xf:group tagname="td" class="w2tb_th">
-									민원위치
-									<w2:attributes></w2:attributes>
-								</xf:group>
-								<xf:group tagname="td" class="w2tb_td">
-									<xf:input adjustMaxLength="" class="" disabled="" fireEventOnInvalid="" id="NODE_NM"
-										invalidMessageFunc="" mandatory="" readOnly="" ref="data:dlt_BRT_CPLNT_HIS.NODE_NM" style="width: 130px;height: 21px;"
-										validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:oneditenter="" ev:onfocus="scwin.NODE_NM_onfocus">
-									</xf:input>
-									<xf:image class="btn" ev:onclick="scwin.btn_searchNode_onclick" id="btn_searchNode" longdesc=""
-										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
-									</xf:image>
-									<w2:attributes></w2:attributes>
+									<w2:inputCalendar footerDiv="false" id="" style="width: 150px;height: 23px;" renderDiv="true"
+										focusOnDateSelect="false" calendarValueType="yearMonthDateTimeSec" rightAlign="false" renderType="component"
+										ref="data:dlt_BRT_CPLNT_HIS.APPL_DTM" readOnly="true">
+									</w2:inputCalendar>
 								</xf:group>
 								<xf:group class="w2tb_th" style="" tagname="th">발생일시</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
@@ -523,7 +674,54 @@
 									</w2:attributes>
 								</xf:group>
 							</xf:group>
-							<xf:group style="" tagname="tr">
+							<xf:group style="" tagname="tr" id="ROUT_TR_ID">
+								<xf:group tagname="th" class="w2tb_th">
+									노선명
+									<w2:attributes>
+										<w2:scope>row</w2:scope>
+									</w2:attributes>
+								</xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<xf:input adjustMaxLength="" class="" disabled="" fireEventOnInvalid="" id="ROUT_NM"
+										invalidMessageFunc="" mandatory="" readOnly="" ref="data:dlt_BRT_CPLNT_HIS.ROUT_NM" style="width: 130px;height: 21px;"
+										validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:oneditenter="" ev:onfocus="scwin.ROUT_NM_onfocus">
+									</xf:input>
+									<xf:image class="btn" ev:onclick="scwin.btn_searchRout_onclick" id="btn_searchRout" longdesc=""
+										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
+									</xf:image>
+								</xf:group>
+								<xf:group tagname="td" class="w2tb_th">
+									정류소명
+									<w2:attributes></w2:attributes>
+								</xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<xf:input adjustMaxLength="" class="" disabled="" fireEventOnInvalid="" id="NODE_NM"
+										invalidMessageFunc="" mandatory="" readOnly="" ref="data:dlt_BRT_CPLNT_HIS.NODE_NM" style="width: 130px;height: 21px;"
+										validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:oneditenter="" ev:onfocus="scwin.NODE_NM_onfocus">
+									</xf:input>
+									<xf:image class="btn" ev:onclick="scwin.btn_searchNode_onclick" id="btn_searchNode" longdesc=""
+										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
+									</xf:image>
+									<w2:attributes></w2:attributes>
+								</xf:group>
+								<xf:group class="w2tb_th" style="" tagname="th">
+									링크명
+								</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<xf:input adjustMaxLength="" class="" disabled="" fireEventOnInvalid="" id="LINK_NM"
+										invalidMessageFunc="" mandatory="" readOnly="" ref="data:dlt_BRT_CPLNT_HIS.LINK_NM" style="width: 130px;height: 21px;"
+										validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:oneditenter="" ev:onfocus="scwin.LINK_NM_onfocus">
+									</xf:input>
+									<xf:image class="btn" ev:onclick="scwin.btn_searchLink_onclick" id="btn_searchLink" longdesc=""
+										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
+									</xf:image>
+									<w2:attributes>
+										<w2:colspan>1</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr" id="VHC_TR_ID">
 								<xf:group tagname="td" class="w2tb_th">
 									차량번호
 									<w2:attributes></w2:attributes>
@@ -552,38 +750,17 @@
 										validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:oneditenter="" ev:onfocus="scwin.COMP_NM_onfocus">
 									</xf:input>
 								</xf:group>
-								<xf:group tagname="th" class="w2tb_th">
-									노선명
-									<w2:attributes>
-										<w2:scope>row</w2:scope>
-									</w2:attributes>
+								<xf:group tagname="th" class="w2tb_th" style="" id="" tabIndex="">
+									운전자명
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
-									<xf:input adjustMaxLength="" class="" disabled="" fireEventOnInvalid="" id="ROUT_NM"
-										invalidMessageFunc="" mandatory="" readOnly="" ref="data:dlt_BRT_CPLNT_HIS.ROUT_NM" style="width: 130px;height: 21px;"
-										validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:oneditenter="" ev:onfocus="scwin.ROUT_NM_onfocus">
+									<xf:input adjustMaxLength="" class="" disabled="" fireEventOnInvalid="" id="DRV_NM"
+										invalidMessageFunc="" mandatory="" readOnly="" ref="data:dlt_BRT_CPLNT_HIS.DRV_NM" style="width: 130px;height: 21px;"
+										validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:oneditenter="" ev:onfocus="scwin.DRV_NM_onfocus">
 									</xf:input>
-									<xf:image class="btn" ev:onclick="scwin.btn_searchRout_onclick" id="btn_searchRout" longdesc=""
+									<xf:image class="btn" ev:onclick="scwin.btn_searchDrv_onclick" id="btn_searchDrv" longdesc=""
 										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
 									</xf:image>
-								</xf:group>
-							</xf:group>
-							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" class="w2tb_th" style="" id="" tabIndex="">
-									접수일시
-									<w2:attributes>
-										<w2:scope>row</w2:scope>
-									</w2:attributes>
-								</xf:group>
-								<xf:group tagname="td" class="w2tb_td">
-									<w2:attributes>
-										<w2:colspan>5</w2:colspan>
-										<w2:rowspan>1</w2:rowspan>
-									</w2:attributes>
-									<w2:inputCalendar footerDiv="false" id="" style="width: 150px;height: 23px;" renderDiv="true"
-										focusOnDateSelect="false" calendarValueType="yearMonthDateTimeSec" rightAlign="false" renderType="component"
-										ref="data:dlt_BRT_CPLNT_HIS.APPL_DTM" readOnly="true">
-									</w2:inputCalendar>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
