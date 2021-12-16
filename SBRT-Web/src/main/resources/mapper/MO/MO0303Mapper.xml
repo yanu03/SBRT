@@ -38,6 +38,7 @@
 				,	E.DRV_NM
 				,	F.LINK_NM
 				,	G.NODE_NM
+				,	IF(J.CNT != 0, "돌발 대응", "돌발 미대응") INCDNT_RES_YN
 				
 	FROM			BRT_INCDNT_INFO A
 	LEFT JOIN		BMS_ROUT_MST B
@@ -52,7 +53,12 @@
 		ON			A.LINK_ID = F.LINK_ID
 	LEFT JOIN		BMS_NODE_MST G
 		ON			A.NODE_ID = G.NODE_ID	
-					
+	LEFT JOIN		(	SELECT H.INCDNT_ID, COUNT(H.INCDNT_ID) CNT
+						FROM	BRT_INCDNT_RES_INFO H
+						LEFT JOIN	BRT_INCDNT_INFO I
+							ON	H.INCDNT_ID = I.INCDNT_ID
+						GROUP BY H.INCDNT_ID) J
+		ON			A.INCDNT_ID = J.INCDNT_ID					
 	<where>
 		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 			AND A.VHC_NO LIKE CONCAT('%',#{CONTENT},'%') || A.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
@@ -63,6 +69,15 @@
 		<if test="TYPE == 'REP_ROUT_NM'">
 			AND A.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
+		<if test="(F_DATE != null and F_DATE != '') and (L_DATE == null or L_DATE == '')">
+			<![CDATA[A.OPER_DT >= #{F_DATE}]]>
+		</if>
+		<if test="(F_DATE == null or F_DATE == '') and L_DATE != null and L_DATE != '' ">
+			<![CDATA[A.OPER_DT <= #{L_DATE}]]>
+		</if>
+		<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
+			A.OPER_DT between #{F_DATE} and #{L_DATE}
+		</if>		
 	</where>
 	
 	ORDER BY		A.OPER_DT DESC
@@ -232,12 +247,13 @@
 	LEFT JOIN		BMS_EMER_CLSFCTN_MST H
 		ON			A.CLSFCTN_ID = H.CLSFCTN_ID	
 		
+	WHERE			A.INCDNT_ID = #{INCDNT_ID}	 
 
-	WHERE			A.OPER_DT = #{OPER_DT}
+<!-- 	WHERE			A.OPER_DT = #{OPER_DT}
 	AND				A.REP_ROUT_ID = #{REP_ROUT_ID}
 	AND				A.VHC_ID = #{VHC_ID}
 	AND				A.INCDNT_TYPE = #{INCDNT_TYPE}
-	AND				A.ROUT_ID = #{ROUT_ID}		
+	AND				A.ROUT_ID = #{ROUT_ID}	 -->	
 </select>
 
 <select id="MO0303G1K0" resultType="Map">
@@ -248,6 +264,7 @@
 	INSERT	INTO BRT_INCDNT_RES_INFO
 				(
 					INCDNT_RES_ID
+				,	INCDNT_ID
 				,	OPER_DT
 				,	REP_ROUT_ID
 				,	VHC_ID
@@ -272,6 +289,7 @@
 				
 		VALUES	(
 					#{INCDNT_RES_ID}
+				,	#{INCDNT_ID}					
 				,	DATE_FORMAT(#{OPER_DT}, '%Y-%m-%d')
 				,	#{REP_ROUT_ID}
 				,	#{VHC_ID}
