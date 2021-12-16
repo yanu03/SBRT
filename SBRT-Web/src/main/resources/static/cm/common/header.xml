@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
 	<head>
+		<script src="/webjars/sockjs-client/sockjs.min.js"></script>
+		<script src="/webjars/stomp-websocket/stomp.min.js"></script>	
 		<w2:type>DEFAULT</w2:type>
 		<w2:buildDate />
 		<xf:model>
@@ -78,7 +80,7 @@
 
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
-
+		scwin.connect();
 	};
 	
 	scwin.onpageunload = function() {
@@ -568,6 +570,68 @@ scwin.fn_getInitData = function() {
 		var data = { "USER_ID" : dma_defInfo.get("SSN_USER_ID") };
 		var options = { id : "settingPassword", popupName : "비밀번호 변경", width : "402", height : popupHeight};
 		com.openPopup("/cm/common/settingPassword.xml", options, data);
+	};
+
+
+	//소켓 처리 부분
+	scwin.connect = function() {
+		var socket = new SockJS('/websocket');
+		stompClient = Stomp.over(socket);
+		
+		stompClient.connect({}, scwin.onConnected, scwin.onError);
+	
+	};	
+	
+	scwin.onConnected = function (frame) {
+		console.log('Connected: ' + frame);
+		
+	    stompClient.subscribe('/topic/public', scwin.onMessageReceived);
+	
+	};	
+
+	scwin.onError = function (error) {
+		showMessage('Could not connect to WebSocket server. ' + error);
+	};	
+
+	scwin.onMessageReceived = function(payload) {
+		var jsonObj = JSON.parse(payload.body);
+		
+		var attrId = jsonObj.ATTR_ID;
+		var dataList = jsonObj.LIST;
+		
+		//4012: 운행이벤트
+//		if(attrId == 4012 && jsonObj.EVT_CODE.indexOf("IC") == 0 && typeof($p.top().tac_layout_contents_MN00100103_body) == "undefined") {
+		if(attrId == 4012 && jsonObj.EVT_CODE.indexOf("IC") == 0) {
+			
+			try {
+					var eventCode = jsonObj.EVT_CODE;
+					var eventMessage = "";
+					com.confirm("돌발이 발생하였습니다. 돌발상황 관제 프로그램으로 이동 하시겠습니까?", function(rtn){
+						if (rtn) {
+							scwin.openMenu("돌발상황 관제 ","/ui/BRT/MO0303/MO0303M01.xml", "MN00100103");
+						}						
+					});
+					
+			} catch (e) {
+				console.log("[scwin.onMessageReceived] Exception :: " + e.message);					
+			}
+				
+		} 
+		
+		else if(attrId == 4020) { //4020: 디스패치
+			//payload.body >>>> {MESSAGE=천천히가세요, DSPTCH_DIV=DP001, ATTR_ID=4020, DSPTCH_KIND=DK002, VHC_ID=VH00000002}
+			
+			//jsonObj.DSPTCH_DIV => 디스패치 구분코드 : DP001(일반메시지), DP002(운행중디스패치), DP003(정차중디스패치)
+			//jsonObj.DSPTCH_KIND => 디스패치 종류(레벨)코드 : DK001(1단계), DK002(2단계), DK003(3단계)
+			//jsonObj.MESSAGE => 디스패치 메시지
+			
+			try {
+						
+			} catch (e) {
+				console.log("[scwin.onMessageReceived] Exception :: " + e.message);		
+			}
+			
+		}
 	};
 ]]></script>
 	</head>
