@@ -145,6 +145,7 @@
 		</style>
 
 		<script type="text/javascript" lazy="false"><![CDATA[
+	var circle = null;
 	scwin.onpageload = function() {
 		 var autoOptions = {
 			Main : { grid : MO0600G0, srchSbm : sub_MO0600G0R0, keyColumn : "VHC_ID", srchGrp : pgm_header, name : "차량 목록"}
@@ -164,6 +165,8 @@
 		
 		routMap.cronMap("map_MO0600_vehicle", {				
 		},map);
+		
+		routMap.cronMap("map_MO0600_circle", {},map);
 		
 		var codeOptions = [ {code : "OPER_STS", compID : "MO0600G0:OPER_STS"},
 							{code : "INCDNT_TYPE", compID : "MO0600G1:INCDNT_TYPE"}
@@ -216,6 +219,9 @@
 			
 		});
 		
+		
+		map.setLevel(7);
+		
 	};	
 	
 	scwin.btn_sub_move = function(){
@@ -261,17 +267,26 @@
 	
 	scwin.MO0600G0_onrowindexchange = function(row,oldRow) {
 		var vhcId = dlt_BRT_CUR_OPER_INFO.getCellData(row, "VHC_ID");
+		
 		com.executeSubmission(sub_selectNodeListByRepRout);
 		com.searchGrid(MO0600G1, sub_MO0600G1R0);
 	};
 	
 	scwin.MO0600G1_onrowindexchange = function(row,oldRow) {
+		debugger;
+		routMap.deleteCircle("map_MO0600");
+		
+		var lat = dlt_BRT_INCDNT_INFO.getCellData(row, "GPS_Y");
+		var lon = dlt_BRT_INCDNT_INFO.getCellData(row, "GPS_X");
+		//routMap.getDrawingCircle("map_MO0600", lat, lon, 3000);
+		
 		routMap.showMarkerList("map_MO0600", dlt_BRT_INCDNT_INFO.getAllJSON(), MO0600G1.getFocusedRowIndex(), MO0600G1);
+		routMap.mapInfo["map_MO0600"].circles.push(routMap.getDrawingCircle("map_MO0600", lat, lon, 3000)); 
+		
 	};
 	
 	scwin.sub_MO0600G1R0_submitdone = function(e) {
 		scwin.updateStatusIncdnt();
-		com.setFocusedCell(MO0600G1, "ROUT_NM");
 	};
 	
 	scwin.updateStatusIncdnt = function() {

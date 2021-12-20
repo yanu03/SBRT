@@ -217,4 +217,58 @@ public class MO0303Service extends ServiceSupport {
         		
 		return null;
 	}
+	
+	public List<Map> MO0303SCK1() throws Exception {
+		
+		Map param = getSimpleDataMap("dma_search");
+		
+//		String vhcId = String.valueOf(param.get("VHC_ID")); //차량 아이디
+		String message = String.valueOf(param.get("MSG_CONTS")); //메시지 내용
+		String vhcIds[] = param.get("VHC_IDS").toString().replace(" ",  "").replace("[",  "").replace("]",  "").split(","); //차량 아이디
+		
+		
+		if(vhcIds == null || vhcIds.length <= 0) {
+			logger.info("돌발 디스패치 전송할 차량 없음");
+			return null;
+		}
+		
+		//쿼리를 위해 따옴표 붙이기
+		for(int i=0; i<vhcIds.length; i++) {
+			String vhcIdStr = "\'" + vhcIds[i] + "\'";
+			vhcIds[i] = vhcIdStr;
+		}		
+		
+		
+		//전송할 차량목록 검색
+		Map paramMap = new HashMap<String, Object>();
+		paramMap.put("VHC_IDS", vhcIds);
+		List<Map<String, Object>> vhcDvcInfoList = vhcMapper.selectVhcDvcInfoList(paramMap);
+		
+		
+		//디스패치 전송
+		for(Map<String, Object> vhcDvcInfo : vhcDvcInfoList) {
+			
+			//logger.info("===========VHC_ID:{}, MNG_ID:{}", vhcDvcInfo.get("VHC_ID").toString(), vhcDvcInfo.get("MNG_ID").toString());
+			
+			String impId = vhcDvcInfo.get("MNG_ID").toString();
+			
+			if(!StringUtils.isEmpty(impId)) {
+				AtDispatch dispatchReq = new AtDispatch();
+				
+				dispatchReq.setUpdateTm(new AtTimeStamp(DateUtil.now("yyyyMMddHHmmss")));
+				dispatchReq.setMessageType((byte)Constants.DispatchType.DISPATCH_TYPE_1); 
+				dispatchReq.setMessageLevel((byte)Constants.DispatchType.DISPATCH_LV_3);
+				dispatchReq.setMessage(message);
+				
+				TimsConfig timsConfig = TService.getInstance().getTimsConfig();
+				TimsMessageBuilder builder = new TimsMessageBuilder(timsConfig);
+				TimsMessage timsMessage = builder.eventRequest(dispatchReq);
+				
+				kafkaProducer.sendKafka(KafkaTopics.T_COMMUNICATION, timsMessage, impId);
+			}
+			
+		}
+		
+		return null;
+	}
 }

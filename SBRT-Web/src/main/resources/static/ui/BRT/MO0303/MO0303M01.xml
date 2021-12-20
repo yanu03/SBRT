@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
 	xmlns:xf="http://www.w3.org/2002/xforms">
-	<head>
+	<head meta_vertical_guides="" meta_horizontal_guides="">
 		<w2:type>DEFAULT</w2:type>
 		<w2:buildDate />
 		<xf:model>
@@ -14,6 +14,8 @@
 						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
 						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
 						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+						<w2:key id="F_DATE" name="name4" dataType="text"></w2:key>
+						<w2:key id="L_DATE" name="name5" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_result">
@@ -44,6 +46,7 @@
 						<w2:key id="ROUT_NM" name="name8" dataType="text"></w2:key>
 						<w2:key id="LINK_ID" name="name9" dataType="text"></w2:key>
 						<w2:key id="NODE_ID" name="name10" dataType="text"></w2:key>
+						<w2:key id="INCDNT_ID" name="돌발ID" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_INCDNT_INFO" saveRemovedData="true">
@@ -81,6 +84,7 @@
 						<w2:column id="OLD_INCDNT_TYPE" name="name22" dataType="text"></w2:column>
 						<w2:column id="OLD_ROUT_ID" name="name23" dataType="text"></w2:column>
 						<w2:column id="OLD_OCR_DTM" name="name32" dataType="text"></w2:column>
+						<w2:column id="INCDNT_RES_YN" name="돌발 대응여부" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_INCDNT_RES_INFO" saveRemovedData="true">
@@ -104,6 +108,7 @@
 						<w2:column id="CLSFCTN_ID" name="name16" dataType="text"></w2:column>
 						<w2:column id="CLSFCTN_NM" name="name17" dataType="text"></w2:column>
 						<w2:column id="PHONE" name="name18" dataType="text"></w2:column>
+						<w2:column id="INCDNT_ID" name="돌발ID" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_SEQ_BRT_INCDNT_INFO_0">
@@ -158,8 +163,17 @@
 					, srchGrp : pgm_header, keyColumn : "INCDNT_ID", focusColumn : "OPER_DT", name :  "돌발상황 목록"},
 			Sub1 : { grid : MO0303G1, srchSbm : sub_MO0303G1R0, keySbm : sub_MO0303G1K0, savSbm : sub_MO0303G1S0, keyColumn : "INCDNT_RES_ID" ,name :  "대응 목록"}
 		 };		
+		 
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions);		 
-
+		var date = new Date();
+		var year = date.getFullYear().toString();
+		var month = (date.getMonth()+1).toString();
+		var day = date.getDate().toString();
+		
+		var today = year+month+day;
+		var firstday = year+month+"01";
+		F_DATE.setValue(firstday);
+		L_DATE.setValue(today);	
 		var codeOptions = [ {code : "INCDNT_TYPE", compID : "MO0303G0:INCDNT_TYPE, INCDNT_TYPE" },
 							{code : "INCDNT_RES_TYPE", compID : "MO0303G1:INCDNT_RES_TYPE, INCDNT_RES_TYPE"},
 							{code : "PROG_DIV", compID : "MO0303G1:PROG_DIV, PROG_DIV"}
@@ -169,20 +183,20 @@
 			com.searchGrid(MO0303G0, sub_MO0303G0R0);
 		});	
 
-		var subOptions = {
-			ADD: scwin.btn_add2_onclick, DEL:{}, CNL:{}
+		var subOptions = { 
 		};		
       	com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
       	
 		var subOptions2 = {
-        	SAVE:[{cbFnc:scwin.btn_scnro_onclick, nm:"시나리오 불러오기",class:"add"}
+        	SAVE:[{cbFnc:scwin.btn_scnro_onclick, nm:"시나리오 불러오기",class:"add"},
+        		 {cbFnc:scwin.btn_incdntResMessage_onclick, nm:"돌발대응 메시지 전송",class:"share"}
                ]
            };
       	com.setSubBtn2(wfm_subBtn2, autoOptions, subOptions2);
                
                
 		var subOptions3 = {
-        	SAVE:[{cbFnc:scwin.btn_message_onclick,nm:"메시지 전송",class:"share"} 
+        	SAVE:[{cbFnc:scwin.btn_incdntMessage_onclick,nm:"돌발상황 메시지 전송",class:"share"} 
                ]
 		};
 		com.setSubBtn2(wfm_subBtn3, autoOptions, subOptions3);
@@ -197,6 +211,17 @@
 	
 
 	scwin.sub_MO0303G0R0_submitdone = function(e) {
+		for (i=0; i<dlt_BRT_INCDNT_INFO.getDataLength(); i++) {
+			//비정상
+			if (dlt_BRT_INCDNT_INFO.getCellData(i, "INCDNT_RES_YN") == "돌발 미대응") {
+				MO0303G0.setCellClass(i, "INCDNT_RES_YN", "cond_abnormal");
+			}
+			//정상
+			else if (dlt_BRT_INCDNT_INFO.getCellData(i, "INCDNT_RES_YN") == "돌발 대응") {
+				MO0303G0.setCellClass(i, "INCDNT_RES_YN", "cond_normal");
+			}
+		}
+				
 		com.setFocusedCell(MO0303G0, "OPER_DT");		
 	};
 	
@@ -205,6 +230,7 @@
 	};
 	
 	scwin.MO0303G0_onrowindexchange = function(row,oldRow) {
+		dma_subsearch.set("INCDNT_ID", dlt_BRT_INCDNT_INFO.getCellData(row, "INCDNT_ID"));
 		dma_subsearch.set("OPER_DT", dlt_BRT_INCDNT_INFO.getCellData(row, "OPER_DT"));
 		dma_subsearch.set("REP_ROUT_ID", dlt_BRT_INCDNT_INFO.getCellData(row, "REP_ROUT_ID"));
 		dma_subsearch.set("VHC_ID", dlt_BRT_INCDNT_INFO.getCellData(row, "VHC_ID"));
@@ -419,6 +445,7 @@
 	
 	scwin.sub_MO0303G1K0_submitdone = function(e) {
 		com.addGridForm(MO0303G1, MO0303F1, dma_SEQ_BRT_INCDNT_RES_INFO_0, "INCDNT_RES_ID", "CLOSE_DTM");
+		dlt_BRT_INCDNT_RES_INFO.setCellData(MO0303G1.getFocusedRowIndex(), "INCDNT_ID", dma_subsearch.get("INCDNT_ID"));
 		dlt_BRT_INCDNT_RES_INFO.setCellData(MO0303G1.getFocusedRowIndex(), "OPER_DT", dma_subsearch.get("OPER_DT"));
 		dlt_BRT_INCDNT_RES_INFO.setCellData(MO0303G1.getFocusedRowIndex(), "REP_ROUT_ID", dma_subsearch.get("REP_ROUT_ID"));
 		dlt_BRT_INCDNT_RES_INFO.setCellData(MO0303G1.getFocusedRowIndex(), "VHC_ID", dma_subsearch.get("VHC_ID"));
@@ -451,16 +478,18 @@
 		dlt_BRT_INCDNT_INFO.setCellData(MO0303G0.getFocusedRowIndex(), "NODE_NM", obj[0].NODE_NM);
 	}
 	
-	scwin.btn_message_onclick = function() {
+	scwin.btn_incdntMessage_onclick = function() {
       var data = { callbackFn : "scwin.btn_message_callback",
      	incdnt_gps_x : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "GPS_X"),
      	incdnt_gps_y : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "GPS_Y"),
-     	incdnt_rep_rout_id : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "REP_ROUT_ID")
-  }
+     	incdnt_rep_rout_id : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "REP_ROUT_ID"),
+     	incdnt_detail : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "INCDNT_DETAIL")
+     	
+ 	 };
       
       var options = { id : "MO0303P03",
-                  popupName : "메시지 전송",
-                  width : 1500,
+                  popupName : "돌발상황 메시지 전송",
+                  width : 910,
                   height : 600, 
                   modal : true};
       com.openPopup("/ui/BRT/MO0303/MO0303P03.xml", options, data);			
@@ -469,6 +498,32 @@
 	scwin.btn_message_callback = function(obj) {
 		
 	}
+	
+	scwin.btn_incdntResMessage_onclick = function() {
+      var data = { callbackFn : "scwin.btn_message_callback",
+     	incdnt_gps_x : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "GPS_X"),
+     	incdnt_gps_y : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "GPS_Y"),
+     	incdnt_rep_rout_id : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "REP_ROUT_ID"),
+     	incdnt_res_remark : dlt_BRT_INCDNT_RES_INFO.getCellData(MO0303G1.getFocusedRowIndex(), "REMARK")
+     	
+ 	 };
+      	
+      var options = { id : "MO0303P04",
+                  popupName : "돌발대응 메시지 전송",
+                  width : 910,
+                  height : 600, 
+                  modal : true};
+      com.openPopup("/ui/BRT/MO0303/MO0303P04.xml", options, data);		
+		
+	}
+	
+	scwin.F_DATE_onviewchange = function(info) {
+		
+	};
+	
+	scwin.L_DATE_onviewchange = function(info) {
+		
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -476,17 +531,9 @@
 			<xf:group id="pgm_navi" class="pgm_navi" style="">
 				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
 			</xf:group>
-
-
 			<xf:group class="pgm_header" id="pgm_header" style="">
-				<xf:group class="gr_search" id="" style="">
-					<xf:group class="label" id="" style="">
-						<w2:span class="" id="" label="검색 항목"></w2:span>
-					</xf:group>
-					<xf:group class="search" id="" style="">
-						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
-							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
-							optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" style="" submenuSize="auto" textAlign="left">
+				<xf:group class="search" id="" style="">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10" optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" style="" submenuSize="auto" textAlign="left">
 							<xf:choices>
 								<xf:item>
 									<xf:label><![CDATA[전체]]></xf:label>
@@ -503,11 +550,7 @@
 							</xf:choices>
 						</xf:select1>
 						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="돌발ID 또는 차번"></xf:input>
-						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
-							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange"
-							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
-							selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="" nextTabByEnter=""
-							disableEdit="">
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-" chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="" nextTabByEnter="" disableEdit="">
 							<w2:choices>
 								<w2:itemset nodeset="data:dlt_searchitem">
 									<w2:label ref="VHC_NO"></w2:label>
@@ -515,11 +558,21 @@
 								</w2:itemset>
 							</w2:choices>
 						</w2:autoComplete>
+						<w2:span id="" class="" label="일시  " style="margin-bottom: 5px;margin-left: 10px;margin-right: 10px;float: left;"></w2:span>
+						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false" style="width:120px; margin-right: 10px; margin-bottom: 5px; float: left;" id="F_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate" ref="data:dma_search.F_DATE" ev:onviewchange="scwin.F_DATE_onviewchange">
+						</w2:inputCalendar>
+						<w2:span label="~" style="margin-right: 10px;margin-bottom: 5px;float: left;" id="">
+						</w2:span>
+						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false" style="width:120px; margin-right: 10px; margin-bottom: 5px; float: left;" id="L_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate" ref="data:dma_search.L_DATE" ev:onviewchange="scwin.L_DATE_onviewchange">
+						</w2:inputCalendar>							
+					</xf:group><xf:group class="gr_search" id="" style="">
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="검색 항목"></w2:span>
 					</xf:group>
+					
 					<w2:wframe class="" id="wfm_mainBtn" scope="true" src="/cm/common/wf_mainBtn.xml" style=""></w2:wframe>
 				</xf:group>
 			</xf:group>
-
 			<xf:group id="pgm_content" class="pgm_content grdc_800_20_a" style="">
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_288_20_a" style="">
 					<xf:group class="defaultbox" id="" style="">
@@ -540,6 +593,9 @@
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column30"
+										value="돌발대응여부" blockSelect="false" displayMode="label" class="req">
+									</w2:column>
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column24"
 										value="돌발ID" blockSelect="false" displayMode="label" class="req">
 									</w2:column>
@@ -571,6 +627,9 @@
 							</w2:header>
 							<w2:gBody style="" id="gBody1">
 								<w2:row style="" id="row2">
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="INCDNT_RES_YN"
+										value="" blockSelect="false" displayMode="label" userData1="M">
+									</w2:column>								
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="INCDNT_ID"
 										value="" blockSelect="false" displayMode="label" userData1="M">
 									</w2:column>								

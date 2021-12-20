@@ -98,7 +98,11 @@
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_allocVhcList_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0303SCK0" ref="data:json,dma_search" target="" action="/mo/MO0303SCK0" method="post" mediatype="application/json" encoding="UTF-8"
+			<xf:submission id="sub_MO0303SCK0" ref="data:json,dma_search" target="" action="/mo/MO0303SCK0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_MO0303SCK1" ref="data:json,dma_search" target="" action="/mo/MO0303SCK1" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -109,7 +113,7 @@
 		scwin.param = com.getParameter();
 		
 		dma_search.set("REP_ROUT_ID", scwin.param.incdnt_rep_rout_id);
-		messageText.setValue(scwin.param.incdnt_detail);
+		messageText.setValue(scwin.param.incdnt_res_remark);
 		
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
 		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
@@ -149,10 +153,11 @@
 		
 		var sendMessage = messageText.getValue(); 
 		
+		
 		if(sendMessage != "") {
 			dma_search.set("VHC_IDS", vhcArray);
 			dma_search.set("MSG_CONTS", sendMessage);
-			com.executeSubmission(sub_MO0303SCK0);
+			com.executeSubmission(sub_MO0303SCK1);
 			com.closePopup();
 		}		
 
@@ -289,21 +294,6 @@
 				dlt_BRT_CUR_OPER_INFO.setCellData(insertIndex, "COMP_NM", dlt_BRT_CUR_ALLOC_PL_INFO.getCellData(i, "COMP_NM"));
 			}
 		}
-		
-//		if (count > 0) {
-//			for(i = 0 ; i<count; i++){
-//				var data = dlt_VDO_INFO.getAllJSON()[focusIdxs[i]];
-//				var insertIndex = dlt_VDO_ORGA_LIST.insertRow();
-//				dlt_VDO_ORGA_LIST.setCellData(insertIndex, "VDO_ID", data.VDO_ID);
-//				dlt_VDO_ORGA_LIST.setCellData(insertIndex, "VDO_NM", data.VDO_NM);
-//				dlt_VDO_ORGA_LIST.setCellData(insertIndex, "FILE_TYPE", data.FILE_TYPE);
-//				dlt_VDO_ORGA_LIST.setCellData(insertIndex, "PLAY_TM", data.PLAY_TM);
-//				dlt_VDO_ORGA_LIST.setCellData(insertIndex, "PLAY_ST_DT", data.PLAY_ST_DT);
-//				dlt_VDO_ORGA_LIST.setCellData(insertIndex, "PLAY_ED_DT", data.PLAY_ED_DT);
-//				dlt_VDO_ORGA_LIST.setCellData(insertIndex, "SN", insertIndex);
-//				dlt_VDO_ORGA_LIST.setCellData(insertIndex, "ORGA_ID", dma_subsearch.get("ORGA_ID"));
-//			}
-//		}		
 
 		//컬럼 dstinct된 데이터들
 		var distinct_VHC_IDS = dlt_BRT_CUR_OPER_INFO.getColumnDistinctDataArray("VHC_ID");
@@ -477,7 +467,7 @@
 				</xf:group>
  			</xf:group>	<!-- grdc_800_20_a -->
  			<xf:group>
-	 			<xf:textarea id="messageText" style="width: 100%;height: 100px;margin-top: 20px;margin-bottom: 10px;" maxlength="200" placeholder="전송할 메시지를 입력하세요." name=""></xf:textarea>
+	 			<xf:textarea id="messageText" style="width: 100%;height: 100px;margin-top: 20px;margin-bottom: 10px;" maxlength="200" placeholder="전송할 돌발대응 메시지를 입력하세요."></xf:textarea>
  			</xf:group>
 			<xf:group id="" style="" class="popup_bottom">
 	 			<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_com">

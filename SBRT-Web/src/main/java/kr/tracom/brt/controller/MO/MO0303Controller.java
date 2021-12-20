@@ -90,5 +90,11 @@ public class MO0303Controller extends ControllerSupport{
 	public @ResponseBody Map<String, Object> MO0303SCK0() throws Exception {		
 		result.setData("", mo0303Service.MO0303SCK0());
 		return result.getResult();
+	}
+	
+	@RequestMapping("/mo/MO0303SCK1")
+	public @ResponseBody Map<String, Object> MO0303SCK1() throws Exception {		
+		result.setData("", mo0303Service.MO0303SCK1());
+		return result.getResult();
 	}	
 }
