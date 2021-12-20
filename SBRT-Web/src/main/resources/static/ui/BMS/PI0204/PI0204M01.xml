@@ -83,7 +83,6 @@
 	
 	
 	scwin.upload0_onInputValueChange = function(fileName) {
-		
 		// 확장자 추출
 		var lastDot = fileName.lastIndexOf('.'); 
 		var fileExtension = fileName.substring(lastDot+1, fileName.length);
@@ -93,7 +92,8 @@
 			VOC_PATH.submit();
 			var doc_audio0 = document.getElementById("audio0");
 			// 실서버 도메인 변경 필요
-			var realPath = "http://localhost:8081/fileUpload/up/";
+			var currentUrl = window.location.href
+			var realPath = currentUrl + 'fileUpload/up/';
 			if (PLAY_TYPE.getValue() == "WAV"){
 				doc_audio0.src = realPath + dlt_BMS_VOC_INFO.getCellData(scwin.idxRowVOC, "VOC_ID") + ".wav";
 			}else{
@@ -107,7 +107,6 @@
 	};
 	
 	scwin.upload0_ondone = function(retXml) {
-		
 		var doc_audio0 = document.getElementById("audio0");
 		var filePath = WebSquare.xml.getValue(retXml, "ret/storedFileList");
 		// 실서버 도메인 변경 필요
@@ -120,10 +119,11 @@
 		// 현재 동일한 파일명으로 업로드 시 (날짜) 형태로 서버에 파일이 생성되는데 괄호가 보안처리에 의해 다른 문자로 치환되서 DB에서 경로 가져올때 문제 있음  
 	};
 	
-	scwin.PI0201G0_onrowindexchange = function(row, oldRow) {
+	scwin.PI0204G0_onrowindexchange = function(row, oldRow) {
 		var doc_audio0 = document.getElementById("audio0");
         // 실서버 도메인 변경 필요
-		var realPath = "http://localhost:8081/fileUpload/up/";
+        var currentUrl = window.location.href
+		var realPath = currentUrl + 'fileUpload/up/';
 		scwin.idxRowVOC = row;
 		doc_audio0.src = dlt_BMS_VOC_INFO.getCellData(row, dlt_BMS_VOC_INFO.getColumnIndex("VOC_PATH"));
 		doc_audio0.pause();
@@ -227,7 +227,7 @@
 				</xf:group>
 			</xf:group><!-- pgm_header -->
 			<xf:group id="pgm_content" class="pgm_content grdc_a_20_900" style="">
-				<xf:group id="pgm_list" class="pgm_list grdr_20_2_280_20_a" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_290_20_a" style="">
 					<xf:group id="" class="" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox id="" style="" class="df_tt fl" label="선택음성 목록"></w2:textbox>
@@ -235,7 +235,7 @@
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="" class="" style="">
-						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.PI0201G0_onrowindexchange" ev:oncellclick="scwin.PI0204G0_oncellclick"
+						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.PI0204G0_onrowindexchange" ev:oncellclick="scwin.PI0204G0_oncellclick"
 							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서"
 							sortable="true" rowStatusHeaderValue="상태" overflowX="auto" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true"
 							dataList="data:dlt_BMS_VOC_INFO" ignoreCellClick="false" style="height:100%;" autoFit="lastColumn" visibleRowNum="" id="PI0204G0"

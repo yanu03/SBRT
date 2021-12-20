@@ -56,6 +56,7 @@
 						<w2:key id="WAY_DIV" name="상하행구분" dataType="text"></w2:key>
 						<w2:key id="OPER_DT" name="운행일" dataType="text"></w2:key>
 						<w2:key id="relDt" name="배포일" dataType="text"></w2:key>
+						<w2:key id="REL_WAY" name="배포방법" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_ALLOC_PL_MST" saveRemovedData="true">
@@ -133,7 +134,7 @@
 			</xf:submission>
 			<xf:submission id="sub_AL0302G1S1" ref='data:json,["dma_param_AL0302G1","dlt_BRT_ALLOC_PL_MST"]'
 				target="data:json,dma_result" action="/al/AL0302G1S1" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
-				errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0302G1S1_submitdone" ev:submiterror="" abortTrigger="">
+				errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0302G1S1_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
@@ -141,7 +142,7 @@
 	scwin.onpageload = function() {
 		var autoOptions = {
 			Main : { grid : AL0302G0, srchSbm : sub_AL0302G0R0, srchGrp : pgm_header , keyColumn : "REP_ROUT_ID", focusColumn : "REP_ROUT_NM", name : "운행계획 목록"},
-			Sub2 : { grid : AL0302G1, srchSbm : sub_AL0302G1R0, keyColumn : "ALLOC_NO", savSbm : sub_AL0302G1S0, name : "차량 배차(배포)" },
+			Sub2 : { grid : AL0302G1, srchSbm : sub_AL0302G1R0, keyColumn : "ALLOC_NO", savSbm : sub_AL0302G1S0, name : "차량 배차(마스터)" },
 			Sub1 : { grid : AL0302G2, srchSbm : sub_AL0302G2R0, keyColumn : "ALLOC_NO", savSbm : sub_AL0302G2S0, name : "차량 배차(일)" }	
 		 };
 		 		
@@ -195,13 +196,14 @@
 	scwin.btn_distri_onclick = function(){
 		var jsondata = dlt_BRT_ALLOC_PL_MST.getAllJSON();
 		var dayDiv = dlt_BRT_OPER_PL_MST.getCellData(AL0302G0.getFocusedRowIndex(), "DAY_DIV");
+		var allJson = dlt_BRT_ALLOC_PL_MST.getAllJSON();
 		
-		var data = {data : jsondata, DAYDIV : dayDiv, callbackFn : "scwin.AL0302P0_callbackFn"};
+		var data = {data : jsondata, DAYDIV : dayDiv, allJson : allJson, callbackFn : "scwin.AL0302P0_callbackFn"};
 		if(jsondata.length > 0){
 			var options = { id : "AL0302P01",
 							popupName : "배포 날짜",
-							width : "450px",
-							height : "330px",
+							width : 1500,
+							heigth : 200,
 							modal : true};
 			com.openPopup("/ui/BRT/AL0302/AL0302P01.xml", options, data);
 		}
@@ -231,12 +233,11 @@
 		
 	}
 	
-	scwin.AL0302P0_callbackFn = function(data){
-		
+	scwin.AL0302P0_callbackFn = function(popup_param){
 		var week = ['일', '월', '화', '수', '목', '금', '토']; 
 		var dayDiv = dlt_BRT_OPER_PL_MST.getCellData(AL0302G0.getFocusedRowIndex(), "DAY_DIV");
-		var startDateValue = data.toString().substring(0, 8);
-		var lastDateValue = data.toString().substring(8);
+		var startDateValue = popup_param[0].toString().substring(0, 8);
+		var lastDateValue = popup_param[0].toString().substring(8);
 		
 		var startDate = startDateValue.slice(0,4) + '-' + startDateValue.slice(4, 6) + '-' + startDateValue.slice(6,8)
 		var lastDate = lastDateValue.slice(0,4) + '-' + lastDateValue.slice(4, 6) + '-' + lastDateValue.slice(6,8)
@@ -265,7 +266,9 @@
 			}
 		}
 		dma_param_AL0302G1.set("relDt", relDt);
+		dma_param_AL0302G1.set("REL_WAY", popup_param[2]);
 		
+		dlt_BRT_ALLOC_PL_MST.setJSON(popup_param[1]);
 		if(dma_param_AL0302G1.get("relDt").length != 0){
 			com.executeSubmission(sub_AL0302G1S1);
 		}else{
@@ -306,7 +309,6 @@
 	};
 	
 	scwin.AL0302G1_ontextimageclick = function(row,col) {
-		debugger;
 		var repRoutId = dma_param_AL0302G1.get("REP_ROUT_ID");
 		//var repRoutId = dlt_BRT_ALLOC_PL_MST.getCellData(AL0302G0.getFocusedRowIndex(), "REP_ROUT_ID");
 		if(col == 1){

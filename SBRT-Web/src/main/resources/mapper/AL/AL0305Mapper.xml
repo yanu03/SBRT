@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.brt.domain.AL0305.AL0305Mapper">
+
+<!--  <select id="AL0302G0R0" resultType="Map">
+	SELECT
+		A.REP_ROUT_ID
+		,A.DAY_DIV
+		,(SELECT STTN_NM FROM BMS_STTN_MST WHERE STTN_ID = A.ST_STTN_ID AND DEL_YN!='Y') ST_STTN_NM
+		,(SELECT STTN_NM FROM BMS_STTN_MST WHERE STTN_ID = A.ED_STTN_ID AND DEL_YN!='Y') ED_STTN_NM
+		,A.WAY_DIV
+		,B.REP_ROUT_NM
+	FROM
+		BRT_OPER_PL_MST A
+		LEFT JOIN BMS_REP_ROUT_MST B
+		ON A.REP_ROUT_ID = B.REP_ROUT_ID
+	<where>
+		<if test="CONTENT1 == 'all'">
+			A.REP_ROUT_ID LIKE CONCAT('%',#{CONTENT3},'%')
+		</if>
+		<if test="CONTENT1 != 'all'">
+			AND A.REP_ROUT_ID = #{CONTENT1}
+		</if>
+		<if test="CONTENT2 != ''">
+			AND A.DAY_DIV = #{CONTENT2}
+		</if>
+	</where>
+	ORDER BY
+		B.REP_ROUT_NM, A.DAY_DIV, A.WAY_DIV DESC
+</select>
+
+<select id="AL0302SHI1" resultType="Map">
+		SELECT			DAY_DIV
+		FROM			BRT_OPER_PL_MST
+		<where>
+			<if test="CONTENT1 != null">
+				REP_ROUT_ID = #{CONTENT1}	
+			</if>
+		</where>
+	</select>
+
+<select id="AL0302G1R0" resultType="Map">
+	SELECT A.REP_ROUT_ID
+	       ,A.DAY_DIV
+	       ,A.WAY_DIV
+	       ,A.ALLOC_NO
+	       ,B.VHC_ID
+	       ,D.VHC_NO
+	       ,E.COMP_NM
+	       ,F.DRV_ID
+			,F.SEC_DRV_ID
+			,F.THR_DRV_ID
+			,(SELECT DRV_NM FROM BMS_DRV_MST WHERE DRV_ID = F.DRV_ID) DRV_NM
+			,(SELECT DRV_NM FROM BMS_DRV_MST WHERE DRV_ID = F.SEC_DRV_ID) SEC_DRV_NM
+			,(SELECT DRV_NM FROM BMS_DRV_MST WHERE DRV_ID = F.THR_DRV_ID) THR_DRV_NM
+			,F.SEC_TRAN_TM
+			,F.THR_TRAN_TM
+	FROM 
+		BRT_OPER_ALLOC_PL_ROUT_INFO A
+		LEFT JOIN BRT_ALLOC_PL_MST B
+		ON A.REP_ROUT_ID = B.REP_ROUT_ID AND A.DAY_DIV = B.DAY_DIV AND A.ALLOC_NO = B.ALLOC_NO
+		LEFT JOIN BRT_REP_ROUT_VHC_CMPSTN C
+		ON B.VHC_ID = C.VHC_ID
+		LEFT JOIN BMS_VHC_MST D
+		ON B.VHC_ID = D.VHC_ID
+		LEFT JOIN BMS_TRANSCOMP_MST E
+		ON D.COMP_ID = E.COMP_ID
+		LEFT JOIN BRT_DRV_ALLOC_INFO F
+		ON A.REP_ROUT_ID = F.REP_ROUT_ID AND A.ALLOC_NO = F.ALLOC_NO 
+		LEFT JOIN BRT_REP_ROUT_DRV_CMPSTN G
+		ON F.DRV_ID = G.DRV_ID
+	WHERE
+		A.REP_ROUT_ID = #{REP_ROUT_ID}
+	AND 
+		A.DAY_DIV = #{DAY_DIV}
+	
+	GROUP BY
+		A.ALLOC_NO
+	ORDER BY
+		A.ALLOC_NO
+</select>
+
+<insert id="AL0302G1U0" parameterType="Map">
+	INSERT INTO BRT_ALLOC_PL_MST(
+		REP_ROUT_ID
+		,DAY_DIV
+		,ALLOC_NO
+		,WAY_DIV
+		,VHC_ID
+		,UPD_DTM
+		,UPD_ID
+	)VALUES(
+		#{REP_ROUT_ID}
+		,#{DAY_DIV}
+		,#{ALLOC_NO}
+		,#{WAY_DIV}
+		,#{VHC_ID}
+		,#{UPD_DTM}
+		,#{SSN_USER_ID}
+	)ON DUPLICATE KEY UPDATE
+		VHC_ID = VALUES(VHC_ID)
+		,UPD_DTM = VALUES(UPD_DTM)
+		,UPD_ID	 = VALUES(UPD_ID)
+</insert>
+
+<insert id="AL0302G1U1" parameterType="Map">
+	INSERT INTO BRT_DRV_ALLOC_INFO(
+		REP_ROUT_ID
+		,ALLOC_NO
+		,DAY_DIV
+		,DRV_ID
+		,SEC_DRV_ID
+		,THR_DRV_ID
+		,SEC_TRAN_TM
+		,THR_TRAN_TM
+	)VALUES(
+		#{REP_ROUT_ID}
+		,#{ALLOC_NO}
+		,#{DAY_DIV}
+		,#{DRV_ID}
+		,#{SEC_DRV_ID}
+		,#{THR_DRV_ID}
+		,#{SEC_TRAN_TM}
+		,#{THR_TRAN_TM}
+	)ON DUPLICATE KEY UPDATE
+		DRV_ID = VALUES(DRV_ID)
+		,SEC_DRV_ID = VALUES(SEC_DRV_ID)
+		,THR_DRV_ID = VALUES(THR_DRV_ID)
+		,SEC_TRAN_TM = VALUES(SEC_TRAN_TM)
+		,THR_TRAN_TM = VALUES(THR_TRAN_TM)
+</insert>
+
+
+<insert id="AL0302G1I0" parameterType="Map">
+	INSERT INTO BRT_CUR_ALLOC_PL_INFO(
+		OPER_DT
+		,REP_ROUT_ID
+		,WAY_DIV
+		,ALLOC_NO
+		,VHC_ID
+		,UPD_DTM
+	)VALUES(
+		#{OPER_DT}
+		,#{REP_ROUT_ID}
+		,#{WAY_DIV}
+		,#{ALLOC_NO}
+		,#{VHC_ID}
+		,#{UPD_DTM}
+	)
+</insert>
+
+<insert id="AL0302G1I1" parameterType="Map">
+	INSERT INTO BRT_CUR_DRV_ALLOC_INFO(
+		OPER_DT
+		,REP_ROUT_ID
+		,ALLOC_NO
+		,DAY_DIV
+		,DRV_ID
+		,SEC_DRV_ID
+		,THR_DRV_ID
+		,SEC_TRAN_TM
+		,THR_TRAN_TM
+	)VALUES(
+		#{OPER_DT}
+		,#{REP_ROUT_ID}
+		,#{ALLOC_NO}
+		,#{DAY_DIV}
+		,#{DRV_ID}
+		,#{SEC_DRV_ID}
+		,#{THR_DRV_ID}
+		,#{SEC_TRAN_TM}
+		,#{THR_TRAN_TM}
+	)
+</insert>-->
+
+<update id="AL0305G0U0" parameterType="Map">
+	UPDATE
+		BRT_CUR_ALLOC_PL_INFO
+	SET
+		VHC_ID = #{VHC_ID}
+		,UPD_DTM = #{UPD_DTM}
+	WHERE
+		REP_ROUT_ID = #{REP_ROUT_ID}
+	AND
+		ALLOC_NO = #{ALLOC_NO}
+	AND
+		OPER_DT = #{OPER_DT}
+</update>
+
+<update id="AL0305G0U1" parameterType="Map">
+	UPDATE
+		BRT_CUR_DRV_ALLOC_INFO
+	SET
+		DRV_ID = #{DRV_ID}
+		,SEC_DRV_ID = #{SEC_DRV_ID}
+		,THR_DRV_ID = #{THR_DRV_ID}
+		,SEC_TRAN_TM = #{SEC_TRAN_TM}
+		,THR_TRAN_TM = #{THR_TRAN_TM}
+	WHERE
+		REP_ROUT_ID = #{REP_ROUT_ID}
+	AND
+		ALLOC_NO = #{ALLOC_NO}
+	AND
+		DAY_DIV = #{DAY_DIV}
+	AND
+		OPER_DT = #{OPER_DT}
+</update>
+
+<select id="AL0305G0R0" resultType="Map" parameterType="Map">
+	SELECT A.REP_ROUT_ID
+	       ,A.DAY_DIV
+	       ,A.ALLOC_NO
+	       ,B.VHC_ID
+	       ,DATE_FORMAT(B.OPER_DT, '%Y-%m-%d') OPER_DT
+	       ,D.VHC_NO
+	       ,E.COMP_NM
+	       ,H.DRV_ID
+			,H.SEC_DRV_ID
+			,H.THR_DRV_ID
+			,(SELECT DRV_NM FROM BMS_DRV_MST WHERE DRV_ID = H.DRV_ID) DRV_NM
+			,(SELECT DRV_NM FROM BMS_DRV_MST WHERE DRV_ID = H.SEC_DRV_ID) SEC_DRV_NM
+			,(SELECT DRV_NM FROM BMS_DRV_MST WHERE DRV_ID = H.THR_DRV_ID) THR_DRV_NM
+			,H.SEC_TRAN_TM
+			,H.THR_TRAN_TM
+	FROM 
+		BRT_OPER_ALLOC_PL_ROUT_INFO A
+		LEFT JOIN BRT_CUR_ALLOC_PL_INFO B
+		ON A.REP_ROUT_ID = B.REP_ROUT_ID AND A.ALLOC_NO = B.ALLOC_NO
+		LEFT JOIN BMS_VHC_MST D
+		ON B.VHC_ID = D.VHC_ID
+		LEFT JOIN BMS_TRANSCOMP_MST E
+		ON D.COMP_ID = E.COMP_ID
+		LEFT JOIN BRT_DRV_ALLOC_INFO F
+		ON A.REP_ROUT_ID = F.REP_ROUT_ID AND A.ALLOC_NO = F.ALLOC_NO
+		LEFT JOIN BRT_CUR_DRV_ALLOC_INFO H
+		ON F.REP_ROUT_ID = H.REP_ROUT_ID AND F.ALLOC_NO = H.ALLOC_NO  
+	<where>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(REP_ROUT_ID)">
+			A.REP_ROUT_ID = #{REP_ROUT_ID}
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(DAY_DIV)">
+			AND A.DAY_DIV = #{DAY_DIV}
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(F_OPERDATE)">
+			AND B.OPER_DT BETWEEN #{F_OPERDATE} AND #{L_OPERDATE}
+		</if>
+	</where>
+	<!--  WHERE
+		A.REP_ROUT_ID = #{REP_ROUT_ID}
+	AND 
+		A.DAY_DIV = #{DAY_DIV}
+	AND
+		B.OPER_DT BETWEEN #{F_OPERDATE} AND #{L_OPERDATE}-->
+	GROUP BY
+		B.OPER_DT, A.ALLOC_NO
+	ORDER BY
+		B.OPER_DT, A.ALLOC_NO
+</select>
+
+</mapper>

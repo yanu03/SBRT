@@ -154,4 +154,13 @@ public class Constants {
     	
     }
     
+    public static class VhcDistType {
+
+        public static final String FIX = "FIX"; //고정배포
+    	public static final String DESC = "DESC"; //순환배포(내림)
+    	public static final String ASC = "ASC"; //순환배포(오름)
+    	
+    }
+
+    
 }
