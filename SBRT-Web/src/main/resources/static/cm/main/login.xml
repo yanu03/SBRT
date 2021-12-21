@@ -50,6 +50,8 @@
 			}
 			ibx_userId.setValue(userInputId);
 			ibx_userId.focus();
+			
+			dma_checkBmsBis.set("chkBmsBis", 1);
 		};
 	
 		scwin.onpageunload = function() {
@@ -78,6 +80,7 @@
 		 * 로그인 버튼 클릭시 실행 - 로그인 처리 트랜잭션 발생
 		 */
 		scwin.btn_login_onclick = function() {
+		
 			com.executeSubmission(sbm_loginCheck);
 		};
 	
@@ -117,10 +120,14 @@
 					}
 					
 					if(dma_checkBmsBis.get("chkBmsBis") == 1){
+						//top.window.location.href = window.location.href;
 						com.goHome();
 					}else if(dma_checkBmsBis.get("chkBmsBis") == 2){
-						com.goHome();
+						//com.goHome();
+						top.window.location.href = 'http://localhost:8082/main/directLogin';
+						//top.window.location.href = 'http://localhost:8082';
 					}
+					
 				} else {
 					com.alert(result.message);
 				}

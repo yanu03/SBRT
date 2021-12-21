@@ -155,6 +155,85 @@ public class LoginController extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping(value = "/main/directLogin")
+	public @ResponseBody void directLogin() throws Exception {
+		HttpSession session = request.getSession();
+		Map memberMap = null;
+		String status = null;
+		Map loginParam = null;
+
+		// loginParam은 param(USER_ID/PW)의 값을 꺼내는 용도
+		loginParam = getSimpleDataMap("dma_loginCheck");
+
+		memberMap = loginService.selectMemberInfoForLogin(loginParam);
+		status = (String) memberMap.get("LOGIN");
+
+		// 로그인 성공
+		if (status.equals("success")) {
+			String mainLayout = (String) memberMap.get("MAIN_LAYOUT_PAGE_CODE");
+			String isUseShortCut = (String) memberMap.get("USE_YN_SHORTCUT");
+
+			// main setting에 값이 저장되어 있지 않는 경우 insert.
+			/*if (mainLayout == null) {
+				mainLayout = user.getDefaultMainLayoutCode();
+			}*/
+			session.setAttribute(Constants.SSN_DELETED, "false");
+			session.setAttribute(Constants.SSN_USER_ID, (String) memberMap.get("USER_ID"));
+			session.setAttribute(Constants.SSN_USER_NM, (String) memberMap.get("USER_NM"));
+			session.setAttribute(Constants.SSN_SYSTEM_BIT, memberMap.get("SYSTEM_BIT"));
+			
+			int systemBit = Integer.parseInt((String)memberMap.get("SYSTEM_BIT"));
+			int loginSystemBit = Integer.parseInt((String) loginParam.get("SYSTEM_BIT"));
+			if(systemBit==Constants.SYSTEM_ALL) {
+				
+				session.setAttribute(Constants.SSN_CUR_SYSTEM, loginSystemBit);
+			}
+			else if(systemBit==loginSystemBit) {
+				
+				session.setAttribute(Constants.SSN_CUR_SYSTEM, systemBit);
+			}
+			else {
+				if(systemBit==1) {
+					result.setMsg(Result.STATUS_ERROR, "차량운행관리 시스템 접근 권한이 없습니다. 시스템 관리자에게 문의하시기 바랍니다.");
+				}
+				else {
+					result.setMsg(Result.STATUS_ERROR, "통합운영관리 시스템 접근 권한이 없습니다. 시스템 관리자에게 문의하시기 바랍니다.");
+				}
+			}
+			
+			// 로그인한 ID가 시스템 관리자인지 여부를 체크한다.
+			// 시스템 관리자 ID는 websquareConfig.properties 파일의 system.admin.id 속성에 정의하면 된다.
+			// 시스템 관자자 ID가 여러 개일 경우 콤마(",") 구분해서 작성할 수 있다.
+			boolean isAdmin = loginService.isAdmin((String) memberMap.get("USER_ID"));
+			session.setAttribute(Constants.SSN_IS_ADMIN, isAdmin);
+			
+			
+			
+			// 클라이언트(UI)에 전달하는 IS_ADMIN 정보는 관리자인지의 여부에 따라 화면 제어가 필요한 로직 처리를 위해서만 사용한다.
+			// 서버 서비스에서의 로직 처리는 보안을 위해서 클라이언트에서 전달하는 IS_ADMIN 정보가 아닌
+			// 서버 서비스에서 관리하는 UserInfo.getIsAdmin()에서 관리자 여부를 받아와서 판단해야 한다.
+
+			// 메뉴 정보 가져오기
+			//memberMap.put("SYSTEM_BIT",session.getAttribute(Constants.SSN_CUR_SYSTEM));
+			//memberMap.put("SSN_USER_ID",session.getAttribute(Constants.SSN_USER_ID));
+			//List sessionMList = commonService.selectMenuList(memberMap);
+			//session.setAttribute("MENU_LIST", (List) sessionMList);
+
+			user.setUserInfo(session);
+			
+			//로그인 이력 저장.
+			memberMap.put("IP", CommonUtil.getIpAddress(request));
+			loginService.insertLoginHis(memberMap);
+
+			result.setMsg(Result.STATUS_SUCESS, "로그인 성공");
+		} else if (status.equals("error")) {
+			result.setMsg(Result.STATUS_ERROR, "로그인 실패(패스워드 불일치)");
+		} else {
+			result.setMsg(Result.STATUS_ERROR, "사용자 정보가 존재하지 않습니다.");
+		}
+	
+	}
+	
 	/**
 	 * 로그인한 사용자의 비밀번호를 변경한다.
 	 * 
