@@ -49,15 +49,19 @@
 			,SM.REMARK
 			,DATE_FORMAT(SM.UPD_DTM, '%Y%m%d%H%i') UPD_DTM
 			,SM.UPD_ID
+			,FI.FCLT_ID
 		FROM 
 			BMS_NOTICE_MST N
 			LEFT OUTER JOIN BMS_NOTICE_STTN_CMPSTN NS
 			ON N.NOTICE_ID = NS.NOTICE_ID 
 			LEFT OUTER JOIN BMS_STTN_MST SM
 			ON NS.STTN_ID = SM.STTN_ID 
+			LEFT OUTER JOIN BMS_FCLT_INFO FI
+			ON SM.STTN_ID = FI.NODE_ID
 		<where>
 			N.NOTICE_ID = #{NOTICE_ID}
 			AND SM.USE_YN = "Y"
+			AND FI.FCLT_KIND = 'FK001'
 		</where>
 		ORDER BY SM.STTN_ID
 	</select>
@@ -108,19 +112,22 @@
 	
 	<select id="PI1002P1R0" resultType="Map" parameterType="Map">
 		SELECT 
-			STTN_ID, 
-			STTN_NM, 
-			STTN_NO, 
-			AREA, 
-			GPS_X, 
-			GPS_Y 
+			A.STTN_ID, 
+			A.STTN_NM, 
+			A.STTN_NO, 
+			A.AREA, 
+			A.GPS_X, 
+			A.GPS_Y,
+			B.FCLT_ID
 		FROM 
-			BMS_STTN_MST
+			BMS_STTN_MST A
+			LEFT JOIN BMS_FCLT_INFO B
+			ON A.STTN_ID = B.NODE_ID
 		<!-- WHERE STTN_ID
 		NOT IN (SELECT STTN_ID FROM BMS_STTN_MST WHERE 
 		<foreach collection="STTN_ECPT_IDS" item="item" separator=" OR "> STTN_ID = #{item}</foreach>
 		) -->
-		WHERE  DEL_YN!='Y'
+		WHERE  DEL_YN!='Y' AND B.FCLT_KIND = 'FK001'
 		<if test="CONTENT != ''">
 			<if test="TYPE == 'ALL'">
 				AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%') || STTN_NO LIKE CONCAT('%',#{CONTENT},'%')

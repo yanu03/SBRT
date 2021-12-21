@@ -19,6 +19,11 @@
                     <w2:key id="SYSTEM_BIT" name="시스템비트" dataType="text" defaultValue="1"></w2:key>
                 </w2:keyInfo>
             </w2:dataMap>
+            <w2:dataMap baseNode="map" id="dma_checkBmsBis">
+                <w2:keyInfo>
+                    <w2:key id="chkBmsBis" name="url기준" dataType="text"></w2:key>
+                </w2:keyInfo>
+            </w2:dataMap>
         </w2:dataCollection>
         <w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sbm_loginCheck" ref="data:json,dma_loginCheck" target='' action="/main/login" method="post"
@@ -80,17 +85,54 @@
 		scwin.btn_bms_check = function() {
 			bg_img.addClass("bg_img_bis");
 			dma_loginCheck.set("SYSTEM_BIT",1);
+			
+			//url 8081로 변경
+			dma_checkBmsBis.set("chkBmsBis", 1);
 		}
 		
 		scwin.btn_brt_check = function() {
 			bg_img.removeClass("bg_img_bis");
 			dma_loginCheck.set("SYSTEM_BIT",2);
+			
+			//url 8082로 변경
+			dma_checkBmsBis.set("chkBmsBis", 2);
 		}
 	
 		/**
 		 * 로그인 submitdone 스크립트 - 로그인 성공여부 판단, 성공시 메인페이지 이동, 실패시 메세지 처리
 		 */
 		scwin.sbm_Login_submitdone = function(e) {
+			debugger;
+			var resultData = e.responseJSON;
+			var result = resultData.rsMsg;
+			try {
+				if (result.statusCode == "S") {
+					
+					if(id_save.getSelectedIndex()=='0'){
+						var userInputId = ibx_userId.getValue();
+						setCookie("userInputId", userInputId, 7);
+					}
+					else {
+						deleteCookie("userInputId");
+					}
+					
+					if(dma_checkBmsBis.get("chkBmsBis") == 1){
+						com.goHome();
+					}else if(dma_checkBmsBis.get("chkBmsBis") == 2){
+						com.goHome();
+					}
+				} else {
+					com.alert(result.message);
+				}
+			} catch (ex) {
+				com.alert("서버 통신 도중 오류가 발생하였습니다. 잠시후 다시 시도해주시기 바랍니다.");
+			}
+		};
+	
+		/**
+		 * 로그인 submitdone 스크립트 - 로그인 성공여부 판단, 성공시 메인페이지 이동, 실패시 메세지 처리
+		 */
+		/*scwin.sbm_Login_submitdone = function(e) {
 			var resultData = e.responseJSON;
 			var result = resultData.rsMsg;
 			try {
@@ -110,7 +152,7 @@
 			} catch (ex) {
 				com.alert("서버 통신 도중 오류가 발생하였습니다. 잠시후 다시 시도해주시기 바랍니다.");
 			}
-		};
+		};*/
 		
 		scwin.id_save_onviewchange = function(info) {
 			

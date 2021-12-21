@@ -51,7 +51,8 @@
 			DATE_FORMAT(N.UPD_DTM, '%Y%m%d%H%i') UPD_DTM, 
 			N.CONTENTS, 
 			N.UPD_ID, 
-			N.NOTICE_ID 
+			N.NOTICE_ID,
+			D.DVC_ID
 		FROM 
 			BMS_NOTICE_MST N
 			LEFT OUTER JOIN BMS_NOTICE_VHC_CMPSTN NV 
@@ -60,8 +61,10 @@
 			ON V.VHC_ID = NV.VHC_ID 
 			LEFT OUTER JOIN BMS_TRANSCOMP_MST T 
 			ON V.COMP_ID = T.COMP_ID
+			LEFT OUTER JOIN BMS_DVC_INFO D
+			ON V.VHC_ID = D.VHC_ID
 		<where>
-			N.NOTICE_ID = #{NOTICE_ID}
+			N.NOTICE_ID = #{NOTICE_ID} AND D.DVC_KIND = 'DK001'
 		</where>
 		ORDER BY V.VHC_ID
 	</select>
@@ -88,26 +91,35 @@
 
 	<select id="PI1001P0R0" resultType="Map" parameterType="Map">
 		SELECT 
-			VHC_ID, 
-			VHC_NO, 
-			CHAS_NO, 
-			COMP_NM, 
-			V.AREA 
+			V.VHC_ID, 
+			V.VHC_NO, 
+			V.CHAS_NO, 
+			T.COMP_NM, 
+			V.AREA,
+			D.DVC_KIND,
+			D.DVC_ID,
+			D.MNG_ID
 		FROM 
-			BMS_VHC_MST V, BMS_TRANSCOMP_MST T 
-		WHERE V.COMP_ID = T.COMP_ID
+			BMS_VHC_MST V 
+			LEFT JOIN BMS_TRANSCOMP_MST T
+			ON V.COMP_ID = T.COMP_ID
+			LEFT JOIN BMS_DVC_INFO D
+			ON V.VHC_ID = D.VHC_ID
+		WHERE
+			D.DVC_KIND = 'DK001'
 		<if test="CONTENT != ''">
 			<if test="TYPE == 'ALL'">
-				AND (VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || VHC_NO LIKE CONCAT('%',#{CONTENT},'%'))
+				AND (V.VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || V.VHC_NO LIKE CONCAT('%',#{CONTENT},'%'))
 			</if>
 			<if test="TYPE == 'VHC_ID'">
-				AND VHC_ID LIKE CONCAT('%',#{CONTENT},'%')
+				AND V.VHC_ID LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
 			<if test="TYPE == 'VHC_NO'">
-				AND VHC_NO LIKE CONCAT('%',#{CONTENT},'%')
+				AND V.VHC_NO LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
 		</if>
-		ORDER BY VHC_ID		
+		ORDER BY 
+			V.VHC_ID		
 	</select>
 	
 	<select id="PI1001P1R0" resultType="Map" parameterType="Map">
