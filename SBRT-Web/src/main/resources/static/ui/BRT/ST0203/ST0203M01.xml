@@ -88,7 +88,11 @@
 			Sub1 : { grid : ST0203G1, srchSbm : sub_ST0203G1R0 }
 		 };				
 		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions);
+		 var mainOptions = {
+	         EXL:scwin.btn_excel_onclick
+	     }; 
+		 
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions, mainOptions);
 		
 		/*var subOptions2 = {
 			SEARCH:[{cbFnc:scwin.openPopUpChart,nm:"노선별 비교 그래프 보기"}
@@ -119,7 +123,7 @@
 	};
 	
 	scwin.btn_excel_onclick = function() {
-		com.exlGrid(p1);
+		com.exlGrid(ST0203G1);
 	};
 	
 	scwin.sub_ST0203SHI0_submitdone = function(e) {
@@ -253,6 +257,7 @@
 				   
 				  },
 				  options: {
+				  	maintainAspectRatio: false,
 				        scales: {
 					      yAxes: [{
 	                            display: true,
@@ -333,7 +338,7 @@
 					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
 			</xf:group><!-- pgm_header -->
-			<xf:group id="pgm_content" class="pgm_content grdc_3f_20_7f" style="">
+			<xf:group id="pgm_content" class="pgm_content grdc_500_20_a" style="">
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 					<xf:group id="" class="" style="">
 						<xf:group class="defaultbox" id="" style="">
@@ -397,7 +402,7 @@
 					</xf:group>
 				</xf:group><!-- pgm_list -->
 				<xf:group id="" class="vertical_line"></xf:group>
-				<xf:group id="pgm_detail" class="grdr_20_2_280_20_a" style="">
+				<xf:group id="pgm_detail" class="grdr_20_2_1f_20_20_1f" style="">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="통계 상세 정보" style=""></w2:textbox>
@@ -419,10 +424,12 @@
 					</xf:group>
 					<xf:group></xf:group><!-- margin-->
 					
-					<canvas id="chart_ST0203" height="65"></canvas>
+					<xf:group style="position:relative;" id="" class="">
+						<canvas id="chart_ST0203" style="position:absolute;"></canvas>
+					</xf:group>
 					
 					<xf:group id="" class="horizontal_line"></xf:group>
-					
+					<xf:group></xf:group>
 					<!--<xf:group style="" id="" class="label">
 						<w2:span label="단위 : [평균통행속도:km/h]" style="float: left;margin-right: 3px; margin-top:5px;" id=""></w2:span>
 					</xf:group>-->

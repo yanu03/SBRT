@@ -122,8 +122,12 @@
 		var autoOptions = {
 			Main : { grid : ST0201G0, srchSbm : sub_ST0201G0R0, keyColumn : "REP_ROUT_ID", srchGrp : pgm_header, name :  "노선 목록"}
 		 };				
+		
+		var mainOptions = {
+	         EXL:scwin.btn_excel_onclick
+	     }; 
 		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions, mainOptions);
 		
 		/*var subOptions2 = {
 			SEARCH:[{cbFnc:scwin.openPopUpChart,nm:"노선별 비교 그래프 보기"}
@@ -156,7 +160,10 @@
 	};
 	
 	scwin.btn_excel_onclick = function() {
-		com.exlGrid(p1);
+		var excelOpt = {};  //excel download 옵션 
+		excelOpt.fileName = "노선별 정류장단위 평균속도 통계.xls";    //또는 xlsx 확장자 사용 
+		
+		pivot_ST0201.pivotExcelDownload(excelOpt);
 	};
 	
 	scwin.sub_ST0201SHI0_submitdone = function(e) {
@@ -554,9 +561,9 @@
 					
 					<xf:group id="group_1" style="position: relative;" class="">
 						<w2:pivot style="position: absolute;height:100%;width:100%;" dataList="data:dlt_BRT_ROUT_LINK_STAT"
-							vals="LINK_AVRG_SPD" rows="OPER_DT,NODE_NM" cols="STAT_H" defaultAggregator="Sum" valuesAxis="col" id="p1" renderMode="compact"
+							vals="LINK_AVRG_SPD" rows="OPER_DT,NODE_NM" cols="STAT_H" defaultAggregator="Sum" valuesAxis="col" id="pivot_ST0201" renderMode="compact"
 							autoFit="allColumn" grandTotalDisplayType="both" showZero="true" showGrandTotal="true" aggregatorName="Average" allTotalName="평균속도"
-							digitsAfterDecimal="1" useNumberFormat="true" headerTextAlign="center" autoFitMinWidth="600">
+							digitsAfterDecimal="1" useNumberFormat="true" headerTextAlign="center" autoFitMinWidth="1000">
 							<w2:fieldInfo>
 								<w2:field id="OPER_DT" name="운행일"></w2:field>
 								<w2:field id="REP_ROUT_ID" name="대표노선ID"></w2:field>

@@ -31,6 +31,18 @@ public class ST0200Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/st/ST0200G1R1")
+	public @ResponseBody Map<String, Object> ST0200G1R1() throws Exception {
+		result.setData("dlt_BRT_ROUT_AVER_OPER_SP_STAT", st0200Service.ST0200G1R1());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/st/ST0200G1R2")
+	public @ResponseBody Map<String, Object> ST0200G1R2() throws Exception {
+		result.setData("dlt_BRT_ROUT_AVER_OPER_SP_STAT", st0200Service.ST0200G1R2());
+		return result.getResult();
+	}
+	
 	/*@RequestMapping("/pi/PI0503G0R0")
 	public @ResponseBody Map<String, Object> PI0503G0R0() throws Exception {
 		result.setData("dlt_VDO_ORGA_INFO", pi0503Service.PI0503G0R0());

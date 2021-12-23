@@ -38,6 +38,20 @@ public class ST0200Service extends ServiceSupport {
 		return st0200Mapper.ST0200G1R0(map);
 	}
 	
+	public List ST0200G1R1() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		String temp[] = map.get("ROUT_ID").toString().replace("[","").replace("]","").replace(" ","").split(",");
+		map.put("ROUT_ID", temp);
+		return st0200Mapper.ST0200G1R1(map);
+	}
+	
+	public List ST0200G1R2() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		String temp[] = map.get("ROUT_ID").toString().replace("[","").replace("]","").replace(" ","").split(",");
+		map.put("ROUT_ID", temp);
+		return st0200Mapper.ST0200G1R2(map);
+	}
+	
 	/*public List PI0503G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
 		return pi0503Mapper.PI0503G0R0(map);
