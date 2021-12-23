@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  <mapper namespace="kr.tracom.brt.domain.ST0602.ST0602Mapper">
+  
+   <select id="ST0602G0R0" resultType="Map">
+		SELECT 		    B.ROUT_ID
+					,   B.REP_ROUT_ID
+					,	B.REP_ROUT_NM
+		FROM		 	BRT_OPER_DSPTCH_STAT A
+		LEFT JOIN	  BMS_ROUT_MST B
+		ON 		  A.REP_ROUT_ID = B.REP_ROUT_ID
+		LEFT JOIN	  BMS_ROUT_MST C
+		ON 		  A.ROUT_ID = C.ROUT_ID
+	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			 REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'REP_ROUT_NM'">
+			 REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'ROUT_NM'">
+			 ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+		GROUP BY 	  A.REP_ROUT_ID	
+		ORDER BY REP_ROUT_NM
+	</select> 
+	
+	
+	 <select id="ST0602SHI0" resultType="Map">
+		SELECT 		    B.ROUT_ID
+					,   B.REP_ROUT_ID
+					,	B.REP_ROUT_NM
+					,	C.ROUT_NM
+		FROM		 	BRT_OPER_DSPTCH_STAT A
+		LEFT JOIN	  BMS_ROUT_MST B
+		ON 		  A.REP_ROUT_ID = B.REP_ROUT_ID
+		LEFT JOIN	  BMS_ROUT_MST C
+		ON 		  A.ROUT_ID = C.ROUT_ID
+	
+	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			 REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'REP_ROUT_NM'">
+			 REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'ROUT_NM'">
+			 ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+		GROUP BY 	  A.ROUT_ID	
+		ORDER BY REP_ROUT_NM
+	</select> 
+	
+  <select id="ST0602G1R0" resultType="Map">
+		SELECT  		SUM(A.DSPTCH_CNT) AS SUM_CNT
+			  		, 	DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+					,	A.REP_ROUT_ID
+					,	A.ROUT_ID
+					,	A.VHC_ID
+					,	C.VHC_NO
+					,	A.DRV_ID
+					,	A.DSPTCH_KIND
+					,	A.STAT_H
+					,	A.DSPTCH_CNT
+					,	A.UPD_DTM
+					,	B.ROUT_NM
+
+		FROM	  	 	BRT_OPER_DSPTCH_STAT A
+		LEFT JOIN		BMS_ROUT_MST B
+		ON			A.ROUT_ID = B.ROUT_ID
+		
+		LEFT JOIN		BMS_VHC_MST C
+		ON				A.VHC_ID = C.VHC_ID
+		
+		<![CDATA[WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} 
+    		AND	A.OPER_DT BETWEEN #{F_DATE} AND #{L_DATE}]]>
+		GROUP BY		A.VHC_ID, A.OPER_DT
+  </select>	
+	
+  <select id="ST0602G2R0" resultType="Map">	
+		SELECT			SUM(A.DSPTCH_CNT) AS SUM_CNT
+					,	A.REP_ROUT_ID
+					,	A.VHC_ID
+					,	C.VHC_NO
+					,	A.ROUT_ID
+					,	DSPTCH_KIND
+					,	B.ROUT_NM
+
+		FROM	  	 	BRT_OPER_DSPTCH_STAT A
+		LEFT JOIN		BMS_ROUT_MST B
+		ON			A.ROUT_ID = B.ROUT_ID
+		
+		LEFT JOIN		BMS_VHC_MST C
+		ON				A.VHC_ID = C.VHC_ID
+		<![CDATA[WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} 
+    		AND	A.OPER_DT BETWEEN #{F_DATE} AND #{L_DATE}]]>	
+		GROUP BY		 A.VHC_ID, A.DSPTCH_KIND
+		ORDER BY	  	A.VHC_ID
+	</select>
+  </mapper>
