@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  <mapper namespace="kr.tracom.brt.domain.ST0502.ST0502Mapper">
+  
+   <select id="ST0502G0R0" resultType="Map">
+		SELECT 		    B.ROUT_ID
+					,   B.REP_ROUT_ID
+					,	B.REP_ROUT_NM
+		FROM		 	BRT_FCLT_STAT A
+		LEFT JOIN	  BMS_ROUT_MST B
+		ON 		  A.REP_ROUT_ID = B.REP_ROUT_ID
+		LEFT JOIN	  BMS_ROUT_MST C
+		ON 		  A.ROUT_ID = C.ROUT_ID
+	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			 REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'REP_ROUT_NM'">
+			 REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'ROUT_NM'">
+			 ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+		GROUP BY 	  A.ROUT_ID	
+		ORDER BY REP_ROUT_NM
+	</select> 
+	
+	
+	 <select id="ST0502SHI0" resultType="Map">
+		SELECT 		    B.ROUT_ID
+					,   B.REP_ROUT_ID
+					,	B.REP_ROUT_NM
+					,	C.ROUT_NM
+		FROM		 	BRT_OPER_DSPTCH_STAT A
+		LEFT JOIN	  BMS_ROUT_MST B
+		ON 		  A.REP_ROUT_ID = B.REP_ROUT_ID
+		LEFT JOIN	  BMS_ROUT_MST C
+		ON 		  A.ROUT_ID = C.ROUT_ID
+	
+	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			 REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'REP_ROUT_NM'">
+			 REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'ROUT_NM'">
+			 ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+		GROUP BY 	  A.ROUT_ID	
+		ORDER BY REP_ROUT_NM
+	</select> 
+	
+  <select id="ST0502G1R0" resultType="Map">
+	  SELECT
+		SUM(A.FCLT_CNT) AS SUM_CNT 
+		, A.REP_ROUT_ID
+		, A.ROUT_ID
+		, A.NODE_ID
+		, A.FCLT_COND
+		, DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+		, A.FCLT_ID
+		, C.FCLT_KIND
+		, B.WORK_TYPE
+
+		FROM BRT_FCLT_STAT A
+		LEFT JOIN  BMS_FCLT_HIS B
+		ON A.FCLT_ID = B.FCLT_ID
+		
+		LEFT JOIN BMS_FCLT_INFO C
+		ON A.FCLT_ID = C.FCLT_ID
+
+		<![CDATA[WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} 
+    		AND	A.OPER_DT BETWEEN #{F_DATE} AND #{L_DATE}]]>
+		GROUP BY C.FCLT_KIND, OPER_DT
+  </select>	
+	
+  <select id="ST0502G2R0" resultType="Map">	
+		SELECT
+			SUM(A.FCLT_CNT) AS SUM_CNT 
+			, A.REP_ROUT_ID
+			, A.ROUT_ID
+			, A.NODE_ID
+			, A.FCLT_COND
+			, DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+			, A.FCLT_ID
+			, C.FCLT_KIND
+			, B.WORK_TYPE
+
+		FROM BRT_FCLT_STAT A
+		LEFT JOIN  BMS_FCLT_HIS B
+		ON A.FCLT_ID = B.FCLT_ID
+		
+		LEFT JOIN BMS_FCLT_INFO C
+		ON A.FCLT_ID = C.FCLT_ID
+
+		<![CDATA[WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} 
+    		AND	A.OPER_DT BETWEEN #{F_DATE} AND #{L_DATE}]]>
+		GROUP BY C.FCLT_KIND, A.FCLT_COND
+	</select>
+  </mapper>
