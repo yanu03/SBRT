@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  <mapper namespace="kr.tracom.brt.domain.ST0501.ST0501Mapper">
+  
+   <select id="ST0501G0R0" resultType="Map">
+		SELECT 		    a.VHC_ID
+					,   a.VHC_NO
+					,	b.DVC_ID
+					,	b.DVC_KIND
+					<!-- , 	c.DVC_COND -->
+		FROM		 	BMS_VHC_MST a
+		LEFT JOIN	  BMS_DVC_INFO b
+			ON 		  a.VHC_ID = b.VHC_ID
+		LEFT JOIN		BMS_DVC_COND_INFO c
+			ON			b.MNG_ID = c.MNG_ID
+	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			 a.VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || a.VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'VHC_ID'">
+			 a.VHC_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'VHC_KIND'">
+			 a.VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+		GROUP BY a.VHC_ID, b.DVC_KIND
+		ORDER BY a.VHC_ID
+	</select> 
+	
+	
+	 <select id="ST0501SHI0" resultType="Map">
+			SELECT 		a.VHC_ID
+					,   a.VHC_NO
+					,	b.DVC_ID
+					,	b.DVC_KIND
+					, 	c.DVC_COND
+		FROM		 	BMS_VHC_MST a
+		LEFT JOIN	  BMS_DVC_INFO b
+			ON 		  a.VHC_ID = b.VHC_ID
+		LEFT JOIN		BMS_DVC_COND_INFO c
+			ON			b.MNG_ID = c.MNG_ID
+	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			 a.VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || a.VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'VHC_ID'">
+			 a.VHC_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'VHC_KIND'">
+			 a.VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+		GROUP BY a.VHC_ID, b.DVC_KIND
+		ORDER BY a.VHC_ID
+	</select>  
+	
+  <select id="ST0501G1R0" resultType="Map">
+			SELECT DATE_FORMAT(A.APLY_DATE, '%Y-%m-%d') AS APLY_DATE
+					,B.DVC_ID
+					,B.DVC_KIND
+					,B.VHC_ID
+					,C.VHC_NO
+					,A.SN
+					,A.WORK_TYPE
+					,A.WORK_AMT
+					,B.DVC_TYPE
+					,COUNT(WORK_TYPE) AS SUM_CNT
+			FROM BMS_DVC_HIS A
+			LEFT JOIN  BMS_DVC_INFO B
+			ON A.DVC_ID = B.DVC_ID
+			LEFT JOIN BMS_VHC_MST C
+			ON B.VHC_ID = C.VHC_ID
+			WHERE 
+			B.VHC_ID IN
+		<foreach collection="VHC_ID" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+			<if test="(F_DATE != null and F_DATE != '') and (L_DATE == null or L_DATE == '')">
+				<![CDATA[AND A.APLY_DATE >= #{F_DATE}]]>
+			</if>
+			<if test="(F_DATE == null or F_DATE == '') and L_DATE != null and L_DATE != '' ">
+				<![CDATA[AND A.APLY_DATE <= #{L_DATE}]]>
+			</if>
+			<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
+				AND A.APLY_DATE between #{F_DATE} and #{L_DATE}
+			</if>	 
+		GROUP BY	B.VHC_ID, A.WORK_TYPE, B.DVC_KIND
+		ORDER BY	DVC_KIND , B.DVC_ID
+  </select>	
+	
+	<select id="ST0501G2R0" resultType="Map">
+			SELECT DATE_FORMAT(A.APLY_DATE, '%Y-%m-%d') AS APLY_DATE
+					,B.DVC_ID
+					,B.DVC_KIND
+					,B.VHC_ID
+					,C.VHC_NO
+					,A.SN
+					,A.WORK_TYPE
+					,A.WORK_AMT
+					,B.DVC_TYPE
+					,COUNT(WORK_TYPE) AS SUM_CNT
+			FROM BMS_DVC_HIS A
+			LEFT JOIN  BMS_DVC_INFO B
+			ON A.DVC_ID = B.DVC_ID
+			LEFT JOIN BMS_VHC_MST C
+			ON B.VHC_ID = C.VHC_ID
+			WHERE 
+			B.VHC_ID IN
+		<foreach collection="VHC_ID" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+			<if test="(F_DATE != null and F_DATE != '') and (L_DATE == null or L_DATE == '')">
+				<![CDATA[AND A.APLY_DATE >= #{F_DATE}]]>
+			</if>
+			<if test="(F_DATE == null or F_DATE == '') and L_DATE != null and L_DATE != '' ">
+				<![CDATA[AND A.APLY_DATE <= #{L_DATE}]]>
+			</if>
+			<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
+				AND A.APLY_DATE between #{F_DATE} and #{L_DATE}
+			</if>	 
+				GROUP BY	 A.WORK_TYPE, B.DVC_KIND
+		ORDER BY B.DVC_KIND
+
+  </select>
+  </mapper>
