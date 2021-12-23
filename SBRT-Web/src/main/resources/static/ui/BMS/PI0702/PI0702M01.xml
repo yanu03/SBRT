@@ -212,7 +212,7 @@
 		com.saveDone(PI0702G1, sub_PI0702G1R0);	
 	};
 	
-	scwin.btn_resrv_onclick = function() {
+	/*scwin.btn_resrv_onclick = function() {
 		var jsondata = PI0702G1.getCheckedJSON("chk");
 		var data = {data : jsondata, callbackFn : "scwin.PI0702P0_callbackFn"};
 		if(jsondata.length > 0){
@@ -224,6 +224,21 @@
 		}
 		
 
+	};*/
+	
+	scwin.btn_resrv_onclick = function() {
+		var jsondata = PI0702G1.getCheckedJSON("chk");
+		var data = {data : jsondata, callbackFn : "scwin.PI0702P0_callbackFn"};
+		if(jsondata.length > 0){
+			var options = { id : "PI0702P01",
+							popupName : "예약 날짜",
+							modal : true,
+							width : 220, height: 350};
+			com.openPopup("/cm/common/popUpReserve.xml", options, data);
+		}else{
+			com.alert('예약할 목록을 선택해 주세요.');
+		}
+		
 	};
 	
 	scwin.datedisplayformat = function(){

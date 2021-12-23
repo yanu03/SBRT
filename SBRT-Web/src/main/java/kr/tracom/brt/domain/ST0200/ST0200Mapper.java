@@ -11,6 +11,8 @@ public interface ST0200Mapper {
 	public List ST0200G0R0(Map param);
 	
 	public List ST0200G1R0(Map param);
+	public List ST0200G1R1(Map param);
+	public List ST0200G1R2(Map param);
 	
 	/*public List PI0503G0R0(Map param);
 	
