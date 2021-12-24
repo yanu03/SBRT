@@ -90,20 +90,18 @@
 	scwin.onpageload = function() {
 		
 		var autoOptions = {
-			Main : { grid : ST0200G0, srchSbm : sub_ST0200G0R0, keyColumn : "OPER_DT", srchGrp : pgm_header, name :  "노선 목록"},
-			Sub1 : { grid : pivot_ST0200}
+			Main : { grid : ST0200G0, srchSbm : sub_ST0200G0R0, keyColumn : "OPER_DT", srchGrp : pgm_header, name :  "노선 목록"}
+			//Sub1 : { grid : pivot_ST0200}
 		 };		
 		 		
 		  var mainOptions = {
 	         EXL:scwin.btn_excel_onclick
 	      };
 	      
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions, mainOptions);
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions, mainOptions);
 		
 		com.executeSubmission(sub_ST0200SHI0);
 		//com.executeSubmission(sub_ST0200G0R0);
-		
-		
 		
 		var date = new Date();
 		var year = date.getFullYear().toString();
@@ -119,7 +117,6 @@
 		
 		F_DATE.setValue(today);
 		L_DATE.setValue(today);
-		
 		
 	};
 	
@@ -142,7 +139,6 @@
 	scwin.sub_ST0200G0R0_submitdone = function(e) {
 		com.setFocusedCell(ST0200G0, "chk");
 		ST0200G0.setCellChecked(ST0200G0.getFocusedRowIndex(), "chk", true);
-		
 
 		var chkJsonData = ST0200G0.getCheckedJSON("chk");
 		var chkCnt = chkJsonData.length;
@@ -165,13 +161,15 @@
 		dma_sub_search.set("SELECT_DIV", SELECT_DIV.getValue());
 		dma_sub_search.set("ROUT_ID", routId);
 		
-		if(SELECT_DIV.getValue() == 'TIME'){
+		/*if(SELECT_DIV.getValue() == 'TIME'){
 			com.executeSubmission(sub_ST0200G1R0);
 		}else if(SELECT_DIV.getValue() == 'DAY'){
 			com.executeSubmission(sub_ST0200G1R1);
 		}else if(SELECT_DIV.getValue() == 'MONTH'){
 			com.executeSubmission(sub_ST0200G1R2);
-		}
+		}*/
+		
+		com.executeSubmission(sub_ST0200G1R0);
 		
 	};
 	
@@ -202,13 +200,15 @@
 		dma_sub_search.set("SELECT_DIV", SELECT_DIV.getValue());
 		
 		if(chkJsonData.length != 0){
-			if(SELECT_DIV.getValue() == 'TIME'){
+			/*if(SELECT_DIV.getValue() == 'TIME'){
 				com.executeSubmission(sub_ST0200G1R0);
 			}else if(SELECT_DIV.getValue() == 'DAY'){
 				com.executeSubmission(sub_ST0200G1R1);
 			}else if(SELECT_DIV.getValue() == 'MONTH'){
 				com.executeSubmission(sub_ST0200G1R2);
-			}
+			}*/
+			
+			com.executeSubmission(sub_ST0200G1R0);
 			pivot_ST0200.show();
 		}else if(chkJsonData.length == 0){
 			chart_ST0200.destroy();
@@ -232,13 +232,15 @@
 		dma_sub_search.set("ROUT_ID", routId);
 		
 		if(chkJsonData.length != 0){
-			if(SELECT_DIV.getValue() == 'TIME'){
+			/*if(SELECT_DIV.getValue() == 'TIME'){
 				com.executeSubmission(sub_ST0200G1R0);
 			}else if(SELECT_DIV.getValue() == 'DAY'){
 				com.executeSubmission(sub_ST0200G1R1);
 			}else if(SELECT_DIV.getValue() == 'MONTH'){
 				com.executeSubmission(sub_ST0200G1R2);
-			}
+			}*/
+			
+			com.executeSubmission(sub_ST0200G1R0);
 			pivot_ST0200.show();
 		}else if(chkJsonData.length == 0){
 			chart_ST0200.destroy();
@@ -544,13 +546,15 @@
 			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseF(info));
 		}
 		
-		if(SELECT_DIV.getValue() == 'TIME'){
+		/*if(SELECT_DIV.getValue() == 'TIME'){
 			com.executeSubmission(sub_ST0200G1R0);
 		}else if(SELECT_DIV.getValue() == 'DAY'){
 			com.executeSubmission(sub_ST0200G1R1);
 		}else if(SELECT_DIV.getValue() == 'MONTH'){
 			com.executeSubmission(sub_ST0200G1R2);
-		}
+		}*/
+		
+		com.executeSubmission(sub_ST0200G1R0);
 	};
 	scwin.checkCloseF = function(info) {
 		F_DATE.setValue(info.oldValue);
@@ -564,13 +568,15 @@
 			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseL(info));
 		}
 		
-		if(SELECT_DIV.getValue() == 'TIME'){
+		/*if(SELECT_DIV.getValue() == 'TIME'){
 			com.executeSubmission(sub_ST0200G1R0);
 		}else if(SELECT_DIV.getValue() == 'DAY'){
 			com.executeSubmission(sub_ST0200G1R1);
 		}else if(SELECT_DIV.getValue() == 'MONTH'){
 			com.executeSubmission(sub_ST0200G1R2);
-		}
+		}*/
+		
+		com.executeSubmission(sub_ST0200G1R0);
 	};
 	
 	scwin.checkCloseL = function(info) {
@@ -581,25 +587,51 @@
 	scwin.SELECT_DIV_onviewchange = function(info) {
 		dma_sub_search.set("SELECT_DIV", info.newValue);
 	
-		if(info.newValue == 'TIME'){
+		/*if(info.newValue == 'TIME'){
 			com.executeSubmission(sub_ST0200G1R0);
 		}else if(info.newValue == 'DAY'){
 			com.executeSubmission(sub_ST0200G1R1);
 		}else if(info.newValue == 'MONTH'){
 			com.executeSubmission(sub_ST0200G1R2);
+		}*/
+		
+		if(info.newValue == 'MONTH'){
+			F_DATE.setCalendarValueType("yearMonth");
+			L_DATE.setCalendarValueType("yearMonth");
+		}else{
+			F_DATE.setCalendarValueType("yearMonthDate");
+			L_DATE.setCalendarValueType("yearMonthDate");
 		}
+		
+		com.executeSubmission(sub_ST0200G1R0);
 	};
 	
 	scwin.sub_ST0200G1R0_submitdone = function(e) {
 		var chkJsonData = ST0200G0.getCheckedJSON("chk");
 		var chkCnt = chkJsonData.length;
+		chart_ST0200.destroy();
 		
-		if(chkCnt > 0){
+		if(chkCnt > 0 && SELECT_DIV.getValue() == 'TIME'){
 			scwin.DrawLineChart_Time(chkCnt);
+			/*pivot_ST0200.setRows("ROUT_NM");
+			pivot_ST0200.setCols("STAT_H");
+			pivot_ST0200.setVals("AVRG_SPD");*/
+			pivot_ST0200.setOption({"rows" : "ROUT_NM, OPER_DT", "cols" : "STAT_H", "vals" : "AVRG_SPD"});
+		}else if(chkCnt > 0 && SELECT_DIV.getValue() == 'DAY'){
+			scwin.DrawBarChart_Day(chkCnt, chkJsonData);
+			pivot_ST0200.setRows("ROUT_NM");
+			pivot_ST0200.setCols("OPER_DT");
+			pivot_ST0200.setVals("AVRG_SPD");
+		}else if(chkCnt > 0 && SELECT_DIV.getValue() == 'MONTH'){
+			scwin.DrawBarChart_Month(chkCnt);
+			pivot_ST0200.setRows("ROUT_NM");
+			pivot_ST0200.setCols("OPER_DT");
+			pivot_ST0200.setVals("AVRG_SPD");
 		}
+		
 	};
 	
-	scwin.sub_ST0200G1R1_submitdone = function(e) {
+	/*scwin.sub_ST0200G1R1_submitdone = function(e) {
 		var chkJsonData = ST0200G0.getCheckedJSON("chk");
 		var chkCnt = chkJsonData.length;
 		
@@ -615,7 +647,7 @@
 		if(chkCnt > 0){
 			scwin.DrawBarChart_Month(chkCnt);
 		}
-	};
+	};*/
 	
 	]]></script>
 	</head>

@@ -22,6 +22,7 @@
   
   <select id="ST0200G1R0" resultType="Map">
   		SELECT
+  		<if test="SELECT_DIV == 'TIME'">
   			DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
 			,A.REP_ROUT_ID
 			,A.ROUT_ID
@@ -30,6 +31,21 @@
 			,MAX_SPD
 			,MIN_SPD
 			,B.ROUT_NM
+		</if>
+		<if test="SELECT_DIV == 'DAY'">
+			DATE_FORMAT(DATE(A.OPER_DT), '%Y-%m-%d') OPER_DT
+			,AVG(A.AVRG_SPD) AS AVRG_SPD
+			,A.ROUT_ID
+			,A.REP_ROUT_ID
+			,B.ROUT_NM
+		</if>
+		<if test="SELECT_DIV == 'MONTH'">
+			MONTH(A.OPER_DT) AS OPER_DT
+			,AVG(A.AVRG_SPD) AS AVRG_SPD
+			,A.ROUT_ID
+			,A.REP_ROUT_ID
+			,B.ROUT_NM
+		</if>
 		FROM
 			BRT_ROUT_AVER_OPER_SP_STAT A
 			LEFT JOIN BMS_ROUT_MST B
@@ -42,22 +58,24 @@
 			<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
 				AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') BETWEEN #{F_DATE} AND #{L_DATE}
 			</if>
-			<if test="TYPE == 'OPER_SN'">
-				GROUP BY
-					A.ROUT_ID, A.OPER_SN
-			</if>
-			<if test="TYPE == 'ALLOC_NO'">
-				GROUP BY
-					A.ROUT_ID, A.ALLOC_NO
-			</if>
-			<if test="TYPE == 'REP_ROUT_ID'">
-				GROUP BY
-					A.REP_ROUT_ID
-			</if>
+		<if test="SELECT_DIV == 'TIME'">
 		GROUP BY
 			OPER_DT, ROUT_ID, A.STAT_H
 		ORDER BY
 			OPER_DT, ROUT_ID, A.STAT_H
+		</if>
+		<if test="SELECT_DIV == 'DAY'">
+		GROUP BY
+			OPER_DT, A.ROUT_ID
+		ORDER BY
+			A.ROUT_ID, OPER_DT
+		</if>
+		<if test="SELECT_DIV == 'MONTH'">
+		GROUP BY 
+			A.ROUT_ID
+		ORDER BY
+			A.ROUT_ID, A.OPER_DT 
+		</if>
   </select>
   
    <select id="ST0200G1R1" resultType="Map">
