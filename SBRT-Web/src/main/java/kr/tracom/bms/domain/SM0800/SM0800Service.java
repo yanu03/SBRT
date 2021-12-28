@@ -3,6 +3,8 @@ package kr.tracom.bms.domain.SM0800;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -15,7 +17,9 @@ import kr.tracom.util.Result;
 
 @Service
 public class SM0800Service extends ServiceSupport{
-
+	
+	private String salt = "tracom3452TRACOM#$%@";
+	
 	@Autowired
 	private SM0800Mapper sm0800Mapper;
 	
@@ -38,6 +42,10 @@ public class SM0800Service extends ServiceSupport{
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
 				String rowStatus = (String) data.get("rowStatus");
+				
+				String apiKey = makeKey(data);
+				data.put("API_KEY", apiKey);
+				
 				if (rowStatus.equals("C")) {
 					iCnt += sm0800Mapper.SM0800G0I0(data);
 				} else if (rowStatus.equals("U")) {
@@ -68,55 +76,45 @@ public class SM0800Service extends ServiceSupport{
 	public Map SM0800G0K0() throws Exception {
 		return sm0800Mapper.SM0800G0K0(); 
 	}
+	
+	private String makeKey(Map data) {
+		String ip = (String) data.get("ALLOWED_IP");
+    	String endPoint = (String) data.get("API_END_POINT");
+    	
+    	return makeHash(ip, endPoint);
+	}
+	
+	/**
+	 * 키 생성 
+	 * SHA256 해시
+	 * ip
+	 * salt = tracomKey & endPoint 
+	 *  **/
+	public String makeHash(String ip, String endPoint) {
+		MessageDigest md = null;
+		String salt2 = endPoint;
+		String salt3 = String.valueOf(Math.random());
+		String msg = ip + salt + salt2 + salt3;
 		
-	/*public List<Map> SM0601G0R0() throws Exception{
-		Map param = getSimpleDataMap("dma_EMAIL_MST");
-		return sM0403Mapper.SM0601G0R0(param);
-	}
-	
-	public List<Map> SM0601G1R0() throws Exception{
-		Map param = getSimpleDataMap("dma_USER_MST");
-		String temp[] = param.get("RCPT_IDS").toString().split(",");
-		return sM0403Mapper.SM0601G1R0(temp);
-	}
-	
-	public List<Map> SM0601P0R0() throws Exception{
-		Map param = getSimpleDataMap("dma_USER_MST");
-		String temp[] = param.get("RCPT_IDS").toString().split(",");
-		param.put("RCPT_IDS", temp);
-		return sM0403Mapper.SM0601P0R0(param);
-	}
-	
-	// save 수정
-	public Map SM0601G0S0() throws Exception {
-
-		int iCnt = 0;
-		int uCnt = 0;
-		int dCnt = 0;
-		List param = getSimpleList("dlt_EMAIL_MST");
-		for (int i = 0; i < param.size(); i++) {
-			Map<String, Object> data = (Map) param.get(i);
-			String rowStatus = (String) data.get("rowStatus");
-			// 데이터베이스 data 타입일때 공백으로 들어가면 에러나는 사항 임시 수정
-			for (String key : data.keySet()) {
-				if (data.get(key).equals("")) {
-					data.put(key, null);
-				}
+		String result = "";
+		try {
+			md = MessageDigest.getInstance("SHA-256");
+			md.update(msg.getBytes());
+			byte msgByte[] = md.digest();
+			StringBuffer sb = new StringBuffer();
+			
+			for(int i = 0; i < msgByte.length; i++) {
+				sb.append(Integer.toString((msgByte[i]&0xff) + 0x100, 16).substring(1));
 			}
-			if (rowStatus.equals("C")) {
-				iCnt += sM0403Mapper.SM0601G0I0(data);
-			} else if (rowStatus.equals("U")) {
-				uCnt += sM0403Mapper.SM0601G0U0(data);
-			} else if (rowStatus.equals("E")) {
-				dCnt += sM0403Mapper.SM0601G0D0(data);
-			}
+			
+			result = sb.toString();
+			
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			result = null;
 		}
-		Map result = new HashMap();
-		result.put("STATUS", "S");
-		result.put("ICNT", String.valueOf(iCnt));
-		result.put("UCNT", String.valueOf(uCnt));
-		result.put("DCNT", String.valueOf(dCnt));
 		
 		return result;
-	}*/
+	}
+		
 }
