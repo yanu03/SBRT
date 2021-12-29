@@ -144,7 +144,8 @@
 			LEFT JOIN BMS_STTN_MST B
 			ON A.NODE_ID = B.STTN_ID
 		WHERE
-			A.NODE_ID IN
+			A.ROUT_ID = #{ROUT_ID}
+			AND A.NODE_ID IN
 		<foreach collection="NODE_ID" item="item" index="index"  open="(" close=")" separator=",">
 			#{item}
 		</foreach>
@@ -153,21 +154,21 @@
 			</if>
 		<if test="SELECT_DIV == 'TIME'">
 		GROUP BY
-			OPER_DT, ROUT_ID, A.STAT_H
+			OPER_DT, NODE_ID, A.STAT_H
 		ORDER BY
-			OPER_DT, ROUT_ID, A.STAT_H
+			OPER_DT, NODE_ID, A.STAT_H
 		</if>
 		<if test="SELECT_DIV == 'DAY'">
 		GROUP BY
-			OPER_DT, A.ROUT_ID
+			OPER_DT, A.NODE_ID
 		ORDER BY
-			A.ROUT_ID, OPER_DT
+			A.NODE_ID, OPER_DT
 		</if>
 		<if test="SELECT_DIV == 'MONTH'">
 		GROUP BY 
-			A.ROUT_ID
+			A.NODE_ID
 		ORDER BY
-			A.ROUT_ID, A.OPER_DT 
+			A.NODE_ID, A.OPER_DT 
 		</if>
   </select>
   <!--

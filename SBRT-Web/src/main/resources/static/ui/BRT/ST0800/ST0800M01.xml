@@ -10,21 +10,6 @@
 				<data xmlns="" />
 			</xf:instance>
 			<w2:dataCollection baseNode="map">
-
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_ROUT_AVER_OPER_SP_STAT" saveRemovedData="true">
-					<w2:columnInfo>
-						<w2:column id="OPER_DT" name="운행일" dataType="text"></w2:column>
-						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
-						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
-						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
-						<w2:column id="STAT_H" name="통계시간" dataType="text"></w2:column>
-						<w2:column id="AVRG_SPD" name="평균속도" dataType="text"></w2:column>
-						<w2:column id="MAX_SPD" name="최대속도" dataType="text"></w2:column>
-						<w2:column id="MIN_SPD" name="최소속도" dataType="text"></w2:column>
-						<w2:column id="STAT_T" name="통계시간" dataType="text"></w2:column>
-					</w2:columnInfo>
-				</w2:dataList>
-				
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_STTN_STAT" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="chk" name="선택" dataType="text" defaultValue="0"></w2:column>
@@ -107,16 +92,6 @@
 				customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0800G2R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<!--  <xf:submission id="sub_ST0800G1R1" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_ROUT_AVER_OPER_SP_STAT"
-				action="/st/ST0800G1R1" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0800G1R1_submitdone"
-				ev:submiterror="" abortTrigger="">
-			</xf:submission>
-			<xf:submission id="sub_ST0800G1R2" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_ROUT_AVER_OPER_SP_STAT"
-				action="/st/ST0800G1R2" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0800G1R2_submitdone"
-				ev:submiterror="" abortTrigger="">
-			</xf:submission>-->
 			<xf:submission id="sub_ST0800SHI0" ref="" target="data:json,dlt_repRoutItem" action="/repRout/selectRepRoutItem"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="scwin.sub_ST0800SHI0_submitdone" ev:submiterror="" abortTrigger="">
@@ -137,7 +112,6 @@
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions, mainOptions);
 		
 		com.executeSubmission(sub_ST0800SHI0);
-		//com.executeSubmission(sub_ST0800G0R0);
 		
 		var date = new Date();
 		var year = date.getFullYear().toString();
@@ -153,15 +127,15 @@
 		
 		F_DATE.setValue(today);
 		L_DATE.setValue(today);
-		dma_sub_search.set("TAB_DIV", "AVER_DELAY_SEC");
+		dma_sub_search.set("TAB_DIV", "AVRG_DELAY_SEC");
 		
 		//탭 목록 클릭 이벤트
 		$(".stat_sttn").find("li").click( function() {
 			var li_id = this.id;
 			$(".stat_sttn").find("li").removeClass("on");
 			$(".stat_sttn").find("#"+li_id).addClass("on");
-			if(li_id == "li_aver_delay_sec") {
-				dma_sub_search.set("TAB_DIV", "AVER_DELAY_SEC");
+			if(li_id == "li_avrg_delay_sec") {
+				dma_sub_search.set("TAB_DIV", "AVRG_DELAY_SEC");
 				com.executeSubmission(sub_ST0800G2R0);
 			}
 			else if(li_id == "li_dsptch_cnt") {
@@ -227,14 +201,6 @@
 		dma_sub_search.set("SELECT_DIV", SELECT_DIV.getValue());
 		dma_sub_search.set("NODE_ID", nodeId);
 		
-		/*if(SELECT_DIV.getValue() == 'TIME'){
-			com.executeSubmission(sub_ST0800G1R0);
-		}else if(SELECT_DIV.getValue() == 'DAY'){
-			com.executeSubmission(sub_ST0800G1R1);
-		}else if(SELECT_DIV.getValue() == 'MONTH'){
-			com.executeSubmission(sub_ST0800G1R2);
-		}*/
-		
 		com.executeSubmission(sub_ST0800G2R0);
 		
 	};
@@ -262,14 +228,6 @@
 		dma_sub_search.set("SELECT_DIV", SELECT_DIV.getValue());
 		
 		if(chkJsonData.length != 0){
-			/*if(SELECT_DIV.getValue() == 'TIME'){
-				com.executeSubmission(sub_ST0800G1R0);
-			}else if(SELECT_DIV.getValue() == 'DAY'){
-				com.executeSubmission(sub_ST0800G1R1);
-			}else if(SELECT_DIV.getValue() == 'MONTH'){
-				com.executeSubmission(sub_ST0800G1R2);
-			}*/
-			
 			com.executeSubmission(sub_ST0800G2R0);
 			pivot_ST0800.show();
 		}else if(chkJsonData.length == 0){
@@ -294,14 +252,6 @@
 		dma_sub_search.set("NODE_ID", nodeId);
 		
 		if(chkJsonData.length != 0){
-			/*if(SELECT_DIV.getValue() == 'TIME'){
-				com.executeSubmission(sub_ST0800G1R0);
-			}else if(SELECT_DIV.getValue() == 'DAY'){
-				com.executeSubmission(sub_ST0800G1R1);
-			}else if(SELECT_DIV.getValue() == 'MONTH'){
-				com.executeSubmission(sub_ST0800G1R2);
-			}*/
-			
 			com.executeSubmission(sub_ST0800G2R0);
 			pivot_ST0800.show();
 		}else if(chkJsonData.length == 0){
@@ -345,8 +295,7 @@
 	
 	var chart_ST0800 = null;
 	 
-	scwin.DrawLineChart_Time = function(chkCnt){
-		debugger;
+	scwin.DrawLineChart_Time = function(chkCnt, chkJsonData){
 		var datasets = new Array();
 		var transData = new Array();
 		var i = 0;
@@ -373,7 +322,15 @@
 			
 			for(var y = 0; y < transData.length; y++){
 				var label = transData[y].STTN_NM;
-				var avrgSpd = transData[y].AVRG_DELAY_SEC;
+				
+				if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
+					var val = transData[y].AVRG_DELAY_SEC;
+				}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
+					var val = transData[y].DSPTCH_CNT;
+				}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
+					var val = transData[y].SIGOPER_CTL_CNT;
+				}
+				
 				var statH = transData[y].STAT_H;
 				var operDt = transData[y].OPER_DT;
 				
@@ -381,7 +338,7 @@
 					var categoryJson = new Object();
 					var labelJson = new Object();
 					
-					categoryJson = avrgSpd;
+					categoryJson = val;
 					labelJson = statH;
 					
 					xLabel.push(labelJson);
@@ -401,6 +358,7 @@
 		charData.tension = 0;
 		charData.pointRadius = 1;
 		
+		
 		datasets.push(charData);
 		
 		transData = [];
@@ -419,7 +377,8 @@
 				  },
 			  options: {
 			       // responsive: true
-			        maintainAspectRatio: false
+			        maintainAspectRatio: false,
+
 			    }
 			});
 	
@@ -454,7 +413,15 @@
 			
 			for(var y = 0; y < transData.length; y++){
 				var label = transData[y].STTN_NM;
-				var avrgSpd = transData[y].AVRG_SPD;
+				
+				if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
+					var val = transData[y].AVRG_DELAY_SEC;
+				}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
+					var val = transData[y].DSPTCH_CNT;
+				}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
+					var val = transData[y].SIGOPER_CTL_CNT;
+				}
+				
 				//var statH = transData[y].STAT_H;
 				var operDt = transData[y].OPER_DT;
 				
@@ -462,7 +429,7 @@
 					var categoryJson = new Object();
 					var labelJson = new Object();
 					
-					categoryJson = avrgSpd;
+					categoryJson = val;
 					labelJson = operDt;
 					
 					xLabel.push(labelJson);
@@ -477,10 +444,11 @@
 		charData.label = label;
 		charData.borderColor = rgb;
 		charData.backgroundColor = rgb;
-		charData.borderWidth = 1;
-		charData.pointBorderWidth = 1;
+		charData.borderWidth = 1; //선 굵기
+		charData.pointBorderWidth = 1; //점 굵기
 		charData.tension = 0;
-		charData.pointRadius = 1;
+		charData.pointRadius = 1; //점 지름
+		charData.maxBarThickness= 60; //막대 굵기
 		
 		datasets.push(charData);
 		
@@ -511,7 +479,7 @@
 										}	
 									}	
 								}
-						}]	
+						}]
 					}
 			    }
 			});
@@ -544,7 +512,15 @@
 			
 			for(var y = 0; y < transData.length; y++){
 				var label = transData[y].STTN_NM;
-				var avrgSpd = transData[y].AVRG_SPD;
+				
+				if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
+					var val = transData[y].AVRG_DELAY_SEC;
+				}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
+					var val = transData[y].DSPTCH_CNT;
+				}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
+					var val = transData[y].SIGOPER_CTL_CNT;
+				}
+				
 				//var statH = transData[y].STAT_H;
 				var operDt = transData[y].OPER_DT;
 				
@@ -552,7 +528,7 @@
 					var categoryJson = new Object();
 					var labelJson = new Object();
 					
-					categoryJson = avrgSpd;
+					categoryJson = val;
 					labelJson = operDt;
 					
 					xLabel.push(labelJson);
@@ -567,10 +543,11 @@
 		charData.label = label;
 		charData.borderColor = rgb;
 		charData.backgroundColor = rgb;
-		charData.borderWidth = 1;
-		charData.pointBorderWidth = 1;
+		charData.borderWidth = 1; //선 굵기
+		charData.pointBorderWidth = 1; //점 굵기
 		charData.tension = 0;
-		charData.pointRadius = 1;
+		charData.pointRadius = 1; //점 지름
+		charData.maxBarThickness= 60; //막대 굵기
 		
 		datasets.push(charData);
 		
@@ -609,14 +586,6 @@
 			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseF(info));
 		}
 		
-		/*if(SELECT_DIV.getValue() == 'TIME'){
-			com.executeSubmission(sub_ST0800G1R0);
-		}else if(SELECT_DIV.getValue() == 'DAY'){
-			com.executeSubmission(sub_ST0800G1R1);
-		}else if(SELECT_DIV.getValue() == 'MONTH'){
-			com.executeSubmission(sub_ST0800G1R2);
-		}*/
-		
 		com.executeSubmission(sub_ST0800G2R0);
 	};
 	scwin.checkCloseF = function(info) {
@@ -631,14 +600,6 @@
 			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseL(info));
 		}
 		
-		/*if(SELECT_DIV.getValue() == 'TIME'){
-			com.executeSubmission(sub_ST0800G1R0);
-		}else if(SELECT_DIV.getValue() == 'DAY'){
-			com.executeSubmission(sub_ST0800G1R1);
-		}else if(SELECT_DIV.getValue() == 'MONTH'){
-			com.executeSubmission(sub_ST0800G1R2);
-		}*/
-		
 		com.executeSubmission(sub_ST0800G2R0);
 	};
 	
@@ -650,13 +611,6 @@
 	scwin.SELECT_DIV_onviewchange = function(info) {
 		dma_sub_search.set("SELECT_DIV", info.newValue);
 	
-		/*if(info.newValue == 'TIME'){
-			com.executeSubmission(sub_ST0800G1R0);
-		}else if(info.newValue == 'DAY'){
-			com.executeSubmission(sub_ST0800G1R1);
-		}else if(info.newValue == 'MONTH'){
-			com.executeSubmission(sub_ST0800G1R2);
-		}*/
 		
 		if(info.newValue == 'MONTH'){
 			F_DATE.setCalendarValueType("yearMonth");
@@ -675,52 +629,39 @@
 		chart_ST0800.destroy();
 		
 		if(chkCnt > 0 && SELECT_DIV.getValue() == 'TIME'){
-			scwin.DrawLineChart_Time(chkCnt);
-			/*pivot_ST0800.setRows("ROUT_NM");
-			pivot_ST0800.setCols("STAT_H");
-			pivot_ST0800.setVals("AVRG_SPD");*/
-			pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "AVRG_DELAY_SEC"});
+			scwin.DrawLineChart_Time(chkCnt, chkJsonData);
+			if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "AVRG_DELAY_SEC"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "DSPTCH_CNT"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "SIGOPER_CTL_CNT"});
+			}
 		}else if(chkCnt > 0 && SELECT_DIV.getValue() == 'DAY'){
 			scwin.DrawBarChart_Day(chkCnt, chkJsonData);
-			/*pivot_ST0800.setRows("ROUT_NM");
-			pivot_ST0800.setCols("OPER_DT");
-			pivot_ST0800.setVals("AVRG_SPD");*/
-			pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "AVRG_DELAY_SEC"});
+			if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "AVRG_DELAY_SEC"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "DSPTCH_CNT"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "SIGOPER_CTL_CNT"});
+			}
 		}else if(chkCnt > 0 && SELECT_DIV.getValue() == 'MONTH'){
 			scwin.DrawBarChart_Month(chkCnt);
-			/*pivot_ST0800.setRows("ROUT_NM");
-			pivot_ST0800.setCols("OPER_DT");
-			pivot_ST0800.setVals("AVRG_SPD");*/
-			pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "AVRG_DELAY_SEC"});
+			if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "AVRG_DELAY_SEC"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "DSPTCH_CNT"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "SIGOPER_CTL_CNT"});
+			}
 		}
 		
+			//pivot테이블 옵션 따로따로 설정.
+			/*pivot_ST0800.setRows("STTN_NM");
+			pivot_ST0800.setCols("STAT_H");
+			pivot_ST0800.setVals("AVRG_DELAY_SEC");*/
 	};
-	
-	/*var li_aver_delay_sec = function(id){
-		if(document.getElementById('li_aver_delay_sec').getAttribute('class') == 'on'){
-			document.getElementById('li_aver_delay_sec').setAttribute('class', '');
-		}else{
-			document.getElementById('li_aver_delay_sec').setAttribute('class', 'on');
-		}
-	}
-	
-	var li_dsptch_cnt = function(id){
-		if(document.getElementById('li_dsptch_cnt').getAttribute('class') == 'on'){
-			document.getElementById('li_dsptch_cnt').setAttribute('class', '');
-		}else{
-			document.getElementById('li_dsptch_cnt').setAttribute('class', 'on');
-		}
-	}
-	
-	var li_sigoper_ctl_cnt = function(id){
-		if(document.getElementById('li_sigoper_ctl_cnt').getAttribute('class') == 'on'){
-			document.getElementById('li_sigoper_ctl_cnt').setAttribute('class', '');
-		}else{
-			document.getElementById('li_sigoper_ctl_cnt').setAttribute('class', 'on');
-		}
-	}*/
-	
-	
 	
 ]]></script>
 	</head>
@@ -916,7 +857,7 @@
 								ref="data:dma_sub_search.L_DATE" ev:onviewchange="scwin.L_DATE_onviewchange">
 							</w2:inputCalendar>
 							<ul id="" class="stat_sttn"  style="margin-top: 10px;">
-								<li id="li_aver_delay_sec" class="on" >
+								<li id="li_avrg_delay_sec" class="on" >
 									<!-- <span class="busimg"></span> -->
 									평균지연시간
 								</li>
@@ -929,17 +870,6 @@
 									신호제어건수
 								</li>
 							</ul>
-							<!--   <ul id="" class="stat_sttn"  style="margin-top: 10px;">
-								<li id="li_aver_delay_sec" class="on" onclick="li_aver_delay_sec(this.id)">
-									평균지연시간
-								</li>
-								<li id="li_dsptch_cnt" class="" onclick="li_dsptch_cnt(this.id)">
-									디스패치건수
-								</li>
-								<li id="li_sigoper_ctl_cnt" class="" onclick="li_sigoper_ctl_cnt(this.id)">
-									신호제어건수
-								</li>
-							</ul>-->
 						</xf:group>
 						<w2:wframe id="wfm_subBtn2" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
 					</xf:group>
@@ -956,7 +886,7 @@
 					</xf:group>
 					<xf:group id="" class="" style="position: relative;">
 						<w2:pivot style="position: absolute;height:100%;width:100%;" dataList="data:dlt_BRT_STTN_STAT_PIVOT" vals="AVRG_DELAY_SEC"
-							rows="OPER_DT,STTN_NM" cols="STAT_H" defaultAggregator="Sum" valuesAxis="col" id="pivot_ST0800" renderMode="compact"
+							rows="STTN_NM" cols="STAT_H" defaultAggregator="Sum" valuesAxis="col" id="pivot_ST0800" renderMode="compact"
 							autoFit="allColumn" grandTotalDisplayType="both" showZero="true" showGrandTotal="true" aggregatorName="Average" allTotalName="평균속도"
 							digitsAfterDecimal="1" useNumberFormat="true" autoFitMinWidth="1300" autoPopupInvalidMessage="" headerTextAlign="center"
 							noResultMessage="">
@@ -969,8 +899,8 @@
 								<w2:field id="STAT_H" name="통계시간"></w2:field>
 								<w2:field id="STAT_T" name="통계시간"></w2:field>
 								<w2:field id="AVRG_DELAY_SEC" name="평균속도"></w2:field>
-								<w2:field id="MAX_SPD" name="최대속도"></w2:field>
-								<w2:field id="MIN_SPD" name="최저속도"></w2:field>
+								<w2:field id="DSPTCH_CNT" name="디스패치건수"></w2:field>
+								<w2:field id="SIGOPER_CTL_CNT" name="신호제어건수"></w2:field>
 							</w2:fieldInfo>
 						</w2:pivot>
 					</xf:group>
