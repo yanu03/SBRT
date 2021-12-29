@@ -10,18 +10,32 @@
 				<data xmlns="" />
 			</xf:instance>
 			<w2:dataCollection baseNode="map">
-
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_ROUT_AVER_OPER_SP_STAT" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_STTN_STAT" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="chk" name="선택" dataType="text" defaultValue="0"></w2:column>
+						<w2:column id="OPER_DT" name="운행일" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
+						<w2:column id="STTN_NM" name="정류소명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_STTN_STAT_PIVOT" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="OPER_DT" name="운행일" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
+						<w2:column id="STTN_NM" name="정류소명" dataType="text"></w2:column>
+						<w2:column id="MIN_DELAY_SEC" name="최소지연시간" dataType="text"></w2:column>
+						<w2:column id="MAX_DELAY_SEC" name="최대지연시간" dataType="text"></w2:column>
+						<w2:column id="AVRG_DELAY_SEC" name="평균지연시간" dataType="text"></w2:column>
+						<w2:column id="DSPTCH_CNT" name="디스패치건수" dataType="text"></w2:column>
+						<w2:column id="SIGOPER_CTL_CNT" name="신호제어건수" dataType="text"></w2:column>
 						<w2:column id="STAT_H" name="통계시간" dataType="text"></w2:column>
-						<w2:column id="AVRG_SPD" name="평균속도" dataType="text"></w2:column>
-						<w2:column id="MAX_SPD" name="최대속도" dataType="text"></w2:column>
-						<w2:column id="MIN_SPD" name="최소속도" dataType="text"></w2:column>
-						<w2:column id="STAT_T" name="통계시간" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 
@@ -54,7 +68,9 @@
 					<w2:keyInfo>
 						<w2:key id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:key>
 						<w2:key id="ROUT_ID" name="노선아이디" dataType="text"></w2:key>
+						<w2:key id="NODE_ID" name="노드아이디" dataType="text"></w2:key>
 						<w2:key id="SELECT_DIV" name="조회구분" dataType="text"></w2:key>
+						<w2:key id="TAB_DIV" name="텝구분" dataType="text"></w2:key>
 						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
 						<w2:key id="F_DATE" name="name3" dataType="text"></w2:key>
 						<w2:key id="L_DATE" name="name3" dataType="text"></w2:key>
@@ -62,46 +78,40 @@
 				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_ST0200G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_MST" action="/st/ST0200G0R0"
+			<xf:submission id="sub_ST0800G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_MST" action="/st/ST0800G0R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0200G0R0_submitdone" ev:submiterror="" abortTrigger="">
+				processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0800G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_ST0200G1R0" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_ROUT_AVER_OPER_SP_STAT"
-				action="/st/ST0200G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0200G1R0_submitdone"
+			<xf:submission id="sub_ST0800G1R0" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_STTN_STAT"
+				action="/st/ST0800G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0800G1R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_ST0200G1R1" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_ROUT_AVER_OPER_SP_STAT"
-				action="/st/ST0200G1R1" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0200G1R1_submitdone"
+			<xf:submission id="sub_ST0800G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_STTN_STAT_PIVOT"
+				action="/st/ST0800G2R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0800G2R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_ST0200G1R2" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_ROUT_AVER_OPER_SP_STAT"
-				action="/st/ST0200G1R2" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0200G1R2_submitdone"
-				ev:submiterror="" abortTrigger="">
-			</xf:submission>
-			<xf:submission id="sub_ST0200SHI0" ref="" target="data:json,dlt_repRoutItem" action="/repRout/selectRepRoutItem"
+			<xf:submission id="sub_ST0800SHI0" ref="" target="data:json,dlt_repRoutItem" action="/repRout/selectRepRoutItem"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="" ev:submitdone="scwin.sub_ST0200SHI0_submitdone" ev:submiterror="" abortTrigger="">
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_ST0800SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[ 
 	scwin.onpageload = function() {
 		
 		var autoOptions = {
-			Main : { grid : ST0200G0, srchSbm : sub_ST0200G0R0, keyColumn : "OPER_DT", srchGrp : pgm_header, name :  "노선 목록"}
-			//Sub1 : { grid : pivot_ST0200}
+			Main : { grid : ST0800G0, srchSbm : sub_ST0800G0R0, keyColumn : "OPER_DT", srchGrp : pgm_header, name :  "노선 목록"},
+			Sub1 : { grid : ST0800G1, srchSbm : sub_ST0800G1R0, keyColumn : "NODE_ID", srchGrp : pgm_header, name :  "정류소 목록"}
 		 };		
 		 		
 		  var mainOptions = {
 	         EXL:scwin.btn_excel_onclick
 	      };
 	      
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions, mainOptions);
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions, mainOptions);
 		
-		com.executeSubmission(sub_ST0200SHI0);
-		//com.executeSubmission(sub_ST0200G0R0);
+		com.executeSubmission(sub_ST0800SHI0);
 		
 		var date = new Date();
 		var year = date.getFullYear().toString();
@@ -117,6 +127,26 @@
 		
 		F_DATE.setValue(today);
 		L_DATE.setValue(today);
+		dma_sub_search.set("TAB_DIV", "AVRG_DELAY_SEC");
+		
+		//탭 목록 클릭 이벤트
+		$(".stat_sttn").find("li").click( function() {
+			var li_id = this.id;
+			$(".stat_sttn").find("li").removeClass("on");
+			$(".stat_sttn").find("#"+li_id).addClass("on");
+			if(li_id == "li_avrg_delay_sec") {
+				dma_sub_search.set("TAB_DIV", "AVRG_DELAY_SEC");
+				com.executeSubmission(sub_ST0800G2R0);
+			}
+			else if(li_id == "li_dsptch_cnt") {
+				dma_sub_search.set("TAB_DIV", "DSPTCH_CNT");
+				com.executeSubmission(sub_ST0800G2R0);
+			}
+			else if(li_id == "li_sigoper_ctl_cnt") {
+				dma_sub_search.set("TAB_DIV", "SIGOPER_CTL_CNT");
+				com.executeSubmission(sub_ST0800G2R0);
+			}
+		});
 		
 	};
 	
@@ -128,24 +158,34 @@
 		var excelOpt = {};  //excel download 옵션 
 		excelOpt.fileName = "노선별 평균속도 통계.xls";    //또는 xlsx 확장자 사용 
 		
-		pivot_ST0200.pivotExcelDownload(excelOpt);
+		pivot_ST0800.pivotExcelDownload(excelOpt);
 	};
 	
-	scwin.sub_ST0200SHI0_submitdone = function(e) {
+	scwin.sub_ST0800SHI0_submitdone = function(e) {
 		TYPE10.setValue("RR00000002");
-		com.searchGrid(ST0200G0, sub_ST0200G0R0);
+		com.searchGrid(ST0800G0, sub_ST0800G0R0);
 	};
 	
-	scwin.sub_ST0200G0R0_submitdone = function(e) {
-		com.setFocusedCell(ST0200G0, "chk");
-		ST0200G0.setCellChecked(ST0200G0.getFocusedRowIndex(), "chk", true);
+	scwin.sub_ST0800G0R0_submitdone = function(e) {
+		com.setFocusedCell(ST0800G0, "REP_ROUT_ID");
+	};
+	
+	scwin.ST0800G0_onrowindexchange = function(row,oldRow) {
+		dma_sub_search.set("ROUT_ID", dlt_BMS_ROUT_MST.getCellData(row, "ROUT_ID"));
+		com.executeSubmission(sub_ST0800G1R0);
+	};
+	
+	
+	scwin.sub_ST0800G1R0_submitdone = function(e) {
+		com.setFocusedCell(ST0800G1, "chk");
+		ST0800G1.setCellChecked(ST0800G1.getFocusedRowIndex(), "chk", true);
 
-		var chkJsonData = ST0200G0.getCheckedJSON("chk");
+		var chkJsonData = ST0800G1.getCheckedJSON("chk");
 		var chkCnt = chkJsonData.length;
 		var i = 0;
-		var routId = [];
+		var nodeId = [];
 
-		com.setFocusedCell(ST0200G0, "REP_ROUT_ID");
+		com.setFocusedCell(ST0800G1, "NODE_ID");
 		
 		var date = new Date();
 		var year = date.getFullYear();
@@ -154,97 +194,69 @@
 
 		//체크 가져오기
 		for(i; i<chkCnt; i++){
-			routId.push(chkJsonData[i].ROUT_ID);
+			nodeId.push(chkJsonData[i].NODE_ID);
 		}
 		
 		//조회구분도 넣어서 처리하기. 일별 월별 시간대별
 		dma_sub_search.set("SELECT_DIV", SELECT_DIV.getValue());
-		dma_sub_search.set("ROUT_ID", routId);
+		dma_sub_search.set("NODE_ID", nodeId);
 		
-		/*if(SELECT_DIV.getValue() == 'TIME'){
-			com.executeSubmission(sub_ST0200G1R0);
-		}else if(SELECT_DIV.getValue() == 'DAY'){
-			com.executeSubmission(sub_ST0200G1R1);
-		}else if(SELECT_DIV.getValue() == 'MONTH'){
-			com.executeSubmission(sub_ST0200G1R2);
-		}*/
-		
-		com.executeSubmission(sub_ST0200G1R0);
+		com.executeSubmission(sub_ST0800G2R0);
 		
 	};
 	
-	scwin.ST0200G0_onrowindexchange = function(row,oldRow) {
-		
-	};
-	
-	scwin.ST0200G0_oncellclick = function(row,col,colId) {
+	scwin.ST0800G1_oncellclick = function(row,col,colId) {
 		if (col != "0"){
-		   if(ST0200G0.getCellChecked(row, 'chk')==0){
-		      ST0200G0.setCellChecked(row, 'chk', true);
-		   }else if(ST0200G0.getCellChecked(row, 'chk')==1){
-		      ST0200G0.setCellChecked(row, 'chk', false);
+		   if(ST0800G1.getCellChecked(row, 'chk')==0){
+		      ST0800G1.setCellChecked(row, 'chk', true);
+		   }else if(ST0800G1.getCellChecked(row, 'chk')==1){
+		      ST0800G1.setCellChecked(row, 'chk', false);
 		   }
 		}
 		
-		var chkJsonData = ST0200G0.getCheckedJSON("chk");
+		var chkJsonData = ST0800G1.getCheckedJSON("chk");
 		var chkCnt = chkJsonData.length;
 		var i = 0;
-		var routId = [];
+		var nodeId = [];
 		
 		//체크된 데이터 가져오기
 		for(i; i<chkCnt; i++){
-			routId.push(chkJsonData[i].ROUT_ID);
+			nodeId.push(chkJsonData[i].NODE_ID);
 		}
 		
-		dma_sub_search.set("ROUT_ID", routId);
+		dma_sub_search.set("NODE_ID", nodeId);
 		dma_sub_search.set("SELECT_DIV", SELECT_DIV.getValue());
 		
 		if(chkJsonData.length != 0){
-			/*if(SELECT_DIV.getValue() == 'TIME'){
-				com.executeSubmission(sub_ST0200G1R0);
-			}else if(SELECT_DIV.getValue() == 'DAY'){
-				com.executeSubmission(sub_ST0200G1R1);
-			}else if(SELECT_DIV.getValue() == 'MONTH'){
-				com.executeSubmission(sub_ST0200G1R2);
-			}*/
-			
-			com.executeSubmission(sub_ST0200G1R0);
-			pivot_ST0200.show();
+			com.executeSubmission(sub_ST0800G2R0);
+			pivot_ST0800.show();
 		}else if(chkJsonData.length == 0){
-			chart_ST0200.destroy();
-			pivot_ST0200.hide();
+			chart_ST0800.destroy();
+			pivot_ST0800.hide();
 		}
 		
 		
 	};
 	
-	scwin.ST0200G0_onheaderclick = function(chkHeader) {
-		var chkJsonData = ST0200G0.getCheckedJSON("chk");
+	scwin.ST0800G1_onheaderclick = function(chkHeader) {
+		var chkJsonData = ST0800G1.getCheckedJSON("chk");
 		var chkCnt = chkJsonData.length;
 		var i = 0;
-		var routId = [];
+		var nodeId = [];
 		
 		//체크 가져오기
 		for(i; i<chkCnt; i++){
-			routId.push(chkJsonData[i].ROUT_ID);
+			nodeId.push(chkJsonData[i].NODE_ID);
 		}
 		
-		dma_sub_search.set("ROUT_ID", routId);
+		dma_sub_search.set("NODE_ID", nodeId);
 		
 		if(chkJsonData.length != 0){
-			/*if(SELECT_DIV.getValue() == 'TIME'){
-				com.executeSubmission(sub_ST0200G1R0);
-			}else if(SELECT_DIV.getValue() == 'DAY'){
-				com.executeSubmission(sub_ST0200G1R1);
-			}else if(SELECT_DIV.getValue() == 'MONTH'){
-				com.executeSubmission(sub_ST0200G1R2);
-			}*/
-			
-			com.executeSubmission(sub_ST0200G1R0);
-			pivot_ST0200.show();
+			com.executeSubmission(sub_ST0800G2R0);
+			pivot_ST0800.show();
 		}else if(chkJsonData.length == 0){
-			chart_ST0200.destroy();
-			pivot_ST0200.hide();
+			chart_ST0800.destroy();
+			pivot_ST0800.hide();
 		}
 	};
 	
@@ -281,26 +293,26 @@
 	}
 	
 	
-	var chart_ST0200 = null;
+	var chart_ST0800 = null;
 	 
-	scwin.DrawLineChart_Time = function(chkCnt){
+	scwin.DrawLineChart_Time = function(chkCnt, chkJsonData){
 		var datasets = new Array();
 		var transData = new Array();
 		var i = 0;
 		var j = 0;
 		var num = 0;
 	
-		var rowCount = dlt_BRT_ROUT_AVER_OPER_SP_STAT.getRowCount();
-		var jsonData = dlt_BRT_ROUT_AVER_OPER_SP_STAT.getAllJSON();
+		var rowCount = dlt_BRT_STTN_STAT_PIVOT.getRowCount();
+		var jsonData = dlt_BRT_STTN_STAT_PIVOT.getAllJSON();
 	
 		for(i; i<chkCnt; i++){
 			var data = new Array();
 			var xLabel = new Array();
 			
 			for(j; j<rowCount; j++){
-				if(jsonData[num].ROUT_ID ==  dlt_BRT_ROUT_AVER_OPER_SP_STAT.getCellData(j, "ROUT_ID")){
-					transData.push(dlt_BRT_ROUT_AVER_OPER_SP_STAT.getRowJSON(j));
-				}else if(jsonData[num].ROUT_ID  !=  dlt_BRT_ROUT_AVER_OPER_SP_STAT.getCellData(j, "ROUT_ID")){
+				if(jsonData[num].NODE_ID ==  dlt_BRT_STTN_STAT_PIVOT.getCellData(j, "NODE_ID")){
+					transData.push(dlt_BRT_STTN_STAT_PIVOT.getRowJSON(j));
+				}else if(jsonData[num].NODE_ID  !=  dlt_BRT_STTN_STAT_PIVOT.getCellData(j, "NODE_ID")){
 					num = j;
 					j = j;
 					break;
@@ -309,8 +321,16 @@
 			
 			
 			for(var y = 0; y < transData.length; y++){
-				var label = transData[y].ROUT_NM;
-				var avrgSpd = transData[y].AVRG_SPD;
+				var label = transData[y].STTN_NM;
+				
+				if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
+					var val = transData[y].AVRG_DELAY_SEC;
+				}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
+					var val = transData[y].DSPTCH_CNT;
+				}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
+					var val = transData[y].SIGOPER_CTL_CNT;
+				}
+				
 				var statH = transData[y].STAT_H;
 				var operDt = transData[y].OPER_DT;
 				
@@ -318,7 +338,7 @@
 					var categoryJson = new Object();
 					var labelJson = new Object();
 					
-					categoryJson = avrgSpd;
+					categoryJson = val;
 					labelJson = statH;
 					
 					xLabel.push(labelJson);
@@ -338,17 +358,18 @@
 		charData.tension = 0;
 		charData.pointRadius = 1;
 		
+		
 		datasets.push(charData);
 		
 		transData = [];
 	}
 	
-		if(chart_ST0200 != null) {
-		      chart_ST0200.destroy();   
+		if(chart_ST0800 != null) {
+		      chart_ST0800.destroy();   
 		}
 	
-		var ctx = document.getElementById('chart_ST0200');
-		chart_ST0200 = new Chart(ctx, {
+		var ctx = document.getElementById('chart_ST0800');
+		chart_ST0800 = new Chart(ctx, {
 			    type: 'line',
 				data: {
 					labels:xLabel,
@@ -356,7 +377,8 @@
 				  },
 			  options: {
 			       // responsive: true
-			        maintainAspectRatio: false
+			        maintainAspectRatio: false,
+
 			    }
 			});
 	
@@ -369,8 +391,8 @@
 		var j = 0;
 		var num = 0;
 	
-		var rowCount = dlt_BRT_ROUT_AVER_OPER_SP_STAT.getRowCount();
-		var jsonData = dlt_BRT_ROUT_AVER_OPER_SP_STAT.getAllJSON();
+		var rowCount = dlt_BRT_STTN_STAT_PIVOT.getRowCount();
+		var jsonData = dlt_BRT_STTN_STAT_PIVOT.getAllJSON();
 	
 		for(i; i<chkCnt; i++){
 			var data = new Array();
@@ -380,9 +402,9 @@
 			//charData.label = chkJsonData[i].ROUT_NM;
 			
 			for(j; j<rowCount; j++){
-				if(jsonData[num].ROUT_ID ==  dlt_BRT_ROUT_AVER_OPER_SP_STAT.getCellData(j, "ROUT_ID")){
-					transData.push(dlt_BRT_ROUT_AVER_OPER_SP_STAT.getRowJSON(j));
-				}else if(jsonData[num].ROUT_ID  !=  dlt_BRT_ROUT_AVER_OPER_SP_STAT.getCellData(j, "ROUT_ID")){
+				if(jsonData[num].NODE_ID ==  dlt_BRT_STTN_STAT_PIVOT.getCellData(j, "NODE_ID")){
+					transData.push(dlt_BRT_STTN_STAT_PIVOT.getRowJSON(j));
+				}else if(jsonData[num].NODE_ID  !=  dlt_BRT_STTN_STAT_PIVOT.getCellData(j, "NODE_ID")){
 					num = j;
 					j = j;
 					break;
@@ -390,8 +412,16 @@
 			}
 			
 			for(var y = 0; y < transData.length; y++){
-				var label = transData[y].ROUT_NM;
-				var avrgSpd = transData[y].AVRG_SPD;
+				var label = transData[y].STTN_NM;
+				
+				if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
+					var val = transData[y].AVRG_DELAY_SEC;
+				}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
+					var val = transData[y].DSPTCH_CNT;
+				}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
+					var val = transData[y].SIGOPER_CTL_CNT;
+				}
+				
 				//var statH = transData[y].STAT_H;
 				var operDt = transData[y].OPER_DT;
 				
@@ -399,7 +429,7 @@
 					var categoryJson = new Object();
 					var labelJson = new Object();
 					
-					categoryJson = avrgSpd;
+					categoryJson = val;
 					labelJson = operDt;
 					
 					xLabel.push(labelJson);
@@ -425,12 +455,12 @@
 		transData = [];
 	}
 	
-		var ctx = document.getElementById('chart_ST0200');
-		if(chart_ST0200 != null) {
-		      chart_ST0200.destroy();   
+		var ctx = document.getElementById('chart_ST0800');
+		if(chart_ST0800 != null) {
+		      chart_ST0800.destroy();   
 		}
 	
-		chart_ST0200 = new Chart(ctx, {
+		chart_ST0800 = new Chart(ctx, {
 			    type: 'bar',
 				data: {
 					labels:xLabel,
@@ -449,7 +479,7 @@
 										}	
 									}	
 								}
-						}]	
+						}]
 					}
 			    }
 			});
@@ -463,17 +493,17 @@
 		var j = 0;
 		var num = 0;
 	
-		var rowCount = dlt_BRT_ROUT_AVER_OPER_SP_STAT.getRowCount();
-		var jsonData = dlt_BRT_ROUT_AVER_OPER_SP_STAT.getAllJSON();
+		var rowCount = dlt_BRT_STTN_STAT_PIVOT.getRowCount();
+		var jsonData = dlt_BRT_STTN_STAT_PIVOT.getAllJSON();
 	
 		for(i; i<chkCnt; i++){
 			var data = new Array();
 			var xLabel = new Array();
 			
 			for(j; j<rowCount; j++){
-				if(jsonData[num].ROUT_ID ==  dlt_BRT_ROUT_AVER_OPER_SP_STAT.getCellData(j, "ROUT_ID")){
-					transData.push(dlt_BRT_ROUT_AVER_OPER_SP_STAT.getRowJSON(j));
-				}else if(jsonData[num].ROUT_ID  !=  dlt_BRT_ROUT_AVER_OPER_SP_STAT.getCellData(j, "ROUT_ID")){
+				if(jsonData[num].NODE_ID ==  dlt_BRT_STTN_STAT_PIVOT.getCellData(j, "NODE_ID")){
+					transData.push(dlt_BRT_STTN_STAT_PIVOT.getRowJSON(j));
+				}else if(jsonData[num].NODE_ID  !=  dlt_BRT_STTN_STAT_PIVOT.getCellData(j, "NODE_ID")){
 					num = j;
 					j = j;
 					break;
@@ -481,8 +511,16 @@
 			}
 			
 			for(var y = 0; y < transData.length; y++){
-				var label = transData[y].ROUT_NM;
-				var avrgSpd = transData[y].AVRG_SPD;
+				var label = transData[y].STTN_NM;
+				
+				if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
+					var val = transData[y].AVRG_DELAY_SEC;
+				}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
+					var val = transData[y].DSPTCH_CNT;
+				}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
+					var val = transData[y].SIGOPER_CTL_CNT;
+				}
+				
 				//var statH = transData[y].STAT_H;
 				var operDt = transData[y].OPER_DT;
 				
@@ -490,7 +528,7 @@
 					var categoryJson = new Object();
 					var labelJson = new Object();
 					
-					categoryJson = avrgSpd;
+					categoryJson = val;
 					labelJson = operDt;
 					
 					xLabel.push(labelJson);
@@ -516,12 +554,12 @@
 		transData = [];
 	}
 	
-		if(chart_ST0200 != null) {
-		      chart_ST0200.destroy();   
+		if(chart_ST0800 != null) {
+		      chart_ST0800.destroy();   
 		}
 	
-		var ctx = document.getElementById('chart_ST0200');
-		chart_ST0200 = new Chart(ctx, {
+		var ctx = document.getElementById('chart_ST0800');
+		chart_ST0800 = new Chart(ctx, {
 			    type: 'bar',
 				data: {
 					labels:xLabel,
@@ -537,7 +575,7 @@
 	
 	
 	scwin.TYPE10_onviewchange = function(info) {
-		com.searchGrid(ST0200G0, sub_ST0200G0R0);
+		com.searchGrid(ST0800G0, sub_ST0800G0R0);
 	};
 
 	scwin.F_DATE_onviewchange = function(info) {
@@ -548,15 +586,7 @@
 			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseF(info));
 		}
 		
-		/*if(SELECT_DIV.getValue() == 'TIME'){
-			com.executeSubmission(sub_ST0200G1R0);
-		}else if(SELECT_DIV.getValue() == 'DAY'){
-			com.executeSubmission(sub_ST0200G1R1);
-		}else if(SELECT_DIV.getValue() == 'MONTH'){
-			com.executeSubmission(sub_ST0200G1R2);
-		}*/
-		
-		com.executeSubmission(sub_ST0200G1R0);
+		com.executeSubmission(sub_ST0800G2R0);
 	};
 	scwin.checkCloseF = function(info) {
 		F_DATE.setValue(info.oldValue);
@@ -570,15 +600,7 @@
 			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseL(info));
 		}
 		
-		/*if(SELECT_DIV.getValue() == 'TIME'){
-			com.executeSubmission(sub_ST0200G1R0);
-		}else if(SELECT_DIV.getValue() == 'DAY'){
-			com.executeSubmission(sub_ST0200G1R1);
-		}else if(SELECT_DIV.getValue() == 'MONTH'){
-			com.executeSubmission(sub_ST0200G1R2);
-		}*/
-		
-		com.executeSubmission(sub_ST0200G1R0);
+		com.executeSubmission(sub_ST0800G2R0);
 	};
 	
 	scwin.checkCloseL = function(info) {
@@ -589,13 +611,6 @@
 	scwin.SELECT_DIV_onviewchange = function(info) {
 		dma_sub_search.set("SELECT_DIV", info.newValue);
 	
-		/*if(info.newValue == 'TIME'){
-			com.executeSubmission(sub_ST0200G1R0);
-		}else if(info.newValue == 'DAY'){
-			com.executeSubmission(sub_ST0200G1R1);
-		}else if(info.newValue == 'MONTH'){
-			com.executeSubmission(sub_ST0200G1R2);
-		}*/
 		
 		if(info.newValue == 'MONTH'){
 			F_DATE.setCalendarValueType("yearMonth");
@@ -605,53 +620,50 @@
 			L_DATE.setCalendarValueType("yearMonthDate");
 		}
 		
-		com.executeSubmission(sub_ST0200G1R0);
+		com.executeSubmission(sub_ST0800G2R0);
 	};
 	
-	scwin.sub_ST0200G1R0_submitdone = function(e) {
-		var chkJsonData = ST0200G0.getCheckedJSON("chk");
+	scwin.sub_ST0800G2R0_submitdone = function(e) {
+		var chkJsonData = ST0800G1.getCheckedJSON("chk");
 		var chkCnt = chkJsonData.length;
-		chart_ST0200.destroy();
+		chart_ST0800.destroy();
 		
 		if(chkCnt > 0 && SELECT_DIV.getValue() == 'TIME'){
-			scwin.DrawLineChart_Time(chkCnt);
-			/*pivot_ST0200.setRows("ROUT_NM");
-			pivot_ST0200.setCols("STAT_H");
-			pivot_ST0200.setVals("AVRG_SPD");*/
-			pivot_ST0200.setOption({"rows" : "ROUT_NM, OPER_DT", "cols" : "STAT_H", "vals" : "AVRG_SPD"});
+			scwin.DrawLineChart_Time(chkCnt, chkJsonData);
+			if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "AVRG_DELAY_SEC"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "DSPTCH_CNT"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "SIGOPER_CTL_CNT"});
+			}
 		}else if(chkCnt > 0 && SELECT_DIV.getValue() == 'DAY'){
 			scwin.DrawBarChart_Day(chkCnt, chkJsonData);
-			pivot_ST0200.setRows("ROUT_NM");
-			pivot_ST0200.setCols("OPER_DT");
-			pivot_ST0200.setVals("AVRG_SPD");
+			if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "AVRG_DELAY_SEC"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "DSPTCH_CNT"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "SIGOPER_CTL_CNT"});
+			}
 		}else if(chkCnt > 0 && SELECT_DIV.getValue() == 'MONTH'){
 			scwin.DrawBarChart_Month(chkCnt);
-			pivot_ST0200.setRows("ROUT_NM");
-			pivot_ST0200.setCols("OPER_DT");
-			pivot_ST0200.setVals("AVRG_SPD");
+			if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "AVRG_DELAY_SEC"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "DSPTCH_CNT"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
+				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "SIGOPER_CTL_CNT"});
+			}
 		}
 		
+			//pivot테이블 옵션 따로따로 설정.
+			/*pivot_ST0800.setRows("STTN_NM");
+			pivot_ST0800.setCols("STAT_H");
+			pivot_ST0800.setVals("AVRG_DELAY_SEC");*/
 	};
 	
-	/*scwin.sub_ST0200G1R1_submitdone = function(e) {
-		var chkJsonData = ST0200G0.getCheckedJSON("chk");
-		var chkCnt = chkJsonData.length;
-		
-		if(chkCnt > 0){
-			scwin.DrawBarChart_Day(chkCnt, chkJsonData);
-		}
-	};
-	
-	scwin.sub_ST0200G1R2_submitdone = function(e) {
-		var chkJsonData = ST0200G0.getCheckedJSON("chk");
-		var chkCnt = chkJsonData.length;
-		
-		if(chkCnt > 0){
-			scwin.DrawBarChart_Month(chkCnt);
-		}
-	};*/
-	
-	]]></script>
+]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
@@ -687,24 +699,12 @@
 								</w2:itemset>
 							</w2:choices>
 						</w2:autoComplete>
-						<!-- <xf:group style="" id="" class="label">
-							<w2:span label="일시" style="float: left;margin-right: 3px; margin-left: 12px;" id=""></w2:span>
-							</xf:group>
-							<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
-							style="width:120px; margin-right: 10px; float: left;margin-top: 3px;" id="" renderType="component" renderDiv="true"
-							calendarValueType="yearMonthDate" ref="data:dma_search.F_DATE">
-							</w2:inputCalendar>
-							<w2:span label="~" style="float: left;margin-right: 10px;margin-top: 5px;" id=""></w2:span>
-							<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
-							style="width: 120px;float: left;margin-top: 3px;" id="" renderType="component" renderDiv="true" calendarValueType="yearMonthDate"
-							ref="data:dma_search.L_DATE">
-							</w2:inputCalendar> -->
 					</xf:group>
 					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
 			</xf:group><!-- pgm_header -->
 			<xf:group id="pgm_content" class="pgm_content grdc_500_20_a" style="">
-				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_187_2_20_a" style="">
 					<xf:group id="" class="" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="노선목록" style=""></w2:textbox>
@@ -712,35 +712,89 @@
 					</xf:group>
 					<xf:group></xf:group><!-- margin -->
 					<xf:group id="" class="" style="">
-
 						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid left"
-							dataList="data:dlt_BMS_ROUT_MST" enterKeyMove="" ev:onafteredit="" ev:oncellclick="scwin.ST0200G0_oncellclick" ev:oneditkeyup=""
-							ev:onkeyup="" ev:onrowindexchange="scwin.ST0200G0_onrowindexchange" ev:ontextimageclick="" ev:onviewchange=""
-							fixedColumnWithHidden="true" id="ST0200G0" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true"
+							dataList="data:dlt_BMS_ROUT_MST" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup=""
+							ev:onkeyup="" ev:onrowindexchange="scwin.ST0800G0_onrowindexchange" ev:ontextimageclick="" ev:onviewchange=""
+							fixedColumnWithHidden="true" id="ST0800G0" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true"
 							rowStatusHeaderValue="" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true"
 							visibleRowNum="" wheelRows="" autoFitMinWidth="0" disabledScrollHidden="" editModeEvent="" editModeEventIcon=""
 							checkEditableInputClass="" keyMoveEditMode="" moveKeyEditMode="" moveKeyEditModeAll="" ignoreNonEditableCellTabEnter=""
 							readOnly="true" keepDefaultColumnWidth="" oddEvenColorDisplay="" rowNumWidth="" summaryAuto="" excludeDeletedRows=""
 							useCtrlOnMultisort="" useFilterList="" useFilterListSync="" sortedIconPosition="" sortable="" sortOrderReverse=""
 							showSortableUseFilter="" focusMode="row" rowNumStatusUniqueId="" rowNumStatusResize="" ev:onbeforecolumnmove="" userData1=""
-							ev:onheaderclick="scwin.ST0200G0_onheaderclick">
+							ev:onheaderclick="">
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
-									<w2:column width="40" inputType="checkbox" style="height:20px" id="chkHeader" value="선택" blockSelect="false"
-										sortable="false">
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column4"
+										value="대표노선ID" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column4" value="대표노선ID"
-										blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column2"
+										value="대표노선명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column2" value="대표노선명"
-										blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column3"
+										value="노선ID" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column3" value="노선ID"
-										blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column1"
+										value="노선명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column1" value="노선명"
-										blockSelect="false" displayMode="label">
+								</w2:row>
+							</w2:header>
+							<w2:gBody style="" id="gBody1">
+								<w2:row style="" id="row2">
+									<w2:column removeBorderStyle="false" width="94" inputType="text" style="height:20px" id="REP_ROUT_ID"
+										value="" blockSelect="false" displayMode="label" textAlign="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="94" inputType="text" style="height:20px" id="REP_ROUT_NM"
+										value="" blockSelect="false" displayMode="label" textAlign="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="85" inputType="text" style="height:20px" id="ROUT_ID"
+										value="" blockSelect="false" displayMode="label" textAlign="">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="85" inputType="text" style="height:20px" id="ROUT_NM"
+										value="" blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer style="" id="footer1">
+								<w2:row style="" id="row3">
+									<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;"
+										id="column48" value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan=""
+										expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" textAlign="left">
+									</w2:column>
+								</w2:row>
+							</w2:footer>
+						</w2:gridView>
+					</xf:group>
+					<xf:group style="" id=""></xf:group>
+					<xf:group id="" class="" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="정류소 목록" style=""></w2:textbox>
+						</xf:group>
+					</xf:group>
+					<xf:group id="" class="" style="">
+						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid left"
+							dataList="data:dlt_BRT_STTN_STAT" enterKeyMove="" ev:onafteredit="" ev:oncellclick="scwin.ST0800G1_oncellclick" ev:oneditkeyup=""
+							ev:onkeyup="" ev:onrowindexchange="scwin.ST0800G1_onrowindexchange" ev:ontextimageclick="" ev:onviewchange=""
+							fixedColumnWithHidden="true" id="ST0800G1" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true"
+							rowStatusHeaderValue="" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true"
+							visibleRowNum="" wheelRows="" autoFitMinWidth="0" disabledScrollHidden="" editModeEvent="" editModeEventIcon=""
+							checkEditableInputClass="" keyMoveEditMode="" moveKeyEditMode="" moveKeyEditModeAll="" ignoreNonEditableCellTabEnter=""
+							readOnly="true" keepDefaultColumnWidth="" oddEvenColorDisplay="" rowNumWidth="" summaryAuto="" excludeDeletedRows=""
+							useCtrlOnMultisort="" useFilterList="" useFilterListSync="" sortedIconPosition="" sortable="" sortOrderReverse=""
+							showSortableUseFilter="" focusMode="row" rowNumStatusUniqueId="" rowNumStatusResize="" ev:onbeforecolumnmove="" userData1=""
+							ev:onheaderclick="scwin.ST0800G1_onheaderclick">
+							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
+							<w2:header style="" id="header1">
+								<w2:row style="" id="row1">
+									<w2:column width="40" inputType="checkbox" style="height:20px" id="chkHeader" value="선택"
+										blockSelect="false" sortable="false">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column4"
+										value="정류소ID" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column2"
+										value="정류소명" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
 							</w2:header>
@@ -749,25 +803,19 @@
 									<w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px"
 										inputType="checkbox" id="chk" blockSelect="false">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="94" inputType="text" style="height:20px" id="REP_ROUT_ID" value=""
-										blockSelect="false" displayMode="label" textAlign="">
+									<w2:column removeBorderStyle="false" width="94" inputType="text" style="height:20px" id="NODE_ID"
+										value="" blockSelect="false" displayMode="label" textAlign="">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="94" inputType="text" style="height:20px" id="REP_ROUT_NM" value=""
-										blockSelect="false" displayMode="label" textAlign="">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="85" inputType="text" style="height:20px" id="ROUT_ID" value=""
-										blockSelect="false" displayMode="label" textAlign="">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="85" inputType="text" style="height:20px" id="ROUT_NM" value=""
-										blockSelect="false" displayMode="label" textAlign="left">
+									<w2:column removeBorderStyle="false" width="94" inputType="text" style="height:20px" id="STTN_NM"
+										value="" blockSelect="false" displayMode="label" textAlign="">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
 							<w2:footer style="" id="footer1">
 								<w2:row style="" id="row3">
-									<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;" id="column48" value=""
-										blockSelect="false" displayMode="label" colSpan="15" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')"
-										textAlign="left">
+									<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;"
+										id="column48" value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan=""
+										expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" textAlign="left">
 									</w2:column>
 								</w2:row>
 							</w2:footer>
@@ -808,13 +856,27 @@
 								style="width: 120px;margin-top: 3px;" id="L_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate"
 								ref="data:dma_sub_search.L_DATE" ev:onviewchange="scwin.L_DATE_onviewchange">
 							</w2:inputCalendar>
+							<ul id="" class="stat_sttn"  style="margin-top: 10px;">
+								<li id="li_avrg_delay_sec" class="on" >
+									<!-- <span class="busimg"></span> -->
+									평균지연시간
+								</li>
+								<li id="li_dsptch_cnt" class="" >
+									<!-- <span class="crossimg"></span> -->
+									디스패치건수
+								</li>
+								<li id="li_sigoper_ctl_cnt" class="" >
+									<!-- <span class="sttnimg"></span> -->
+									신호제어건수
+								</li>
+							</ul>
 						</xf:group>
 						<w2:wframe id="wfm_subBtn2" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
 					</xf:group>
 					<xf:group></xf:group><!-- margin -->
 
 					<xf:group style="position:relative;" id="" class="">
-						<canvas id="chart_ST0200" style="position:absolute;"></canvas>
+						<canvas id="chart_ST0800" style="position:absolute;"></canvas>
 					</xf:group>
 
 					<xf:group id="" class="horizontal_line"></xf:group>
@@ -823,8 +885,8 @@
 						<w2:span label="단위 : [평균통행속도:km/h]" style="float: left;margin-right: 3px; margin-top:5px;" id=""></w2:span>
 					</xf:group>
 					<xf:group id="" class="" style="position: relative;">
-						<w2:pivot style="position: absolute;height:100%;width:100%;" dataList="dlt_BRT_ROUT_AVER_OPER_SP_STAT" vals="AVRG_SPD"
-							rows="OPER_DT,ROUT_NM" cols="STAT_H" defaultAggregator="Sum" valuesAxis="col" id="pivot_ST0200" renderMode="compact"
+						<w2:pivot style="position: absolute;height:100%;width:100%;" dataList="data:dlt_BRT_STTN_STAT_PIVOT" vals="AVRG_DELAY_SEC"
+							rows="STTN_NM" cols="STAT_H" defaultAggregator="Sum" valuesAxis="col" id="pivot_ST0800" renderMode="compact"
 							autoFit="allColumn" grandTotalDisplayType="both" showZero="true" showGrandTotal="true" aggregatorName="Average" allTotalName="평균속도"
 							digitsAfterDecimal="1" useNumberFormat="true" autoFitMinWidth="1300" autoPopupInvalidMessage="" headerTextAlign="center"
 							noResultMessage="">
@@ -833,11 +895,12 @@
 								<w2:field id="REP_ROUT_ID" name="대표노선ID"></w2:field>
 								<w2:field id="ROUT_ID" name="노선ID"></w2:field>
 								<w2:field id="ROUT_NM" name="노선명"></w2:field>
+								<w2:field id="STTN_NM" name="정류소명"></w2:field>
 								<w2:field id="STAT_H" name="통계시간"></w2:field>
 								<w2:field id="STAT_T" name="통계시간"></w2:field>
-								<w2:field id="AVRG_SPD" name="평균속도"></w2:field>
-								<w2:field id="MAX_SPD" name="최대속도"></w2:field>
-								<w2:field id="MIN_SPD" name="최저속도"></w2:field>
+								<w2:field id="AVRG_DELAY_SEC" name="평균속도"></w2:field>
+								<w2:field id="DSPTCH_CNT" name="디스패치건수"></w2:field>
+								<w2:field id="SIGOPER_CTL_CNT" name="신호제어건수"></w2:field>
 							</w2:fieldInfo>
 						</w2:pivot>
 					</xf:group>

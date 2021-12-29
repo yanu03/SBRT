@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="/cm/css/all.css" type="text/css"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head meta_vertical_guides="375" meta_horizontal_guides="">
+		<!-- 
+		#####################################################################
+		파일명 : SM0401M01.xml
+		프로그램명 : 사원 관리 
+		설 명 :  사원 정보를 관리(등록,수정,삭제)하는 화면
+		작성자 : Inswave Systems
+		작성일 : 2016.10.24
+		
+		수정일자	  수정자			 수정내용
+		=====================================================================
+		2016.10.24	Inswave Systems	최초작성
+		2018.01.26	Inswave Systems	WebSquare5 SP2 기능을 적용하도록 소스 업그레이드
+		2018.11.12	Inswave Systems	WebSquare5 SP3 기능을 적용하도록 소스 업그레이드
+		#####################################################################
+		-->
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="IS_USE" name="name3" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataList id="dlt_BMS_API_INFO" baseNode="list" saveRemovedData="true" repeatNode="map">
+					<w2:columnInfo>
+						<w2:column id="API_ID" name="API아이디" dataType="text"></w2:column>
+						<w2:column id="API_NAME" name="API명" dataType="text"></w2:column>
+						<w2:column id="API_END_POINT" name="API엔드포인트" dataType="text"></w2:column>
+						<w2:column id="ALLOWED_IP" name="허용IP" dataType="text"></w2:column>
+						<w2:column id="EXPIRE_DATE" name="API키만료일" dataType="date"></w2:column>
+						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
+						<w2:column id="API_KEY" name="API키" dataType="text"></w2:column>
+						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="date"></w2:column>
+						<w2:column id="UPD_ID" name="갱신아이디" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_result">
+					<w2:keyInfo>
+						<w2:key id="STATUS" name="name1" dataType="text"></w2:key>
+						<w2:key id="ICNT" name="name2" dataType="text"></w2:key>
+						<w2:key id="UCNT" name="name3" dataType="text"></w2:key>
+						<w2:key id="DCNT" name="name4" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="name5" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataList id="dlt_searchItem" baseNode="list" saveRemovedData="true" repeatNode="map">
+					<w2:columnInfo>
+						<w2:column id="API_ID" name="API권한 ID" dataType="text"></w2:column>
+						<w2:column id="API_NAME" name="API권한명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_API_INFO_0">
+					<w2:keyInfo>
+						<w2:key id="SEQ" name="SEQ" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_SM0800G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_API_INFO"
+				action="/sm/SM0800G0R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_SM0800G0R0_submitdone"
+				ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_SM0800G0S0" ref='data:json,{"action":"modified","id":"dlt_BMS_API_INFO"}'
+				target='data:json,dma_result' action="/sm/SM0800G0S0" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중 입니다..." ev:submit=""
+				ev:submitdone="scwin.sub_SM0800G0S0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_SM0800SHI0" ref="" target="data:json,dlt_searchItem"
+				action="/sm/SM0800SHI0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
+				errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_SM0800G0K0" ref="" target="data:json,dma_SEQ_BMS_API_INFO_0" action="/sm/SM0800G0K0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="scwin.sub_SM0800G0K0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+	/**
+	 * 초기화 함수(셀렉트 박스의 항목을 가져온다)
+	 */
+	scwin.onpageload = function() {
+	
+		var autoOptions = {
+			Main : { grid : SM0800G0, frm : SM0800F0, keyColumn : "API_ID", focusColumn : "API_ID", srchGrp : pgm_header
+					, srchSbm : sub_SM0800G0R0, savSbm : sub_SM0800G0S0, keySbm : sub_SM0800G0K0}
+		};
+		
+		var mainOptions = {
+			SAVE: scwin.btn_ServiceKey_onclick
+		};
+		
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions, mainOptions);
+		
+		com.executeSubmission(sub_SM0800SHI0);
+		com.executeSubmission(sub_SM0800G0R0);
+	};
+	
+	scwin.onpageunload = function() {
+	
+	};
+	
+	/**
+	 * 검색항목(selectBox)의 내용이 변경되었을 때 실행된다.
+	 * 직위면 inputBox를 hidden, selectBox를 띄운다. 
+	 */
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
+		if (info.newValue == "ALL") {
+			acb_autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} else if (info.newValue == "API_ID") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_memberSearchItem", "API_ID", "API_ID");
+			acb_autoChoiceBox.show("");
+		} else if (info.newValue == "API_NAME") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_memberSearchItem", "API_NAME", "API_NAME");
+			acb_autoChoiceBox.show("");
+		}
+	};
+	
+	
+	/**
+	 * 저장 버튼 클릭한다.
+	 */
+	scwin.btn_ServiceKey_onclick = function() {
+		var modifiedIdx = dlt_BMS_API_INFO.getModifiedIndex();
+		var modifiedRowCount = modifiedIdx.length;
+		
+		var accIp1 = ACC_IP1.getValue();
+		var accIp2 = ACC_IP2.getValue();
+		var accIp3 = ACC_IP3.getValue();
+		var accIp4 = ACC_IP4.getValue();
+		var accIp = accIp1 +'.'+accIp2 +'.'+ accIp3 +'.'+ accIp4
+		dlt_BMS_API_INFO.setCellData(SM0800G0.getFocusedRowIndex(), "ALLOWED_IP", accIp);
+		
+		if (com.validateGridTableView(SM0800G0, SM0800F0) && modifiedRowCount > 0) {
+			com.confirm(modifiedRowCount + "건의 데이타를 반영하시겠습니까", function(rtn) {
+				if (rtn) { 
+					com.executeSubmission(sub_SM0800G0S0);
+				}
+			});
+		}
+		
+	};
+	
+	/**
+	 * 저장 콜백 메소드
+	 */
+	scwin.sub_SM0800G0S0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SAVE) {
+			com.searchGrid(SM0800G0, sub_SM0800G0R0);
+		}
+	};
+
+	
+	scwin.SM0800G0_onrowindexchange = function(row, oldRow) {
+		var allIp = dlt_BMS_API_INFO.getCellData(row, "ALLOWED_IP");
+		var allIpArray = allIp.split('.');
+		
+		if(allIp != ""){
+			ACC_IP1.setValue(allIpArray[0]);
+			ACC_IP2.setValue(allIpArray[1]);
+			ACC_IP3.setValue(allIpArray[2]);
+			ACC_IP4.setValue(allIpArray[3]);
+		}else{
+			ACC_IP1.setValue("");
+			ACC_IP2.setValue("");
+			ACC_IP3.setValue("");
+			ACC_IP4.setValue("");
+		}
+		
+		var dltObj = com.getGridViewDataList(SM0800G0);
+		var rowStatus = dltObj.getRowStatus(row);
+		if(rowStatus == 'R'){
+			ACC_IP1.setDisabled(true);
+			ACC_IP2.setDisabled(true);
+			ACC_IP3.setDisabled(true);
+			ACC_IP4.setDisabled(true);
+		}else{
+			ACC_IP1.setDisabled(false);
+			ACC_IP2.setDisabled(false);
+			ACC_IP3.setDisabled(false);
+			ACC_IP4.setDisabled(false);
+		}
+	};
+	
+
+	scwin.sub_SM0800G0K0_submitdone = function(e) {
+		com.addGridForm(SM0800G0, SM0800F0, dma_SEQ_BMS_API_INFO_0, "API_ID", "API_ID");
+	};
+	
+	
+	scwin.sub_SM0800G0R0_submitdone = function(e) {
+		com.setFocusedCell(SM0800G0, "API_ID");
+	};
+	
+	scwin.useYnDisFormatter = function(data){
+		if(data == ""){
+			return "";
+		}else if(data == 'Y'){
+			return "사용";
+		}else if(data == 'N'){
+			return "사용안함";
+		}
+	}
+	
+	]]></script>
+
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
+			<xf:group id="pgm_navi" class="pgm_navi" style="">
+				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
+			</xf:group>
+			<xf:group id="pgm_header" class="pgm_header" style="">
+				<xf:group id="" style="" class="gr_search">
+					<xf:group id="" style="" class="label">
+						<w2:span id="" class="" label="검색 항목"></w2:span>
+					</xf:group>
+					<xf:group id="" style="" class="search">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
+							optionOrder="false" ref="data:dma_search.TYPE" style="" class="search_type" submenuSize="auto" textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[API권한 ID]]></xf:label>
+									<xf:value><![CDATA[API_ID]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[API권한명]]></xf:label>
+									<xf:value><![CDATA[API_NAME]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="API권한 ID 또는 API권한명"></xf:input>
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
+							ev:onviewchange="" id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
+							selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+							<w2:choices>
+								<w2:itemset nodeset="data:dlt_memberSearchItem">
+									<w2:label ref="USER_NM"></w2:label>
+									<w2:value ref="USER_NM"></w2:value>
+								</w2:itemset>
+							</w2:choices>
+						</w2:autoComplete>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group><!-- pgm_header -->
+			<xf:group id="pgm_content" class="pgm_content grdc_a_20_900_minmax" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
+					<xf:group id="" class="" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="API권한 목록" style=""></w2:textbox>
+						</xf:group>
+					</xf:group>
+					<xf:group></xf:group>
+					<xf:group id="" class="" style="">
+						<w2:gridView ignoreCellClick="false" ev:onrowindexchange="scwin.SM0800G0_onrowindexchange"
+							autoFit="lastColumn" sortable="true" sortEvent="onclick" class="cm_grid left" showSortableImage="" fixedColumnWithHidden="true"
+							dataList="dlt_BMS_API_INFO" id="SM0800G0" readOnly="" style="" overflowX="hidden" useShiftKey="true" scrollByColumn="false"
+							overflowY="scroll" rowStatusVisible="false" ev:onafteredit="" rowStatusHeaderValue="상태"
+							ev:oncellclick="scwin.SM0800G0_oncellclick" ev:oncelldblclick="" rowNumHeaderValue="순서" rowNumVisible="true"
+							focusMode="row">
+							<w2:header id="header1" style="">
+								<w2:row id="row2" style="">
+									<w2:column id="column13" blockSelect="false" style="height:20px;" width="100" inputType="text"
+										value="API권한 ID" displayMode="label" class="req">
+									</w2:column>
+									<w2:column id="column11" blockSelect="false" style="height:20px;" width="150" inputType="text"
+										value="API권한명" displayMode="label" class="req">
+									</w2:column>
+									<w2:column id="column3" blockSelect="false" style="height:20px;" width="150" inputType="text"
+										value="접근허용IP" displayMode="label" class="req">
+									</w2:column>
+									<w2:column id="column14" blockSelect="false" style="height:20px;" width="150" inputType="text"
+										value="키 만료일" displayMode="label" class="req">
+									</w2:column>
+									<w2:column id="column16" blockSelect="false" style="height:20px;" width="110" inputType="text"
+										value="키 사용여부" displayMode="label" class="req">
+									</w2:column>
+									<w2:column id="column17" blockSelect="false" style="height:20px;" width="0" inputType="text"
+										value="서비스 키" displayMode="label" class="req">
+									</w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody id="gBody4" style="">
+								<w2:row id="row5" style="">
+									<w2:column id="API_ID" blockSelect="false" readOnly="true" style="height:20px;" width=""
+										inputType="text" displayMode="label" userData1="M">
+									</w2:column>
+									<w2:column id="API_NAME" blockSelect="false" readOnly="true" style="height:20px;" width=""
+										inputType="text" displayMode="label" userData1="M" textAlign="left">
+									</w2:column>
+									<w2:column id="ALLOWED_IP" blockSelect="false" readOnly="true" style="height:20px;" width=""
+										inputType="text" displayMode="label" textAlign="right" chooseOption="false" chooseOptionLabel="" checkboxLabelFormatter=""
+										allOption="" ref="" userData1="M">
+									</w2:column>
+									<w2:column id="EXPIRE_DATE" blockSelect="false" readOnly="true" style="height:20px" width="" inputType="text"
+										displayMode="label" textAlign="" userData1="M">
+									</w2:column>
+									<w2:column id="USE_YN" blockSelect="false" readOnly="true" style="height:20px;" width="" inputType="text"
+										displayMode="label" userData1="M" displayFormatter="scwin.useYnDisFormatter">
+									</w2:column>
+									<w2:column id="API_KEY" blockSelect="false" readOnly="true" style="height:20px;" width=""
+										inputType="text" displayMode="label" userData1="">
+									</w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer style="" id="footer1">
+								<w2:row style="" id="row3">
+									<w2:column removeBorderStyle="false" width="" inputType="expression" style="height:20px;" id="column42"
+										value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')"
+										textAlign="left">
+									</w2:column>
+								</w2:row>
+							</w2:footer>
+						</w2:gridView>
+					</xf:group>
+				</xf:group><!-- pgm_list -->
+
+				<xf:group id="" class="vertical_line"></xf:group>
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_300_a" style="">
+					<xf:group id="" class="gr_sub_header" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="API권한 정보" style=""></w2:textbox>
+						</xf:group>
+					</xf:group>
+					<xf:group style="" id=""></xf:group>
+					<xf:group class="" id="" style="">
+						<xf:group id="SM0800F0" style="width:100%;" class="w2tb tb" tagname="table">
+							<w2:attributes>
+								<w2:summary></w2:summary>
+							</w2:attributes>
+							<xf:group tagname="colgroup">
+								<xf:group style="width:120px;" tagname="col"></xf:group>
+								<xf:group style="" tagname="col"></xf:group>
+								<xf:group style="width:120px;" tagname="col"></xf:group>
+								<xf:group style="" tagname="col"></xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group style="" class="w2tb_th req" tagname="th">API권한 ID</xf:group>
+								<xf:group style="" class="w2tb_td" tagname="td">
+									<xf:input id="ibx_userId" ref="data:dlt_BMS_API_INFO.API_ID" enterBlur=""
+										style="height:24px;width: 100px;" mandatory="true" class="req" maxlength="10" minlength="1" userData1="M" disabled="true">
+									</xf:input>
+								</xf:group>
+								<xf:group style="" class="w2tb_th req" tagname="th">API권한명</xf:group>
+								<xf:group style="" class="w2tb_td" tagname="td" useLocale="" userData1="M">
+									<xf:input id="ibx_userNm" ref="data:dlt_BMS_API_INFO.API_NAME" style="height:24px;width: 150px"
+										mandatory="true" class="req" maxlength="30">
+									</xf:input>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group style="" class="w2tb_th req" tagname="th">접근허용IP</xf:group>
+								<xf:group style="" class="w2tb_td" tagname="td">
+									<xf:input id="ACC_IP1" ref="" enterBlur="" style="height:24px;width: 40px;" mandatory="true" class="req"
+										maxlength="3" minlength="1" userData1="M" allowChar="0-9*">
+									</xf:input>
+									<w2:span id="" class="" label="." style="margin-left: 5px; margin-right: 5px;"></w2:span>
+									<xf:input id="ACC_IP2" ref="" enterBlur="" style="height:24px;width: 40px;" mandatory="true" class="req"
+										maxlength="3" minlength="1" userData1="M" allowChar="0-9*">
+									</xf:input>
+									<w2:span id="" class="" label="." style="margin-left: 5px; margin-right: 5px;"></w2:span>
+									<xf:input id="ACC_IP3" ref="" enterBlur="" style="height:24px;width: 40px;" mandatory="true" class="req"
+										maxlength="3" minlength="1" userData1="M" allowChar="0-9*">
+									</xf:input>
+									<w2:span id="" class="" label="." style="margin-left: 5px; margin-right: 5px;"></w2:span>
+									<xf:input id="ACC_IP4" ref="" enterBlur="" style="height:24px;width: 40px;" mandatory="true" class="req"
+										maxlength="3" minlength="1" userData1="M" allowChar="0-9*">
+									</xf:input>
+								</xf:group>
+								<xf:group style="" class="w2tb_th req" tagname="th">키만료일</xf:group>
+								<xf:group style="" class="w2tb_td" tagname="td">
+									<w2:inputCalendar footerDiv="false" id="EXPIRE_DATE" style="width: 150px;height: 23px;" renderDiv="true"
+										focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component"
+										ref="data:dlt_BMS_API_INFO.EXPIRE_DATE">
+									</w2:inputCalendar>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group style="" class="w2tb_th req" tagname="th">키 사용여부</xf:group>
+								<xf:group style="" class="w2tb_td" tagname="td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:select1 id="" chooseOption="" style="width: 100px;height: 21px;" submenuSize="auto" allOption=""
+										disabled="false" direction="auto" appearance="minimal" disabledClass="w2selectbox_disabled" ref="data:dlt_BMS_API_INFO.USE_YN">
+										<xf:choices>
+											<xf:item>
+												<xf:label><![CDATA[사용]]></xf:label>
+												<xf:value><![CDATA[Y]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[사용안함]]></xf:label>
+												<xf:value><![CDATA[N]]></xf:value>
+											</xf:item>
+										</xf:choices>
+									</xf:select1>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group style="height: 70px;vertical-align: top;" class="w2tb_th" tagname="th">비고</xf:group>
+								<xf:group style="" class="w2tb_td" tagname="td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:textarea adjustMaxLength="" class="" disabled="" id="REMARK" mandatory=""
+										ref="data:dlt_BMS_API_INFO.REMARK" style="width:100%;height:70px;" maxlength="200">
+									</xf:textarea>
+								</xf:group>
+							</xf:group>
+							<xf:group tagname="tr" style="">
+								<xf:group tagname="th" class="w2tb_th req" style="height: 70px;vertical-align: top;" id="" tabIndex="">
+									서비스 키
+									<w2:attributes>
+										<w2:scope>row</w2:scope>
+									</w2:attributes>
+								</xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:textarea adjustMaxLength="" class="" disabled="true" id="" mandatory=""
+										ref="data:dlt_BMS_API_INFO.API_KEY" style="width:100%;height:70px;" maxlength="200">
+									</xf:textarea>
+								</xf:group>
+							</xf:group>
+						</xf:group>
+					</xf:group>
+					<xf:group style="position:relative" id="">
+						<xf:image src="/cm/images/add/bg_brt.png" style="position:absolute; width: 100%;height: 100%;" id=""></xf:image>
+					</xf:group>
+				</xf:group><!-- pgm_detail -->
+			</xf:group>
+		</xf:group>
+		
+	</body>
+</html>
