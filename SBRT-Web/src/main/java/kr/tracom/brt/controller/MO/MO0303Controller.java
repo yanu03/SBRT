@@ -77,6 +77,7 @@ public class MO0303Controller extends ControllerSupport{
 	@RequestMapping("/mo/MO0303P3R1")
 	public @ResponseBody Map<String, Object> MO0303P3R1() throws Exception {
 		result.setData("dlt_BRT_CUR_OPER_INFO", mo0303Service.MO0303P3R1());
+		result.setData("dlt_SEND_MESSAGE_LIST", mo0303Service.MO0303P3R1());
 		return result.getResult();
 	}
 	
