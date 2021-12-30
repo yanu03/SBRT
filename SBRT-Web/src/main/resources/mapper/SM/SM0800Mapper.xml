@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.bms.domain.SM0800.SM0800Mapper">
+
+	<select id="SM0800G0R0" resultType="Map">
+	 	SELECT
+	 		API_ID
+			,API_NAME
+			,API_END_POINT
+			,ALLOWED_IP
+			,DATE_FORMAT(EXPIRE_DATE, '%Y%m%d') EXPIRE_DATE
+			,USE_YN
+			,API_KEY
+			,REMARK
+			,DATE_FORMAT(UPD_DTM, '%Y-%m-%d') UPD_DTM
+			,UPD_ID
+		FROM 
+			BMS_API_INFO
+		<where>
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND API_ID LIKE CONCAT('%',#{CONTENT},'%') || API_NAME LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'API_ID'">
+				AND API_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'API_NAME'">
+				AND API_NAME LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>
+		ORDER BY 
+			API_ID
+	</select>
+	
+	<select id="SM0800SHI0" resultType="Map">
+		SELECT 
+			API_ID
+			,API_NAME
+		FROM 
+			BMS_API_INFO
+		ORDER BY
+			API_ID
+	</select>
+	
+	<select id="SM0800G0K0" resultType="Map">
+		SELECT CONCAT('AI', LPAD(NEXTVAL(SEQ_BMS_API_INFO_0), 8, '0')) AS 'SEQ'
+	</select>	
+	
+	<insert id="SM0800G0I0" parameterType="Map">
+	INSERT INTO		BMS_API_INFO	
+					(
+						API_ID
+						,API_NAME
+						,API_END_POINT
+						,ALLOWED_IP
+						,EXPIRE_DATE
+						,USE_YN
+						,API_KEY
+						,REMARK
+						,UPD_DTM
+						,UPD_ID
+					)
+	VALUES			(
+						#{API_ID}
+						,#{API_NAME}
+						,'*'
+						,#{ALLOWED_IP}
+						,#{EXPIRE_DATE}
+						,#{USE_YN}
+						,#{API_KEY}
+						,#{REMARK}
+						,#{UPD_DTM}
+						,#{SSN_USER_ID}	
+					)
+</insert>
+
+<update id="SM0800G0U0" parameterType="Map">
+	UPDATE			BMS_API_INFO
+	SET				API_ID = #{API_ID}
+					,API_NAME = #{API_NAME}
+					,ALLOWED_IP = #{ALLOWED_IP}
+					,EXPIRE_DATE = #{EXPIRE_DATE}
+					,USE_YN = #{USE_YN}	
+					,API_KEY = #{API_KEY}	
+					,REMARK = #{REMARK}	
+					,UPD_DTM = #{UPD_DTM}
+					,UPD_ID = #{SSN_USER_ID}	
+	WHERE			API_ID = #{API_ID}							 	
+</update>
+
+<delete id="SM0800G0D0" parameterType="Map">
+	DELETE FROM 	BMS_API_INFO
+	WHERE			API_ID = #{API_ID}
+</delete>
+	
+	
+	<!--
+	<select id="SM0601G1R0" resultType="Map">
+		SELECT USER_ID, U.ORG_ID, USER_NM, U.EMAIL, HP_NO, ORG_NM 
+		FROM BMS_USER_MST U, BMS_ORG_MST O 
+		<where>
+			<foreach collection="array" item="item" separator=" OR "> (USER_ID = #{item} AND U.ORG_ID = O.ORG_ID)</foreach>
+		</where>
+		
+	</select>
+	
+	<select id="SM0601P0R0" resultType="Map" parameterType="Map">
+		SELECT U.USER_ID, U.EMAIL, U.USER_NM, U.ORG_ID, O.ORG_NM	FROM BMS_USER_MST U, BMS_ORG_MST O 
+		WHERE U.ORG_ID = O.ORG_ID AND U.USER_ID NOT IN (SELECT U.USER_ID 
+		FROM BMS_USER_MST U, BMS_ORG_MST O WHERE 
+		<foreach collection="RCPT_IDS" item="item" separator=" OR "> U.ORG_ID = O.ORG_ID AND U.USER_ID = #{item}</foreach>
+		)
+		<if test="TYPE == 'USER_ID'">
+			AND U.USER_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'USER_NM'">
+			AND U.USER_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		ORDER BY U.USER_ID		
+	</select>
+	
+	<insert id="SM0601G0I0" parameterType="Map">
+		<selectKey keyProperty="EMAIL_ID" resultType="String" order="BEFORE">
+	          SELECT CONCAT('EM', LPAD(NEXTVAL(SEQ_BMS_EMAIL_MST_0), 8, '0'))
+		</selectKey>	
+		INSERT INTO BMS_EMAIL_MST(EMAIL_ID, SENDER_NM, SENDER_ADDR, RCPT_IDS, EMAIL_TITLE, EMAIL_CONTENTS,
+		SEND_DIV, SEND_STS, RSV_DTM, SEND_DTM, UPD_DTM, UPD_ID) 
+		VALUES (#{EMAIL_ID}, #{SENDER_NM}, #{SENDER_ADDR}, #{RCPT_IDS}, #{EMAIL_TITLE}, #{EMAIL_CONTENTS},
+		#{SEND_DIV}, #{SEND_STS}, STR_TO_DATE(#{RSV_DTM}, '%Y%m%d%H%i'), STR_TO_DATE(#{SEND_DTM}, '%Y%m%d%H%i'), 
+		#{UPD_DTM}, #{UPD_ID})
+	</insert>
+
+	<delete id="SM0601G0D0" parameterType="Map">
+		DELETE FROM BMS_EMAIL_MST WHERE EMAIL_ID = #{EMAIL_ID}
+	</delete>
+	
+	<update id="SM0601G0U0" parameterType="Map">
+		UPDATE BMS_EMAIL_MST SET SENDER_NM = #{SENDER_NM}, SENDER_ADDR = #{SENDER_ADDR}, 
+		RCPT_IDS = #{RCPT_IDS}, EMAIL_TITLE = #{EMAIL_TITLE}, EMAIL_CONTENTS = #{EMAIL_CONTENTS},	
+		SEND_DIV = #{SEND_DIV}, SEND_STS = #{SEND_STS}, RSV_DTM = STR_TO_DATE(#{RSV_DTM}, '%Y%m%d%H%i'), 
+		SEND_DTM = STR_TO_DATE(#{SEND_DTM}, '%Y%m%d%H%i'), UPD_DTM = #{UPD_DTM}, UPD_ID = #{UPD_ID} WHERE EMAIL_ID = #{EMAIL_ID}
+	</update> -->
+</mapper>

@@ -157,6 +157,13 @@
 		 };
 		 
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions, mainOptions);
+
+		var subOptions = {
+        	SAVE:[{cbFnc:scwin.btn_incdntMessage_onclick,nm:"돌발상황 메시지 전송",class:"share"} 
+               ]
+		};
+		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
+
 				
 		var map = routMap.initMap2("map_MO0600", 
 				{width:"100%"
@@ -333,7 +340,24 @@
 		com.searchGrid(MO0600G0, sub_MO0600G0R0);
 		com.searchGrid(MO0600G1, sub_MO0600G1R0);
 	};
-	]]></script>
+	
+	scwin.btn_incdntMessage_onclick = function() {
+	
+	   var data = { callbackFn : "scwin.btn_message_callback",
+	     	incdnt_gps_x : dlt_BRT_INCDNT_INFO.getCellData(MO0600G0.getFocusedRowIndex(), "GPS_X"),
+	     	incdnt_gps_y : dlt_BRT_INCDNT_INFO.getCellData(MO0600G0.getFocusedRowIndex(), "GPS_Y"),
+	     	incdnt_rep_rout_id : dlt_BRT_INCDNT_INFO.getCellData(MO0600G0.getFocusedRowIndex(), "REP_ROUT_ID"),
+	     	//incdnt_detail : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "INCDNT_DETAIL")
+	     	
+ 	  };	
+ 	  
+      var options = { id : "MO0303P03",
+                  popupName : "돌발상황 메시지 전송",
+                  width : 910,
+                  height : 600, 
+                  modal : true};
+      com.openPopup("/ui/BRT/MO0303/MO0303P03.xml", options, data);			
+	};]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
@@ -383,8 +407,11 @@
 			<xf:group id="pgm_content" class="pgm_content grdc_600_20_a" style="" >
 				<!-- <xf:group id="pgm_list" class="pgm_list grdr_20_2_350_20_a" style=""> detail 추가할 거 있으면 레이아웃 바꾸기-->
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_212_20_a" style="">
-					<xf:group class="defaultbox" id="" style="">
-						<w2:textbox class="df_tt fl" id="" label="차량 목록" style=""></w2:textbox>
+					<xf:group id="" class="gr_sub_header" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="차량 목록" style=""></w2:textbox>
+						</xf:group>
+						<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="" class="" style="">

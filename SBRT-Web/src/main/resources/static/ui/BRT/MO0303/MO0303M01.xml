@@ -164,7 +164,12 @@
 			Sub1 : { grid : MO0303G1, srchSbm : sub_MO0303G1R0, keySbm : sub_MO0303G1K0, savSbm : sub_MO0303G1S0, keyColumn : "INCDNT_RES_ID" ,name :  "대응 목록"}
 		 };		
 		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions);		 
+		var mainOptions = {
+			//PLAY : scwin.btn_play_onclick
+			PLAY : {cbFnc:scwin.btn_play_onclick, nm:"돌발 메시지 전송", class:"share"}
+		};
+		 
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions, mainOptions);		 
 		var date = new Date();
 		var year = date.getFullYear().toString();
 		var month = (date.getMonth()+1).toString();
@@ -184,7 +189,9 @@
 		});	
 
 		var subOptions = { 
+            ADD: scwin.btn_add2_onclick, DEL:{}, CNL:{}
 		};		
+		
       	com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
       	
 		var subOptions2 = {
@@ -524,7 +531,42 @@
 	scwin.L_DATE_onviewchange = function(info) {
 		
 	};
-	]]></script>
+	
+	scwin.btn_play_onclick = function() {
+	  var focusRowIndex = MO0303G0.getFocusedRowIndex();	
+		
+	  if(focusRowIndex == -1) {
+		  	com.alert("돌발상황 목록 선택후 돌발 메시지를 전송할 수 있습니다.");
+		 }	
+	  else {
+	      var data = { callbackFn : "scwin.btn_message_callback",
+	     	incdnt_gps_x : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "GPS_X"),
+	     	incdnt_gps_y : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "GPS_Y"),
+	     	incdnt_rep_rout_id : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "REP_ROUT_ID"),
+	     	incdnt_rep_rout_nm : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "REP_ROUT_NM"),
+	     	incdnt_detail : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "INCDNT_DETAIL"),
+	     	incdnt_res_remark : dlt_BRT_INCDNT_RES_INFO.getCellData(MO0303G1.getFocusedRowIndex(), "REMARK"),
+	     	incdnt_id : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "INCDNT_ID"),
+	     	incdnt_rout_id : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "ROUT_ID"),
+	     	incdnt_rout_nm : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "ROUT_NM"),
+	     	incdnt_type : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "INCDNT_TYPE"),
+	     	incdnt_res_yn : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "INCDNT_RES_YN"),
+	     	incdnt_link_nm : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "LINK_NM"),
+	     	incdnt_vhc_id : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "VHC_ID"),
+	     	incdnt_vhc_no : dlt_BRT_INCDNT_INFO.getCellData(MO0303G0.getFocusedRowIndex(), "VHC_NO")
+	     	
+	 	 };
+	      
+	      var options = { id : "popUpIncdntMessage",
+	                  popupName : "돌발상황 메시지 전송",
+	                  width : 1100,
+	                  height : 600, 
+	                  modal : true};
+	      com.openPopup("/cm/common/popUpIncdntMessage.xml", options, data);	
+		  
+		 }	 
+		
+	}]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
@@ -532,7 +574,7 @@
 				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
 			</xf:group>
 			<xf:group class="pgm_header" id="pgm_header" style="">
-				<xf:group class="search" id="" style="">
+				<xf:group class="gr_search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10" optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" style="" submenuSize="auto" textAlign="left">
 							<xf:choices>
 								<xf:item>
@@ -565,16 +607,11 @@
 						</w2:span>
 						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false" style="width:120px; margin-right: 10px; margin-bottom: 5px; float: left;" id="L_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate" ref="data:dma_search.L_DATE" ev:onviewchange="scwin.L_DATE_onviewchange">
 						</w2:inputCalendar>							
-					</xf:group><xf:group class="gr_search" id="" style="">
-					<xf:group class="label" id="" style="">
-						<w2:span class="" id="" label="검색 항목"></w2:span>
-					</xf:group>
-					
 					<w2:wframe class="" id="wfm_mainBtn" scope="true" src="/cm/common/wf_mainBtn.xml" style=""></w2:wframe>
 				</xf:group>
 			</xf:group>
 			<xf:group id="pgm_content" class="pgm_content grdc_800_20_a" style="">
-				<xf:group id="pgm_list" class="pgm_list grdr_20_2_288_20_a" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_250_20_a" style="">
 					<xf:group class="defaultbox" id="" style="">
 						<w2:textbox class="df_tt fl" id="" label="돌발상황 목록" style=""></w2:textbox>
 					</xf:group>
@@ -720,7 +757,7 @@
 											renderType="component" rightAlign="false" style="width:150px;height:23px;" validCheck="">
 										</w2:inputCalendar>
 									</xf:group>
-</xf:group>
+								</xf:group>
 								<xf:group style="" tagname="tr">
 									<xf:group tagname="td" class="w2tb_th" id="">차량번호<w2:attributes></w2:attributes></xf:group>
 									<xf:group tagname="td" class="w2tb_td">
