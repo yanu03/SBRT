@@ -753,7 +753,7 @@ public class OperPlanService extends ServiceSupport {
 									//필요정차시간이 없는 경우
 									//e.printStackTrace();
 									
-									dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, min_stop_sec); //최소정차시간 추가
+									dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, stop_sec_none_peak); //비첨두시정차시간 추가
 								}
 
 							} /*else //필요정차시간이 없는 경우
