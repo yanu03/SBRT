@@ -987,7 +987,7 @@ public class OperPlanService extends ServiceSupport {
 					//#도착시간이 빠른 경우
 					if (diffSec < 0) {
 
-						if (max_speed > MIN_SPEED_LIMIT) {
+						if (max_speed > (MIN_SPEED_LIMIT-5)) {
 
 							if (Math.abs(Math.abs(diffSec) - LIMIT_DIFF_SEC) <= 5) {
 								max_speed -= 0.2;
