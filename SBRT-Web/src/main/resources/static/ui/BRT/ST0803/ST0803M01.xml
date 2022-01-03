@@ -10,7 +10,7 @@
 				<data xmlns="" />
 			</xf:instance>
 			<w2:dataCollection baseNode="map">
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_STTN_STAT" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_STTN_PNCTLTY_STAT" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="chk" name="선택" dataType="text" defaultValue="0"></w2:column>
 						<w2:column id="OPER_DT" name="운행일" dataType="text"></w2:column>
@@ -22,7 +22,7 @@
 					</w2:columnInfo>
 				</w2:dataList>
 				
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_STTN_STAT_PIVOT" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_STTN_PNCTLTY_STAT_PIVOT" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="OPER_DT" name="운행일" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
@@ -30,11 +30,9 @@
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 						<w2:column id="STTN_NM" name="정류소명" dataType="text"></w2:column>
-						<w2:column id="MIN_DELAY_SEC" name="최소지연시간" dataType="text"></w2:column>
-						<w2:column id="MAX_DELAY_SEC" name="최대지연시간" dataType="text"></w2:column>
-						<w2:column id="AVRG_DELAY_SEC" name="평균지연시간" dataType="text"></w2:column>
-						<w2:column id="DSPTCH_CNT" name="디스패치건수" dataType="text"></w2:column>
-						<w2:column id="SIGOPER_CTL_CNT" name="신호제어건수" dataType="text"></w2:column>
+						<w2:column id="PNCTLTY_CNT" name="정시성횟수" dataType="text"></w2:column>
+						<w2:column id="PNCTLTY_VIOLT_DELAY_CNT" name="정시성위반지연횟수" dataType="text"></w2:column>
+						<w2:column id="PNCTLTY_VIOLT_FAST_CNT" name="정시성위반신속횟수" dataType="text"></w2:column>
 						<w2:column id="STAT_H" name="통계시간" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
@@ -78,31 +76,31 @@
 				</w2:dataMap>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_ST0800G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_MST" action="/st/ST0800G0R0"
+			<xf:submission id="sub_ST0803G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_MST" action="/st/ST0803G0R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0800G0R0_submitdone" ev:submiterror="" abortTrigger="">
+				processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0803G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_ST0800G1R0" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_STTN_STAT"
-				action="/st/ST0800G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0800G1R0_submitdone"
+			<xf:submission id="sub_ST0803G1R0" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_STTN_PNCTLTY_STAT"
+				action="/st/ST0803G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0803G1R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_ST0800G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_STTN_STAT_PIVOT"
-				action="/st/ST0800G2R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0800G2R0_submitdone"
+			<xf:submission id="sub_ST0803G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_STTN_PNCTLTY_STAT_PIVOT"
+				action="/st/ST0803G2R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0803G2R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_ST0800SHI0" ref="" target="data:json,dlt_repRoutItem" action="/repRout/selectRepRoutItem"
+			<xf:submission id="sub_ST0803SHI0" ref="" target="data:json,dlt_repRoutItem" action="/repRout/selectRepRoutItem"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="" ev:submitdone="scwin.sub_ST0800SHI0_submitdone" ev:submiterror="" abortTrigger="">
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_ST0803SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[ 
 	scwin.onpageload = function() {
 		
 		var autoOptions = {
-			Main : { grid : ST0800G0, srchSbm : sub_ST0800G0R0, keyColumn : "OPER_DT", srchGrp : pgm_header, name :  "노선 목록"},
-			Sub1 : { grid : ST0800G1, srchSbm : sub_ST0800G1R0, keyColumn : "NODE_ID", srchGrp : pgm_header, name :  "정류소 목록"}
+			Main : { grid : ST0803G0, srchSbm : sub_ST0803G0R0, keyColumn : "OPER_DT", srchGrp : pgm_header, name :  "노선 목록"},
+			Sub1 : { grid : ST0803G1, srchSbm : sub_ST0803G1R0, keyColumn : "NODE_ID", srchGrp : pgm_header, name :  "정류소 목록"}
 		 };		
 		 		
 		  var mainOptions = {
@@ -111,7 +109,7 @@
 	      
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions, mainOptions);
 		
-		com.executeSubmission(sub_ST0800SHI0);
+		com.executeSubmission(sub_ST0803SHI0);
 		
 		var date = new Date();
 		var year = date.getFullYear().toString();
@@ -131,24 +129,24 @@
 		
 		F_DATE.setValue(today);
 		L_DATE.setValue(today);
-		dma_sub_search.set("TAB_DIV", "AVRG_DELAY_SEC");
+		dma_sub_search.set("TAB_DIV", "PNCTLTY_CNT");
 		
 		//탭 목록 클릭 이벤트
 		$(".stat_sttn").find("li").click( function() {
 			var li_id = this.id;
 			$(".stat_sttn").find("li").removeClass("on");
 			$(".stat_sttn").find("#"+li_id).addClass("on");
-			if(li_id == "li_avrg_delay_sec") {
-				dma_sub_search.set("TAB_DIV", "AVRG_DELAY_SEC");
-				com.executeSubmission(sub_ST0800G2R0);
+			if(li_id == "li_PNCTLTY_CNT") {
+				dma_sub_search.set("TAB_DIV", "PNCTLTY_CNT");
+				com.executeSubmission(sub_ST0803G2R0);
 			}
-			else if(li_id == "li_dsptch_cnt") {
-				dma_sub_search.set("TAB_DIV", "DSPTCH_CNT");
-				com.executeSubmission(sub_ST0800G2R0);
+			else if(li_id == "li_PNCTLTY_VIOLT_DELAY_CNT") {
+				dma_sub_search.set("TAB_DIV", "PNCTLTY_VIOLT_DELAY_CNT");
+				com.executeSubmission(sub_ST0803G2R0);
 			}
-			else if(li_id == "li_sigoper_ctl_cnt") {
-				dma_sub_search.set("TAB_DIV", "SIGOPER_CTL_CNT");
-				com.executeSubmission(sub_ST0800G2R0);
+			else if(li_id == "li_PNCTLTY_VIOLT_FAST_CNT") {
+				dma_sub_search.set("TAB_DIV", "PNCTLTY_VIOLT_FAST_CNT");
+				com.executeSubmission(sub_ST0803G2R0);
 			}
 		});
 		
@@ -162,34 +160,34 @@
 		var excelOpt = {};  //excel download 옵션 
 		excelOpt.fileName = "노선별 평균속도 통계.xls";    //또는 xlsx 확장자 사용 
 		
-		pivot_ST0800.pivotExcelDownload(excelOpt);
+		pivot_ST0803.pivotExcelDownload(excelOpt);
 	};
 	
-	scwin.sub_ST0800SHI0_submitdone = function(e) {
+	scwin.sub_ST0803SHI0_submitdone = function(e) {
 		TYPE10.setValue("RR00000002");
-		com.searchGrid(ST0800G0, sub_ST0800G0R0);
+		com.searchGrid(ST0803G0, sub_ST0803G0R0);
 	};
 	
-	scwin.sub_ST0800G0R0_submitdone = function(e) {
-		com.setFocusedCell(ST0800G0, "REP_ROUT_ID");
+	scwin.sub_ST0803G0R0_submitdone = function(e) {
+		com.setFocusedCell(ST0803G0, "REP_ROUT_ID");
 	};
 	
-	scwin.ST0800G0_onrowindexchange = function(row,oldRow) {
+	scwin.ST0803G0_onrowindexchange = function(row,oldRow) {
 		dma_sub_search.set("ROUT_ID", dlt_BMS_ROUT_MST.getCellData(row, "ROUT_ID"));
-		com.executeSubmission(sub_ST0800G1R0);
+		com.executeSubmission(sub_ST0803G1R0);
 	};
 	
 	
-	scwin.sub_ST0800G1R0_submitdone = function(e) {
-		com.setFocusedCell(ST0800G1, "chk");
-		ST0800G1.setCellChecked(ST0800G1.getFocusedRowIndex(), "chk", true);
+	scwin.sub_ST0803G1R0_submitdone = function(e) {
+		com.setFocusedCell(ST0803G1, "chk");
+		ST0803G1.setCellChecked(ST0803G1.getFocusedRowIndex(), "chk", true);
 
-		var chkJsonData = ST0800G1.getCheckedJSON("chk");
+		var chkJsonData = ST0803G1.getCheckedJSON("chk");
 		var chkCnt = chkJsonData.length;
 		var i = 0;
 		var nodeId = [];
 
-		com.setFocusedCell(ST0800G1, "NODE_ID");
+		com.setFocusedCell(ST0803G1, "NODE_ID");
 		
 		var date = new Date();
 		var year = date.getFullYear();
@@ -205,20 +203,20 @@
 		dma_sub_search.set("SELECT_DIV", SELECT_DIV.getValue());
 		dma_sub_search.set("NODE_ID", nodeId);
 		
-		com.executeSubmission(sub_ST0800G2R0);
+		com.executeSubmission(sub_ST0803G2R0);
 		
 	};
 	
-	scwin.ST0800G1_oncellclick = function(row,col,colId) {
+	scwin.ST0803G1_oncellclick = function(row,col,colId) {
 		if (col != "0"){
-		   if(ST0800G1.getCellChecked(row, 'chk')==0){
-		      ST0800G1.setCellChecked(row, 'chk', true);
-		   }else if(ST0800G1.getCellChecked(row, 'chk')==1){
-		      ST0800G1.setCellChecked(row, 'chk', false);
+		   if(ST0803G1.getCellChecked(row, 'chk')==0){
+		      ST0803G1.setCellChecked(row, 'chk', true);
+		   }else if(ST0803G1.getCellChecked(row, 'chk')==1){
+		      ST0803G1.setCellChecked(row, 'chk', false);
 		   }
 		}
 		
-		var chkJsonData = ST0800G1.getCheckedJSON("chk");
+		var chkJsonData = ST0803G1.getCheckedJSON("chk");
 		var chkCnt = chkJsonData.length;
 		var i = 0;
 		var nodeId = [];
@@ -232,18 +230,18 @@
 		dma_sub_search.set("SELECT_DIV", SELECT_DIV.getValue());
 		
 		if(chkJsonData.length != 0){
-			com.executeSubmission(sub_ST0800G2R0);
-			pivot_ST0800.show();
+			com.executeSubmission(sub_ST0803G2R0);
+			pivot_ST0803.show();
 		}else if(chkJsonData.length == 0){
-			chart_ST0800.destroy();
-			pivot_ST0800.hide();
+			chart_ST0803.destroy();
+			pivot_ST0803.hide();
 		}
 		
 		
 	};
 	
-	scwin.ST0800G1_onheaderclick = function(chkHeader) {
-		var chkJsonData = ST0800G1.getCheckedJSON("chk");
+	scwin.ST0803G1_onheaderclick = function(chkHeader) {
+		var chkJsonData = ST0803G1.getCheckedJSON("chk");
 		var chkCnt = chkJsonData.length;
 		var i = 0;
 		var nodeId = [];
@@ -256,11 +254,11 @@
 		dma_sub_search.set("NODE_ID", nodeId);
 		
 		if(chkJsonData.length != 0){
-			com.executeSubmission(sub_ST0800G2R0);
-			pivot_ST0800.show();
+			com.executeSubmission(sub_ST0803G2R0);
+			pivot_ST0803.show();
 		}else if(chkJsonData.length == 0){
-			chart_ST0800.destroy();
-			pivot_ST0800.hide();
+			chart_ST0803.destroy();
+			pivot_ST0803.hide();
 		}
 	};
 	
@@ -297,28 +295,26 @@
 	}
 	
 	
-	var chart_ST0800 = null;
+	var chart_ST0803 = null;
 	 
 	scwin.DrawLineChart_Time = function(chkCnt, chkJsonData){
-		debugger;
-		
 		var datasets = new Array();
 		var transData = new Array();
 		var i = 0;
 		var j = 0;
 		var num = 0;
 	
-		var rowCount = dlt_BRT_STTN_STAT_PIVOT.getRowCount();
-		var jsonData = dlt_BRT_STTN_STAT_PIVOT.getAllJSON();
+		var rowCount = dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getRowCount();
+		var jsonData = dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getAllJSON();
 	
 		for(i; i<chkCnt; i++){
 			var data = new Array();
 			var xLabel = new Array();
 			
 			for(j; j<rowCount; j++){
-				if(jsonData[num].NODE_ID ==  dlt_BRT_STTN_STAT_PIVOT.getCellData(j, "NODE_ID")){
-					transData.push(dlt_BRT_STTN_STAT_PIVOT.getRowJSON(j));
-				}else if(jsonData[num].NODE_ID  !=  dlt_BRT_STTN_STAT_PIVOT.getCellData(j, "NODE_ID")){
+				if(jsonData[num].NODE_ID ==  dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getCellData(j, "NODE_ID")){
+					transData.push(dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getRowJSON(j));
+				}else if(jsonData[num].NODE_ID  !=  dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getCellData(j, "NODE_ID")){
 					num = j;
 					j = j;
 					break;
@@ -328,12 +324,12 @@
 			for(var y = 0; y < transData.length; y++){
 				var label = transData[y].STTN_NM;
 				
-				if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
-					var val = transData[y].AVRG_DELAY_SEC;
-				}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
-					var val = transData[y].DSPTCH_CNT;
-				}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
-					var val = transData[y].SIGOPER_CTL_CNT;
+				if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_CNT'){
+					var val = transData[y].PNCTLTY_CNT;
+				}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_DELAY_CNT'){
+					var val = transData[y].PNCTLTY_VIOLT_DELAY_CNT;
+				}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_FAST_CNT'){
+					var val = transData[y].PNCTLTY_VIOLT_FAST_CNT;
 				}
 				
 				var statH = transData[y].STAT_H;
@@ -369,12 +365,12 @@
 		transData = [];
 	}
 	
-		if(chart_ST0800 != null) {
-		      chart_ST0800.destroy();   
+		if(chart_ST0803 != null) {
+		      chart_ST0803.destroy();   
 		}
 	
-		var ctx = document.getElementById('chart_ST0800');
-		chart_ST0800 = new Chart(ctx, {
+		var ctx = document.getElementById('chart_ST0803');
+		chart_ST0803 = new Chart(ctx, {
 			    type: 'line',
 				data: {
 					labels:xLabel,
@@ -396,8 +392,8 @@
 		var j = 0;
 		var num = 0;
 	
-		var rowCount = dlt_BRT_STTN_STAT_PIVOT.getRowCount();
-		var jsonData = dlt_BRT_STTN_STAT_PIVOT.getAllJSON();
+		var rowCount = dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getRowCount();
+		var jsonData = dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getAllJSON();
 	
 		for(i; i<chkCnt; i++){
 			var data = new Array();
@@ -407,9 +403,9 @@
 			//charData.label = chkJsonData[i].ROUT_NM;
 			
 			for(j; j<rowCount; j++){
-				if(jsonData[num].NODE_ID ==  dlt_BRT_STTN_STAT_PIVOT.getCellData(j, "NODE_ID")){
-					transData.push(dlt_BRT_STTN_STAT_PIVOT.getRowJSON(j));
-				}else if(jsonData[num].NODE_ID  !=  dlt_BRT_STTN_STAT_PIVOT.getCellData(j, "NODE_ID")){
+				if(jsonData[num].NODE_ID ==  dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getCellData(j, "NODE_ID")){
+					transData.push(dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getRowJSON(j));
+				}else if(jsonData[num].NODE_ID  !=  dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getCellData(j, "NODE_ID")){
 					num = j;
 					j = j;
 					break;
@@ -419,12 +415,12 @@
 			for(var y = 0; y < transData.length; y++){
 				var label = transData[y].STTN_NM;
 				
-				if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
-					var val = transData[y].AVRG_DELAY_SEC;
-				}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
-					var val = transData[y].DSPTCH_CNT;
-				}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
-					var val = transData[y].SIGOPER_CTL_CNT;
+				if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_CNT'){
+					var val = transData[y].PNCTLTY_CNT;
+				}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_DELAY_CNT'){
+					var val = transData[y].PNCTLTY_VIOLT_DELAY_CNT;
+				}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_FAST_CNT'){
+					var val = transData[y].PNCTLTY_VIOLT_FAST_CNT;
 				}
 				
 				//var statH = transData[y].STAT_H;
@@ -460,12 +456,12 @@
 		transData = [];
 	}
 	
-		var ctx = document.getElementById('chart_ST0800');
-		if(chart_ST0800 != null) {
-		      chart_ST0800.destroy();   
+		var ctx = document.getElementById('chart_ST0803');
+		if(chart_ST0803 != null) {
+		      chart_ST0803.destroy();   
 		}
 	
-		chart_ST0800 = new Chart(ctx, {
+		chart_ST0803 = new Chart(ctx, {
 			    type: 'bar',
 				data: {
 					labels:xLabel,
@@ -498,17 +494,17 @@
 		var j = 0;
 		var num = 0;
 	
-		var rowCount = dlt_BRT_STTN_STAT_PIVOT.getRowCount();
-		var jsonData = dlt_BRT_STTN_STAT_PIVOT.getAllJSON();
+		var rowCount = dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getRowCount();
+		var jsonData = dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getAllJSON();
 	
 		for(i; i<chkCnt; i++){
 			var data = new Array();
 			var xLabel = new Array();
 			
 			for(j; j<rowCount; j++){
-				if(jsonData[num].NODE_ID ==  dlt_BRT_STTN_STAT_PIVOT.getCellData(j, "NODE_ID")){
-					transData.push(dlt_BRT_STTN_STAT_PIVOT.getRowJSON(j));
-				}else if(jsonData[num].NODE_ID  !=  dlt_BRT_STTN_STAT_PIVOT.getCellData(j, "NODE_ID")){
+				if(jsonData[num].NODE_ID ==  dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getCellData(j, "NODE_ID")){
+					transData.push(dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getRowJSON(j));
+				}else if(jsonData[num].NODE_ID  !=  dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getCellData(j, "NODE_ID")){
 					num = j;
 					j = j;
 					break;
@@ -518,12 +514,12 @@
 			for(var y = 0; y < transData.length; y++){
 				var label = transData[y].STTN_NM;
 				
-				if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
-					var val = transData[y].AVRG_DELAY_SEC;
-				}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
-					var val = transData[y].DSPTCH_CNT;
-				}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
-					var val = transData[y].SIGOPER_CTL_CNT;
+				if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_CNT'){
+					var val = transData[y].PNCTLTY_CNT;
+				}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_DELAY_CNT'){
+					var val = transData[y].PNCTLTY_VIOLT_DELAY_CNT;
+				}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_FAST_CNT'){
+					var val = transData[y].PNCTLTY_VIOLT_FAST_CNT;
 				}
 				
 				//var statH = transData[y].STAT_H;
@@ -559,12 +555,12 @@
 		transData = [];
 	}
 	
-		if(chart_ST0800 != null) {
-		      chart_ST0800.destroy();   
+		if(chart_ST0803 != null) {
+		      chart_ST0803.destroy();   
 		}
 	
-		var ctx = document.getElementById('chart_ST0800');
-		chart_ST0800 = new Chart(ctx, {
+		var ctx = document.getElementById('chart_ST0803');
+		chart_ST0803 = new Chart(ctx, {
 			    type: 'bar',
 				data: {
 					labels:xLabel,
@@ -580,7 +576,7 @@
 	
 	
 	scwin.TYPE10_onviewchange = function(info) {
-		com.searchGrid(ST0800G0, sub_ST0800G0R0);
+		com.searchGrid(ST0803G0, sub_ST0803G0R0);
 	};
 
 	scwin.F_DATE_onviewchange = function(info) {
@@ -591,7 +587,7 @@
 			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseF(info));
 		}
 		
-		com.executeSubmission(sub_ST0800G2R0);
+		com.executeSubmission(sub_ST0803G2R0);
 	};
 	scwin.checkCloseF = function(info) {
 		F_DATE.setValue(info.oldValue);
@@ -605,7 +601,7 @@
 			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseL(info));
 		}
 		
-		com.executeSubmission(sub_ST0800G2R0);
+		com.executeSubmission(sub_ST0803G2R0);
 	};
 	
 	scwin.checkCloseL = function(info) {
@@ -625,47 +621,47 @@
 			L_DATE.setCalendarValueType("yearMonthDate");
 		}
 		
-		com.executeSubmission(sub_ST0800G2R0);
+		com.executeSubmission(sub_ST0803G2R0);
 	};
 	
-	scwin.sub_ST0800G2R0_submitdone = function(e) {
-		var chkJsonData = ST0800G1.getCheckedJSON("chk");
+	scwin.sub_ST0803G2R0_submitdone = function(e) {
+		var chkJsonData = ST0803G1.getCheckedJSON("chk");
 		var chkCnt = chkJsonData.length;
-		chart_ST0800.destroy();
+		chart_ST0803.destroy();
 		
 		if(chkCnt > 0 && SELECT_DIV.getValue() == 'TIME'){
-			if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "AVRG_DELAY_SEC"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "DSPTCH_CNT"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "SIGOPER_CTL_CNT"});
+			if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_CNT'){
+				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "PNCTLTY_CNT"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_DELAY_CNT'){
+				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "PNCTLTY_VIOLT_DELAY_CNT"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_FAST_CNT'){
+				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "PNCTLTY_VIOLT_FAST_CNT"});
 			}
 			scwin.DrawLineChart_Time(chkCnt, chkJsonData);
 		}else if(chkCnt > 0 && SELECT_DIV.getValue() == 'DAY'){
-			if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "AVRG_DELAY_SEC"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "DSPTCH_CNT"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "SIGOPER_CTL_CNT"});
+			if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_CNT'){
+				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "PNCTLTY_CNT"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_DELAY_CNT'){
+				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "PNCTLTY_VIOLT_DELAY_CNT"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_FAST_CNT'){
+				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "PNCTLTY_VIOLT_FAST_CNT"});
 			}
 			scwin.DrawBarChart_Day(chkCnt, chkJsonData);
 		}else if(chkCnt > 0 && SELECT_DIV.getValue() == 'MONTH'){
-			if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "AVRG_DELAY_SEC"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "DSPTCH_CNT"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "SIGOPER_CTL_CNT"});
+			if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_CNT'){
+				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "PNCTLTY_CNT"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_DELAY_CNT'){
+				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "PNCTLTY_VIOLT_DELAY_CNT"});
+			}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_FAST_CNT'){
+				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "PNCTLTY_VIOLT_FAST_CNT"});
 			}
 			scwin.DrawBarChart_Month(chkCnt);
 		}
 		
 			//pivot테이블 옵션 따로 설정.
-			/*pivot_ST0800.setRows("STTN_NM");
-			pivot_ST0800.setCols("STAT_H");
-			pivot_ST0800.setVals("AVRG_DELAY_SEC");*/
+			/*pivot_ST0803.setRows("STTN_NM");
+			pivot_ST0803.setCols("STAT_H");
+			pivot_ST0803.setVals("PNCTLTY_CNT");*/
 	};
 	
 ]]></script>
@@ -719,8 +715,8 @@
 					<xf:group id="" class="" style="">
 						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid left"
 							dataList="data:dlt_BMS_ROUT_MST" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup=""
-							ev:onkeyup="" ev:onrowindexchange="scwin.ST0800G0_onrowindexchange" ev:ontextimageclick="" ev:onviewchange=""
-							fixedColumnWithHidden="true" id="ST0800G0" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true"
+							ev:onkeyup="" ev:onrowindexchange="scwin.ST0803G0_onrowindexchange" ev:ontextimageclick="" ev:onviewchange=""
+							fixedColumnWithHidden="true" id="ST0803G0" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true"
 							rowStatusHeaderValue="" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true"
 							visibleRowNum="" wheelRows="" autoFitMinWidth="0" disabledScrollHidden="" editModeEvent="" editModeEventIcon=""
 							checkEditableInputClass="" keyMoveEditMode="" moveKeyEditMode="" moveKeyEditModeAll="" ignoreNonEditableCellTabEnter=""
@@ -779,16 +775,16 @@
 					</xf:group>
 					<xf:group id="" class="" style="">
 						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid left"
-							dataList="data:dlt_BRT_STTN_STAT" enterKeyMove="" ev:onafteredit="" ev:oncellclick="scwin.ST0800G1_oncellclick" ev:oneditkeyup=""
-							ev:onkeyup="" ev:onrowindexchange="scwin.ST0800G1_onrowindexchange" ev:ontextimageclick="" ev:onviewchange=""
-							fixedColumnWithHidden="true" id="ST0800G1" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true"
+							dataList="data:dlt_BRT_STTN_PNCTLTY_STAT" enterKeyMove="" ev:onafteredit="" ev:oncellclick="scwin.ST0803G1_oncellclick" ev:oneditkeyup=""
+							ev:onkeyup="" ev:onrowindexchange="scwin.ST0803G1_onrowindexchange" ev:ontextimageclick="" ev:onviewchange=""
+							fixedColumnWithHidden="true" id="ST0803G1" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true"
 							rowStatusHeaderValue="" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true"
 							visibleRowNum="" wheelRows="" autoFitMinWidth="0" disabledScrollHidden="" editModeEvent="" editModeEventIcon=""
 							checkEditableInputClass="" keyMoveEditMode="" moveKeyEditMode="" moveKeyEditModeAll="" ignoreNonEditableCellTabEnter=""
 							readOnly="true" keepDefaultColumnWidth="" oddEvenColorDisplay="" rowNumWidth="" summaryAuto="" excludeDeletedRows=""
 							useCtrlOnMultisort="" useFilterList="" useFilterListSync="" sortedIconPosition="" sortable="" sortOrderReverse=""
 							showSortableUseFilter="" focusMode="row" rowNumStatusUniqueId="" rowNumStatusResize="" ev:onbeforecolumnmove="" userData1=""
-							ev:onheaderclick="scwin.ST0800G1_onheaderclick">
+							ev:onheaderclick="scwin.ST0803G1_onheaderclick">
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
@@ -862,17 +858,14 @@
 								ref="data:dma_sub_search.L_DATE" ev:onviewchange="scwin.L_DATE_onviewchange">
 							</w2:inputCalendar>
 							<ul id="" class="stat_sttn"  style="margin-top: 10px;">
-								<li id="li_avrg_delay_sec" class="on" >
-									<!-- <span class="busimg"></span> -->
-									평균지연시간
+								<li id="li_PNCTLTY_CNT" class="on" >
+									정시성횟수
 								</li>
-								<li id="li_dsptch_cnt" class="" >
-									<!-- <span class="crossimg"></span> -->
-									디스패치건수
+								<li id="li_PNCTLTY_VIOLT_DELAY_CNT" class="" >
+									위반지연횟수
 								</li>
-								<li id="li_sigoper_ctl_cnt" class="" >
-									<!-- <span class="sttnimg"></span> -->
-									신호제어건수
+								<li id="li_PNCTLTY_VIOLT_FAST_CNT" class="" >
+									위반신속횟수
 								</li>
 							</ul>
 						</xf:group>
@@ -881,7 +874,7 @@
 					<xf:group></xf:group><!-- margin -->
 
 					<xf:group style="position:relative;" id="" class="">
-						<canvas id="chart_ST0800" style="position:absolute;"></canvas>
+						<canvas id="chart_ST0803" style="position:absolute;"></canvas>
 					</xf:group>
 
 					<xf:group id="" class="horizontal_line"></xf:group>
@@ -890,8 +883,8 @@
 						<w2:span label="단위 : [평균통행속도:km/h]" style="float: left;margin-right: 3px; margin-top:5px;" id=""></w2:span>
 					</xf:group>
 					<xf:group id="" class="" style="position: relative;">
-						<w2:pivot style="position: absolute;height:100%;width:100%;" dataList="data:dlt_BRT_STTN_STAT_PIVOT" vals="AVRG_DELAY_SEC"
-							rows="OPER_DT,STTN_NM" cols="STAT_H" defaultAggregator="Sum" valuesAxis="col" id="pivot_ST0800" renderMode="compact"
+						<w2:pivot style="position: absolute;height:100%;width:100%;" dataList="data:dlt_BRT_STTN_PNCTLTY_STAT_PIVOT" vals="PNCTLTY_CNT"
+							rows="OPER_DT,STTN_NM" cols="STAT_H" defaultAggregator="Sum" valuesAxis="col" id="pivot_ST0803" renderMode="compact"
 							autoFit="allColumn" grandTotalDisplayType="both" showZero="true" showGrandTotal="true" aggregatorName="Average" allTotalName="평균속도"
 							digitsAfterDecimal="1" useNumberFormat="true" autoFitMinWidth="1300" autoPopupInvalidMessage="" headerTextAlign="center"
 							noResultMessage="">
@@ -903,9 +896,9 @@
 								<w2:field id="STTN_NM" name="정류소명"></w2:field>
 								<w2:field id="STAT_H" name="통계시간"></w2:field>
 								<w2:field id="STAT_T" name="통계시간"></w2:field>
-								<w2:field id="AVRG_DELAY_SEC" name="평균속도"></w2:field>
-								<w2:field id="DSPTCH_CNT" name="디스패치건수"></w2:field>
-								<w2:field id="SIGOPER_CTL_CNT" name="신호제어건수"></w2:field>
+								<w2:field id="PNCTLTY_CNT" name="정시성횟수"></w2:field>
+								<w2:field id="PNCTLTY_VIOLT_DELAY_CNT" name="정시성위반지연횟수"></w2:field>
+								<w2:field id="PNCTLTY_VIOLT_FAST_CNT" name="정시성위반신속횟수"></w2:field>
 							</w2:fieldInfo>
 						</w2:pivot>
 					</xf:group>
