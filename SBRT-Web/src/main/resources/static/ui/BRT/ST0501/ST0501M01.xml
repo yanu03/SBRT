@@ -10,21 +10,6 @@
 				<data xmlns="" />
 			</xf:instance>
 			<w2:dataCollection baseNode="map">
-
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_VHC_AVER_OPER_SP_STAT" saveRemovedData="true">
-					<w2:columnInfo>
-						<w2:column id="OPER_DT" name="운행일" dataType="text"></w2:column>
-						<w2:column id="VHC_ID" name="노선ID" dataType="text"></w2:column>
-						<w2:column id="VHC_NM" name="노선명" dataType="text"></w2:column>
-						<w2:column id="STAT_H" name="통계시간" dataType="text"></w2:column>
-						<w2:column id="AVRG_SPD" name="평균속도" dataType="text"></w2:column>
-						<w2:column id="MAX_SPD" name="최대속도" dataType="text"></w2:column>
-						<w2:column id="MIN_SPD" name="최소속도" dataType="text"></w2:column>
-					</w2:columnInfo>
-				</w2:dataList>
-
-		
-				
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_VHC_MST" saveRemovedData="true">
 					<w2:columnInfo>
 						<!-- <w2:column id="chk" name="선택" dataType="text" defaultValue="0"></w2:column> -->
@@ -56,8 +41,6 @@
 				<w2:dataMap baseNode="map" id="dma_sub_search">
 					<w2:keyInfo>
 						<w2:key id="VHC_ID" name="차량ID" dataType="text"></w2:key>
-						<w2:key id="DVC_ID" name="장치아이디" dataType="text"></w2:key>
-						<w2:key id="VHC_NO" name="차량번호" dataType="text"></w2:key>
 						<w2:key id="CTR_YN" name="탭여부" dataType="text"></w2:key>
 						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
 						<w2:key id="F_DATE" name="name3" dataType="text"></w2:key>
@@ -75,15 +58,20 @@
 						<w2:column id="WORK_TYPE" name="작업유형" dataType="text"></w2:column>
 						<w2:column id="WORK_AMT" name="작업비용" dataType="text"></w2:column>
 						<w2:column id="SUM_CNT" name="작업횟수" dataType="text"></w2:column>
+						<w2:column id="SUM1" name="최초설치 합" dataType="text"></w2:column>
+						<w2:column id="SUM2" name="장치수리 합" dataType="text"></w2:column>
+						<w2:column id="SUM3" name="교체설치 합" dataType="text"></w2:column>
+						<w2:column id="SUM4" name="정기점검 합" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_WORK_STAT" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="SUM_CNT" name="장치별 총계" dataType="text"></w2:column>
+						<w2:column id="APLY_DATE" name="적용일" dataType="text"></w2:column>
+						<w2:column id="VHC_ID" name="차량ID" dataType="text"></w2:column>
 						<w2:column id="DVC_KIND" name="장치종류" dataType="text"></w2:column>
-						<w2:column id="WORK_TYPE" name="유지보수유형" dataType="text"></w2:column>
-						<w2:column id="WORK_AMT" name="유지보수비용" dataType="text"></w2:column>
 						<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
+						<w2:column id="WORK_TYPE" name="유지보수유형" dataType="text"></w2:column>
+						<w2:column id="WORK_AMT" name="장치별 유지보수 비용 합계" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 			</w2:dataCollection>
@@ -169,60 +157,27 @@
 	
 	
 	scwin.sub_ST0501G0R0_submitdone = function(e) {
-		
+	debugger;
 		com.setFocusedCell(ST0501G0, "VHC_ID");
 		vhcID = dlt_BMS_VHC_MST.getCellData(ST0501G0.getFocusedRowIndex(), "VHC_ID");
-		
 		dma_sub_search.set("VHC_ID", vhcID);
-		
  		com.executeSubmission(sub_ST0501G1R0);
-		
-	};
-	
-	scwin.ST0501G0_onrowindexchange = function(row,oldRow) {
-		//dma_sub_search.set("REP_VHC_ID", dlt_BMS_VHC_MST.getCellData(row, "REP_VHC_ID"));
-		//dma_sub_search.set("VHC_ID", dlt_BMS_VHC_MST.getCellData(row, "VHC_ID"));
-		
-		//com.executeSubmission(sub_ST0501G1R0);
-		var focusOption = {keyMap : dma_sub_search};
-		com.changeDualGrid(ST0501G0, ST0501G1, null, sub_ST0501G1R0, focusOption, row, oldRow);
+ 		com.executeSubmsision(sub_ST0501G2R0);
 	};
 	
 	scwin.ST0501G0_oncellclick = function(row,col,colId) {
-//		 if (col != "0"){
-//		   if(ST0501G0.getCellChecked(row, 'chk')==0){
-//		      ST0501G0.setCellChecked(row, 'chk', true);
-//		   }else if(ST0501G0.getCellChecked(row, 'chk')==1){
-//		      ST0501G0.setCellChecked(row, 'chk', false);
-//		   }
-//		}
-//		
-//		var chkJsonData = ST0501G0.getCheckedJSON("chk");
-//		var chkCnt = chkJsonData.length;
-//		var i = 0;
-//		var VHCId = [];
-//		
-//		체크 가져오기
-//		for(i; i<chkCnt; i++){
-//			VHCId.push(chkJsonData[i].VHC_ID);
-//		}
-//		var vhcId = dlt_BMS_VHC_MST.getCellData(row, 'VHC_ID');
-//		
-//		dma_sub_search.set("VHC_ID", VHCId);
-//		com.executeSubmission(sub_ST0501G1R0);
-//	
-//		if(chkCnt > 0){
-//			scwin.drawChart(chkCnt);
-//		}
-		var VHCId = dlt_BMS_VHC_MST.getCellData(ST0501G0.getFocusedRowIndex(), 'VHC_ID');
-		dma_sub_search.set("VHC_ID", VHCId);
-		com.excuteSubmission(sub_ST0501G1R0);
+		vhcID = dlt_BMS_VHC_MST.getCellData(ST0501G0.getFocusedRowIndex(), "VHC_ID");
+		dma_sub_search.set("VHC_ID", vhcID);
 		
+		
+		com.executeSubmission(sub_ST0501G1R0);
+		com.executeSubmsision(sub_ST0501G2R0);
 	};
 	
 	scwin.sub_ST0501G1R0_submitdone = function(e) {
-		vhcNo = dlt_BMS_DVC_STAT.getcellData(ST0501G0.getFocusedRowIndex(),'VHC_ID');
-		scwin.drawChart(vhcNo);
+		vhcID = dlt_BMS_VHC_MST.getCellData(ST0501G0.getFocusedRowIndex(), "VHC_ID");
+		scwin.drawChart(vhcID);
+		scwin.CTR_YN_onchange();
 	};
 	
 	scwin.getRandomColor = function(_isAlpha) {
@@ -254,7 +209,8 @@
 	}
 	var chart_ST0501 = null;
 	
-	scwin.drawChart = function(vhcNo){
+	scwin.drawChart = function(vhcId){
+		
 		
 		var datasets = new Array();
 		var transData = new Array();
@@ -265,16 +221,16 @@
 		var rowCount = dlt_BRT_DVC_STAT.getRowCount();
 		var jsonData = dlt_BRT_DVC_STAT.getAllJSON();
 	
-		for(i; i<chkCnt; i++){
+//		for(i; i<chkCnt; i++){
 			var data = new Array();
 			var xLabel = new Array();
 			var color = new Array();
 			var charData = new CharData();
 			
-			var rgb = scwin.getRandomColor();
-			charData.label = vhcNo;
-			charData.borderColor = rgb;
-			charData.backgroundColor = rgb;
+//			var rgb = scwin.getRandomColor();
+//			charData.label = vhcId;
+//			charData.borderColor = rgb;
+//			charData.backgroundColor = rgb;
 			
 			for(j; j<rowCount; j++){
 				if(jsonData[num].VHC_ID ==  dlt_BRT_DVC_STAT.getCellData(j, "VHC_ID")){
@@ -285,85 +241,367 @@
 					break;
 				}
 			}
+			
+			var sum1 = new Array();
+			var sum2 = new Array();
+			var sum3 = new Array();
+			var sum4 = new Array();
 
 			for(var y = 0; y < transData.length; y++){
-			 
 				var label = transData[y].VHC_NO;
 				var sumCnt = transData[y].SUM_CNT;
+				var workType = transData[y].WORK_TYPE;
 				var incdntType = transData[y].DVC_KIND;
-				//var workAmt = transData[y].WORK_AMT; 
-				//var aplyDt = jsonData[y].APLY_DATE;
-		
+			
 				
+		
 				var showType = "";
 				switch(incdntType){		
 					case "DK001":
 						showType = "OBE";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
 						break;
 					case "DK002":
 						showType = "운전자단말기";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
 						break;	
 					case "DK003":
 						showType = "승객용안내기";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
 						break;	
 					case "DK004":
 						showType = "전자노선도";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
 						break;	
 					case "DK005":
 						showType = "행선지키패드";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
 						break;		
 					case "DK006":
 						showType = "행선지안내기X정면 12열(싸인)";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
 						break;	
 					case "DK007":
 						showType = "행선지안내기X정면 11열(애드앤텍)";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
 						break;	
 					case "DK008":
 						showType = "행선지안내기X측면(싸인)";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
 						break;
 					case "DK009":
 						showType = "행선지안내기X측면2(싸인)";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
 						break;	
 					case "DK010":
 						showType = "투명디스플레이";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
 						break;	
 					case "DK011":
 						showType = "태그리스";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
 						break;
 					case "DK012":
 						showType = "행선지안내기X측면(애드앤텍)";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
 						break;
 					case "DK013":
 						showType = "태그리스";
-						break;	
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
+						break;
+					case "OBE":
+						showType = "OBE";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
+						break;
+					case "운전자단말기":
+						showType = "운전자단말기";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
+						break;
+					case "승객용안내기":
+						showType = "승객용안내기";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
+						break;
+					case "전자노선도":
+						showType = "전자노선도";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
+						break;
+					case "행선지키패드":
+						showType = "행선지키패드";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
+						break;
+					case "행선지안내기X정면 12열(싸인)":
+						showType = "행선지안내기X정면 12열(싸인)";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
+						break;
+					case "행선지안내기X정면 11열(애드앤텍)":
+						showType = "행선지안내기X정면 11열(애드앤텍)";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
+						break;
+					case "행선지안내기X측면(싸인)":
+						showType = "행선지안내기X측면(싸인)";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
+						break;
+					case "행선지안내기X측면2(싸인)":
+						showType = "행선지안내기X측면2(싸인)";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
+						break;
+					case "투명디스플레이":
+						showType = "투명디스플레이";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
+						break;
+					case "태그리스":
+						showType = "태그리스";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
+						break;
+					case "행선지안내기X측면(애드앤텍)":
+						showType = "행선지안내기X측면(애드앤텍)";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
+						break;
+					case "태그리스":
+						showType = "태그리스";
+						if(workType == "WT001"){
+							sum1.push(sumCnt);
+						}else if(workType == "WT002"){
+							sum2.push(sumCnt);
+						}else if(workType == "WT003"){
+							sum3.push(sumCnt);
+						}else if(workType == "WT004"){
+							sum4.push(sumCnt);
+						}
+						break;
 				}	
 				
 				var categoryJson = new Object();
 				var labelJson = new Object();
-			
 		
 				categoryJson = sumCnt;
+				var isSame = false;
+				for(i=0;i<xLabel.length;i++){
+					if(xLabel[i].indexOf(showType)>=0){
+						isSame = true;
+						break;
+					}
+				}
+				if(isSame==false)xLabel.push(showType);
+				//labelJson = showType;
 				
-				labelJson = showType;
-				
-				xLabel.push(labelJson);
-				data.push(categoryJson);
+//				xLabel.push(labelJson);
+//				data.push(categoryJson);
 			};
 			
-				//charData.label = label;
-				//charData.borderColor = rgb;
-				//charData.backgroundColor = rgb;
-				//charData.borderWidth = 1;
-				//charData.pointBorderWidth = 1;
-				//charData.tension = 0;
-				//charData.pointRadius = 1;
-				
+//				charData.label = label;
+//				charData.borderColor = rgb;
+//				charData.backgroundColor = rgb;
+//				charData.borderWidth = 1;
+//				charData.pointBorderWidth = 1;
+//				charData.tension = 0;
+//				charData.pointRadius = 1;
 				
 				charData.data = data;
 				datasets.push(charData);			
 
 		transData = [];
-	} //end for
+//	} //end for
 	
 		var ctx = document.getElementById('chart_ST0501');
 		
@@ -375,20 +613,48 @@
 			    type: 'bar',
 				data: {
 					labels:xLabel,
-					datasets
+					datasets: [{
+						label:"최초설치",
+						type: "bar",
+						stack: "Base",
+						backgroundColor: "#eece01",
+						data: sum1,
+					},{
+						label:"장치수리",
+						type: "bar",
+						stack: "Base",
+						backgroundColor: "#87d84d",
+						data: sum2,
+					},{
+						label:"교체설치",
+						type: "bar",
+						stack: "Base",
+						backgroundColor: "#f8981f",
+						data: sum3,
+					},{
+						label:"정기점검",
+						type: "bar",
+						stack: "Base",
+						backgroundColor: "#0000FF",
+						data: sum4,
+					},
+					]
 				  },
 				options: {
 					maintainAspectRatio: false,
 					scales: {
+				     xAxes: [{
+				        //stacked: true,
+				        stacked: true,
+				        ticks: {
+				          beginAtZero: true,
+				          maxRotation: 0,
+				          minRotation: 0
+				        }
+				      }],
 				      yAxes: [{
-                            display: true,
-                            ticks: {
-                                beginAtZero: true,
-                                steps: 10,
-                                stepValue: 0,
-                                max: 80
-                            }
-                        }]
+				        stacked: true,
+				      }]
 			        }
 				}  //end options				  
 				  
@@ -396,33 +662,34 @@
 	
 	}
 	
-	scwin.drawChart2 = function(chkCnt, chkJsonDataArr){
-		debugger;
-		
+	scwin.drawChart2 = function(vhcID){
+	
 		var datasets = new Array();
 		var transData = new Array();
 		var i = 0;
 		var j = 0;
 		var num = 0;
 	
-		var rowCount = dlt_BRT_DVC_STAT.getRowCount();
-		var jsonData = dlt_BRT_DVC_STAT.getAllJSON();
+		var rowCount = dlt_BRT_WORK_STAT.getRowCount();
+		var jsonData = dlt_BRT_WORK_STAT.getAllJSON();
 	
-		for(i; i<chkCnt; i++){
+//		for(i; i<chkCnt; i++){
 			var data = new Array();
 			var xLabel = new Array();
 			var color = new Array();
 			var charData = new CharData();
 			
+			
+			
 			var rgb = scwin.getRandomColor();
-			charData.label = chkJsonDataArr[i].VHC_NO;
+			charData.label = vhcID;
 			charData.borderColor = rgb;
 			charData.backgroundColor = rgb;
-			
+			debugger;
 			for(j; j<rowCount; j++){
-				if(jsonData[num].VHC_ID ==  dlt_BRT_DVC_STAT.getCellData(j, "VHC_ID")){
-					transData.push(dlt_BRT_DVC_STAT.getRowJSON(j));
-				}else if(jsonData[num].VHC_ID  !=  dlt_BRT_DVC_STAT.getCellData(j, "VHC_ID")){
+				if(jsonData[num].VHC_ID ==  dlt_BRT_WORK_STAT.getCellData(j, "VHC_ID")){
+					transData.push(dlt_BRT_WORK_STAT.getRowJSON(j));
+				}else if(jsonData[num].VHC_ID  !=  dlt_BRT_WORK_STAT.getCellData(j, "VHC_ID")){
 					num = j;
 					j = j;
 					break;
@@ -430,12 +697,9 @@
 			}
 
 			for(var y = 0; y < transData.length; y++){
-			 
 				var label = transData[y].VHC_NO;
 				var workAmt = transData[y].WORK_AMT;
 				var incdntType = transData[y].DVC_KIND;
-				//var workAmt = transData[y].WORK_AMT; 
-				//var aplyDt = jsonData[y].APLY_DATE;
 		
 				
 				var showType = "";
@@ -478,7 +742,46 @@
 						break;
 					case "DK013":
 						showType = "태그리스";
-						break;	
+						break;
+					case "OBE":
+						showType = "OBE";
+						break;
+					case "운전자단말기":
+						showType = "운전자단말기";
+						break;
+					case "승객용안내기":
+						showType = "승객용안내기";
+						break;
+					case "전자노선도":
+						showType = "전자노선도";
+						break;
+					case "행선지키패드":
+						showType = "행선지키패드";
+						break;
+					case "행선지안내기X정면 12열(싸인)":
+						showType = "행선지안내기X정면 12열(싸인)";
+						break;
+					case "행선지안내기X정면 11열(애드앤텍)":
+						showType = "행선지안내기X정면 11열(애드앤텍)";
+						break;
+					case "행선지안내기X측면(싸인)":
+						showType = "행선지안내기X측면(싸인)";
+						break;
+					case "행선지안내기X측면2(싸인)":
+						showType = "행선지안내기X측면2(싸인)";
+						break;
+					case "투명디스플레이":
+						showType = "투명디스플레이";
+						break;
+					case "태그리스":
+						showType = "태그리스";
+						break;
+					case "행선지안내기X측면(애드앤텍)":
+						showType = "행선지안내기X측면(애드앤텍)";
+						break;
+					case "태그리스":
+						showType = "태그리스";
+						break;
 				}	
 				
 				var categoryJson = new Object();
@@ -486,27 +789,26 @@
 			
 		
 				categoryJson = workAmt;
-				
 				labelJson = showType;
 				
 				xLabel.push(labelJson);
 				data.push(categoryJson);
 			};
 			
-				//charData.label = label;
-				//charData.borderColor = rgb;
-				//charData.backgroundColor = rgb;
-				//charData.borderWidth = 1;
-				//charData.pointBorderWidth = 1;
-				//charData.tension = 0;
-				//charData.pointRadius = 1;
-				
+				charData.label = label;
+				charData.borderColor = rgb;
+				charData.backgroundColor = rgb;
+				charData.borderWidth = 1;
+				charData.pointBorderWidth = 1;
+				charData.tension = 0;
+				charData.pointRadius = 1;
+				//charData.grouped = true;
 				
 				charData.data = data;
 				datasets.push(charData);			
 
 		transData = [];
-	} //end for
+//	} //end for
 	
 		var ctx = document.getElementById('chart_ST0501');
 		
@@ -521,6 +823,7 @@
 					datasets
 				  },
 				options: {
+				responsive: true,
 					maintainAspectRatio: false,
 					scales: {
 				      yAxes: [{
@@ -561,12 +864,13 @@
 	};	
 	
 	scwin.ST0501G1_onrefresh = function(options) {
-		var incdntLength = $(".w2editablePivot_contentTable_header_TR").find(".pvtColLabel").length;
-		var dvcLength = $(".w2editablePivot_contentTable_content_TR").find(".pvtRowLabel").length;
+	
+		var incdntLength =  $("#mf_tac_layout_contents_MN00120402_body_ST0501G1").find(".w2editablePivot_contentTable_header_TR").find(".pvtColLabel").length;
+		var dvcLength = $("#mf_tac_layout_contents_MN00120402_body_ST0501G1").find(".w2editablePivot_contentTable_content_TR").find(".pvtRowLabel[colspan = 2]").length;
 		
 		for (var i=0; i<incdntLength; i++) {
-			var incdntType = $(".w2editablePivot_contentTable_header_TR").find(".pvtColLabel")[i].innerHTML;
-			switch(incdntType.trim()) {			
+			var incdntType = $("#mf_tac_layout_contents_MN00120402_body_ST0501G1").find(".w2editablePivot_contentTable_header_TR").find(".pvtColLabel")[i].innerHTML;
+			switch(incdntType) {			
 					case "WT001":
 						showType = "최초설치";
 						break;
@@ -583,9 +887,9 @@
 						showType = "폐기";
 						break;				
 			}
-			$(".w2editablePivot_contentTable_header_TR").find(".pvtColLabel")[i].innerHTML = showType;				
+			 $("#mf_tac_layout_contents_MN00120402_body_ST0501G1").find(".w2editablePivot_contentTable_header_TR").find(".pvtColLabel")[i].innerHTML = showType;				
 		}
-		for (var i=0; i<dvcLength; i++) {
+		for (var i=0; i<dlt_BRT_DVC_STAT.getAllJSON().length; i++) {
 			var incdntType2 = dlt_BRT_DVC_STAT.getCellData(i, "DVC_KIND");
 			switch(incdntType2) {			
 					case "DK001":
@@ -691,14 +995,12 @@
 		
 		if(CTR_YN.getValue() == "WORK_AMT") {
 			suffix = "원";
-			var chkJsonDataArr = ST0501G0.getCheckedJSON("chk");
-			var chkCnt = chkJsonDataArr.length;
-			scwin.drawChart2(chkCnt, chkJsonDataArr);
+			vhcId = dlt_BMS_VHC_MST.getCellData(ST0501G0.getFocusedRowIndex(), 'VHC_ID');
+			scwin.drawChart2(vhcId);
 		} else {
 			suffix = "건";
-			var chkJsonDataArr = ST0501G0.getCheckedJSON("chk");
-			var chkCnt = chkJsonDataArr.length;
-			scwin.drawChart(chkCnt, chkJsonDataArr);
+			vhcId = dlt_BMS_VHC_MST.getCellData(ST0501G0.getFocusedRowIndex(), 'VHC_ID');
+			scwin.drawChart(vhcId);
 		}
 		
 		
@@ -726,6 +1028,7 @@
 //							"vals":"reduRate,totReduAmt,totRatAmt",
 //							"valuesAxis":"column"});		
 	};
+	
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -850,7 +1153,7 @@
 							<w2:textbox class="df_tt fl" id="" label="통계 상세 정보" style=""></w2:textbox>
 
 							<!--  <xf:group style="" id="" class="label">
-								<w2:span label="구분" style="float: left;margin-right: 3px; margin-left: 15px; margin-top:5px;" id=""></w2:span>
+								<w2:span larjdmbel="구분" style="float: left;margin-right: 3px; margin-left: 15px; margin-top:5px;" id=""></w2:span>
 								</xf:group>
 								
 								<xf:select1 id="" chooseOption="" style="width: 100px;height: 21px;" submenuSize="auto" allOption="" textAlign="left"

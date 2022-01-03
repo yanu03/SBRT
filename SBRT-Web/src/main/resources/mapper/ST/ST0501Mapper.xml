@@ -67,6 +67,10 @@
 					,A.WORK_AMT
 					,B.DVC_TYPE
 					,COUNT(WORK_TYPE) AS SUM_CNT
+					,COUNT(case when WORK_TYPE='WT001' then 1 end) as SUM1
+					,COUNT(case when WORK_TYPE='WT002' then 1 end) as SUM2
+					,COUNT(case when WORK_TYPE='WT003' then 1 end) as SUM3
+					,COUNT(case when WORK_TYPE='WT004' then 1 end) as SUM4
 			FROM BMS_DVC_HIS A
 			LEFT JOIN  BMS_DVC_INFO B
 			ON A.DVC_ID = B.DVC_ID
@@ -92,23 +96,19 @@
 	
 	<select id="ST0501G2R0" resultType="Map">
 			SELECT DATE_FORMAT(A.APLY_DATE, '%Y-%m-%d') AS APLY_DATE
-					,B.DVC_ID
-					,B.DVC_KIND
 					,B.VHC_ID
+					,B.DVC_KIND
 					,C.VHC_NO
-					,A.SN
 					,A.WORK_TYPE
-					,A.WORK_AMT
-					,B.DVC_TYPE
-					,COUNT(WORK_TYPE) AS SUM_CNT
+					,SUM(A.WORK_AMT) AS WORK_AMT
 			FROM BMS_DVC_HIS A
 			LEFT JOIN  BMS_DVC_INFO B
 			ON A.DVC_ID = B.DVC_ID
 			LEFT JOIN BMS_VHC_MST C
 			ON B.VHC_ID = C.VHC_ID
-			WHERE 
-			B.VHC_ID IN
-		<foreach collection="VHC_ID" item="item" open="(" close=")" separator=",">
+			 WHERE 
+			B.VHC_ID IN 
+		 <foreach collection="VHC_ID" item="item" open="(" close=")" separator=",">
 			#{item}
 		</foreach>
 			<if test="(F_DATE != null and F_DATE != '') and (L_DATE == null or L_DATE == '')">
@@ -120,7 +120,7 @@
 			<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
 				AND A.APLY_DATE between #{F_DATE} and #{L_DATE}
 			</if>	 
-				GROUP BY	 A.WORK_TYPE, B.DVC_KIND
+				GROUP BY	 B.VHC_ID, A.DVC_ID, B.DVC_TYPE
 		ORDER BY B.DVC_KIND
 
   </select>
