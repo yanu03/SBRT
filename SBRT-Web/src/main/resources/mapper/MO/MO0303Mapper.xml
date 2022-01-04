@@ -465,4 +465,40 @@
 	WHERE			A.OPER_DT = DATE_FORMAT(NOW(), '%Y/%m/%d')
 </select>
 
+<select id="sttnList" resultType="Map">
+	SELECT			A.STTN_ID
+				,	A.STTN_NM
+				,	A.STTN_ENM
+				,	A.AREA
+				,	A.STTN_NO
+				,	A.GPS_X
+				,	A.GPS_Y
+				,	A.CENTER_YN
+				,	A.STTN_FCLT_TYPE
+				,	A.VHC_DOOR_DIR_TYPE
+				,	A.WAY_DIV
+				,	A.APPL_RDS
+				,	A.BAY_TYPE
+				,	A.BAY_LEN
+				,	A.LINE_CNT
+				,	A.STOP_TM_PEAK
+				,	A.STOP_TM_NONE_PEAK
+				,	A.APPL_ST_DT
+				,	A.APPL_ED_DT
+				,	A.USE_YN
+				,	A.DEL_YN
+				,	A.REMARK
+				,	B.ROUT_ID
+				,	C.REP_ROUT_ID
+				
+	FROM			BMS_STTN_MST A 
+	LEFT JOIN		BMS_ROUT_NODE_CMPSTN B
+		ON	A.STTN_ID = B.NODE_ID
+	LEFT JOIN		BMS_ROUT_MST C
+		ON 	B.ROUT_ID = C.ROUT_ID
+		
+	ORDER BY 		A.STTN_ID	
+	
+</select>
+
 </mapper>

@@ -98,4 +98,10 @@ public class MO0303Controller extends ControllerSupport{
 		result.setData("", mo0303Service.MO0303SCK1());
 		return result.getResult();
 	}	
+	
+	@RequestMapping("/mo/sttnList")
+	public @ResponseBody Map<String, Object> sttnList() throws Exception {		
+		result.setData("dlt_BMS_STTN_MST", mo0303Service.sttnList());
+		return result.getResult();
+	}	
 }
