@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  <mapper namespace="kr.tracom.brt.domain.ST0603.ST0603Mapper">
+  
+   <select id="ST0603G0R0" resultType="Map">
+		SELECT 		    B.ROUT_ID
+					,   B.REP_ROUT_ID
+					,	B.REP_ROUT_NM
+					,	C.ROUT_NM
+		FROM		 	BRT_OPER_DSPTCH_STAT A
+		LEFT JOIN	  BMS_ROUT_MST B
+			ON 		  A.REP_ROUT_ID = B.REP_ROUT_ID
+			LEFT JOIN	  BMS_ROUT_MST C
+			ON 		  A.ROUT_ID = C.ROUT_ID
+	<where>
+			<if test="CONTENT != NULL">
+				AND A.REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+	</where>
+		GROUP BY 	   A.REP_ROUT_ID	
+		ORDER BY REP_ROUT_NM
+	</select> 
+	
+	
+	 <select id="ST0603SHI0" resultType="Map">
+		SELECT 		    B.ROUT_ID
+					,   B.REP_ROUT_ID
+					,	B.REP_ROUT_NM
+					,	C.ROUT_NM
+		FROM		 	BRT_OPER_DSPTCH_STAT A
+		LEFT JOIN	  BMS_ROUT_MST B
+		ON 		  A.REP_ROUT_ID = B.REP_ROUT_ID
+		LEFT JOIN	  BMS_ROUT_MST C
+		ON 		  A.ROUT_ID = C.ROUT_ID
+	
+	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			 REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'REP_ROUT_NM'">
+			 REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'ROUT_NM'">
+			 ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+		GROUP BY 	  A.ROUT_ID	
+		ORDER BY REP_ROUT_NM
+	</select> 
+	
+  <select id="ST0603G1R0" resultType="Map">
+		SELECT A.ROUT_ID, A.NODE_ID, A.NODE_SN, A.NODE_NM, A.NODE_ENM, A.NODE_TYPE, A.LINK_ID, A.STTN_ID, A.STTN_NO, A.CRS_ID, A.GPS_X, A.GPS_Y, A.TM_X, A.TM_Y, A.MORN_STD
+			, A.UPD_DTM, A.UPD_ID
+			FROM BMS_ROUT_NODE_CMPSTN A 
+			INNER JOIN BMS_ROUT_MST R 
+			ON A.ROUT_ID = R.ROUT_ID
+
+			<!-- <![CDATA[WHERE A.ROUT_ID = #{ROUT_ID} 
+    		AND	A.OPER_DT BETWEEN #{F_DATE} AND #{L_DATE}]]> -->
+    
+			ORDER BY NODE_SN
+
+  </select>	
+
+  <select id="ST0603G2R0" resultType="Map">	
+		SELECT DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') AS OPER_DT
+			,C.NODE_NM
+			,SUM(A.OPER_CNT) AS OPER_CNT
+			,SUM(A.CHG_OPER_CNT) AS CHG_OPER_CNT
+			, A.STAT_H
+			FROM BRT_CHG_OPER_STAT A
+			LEFT JOIN BMS_ROUT_MST B
+			ON A.ROUT_ID = B.ROUT_ID
+			LEFT JOIN BMS_NODE_MST C
+			ON A.NODE_ID = C.NODE_ID
+
+			<![CDATA[WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} 
+    		AND	A.OPER_DT BETWEEN #{F_DATE} AND #{L_DATE}]]>
+    		
+			GROUP BY C.NODE_NM, A.STAT_H
+			ORDER BY OPER_DT, A.STAT_H
+
+	</select>
+  </mapper>

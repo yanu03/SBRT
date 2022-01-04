@@ -13,15 +13,9 @@
 		LEFT JOIN	  BMS_ROUT_MST C
 		ON 		  A.ROUT_ID = C.ROUT_ID
 	<where>
-		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-			 REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
-		</if>
-		<if test="TYPE == 'REP_ROUT_NM'">
-			 REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
-		<if test="TYPE == 'ROUT_NM'">
-			 ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
-		</if>
+		<if test="CONTENT != NULL">
+				AND A.REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
 	</where>
 		GROUP BY 	  A.ROUT_ID	
 		ORDER BY REP_ROUT_NM
