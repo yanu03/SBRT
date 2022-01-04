@@ -80,4 +80,10 @@ public class SI0402Controller extends ControllerSupport {
 		result.setData("dma_SEQ_BMS_CRS_MST_0", si0402Service.SI0402P3K0());
 		return result.getResult();
 	}
+	
+	@RequestMapping("/si/SI0402P5R0")
+	public @ResponseBody Map<String, Object> SI0402P5R0() throws Exception {
+		result.setData("dlt_BMS_GRG_MST", si0402Service.SI0402P5R0());
+		return result.getResult();
+	}	
 }

@@ -316,4 +316,9 @@ public class SI0402Service extends ServiceSupport {
 	public Map SI0402P3K0() throws Exception {
 		return si0402Mapper.SI0402P3K0(); 
 	}
+	
+	public List SI0402P5R0() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return si0402Mapper.SI0402P5R0(map);
+	}	
 }

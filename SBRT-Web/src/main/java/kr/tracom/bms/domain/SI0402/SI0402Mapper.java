@@ -55,4 +55,6 @@ public interface SI0402Mapper {
 	public int SI0402P3I0(Map param);
 	
 	public int SI0402P3U0(Map param);
+	
+	public List SI0402P5R0(Map param);	
 }
