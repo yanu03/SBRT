@@ -5,8 +5,9 @@ var routMap = {
 		CROSS : "NT001",
 		BUSSTOP : "NT002",
 		NORMAL : "NT003",
+		GARAGE : "NT004",
 		VERTEX : "NT005",
-		SOUND : "NT006"
+		SOUND : "NT006",
 	},
 	MAX_NODE_CNT : 800,
 	LIMIT_SPEED : 50
@@ -3128,6 +3129,64 @@ routMap.addSoundByClick = function(mapId,grid,routeId,e){
 		//routeData = com.getGridDispJsonData(grid);
 		//routMap.drawRoute(mapId, grid, idx);
 	}
+	return idx;
+}
+
+routMap.addGrgByClick = function(mapId,grid,routeId,e){
+	var idx = -1;
+	var routeData = com.getGridDispJsonData(grid);
+	if(routeData.length >= routMap.MAX_NODE_CNT){
+		//com.alert ("더이상 추가할 수 없습니다.");
+		return idx;
+	}
+	
+	var lonlat = e.latLng;
+	var min = 10000000;
+/*	var minIndex = null;
+
+	for(var i = 0; i < routeData.length - 1; i++) {
+		var result = getDistanceToLine(
+			lonlat.Ma,
+			lonlat.La,
+			routeData[i].GPS_Y,
+			routeData[i].GPS_X,
+			routeData[i + 1].GPS_Y,
+			routeData[i + 1].GPS_X
+		)
+		
+		if(result.distance) {
+			if(min > result.distance) {
+				min = result.distance;
+				minIndex = i;
+			}
+		}
+	}
+	
+	if(minIndex == null) {
+		com.alert("선택할 수 없는 좌표입니다. 경로를 먼저 입력하세요");
+	} */
+//	else {
+	//	idx = minIndex + 1;
+		idx = grid.getFocusedRowIndex();
+		idx = com.getGridViewDataList(grid).insertRow(idx);
+	debugger;
+		var today = new Date();
+		var data = {
+		
+				ROUT_ID: routeId,
+				NODE_SN: idx,
+				NODE_NM: /*routNm + */"차고지_" + util.getCurrentDate().substring(4),
+				NODE_TYPE: routMap.NODE_TYPE.GARAGE,
+				GPS_Y: util.getDispGps(lonlat.Ma,7),
+				GPS_X: util.getDispGps(lonlat.La,7),
+				draggable:routMap.mapInfo[mapId].draggable
+				};
+	
+		com.getGridViewDataList(grid).setRowJSON(idx, data, true);
+		grid.setFocusedCell(idx,"NODE_ID");
+		//routeData = com.getGridDispJsonData(grid);
+		//routMap.drawRoute(mapId, grid, idx);
+//	}
 	return idx;
 }
 
