@@ -23,6 +23,8 @@
 					<w2:keyInfo>
 						<w2:key id="GRG_ID" name="차고지ID" dataType="text"></w2:key>
 						<w2:key id="GRG_NM" name="차고지명" dataType="text"></w2:key>
+						<w2:key id="CENTER_GPS_X" name="중심GPS_X" dataType="text"></w2:key>
+						<w2:key id="CENTER_GPS_Y" name="중심GPS_Y" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 			</w2:dataCollection>
@@ -33,14 +35,13 @@
 			</xf:submission>
 			<xf:submission id="sub_SI0101P0S0" ref='data:json,{"action":"modified","id":"dlt_GRG_RDS_INFO"}' target="data:json,dma_result"
 				action="/si/SI0101P0S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_SI0101P0S0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
 		
 	var isEdit = false;
 	scwin.onpageload = function() {
-	
 		scwin.param = com.getParameter();
 		
 		dma_search.set("GRG_ID" , scwin.param.data.GRG_ID);
@@ -56,8 +57,6 @@
 		}
 				
 		com.setPopupBtn(wfm_mainBtn, btnOptions);
-		
-
 		
 		setTimeout(function() {
 			routMap.initMap("map_SI0101", {
@@ -77,10 +76,42 @@
 	scwin.onClickMap = function(e) {
 		if(isEdit){
 			routMap.addPolygonByClick("map_SI0101", dlt_GRG_RDS_INFO, dma_search.get("GRG_ID"), dma_search.get("GRG_NM"),e);
+			
+			//폴리곤 중심값 구하기
+			if(dlt_GRG_RDS_INFO.getDataLength() >= 4) {
+				var area = 0;
+				var cx = 0;
+				var cy = 0;			
+				
+				for(var i = 0; i<dlt_GRG_RDS_INFO.getDataLength(); i++) {
+					var j = (i+1) % dlt_GRG_RDS_INFO.getDataLength();
+					
+					var x1 = dlt_GRG_RDS_INFO.getCellData(i, "GPS_X");
+					var x2 = dlt_GRG_RDS_INFO.getCellData(j, "GPS_X");
+					var y1 = dlt_GRG_RDS_INFO.getCellData(i, "GPS_Y");
+					var y2 = dlt_GRG_RDS_INFO.getCellData(j, "GPS_Y");
+					
+					area += x1 * y2 - x2 * y1;
+					cx += (x1 + x2) * (x1 * y2 - x2 * y1);
+					cy += (y1 + y2) * (x1 * y2 - x2 * y1);
+				}
+				
+				area /= 2;
+				
+				var center_x = cx / (6 * area);
+				var center_y = cy / (6 * area);
+				dma_search.set("CENTER_GPS_X", center_x);
+				dma_search.set("CENTER_GPS_Y", center_y);
+			}
 		}
 	}
 	
 	scwin.sub_SI0101P0R0_submitdone = function(e) {
+		
+		if (scwin.param.GPS_Y != "" || scwin.param.GPS_X != "") {
+			//중심좌표 이동		
+			routMap.moveMap("map_SI0101", scwin.param.GPS_Y, scwin.param.GPS_X);
+		}
 		
 		var sCode = com.getResultCode(e);
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {			
@@ -159,10 +190,16 @@
 			});
 		}
 		else {
-			com.closePopup();
+			//com.closePopup();
+			var data = [{"CENTER_GPS_X" : dma_search.get("CENTER_GPS_X"), "CENTER_GPS_Y" : dma_search.get("CENTER_GPS_Y")}];	
+			com.closePopup(scwin.closeCallbackFncName, data);	
 		}	
 	};
-]]></script>
+
+	scwin.sub_SI0101P0S0_submitdone = function(e) {
+		dlt_GRG_RDS_INFO.modifyAllStatus("R");
+	};
+	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group class="popup_container grdr_36_a" id="popup_container" style="">
