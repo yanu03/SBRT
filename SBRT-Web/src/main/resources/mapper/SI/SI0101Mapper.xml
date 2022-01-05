@@ -4,7 +4,7 @@
 <mapper namespace="kr.tracom.bms.domain.SI0101.SI0101Mapper">
 
 <select id="SI0101G0R0" resultType="Map">
-	select GRG_ID, GRG_NM, OWNER_TYPE, ADDR, PHONE, FAX, EMAIL, CNG_YN, ELEC_YN, LEGAL_AREA,
+	select GRG_ID, GRG_NM, OWNER_TYPE, ADDR, PHONE, FAX, EMAIL, CNG_YN, ELEC_YN, LEGAL_AREA, GPS_X, GPS_Y,
 			SECURE_AREA, <!-- APPL_ST_DT, APPL_ED_DT, --> REMARK
 	from BMS_GRG_MST
 	<where>
@@ -29,6 +29,12 @@
 			<if test="SECURE_AREA != null and SECURE_AREA != ''">
 			SECURE_AREA, 
 			</if>
+			<if test="GPS_X != null and GPS_X != ''">
+			GPS_X, 
+			</if>
+			<if test="GPS_Y != null and GPS_Y != ''">
+			GPS_Y, 
+			</if>
 			<!-- APPL_ST_DT, APPL_ED_DT, --> REMARK)
 	values (#{GRG_ID}, #{GRG_NM}, #{OWNER_TYPE}, #{ADDR}, #{PHONE}, #{FAX}, #{EMAIL}, #{CNG_YN}, #{ELEC_YN},  
 			<if test="LEGAL_AREA != null and LEGAL_AREA != ''">
@@ -37,6 +43,12 @@
 			<if test="SECURE_AREA != null and SECURE_AREA != ''">
 				#{SECURE_AREA},
 			</if>
+			<if test="GPS_X != null and GPS_X != ''">
+				#{GPS_X}, 
+			</if>
+			<if test="GPS_Y != null and GPS_Y != ''">
+				#{GPS_Y}, 
+			</if>			
 			 <!-- #{APPL_ST_DT}, #{APPL_ED_DT}, --> #{REMARK})
 </insert>
 
@@ -50,6 +62,12 @@
 		<if test="SECURE_AREA != null and SECURE_AREA != ''">
 			SECURE_AREA = #{SECURE_AREA},
 		</if>
+		<if test="GPS_X != null and GPS_X != ''">
+			GPS_X = #{GPS_X}, 
+		</if>
+		<if test="GPS_Y != null and GPS_Y != ''">
+			GPS_Y = #{GPS_Y}, 
+		</if>		
 		APPL_ST_DT = #{APPL_ST_DT}, APPL_ED_DT = #{APPL_ED_DT}, REMARK = #{REMARK}
 	where GRG_ID = #{GRG_ID}
 </update>

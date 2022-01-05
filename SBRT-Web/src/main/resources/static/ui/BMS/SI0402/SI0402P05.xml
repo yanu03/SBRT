@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+	 <head>
+	<w2:type>DEFAULT</w2:type>
+	<w2:buildDate/>
+	<xf:model>
+		<xf:instance>
+			<data xmlns="" />
+		</xf:instance>
+		<w2:dataCollection baseNode="map">
+			<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_GRG_MST" saveRemovedData="true">
+				<w2:columnInfo>
+					<!-- <w2:column id="chk" name="선택" dataType="text"></w2:column> -->
+					<w2:column id="GRG_ID" name="차고지아이디" dataType="text"></w2:column>
+					<w2:column id="GRG_NM" name="차고지명" dataType="text"></w2:column>
+					<w2:column id="GRG_ENM" name="차고지영문명" dataType="text"></w2:column>
+					<w2:column id="OWNER_TYPE" name="소유형태" dataType="text"></w2:column>
+					<w2:column id="ADDR" name="주소" dataType="text"></w2:column>
+					<w2:column id="GPS_X" name="GPS_X좌표" dataType="text"></w2:column>
+					<w2:column id="GPS_Y" name="GPS_Y좌표" dataType="text"></w2:column>
+					<w2:column id="TM_X" name="TM_X좌표" dataType="text"></w2:column>
+					<w2:column id="TM_Y" name="TM_Y좌표" dataType="text"></w2:column>
+					<w2:column id="PHONE" name="전화번호" dataType="text"></w2:column>
+					<w2:column id="FAX" name="팩스" dataType="text"></w2:column>
+
+					<w2:column id="EMAIL" name="메일" dataType="text"></w2:column>
+					<w2:column id="CNG_YN" name="CNG충전여부" dataType="text"></w2:column>
+					<w2:column id="ELEC_YN" name="전기충전여부" dataType="text"></w2:column>
+					<w2:column id="LEGAL_AREA" name="법적면적" dataType="text"></w2:column>
+					<w2:column id="SECURE_AREA" name="확보면적" dataType="text"></w2:column>
+					<w2:column id="COL" name="적용반경" dataType="text"></w2:column>
+					<w2:column id="APPL_ST_DT" name="적용시작일" dataType="text"></w2:column>
+					<w2:column id="APPL_ED_DT" name="적용종료일" dataType="text"></w2:column>
+					<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
+					<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+				</w2:columnInfo>
+			</w2:dataList>
+			<w2:dataMap baseNode="map" id="dma_search">
+				<w2:keyInfo>
+					<w2:key id="STTN_ECPT_ID" name="정류소제외ID" dataType="text"></w2:key>
+					<w2:key id="CONTENT" name="name3" dataType="text"></w2:key>
+				</w2:keyInfo>
+			</w2:dataMap>
+
+        		<w2:dataMap baseNode="map" id="dma_SEQ_BMS_STTN_MST_0">
+        			<w2:keyInfo>
+        				<w2:key id="SEQ" name="SEQ" dataType="text"></w2:key>
+        			</w2:keyInfo>
+        		</w2:dataMap>
+        		<w2:dataMap baseNode="map" id="dma_result">
+        			<w2:keyInfo>
+        				<w2:key id="STATUS" name="STATUS" dataType="text"></w2:key>
+        				<w2:key id="ICNT" name="입력건수" dataType="text"></w2:key>
+        				<w2:key id="UCNT" name="수정건수" dataType="text"></w2:key>
+        				<w2:key id="DCNT" name="삭제건수" dataType="text"></w2:key>
+        				<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
+        			</w2:keyInfo>
+        		</w2:dataMap>
+		</w2:dataCollection>
+		<w2:workflowCollection></w2:workflowCollection>
+		<xf:submission id="sub_SI0402P5R0" ref="data:json,dma_search" target="data:json,dlt_BMS_GRG_MST" action="/si/SI0402P5R0"
+			method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+			processMsg="" ev:submit="" ev:submitdone="scwin.sub_SI0402P5R0_submitdone" ev:submiterror="" abortTrigger="">
+		</xf:submission>
+        </xf:model>
+        <script type="text/javascript" lazy="false"><![CDATA[
+	var isClose = false;
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		dma_search.set("STTN_ECPT_ID" , scwin.param.data.STTN_IDS);
+
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		
+    		var autoOptions = {
+			Main : { grid : SI0402P5, srchSbm : sub_SI0402P5R0, keyColumn : "GRG_ID",
+					 focusColumn : "GRG_NM", name :  "차고지명"}
+		};
+		var popupOptions = {
+			SEARCH: {}
+		};
+		com.setPopupBtn(wfm_mainBtn, popupOptions, autoOptions);
+		
+		var codeOptions = [ {code : "OWNER_TYPE", compID : "SI0402P5:OWNER_TYPE" }
+						];		
+	
+		com.setCommonDtl(codeOptions, function() {
+			com.executeSubmission(sub_SI0402P5R0);	
+		});	
+
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	scwin.btn_confirm_onclick = function() {
+//		var idx = SI0402P5.getModifiedIndex().length;
+//		if (idx > 0) {
+//			isClose = true;
+//			if (com.validateGridView(SI0402P5)) {
+//				var yesno_str = com.strModifiedCnt(SI0402P5) + "의 데이터가 저장됩니다. \n 진행하시겠습니까?";
+//				com.confirm(yesno_str, function(rtn) {
+//					if (rtn) {				
+//						com.saveData(SI0402P5,null,sub_SI0402P5S0);
+//					}
+//				});
+//			}
+//		}
+//		else {
+			var data = dlt_BMS_GRG_MST.getAllJSON()[SI0402P5.getFocusedRowIndex()];
+			
+			com.closePopup(scwin.closeCallbackFncName, data);
+		//}		
+	};
+	
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup(scwin.closeCallbackFncName);		
+	};
+	
+	scwin.sub_SI0402P5R0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+		
+			var ids=dma_search.get("STTN_ECPT_ID");
+			com.excludeItemsByGrid(SI0402P5, ids, "STTN_ID");
+		}
+	};
+	
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+				<xf:group class="gr_search" id="" style="">
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="검색"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="차고지ID 또는 차고지명"></xf:input>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group>
+			
+			<xf:group style="" id="" class="popup_content">
+				<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BMS_GRG_MST" useShiftKey="false" readOnly="true"
+					style="width:775px" scrollByColumn="false" id="SI0402P5" autoFit="allColumn" class="cm_grid popup" focusMode="row"
+					ev:onrowindexchange="scwin.SI0402P5_onrowindexchange">
+					<w2:header style="" id="header1">
+						<w2:row style="" id="row1">
+							<w2:column width="70" inputType="text" style="height:20px" id="column1" value="차고지ID" blockSelect="false"></w2:column>
+							<w2:column width="150" inputType="text" style="height:20px" id="column2" value="차고지명" blockSelect="false"></w2:column>
+							<w2:column width="50" inputType="text" style="height:20px" id="column3" value="소유형태" blockSelect="false"></w2:column>
+							<w2:column width="200" inputType="text" style="height:20px" id="column3" value="주소" blockSelect="false"></w2:column>
+							<!-- <w2:column width="101" inputType="text" style="height:20px" id="column4" value="전화번호" blockSelect="false"></w2:column> -->
+							<w2:column width="70" inputType="text" style="height:20px" id="column5" value="경도" blockSelect="false"></w2:column>
+							<w2:column width="70" inputType="text" style="height:20px" id="column6" value="위도" blockSelect="false"></w2:column>
+						</w2:row>
+						</w2:header>
+						<w2:gBody id="gBody1" style="">
+							<w2:row id="row2" style="">
+								<w2:column width="" inputType="text" style="height:20px" id="GRG_ID" blockSelect="false"></w2:column>
+								<w2:column width="" inputType="text" style="height:20px" id="GRG_NM" blockSelect="false"></w2:column>
+								<w2:column width="" inputType="select" style="height:20px" id="OWNER_TYPE" blockSelect="false"></w2:column>
+								<w2:column width="" inputType="text" style="height:20px" id="ADDR" blockSelect="false"></w2:column>
+								<!-- <w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="PHONE" value=""
+									blockSelect="false" displayMode="label">
+								</w2:column> -->
+								<w2:column width="" inputType="text" style="height:20px" id="GPS_X" blockSelect="false"></w2:column>
+								<w2:column width="" inputType="text" style="height:20px" id="GPS_Y" blockSelect="false"></w2:column>
+						</w2:row>
+					</w2:gBody>
+				</w2:gridView>
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

@@ -199,8 +199,10 @@
 					dma_sub_search.set("GRG_ID", param);
 					dma_sub_search.set("GRG_NM",SI0101G0.getDataRow(row).GRG_NM);
 					
-					
-					var data = { data : dma_sub_search.getJSON(), callbackFn : scwin.insertPopupData };
+					var data = { data : dma_sub_search.getJSON(), 
+								 GPS_X : dlt_BMS_GRG_MST.getCellData(row, "GPS_X"), 
+					 			 GPS_Y : dlt_BMS_GRG_MST.getCellData(row, "GPS_Y"),	
+								 callbackFn : "scwin.insertPopupData" };
 					
 					var options = {
 						id : "SI0101P01",
@@ -211,6 +213,13 @@
 			}
 		}
 	};
+	
+	scwin.insertPopupData = function(obj) {
+		if(obj[0].CENTER_GPS_X != "" && obj[0].CENTER_GPS_Y != "") {
+			dlt_BMS_GRG_MST.setCellData(SI0101G0.getFocusedRowIndex(), "GPS_X", obj[0].CENTER_GPS_X);	
+			dlt_BMS_GRG_MST.setCellData(SI0101G0.getFocusedRowIndex(), "GPS_Y", obj[0].CENTER_GPS_Y);	
+		}
+	}
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
 		if (info.newValue == "ALL") {

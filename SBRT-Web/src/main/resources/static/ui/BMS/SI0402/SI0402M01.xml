@@ -84,6 +84,7 @@
 						<w2:column id="MOCK_NODE_ID" name="표준노드ID" dataType="text"></w2:column>
 						<w2:column id="MAX_SPD" name="최대속도" dataType="text"></w2:column>
 						<w2:column id="MORN_STD" name="집중모니터링기준" dataType="text"></w2:column>
+						<w2:column id="GRG_ID" name="차고지ID" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_disp_check">
@@ -118,6 +119,7 @@
 	var isPathAdd;
 	var isVertexAdd;
 	var isCrossAdd;
+	var isGrgAdd;
 	var oldNodeType;
 	var curRoutId;
 	var curRoutId;
@@ -154,7 +156,7 @@
 		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
 		
 		var subOptions2 = {
-			SAVE:[{cbFnc:scwin.addPathClick,nm:"경로추가",class:"addPath"},{cbFnc:scwin.addVertexClick,nm:"버텍스추가",class:"addVertex"},{cbFnc:scwin.addSttnClick,nm:"정류소추가",class:"addSttn"}
+			SAVE:[{cbFnc:scwin.addGrgClick,nm:"차고지추가",class:"addGrg"},{cbFnc:scwin.addPathClick,nm:"경로추가",class:"addPath"},{cbFnc:scwin.addVertexClick,nm:"버텍스추가",class:"addVertex"},{cbFnc:scwin.addSttnClick,nm:"정류소추가",class:"addSttn"}
 					,{cbFnc:scwin.addCrossClick,nm:"교차로추가",class:"addCross"},{cbFnc:scwin.btn_sub_del,nm:"선택삭제",class:"del"}
 			]
 		};
@@ -382,8 +384,48 @@
 		}
 	}
 	
+	scwin.select_grg = function(isAdd) {
+
+		if (curRoutId != "") {
+			var data = null;
+			if(isAdd){
+				data = { data : dma_sub_search.getJSON(), callbackFn : "scwin.add_grg_done" };
+			}
+			else{
+				data = { data : dma_sub_search.getJSON(), callbackFn : "scwin.select_grg_done" };
+			}
+			var options = { id : "SI0402P05",
+							popupName : "차고지선택", 
+							modal : true};
+			com.openPopup("/ui/BMS/SI0402/SI0402P05.xml", options, data);
+		}
+	}	
+	
+	scwin.select_grg_done = function(obj){
+		if (typeof obj === "undefined") {
+			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE", oldNodeType);
+		}
+		else {
+			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE", routMap.NODE_TYPE.GARAGE);
+			scwin.mappingNode("map_SI0402", SI0402G1, SI0402G1.getFocusedRowIndex(), obj, true);
+		}
+	}	
+	
+	scwin.add_grg_done = function(obj){
+		if (typeof obj === "undefined") {
+			dlt_BMS_ROUT_NODE_CMPSTN.setCellData(SI0402G1.getFocusedRowIndex(),"NODE_TYPE", oldNodeType);
+		}
+		else {
+			if(com.isEmpty(obj.GPS_Y)==false && com.isEmpty(obj.GPS_X)==false){
+				curPoint.latLng.Ma = obj.GPS_Y;
+				curPoint.latLng.La = obj.GPS_X;
+			}
+			var idx = routMap.addGrgByClick("map_SI0402", SI0402G1,curRoutId,curPoint);
+			scwin.mappingNode("map_SI0402", SI0402G1, idx, obj, true);
+		}
+	}	
+	
 	scwin.mappingNode = function(mapId, grid, index, data, draggable){
-		
 		if(data==null)return;
 
 		var nodeId = com.getGridViewDataList(grid).getCellData(index, "NODE_ID");
@@ -402,6 +444,13 @@
 			com.getGridViewDataList(grid).setCellData(index, "OLD_NODE_ID",nodeId);
 			com.getGridViewDataList(grid).setCellData(index, "NODE_ID",data.CRS_ID);
 			com.getGridViewDataList(grid).setCellData(index, "NODE_NM",data.CRS_NM);
+		}
+		else if(com.getGridViewDataList(grid).getCellData(index,"NODE_TYPE")==routMap.NODE_TYPE.GARAGE){
+			com.getGridViewDataList(grid).setCellData(index, "ROUT_ID",curRoutId);
+			com.getGridViewDataList(grid).setCellData(index, "GRG_ID",data.GRG_ID);
+			com.getGridViewDataList(grid).setCellData(index, "OLD_NODE_ID",nodeId);
+			com.getGridViewDataList(grid).setCellData(index, "NODE_ID",data.GRG_ID);
+			com.getGridViewDataList(grid).setCellData(index, "NODE_NM",data.GRG_NM);
 		}
 		routMap.drawRoute(mapId, grid, index, draggable);
 	}
@@ -493,11 +542,13 @@
 			routMap.addVertexByClick("map_SI0402", SI0402G1,curRoutId,e);
 		}else if(isPathAdd){
 			routMap.addPathByClick("map_SI0402", SI0402G1,curRoutId,e);
+		} else if (isGrgAdd) {
+			scwin.select_grg(true);
 		}
 	}
 	
 	scwin.nodeChangeCb = function(idx) {
-		if(isPathAdd || isVertexAdd || isSttnAdd || isCrossAdd) return;
+		if(isPathAdd || isVertexAdd || isSttnAdd || isCrossAdd || isGrgAdd) return;
 		
 		SI0402G1.setFocusedCell(idx,"NODE_ID");
 		
@@ -548,6 +599,7 @@
 			isSttnAdd = false;
 			isVertexAdd = false;
 			isCrossAdd = false;
+			isGrgAdd = false;
 		}
 		scwin.changeGeoBtn();
 	}
@@ -561,6 +613,7 @@
 			isSttnAdd = false;
 			isVertexAdd = true;
 			isCrossAdd = false;
+			isGrgAdd = false;
 		}
 		scwin.changeGeoBtn();
 	}
@@ -573,6 +626,7 @@
 			isSttnAdd = true;
 			isVertexAdd = false;
 			isCrossAdd = false;
+			isGrgAdd = false;
 		}
 		scwin.changeGeoBtn();
 	}
@@ -585,8 +639,22 @@
 			isSttnAdd = false;
 			isVertexAdd = false;
 			isCrossAdd = true;
+			isGrgAdd = false;
 		}
 		scwin.changeGeoBtn();
+	}
+	
+	scwin.addGrgClick = function() {
+		if(isGrgAdd) {
+			isGrgAdd = false;
+		} else {
+			isPathAdd = false;
+			isSttnAdd = false;
+			isVertexAdd = false;
+			isCrossAdd = false;
+			isGrgAdd = true;
+		}
+		scwin.changeGeoBtn();	
 	}
 	
 	scwin.subGridUp = function(){
@@ -630,6 +698,7 @@
 		isVertexAdd = false;
 		isSttnAdd = false;
 		isCrossAdd = false;
+		isGrgAdd = false;
 		scwin.changeGeoBtn();
 	}
 		
@@ -637,40 +706,49 @@
 
 		var temp = wfm_subBtn2.getWindow().btn_sub_generator;
 		
-		if(isPathAdd) {
-			temp.getChild(0,"btn_sub").setValue("경로종료");
-			temp.getChild(0,"btn_sub").addClass("end");
+		if(isGrgAdd) {
+			temp.getChild(0,"btn_sub").setValue("차고지종료");
+			temp.getChild(0,"btn_sub").addClass("end");		
 		}
 		else {
-			temp.getChild(0,"btn_sub").setValue("경로추가");
+			temp.getChild(0,"btn_sub").setValue("차고지추가");
 			temp.getChild(0,"btn_sub").removeClass("end");
 		}
 		
-		if(isVertexAdd) {
-			temp.getChild(1,"btn_sub").setValue("버텍스종료");
+		if(isPathAdd) {
+			temp.getChild(1,"btn_sub").setValue("경로종료");
 			temp.getChild(1,"btn_sub").addClass("end");
 		}
 		else {
-			temp.getChild(1,"btn_sub").setValue("버텍스추가");
+			temp.getChild(1,"btn_sub").setValue("경로추가");
 			temp.getChild(1,"btn_sub").removeClass("end");
 		}
 		
-		if(isSttnAdd) {
-			temp.getChild(2,"btn_sub").setValue("정류소종료");
+		if(isVertexAdd) {
+			temp.getChild(2,"btn_sub").setValue("버텍스종료");
 			temp.getChild(2,"btn_sub").addClass("end");
 		}
 		else {
-			temp.getChild(2,"btn_sub").setValue("정류소추가");
+			temp.getChild(2,"btn_sub").setValue("버텍스추가");
 			temp.getChild(2,"btn_sub").removeClass("end");
 		}
 		
-		if(isCrossAdd) {
-			temp.getChild(3,"btn_sub").setValue("교차로종료");
+		if(isSttnAdd) {
+			temp.getChild(3,"btn_sub").setValue("정류소종료");
 			temp.getChild(3,"btn_sub").addClass("end");
 		}
 		else {
-			temp.getChild(3,"btn_sub").setValue("교차로추가");
+			temp.getChild(3,"btn_sub").setValue("정류소추가");
 			temp.getChild(3,"btn_sub").removeClass("end");
+		}
+		
+		if(isCrossAdd) {
+			temp.getChild(4,"btn_sub").setValue("교차로종료");
+			temp.getChild(4,"btn_sub").addClass("end");
+		}
+		else {
+			temp.getChild(4,"btn_sub").setValue("교차로추가");
+			temp.getChild(4,"btn_sub").removeClass("end");
 		}
 		
 		if(!isPathAdd&&!isVertexAdd&&!isSttnAdd&&!isCrossAdd) {
@@ -850,6 +928,9 @@
 										<w2:column blockSelect="false" displayMode="label" id="column7" inputType="text"
 											removeBorderStyle="false" style="height:20px" value="정류소번호" width="70">
 										</w2:column>
+										<w2:column blockSelect="false" displayMode="label" id="column12" inputType="text"
+											removeBorderStyle="false" style="height:20px" value="차고지ID" width="100">
+										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="column11" inputType="text"
 											removeBorderStyle="false" style="height:20px" value="현시번호" width="70">
 										</w2:column>
@@ -882,6 +963,9 @@
 											style="height:20px" width="" readonly="true">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="STTN_NO" inputType="text" removeBorderStyle="false"
+											style="height:20px" width="" readonly="true">
+										</w2:column>
+										<w2:column blockSelect="false" displayMode="label" id="GRG_ID" inputType="text" removeBorderStyle="false"
 											style="height:20px" width="" readonly="true">
 										</w2:column>
 										<w2:column blockSelect="false" displayMode="label" id="PHASE_NO" inputType="text" removeBorderStyle="false"

@@ -17,6 +17,7 @@ import kr.tracom.cm.support.exception.MessageException;
 import kr.tracom.platform.attribute.brt.AtDispatch;
 import kr.tracom.platform.attribute.common.AtTimeStamp;
 import kr.tracom.platform.net.config.TimsConfig;
+import kr.tracom.platform.net.protocol.TimsAddress;
 import kr.tracom.platform.net.protocol.TimsMessage;
 import kr.tracom.platform.net.protocol.TimsMessageBuilder;
 import kr.tracom.platform.service.TService;
@@ -257,11 +258,12 @@ public class MO0303Service extends ServiceSupport {
 				
 				dispatchReq.setUpdateTm(new AtTimeStamp(DateUtil.now("yyyyMMddHHmmss")));
 				dispatchReq.setMessageType((byte)Constants.DispatchType.DISPATCH_TYPE_1); 
-				dispatchReq.setMessageLevel((byte)Constants.DispatchType.DISPATCH_LV_3);
+				dispatchReq.setMessageLevel((byte)Constants.DispatchType.DISPATCH_LV_2);
 				dispatchReq.setMessage(message);
 				
 				TimsConfig timsConfig = TService.getInstance().getTimsConfig();
-				TimsMessageBuilder builder = new TimsMessageBuilder(timsConfig);
+				TimsMessageBuilder builder = new TimsMessageBuilder(TService.getInstance().getTimsConfig(), new TimsAddress(), new TimsAddress(TimsAddress.APP_ID_DRIVER_TERMINAL));
+				
 				TimsMessage timsMessage = builder.eventRequest(dispatchReq);
 				
 				kafkaProducer.sendKafka(KafkaTopics.T_COMMUNICATION, timsMessage, impId);
@@ -271,4 +273,10 @@ public class MO0303Service extends ServiceSupport {
 		
 		return null;
 	}
+	
+	public List sttnList() throws Exception {
+		// TODO Auto-generated method stub
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return mo0303Mapper.sttnList(map);
+	}		
 }
