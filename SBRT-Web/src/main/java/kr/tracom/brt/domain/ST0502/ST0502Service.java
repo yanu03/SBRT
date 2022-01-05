@@ -20,17 +20,22 @@ public class ST0502Service extends ServiceSupport {
 		return st0502Mapper.ST0502G0R0(map);
 	}
 	
+	public List ST0502G0R1() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		return st0502Mapper.ST0502G0R1(map);
+	}
+	
 	public List ST0502G1R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
-		String temp[] = map.get("ROUT_ID").toString().replace("[","").replace("]","").replace(" ","").split(",");
-		map.put("ROUT_ID", temp);
+		String temp[] = map.get("NODE_ID").toString().replace("[","").replace("]","").replace(" ","").split(",");
+		map.put("NODE_ID", temp);
 		return st0502Mapper.ST0502G1R0(map);
 	}
 	
 	public List ST0502G2R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
-		String temp[] = map.get("ROUT_ID").toString().replace("[","").replace("]","").replace(" ","").split(",");
-		map.put("ROUT_ID", temp);
+		String temp[] = map.get("NODE_ID").toString().replace("[","").replace("]","").replace(" ","").split(",");
+		map.put("NODE_ID", temp);
 		return st0502Mapper.ST0502G2R0(map);
 	}
 	

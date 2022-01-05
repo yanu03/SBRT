@@ -36,6 +36,21 @@ public class ST0802Service extends ServiceSupport {
 		return st0802Mapper.ST0802G1R0(map);
 	}
 	
+	public List ST0802G1R1() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		String tabDivG1 = (String) map.get("TAB_DIV_G1");
+		
+		if(tabDivG1.equals("BUS")){
+			String temp[] = map.get("VHC_ID").toString().replace("[","").replace("]","").replace(" ","").split(",");
+			map.put("VHC_ID", temp);
+		}else if(tabDivG1.equals("DRV")) {
+			String temp[] = map.get("DRV_ID").toString().replace("[","").replace("]","").replace(" ","").split(",");
+			map.put("DRV_ID", temp);
+		}
+	
+		return st0802Mapper.ST0802G1R1(map);
+	}
+	
 	public List ST0802G2R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
 		String tabDivG1 = (String) map.get("TAB_DIV_G1");

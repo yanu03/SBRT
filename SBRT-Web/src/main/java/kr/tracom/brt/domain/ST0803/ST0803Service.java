@@ -35,6 +35,13 @@ public class ST0803Service extends ServiceSupport {
 		return st0803Mapper.ST0803G1R0(map);
 	}
 	
+	public List ST0803G1R1() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		String temp[] = map.get("NODE_ID").toString().replace("[","").replace("]","").replace(" ","").split(",");
+		map.put("NODE_ID", temp);
+		return st0803Mapper.ST0803G1R1(map);
+	}
+	
 	public List ST0803G2R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
 		String temp[] = map.get("NODE_ID").toString().replace("[","").replace("]","").replace(" ","").split(",");

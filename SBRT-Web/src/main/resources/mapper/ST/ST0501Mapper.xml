@@ -3,32 +3,41 @@
 
   <mapper namespace="kr.tracom.brt.domain.ST0501.ST0501Mapper">
   
-   <select id="ST0501G0R0" resultType="Map">
-		SELECT 		    a.VHC_ID
-					,   a.VHC_NO
-					,	b.DVC_ID
-					,	b.DVC_KIND
-					<!-- , 	c.DVC_COND -->
-		FROM		 	BMS_VHC_MST a
-		LEFT JOIN	  BMS_DVC_INFO b
-			ON 		  a.VHC_ID = b.VHC_ID
-		LEFT JOIN		BMS_DVC_COND_INFO c
-			ON			b.MNG_ID = c.MNG_ID
-	<where>
-		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-			 a.VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || a.VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
-		</if>
-		<if test="TYPE == 'VHC_ID'">
-			 a.VHC_ID LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
-		<if test="TYPE == 'VHC_KIND'">
-			 a.VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
-		</if>
-	</where>
-		GROUP BY a.VHC_ID, b.DVC_KIND
-		ORDER BY a.VHC_ID
-	</select> 
-	
+  <select id="ST0501G0R0" resultType="Map">
+		SELECT  ROUT_ID
+				,REP_ROUT_ID
+				,REP_ROUT_NM
+				,ROUT_NM
+				,ROUT_LEN
+		FROM 
+			BMS_ROUT_MST
+		WHERE 
+			DEL_YN != 'Y'
+			<if test="CONTENT != NULL">
+				AND REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		ORDER BY 
+			REP_ROUT_NM, ROUT_ID
+	</select>
+  
+   <select id="ST0501G0R1" resultType="Map">
+		SELECT  
+			A.ERROR_DT
+			,A.REP_ROUT_ID
+			,A.ROUT_ID
+			,A.VHC_ID
+			,B.VHC_NO
+		FROM 
+			BRT_DVC_STAT A
+			LEFT JOIN BMS_VHC_MST B
+			ON A.VHC_ID = B.VHC_ID
+		WHERE 
+			A.ROUT_ID = #{ROUT_ID}
+		GROUP BY
+			A.ROUT_ID, A.VHC_ID
+		ORDER BY 
+			A.VHC_ID
+	</select>
 	
 	 <select id="ST0501SHI0" resultType="Map">
 			SELECT 		a.VHC_ID
@@ -57,71 +66,63 @@
 	</select>  
 	
   <select id="ST0501G1R0" resultType="Map">
-			SELECT DATE_FORMAT(A.APLY_DATE, '%Y-%m-%d') AS APLY_DATE
-					,B.DVC_ID
-					,B.DVC_KIND
-					,B.VHC_ID
-					,C.VHC_NO
-					,A.SN
-					,A.WORK_TYPE
-					,A.WORK_AMT
-					,B.DVC_TYPE
-					,COUNT(WORK_TYPE) AS SUM_CNT
-					,COUNT(case when WORK_TYPE='WT001' then 1 end) as SUM1
-					,COUNT(case when WORK_TYPE='WT002' then 1 end) as SUM2
-					,COUNT(case when WORK_TYPE='WT003' then 1 end) as SUM3
-					,COUNT(case when WORK_TYPE='WT004' then 1 end) as SUM4
-			FROM BMS_DVC_HIS A
-			LEFT JOIN  BMS_DVC_INFO B
-			ON A.DVC_ID = B.DVC_ID
-			LEFT JOIN BMS_VHC_MST C
-			ON B.VHC_ID = C.VHC_ID
-			WHERE 
-			B.VHC_ID IN
-		<foreach collection="VHC_ID" item="item" open="(" close=")" separator=",">
+		SELECT
+ 			DATE_FORMAT(A.ERROR_DT, '%Y-%m-%d') ERROR_DT
+			,A.REP_ROUT_ID
+			,A.ROUT_ID
+			,A.VHC_ID
+			,A.DVC_KIND
+			,SUM(A.JUDG_CNT) AS JUDG_CNT
+			,SUM(A.ERROR_CNT) AS ERROR_CNT
+			,B.VHC_NO
+		FROM
+			BRT_DVC_STAT A
+			LEFT JOIN BMS_VHC_MST B
+			ON A.VHC_ID = B.VHC_ID
+		WHERE
+			A.ROUT_ID = #{ROUT_ID}
+			AND A.DVC_KIND = #{DVC_SELECT_DIV}
+			AND A.VHC_ID IN
+		<foreach collection="VHC_ID" item="item" index="index"  open="(" close=")" separator=",">
 			#{item}
 		</foreach>
-			<if test="(F_DATE != null and F_DATE != '') and (L_DATE == null or L_DATE == '')">
-				<![CDATA[AND A.APLY_DATE >= #{F_DATE}]]>
-			</if>
-			<if test="(F_DATE == null or F_DATE == '') and L_DATE != null and L_DATE != '' ">
-				<![CDATA[AND A.APLY_DATE <= #{L_DATE}]]>
-			</if>
 			<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
-				AND A.APLY_DATE between #{F_DATE} and #{L_DATE}
-			</if>	 
-		GROUP BY	B.VHC_ID, A.WORK_TYPE, B.DVC_KIND
-		ORDER BY	DVC_KIND , B.DVC_ID
+				AND DATE_FORMAT(A.ERROR_DT, '%Y%m%d') BETWEEN #{F_DATE} AND #{L_DATE}
+			</if>
+		GROUP BY
+			ERROR_DT, A.VHC_ID
+		ORDER BY
+			A.VHC_ID, ERROR_DT
   </select>	
 	
 	<select id="ST0501G2R0" resultType="Map">
-			SELECT DATE_FORMAT(A.APLY_DATE, '%Y-%m-%d') AS APLY_DATE
-					,B.VHC_ID
-					,B.DVC_KIND
-					,C.VHC_NO
-					,A.WORK_TYPE
-					,SUM(A.WORK_AMT) AS WORK_AMT
-			FROM BMS_DVC_HIS A
-			LEFT JOIN  BMS_DVC_INFO B
-			ON A.DVC_ID = B.DVC_ID
-			LEFT JOIN BMS_VHC_MST C
-			ON B.VHC_ID = C.VHC_ID
-			 WHERE 
-			B.VHC_ID IN 
-		 <foreach collection="VHC_ID" item="item" open="(" close=")" separator=",">
+		SELECT
+ 			DATE_FORMAT(A.ERROR_DT, '%Y-%m-%d') ERROR_DT
+			,A.REP_ROUT_ID
+			,A.ROUT_ID
+			,A.VHC_ID
+			,A.DVC_KIND
+			,SUM(A.JUDG_CNT) AS JUDG_CNT
+			,SUM(A.ERROR_CNT) AS ERROR_CNT
+			,B.VHC_NO
+		FROM
+			BRT_DVC_STAT A
+			LEFT JOIN BMS_VHC_MST B
+			ON A.VHC_ID = B.VHC_ID
+		WHERE
+			A.ROUT_ID = #{ROUT_ID}
+			AND A.DVC_KIND = #{DVC_SELECT_DIV}
+			AND A.VHC_ID IN
+		<foreach collection="VHC_ID" item="item" index="index"  open="(" close=")" separator=",">
 			#{item}
 		</foreach>
-			<if test="(F_DATE != null and F_DATE != '') and (L_DATE == null or L_DATE == '')">
-				<![CDATA[AND A.APLY_DATE >= #{F_DATE}]]>
-			</if>
-			<if test="(F_DATE == null or F_DATE == '') and L_DATE != null and L_DATE != '' ">
-				<![CDATA[AND A.APLY_DATE <= #{L_DATE}]]>
-			</if>
 			<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
-				AND A.APLY_DATE between #{F_DATE} and #{L_DATE}
-			</if>	 
-				GROUP BY	 B.VHC_ID, A.DVC_ID, B.DVC_TYPE
-		ORDER BY B.DVC_KIND
-
+				AND DATE_FORMAT(A.ERROR_DT, '%Y%m%d') BETWEEN #{F_DATE} AND #{L_DATE}
+			</if>
+		GROUP BY
+			A.VHC_ID
+		ORDER BY
+			A.VHC_ID
   </select>
-  </mapper>
+  
+ </mapper>

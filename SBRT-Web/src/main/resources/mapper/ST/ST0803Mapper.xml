@@ -19,23 +19,23 @@
 		ORDER BY REP_ROUT_NM
 	</select>
 	
-	 <select id="ST0803G1R0" resultType="Map" parameterType="Map">
+	<select id="ST0803G1R0" resultType="Map" parameterType="Map">
 		SELECT  
 			A.OPER_DT
 			,A.REP_ROUT_ID
 			,A.ROUT_ID
 			,A.NODE_ID
-			,B.STTN_NM
+			,B.NODE_NM AS STTN_NM
 		FROM 
 			BRT_STTN_PNCTLTY_STAT A
-			LEFT JOIN BMS_STTN_MST B
-			ON A.NODE_ID = B.STTN_ID
+			LEFT JOIN BMS_ROUT_NODE_CMPSTN B
+			ON A.NODE_ID = B.NODE_ID
 		WHERE 
-			A.ROUT_ID = #{ROUT_ID}
+			A.ROUT_ID = #{ROUT_ID} AND B.NODE_TYPE = 'NT002'
 		GROUP BY
 			A.NODE_ID
 		ORDER BY 
-			OPER_DT, A.NODE_ID
+			B.NODE_SN
 	</select>
   
   <select id="ST0803G2R0" resultType="Map">
@@ -151,6 +151,134 @@
 			OPER_DT, NODE_ID, A.STAT_H
 		ORDER BY
 			OPER_DT, NODE_ID, A.STAT_H
+		</if>
+		<if test="SELECT_DIV == 'DAY'">
+		GROUP BY
+			OPER_DT, A.NODE_ID
+		ORDER BY
+			A.NODE_ID, OPER_DT
+		</if>
+		<if test="SELECT_DIV == 'MONTH'">
+		GROUP BY 
+			A.NODE_ID
+		ORDER BY
+			A.NODE_ID, A.OPER_DT 
+		</if>
+  </select>
+  
+  <select id="ST0803G1R1" resultType="Map">
+  		SELECT
+  		<if test="SELECT_DIV == 'TIME'">
+	  		<choose>
+	  			<when test="TAB_DIV == 'PNCTLTY_CNT'">
+	  				DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,A.NODE_ID
+					,B.STTN_NM
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,AVG(PNCTLTY_CNT) AS PNCTLTY_CNT
+	  			</when>
+	  			<when test="TAB_DIV == 'PNCTLTY_VIOLT_DELAY_CNT'">
+	  				DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,A.NODE_ID
+					,B.STTN_NM
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,AVG(A.PNCTLTY_VIOLT_DELAY_CNT) AS PNCTLTY_VIOLT_DELAY_CNT
+	  			</when>
+	  			<when test="TAB_DIV == 'PNCTLTY_VIOLT_FAST_CNT'">
+	  				DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,A.NODE_ID
+					,B.STTN_NM
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,AVG(A.PNCTLTY_VIOLT_FAST_CNT) AS PNCTLTY_VIOLT_FAST_CNT
+	  			</when>
+	  		</choose>
+		</if>
+		<if test="SELECT_DIV == 'DAY'">
+			<choose>
+	  			<when test="TAB_DIV == 'PNCTLTY_CNT'">
+	  				DATE_FORMAT(DATE(A.OPER_DT), '%Y-%m-%d') OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,A.NODE_ID
+					,B.STTN_NM
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,SUM(PNCTLTY_CNT) AS PNCTLTY_CNT
+	  			</when>
+	  			<when test="TAB_DIV == 'PNCTLTY_VIOLT_DELAY_CNT'">
+	  				DATE_FORMAT(DATE(A.OPER_DT), '%Y-%m-%d') OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,A.NODE_ID
+					,B.STTN_NM
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,SUM(A.PNCTLTY_VIOLT_DELAY_CNT) AS PNCTLTY_VIOLT_DELAY_CNT
+	  			</when>
+	  			<when test="TAB_DIV == 'PNCTLTY_VIOLT_FAST_CNT'">
+	  				DATE_FORMAT(DATE(A.OPER_DT), '%Y-%m-%d') OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,A.NODE_ID
+					,B.STTN_NM
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,SUM(A.PNCTLTY_VIOLT_FAST_CNT) AS PNCTLTY_VIOLT_FAST_CNT
+	  			</when>
+	  		</choose>
+		</if>
+		<if test="SELECT_DIV == 'MONTH'">
+			<choose>
+	  			<when test="TAB_DIV == 'PNCTLTY_CNT'">
+	  				MONTH(A.OPER_DT) AS OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,A.NODE_ID
+					,B.STTN_NM
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,SUM(PNCTLTY_CNT) AS PNCTLTY_CNT
+	  			</when>
+	  			<when test="TAB_DIV == 'PNCTLTY_VIOLT_DELAY_CNT'">
+	  				MONTH(A.OPER_DT) AS OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,A.NODE_ID
+					,B.STTN_NM
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,SUM(PNCTLTY_VIOLT_DELAY_CNT) AS PNCTLTY_VIOLT_DELAY_CNT
+	  			</when>
+	  			<when test="TAB_DIV == 'PNCTLTY_VIOLT_FAST_CNT'">
+	  				MONTH(A.OPER_DT) AS OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,A.NODE_ID
+					,B.STTN_NM
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,SUM(PNCTLTY_VIOLT_FAST_CNT) AS PNCTLTY_VIOLT_FAST_CNT
+	  			</when>
+	  		</choose>
+		</if>
+		FROM
+			BRT_STTN_PNCTLTY_STAT A
+			LEFT JOIN BMS_STTN_MST B
+			ON A.NODE_ID = B.STTN_ID
+		WHERE
+			A.ROUT_ID = #{ROUT_ID}
+			AND A.NODE_ID IN
+		<foreach collection="NODE_ID" item="item" index="index"  open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+			<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
+				AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') BETWEEN #{F_DATE} AND #{L_DATE}
+			</if>
+		<if test="SELECT_DIV == 'TIME'">
+		GROUP BY
+			NODE_ID, A.STAT_H
+		ORDER BY
+			NODE_ID, A.STAT_H
 		</if>
 		<if test="SELECT_DIV == 'DAY'">
 		GROUP BY

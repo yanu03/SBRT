@@ -6,9 +6,11 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface ST0502Mapper {
+public interface ST0502Mapper{
 
 	public List ST0502G0R0(Map param);
+	
+	public List ST0502G0R1(Map param);
 	
 	public List ST0502G1R0(Map param);
 	

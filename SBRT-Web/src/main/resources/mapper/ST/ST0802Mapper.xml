@@ -227,5 +227,183 @@
 			</if>
 		</if>
   </select>
+  
+  <select id="ST0802G1R1" resultType="Map">
+  		SELECT
+  		<if test="SELECT_DIV == 'TIME'">
+	  		<choose>
+	  			<when test="TAB_DIV == 'PNCTLTY_CNT'">
+	  				DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,A.VHC_ID
+					,B.VHC_NO
+					,A.DRV_ID
+					,AVG(A.PNCTLTY_CNT) AS PNCTLTY_CNT
+					,C.DRV_NM
+	  			</when>
+	  			<when test="TAB_DIV == 'PNCTLTY_VIOLT_DELAY_CNT'">
+	  				DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,A.VHC_ID
+					,B.VHC_NO
+					,A.DRV_ID
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,AVG(A.PNCTLTY_VIOLT_DELAY_CNT) AS PNCTLTY_VIOLT_DELAY_CNT
+					,C.DRV_NM
+	  			</when>
+	  			<when test="TAB_DIV == 'PNCTLTY_VIOLT_FAST_CNT'">
+	  				DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,A.VHC_ID
+					,B.VHC_NO
+					,A.DRV_ID
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,AVG(A.PNCTLTY_VIOLT_FAST_CNT) AS PNCTLTY_VIOLT_FAST_CNT
+					,C.DRV_NM
+	  			</when>
+	  		</choose>
+		</if>
+		<if test="SELECT_DIV == 'DAY'">
+			<choose>
+	  			<when test="TAB_DIV == 'PNCTLTY_CNT'">
+	  				DATE_FORMAT(DATE(A.OPER_DT), '%Y-%m-%d') OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,A.VHC_ID
+					,B.VHC_NO
+					,A.DRV_ID
+					,C.DRV_NM
+					,SUM(A.PNCTLTY_CNT) AS PNCTLTY_CNT
+	  			</when>
+	  			<when test="TAB_DIV == 'PNCTLTY_VIOLT_DELAY_CNT'">
+	  				DATE_FORMAT(DATE(A.OPER_DT), '%Y-%m-%d') OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,A.VHC_ID
+					,B.VHC_NO
+					,A.DRV_ID
+					,C.DRV_NM
+					,SUM(A.PNCTLTY_VIOLT_DELAY_CNT) AS PNCTLTY_VIOLT_DELAY_CNT
+	  			</when>
+	  			<when test="TAB_DIV == 'PNCTLTY_VIOLT_FAST_CNT'">
+	  				DATE_FORMAT(DATE(A.OPER_DT), '%Y-%m-%d') OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,A.VHC_ID
+					,B.VHC_NO
+					,A.DRV_ID
+					,C.DRV_NM
+					,SUM(A.PNCTLTY_VIOLT_FAST_CNT) AS PNCTLTY_VIOLT_FAST_CNT
+	  			</when>
+	  		</choose>
+		</if>
+		<if test="SELECT_DIV == 'MONTH'">
+			<choose>
+	  			<when test="TAB_DIV == 'PNCTLTY_CNT'">
+	  				MONTH(A.OPER_DT) AS OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,A.VHC_ID
+					,B.VHC_NO
+					,A.DRV_ID
+					,C.DRV_NM
+					,SUM(A.PNCTLTY_CNT) AS PNCTLTY_CNT
+	  			</when>
+	  			<when test="TAB_DIV == 'PNCTLTY_VIOLT_DELAY_CNT'">
+	  				MONTH(A.OPER_DT) AS OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,A.VHC_ID
+					,B.VHC_NO
+					,A.DRV_ID
+					,C.DRV_NM
+					,SUM(A.PNCTLTY_VIOLT_DELAY_CNT) AS PNCTLTY_VIOLT_DELAY_CNT
+	  			</when>
+	  			<when test="TAB_DIV == 'PNCTLTY_VIOLT_FAST_CNT'">
+	  				MONTH(A.OPER_DT) AS OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,A.VHC_ID
+					,B.VHC_NO
+					,A.DRV_ID
+					,C.DRV_NM
+					,SUM(A.PNCTLTY_VIOLT_FAST_CNT) AS PNCTLTY_VIOLT_FAST_CNT
+	  			</when>
+	  		</choose>
+		</if>
+		FROM
+			BRT_OPER_PNCTLTY_STAT A
+			LEFT JOIN BMS_VHC_MST B
+			ON A.VHC_ID = B.VHC_ID
+			LEFT JOIN BMS_DRV_MST C
+			ON A.DRV_ID = C.DRV_ID
+		WHERE
+			A.ROUT_ID = #{ROUT_ID}
+		<if test="TAB_DIV_G1 == 'BUS'">
+			AND A.VHC_ID IN
+			<foreach collection="VHC_ID" item="item" index="index"  open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="TAB_DIV_G1 == 'DRV'">
+			AND A.DRV_ID IN
+			<foreach collection="DRV_ID" item="item" index="index"  open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
+			AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') BETWEEN #{F_DATE} AND #{L_DATE}
+		</if>
+		<if test="TAB_DIV_G1 == 'BUS'">
+			<if test="SELECT_DIV == 'TIME'">
+			GROUP BY
+				A.ROUT_ID, A.VHC_ID, A.STAT_H
+			ORDER BY
+				A.VHC_ID, A.STAT_H
+			</if>
+			<if test="SELECT_DIV == 'DAY'">
+			GROUP BY
+				OPER_DT, A.VHC_ID
+			ORDER BY
+				A.VHC_ID, OPER_DT
+			</if>
+			<if test="SELECT_DIV == 'MONTH'">
+			GROUP BY 
+				A.VHC_ID
+			ORDER BY
+				A.VHC_ID, A.OPER_DT 
+			</if>
+		</if>
+		<if test="TAB_DIV_G1 == 'DRV'">
+			<if test="SELECT_DIV == 'TIME'">
+			GROUP BY
+				A.ROUT_ID, A.DRV_ID, A.STAT_H
+			ORDER BY
+				A.DRV_ID, A.STAT_H
+			</if>
+			<if test="SELECT_DIV == 'DAY'">
+			GROUP BY
+				OPER_DT, A.DRV_ID
+			ORDER BY
+				A.DRV_ID, OPER_DT
+			</if>
+			<if test="SELECT_DIV == 'MONTH'">
+			GROUP BY 
+				A.DRV_ID
+			ORDER BY
+				A.DRV_ID, A.OPER_DT 
+			</if>
+		</if>
+  </select>
 
 </mapper>

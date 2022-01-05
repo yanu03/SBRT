@@ -12,5 +12,7 @@ public interface ST0803Mapper {
 	
 	public List ST0803G1R0(Map param);
 	
+	public List ST0803G1R1(Map param);
+	
 	public List ST0803G2R0(Map param);
 }

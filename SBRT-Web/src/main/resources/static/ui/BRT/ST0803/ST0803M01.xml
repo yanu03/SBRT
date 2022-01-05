@@ -36,6 +36,21 @@
 						<w2:column id="STAT_H" name="통계시간" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_STTN_PNCTLTY_STAT_PIVOT_2" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="OPER_DT" name="운행일" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
+						<w2:column id="STTN_NM" name="정류소명" dataType="text"></w2:column>
+						<w2:column id="PNCTLTY_CNT" name="정시성횟수" dataType="text"></w2:column>
+						<w2:column id="PNCTLTY_VIOLT_DELAY_CNT" name="정시성위반지연횟수" dataType="text"></w2:column>
+						<w2:column id="PNCTLTY_VIOLT_FAST_CNT" name="정시성위반신속횟수" dataType="text"></w2:column>
+						<w2:column id="STAT_H" name="통계시간" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_MST" saveRemovedData="true">
 					<w2:columnInfo>
@@ -85,6 +100,11 @@
 				customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0803G1R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
+			<xf:submission id="sub_ST0803G1R1" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_STTN_PNCTLTY_STAT_PIVOT_2"
+				action="/st/ST0803G1R1" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0803G1R1_submitdone"
+				ev:submiterror="" abortTrigger="">
+			</xf:submission>
 			<xf:submission id="sub_ST0803G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_STTN_PNCTLTY_STAT_PIVOT"
 				action="/st/ST0803G2R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0803G2R0_submitdone"
@@ -109,8 +129,6 @@
 	      
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions, mainOptions);
 		
-		com.executeSubmission(sub_ST0803SHI0);
-		
 		var date = new Date();
 		var year = date.getFullYear().toString();
 		var month = (date.getMonth()+1).toString();
@@ -131,6 +149,8 @@
 		L_DATE.setValue(today);
 		dma_sub_search.set("TAB_DIV", "PNCTLTY_CNT");
 		
+		com.executeSubmission(sub_ST0803SHI0);
+		
 		//탭 목록 클릭 이벤트
 		$(".stat_sttn").find("li").click( function() {
 			var li_id = this.id;
@@ -138,15 +158,21 @@
 			$(".stat_sttn").find("#"+li_id).addClass("on");
 			if(li_id == "li_PNCTLTY_CNT") {
 				dma_sub_search.set("TAB_DIV", "PNCTLTY_CNT");
-				com.executeSubmission(sub_ST0803G2R0);
+				pivot_ST0803.setVals("PNCTLTY_CNT");
+				pivot_ST0803_sub.setVals("PNCTLTY_CNT");
+				com.executeSubmission(sub_ST0803G1R1);
 			}
 			else if(li_id == "li_PNCTLTY_VIOLT_DELAY_CNT") {
 				dma_sub_search.set("TAB_DIV", "PNCTLTY_VIOLT_DELAY_CNT");
-				com.executeSubmission(sub_ST0803G2R0);
+				pivot_ST0803.setVals("PNCTLTY_VIOLT_DELAY_CNT");
+				pivot_ST0803_sub.setVals("PNCTLTY_VIOLT_DELAY_CNT");
+				com.executeSubmission(sub_ST0803G1R1);
 			}
 			else if(li_id == "li_PNCTLTY_VIOLT_FAST_CNT") {
 				dma_sub_search.set("TAB_DIV", "PNCTLTY_VIOLT_FAST_CNT");
-				com.executeSubmission(sub_ST0803G2R0);
+				pivot_ST0803.setVals("PNCTLTY_VIOLT_FAST_CNT");
+				pivot_ST0803_sub.setVals("PNCTLTY_VIOLT_FAST_CNT");
+				com.executeSubmission(sub_ST0803G1R1);
 			}
 		});
 		
@@ -202,8 +228,7 @@
 		//조회구분도 넣어서 처리하기. 일별 월별 시간대별
 		dma_sub_search.set("SELECT_DIV", SELECT_DIV.getValue());
 		dma_sub_search.set("NODE_ID", nodeId);
-		
-		com.executeSubmission(sub_ST0803G2R0);
+		com.executeSubmission(sub_ST0803G1R1);
 		
 	};
 	
@@ -230,7 +255,7 @@
 		dma_sub_search.set("SELECT_DIV", SELECT_DIV.getValue());
 		
 		if(chkJsonData.length != 0){
-			com.executeSubmission(sub_ST0803G2R0);
+			com.executeSubmission(sub_ST0803G1R1);
 			pivot_ST0803.show();
 		}else if(chkJsonData.length == 0){
 			chart_ST0803.destroy();
@@ -254,7 +279,7 @@
 		dma_sub_search.set("NODE_ID", nodeId);
 		
 		if(chkJsonData.length != 0){
-			com.executeSubmission(sub_ST0803G2R0);
+			com.executeSubmission(sub_ST0803G1R1);
 			pivot_ST0803.show();
 		}else if(chkJsonData.length == 0){
 			chart_ST0803.destroy();
@@ -304,17 +329,17 @@
 		var j = 0;
 		var num = 0;
 	
-		var rowCount = dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getRowCount();
-		var jsonData = dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getAllJSON();
+		var rowCount = dlt_BRT_STTN_PNCTLTY_STAT_PIVOT_2.getRowCount();
+		var jsonData = dlt_BRT_STTN_PNCTLTY_STAT_PIVOT_2.getAllJSON();
 	
 		for(i; i<chkCnt; i++){
 			var data = new Array();
 			var xLabel = new Array();
 			
 			for(j; j<rowCount; j++){
-				if(jsonData[num].NODE_ID ==  dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getCellData(j, "NODE_ID")){
-					transData.push(dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getRowJSON(j));
-				}else if(jsonData[num].NODE_ID  !=  dlt_BRT_STTN_PNCTLTY_STAT_PIVOT.getCellData(j, "NODE_ID")){
+				if(jsonData[num].NODE_ID ==  dlt_BRT_STTN_PNCTLTY_STAT_PIVOT_2.getCellData(j, "NODE_ID")){
+					transData.push(dlt_BRT_STTN_PNCTLTY_STAT_PIVOT_2.getRowJSON(j));
+				}else if(jsonData[num].NODE_ID  !=  dlt_BRT_STTN_PNCTLTY_STAT_PIVOT_2.getCellData(j, "NODE_ID")){
 					num = j;
 					j = j;
 					break;
@@ -586,9 +611,9 @@
 		if (fdate > ldate && ldate != "") {
 			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseF(info));
 		}
-		
-		com.executeSubmission(sub_ST0803G2R0);
+		com.executeSubmission(sub_ST0803G1R1);
 	};
+	
 	scwin.checkCloseF = function(info) {
 		F_DATE.setValue(info.oldValue);
 	}
@@ -600,14 +625,12 @@
 		if (fdate > ldate && ldate != "") {
 			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseL(info));
 		}
-		
-		com.executeSubmission(sub_ST0803G2R0);
+		com.executeSubmission(sub_ST0803G1R1);
 	};
 	
 	scwin.checkCloseL = function(info) {
 		L_DATE.setValue(info.oldValue);
 	}
-	
 	
 	scwin.SELECT_DIV_onviewchange = function(info) {
 		dma_sub_search.set("SELECT_DIV", info.newValue);
@@ -620,7 +643,10 @@
 			F_DATE.setCalendarValueType("yearMonthDate");
 			L_DATE.setCalendarValueType("yearMonthDate");
 		}
-		
+		com.executeSubmission(sub_ST0803G1R1);
+	};
+	
+	scwin.sub_ST0803G1R1_submitdone = function(e) {
 		com.executeSubmission(sub_ST0803G2R0);
 	};
 	
@@ -630,31 +656,16 @@
 		chart_ST0803.destroy();
 		
 		if(chkCnt > 0 && SELECT_DIV.getValue() == 'TIME'){
-			if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_CNT'){
-				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "PNCTLTY_CNT"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_DELAY_CNT'){
-				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "PNCTLTY_VIOLT_DELAY_CNT"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_FAST_CNT'){
-				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "PNCTLTY_VIOLT_FAST_CNT"});
-			}
+			ST0803T0.show();
+			ST0803T1.hide();
 			scwin.DrawLineChart_Time(chkCnt, chkJsonData);
 		}else if(chkCnt > 0 && SELECT_DIV.getValue() == 'DAY'){
-			if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_CNT'){
-				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "PNCTLTY_CNT"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_DELAY_CNT'){
-				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "PNCTLTY_VIOLT_DELAY_CNT"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_FAST_CNT'){
-				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "PNCTLTY_VIOLT_FAST_CNT"});
-			}
+			ST0803T1.show();
+			ST0803T0.hide();
 			scwin.DrawBarChart_Day(chkCnt, chkJsonData);
 		}else if(chkCnt > 0 && SELECT_DIV.getValue() == 'MONTH'){
-			if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_CNT'){
-				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "PNCTLTY_CNT"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_DELAY_CNT'){
-				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "PNCTLTY_VIOLT_DELAY_CNT"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'PNCTLTY_VIOLT_FAST_CNT'){
-				pivot_ST0803.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "PNCTLTY_VIOLT_FAST_CNT"});
-			}
+			ST0803T1.show();
+			ST0803T0.hide();
 			scwin.DrawBarChart_Month(chkCnt);
 		}
 		
@@ -664,7 +675,9 @@
 			pivot_ST0803.setVals("PNCTLTY_CNT");*/
 	};
 	
-]]></script>
+
+	
+	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
@@ -882,9 +895,29 @@
 					<xf:group style="" id="" class="label">
 						<w2:span label="단위 : [평균통행속도:km/h]" style="float: left;margin-right: 3px; margin-top:5px;" id=""></w2:span>
 					</xf:group>
-					<xf:group id="" class="" style="position: relative;">
+					<xf:group id="ST0803T0" class="" style="position: relative;">
 						<w2:pivot style="position: absolute;height:100%;width:100%;" dataList="data:dlt_BRT_STTN_PNCTLTY_STAT_PIVOT" vals="PNCTLTY_CNT"
 							rows="OPER_DT,STTN_NM" cols="STAT_H" defaultAggregator="Sum" valuesAxis="col" id="pivot_ST0803" renderMode="compact"
+							autoFit="allColumn" grandTotalDisplayType="both" showZero="true" showGrandTotal="true" aggregatorName="Average" allTotalName="평균속도"
+							digitsAfterDecimal="1" useNumberFormat="true" autoFitMinWidth="1300" autoPopupInvalidMessage="" headerTextAlign="center"
+							noResultMessage="">
+							<w2:fieldInfo>
+								<w2:field id="OPER_DT" name="운행일"></w2:field>
+								<w2:field id="REP_ROUT_ID" name="대표노선ID"></w2:field>
+								<w2:field id="ROUT_ID" name="노선ID"></w2:field>
+								<w2:field id="ROUT_NM" name="노선명"></w2:field>
+								<w2:field id="STTN_NM" name="정류소명"></w2:field>
+								<w2:field id="STAT_H" name="통계시간"></w2:field>
+								<w2:field id="STAT_T" name="통계시간"></w2:field>
+								<w2:field id="PNCTLTY_CNT" name="정시성횟수"></w2:field>
+								<w2:field id="PNCTLTY_VIOLT_DELAY_CNT" name="정시성위반지연횟수"></w2:field>
+								<w2:field id="PNCTLTY_VIOLT_FAST_CNT" name="정시성위반신속횟수"></w2:field>
+							</w2:fieldInfo>
+						</w2:pivot>
+					</xf:group>
+					<xf:group id="ST0803T1" class="" style="position: relative; display: none;visibility:hidden;">
+						<w2:pivot style="position: absolute;height:100%;width:100%;" dataList="data:dlt_BRT_STTN_PNCTLTY_STAT_PIVOT" vals="PNCTLTY_CNT"
+							rows="STTN_NM" cols="OPER_DT" defaultAggregator="Sum" valuesAxis="col" id="pivot_ST0803_sub" renderMode="compact"
 							autoFit="allColumn" grandTotalDisplayType="both" showZero="true" showGrandTotal="true" aggregatorName="Average" allTotalName="평균속도"
 							digitsAfterDecimal="1" useNumberFormat="true" autoFitMinWidth="1300" autoPopupInvalidMessage="" headerTextAlign="center"
 							noResultMessage="">

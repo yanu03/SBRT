@@ -33,6 +33,12 @@ public class ST0803Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/st/ST0803G1R1")
+	public @ResponseBody Map<String, Object> ST0803G1R1() throws Exception {
+		result.setData("dlt_BRT_STTN_PNCTLTY_STAT_PIVOT_2", st0803Service.ST0803G1R1());
+		return result.getResult();
+	}
+	
 	@RequestMapping("/st/ST0803G2R0")
 	public @ResponseBody Map<String, Object> ST0803G2R0() throws Exception {
 		result.setData("dlt_BRT_STTN_PNCTLTY_STAT_PIVOT", st0803Service.ST0803G2R0());

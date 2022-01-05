@@ -24,15 +24,21 @@ public class ST0502Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/st/ST0502G0R1")
+	public @ResponseBody Map<String, Object> ST0502G0R1() throws Exception {
+		result.setData("dlt_BMS_NODE_MST", st0502Service.ST0502G0R1());
+		return result.getResult();
+	}
+	
 	@RequestMapping("/st/ST0502G1R0")
 	public @ResponseBody Map<String, Object> ST0502G1R0() throws Exception {
-		result.setData("dlt_BRT_OPER_VIOLT_STAT", st0502Service.ST0502G1R0());
+		result.setData("dlt_BRT_FCLT_STAT_PIVOT", st0502Service.ST0502G1R0());
 		return result.getResult();
 	}
 	
 	@RequestMapping("/st/ST0502G2R0")
 	public @ResponseBody Map<String, Object> ST0502G2R0() throws Exception {
-		result.setData("dlt_BRT_OPER_VIOLT_STAT2", st0502Service.ST0502G2R0());
+		result.setData("dlt_BRT_FCLT_STAT_PIVOT_2", st0502Service.ST0502G2R0());
 		return result.getResult();
 	}
 	

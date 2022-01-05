@@ -32,60 +32,17 @@ public class ST0800Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/st/ST0800G1R1")
+	public @ResponseBody Map<String, Object> ST0800G1R1() throws Exception {
+		result.setData("dlt_BRT_STTN_STAT_PIVOT_2", st0800Service.ST0800G1R1());
+		return result.getResult();
+	}
+	
 	@RequestMapping("/st/ST0800G2R0")
 	public @ResponseBody Map<String, Object> ST0800G2R0() throws Exception {
 		result.setData("dlt_BRT_STTN_STAT_PIVOT", st0800Service.ST0800G2R0());
 		return result.getResult();
 	}
 	
-	/*@RequestMapping("/st/ST0200G1R1")
-	public @ResponseBody Map<String, Object> ST0200G1R1() throws Exception {
-		result.setData("dlt_BRT_ROUT_AVER_OPER_SP_STAT", st0200Service.ST0200G1R1());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/st/ST0200G1R2")
-	public @ResponseBody Map<String, Object> ST0200G1R2() throws Exception {
-		result.setData("dlt_BRT_ROUT_AVER_OPER_SP_STAT", st0200Service.ST0200G1R2());
-		return result.getResult();
-	}*/
-	
-	/*@RequestMapping("/pi/PI0503G0R0")
-	public @ResponseBody Map<String, Object> PI0503G0R0() throws Exception {
-		result.setData("dlt_VDO_ORGA_INFO", pi0503Service.PI0503G0R0());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/pi/PI0503G1R0")
-	public @ResponseBody Map<String, Object> PI0503G1R0() throws Exception {
-		result.setData("dlt_DVC_INFO", pi0503Service.PI0503G1R0());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/pi/PI0503G2R0")
-	public @ResponseBody Map<String, Object> PI0503G2R0() throws Exception {
-		result.setData("dlt_BMS_VDO_RSV_RST_INFO", pi0503Service.PI0503G2R0());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/pi/PI0503G1S0")
-	public @ResponseBody Map<String, Object> PI0503G1S0() throws Exception {
-		Map map = pi0503Service.PI0503G1S0();
-		result.setData("dma_result", map);
-		return result.getResultSave();
-	}
-	
-	@RequestMapping("/pi/PI0503G1U0")
-	public @ResponseBody Map<String, Object> PI0503G1D0() throws Exception {
-		Map map = pi0503Service.PI0503G1U0();
-		result.setData("dma_result", map);
-		return result.getResultSave();
-	}
-	
-	@RequestMapping("/pi/PI0503SHI0")
-	public @ResponseBody Map<String, Object> PI0503SHI0() throws Exception {
-		result.setData("dlt_searchitem", pi0503Service.PI0503SHI0());
-		return result.getResult();
-	}*/
 	
 }

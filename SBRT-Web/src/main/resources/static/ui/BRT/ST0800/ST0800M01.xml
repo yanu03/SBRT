@@ -38,6 +38,23 @@
 						<w2:column id="STAT_H" name="통계시간" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_STTN_STAT_PIVOT_2" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="OPER_DT" name="운행일" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
+						<w2:column id="STTN_NM" name="정류소명" dataType="text"></w2:column>
+						<w2:column id="MIN_DELAY_SEC" name="최소지연시간" dataType="text"></w2:column>
+						<w2:column id="MAX_DELAY_SEC" name="최대지연시간" dataType="text"></w2:column>
+						<w2:column id="AVRG_DELAY_SEC" name="평균지연시간" dataType="text"></w2:column>
+						<w2:column id="DSPTCH_CNT" name="디스패치건수" dataType="text"></w2:column>
+						<w2:column id="SIGOPER_CTL_CNT" name="신호제어건수" dataType="text"></w2:column>
+						<w2:column id="STAT_H" name="통계시간" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_MST" saveRemovedData="true">
 					<w2:columnInfo>
@@ -85,6 +102,11 @@
 			<xf:submission id="sub_ST0800G1R0" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_STTN_STAT"
 				action="/st/ST0800G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0800G1R0_submitdone"
+				ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_ST0800G1R1" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_STTN_STAT_PIVOT_2"
+				action="/st/ST0800G1R1" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_ST0800G1R1_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_ST0800G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_STTN_STAT_PIVOT"
@@ -140,15 +162,21 @@
 			$(".stat_sttn").find("#"+li_id).addClass("on");
 			if(li_id == "li_avrg_delay_sec") {
 				dma_sub_search.set("TAB_DIV", "AVRG_DELAY_SEC");
-				com.executeSubmission(sub_ST0800G2R0);
+				pivot_ST0800.setVals("AVRG_DELAY_SEC");
+				pivot_ST0800_sub.setVals("AVRG_DELAY_SEC");
+				com.executeSubmission(sub_ST0800G1R1);
 			}
 			else if(li_id == "li_dsptch_cnt") {
 				dma_sub_search.set("TAB_DIV", "DSPTCH_CNT");
-				com.executeSubmission(sub_ST0800G2R0);
+				pivot_ST0800.setVals("DSPTCH_CNT");
+				pivot_ST0800_sub.setVals("DSPTCH_CNT");
+				com.executeSubmission(sub_ST0800G1R1);
 			}
 			else if(li_id == "li_sigoper_ctl_cnt") {
 				dma_sub_search.set("TAB_DIV", "SIGOPER_CTL_CNT");
-				com.executeSubmission(sub_ST0800G2R0);
+				pivot_ST0800.setVals("SIGOPER_CTL_CNT");
+				pivot_ST0800_sub.setVals("SIGOPER_CTL_CNT");
+				com.executeSubmission(sub_ST0800G1R1);
 			}
 		});
 		
@@ -205,7 +233,7 @@
 		dma_sub_search.set("SELECT_DIV", SELECT_DIV.getValue());
 		dma_sub_search.set("NODE_ID", nodeId);
 		
-		com.executeSubmission(sub_ST0800G2R0);
+		com.executeSubmission(sub_ST0800G1R1);
 		
 	};
 	
@@ -232,7 +260,7 @@
 		dma_sub_search.set("SELECT_DIV", SELECT_DIV.getValue());
 		
 		if(chkJsonData.length != 0){
-			com.executeSubmission(sub_ST0800G2R0);
+			com.executeSubmission(sub_ST0800G1R1);
 			pivot_ST0800.show();
 		}else if(chkJsonData.length == 0){
 			chart_ST0800.destroy();
@@ -256,7 +284,7 @@
 		dma_sub_search.set("NODE_ID", nodeId);
 		
 		if(chkJsonData.length != 0){
-			com.executeSubmission(sub_ST0800G2R0);
+			com.executeSubmission(sub_ST0800G1R1);
 			pivot_ST0800.show();
 		}else if(chkJsonData.length == 0){
 			chart_ST0800.destroy();
@@ -300,25 +328,23 @@
 	var chart_ST0800 = null;
 	 
 	scwin.DrawLineChart_Time = function(chkCnt, chkJsonData){
-		debugger;
-		
 		var datasets = new Array();
 		var transData = new Array();
 		var i = 0;
 		var j = 0;
 		var num = 0;
 	
-		var rowCount = dlt_BRT_STTN_STAT_PIVOT.getRowCount();
-		var jsonData = dlt_BRT_STTN_STAT_PIVOT.getAllJSON();
+		var rowCount = dlt_BRT_STTN_STAT_PIVOT_2.getRowCount();
+		var jsonData = dlt_BRT_STTN_STAT_PIVOT_2.getAllJSON();
 	
 		for(i; i<chkCnt; i++){
 			var data = new Array();
 			var xLabel = new Array();
 			
 			for(j; j<rowCount; j++){
-				if(jsonData[num].NODE_ID ==  dlt_BRT_STTN_STAT_PIVOT.getCellData(j, "NODE_ID")){
-					transData.push(dlt_BRT_STTN_STAT_PIVOT.getRowJSON(j));
-				}else if(jsonData[num].NODE_ID  !=  dlt_BRT_STTN_STAT_PIVOT.getCellData(j, "NODE_ID")){
+				if(jsonData[num].NODE_ID ==  dlt_BRT_STTN_STAT_PIVOT_2.getCellData(j, "NODE_ID")){
+					transData.push(dlt_BRT_STTN_STAT_PIVOT_2.getRowJSON(j));
+				}else if(jsonData[num].NODE_ID  !=  dlt_BRT_STTN_STAT_PIVOT_2.getCellData(j, "NODE_ID")){
 					num = j;
 					j = j;
 					break;
@@ -591,7 +617,7 @@
 			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseF(info));
 		}
 		
-		com.executeSubmission(sub_ST0800G2R0);
+		com.executeSubmission(sub_ST0800G1R1);
 	};
 	scwin.checkCloseF = function(info) {
 		F_DATE.setValue(info.oldValue);
@@ -605,7 +631,7 @@
 			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkCloseL(info));
 		}
 		
-		com.executeSubmission(sub_ST0800G2R0);
+		com.executeSubmission(sub_ST0800G1R1);
 	};
 	
 	scwin.checkCloseL = function(info) {
@@ -625,6 +651,11 @@
 			L_DATE.setCalendarValueType("yearMonthDate");
 		}
 		
+		com.executeSubmission(sub_ST0800G1R1);
+		
+	};
+	
+	scwin.sub_ST0800G1R1_submitdone = function(e) {
 		com.executeSubmission(sub_ST0800G2R0);
 	};
 	
@@ -634,32 +665,17 @@
 		chart_ST0800.destroy();
 		
 		if(chkCnt > 0 && SELECT_DIV.getValue() == 'TIME'){
-			if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "AVRG_DELAY_SEC"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "DSPTCH_CNT"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "STAT_H", "vals" : "SIGOPER_CTL_CNT"});
-			}
 			scwin.DrawLineChart_Time(chkCnt, chkJsonData);
+			ST0800T0.show();
+			ST0800T1.hide();
 		}else if(chkCnt > 0 && SELECT_DIV.getValue() == 'DAY'){
-			if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "AVRG_DELAY_SEC"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "DSPTCH_CNT"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "SIGOPER_CTL_CNT"});
-			}
 			scwin.DrawBarChart_Day(chkCnt, chkJsonData);
+			ST0800T0.hide();
+			ST0800T1.show();
 		}else if(chkCnt > 0 && SELECT_DIV.getValue() == 'MONTH'){
-			if(dma_sub_search.get("TAB_DIV") == 'AVRG_DELAY_SEC'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "AVRG_DELAY_SEC"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'DSPTCH_CNT'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "DSPTCH_CNT"});
-			}else if(dma_sub_search.get("TAB_DIV") == 'SIGOPER_CTL_CNT'){
-				pivot_ST0800.setOption({"rows" : "STTN_NM", "cols" : "OPER_DT", "vals" : "SIGOPER_CTL_CNT"});
-			}
 			scwin.DrawBarChart_Month(chkCnt);
+			ST0800T0.hide();
+			ST0800T1.show();
 		}
 		
 			//pivot테이블 옵션 따로 설정.
@@ -668,7 +684,10 @@
 			pivot_ST0800.setVals("AVRG_DELAY_SEC");*/
 	};
 	
-]]></script>
+
+	
+	
+	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
@@ -863,15 +882,12 @@
 							</w2:inputCalendar>
 							<ul id="" class="stat_sttn"  style="margin-top: 10px;">
 								<li id="li_avrg_delay_sec" class="on" >
-									<!-- <span class="busimg"></span> -->
 									평균지연시간
 								</li>
 								<li id="li_dsptch_cnt" class="" >
-									<!-- <span class="crossimg"></span> -->
 									디스패치건수
 								</li>
 								<li id="li_sigoper_ctl_cnt" class="" >
-									<!-- <span class="sttnimg"></span> -->
 									신호제어건수
 								</li>
 							</ul>
@@ -889,9 +905,29 @@
 					<xf:group style="" id="" class="label">
 						<w2:span label="단위 : [평균통행속도:km/h]" style="float: left;margin-right: 3px; margin-top:5px;" id=""></w2:span>
 					</xf:group>
-					<xf:group id="" class="" style="position: relative;">
+					<xf:group id="ST0800T0" class="" style="position: relative;">
 						<w2:pivot style="position: absolute;height:100%;width:100%;" dataList="data:dlt_BRT_STTN_STAT_PIVOT" vals="AVRG_DELAY_SEC"
 							rows="OPER_DT,STTN_NM" cols="STAT_H" defaultAggregator="Sum" valuesAxis="col" id="pivot_ST0800" renderMode="compact"
+							autoFit="allColumn" grandTotalDisplayType="both" showZero="true" showGrandTotal="true" aggregatorName="Average" allTotalName="평균속도"
+							digitsAfterDecimal="1" useNumberFormat="true" autoFitMinWidth="1300" autoPopupInvalidMessage="" headerTextAlign="center"
+							noResultMessage="">
+							<w2:fieldInfo>
+								<w2:field id="OPER_DT" name="운행일"></w2:field>
+								<w2:field id="REP_ROUT_ID" name="대표노선ID"></w2:field>
+								<w2:field id="ROUT_ID" name="노선ID"></w2:field>
+								<w2:field id="ROUT_NM" name="노선명"></w2:field>
+								<w2:field id="STTN_NM" name="정류소명"></w2:field>
+								<w2:field id="STAT_H" name="통계시간"></w2:field>
+								<w2:field id="STAT_T" name="통계시간"></w2:field>
+								<w2:field id="AVRG_DELAY_SEC" name="평균속도"></w2:field>
+								<w2:field id="DSPTCH_CNT" name="디스패치건수"></w2:field>
+								<w2:field id="SIGOPER_CTL_CNT" name="신호제어건수"></w2:field>
+							</w2:fieldInfo>
+						</w2:pivot>
+					</xf:group>
+					<xf:group id="ST0800T1" class="" style="position: relative; display: none;visibility:hidden;">
+						<w2:pivot style="position: absolute;height:100%;width:100%;" dataList="data:dlt_BRT_STTN_STAT_PIVOT" vals="AVRG_DELAY_SEC"
+							rows="STTN_NM" cols="OPER_DT" defaultAggregator="Sum" valuesAxis="col" id="pivot_ST0800_sub" renderMode="compact"
 							autoFit="allColumn" grandTotalDisplayType="both" showZero="true" showGrandTotal="true" aggregatorName="Average" allTotalName="평균속도"
 							digitsAfterDecimal="1" useNumberFormat="true" autoFitMinWidth="1300" autoPopupInvalidMessage="" headerTextAlign="center"
 							noResultMessage="">

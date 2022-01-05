@@ -20,19 +20,25 @@ public class ST0501Controller extends ControllerSupport {
 	
 	@RequestMapping("/st/ST0501G0R0")
 	public @ResponseBody Map<String, Object> ST0501G0R0() throws Exception {
-		result.setData("dlt_BMS_VHC_MST", st0501Service.ST0501G0R0());
+		result.setData("dlt_BMS_ROUT_MST", st0501Service.ST0501G0R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/st/ST0501G0R1")
+	public @ResponseBody Map<String, Object> ST0501G0R1() throws Exception {
+		result.setData("dlt_BMS_VHC_MST", st0501Service.ST0501G0R1());
 		return result.getResult();
 	}
 	
 	@RequestMapping("/st/ST0501G1R0")
 	public @ResponseBody Map<String, Object> ST0501G1R0() throws Exception {
-		result.setData("dlt_BRT_DVC_STAT", st0501Service.ST0501G1R0());
+		result.setData("dlt_BRT_DVC_STAT_PIVOT", st0501Service.ST0501G1R0());
 		return result.getResult();
 	}
 	
 	@RequestMapping("/st/ST0501G2R0")
 	public @ResponseBody Map<String, Object> ST0501G2R0() throws Exception {
-		result.setData("dlt_BRT_WORK_STAT", st0501Service.ST0501G2R0());
+		result.setData("dlt_BRT_DVC_STAT_PIVOT_2", st0501Service.ST0501G2R0());
 		return result.getResult();
 	}
 	

@@ -151,5 +151,118 @@
 			A.CRS_ID, A.OPER_DT 
 		</if>
   </select>
+  
+  <select id="ST0801G1R1" resultType="Map">
+  		SELECT
+  		<if test="SELECT_DIV == 'TIME'">
+	  		<choose>
+	  			<when test="TAB_DIV == 'AVRG_DELAY_SEC'">
+	  				DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,A.NODE_ID
+					,A.CRS_ID
+					,B.CRS_NM
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,AVG(AVRG_DELAY_SEC) AS AVRG_DELAY_SEC
+					,MIN_DELAY_SEC
+					,MAX_DELAY_SEC
+	  			</when>
+	  			<when test="TAB_DIV == 'PSIG_CNT'">
+	  				DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,A.CRS_ID
+					,A.NODE_ID
+					,B.CRS_NM
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,A.PSIG_CNT
+	  			</when>
+	  		</choose>
+		</if>
+		<if test="SELECT_DIV == 'DAY'">
+			<choose>
+	  			<when test="TAB_DIV == 'AVRG_DELAY_SEC'">
+	  				DATE_FORMAT(DATE(A.OPER_DT), '%Y-%m-%d') OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,A.NODE_ID
+					,A.CRS_ID
+					,B.CRS_NM
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,AVG(AVRG_DELAY_SEC) AS AVRG_DELAY_SEC
+					,MIN_DELAY_SEC
+					,MAX_DELAY_SEC
+	  			</when>
+	  			<when test="TAB_DIV == 'PSIG_CNT'">
+	  				DATE_FORMAT(DATE(A.OPER_DT), '%Y-%m-%d') OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,A.NODE_ID
+					,A.CRS_ID
+					,B.CRS_NM
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,SUM(A.PSIG_CNT) AS PSIG_CNT
+	  			</when>
+	  		</choose>
+		</if>
+		<if test="SELECT_DIV == 'MONTH'">
+			<choose>
+	  			<when test="TAB_DIV == 'AVRG_DELAY_SEC'">
+	  				MONTH(A.OPER_DT) AS OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,A.NODE_ID
+					,A.CRS_ID
+					,B.CRS_NM
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,AVG(AVRG_DELAY_SEC) AS AVRG_DELAY_SEC
+					,MIN_DELAY_SEC
+					,MAX_DELAY_SEC
+	  			</when>
+	  			<when test="TAB_DIV == 'PSIG_CNT'">
+	  				MONTH(A.OPER_DT) AS OPER_DT
+					,A.REP_ROUT_ID
+					,A.ROUT_ID
+					,A.NODE_ID
+					,A.CRS_ID
+					,B.CRS_NM
+					,CONCAT(A.STAT_H, '시') AS STAT_H
+					,A.PSIG_CNT
+	  			</when>
+	  		</choose>
+		</if>
+		FROM
+			BRT_SGN_STAT A
+			LEFT JOIN BMS_CRS_MST B
+			ON A.CRS_ID = B.CRS_ID
+		WHERE
+			A.ROUT_ID = #{ROUT_ID}
+			AND A.CRS_ID IN
+		<foreach collection="CRS_ID" item="item" index="index"  open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+			<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
+				AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') BETWEEN #{F_DATE} AND #{L_DATE}
+			</if>
+		<if test="SELECT_DIV == 'TIME'">
+		GROUP BY
+			A.ROUT_ID, A.CRS_ID, A.STAT_H
+		ORDER BY
+			A.CRS_ID, A.STAT_H
+		</if>
+		<if test="SELECT_DIV == 'DAY'">
+		GROUP BY
+			OPER_DT, A.CRS_ID
+		ORDER BY
+			A.CRS_ID, OPER_DT
+		</if>
+		<if test="SELECT_DIV == 'MONTH'">
+		GROUP BY 
+			A.CRS_ID
+		ORDER BY
+			A.CRS_ID, A.OPER_DT 
+		</if>
+  </select>
 
 </mapper>

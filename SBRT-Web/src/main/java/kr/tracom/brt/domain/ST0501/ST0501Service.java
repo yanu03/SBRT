@@ -20,6 +20,11 @@ public class ST0501Service extends ServiceSupport {
 		return st0501Mapper.ST0501G0R0(map);
 	}
 	
+	public List ST0501G0R1() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		return st0501Mapper.ST0501G0R1(map);
+	}
+	
 	public List ST0501G1R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
 		String temp[] = map.get("VHC_ID").toString().replace("[","").replace("]","").replace(" ","").split(",");
