@@ -537,6 +537,10 @@ public class EventThread extends Thread{
 	private void setOperEventData(Map<String, Object> operEventMap) {
 	    	
 	    	try {
+	    		
+	    		//운행일 생성. 시간에 따라 0시(24시) ~ 02시까지는 이전 날짜로 운행일 설정
+	    		operEventMap.put("OPER_DT", OperDtUtil.convertTimeToOperDt(operEventMap.get("UPD_DTM").toString(), "yyyy-MM-dd HH:mm:ss"));
+	    		
 		    	//다음노드(교차로 or 정류소)
 		    	Map<String, Object> realNodeInfo = timsMapper.selectNodeByLinkSn(operEventMap); //통플에서 넘어온 노드순번(실제로는 링크순번) 으로 실제 노드순번 구하기
 		    	if(realNodeInfo != null) {
