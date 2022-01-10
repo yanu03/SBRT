@@ -389,12 +389,32 @@ public class EventThread extends Thread{
                  	wsDataMap.put("DVC_ID", vhcInfo.get("DVC_ID"));
                  	wsDataMap.put("GPS_X", busEventMap.get("LONGITUDE"));
                  	wsDataMap.put("GPS_Y", busEventMap.get("LATITUDE"));
-                 	wsDataMap.put("NODE_NM", busEventMap.get("NODE_NM")); //지나온 노드명
-                 	wsDataMap.put("NODE_TYPE", busEventMap.get("NODE_TYPE")); //지나온 노드 타입
-                	wsDataMap.put("PREV_NODE_NM", busEventMap.get("PREV_NODE_NM")); //이전 정류소/교차로
-                 	wsDataMap.put("NEXT_NODE_ID", busEventMap.get("NEXT_NODE_ID")); //다음 정류소/교차로
-                 	wsDataMap.put("NEXT_NODE_NM", busEventMap.get("NEXT_NODE_NM"));
-                 	wsDataMap.put("NEXT_NODE_TYPE", busEventMap.get("NEXT_NODE_TYPE"));
+                 	
+                    if(eventCode == 0x01 || eventCode == 0x02 //정류장 출/도착 인 경우
+                       || eventCode == 0x03 || eventCode == 0x04 //기점 출/도착 인 경우 
+                       || eventCode == 0x05 || eventCode == 0x06) //종점점 출/도착 인 경우
+                    {                    
+                    	Map<String, Object> sttnEventMap = new HashMap<String, Object>(busEventMap);
+                    	
+                    	setOperEventData(sttnEventMap);
+                    	
+                    	wsDataMap.put("NODE_NM", sttnEventMap.get("NODE_NM")); //출/도착 정류소명
+                    	wsDataMap.put("NODE_TYPE", sttnEventMap.get("NODE_TYPE"));                     	
+                    	wsDataMap.put("PREV_NODE_NM", sttnEventMap.get("PREV_NODE_NM")); //이전 정류소/교차로
+                    	wsDataMap.put("NEXT_NODE_ID", sttnEventMap.get("NEXT_NODE_ID")); //다음 정류소/교차로
+                    	wsDataMap.put("NEXT_NODE_NM", sttnEventMap.get("NEXT_NODE_NM"));
+                    	wsDataMap.put("NEXT_NODE_TYPE", sttnEventMap.get("NEXT_NODE_TYPE"));
+                    	
+                    } else {
+                    	wsDataMap.put("NODE_NM", busEventMap.get("NODE_NM")); //지나온 노드명
+                    	wsDataMap.put("NODE_TYPE", busEventMap.get("NODE_TYPE")); //지나온 노드 타입                    	
+                    	wsDataMap.put("PREV_NODE_NM", busEventMap.get("PREV_NODE_NM")); //이전 정류소/교차로
+                    	wsDataMap.put("NEXT_NODE_ID", busEventMap.get("NEXT_NODE_ID")); //다음 정류소/교차로
+                    	wsDataMap.put("NEXT_NODE_NM", busEventMap.get("NEXT_NODE_NM"));
+                    	wsDataMap.put("NEXT_NODE_TYPE", busEventMap.get("NEXT_NODE_TYPE"));
+                    }
+                    	
+                 	
                  	wsDataMap.put("EVT_CODE", eventCd);
                  	wsDataMap.put("EVT_TYPE", eventType);
                  	wsDataMap.put("SPEED", busEventMap.get("SPEED"));
@@ -514,29 +534,64 @@ public class EventThread extends Thread{
     }
     
     
+	private void setOperEventData(Map<String, Object> operEventMap) {
+	    	
+	    	try {
+		    	//다음노드(교차로 or 정류소)
+		    	Map<String, Object> realNodeInfo = timsMapper.selectNodeByLinkSn(operEventMap); //통플에서 넘어온 노드순번(실제로는 링크순번) 으로 실제 노드순번 구하기
+		    	if(realNodeInfo != null) {
+		    		operEventMap.put("ROUT_NM", realNodeInfo.get("ROUT_NM"));
+		    		operEventMap.put("NODE_TYPE", realNodeInfo.get("NODE_TYPE"));
+		    		operEventMap.put("NODE_NM", realNodeInfo.get("NODE_NM"));
+		    		operEventMap.put("NODE_SN", realNodeInfo.get("NODE_SN"));
+		    	}
+		    	
+		    	Map<String, Object> nextNodeInfo = timsMapper.selectNextSttnCrsInfo(operEventMap);
+		    	if(nextNodeInfo != null) {
+		    		operEventMap.put("PREV_NODE_NM", nextNodeInfo.get("PREV_NODE_NM"));
+		    		operEventMap.put("NEXT_NODE_ID", nextNodeInfo.get("NEXT_NODE_ID"));
+		    		operEventMap.put("NEXT_NODE_NM", nextNodeInfo.get("NEXT_NODE_NM")); 
+		    		operEventMap.put("NEXT_NODE_TYPE", nextNodeInfo.get("NEXT_NODE_TYPE"));
+		    	}
+		    	
+	    	} catch (Exception e) {
+	    		//logger.error("", e);
+			}
+	    	
+	}
+	
     
     private int insertCurOperInfo(Map<String, Object> curOperInfo) {
     	
+    	
+    	/*
     	try {
 	    	//운행일 생성. 시간에 따라 0시(24시) ~ 02시까지는 이전 날짜로 운행일 설정
-	    	curOperInfo.put("OPER_DT", OperDtUtil.convertTimeToOperDt(curOperInfo.get("UPD_DTM").toString(), "yyyy-MM-dd HH:mm:ss")); 
+	    	curOperInfo.put("OPER_DT", OperDtUtil.convertTimeToOperDt(curOperInfo.get("UPD_DTM").toString(), "yyyy-MM-dd HH:mm:ss")); 	    		
+	    	
 	    	
 	    	//다음노드(교차로 or 정류소)
 	    	Map<String, Object> realNodeInfo = timsMapper.selectNodeByLinkSn(curOperInfo); //통플에서 넘어온 노드순번(실제로는 링크순번) 으로 실제 노드순번 구하기
-	    	curOperInfo.put("ROUT_NM", realNodeInfo.get("ROUT_NM"));
-	    	curOperInfo.put("NODE_TYPE", realNodeInfo.get("NODE_TYPE"));
-	    	curOperInfo.put("NODE_NM", realNodeInfo.get("NODE_NM"));
-	    	curOperInfo.put("NODE_SN", realNodeInfo.get("NODE_SN"));
+	    	if(realNodeInfo != null) {
+		    	curOperInfo.put("ROUT_NM", realNodeInfo.get("ROUT_NM"));
+		    	curOperInfo.put("NODE_TYPE", realNodeInfo.get("NODE_TYPE"));
+		    	curOperInfo.put("NODE_NM", realNodeInfo.get("NODE_NM"));
+		    	curOperInfo.put("NODE_SN", realNodeInfo.get("NODE_SN"));
+	    	}
 	    	
 	    	Map<String, Object> nextNodeInfo = timsMapper.selectNextSttnCrsInfo(curOperInfo);
-	    	
-			curOperInfo.put("PREV_NODE_NM", nextNodeInfo.get("PREV_NODE_NM"));
-			curOperInfo.put("NEXT_NODE_ID", nextNodeInfo.get("NEXT_NODE_ID"));
-			curOperInfo.put("NEXT_NODE_NM", nextNodeInfo.get("NEXT_NODE_NM")); 
-			curOperInfo.put("NEXT_NODE_TYPE", nextNodeInfo.get("NEXT_NODE_TYPE"));
+	    	if(nextNodeInfo != null) {
+				curOperInfo.put("PREV_NODE_NM", nextNodeInfo.get("PREV_NODE_NM"));
+				curOperInfo.put("NEXT_NODE_ID", nextNodeInfo.get("NEXT_NODE_ID"));
+				curOperInfo.put("NEXT_NODE_NM", nextNodeInfo.get("NEXT_NODE_NM")); 
+				curOperInfo.put("NEXT_NODE_TYPE", nextNodeInfo.get("NEXT_NODE_TYPE"));
+	    	}
     	} catch (Exception e) {
     		
 		}
+		*/
+    	
+    	setOperEventData(curOperInfo);
     	
     	return curInfoMapper.insertCurOperInfo(curOperInfo);
     }
