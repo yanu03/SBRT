@@ -396,6 +396,8 @@ public class EventThread extends Thread{
                     {                    
                     	Map<String, Object> sttnEventMap = new HashMap<String, Object>(busEventMap);
                     	
+                    	sttnEventMap.put("NODE_ID", busEvent.getEventData()); //정류장 출/도착인 경우 EVENT_DATA를 사용
+                    	
                     	setOperEventData(sttnEventMap);
                     	
                     	wsDataMap.put("NODE_NM", sttnEventMap.get("NODE_NM")); //출/도착 정류소명
