@@ -352,6 +352,8 @@ public class OperPlanService extends ServiceSupport {
 		int drv_len;	 //최고속도 주행 거리(m)
 
 		
+		boolean bNeedChgEdTm = false; //도착예정시각변경 필요한 경우 //변경운행에 사용
+		
 
 		//리스트에 담아서 한 번에 insert
 		List<Map<String, Object>> operNodeList = new ArrayList<>();
@@ -596,7 +598,14 @@ public class OperPlanService extends ServiceSupport {
 							logger.info("변경운행 전 도착예정시각1:{}, diffSec1:{}, offsetTm:{}", route_ed_tm, diffSec1, offsetTm);
 							
 							route_st_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, (diffSec1+offsetTm));
-							route_ed_tm = DateUtil.addSeconds2(route_ed_tm, TIME_PATTERN, (diffSec1+offsetTm)); //변경운행인 경우 기준도착시간도 변경
+							
+
+							//변경운행 생성시 종점 도착시각은 변경하지 않는 것을 기본으로 하자!!
+							//도착시각을 맞출 수 없는 경우에는 도착시각 변경(속도를 최대로 올리거나 최소로 낮춰도 안 맞는 경우..)
+							if(bNeedChgEdTm == true) {
+								route_ed_tm = DateUtil.addSeconds2(route_ed_tm, TIME_PATTERN, (diffSec1+offsetTm)); //변경운행인 경우 기준도착시간도 변경
+							}
+
 							
 							logger.info("변경운행 후 도착예정시각1:{}", route_ed_tm);
 							
@@ -655,7 +664,12 @@ public class OperPlanService extends ServiceSupport {
 							logger.info("변경운행 전 도착예정시각2:{}, diffSec1:{}, offsetTm:{}", route_ed_tm, diffSec1, offsetTm);
 							
 							arrv_tm = DateUtil.addSeconds2(nodeArrvTm, TIME_PATTERN, (diffSec1+offsetTm));
-							route_ed_tm = DateUtil.addSeconds2(route_ed_tm, TIME_PATTERN, (diffSec1+offsetTm)); //변경운행인 경우 기준도착시간도 변경
+							
+							//변경운행 생성시 종점 도착시각은 변경하지 않는 것을 기본으로 하자!!
+							//도착시각을 맞출 수 없는 경우에는 도착시각 변경(속도를 최대로 올리거나 최소로 낮춰도 안 맞는 경우..)
+							if(bNeedChgEdTm == true) {
+								route_ed_tm = DateUtil.addSeconds2(route_ed_tm, TIME_PATTERN, (diffSec1+offsetTm)); //변경운행인 경우 기준도착시간도 변경
+							}
 							
 							logger.info("변경운행 후 도착예정시각2:{}", route_ed_tm);
 							
@@ -1007,6 +1021,23 @@ public class OperPlanService extends ServiceSupport {
 						
 						isDone = false;
 						tryCount++;
+						
+
+						if(chgType == OperPlanCalc.CHG_TYPE_CHG_OPER) {
+							
+							if (max_speed <= (MIN_SPEED_LIMIT-5)) {
+								
+								logger.info("도착예정시각 변경 필요함!!!");
+								
+								max_speed = MAX_SPEED_DEFAULT; //최대속도 초기화			
+								
+								//변경운행에 도착예정시각 변경이 필요한경우
+								bNeedChgEdTm = true;
+								tryCount = 0;
+							}
+						} 
+						
+						
 
 						if (tryCount >= OperPlanCalc.MAX_TRY_COUNT) {
 							tryCount = 0;
@@ -1015,7 +1046,6 @@ public class OperPlanService extends ServiceSupport {
 							max_speed = MAX_SPEED_DEFAULT; //최대속도 초기화
 
 							//가속도 변경
-							
 							
 							return null; //bhmin tmp //변경운행 생성 실패
 
@@ -1043,6 +1073,22 @@ public class OperPlanService extends ServiceSupport {
 
 						isDone = false;
 						tryCount++;
+						
+
+						if(chgType == OperPlanCalc.CHG_TYPE_CHG_OPER) {
+							
+							if (max_speed >= MAX_SPEED_LIMIT) {
+								
+								logger.info("도착예정시각 변경 필요함!!!");
+								
+								max_speed = MAX_SPEED_DEFAULT; //최대속도 초기화			
+								
+								//변경운행에 도착예정시각 변경이 필요한경우
+								bNeedChgEdTm = true;
+								tryCount = 0;
+							}
+						} 						
+						
 						
 						if (tryCount >= OperPlanCalc.MAX_TRY_COUNT) {
 							tryCount = 0;
