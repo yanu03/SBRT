@@ -21,8 +21,7 @@
 		FROM			BMS_NODE_MST A
 		LEFT JOIN BMS_STTN_MST B
 		ON A.NODE_ID = B.STTN_ID
-		WHERE			(NODE_TYPE = 'NT001'
-		OR				NODE_TYPE = 'NT002')
+		<where>
 			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
 				<if test="TYPE == 'ALL' || TYPE == ''">
 					AND (NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || NODE_NM LIKE CONCAT('%',#{CONTENT},'%'))
@@ -34,7 +33,18 @@
 					AND NODE_NM LIKE CONCAT('%',#{CONTENT},'%') 
 				</if>
 			</if>
-			
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">
+				<if test="NODE_TYPE == 'ALL'">
+					AND (A.NODE_TYPE = 'NT001' OR A.NODE_TYPE = 'NT002')
+				</if>
+				<if test="NODE_TYPE == 'NT001'">
+					AND A.NODE_TYPE = #{NODE_TYPE}
+				</if>
+				<if test="NODE_TYPE == 'NT002'">
+					AND A.NODE_TYPE = #{NODE_TYPE}
+				</if>
+			</if>
+		</where>
 	</select>
 
 <select id="FM0100G1R0" resultType="Map">
