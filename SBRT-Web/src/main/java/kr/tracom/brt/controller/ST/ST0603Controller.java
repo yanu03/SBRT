@@ -18,6 +18,7 @@ public class ST0603Controller extends ControllerSupport {
 	@Autowired
 	private ST0603Service st0603Service;
 	
+	
 	@RequestMapping("/st/ST0603G0R0")
 	public @ResponseBody Map<String, Object> ST0603G0R0() throws Exception {
 		result.setData("dlt_BMS_ROUT_MST", st0603Service.ST0603G0R0());
@@ -26,20 +27,22 @@ public class ST0603Controller extends ControllerSupport {
 	
 	@RequestMapping("/st/ST0603G1R0")
 	public @ResponseBody Map<String, Object> ST0603G1R0() throws Exception {
-		result.setData("dlt_BRT_OPER_VIOLT_STAT", st0603Service.ST0603G1R0());
+		result.setData("dlt_BRT_OPER_PNCTLTY_STAT", st0603Service.ST0603G1R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/st/ST0603G1R1")
+	public @ResponseBody Map<String, Object> ST0603G1R1() throws Exception {
+		result.setData("dlt_BRT_OPER_PNCTLTY_STAT_PIVOT_2", st0603Service.ST0603G1R1());
 		return result.getResult();
 	}
 	
 	@RequestMapping("/st/ST0603G2R0")
 	public @ResponseBody Map<String, Object> ST0603G2R0() throws Exception {
-		result.setData("dlt_BRT_OPER_VIOLT_STAT2", st0603Service.ST0603G2R0());
+		result.setData("dlt_BRT_OPER_PNCTLTY_STAT_PIVOT", st0603Service.ST0603G2R0());
 		return result.getResult();
 	}
 	
-	@RequestMapping("/st/ST0603SHI0")
-	public @ResponseBody Map<String, Object> ST0603SHI0() throws Exception {
-		result.setData("dlt_searchitem", st0603Service.ST0603SHI0());
-		return result.getResult();
-	}
+	
 	
 }

@@ -3,83 +3,329 @@
 
   <mapper namespace="kr.tracom.brt.domain.ST0603.ST0603Mapper">
   
-   <select id="ST0603G0R0" resultType="Map">
-		SELECT 		    B.ROUT_ID
-					,   B.REP_ROUT_ID
-					,	B.REP_ROUT_NM
-					,	C.ROUT_NM
-		FROM		 	BRT_OPER_DSPTCH_STAT A
-		LEFT JOIN	  BMS_ROUT_MST B
-			ON 		  A.REP_ROUT_ID = B.REP_ROUT_ID
-			LEFT JOIN	  BMS_ROUT_MST C
-			ON 		  A.ROUT_ID = C.ROUT_ID
-	<where>
+ <select id="ST0603G0R0" resultType="Map">
+		SELECT  ROUT_ID
+				,REP_ROUT_ID
+				,REP_ROUT_NM
+				,ROUT_NM
+				,ROUT_LEN
+		FROM 
+			BMS_ROUT_MST
+		WHERE 
+			DEL_YN != 'Y'
 			<if test="CONTENT != NULL">
-				AND A.REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') 
+				AND REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
-	</where>
-		GROUP BY 	   A.REP_ROUT_ID	
 		ORDER BY REP_ROUT_NM
-	</select> 
-	
-	
-	 <select id="ST0603SHI0" resultType="Map">
-		SELECT 		    B.ROUT_ID
-					,   B.REP_ROUT_ID
-					,	B.REP_ROUT_NM
-					,	C.ROUT_NM
-		FROM		 	BRT_OPER_DSPTCH_STAT A
-		LEFT JOIN	  BMS_ROUT_MST B
-		ON 		  A.REP_ROUT_ID = B.REP_ROUT_ID
-		LEFT JOIN	  BMS_ROUT_MST C
-		ON 		  A.ROUT_ID = C.ROUT_ID
-	
-	<where>
-		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-			 REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
-		</if>
-		<if test="TYPE == 'REP_ROUT_NM'">
-			 REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%')
-		</if>
-		<if test="TYPE == 'ROUT_NM'">
-			 ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
-		</if>
-	</where>
-		GROUP BY 	  A.ROUT_ID	
-		ORDER BY REP_ROUT_NM
-	</select> 
-	
-  <select id="ST0603G1R0" resultType="Map">
-		SELECT A.ROUT_ID, A.NODE_ID, A.NODE_SN, A.NODE_NM, A.NODE_ENM, A.NODE_TYPE, A.LINK_ID, A.STTN_ID, A.STTN_NO, A.CRS_ID, A.GPS_X, A.GPS_Y, A.TM_X, A.TM_Y, A.MORN_STD
-			, A.UPD_DTM, A.UPD_ID
-			FROM BMS_ROUT_NODE_CMPSTN A 
-			INNER JOIN BMS_ROUT_MST R 
-			ON A.ROUT_ID = R.ROUT_ID
-
-			<!-- <![CDATA[WHERE A.ROUT_ID = #{ROUT_ID} 
-    		AND	A.OPER_DT BETWEEN #{F_DATE} AND #{L_DATE}]]> -->
-    
-			ORDER BY NODE_SN
-
-  </select>	
-
-  <select id="ST0603G2R0" resultType="Map">	
-		SELECT DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') AS OPER_DT
-			,C.NODE_NM
-			,SUM(A.OPER_CNT) AS OPER_CNT
-			,SUM(A.CHG_OPER_CNT) AS CHG_OPER_CNT
-			, A.STAT_H
-			FROM BRT_CHG_OPER_STAT A
-			LEFT JOIN BMS_ROUT_MST B
-			ON A.ROUT_ID = B.ROUT_ID
-			LEFT JOIN BMS_NODE_MST C
-			ON A.NODE_ID = C.NODE_ID
-
-			<![CDATA[WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} 
-    		AND	A.OPER_DT BETWEEN #{F_DATE} AND #{L_DATE}]]>
-    		
-			GROUP BY C.NODE_NM, A.STAT_H
-			ORDER BY OPER_DT, A.STAT_H
-
 	</select>
-  </mapper>
+	
+	 <select id="ST0603G1R0" resultType="Map" parameterType="Map">
+		SELECT  
+			A.OPER_DT
+			,A.REP_ROUT_ID
+			,A.ROUT_ID
+			,A.NODE_ID
+			,A.VHC_ID
+			,B.VHC_NO
+			,A.DRV_ID
+			,C.DRV_NM
+			,D.NODE_NM
+		FROM 
+			BRT_CHG_OPER_STAT A
+			LEFT JOIN BMS_VHC_MST B
+			ON A.VHC_ID = B.VHC_ID
+			LEFT JOIN BMS_DRV_MST C
+			ON A.DRV_ID = C.DRV_ID
+			LEFT JOIN BMS_ROUT_NODE_CMPSTN D
+			ON A.NODE_ID = D.NODE_ID
+		WHERE 
+			A.ROUT_ID = #{ROUT_ID}
+		<if test="TAB_DIV_G1 == 'BUS'">
+			GROUP BY
+				A.VHC_ID
+			ORDER BY 
+				A.VHC_ID
+		</if>
+		<if test="TAB_DIV_G1 == 'DRV'">
+			GROUP BY
+				A.DRV_ID
+			ORDER BY 
+				A.DRV_ID
+		</if>
+		<if test="TAB_DIV_G1 == 'STTN'">
+			GROUP BY
+				A.NODE_ID
+			ORDER BY 
+				D.NODE_SN
+		</if>
+	</select>
+  
+  <select id="ST0603G2R0" resultType="Map">
+  		SELECT
+  		<if test="SELECT_DIV == 'TIME'">
+	 			DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+				,A.REP_ROUT_ID
+				,A.ROUT_ID
+				,CONCAT(A.STAT_H, '시') AS STAT_H
+				,A.VHC_ID
+				,B.VHC_NO
+				,A.DRV_ID
+				,CHG_OPER_CNT
+				,C.DRV_NM
+				,A.NODE_ID
+				,D.NODE_NM
+		</if>
+		<if test="SELECT_DIV == 'DAY'">
+  				DATE_FORMAT(DATE(A.OPER_DT), '%Y-%m-%d') OPER_DT
+				,A.REP_ROUT_ID
+				,A.ROUT_ID
+				,CONCAT(A.STAT_H, '시') AS STAT_H
+				,A.VHC_ID
+				,B.VHC_NO
+				,A.DRV_ID
+				,SUM(A.CHG_OPER_CNT) AS CHG_OPER_CNT
+				,C.DRV_NM
+				,A.NODE_ID
+				,D.NODE_NM
+		</if>
+		<if test="SELECT_DIV == 'MONTH'">
+  				MONTH(A.OPER_DT) AS OPER_DT
+				,A.REP_ROUT_ID
+				,A.ROUT_ID
+				,CONCAT(A.STAT_H, '시') AS STAT_H
+				,A.VHC_ID
+				,B.VHC_NO
+				,A.DRV_ID
+				,SUM(A.CHG_OPER_CNT) AS CHG_OPER_CNT
+				,C.DRV_NM
+				,A.NODE_ID
+				,D.NODE_NM
+		</if>
+		FROM
+			BRT_CHG_OPER_STAT A
+			LEFT JOIN BMS_VHC_MST B
+			ON A.VHC_ID = B.VHC_ID
+			LEFT JOIN BMS_DRV_MST C
+			ON A.DRV_ID = C.DRV_ID
+			LEFT JOIN BMS_NODE_MST D
+			ON A.NODE_ID = D.NODE_ID
+		WHERE
+			A.ROUT_ID = #{ROUT_ID}
+		<if test="TAB_DIV_G1 == 'BUS'">
+			AND A.VHC_ID IN
+			<foreach collection="VHC_ID" item="item" index="index"  open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="TAB_DIV_G1 == 'DRV'">
+			AND A.DRV_ID IN
+			<foreach collection="DRV_ID" item="item" index="index"  open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="TAB_DIV_G1 == 'STTN'">
+			AND A.NODE_ID IN
+			<foreach collection="NODE_ID" item="item" index="index"  open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
+			AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') BETWEEN #{F_DATE} AND #{L_DATE}
+		</if>
+		<if test="TAB_DIV_G1 == 'BUS'">
+			<if test="SELECT_DIV == 'TIME'">
+			GROUP BY
+				OPER_DT, A.VHC_ID, A.STAT_H
+			ORDER BY
+				OPER_DT, A.VHC_ID, A.STAT_H
+			</if>
+			<if test="SELECT_DIV == 'DAY'">
+			GROUP BY
+				OPER_DT, A.VHC_ID
+			ORDER BY
+				A.VHC_ID, OPER_DT
+			</if>
+			<if test="SELECT_DIV == 'MONTH'">
+			GROUP BY 
+				A.VHC_ID
+			ORDER BY
+				A.VHC_ID, A.OPER_DT 
+			</if>
+		</if>
+		<if test="TAB_DIV_G1 == 'DRV'">
+			<if test="SELECT_DIV == 'TIME'">
+			GROUP BY
+				OPER_DT, A.ROUT_ID, A.DRV_ID, A.STAT_H
+			ORDER BY
+				OPER_DT, A.DRV_ID, A.STAT_H
+			</if>
+			<if test="SELECT_DIV == 'DAY'">
+			GROUP BY
+				OPER_DT, A.DRV_ID
+			ORDER BY
+				A.DRV_ID, OPER_DT
+			</if>
+			<if test="SELECT_DIV == 'MONTH'">
+			GROUP BY 
+				A.DRV_ID
+			ORDER BY
+				A.DRV_ID, A.OPER_DT 
+			</if>
+		</if>
+		<if test="TAB_DIV_G1 == 'STTN'">
+			<if test="SELECT_DIV == 'TIME'">
+			GROUP BY
+				OPER_DT, A.ROUT_ID, A.NODE_ID, A.STAT_H
+			ORDER BY
+				OPER_DT, A.NODE_ID, A.STAT_H
+			</if>
+			<if test="SELECT_DIV == 'DAY'">
+			GROUP BY
+				OPER_DT, A.NODE_ID
+			ORDER BY
+				A.NODE_ID, OPER_DT
+			</if>
+			<if test="SELECT_DIV == 'MONTH'">
+			GROUP BY 
+				A.NODE_ID
+			ORDER BY
+				A.NODE_ID, A.OPER_DT 
+			</if>
+		</if>
+  </select>
+  
+  <select id="ST0603G1R1" resultType="Map">
+  		SELECT
+  		<if test="SELECT_DIV == 'TIME'">
+	 			DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
+				,A.REP_ROUT_ID
+				,A.ROUT_ID
+				,CONCAT(A.STAT_H, '시') AS STAT_H
+				,A.VHC_ID
+				,B.VHC_NO
+				,A.DRV_ID
+				,AVG(CHG_OPER_CNT) AS CHG_OPER_CNT
+				,C.DRV_NM
+				,A.NODE_ID
+				,D.NODE_NM
+		</if>
+		<if test="SELECT_DIV == 'DAY'">
+  				DATE_FORMAT(DATE(A.OPER_DT), '%Y-%m-%d') OPER_DT
+				,A.REP_ROUT_ID
+				,A.ROUT_ID
+				,CONCAT(A.STAT_H, '시') AS STAT_H
+				,A.VHC_ID
+				,B.VHC_NO
+				,A.DRV_ID
+				,SUM(A.CHG_OPER_CNT) AS CHG_OPER_CNT
+				,C.DRV_NM
+				,A.NODE_ID
+				,D.NODE_NM
+		</if>
+		<if test="SELECT_DIV == 'MONTH'">
+  				MONTH(A.OPER_DT) AS OPER_DT
+				,A.REP_ROUT_ID
+				,A.ROUT_ID
+				,CONCAT(A.STAT_H, '시') AS STAT_H
+				,A.VHC_ID
+				,B.VHC_NO
+				,A.DRV_ID
+				,SUM(A.CHG_OPER_CNT) AS CHG_OPER_CNT
+				,C.DRV_NM
+				,A.NODE_ID
+				,D.NODE_NM
+		</if>
+		FROM
+			BRT_CHG_OPER_STAT A
+			LEFT JOIN BMS_VHC_MST B
+			ON A.VHC_ID = B.VHC_ID
+			LEFT JOIN BMS_DRV_MST C
+			ON A.DRV_ID = C.DRV_ID
+			LEFT JOIN BMS_NODE_MST D
+			ON A.NODE_ID = D.NODE_ID
+		WHERE
+			A.ROUT_ID = #{ROUT_ID}
+		<if test="TAB_DIV_G1 == 'BUS'">
+			AND A.VHC_ID IN
+			<foreach collection="VHC_ID" item="item" index="index"  open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="TAB_DIV_G1 == 'DRV'">
+			AND A.DRV_ID IN
+			<foreach collection="DRV_ID" item="item" index="index"  open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="TAB_DIV_G1 == 'STTN'">
+			AND A.NODE_ID IN
+			<foreach collection="NODE_ID" item="item" index="index"  open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="F_DATE != null and F_DATE != '' and L_DATE != null and L_DATE != '' ">
+			AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') BETWEEN #{F_DATE} AND #{L_DATE}
+		</if>
+		<if test="TAB_DIV_G1 == 'BUS'">
+			<if test="SELECT_DIV == 'TIME'">
+			GROUP BY
+				A.VHC_ID, A.STAT_H
+			ORDER BY
+				A.VHC_ID, A.STAT_H
+			</if>
+			<if test="SELECT_DIV == 'DAY'">
+			GROUP BY
+				OPER_DT, A.VHC_ID
+			ORDER BY
+				A.VHC_ID, OPER_DT
+			</if>
+			<if test="SELECT_DIV == 'MONTH'">
+			GROUP BY 
+				A.VHC_ID
+			ORDER BY
+				A.VHC_ID, A.OPER_DT 
+			</if>
+		</if>
+		<if test="TAB_DIV_G1 == 'DRV'">
+			<if test="SELECT_DIV == 'TIME'">
+			GROUP BY
+				A.ROUT_ID, A.DRV_ID, A.STAT_H
+			ORDER BY
+				A.DRV_ID, A.STAT_H
+			</if>
+			<if test="SELECT_DIV == 'DAY'">
+			GROUP BY
+				OPER_DT, A.DRV_ID
+			ORDER BY
+				A.DRV_ID, OPER_DT
+			</if>
+			<if test="SELECT_DIV == 'MONTH'">
+			GROUP BY 
+				A.DRV_ID
+			ORDER BY
+				A.DRV_ID, A.OPER_DT 
+			</if>
+		</if>
+		<if test="TAB_DIV_G1 == 'STTN'">
+			<if test="SELECT_DIV == 'TIME'">
+			GROUP BY
+				A.ROUT_ID, A.NODE_ID, A.STAT_H
+			ORDER BY
+				D.NODE_ID, A.STAT_H
+			</if>
+			<if test="SELECT_DIV == 'DAY'">
+			GROUP BY
+				OPER_DT, A.NODE_ID
+			ORDER BY
+				D.NODE_ID, OPER_DT
+			</if>
+			<if test="SELECT_DIV == 'MONTH'">
+			GROUP BY 
+				A.NODE_ID
+			ORDER BY
+				D.NODE_ID, A.OPER_DT 
+			</if>
+		</if>
+  </select>
+
+</mapper>

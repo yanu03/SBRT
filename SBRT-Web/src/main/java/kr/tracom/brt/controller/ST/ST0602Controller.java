@@ -26,20 +26,22 @@ public class ST0602Controller extends ControllerSupport {
 	
 	@RequestMapping("/st/ST0602G1R0")
 	public @ResponseBody Map<String, Object> ST0602G1R0() throws Exception {
-		result.setData("dlt_BRT_OPER_VIOLT_STAT", st0602Service.ST0602G1R0());
+		result.setData("dlt_BRT_OPER_DSPTCH_STAT", st0602Service.ST0602G1R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/st/ST0602G1R1")
+	public @ResponseBody Map<String, Object> ST0602G1R1() throws Exception {
+		result.setData("dlt_BRT_OPER_DSPTCH_STAT_PIVOT_2", st0602Service.ST0602G1R1());
 		return result.getResult();
 	}
 	
 	@RequestMapping("/st/ST0602G2R0")
 	public @ResponseBody Map<String, Object> ST0602G2R0() throws Exception {
-		result.setData("dlt_BRT_OPER_VIOLT_STAT2", st0602Service.ST0602G2R0());
+		result.setData("dlt_BRT_OPER_DSPTCH_STAT_PIVOT", st0602Service.ST0602G2R0());
 		return result.getResult();
 	}
 	
-	@RequestMapping("/st/ST0602SHI0")
-	public @ResponseBody Map<String, Object> ST0602SHI0() throws Exception {
-		result.setData("dlt_searchitem", st0602Service.ST0602SHI0());
-		return result.getResult();
-	}
+	
 	
 }
