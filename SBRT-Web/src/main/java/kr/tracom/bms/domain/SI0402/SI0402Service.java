@@ -60,22 +60,38 @@ public class SI0402Service extends ServiceSupport {
 				
 				String rowStatus = (String) data.get("rowStatus");
 				String nodeType = (String) data.get("NODE_TYPE");
+				String lastNodeId = (String) map.get("LAST_NODE_ID");
+				
+				
+				String nodeType2 = null;
+				
+				if(i < param.size()-1) {
+					Map data2 = (Map) param.get(i+1);
+					nodeType2 = (String) data2.get("NODE_TYPE");
+				}
 				
 				if (rowStatus.equals("C")) {
 					Map key = null;
 					if(CommonUtil.empty(data.get("NODE_ID"))){
 						key = si0402Mapper.SI0402G1K0();
 					}
-					if(Constants.NODE_TYPE_VERTEX.equals(nodeType)==false
-						&&Constants.NODE_TYPE_SOUND.equals(nodeType)==false
-						&&Constants.NODE_TYPE_GARAGE.equals(nodeType)==false
+					if((Constants.NODE_TYPE_VERTEX.equals(nodeType)==false)
+						&&(Constants.NODE_TYPE_SOUND.equals(nodeType)==false)
+						&&(Constants.NODE_TYPE_GARAGE.equals(nodeType)==false)
 					) {
-						if(i<param.size()-1)
+						if(CommonUtil.empty(nodeType2)||(Constants.NODE_TYPE_GARAGE.equals(nodeType2)==false)
+							&&(data.get("NODE_ID").equals(lastNodeId)==false))
 						{
 							Map linkKeyMap = si0402Mapper.SI0402G1K1();
 							data.put("LINK_ID",linkKeyMap.get("SEQ"));	
 						}
+						else if(data.get("NODE_ID").equals(lastNodeId)){
+							data.put("LINK_ID","");	
+						}
 						data.put("LINK_NODE_YN","Y");
+					}
+					else {
+						data.put("LINK_ID","");	
 					}
 					
 					if(key!=null)data.put("NODE_ID",key.get("SEQ"));
@@ -103,16 +119,23 @@ public class SI0402Service extends ServiceSupport {
 						routMapper.updateMainRoutNodeToAnotherRoute(data);
 					}
 				} else if (rowStatus.equals("U")) {
-					if(Constants.NODE_TYPE_VERTEX.equals(nodeType)==false
-						&&Constants.NODE_TYPE_SOUND.equals(nodeType)==false
-						&&Constants.NODE_TYPE_GARAGE.equals(nodeType)==false
+					if((Constants.NODE_TYPE_VERTEX.equals(nodeType)==false)
+						&&(Constants.NODE_TYPE_SOUND.equals(nodeType)==false)
+						&&(Constants.NODE_TYPE_GARAGE.equals(nodeType)==false)
 					) {
-						if(CommonUtil.empty(data.get("LINK_ID"))&&i<param.size()-1)
+						if((CommonUtil.empty(nodeType2)||(Constants.NODE_TYPE_GARAGE.equals(nodeType2)==false))
+							&&CommonUtil.empty(data.get("LINK_ID"))&&(data.get("NODE_ID").equals(lastNodeId)==false))
 						{
 							Map linkKeyMap = si0402Mapper.SI0402G1K1();
 							data.put("LINK_ID",linkKeyMap.get("SEQ"));	
 						}
+						else if(data.get("NODE_ID").equals(lastNodeId)){
+							data.put("LINK_ID","");	
+						}
 						data.put("LINK_NODE_YN","Y");
+					}
+					else {
+						data.put("LINK_ID","");	
 					}
 					
 					if(Constants.NODE_TYPE_BUSSTOP.equals(nodeType)&&Constants.NODE_TYPE_CROSS.equals(nodeType)
