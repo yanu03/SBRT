@@ -59,14 +59,16 @@ public class SI0402Service extends ServiceSupport {
 				}
 				
 				String rowStatus = (String) data.get("rowStatus");
+				String nodeType = (String) data.get("NODE_TYPE");
 				
 				if (rowStatus.equals("C")) {
 					Map key = null;
 					if(CommonUtil.empty(data.get("NODE_ID"))){
 						key = si0402Mapper.SI0402G1K0();
 					}
-					if(Constants.NODE_TYPE_VERTEX.equals((String) data.get("NODE_TYPE"))==false
-						&&Constants.NODE_TYPE_SOUND.equals((String) data.get("NODE_TYPE"))==false
+					if(Constants.NODE_TYPE_VERTEX.equals(nodeType)==false
+						&&Constants.NODE_TYPE_SOUND.equals(nodeType)==false
+						&&Constants.NODE_TYPE_GARAGE.equals(nodeType)==false
 					) {
 						if(i<param.size()-1)
 						{
@@ -84,15 +86,15 @@ public class SI0402Service extends ServiceSupport {
 						 iCnt += si0402Mapper.SI0402G1U0(data);
 					}
 					
-					if((Constants.NODE_TYPE_VERTEX.equals((String) data.get("NODE_TYPE"))==false)
+					if(Constants.NODE_TYPE_BUSSTOP.equals(nodeType)&&Constants.NODE_TYPE_CROSS.equals(nodeType)
 						&&(CommonUtil.notEmpty(data.get("STTN_ID"))||CommonUtil.notEmpty(data.get("CRS_ID")))){
-						if(Constants.NODE_TYPE_BUSSTOP.equals((String) data.get("NODE_TYPE"))&&CommonUtil.notEmpty(data.get("STTN_ID"))){
+						if(Constants.NODE_TYPE_BUSSTOP.equals(nodeType)&&CommonUtil.notEmpty(data.get("STTN_ID"))){
 							data.put("TYPE","STTN_ID");	
 							//data.put("WAY_DIV",map.get("WAY_DIV"));	
 							routMapper.updateSttn(data);
 						
 						}
-						else if(Constants.NODE_TYPE_CROSS.equals((String) data.get("NODE_TYPE"))&&CommonUtil.notEmpty(data.get("CRS_ID"))){
+						else if(Constants.NODE_TYPE_CROSS.equals(nodeType)&&CommonUtil.notEmpty(data.get("CRS_ID"))){
 							data.put("TYPE","CRS_ID");
 							routMapper.updateCrs(data);
 						}
@@ -101,8 +103,9 @@ public class SI0402Service extends ServiceSupport {
 						routMapper.updateMainRoutNodeToAnotherRoute(data);
 					}
 				} else if (rowStatus.equals("U")) {
-					if(Constants.NODE_TYPE_VERTEX.equals((String) data.get("NODE_TYPE"))==false
-						&&Constants.NODE_TYPE_SOUND.equals((String) data.get("NODE_TYPE"))==false
+					if(Constants.NODE_TYPE_VERTEX.equals(nodeType)==false
+						&&Constants.NODE_TYPE_SOUND.equals(nodeType)==false
+						&&Constants.NODE_TYPE_GARAGE.equals(nodeType)==false
 					) {
 						if(CommonUtil.empty(data.get("LINK_ID"))&&i<param.size()-1)
 						{
@@ -112,15 +115,15 @@ public class SI0402Service extends ServiceSupport {
 						data.put("LINK_NODE_YN","Y");
 					}
 					
-					if((Constants.NODE_TYPE_VERTEX.equals((String) data.get("NODE_TYPE"))==false)
+					if(Constants.NODE_TYPE_BUSSTOP.equals(nodeType)&&Constants.NODE_TYPE_CROSS.equals(nodeType)
 						&&(CommonUtil.notEmpty(data.get("STTN_ID"))||CommonUtil.notEmpty(data.get("CRS_ID")))){
 						
-						if(Constants.NODE_TYPE_BUSSTOP.equals((String) data.get("NODE_TYPE"))&&CommonUtil.notEmpty(data.get("STTN_ID"))){
+						if(Constants.NODE_TYPE_BUSSTOP.equals(nodeType)&&CommonUtil.notEmpty(data.get("STTN_ID"))){
 							data.put("TYPE","STTN_ID");
 							//data.put("WAY_DIV",map.get("WAY_DIV"));	
 							routMapper.updateSttn(data);
 						}
-						else if(Constants.NODE_TYPE_CROSS.equals((String) data.get("NODE_TYPE"))&&CommonUtil.notEmpty(data.get("CRS_ID"))){
+						else if(Constants.NODE_TYPE_CROSS.equals(nodeType)&&CommonUtil.notEmpty(data.get("CRS_ID"))){
 							data.put("TYPE","CRS_ID");
 							routMapper.updateCrs(data);
 						}
@@ -163,9 +166,10 @@ public class SI0402Service extends ServiceSupport {
 				if(routNodeList.size()>0) {
 					for (int i = 0; i < routNodeList.size()-1; i++) {
 						Map data = routNodeList.get(i);
+						String nodeType = (String) data.get("NODE_TYPE");
 						
 						Map data2 = routNodeList.get(i+1);
-						if(Constants.NODE_TYPE_BUSSTOP.equals((String) data.get("NODE_TYPE"))){
+						if(Constants.NODE_TYPE_BUSSTOP.equals(nodeType)){
 							sttnCnt++;
 						}
 						data.put("LINK_SN",(i+1));

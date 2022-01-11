@@ -82,7 +82,7 @@ public class InitController {
 			String id = SsoCrypto.decrypt(ssoCryptoId, CommonUtil.getIpAddress(request));
 			Map loginParam = new HashMap();
 			loginParam.put("USER_ID", id);
-			loginParam.put("SYSTEM_BIT", Constants.SYSTEM_BRT);
+			loginParam.put("SYSTEM_BIT", Constants.SYSTEM_SBRT);
 			Map memberMap = null;
 			String status = null;
 			memberMap = loginService.selectMemberInfoByOnlyId(loginParam);
