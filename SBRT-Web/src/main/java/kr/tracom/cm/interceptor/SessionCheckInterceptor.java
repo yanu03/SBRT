@@ -81,7 +81,7 @@ public class SessionCheckInterceptor extends HandlerInterceptorAdapter {
 	 */
 	private boolean isSkipURI(HttpServletRequest request) {
 		
-		String[] skipUrl = { "/", "/I18N", "/ClipReport" };
+		String[] skipUrl = { "/", "/I18N", "/ClipReport", "/main/ssoCheck"};
 		boolean result = false;
 		String uri = (request.getRequestURI()).replace(request.getContextPath(), "");
 		System.out.println("isSkipURI() in uri="+uri);

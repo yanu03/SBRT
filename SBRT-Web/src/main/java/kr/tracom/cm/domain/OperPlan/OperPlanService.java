@@ -526,7 +526,7 @@ public class OperPlanService extends ServiceSupport {
 					acc_len = 0;
 					dec_len = 0;
 
-					if (node_type.equals("NT002") || node_sn == route_first_node_sn) {  //정류장에서 출발하는 경우 or 첫번째 노드에서 출발
+					if (node_type.equals(Constants.NODE_TYPE_BUSSTOP) || node_sn == route_first_node_sn) {  //정류장에서 출발하는 경우 or 첫번째 노드에서 출발
 
 						//가속구간
 						acc_len = (int) (0 + (acc_avg * Math.pow(acc_avg_tm, 2)) / 2);
@@ -539,7 +539,7 @@ public class OperPlanService extends ServiceSupport {
 					}
 
 
-					if (next_node_type.equals("NT002")) {  //다음노드가 정류장인 경우
+					if (next_node_type.equals(Constants.NODE_TYPE_BUSSTOP)) {  //다음노드가 정류장인 경우
 						//감속구간
 						dec_len = (int) ((max_speed_per_sec * dec_avg_tm) + (dec_avg * Math.pow(dec_avg_tm, 2)) / 2);
 
@@ -620,7 +620,7 @@ public class OperPlanService extends ServiceSupport {
 					arrv_tm = dprt_tm; //도착시각=출발시각
 					
 					//첫 번째 노드가 정류장이 아닌경우 첫번째 정류장의 출발시각 설정
-					if(!node_type.equals("NT002") && next_node_type.equals("NT002")) {
+					if(!node_type.equals(Constants.NODE_TYPE_BUSSTOP) && next_node_type.equals(Constants.NODE_TYPE_BUSSTOP)) {
 						next_diff_sec = 0;
 						prev_diff_sec = 0;
 						prev_dprt_tm = dprt_tm;
@@ -629,7 +629,7 @@ public class OperPlanService extends ServiceSupport {
 						prev_dprt_tm = dprt_tm;
 					}
 
-				} else if(node_sn == route_last_node_sn && !node_type.equals("NT002")) {  //노선의 마지막 노드이고 정류장아 아니면
+				} else if(node_sn == route_last_node_sn && !node_type.equals(Constants.NODE_TYPE_BUSSTOP)) {  //노선의 마지막 노드이고 정류장아 아니면
 
 					//마지막 노드가 정류장이 아니면 이전 노드(정류장)의 시간을 그대로 사용
 					arrv_tm = prev_dprt_tm;
@@ -712,7 +712,7 @@ public class OperPlanService extends ServiceSupport {
 					stop_sec_none_peak = 0;
 
 					//노드타입에 따라 최소정차시간 추가
-					if(node_type.equals("NT002")) { //정류장
+					if(node_type.equals(Constants.NODE_TYPE_BUSSTOP)) { //정류장
 
 						if(chgType != OperPlanCalc.CHG_TYPE_MODIFY) { //수정인 경우에는 정류장 출도착 시각을 전달받음
 
@@ -792,7 +792,7 @@ public class OperPlanService extends ServiceSupport {
 					//마지막 정류장 처리
 					if(next_node_sn == route_last_node_sn) { // 다음노드가 노선의 마지막 노드이면
 
-						if(node_type.equals("NT002") && !next_node_type.equals("NT002")){ //다음 노드가 정류장이 아니면
+						if(node_type.equals(Constants.NODE_TYPE_BUSSTOP) && !next_node_type.equals(Constants.NODE_TYPE_BUSSTOP)){ //다음 노드가 정류장이 아니면
 
 							//출발시각 = 도착시각
 							dprt_tm = arrv_tm; //출발시각=도착시각
@@ -807,7 +807,7 @@ public class OperPlanService extends ServiceSupport {
 				if(node_sn != route_last_node_sn) {
 
 
-					if(next_node_type.equals("NT001") && !StringUtils.isEmpty(next_cross_id)){ //다음 노드가 교차로이면
+					if(next_node_type.equals(Constants.NODE_TYPE_CROSS) && !StringUtils.isEmpty(next_cross_id)){ //다음 노드가 교차로이면
 
 						//현시정보 확인가능여부
 						paramMap.put("NODE_ID", next_cross_id);
@@ -895,7 +895,7 @@ public class OperPlanService extends ServiceSupport {
 
 							//다음 초록불까지 남은 시간에 따라
 							//현재 노드가 정류장이면 출발시각을 늦춘다(20초 정도까지..)
-							if(node_type.equals("NT002")) { //정류장
+							if(node_type.equals(Constants.NODE_TYPE_BUSSTOP)) { //정류장
 								if(Math.abs(phase_remain_sec) > max_delay_sec) {
 									dprt_tm = DateUtil.addSeconds2(dprt_tm, TIME_PATTERN, max_delay_sec);
 								} else {

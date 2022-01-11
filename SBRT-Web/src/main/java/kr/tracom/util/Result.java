@@ -10,6 +10,7 @@ public class Result {
 
 	// 성공메세지
 	public final static String STATUS_SUCESS = "S";
+	public final static String STATUS_SSO = "SSO";
 
 	//저장메시지
 	public final static String STATUS_SAVE = "SAVE";
@@ -140,6 +141,9 @@ public class Result {
 		} else if (status.equals(STATUS_ERROR)) {
 			setErrorMsg(STATUS_ERROR_DEFAULT_DETAIL_CODE, message, ex);
 			return;
+		}else if (status.equals(STATUS_SSO)) {
+			result.put("statusCode", STATUS_SSO);
+			result.put("message", getDefaultStatusMessage(message, STATUS_SUCESS_MESSAGE));
 		}
 
 		if (ex != null) {
