@@ -4,8 +4,8 @@
 <mapper namespace="kr.tracom.bms.domain.SI0101.SI0101Mapper">
 
 <select id="SI0101G0R0" resultType="Map">
-	select GRG_ID, GRG_NM, OWNER_TYPE, ADDR, PHONE, FAX, EMAIL, CNG_YN, ELEC_YN, LEGAL_AREA, GPS_X, GPS_Y,
-			SECURE_AREA, <!-- APPL_ST_DT, APPL_ED_DT, --> REMARK
+	select GRG_ID, GRG_NM, GRG_ENM, OWNER_TYPE, ADDR, PHONE, FAX, EMAIL, CNG_YN, ELEC_YN, LEGAL_AREA, GPS_X, GPS_Y,
+			SECURE_AREA, <!-- APPL_ST_DT, APPL_ED_DT, --> USE_YN, REMARK
 	from BMS_GRG_MST
 	<where>
 		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
@@ -22,7 +22,7 @@
 </select>
 
 <insert id="SI0101G0I0" parameterType="Map">
-	insert into BMS_GRG_MST(GRG_ID, GRG_NM, OWNER_TYPE, ADDR, PHONE, FAX, EMAIL, CNG_YN, ELEC_YN, 
+	insert into BMS_GRG_MST(GRG_ID, GRG_NM, GRG_ENM, OWNER_TYPE, ADDR, PHONE, FAX, EMAIL, CNG_YN, ELEC_YN, USE_YN,
 			<if test="LEGAL_AREA != null and LEGAL_AREA != ''">
 				LEGAL_AREA,
 			</if>
@@ -36,7 +36,7 @@
 			GPS_Y, 
 			</if>
 			<!-- APPL_ST_DT, APPL_ED_DT, --> REMARK)
-	values (#{GRG_ID}, #{GRG_NM}, #{OWNER_TYPE}, #{ADDR}, #{PHONE}, #{FAX}, #{EMAIL}, #{CNG_YN}, #{ELEC_YN},  
+	values (#{GRG_ID}, #{GRG_NM}, #{GRG_ENM}, #{OWNER_TYPE}, #{ADDR}, #{PHONE}, #{FAX}, #{EMAIL}, #{CNG_YN}, #{ELEC_YN}, #{USE_YN}, 
 			<if test="LEGAL_AREA != null and LEGAL_AREA != ''">
 				#{LEGAL_AREA},
 			</if>
@@ -54,7 +54,7 @@
 
 <update id="SI0101G0U0" parameterType="Map">
  update BMS_GRG_MST
-	set GRG_NM = #{GRG_NM}, OWNER_TYPE = #{OWNER_TYPE}, ADDR = #{ADDR}, PHONE = #{PHONE}, FAX = #{FAX},
+	set GRG_NM = #{GRG_NM}, GRG_ENM = #{GRG_ENM}, OWNER_TYPE = #{OWNER_TYPE}, ADDR = #{ADDR}, PHONE = #{PHONE}, FAX = #{FAX}, USE_YN = #{USE_YN},
 		EMAIL = #{EMAIL}, CNG_YN = #{CNG_YN}, ELEC_YN =  #{ELEC_YN}, 
 		<if test="LEGAL_AREA != null and LEGAL_AREA != ''">
 			LEGAL_AREA = #{LEGAL_AREA}, 
