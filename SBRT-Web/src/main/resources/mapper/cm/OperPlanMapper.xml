@@ -112,7 +112,8 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             , ROUT_ED_TM
         FROM BMS_ROUT_NODE_CMPSTN A
             LEFT JOIN BRT_OPER_ALLOC_PL_ROUT_INFO B ON A.ROUT_ID = B.ROUT_ID AND B.OPER_SN = #{OPER_SN}
-        WHERE A.ROUT_ID = #{ROUT_ID} AND B.DAY_DIV = #{DAY_DIV};
+        WHERE A.ROUT_ID = #{ROUT_ID} AND B.DAY_DIV = #{DAY_DIV}
+        	AND A.LINK_NODE_YN = 'Y';
     </select>
 
     <!--최소 정차시간 -->
@@ -185,6 +186,7 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
         FROM BMS_ROUT_NODE_CMPSTN A
             LEFT JOIN BMS_CRS_MST B ON A.CRS_ID = B.CRS_ID
         WHERE A.ROUT_ID = #{ROUT_ID}
+        	AND A.LINK_NODE_YN = 'Y'
         ORDER BY A.NODE_SN ASC;        
     </select>
 
