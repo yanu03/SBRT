@@ -54,6 +54,26 @@ public class LoginService {
 	}
 
 	/**
+	 * 사용자 정보 조회 (ID로만 로그인 처리 사용 )
+	 */
+
+	public Map selectMemberInfoByOnlyId(Map param) {
+		
+		Map memberMap = loginMapper.selectMemberInfoForLogin(param);
+
+		// 사용자가 존재하지 않을 경우
+		if (memberMap == null) {
+			memberMap = new HashMap();
+			memberMap.put("LOGIN", "notexist");
+
+			// 사용자가 존재할 경우
+		} else {
+			memberMap.put("LOGIN", "success");
+		}
+		return memberMap;
+	}
+	
+	/**
 	 * 해당 사용자 ID가 관리자 ID인지를 검사한다.
 	 */
 

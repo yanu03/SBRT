@@ -24,6 +24,7 @@
 						<w2:key id="WAY_DIV" name="상하행구분" dataType="text"></w2:key>
 						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
 						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
+						<w2:key id="LAST_NODE_ID" name="마지막노드ID" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_result">
@@ -499,7 +500,6 @@
 	
 	scwin.btn_save_onclick = function() {
 		
-		
 		com.setSerialNumberToData(SI0402G1, "NODE_SN", "OLD_NODE_SN");
 		
 		var idx = SI0402G1.getModifiedIndex().length;
@@ -510,12 +510,16 @@
 			com.alert(str);
 			return false;
 		}
-	
+		
 		if (com.validateGridView(SI0402G1)) {
 			if (idx > 0) {
 				var yesno_str = com.strModifiedCnt(SI0402G1) + "의 데이터가 저장됩니다. \n 진행하시겠습니까?";
 				com.confirm(yesno_str, function(rtn) {
-					if (rtn) {				
+					if (rtn) {
+						if(dlt_BMS_ROUT_NODE_CMPSTN.getRowCount()>0){
+							var lastNodeId = dlt_BMS_ROUT_NODE_CMPSTN.getCellData(dlt_BMS_ROUT_NODE_CMPSTN.getRowCount()-1, "NODE_ID");
+							dma_sub_search.set("LAST_NODE_ID", lastNodeId);
+						}
 						com.saveData(SI0402G1,null,sub_SI0402G1S0);
 					}
 				});

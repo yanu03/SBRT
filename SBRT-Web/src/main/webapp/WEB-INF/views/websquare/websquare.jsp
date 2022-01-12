@@ -33,7 +33,7 @@
 		<!-- <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&amp;appkey=l7xx6099b61644bf40d78594611b250c9694"></script> -->
 		<script type="text/javascript" src="/cm/js/Chart.js/3.6.0/chart.js"></script>
 	    <script type="text/javascript" src="/cm/js/Chart.js/3.6.0/Chart.min.js"></script>
-	    <<!-- script type="text/javascript" src="/cm/js/moment.js/2.27.0/moment.min.js" integrity="sha512-rmZcZsyhe0/MAjquhTgiUcb4d9knaFc7b5xAfju483gbEXTkeJRUMIPk6s3ySZMYUHEcjKbjLjyddGWMrNEvZg==" crossorigin="anonymous"></script> -->
+	    <!-- <script type="text/javascript" src="/cm/js/moment.js/2.27.0/moment.min.js" integrity="sha512-rmZcZsyhe0/MAjquhTgiUcb4d9knaFc7b5xAfju483gbEXTkeJRUMIPk6s3ySZMYUHEcjKbjLjyddGWMrNEvZg==" crossorigin="anonymous"></script> -->
 			
 		<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=31aa62fb189294413e43c24caeb82419&amp;libraries=services&amp;autoload=false"></script>
 		<script type="text/javascript" src="/cm/js/map.js"></script>

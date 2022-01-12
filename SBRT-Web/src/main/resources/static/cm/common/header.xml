@@ -36,6 +36,8 @@
 						<w2:key id="UCNT" name="name3" dataType="text"></w2:key>
 						<w2:key id="DCNT" name="name4" dataType="text"></w2:key>
 						<w2:key id="TYPE" name="name5" dataType="text"></w2:key>
+						<w2:key id="USER_ID" name="USER_ID" dataType="text"></w2:key>
+						<w2:key id="BIMS_URL" name="BIMS_URL" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_defInfo">
@@ -43,6 +45,7 @@
 						<w2:key id="SSN_USER_ID" name="사용자ID" dataType="text"></w2:key>
 						<w2:key id="SSN_USER_NM" name="사용자명" dataType="text"></w2:key>
 						<w2:key id="SSN_CUR_SYSTEM" name="현재시스템" dataType="text"></w2:key>
+						<w2:key id="SSN_SYSTEM_BIT" name="시스템비트" dataType="text"></w2:key> 현재 계정이 접속할수 있는 시스템
 						<w2:key id="SSN_IS_ADMIN" name="관리자여부" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
@@ -71,7 +74,7 @@
 			</w2:dataCollection>
 			
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sbm_systemChange" ref="data:json,dma_systemChange" target="" action="/main/systemChange" method="post" mediatype="application/json"
+			<xf:submission id="sbm_systemChange" ref="data:json,dma_systemChange" target="data:json,dma_result" action="/main/systemChange" method="post" mediatype="application/json"
 				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sbm_systemChange_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -352,7 +355,11 @@
 	 * bms로 이동
 	 */
 	scwin.btn_bms_onclick = function(e) {
-		
+		var systemBit = dma_defInfo.get("SSN_SYSTEM_BIT");
+		if(systemBit!="1" && systemBit!="3"){
+			com.alert("통합운영관리시스템의 대한 접근 권한이 없습니다. 시스템 관리자에게 문의하시기 바랍니다.");
+			return;
+		}
 		dma_systemChange.set("SYSTEM_BIT",1); 
 		com.executeSubmission(sbm_systemChange);
 	};
@@ -360,10 +367,14 @@
 	/**
 	 * brs로 이동
 	 */
-	scwin.btn_brt_onclick = function(e) {
+	/*scwin.btn_brt_onclick = function(e) {
+		if(systemBit!="2" && systemBit!="3"){
+			com.alert("차량운행관리시스템의 대한 접근 권한이 없습니다. 시스템 관리자에게 문의하시기 바랍니다.");
+			return;
+		}
 		dma_systemChange.set("SYSTEM_BIT",2); 	
 		com.executeSubmission(sbm_systemChange);
-	};
+	};*/
 
 	scwin.sbm_systemChange_submitdone = function(e) {
 		var resultData = e.responseJSON;
@@ -371,7 +382,8 @@
 		var result = resultData.rsMsg;
 		try {
 			if (result.statusCode == "S") {
-				com.goHome();
+				//com.goHome();
+				top.window.location.href = dma_result.get("BIMS_URL")+"?ID="+dma_result.get("USER_ID");
 			} else {
 				com.alert(result.message);
 			}
@@ -389,37 +401,7 @@ scwin.fn_getInitData = function() {
 	};
 
 	scwin.initDataCallback = function() {
-		var curSystem = dma_defInfo.get("SSN_CUR_SYSTEM");
-
-		$p.parent().wfm_header.getWindow().txt_userNm.setValue(dma_defInfo.get("SSN_USER_NM"));
-		
-		if(curSystem==1){
-			//$p.parent().wfm_header.getWindow().txt_systemNm.setValue("통합운영관리");
-			scwin.openMenu("메인","/cm/common/bmsMain.xml","MAIN");
-			$p.parent().wfm_header.getWindow().btn_bms.hide();
-			$p.parent().wfm_header.getWindow().btn_brt.show();
-			$p.parent().wfm_header.getWindow().logo_brt.hide();
-			$p.parent().wfm_header.getWindow().logo.show();
-		}
-		else if(curSystem==2){
-			//$p.parent().wfm_header.getWindow().txt_systemNm.setValue("차량운행관리");
-			scwin.openMenu("메인","/cm/common/brtMain.xml","MAIN");
-			$p.parent().wfm_header.getWindow().btn_brt.hide();
-			$p.parent().wfm_header.getWindow().btn_bms.show();
-			$p.parent().wfm_header.getWindow().logo.hide();
-			$p.parent().wfm_header.getWindow().logo_brt.show();
-		}
-	
-		/*var index = 0;
-		var tmpMenus = dlt_menu.getAllJSON();
-		
-		for (index in tmpMenus) {
-			if( tmpMenus[index].PROG_PH != '' && tmpMenus[index].PROG_PH != null ){
-				break;
-			}
-		}
-		scwin.openMenu(tmpMenus[index].MENU_NM,tmpMenus[index].PROG_PH,tmpMenus[index].MENU_CD);*/
-		
+		scwin.openMenu("메인","/cm/common/brtMain.xml","MAIN");
 	};
 	
 	scwin.dlt_menu_ondataload = function() {
@@ -637,12 +619,6 @@ scwin.fn_getInitData = function() {
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="" style="" class="head_top">
-			<xf:group id="logo" style="" class="logo" tagname="a">
-				<w2:attributes>
-					<w2:href>javascript:com.goHome()</w2:href>
-				</w2:attributes>
-				<!-- <xf:image id="" style="" alt="tracom" src="/cm/images/inc/tracom_trans_log.png" ev:onclick=""></xf:image> -->
-			</xf:group>
 			<xf:group id="logo_brt" style="" class="logo_brt" tagname="a">
 				<w2:attributes>
 					<w2:href>javascript:com.goHome()</w2:href>
@@ -652,9 +628,6 @@ scwin.fn_getInitData = function() {
 			<xf:group class="sysbtnbox" id="" style="">
 				<xf:trigger id="btn_bms" class="bms" style="" type="button" ev:onclick="scwin.btn_bms_onclick">
 					<xf:label><![CDATA[통합운영관리]]></xf:label>
-				</xf:trigger>
-				<xf:trigger id="btn_brt" class="brt" style="" type="button" ev:onclick="scwin.btn_brt_onclick">
-					<xf:label><![CDATA[차량운행관리]]></xf:label>
 				</xf:trigger>
 			</xf:group>
 		</xf:group>

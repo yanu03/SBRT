@@ -5,32 +5,37 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
 
 <head>
-    <w2:type>DEFAULT</w2:type>
-    <w2:buildDate />
-    <xf:model>
-        <xf:instance>
-            <data xmlns="" />
-        </xf:instance>
-        <w2:dataCollection baseNode="map">
-            <w2:dataMap baseNode="map" id="dma_loginCheck">
-                <w2:keyInfo>
-                    <w2:key id="USER_ID" name="사용자ID" dataType="text"></w2:key>
-                    <w2:key id="PASSWORD" name="비밀번호" dataType="text"></w2:key>
-                    <w2:key id="SYSTEM_BIT" name="시스템비트" dataType="text" defaultValue="1"></w2:key>
-                </w2:keyInfo>
-            </w2:dataMap>
-            <w2:dataMap baseNode="map" id="dma_checkBmsBis">
-                <w2:keyInfo>
-                    <w2:key id="chkBmsBis" name="url기준" dataType="text"></w2:key>
-                </w2:keyInfo>
-            </w2:dataMap>
-        </w2:dataCollection>
-        <w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sbm_loginCheck" ref="data:json,dma_loginCheck" target='' action="/main/login" method="post"
-				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit=""
-				ev:submitdone="scwin.sbm_Login_submitdone" ev:submiterror="">
-        </xf:submission>
-    </xf:model>
+	<w2:type>DEFAULT</w2:type>
+	<w2:buildDate />
+	<xf:model>
+		<xf:instance>
+			<data xmlns="" />
+		</xf:instance>
+		<w2:dataCollection baseNode="map">
+			<w2:dataMap baseNode="map" id="dma_loginCheck">
+				<w2:keyInfo>
+					<w2:key id="USER_ID" name="사용자ID" dataType="text"></w2:key>
+					<w2:key id="PASSWORD" name="비밀번호" dataType="text"></w2:key>
+					<w2:key id="SYSTEM_BIT" name="시스템비트" dataType="text" defaultValue="2"></w2:key>
+				</w2:keyInfo>
+			</w2:dataMap>
+			<w2:dataMap baseNode="list" repeatNode="map" id="dma_result" saveRemovedData="true">
+				<w2:keyInfo>
+					<w2:key id="USER_ID" name="USER_ID" dataType="text"></w2:key>
+					<w2:key id="BIMS_URL" name="BIMS_URL" dataType="text"></w2:key>
+				</w2:keyInfo>
+			</w2:dataMap>
+		</w2:dataCollection>
+		<w2:workflowCollection></w2:workflowCollection>
+		<xf:submission id="sbm_loginCheck" ref="data:json,dma_loginCheck" target="data:json,dma_result" action="/main/login" method="post"
+			mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+			ev:submit="" ev:submitdone="scwin.sbm_Login_submitdone" ev:submiterror="">
+		</xf:submission>
+		<xf:submission id="sso_loginCheck" ref="data:json,dma_loginCheck" target='' action="/main/ssoCheck" method="post"
+			mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+			ev:submit="" ev:submitdone="scwin.ssoCheck_submitdone" ev:submiterror="">
+		</xf:submission>
+	</xf:model>
     <script type="javascript" lazy="false"><![CDATA[
 		/**
 		 * 화면 초기 로딩시 수행 스크립트
@@ -50,8 +55,6 @@
 			}
 			ibx_userId.setValue(userInputId);
 			ibx_userId.focus();
-			
-			dma_checkBmsBis.set("chkBmsBis", 1);
 		};
 	
 		scwin.onpageunload = function() {
@@ -80,7 +83,6 @@
 		 * 로그인 버튼 클릭시 실행 - 로그인 처리 트랜잭션 발생
 		 */
 		scwin.btn_login_onclick = function() {
-		
 			com.executeSubmission(sbm_loginCheck);
 		};
 	
@@ -88,53 +90,12 @@
 		scwin.btn_bms_check = function() {
 			bg_img.addClass("bg_img_bis");
 			dma_loginCheck.set("SYSTEM_BIT",1);
-			
-			//url 8081로 변경
-			dma_checkBmsBis.set("chkBmsBis", 1);
 		}
 		
 		scwin.btn_brt_check = function() {
 			bg_img.removeClass("bg_img_bis");
 			dma_loginCheck.set("SYSTEM_BIT",2);
-			
-			//url 8082로 변경
-			dma_checkBmsBis.set("chkBmsBis", 2);
 		}
-	
-		/**
-		 * 로그인 submitdone 스크립트 - 로그인 성공여부 판단, 성공시 메인페이지 이동, 실패시 메세지 처리
-		 */
-		/*scwin.sbm_Login_submitdone = function(e) {
-			debugger;
-			var resultData = e.responseJSON;
-			var result = resultData.rsMsg;
-			try {
-				if (result.statusCode == "S") {
-					
-					if(id_save.getSelectedIndex()=='0'){
-						var userInputId = ibx_userId.getValue();
-						setCookie("userInputId", userInputId, 7);
-					}
-					else {
-						deleteCookie("userInputId");
-					}
-					
-					if(dma_checkBmsBis.get("chkBmsBis") == 1){
-						//top.window.location.href = window.location.href;
-						com.goHome();
-					}else if(dma_checkBmsBis.get("chkBmsBis") == 2){
-						//com.goHome();
-						top.window.location.href = 'http://localhost:8082/main/directLogin';
-						//top.window.location.href = 'http://localhost:8082';
-					}
-					
-				} else {
-					com.alert(result.message);
-				}
-			} catch (ex) {
-				com.alert("서버 통신 도중 오류가 발생하였습니다. 잠시후 다시 시도해주시기 바랍니다.");
-			}
-		};*/
 	
 		/**
 		 * 로그인 submitdone 스크립트 - 로그인 성공여부 판단, 성공시 메인페이지 이동, 실패시 메세지 처리
@@ -152,7 +113,12 @@
 					else {
 						deleteCookie("userInputId");
 					}
-					com.goHome();
+					if(dma_loginCheck.get("SYSTEM_BIT")==2){
+						com.goHome();
+					}
+					else {
+						top.window.location.href = dma_result.get("BIMS_URL")+"?ID="+dma_result.get("USER_ID");
+					}
 				} else {
 					com.alert(result.message);
 				}
@@ -161,6 +127,19 @@
 			}
 		};
 		
+		scwin.ssoCheck_submitdone = function(e) {
+			var resultData = e.responseJSON;
+			var result = resultData.rsMsg;
+			try {
+				if (result.statusCode == "SSO") {
+					com.goHome();
+				} else {
+					//com.alert(result.message);
+				}
+			} catch (ex) {
+				//com.alert("서버 통신 도중 오류가 발생하였습니다. 잠시후 다시 시도해주시기 바랍니다.");
+			}
+		};
 		scwin.id_save_onviewchange = function(info) {
 			
 			if(info.checked == true){
@@ -236,7 +215,7 @@
 
 <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
     <xf:group class="login_wrap">
-        <xf:group class="bg_img bg_img_bis" id="bg_img">
+        <xf:group class="bg_img" id="bg_img">
             <xf:group class="bg_logo" style=""></xf:group>
             <xf:group class="box" tagname="ul">
 
@@ -245,16 +224,16 @@
 			<xf:group tagname="li" class="system">
 				<xf:group class="question" tagname="ul">
 					<xf:group tagname="li" class="system_inner01 on">
-						<w2:anchor outerDiv="false" class="system01" ev:onclick="scwin.btn_bms_check">
+						<w2:anchor outerDiv="false" class="system01" ev:onclick="scwin.btn_brt_check">
 							<xf:label>
-								<![CDATA[통합운영관리]]>
+								<![CDATA[차량운행관리]]>
 							</xf:label>
 						</w2:anchor>
 					</xf:group>
 					<xf:group tagname="li" class="system_inner02">
-						<w2:anchor outerDiv="false" class="system02" ev:onclick="scwin.btn_brt_check">
+						<w2:anchor outerDiv="false" class="system02" ev:onclick="scwin.btn_bms_check">
 							<xf:label>
-								<![CDATA[차량운행관리]]>
+								<![CDATA[통합운영관리]]>
 							</xf:label>
 						</w2:anchor>
 					</xf:group>
