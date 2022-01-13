@@ -29,4 +29,11 @@ public class NodeController extends ControllerSupport {
 		result.setData("dlt_searchitem", nodeService.selectNodeItem());
 		return result.getResult();
 	}
+	
+	@RequestMapping("/node/selectMockNodeList")
+	public @ResponseBody Map<String, Object> selectMockNodeList() throws Exception {
+		result.setData("dlt_BMS_MOCK_NODE", nodeService.selectMockNodeList());
+		return result.getResult();
+	}	
+	
 }

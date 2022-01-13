@@ -23,4 +23,9 @@ public class NodeService extends ServiceSupport {
 	public List<Map<String, Object>> selectNodeItem() throws Exception {
 		return nodeMapper.selectNodeItem();
 	}
+	
+	public List<Map<String, Object>> selectMockNodeList() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return nodeMapper.selectMockNodeList(map);
+	}	
 }

@@ -42,5 +42,29 @@
 		ORDER BY		NODE_ID
 	</select>
 	
-
+	<select id="selectMockNodeList" resultType="Map">
+		SELECT 			MOCK_NODE_ID
+					,	NODE_TYPE
+					,	NODE_NAME
+					,	TURN_P
+					,	REMARK
+					,	GPS_X
+					,	GPS_Y
+					,	TM_X
+					,	TM_Y
+					
+		FROM			BMS_MOCK_NODE
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+				<if test="TYPE == 'ALL' || TYPE == ''">
+					AND (MOCK_NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || NODE_NM LIKE CONCAT('%',#{CONTENT},'%'))
+				</if>
+				<if test="TYPE == 'MOCK_NODE_ID'">
+					AND MOCK_NODE_ID LIKE CONCAT('%',#{CONTENT},'%')
+				</if>
+				<if test="TYPE == 'NODE_NM'">
+					AND NODE_NM LIKE CONCAT('%',#{CONTENT},'%') 
+				</if>
+			</if>
+			
+	</select>
 </mapper>

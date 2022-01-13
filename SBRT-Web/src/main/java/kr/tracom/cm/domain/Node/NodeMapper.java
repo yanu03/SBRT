@@ -12,4 +12,6 @@ public interface NodeMapper {
 	
 	public List<Map<String, Object>> selectNodeItem();
 	
+	public List<Map<String, Object>> selectMockNodeList(Map param);
+	
 }
