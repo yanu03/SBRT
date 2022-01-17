@@ -32,6 +32,36 @@ public class ProgramController extends ControllerSupport {
 		result.setData("dlt_program", programService.selectProgram());
 		return result.getResult();
 	}
+	
+	/**
+	 * searchUserAuthProgram - 조회조건에 따른 프로그램관리 리스트를 조회한다.
+	 * 
+	 * @date 2022.01.13
+	 * @param {} dma_program { USER_ID:"사용자아이디"}
+	 * @throws Exception 
+	 * @returns mv dlt_userAuthProgram ( 프로그램관리 리스트 ) author ko
+	 * @example
+	 */
+	@RequestMapping("/program/searchUserAuthProgram")
+	public @ResponseBody Map<String, Object> searchUserAuthProgram() throws Exception {
+		result.setData("dlt_userAuthProgram", programService.searchUserAuthProgram());
+		return result.getResult();
+	}
+	
+	/**
+	 * searchOrgAuthProgram - 조회조건에 따른 프로그램관리 리스트를 조회한다.
+	 * 
+	 * @date 2022.01.13
+	 * @param {} dma_program { ORG_ID:"조직아이디"}
+	 * @throws Exception 
+	 * @returns mv dlt_orgAuthProgram ( 프로그램관리 리스트 ) author ko
+	 * @example
+	 */
+	@RequestMapping("/program/searchOrgAuthProgram")
+	public @ResponseBody Map<String, Object> searchOrgAuthProgram() throws Exception {
+		result.setData("dlt_orgAuthProgram", programService.searchOrgAuthProgram());
+		return result.getResult();
+	}
 
 	/**
 	 * updateProgram - 프로그램관리 리스트를 등록 수정 삭제 한다.
@@ -51,6 +81,38 @@ public class ProgramController extends ControllerSupport {
 		return result.getResultSave();
 	}
 
+	/**
+	 * saveUserAuthProgram - 사용자별 프로그램 권한 등록 수정 삭제 한다.
+	 * 
+	 * @date 2022.01.13
+	 * @param {} dlt_userAuthProgram ( 프로그램관리 상태인( C,U,D ) 리스트 )
+	 * @throws Exception 
+	 * @returns mv dlt_result ( 입력,수정,삭제된 건수 및 상태 )author ko
+	 * @example
+	 */
+	@RequestMapping("/program/saveUserAuthProgram")
+	public @ResponseBody Map<String, Object> saveUserAuthProgram() throws Exception {
+		Map map = programService.saveUserAuthProgram();
+		result.setData("dma_result", map);
+		return result.getResultSave();
+	}
+	
+	/**
+	 * saveOrgAuthProgram - 조직별 프로그램 권한 등록 수정 삭제 한다.
+	 * 
+	 * @date 2022.01.13
+	 * @param {} dlt_orgAuthProgram ( 프로그램관리 상태인( C,U,D ) 리스트 )
+	 * @throws Exception 
+	 * @returns mv dlt_result ( 입력,수정,삭제된 건수 및 상태 )author ko
+	 * @example
+	 */
+	@RequestMapping("/program/saveOrgAuthProgram")
+	public @ResponseBody Map<String, Object> saveOrgAuthProgram() throws Exception {
+		Map map = programService.saveOrgAuthProgram();
+		result.setData("dma_result", map);
+		return result.getResultSave();
+	}
+	
 	/**
 	 * updateProgram - 프로그램관리 리스트를 등록 수정 삭제 한다.
 	 * 

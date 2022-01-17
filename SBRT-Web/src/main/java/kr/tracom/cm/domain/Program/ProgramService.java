@@ -28,6 +28,28 @@ public class ProgramService extends ServiceSupport{
 		Map param = getSimpleDataMap("dma_search");
 		return programMapper.selectProgram(param);
 	}
+	
+	/**
+	 * 사용자별 권한 프로그램 조회
+	 * 
+	 * @param param Client 전달한 데이터 맵 객체
+	 * @throws Exception 
+	 */
+	public List<Map> searchUserAuthProgram() throws Exception {
+		Map param = getSimpleDataMap("dma_program");
+		return programMapper.searchUserAuthProgram(param);
+	}
+	
+	/**
+	 * 조직별 권한 프로그램 조회
+	 * 
+	 * @param param Client 전달한 데이터 맵 객체
+	 * @throws Exception 
+	 */
+	public List<Map> searchOrgAuthProgram() throws Exception {
+		Map param = getSimpleDataMap("dma_program");
+		return programMapper.searchOrgAuthProgram(param);
+	}
 
 	/**
 	 * 메뉴별 접근 메뉴 조회
@@ -76,6 +98,62 @@ public class ProgramService extends ServiceSupport{
 				uCnt += programMapper.updateProgram(data);
 			} else if (rowStatus.equals("D")) {
 				dCnt += programMapper.deleteProgram(data);
+			}
+		}
+		Map result = saveResult(iCnt, uCnt, dCnt);
+		return result;
+	}
+	
+	/**
+	 * 사용자 권한 데이터를 변경(등록, 수정, 삭제)한다.
+	 * 
+	 * @param param Client 전달한 데이터 리스트 객체
+	 * @throws Exception 
+	 */
+	public Map saveUserAuthProgram() throws Exception {
+		int iCnt = 0;
+		int uCnt = 0;
+		int dCnt = 0;
+
+		List param = getSimpleList("dlt_userAuthProgram");
+		for (int i = 0; i < param.size(); i++) {
+
+			Map data = (Map) param.get(i);
+			String rowStatus = (String) data.get("rowStatus");
+			if (rowStatus.equals("C")) {
+				iCnt += programMapper.insertUserAuthProgram(data);
+			} else if (rowStatus.equals("U")) {
+				uCnt += programMapper.updateUserAuthProgram(data);
+			} else if (rowStatus.equals("D")) {
+				dCnt += programMapper.deleteUserAuthProgram(data);
+			}
+		}
+		Map result = saveResult(iCnt, uCnt, dCnt);
+		return result;
+	}
+	
+	/**
+	 * 조직 권한 데이터를 변경(등록, 수정, 삭제)한다.
+	 * 
+	 * @param param Client 전달한 데이터 리스트 객체
+	 * @throws Exception 
+	 */
+	public Map saveOrgAuthProgram() throws Exception {
+		int iCnt = 0;
+		int uCnt = 0;
+		int dCnt = 0;
+
+		List param = getSimpleList("dlt_orgAuthProgram");
+		for (int i = 0; i < param.size(); i++) {
+
+			Map data = (Map) param.get(i);
+			String rowStatus = (String) data.get("rowStatus");
+			if (rowStatus.equals("C")) {
+				iCnt += programMapper.insertOrgAuthProgram(data);
+			} else if (rowStatus.equals("U")) {
+				uCnt += programMapper.updateOrgAuthProgram(data);
+			} else if (rowStatus.equals("D")) {
+				dCnt += programMapper.deleteOrgAuthProgram(data);
 			}
 		}
 		Map result = saveResult(iCnt, uCnt, dCnt);

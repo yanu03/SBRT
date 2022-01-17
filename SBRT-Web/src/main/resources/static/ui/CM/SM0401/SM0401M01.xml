@@ -36,9 +36,13 @@
 				<w2:dataList id="dlt_memberBasic" baseNode="list" saveRemovedData="true" repeatNode="map">
 					<w2:columnInfo>
 						<w2:column id="USER_ID" name="사용자ID" dataType="text"></w2:column>
+						<w2:column id="AUTH_CD" name="권한ID" dataType="text"></w2:column>
 						<w2:column id="ORG_ID" name="조직ID" dataType="text"></w2:column>
 						<w2:column id="SYSTEM_BIT" name="시스템비트" dataType="text"></w2:column>
 						<w2:column id="USER_NM" name="사용자명" dataType="text"></w2:column>
+						<w2:column id="JOB_POSITION" name="직급" dataType="text"></w2:column>
+						<w2:column id="JOB_DUTY" name="직책" dataType="text"></w2:column>
+						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
 						<w2:column id="EMAIL" name="이메일" dataType="text"></w2:column>
 						<w2:column id="HP_NO" name="전화번호" dataType="text"></w2:column>
 						<w2:column id="NEW_USER_PS" name="새비밀번호" dataType="text"></w2:column>
@@ -67,6 +71,15 @@
 						<w2:column id="ORG_NM" name="name2" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				<w2:dataList id="dlt_authority" baseNode="list" saveRemovedData="true" repeatNode="map">
+					<w2:columnInfo>
+						<w2:column id="AUTH_CD" name="name1" dataType="text"></w2:column>
+						<w2:column id="SYSTEM_BIT" name="name2" dataType="text"></w2:column>
+						<w2:column id="AUTH_NM" name="name2" dataType="text"></w2:column>
+						<w2:column id="USE_YN" name="name2" dataType="text"></w2:column>
+						<w2:column id="REMARK" name="name2" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sbm_searchMemberBasic" ref="data:json,dma_search" target="data:json,dlt_memberBasic"
@@ -79,13 +92,18 @@
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중 입니다..." ev:submit=""
 				ev:submitdone="scwin.sbm_saveMemberBasic_submitdone" ev:submiterror="">
 			</xf:submission>
-			<xf:submission id="sbm_memberSearchItem" ref="" target="data:json,dlt_memberSearchItem"
-				action="/member/selectMemberSearchItem" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
-				errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="">
+			<xf:submission id="sbm_memberSearchItem" ref="" target="data:json,dlt_memberSearchItem" action="/member/selectMemberSearchItem"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="">
 			</xf:submission>
 			<xf:submission id="sbm_searchMemberBasicOrganization" ref="" target="data:json,dlt_memberOrganization"
 				action="/member/searchMemberBasicOrganization" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
-				errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sbm_searchMemberBasic_submitdone" ev:submiterror="">
+				errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sbm_searchMemberBasic_submitdone"
+				ev:submiterror="">
+			</xf:submission>
+			<xf:submission id="sbm_searchAuthority" ref="data:json,dma_search" target="data:json,dlt_authority" action="/authority/selectAuthorityList"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
@@ -109,6 +127,7 @@
 		});
 	
 		com.executeSubmission(sbm_memberSearchItem);
+		com.executeSubmission(sbm_searchAuthority);
 		com.executeSubmission(sbm_searchMemberBasicOrganization);
 	};
 	
@@ -402,7 +421,7 @@
 										</xf:choices>
 									</xf:select1>
 								</xf:group>
-								<xf:group style="" class="w2tb_th" tagname="th">시스템</xf:group>
+								<xf:group style="" class="w2tb_th req" tagname="th">시스템</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
 									<xf:select1 allOption="" appearance="minimal" 
 										direction="auto" disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="sbx_system" optionOrder="false"
@@ -411,7 +430,118 @@
 									</xf:select1>
 								</xf:group>
 							</xf:group>
-							<xf:group style="" tagname="tr">
+							<xf:group tagname="tr" style=""><xf:group tagname="th" class="w2tb_th req">권한그룹<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes></w2:attributes>
+									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="-선택-"
+										direction="auto" disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="AUTH_GRP" optionOrder="false"
+										ref="data:dlt_memberBasic.AUTH_CD" renderType="component" style="height:24px;width: 150px;" submenuSize="auto" userData1="M">
+										<xf:choices>
+											<xf:itemset nodeset="data:dlt_authority">
+												<xf:label ref="AUTH_NM"></xf:label>
+												<xf:value ref="AUTH_CD"></xf:value>
+											</xf:itemset>
+										</xf:choices>
+									</xf:select1>
+								</xf:group>
+								<xf:group tagname="th" class="w2tb_th">직급<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes></w2:attributes>
+									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="-선택-"
+										direction="auto" disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="JOB_POSITION" optionOrder="false"
+										ref="data:dlt_memberBasic.JOB_POSITION" renderType="component" style="height:24px;width: 150px;" submenuSize="auto" userData1="M">
+										<xf:choices>
+											<xf:item>
+												<xf:label><![CDATA[사원]]></xf:label>
+												<xf:value><![CDATA[JP001]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[대리]]></xf:label>
+												<xf:value><![CDATA[JP002]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[과장]]></xf:label>
+												<xf:value><![CDATA[JP003]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[차장]]></xf:label>
+												<xf:value><![CDATA[JP004]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[부장]]></xf:label>
+												<xf:value><![CDATA[JP005]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[이사]]></xf:label>
+												<xf:value><![CDATA[JP006]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[상무]]></xf:label>
+												<xf:value><![CDATA[JP007]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[부사장]]></xf:label>
+												<xf:value><![CDATA[JP008]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[대표]]></xf:label>
+												<xf:value><![CDATA[JP009]]></xf:value>
+											</xf:item>
+										</xf:choices>
+									</xf:select1>
+								</xf:group>
+								</xf:group>
+								<xf:group tagname="tr" style="">
+								<xf:group tagname="th" class="w2tb_th">직책<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes></w2:attributes>
+									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="-선택-"
+										direction="auto" disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="JOB_DUTY" optionOrder="false"
+										ref="data:dlt_memberBasic.JOB_DUTY" renderType="component" style="height:24px;width: 150px;" submenuSize="auto" userData1="M">
+										<xf:choices>
+											<xf:item>
+												<xf:label><![CDATA[파트장]]></xf:label>
+												<xf:value><![CDATA[JD001]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[팀장]]></xf:label>
+												<xf:value><![CDATA[JD002]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[실장]]></xf:label>
+												<xf:value><![CDATA[JD003]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[본부장]]></xf:label>
+												<xf:value><![CDATA[JD004]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[CEO]]></xf:label>
+												<xf:value><![CDATA[JD005]]></xf:value>
+											</xf:item>
+										</xf:choices>
+									</xf:select1>
+								</xf:group>
+								<xf:group tagname="th" class="w2tb_th">사용여부<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes></w2:attributes>
+									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="-선택-"
+										direction="auto" disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="USE_YN" optionOrder="false"
+										ref="data:dlt_memberBasic.USE_YN" renderType="component" style="height:24px;width: 150px;" submenuSize="auto" userData1="M">
+										<xf:choices>
+											<xf:item>
+												<xf:label><![CDATA[사용]]></xf:label>
+												<xf:value><![CDATA[Y]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[미사용]]></xf:label>
+												<xf:value><![CDATA[N]]></xf:value>
+											</xf:item>
+										</xf:choices>
+									</xf:select1>
+								</xf:group>
+								</xf:group>
+								<xf:group style="" tagname="tr">
 								<xf:group style="" class="w2tb_th" tagname="th">전화번호</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
 									<xf:input class="fl" id="ibx_hpNo" ref="data:dlt_memberBasic.HP_NO" style="height:24px;" maskFormat="" displayFormat="" customModelFormatter="com.transPhone" displayFormatter="com.transPhone" allowChar="0-9" maxlength="13"></xf:input>
