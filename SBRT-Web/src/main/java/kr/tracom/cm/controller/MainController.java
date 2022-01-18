@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -22,6 +22,7 @@ import kr.tracom.cm.support.ControllerSupport;
 import kr.tracom.util.CommonUtil;
 import kr.tracom.util.Constants;
 import kr.tracom.util.Result;
+import kr.tracom.util.SsoCrypto;
 import kr.tracom.util.UserInfo;
 
 @Controller
@@ -42,6 +43,8 @@ public class MainController extends ControllerSupport {
 
 	@Value("${main.setting.code.LS}")
 	private String lsCode;
+	@Value("${system.bims.url}")
+	private String bimsUrl;
 
 	@RequestMapping("/main/init")
 	public @ResponseBody Map<String, Object> getInitMainInfo(HttpServletRequest request) {
@@ -66,6 +69,7 @@ public class MainController extends ControllerSupport {
 			
 			int curSystem = (int)user.getCurSystem();
 			defInfo.put(Constants.SSN_CUR_SYSTEM, curSystem);
+			defInfo.put(Constants.SSN_SYSTEM_BIT, user.getSystemBit());
 			
 			memberParam.put(Constants.SSN_SYSTEM_BIT, curSystem);
 			
@@ -91,12 +95,12 @@ public class MainController extends ControllerSupport {
 	 * @example
 	 */
 	@RequestMapping(value = "/main/systemChange")
-	public @ResponseBody Map<String, Object> systemChange(HttpServletRequest request) {
+	public @ResponseBody Map<String, Object> systemChange(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
 
-		Map map = null;
+		//Map map = null;
 		Result result = new Result();
-		try {
+		/*try {
 
 			map = (Map) getSimpleDataMap("dma_systemChange");
 			
@@ -110,10 +114,19 @@ public class MainController extends ControllerSupport {
 		} catch (Exception ex) {// DB커넥션 없음
 			ex.printStackTrace();
 			result.setMsg(Result.STATUS_ERROR, "처리도중 시스템 오류가 발생하였습니다.", ex);
-		}
+		}*/
 
 		
+		SsoCrypto.init();
+		String ip =  CommonUtil.getIpAddress(request);
+		SsoCrypto.setCookie(request,response);
+		String ssoId = SsoCrypto.encrypt((String) user.getUserId(), ip);
+		Map resultData = new HashMap();
+		resultData.put("USER_ID", ssoId);
+		resultData.put("BIMS_URL", bimsUrl);
+		result.setData("dma_result", resultData);
 		result.setMsg(Result.STATUS_SUCESS, "성공");
+		request.getSession().invalidate();
 		return result.getResult();
 	}
 	

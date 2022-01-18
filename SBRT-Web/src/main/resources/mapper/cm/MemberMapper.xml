@@ -15,22 +15,36 @@
 	</select>
 
 	<select id="selectMemberBasic" resultType="Map" parameterType="Map">
-		SELECT USER_ID,ORG_ID,SYSTEM_BIT,USER_NM,SCD_PS,EMAIL,HP_NO,USE_YN,REMARK
-		FROM BMS_USER_MST
+		SELECT 
+			A.USER_ID
+			,A.ORG_ID
+			,A.SYSTEM_BIT
+			,A.USER_NM
+			,A.SCD_PS
+			,A.EMAIL
+			,A.HP_NO
+			,A.USE_YN
+			,A.REMARK
+			,A.JOB_POSITION
+			,A.JOB_DUTY
+			,B.AUTH_CD
+		FROM BMS_USER_MST A
+		LEFT JOIN BMS_USER_AUTH_CMPSTN B
+		ON A.USER_ID = B.USER_ID
 		<where>
 			<if test="CONTENT != '' and CONTENT != null">
 				<if test="TYPE == 'ALL'">
-					AND USER_ID LIKE CONCAT('%',#{CONTENT},'%') || USER_NM LIKE CONCAT('%',#{CONTENT},'%')
+					AND A.USER_ID LIKE CONCAT('%',#{CONTENT},'%') || A.USER_NM LIKE CONCAT('%',#{CONTENT},'%')
 				</if>
 				<if test="TYPE == 'USER_ID'">
-					AND USER_ID LIKE CONCAT('%',#{CONTENT},'%')
+					AND A.USER_ID LIKE CONCAT('%',#{CONTENT},'%')
 				</if>
 				<if test="TYPE == 'USER_NM'">
-					AND USER_NM LIKE CONCAT('%',#{CONTENT},'%')
+					AND A.USER_NM LIKE CONCAT('%',#{CONTENT},'%')
 				</if>
 			</if>
 		</where>
-		ORDER BY USER_ID
+		ORDER BY A.USER_ID
 	</select>
 
 	<select id="selectMemberSearchItem" resultType="Map">
@@ -54,9 +68,12 @@
 	</select>
 
 	<insert id="insertMemberBasic" parameterType="Map">
-		insert into BMS_USER_MST( USER_ID,USER_NM,ORG_ID,SYSTEM_BIT,USER_PS,EMAIL,HP_NO, USE_YN,REMARK,UPD_DTM,UPD_ID )
+		insert into BMS_USER_MST( USER_ID,USER_NM,ORG_ID,SYSTEM_BIT,USER_PS,EMAIL,HP_NO, USE_YN,REMARK,UPD_DTM,UPD_ID,JOB_POSITION,JOB_DUTY )
 		values( #{USER_ID},#{USER_NM},#{ORG_ID},#{SYSTEM_BIT},#{USER_PS}, #{EMAIL},#{HP_NO},
-		'Y',#{REMARK},#{UPD_DTM},#{SSN_USER_ID} )
+		'Y',#{REMARK},#{UPD_DTM},#{SSN_USER_ID},#{JOB_POSITION},#{JOB_DUTY} );
+		
+		insert into BMS_USER_AUTH_CMPSTN (USER_ID, AUTH_CD)
+		values(#{USER_ID}, #{AUTH_CD});
 	</insert>
 
 
@@ -68,10 +85,16 @@
 		   </if>
 			 , EMAIL = #{EMAIL}, HP_NO = #{HP_NO}, USE_YN = #{USE_YN}, REMARK = #{REMARK}
 			 , UPD_DTM = #{UPD_DTM}, UPD_ID = #{SESSION_USER_ID}
-		 WHERE USER_ID = #{USER_ID}
+			 , JOB_POSITION = #{JOB_POSITION}, JOB_DUTY = #{JOB_DUTY}
+		 WHERE USER_ID = #{USER_ID};
+		 
+		 UPDATE BMS_USER_AUTH_CMPSTN
+		 	SET	AUTH_CD = #{AUTH_CD}
+		  WHERE USER_ID = #{USER_ID};
 	</update>
 
 	<delete id="deleteMemberBasic" parameterType="Map">
-		DELETE FROM BMS_USER_MST WHERE USER_ID = #{USER_ID}
+		DELETE FROM BMS_USER_MST WHERE USER_ID = #{USER_ID};
+		DELETE FROM BMS_USER_AUTH_CMPSTN WHERE USER_ID = #{USER_ID};
 	</delete>
 </mapper>

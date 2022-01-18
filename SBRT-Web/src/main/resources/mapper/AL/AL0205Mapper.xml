@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.brt.domain.AL0205.AL0205Mapper">
+
+<select id="AL0205G0R0" resultType="Map">
+	SELECT			
+		NODE_ID
+		,NODE_NM
+		,NODE_ENM
+		,NODE_TYPE
+		,GPS_X
+		,GPS_Y
+		,USE_YN
+		,UPD_DTM
+		,UPD_ID
+	FROM BMS_NODE_MST
+	<where>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || NODE_NM LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'NODE_ID'">
+				AND NODE_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'NODE_NM'">
+				AND NODE_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">
+			<if test="NODE_TYPE == 'ALL'">
+				AND NODE_TYPE = 'NT001' OR NODE_TYPE = 'NT002'
+			</if>
+			<if test="NODE_TYPE == 'NT001'">
+				AND NODE_TYPE = #{NODE_TYPE}
+			</if>
+			<if test="NODE_TYPE == 'NT002'">
+				AND NODE_TYPE = #{NODE_TYPE}
+			</if>
+		</if>
+	</where>
+	GROUP BY
+		NODE_ID
+	ORDER BY
+		NODE_ID
+</select>
+
+
+<select id="AL0205SHI0" resultType="Map">
+	SELECT			NODE_ID
+				,	NODE_NM
+	FROM			BMS_NODE_MST
+	WHERE			NODE_TYPE = 'NT002'
+</select>
+
+<select id="AL0205G1R0" resultType="Map" parameterType="Map">
+	SELECT
+		A.REP_ROUT_ID
+		,A.ROUT_ID
+		,A.DAY_DIV
+		,A.OPER_SN
+		,A.NODE_ID
+		,A.NODE_SN
+		,A.ALLOC_NO
+		,A.NODE_TYPE
+		,A.ARRV_TM
+		,A.DPRT_TM
+		<!--  ,LEFT(A.ARRV_TM, 5) AS ARRV_TM
+		,LEFT(A.DPRT_TM, 5) AS DPRT_TM-->
+		,DATE_FORMAT(A.UPD_DTM, '%Y-%m-%d') UPD_DTM 
+		,A.UPD_ID
+		,B.REP_ROUT_NM
+		,C.ROUT_NM
+	FROM 
+		BRT_OPER_ALLOC_PL_NODE_INFO A 
+		LEFT JOIN BMS_REP_ROUT_MST B
+		ON	A.REP_ROUT_ID = B.REP_ROUT_ID 
+		LEFT JOIN BMS_ROUT_MST C
+		ON A.ROUT_ID = C.ROUT_ID
+	WHERE
+		A.NODE_ID = #{NODE_ID} 
+		AND A.DAY_DIV = #{DAY_DIV} 
+		AND A.WAY_DIV = #{WAY_DIV} 
+		AND A.NODE_TYPE = 'NT002'
+	ORDER BY 
+		A.OPER_SN, A.REP_ROUT_ID
+</select>
+
+
+<select id="AL0205G1CNT" resultType="Map" parameterType="Map">
+		SELECT 
+			COUNT(*) CNT
+		FROM 
+			BRT_OPER_ALLOC_PL_NODE_INFO A
+		WHERE  
+			A.NODE_ID = #{NODE_ID} 
+			AND A.DAY_DIV = #{DAY_DIV} 
+			AND A.NODE_TYPE = #{NODE_TYPE}
+			AND A.WAY_DIV = #{WAY_DIV}
+		GROUP BY
+			A.OPER_SN
+</select>
+
+
+</mapper>

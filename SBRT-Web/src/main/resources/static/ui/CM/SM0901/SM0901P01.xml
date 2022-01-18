@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="/cm/css/all.css" type="text/css"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<!--
+		#####################################################################
+		파일명 : BM003P01.xml
+		프로그램명 : 메뉴별 사용자 조회 팝업
+		설 명 : 메뉴별 사용자 조회 팝업
+		작성자 : Inswave Systems
+		작성일 : 2016.10.25
+
+		수정일자	  수정자			 수정내용
+		=====================================================================
+		2016.10.25	Inswave Systems	최초작성
+		2018.01.26	Inswave Systems	WebSquare5 SP2 기능을 적용하도록 소스 업그레이드
+		2018.11.12	Inswave Systems	WebSquare5 SP3 기능을 적용하도록 소스 업그레이드
+		#####################################################################
+		-->
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataList id="dlt_program" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
+					<w2:columnInfo>
+						<w2:column id="chk" name="선택" dataType="text" ignoreStatus="true"></w2:column>
+						<w2:column id="ORG_ID" name="조직아이디" dataType="text"></w2:column>
+						<w2:column id="PROG_CD" name="프로그램코드" dataType="text"></w2:column>
+						<w2:column id="PROG_NM" name="프로그램명" dataType="text"></w2:column>
+						<w2:column id="PROG_GRP_CD" name="프로그램그룹명" dataType="text"></w2:column>
+						<w2:column id="PROG_PH" name="프로그램소스경로" dataType="text"></w2:column>
+						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
+						<w2:column id="AUTH_CHECK" name="권한체크여부" dataType="text"></w2:column>
+						<w2:column id="SCH_AH" name="조회권한여부" dataType="text"></w2:column>
+						<w2:column id="SAV_AH" name="저장권한여부" dataType="text"></w2:column>
+						<w2:column id="GEX_AH" name="엑셀폼다운권한여부" dataType="text"></w2:column>
+						<w2:column id="IEX_AH" name="엑셀입력권한여부" dataType="text"></w2:column>
+						<w2:column id="EXL_AH" name="엑셀권한여부" dataType="text"></w2:column>
+						<!-- <w2:column id="DEL_AH" name="삭제권한여부" dataType="text"></w2:column>
+						<w2:column id="FN1_AH" name="추가권한여부" dataType="text"></w2:column>
+						<w2:column id="FN2_AH" name="닫기권한여부" dataType="text"></w2:column> -->
+						<w2:column id="FN3_AH" name="예약권한여부" dataType="text"></w2:column>
+						<w2:column id="FN4_AH" name="실행권한여부" dataType="text"></w2:column>
+						<w2:column id="FN5_AH" name="확정권한여부" dataType="text"></w2:column>
+						<w2:column id="FN6_AH" name="설정권한여부" dataType="text"></w2:column>
+						<w2:column id="FN7_AH" name="초기화권한여부" dataType="text"></w2:column>
+						<w2:column id="FN8_AH" name="기능키8권한여부" dataType="text"></w2:column>
+						<w2:column id="HELP_AH" name="도움말권한여부" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataList id="dlt_programAuthority" baseNode="list" style="" repeatNode="map">
+					<w2:columnInfo>
+						<w2:column id="chk" name="선택" dataType="text"></w2:column>
+						<w2:column id="AUTH_CD" name="권한코드" dataType="text"></w2:column>
+						<w2:column id="AUTH_NM" name="권한명" dataType="text"></w2:column>
+						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="PROG_CD" name="프로그램코드" dataType="text"></w2:key>
+						<w2:key id="PROG_CD_IDS" name="제외프로그램코드" dataType="text"></w2:key>
+						<w2:key id="ORG_ID" name="조직아이디" dataType="text"></w2:key>
+						<w2:key id="USE_YN" name="사용여부" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="name2" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name3" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+			</w2:dataCollection>
+			<w2:workflowCollection>
+			</w2:workflowCollection>
+			<xf:submission id="sbm_excludeSearchProgramAuthority" ref='data:json,dma_search' target='data:json,dlt_programAuthority'
+				action="/program/excludeSelectProgramAuthority" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="">
+			</xf:submission>
+			<xf:submission id="sbm_searchProgram" ref="data:json,dma_search" target="data:json,dlt_program" action="/program/searchProgram" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit=""
+				ev:submitdone="scwin.sbm_searchProgram_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>		
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+	/**
+	  * 초기 스크립트 수행 함수 정의
+	  */
+	scwin.onpageload = function() {
+		
+		var param = com.getParameter();
+		dma_search.set("PROG_CD" , param.data.PROG_CD);
+		dma_search.set("ORG_ID" , param.data.ORG_ID);
+		dma_search.set("PROG_CD_IDS" , param.data.PROG_CD_IDS);
+		dma_search.set("USE_YN" , "Y");
+		
+		scwin.closeCallbackFncName = param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		var btnOptions = 
+		[
+			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
+		];
+		com.setMainBtn3(wfm_mainBtn, btnOptions);
+		
+		var codeOptions = [{ code : "PROG_GRP_CD", compID : "grd_program:PROG_GRP_CD"}];
+		
+		com.setCommonDtl(codeOptions, function() {
+				com.searchGrid(grd_program,sbm_searchProgram);
+		});
+		
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+		
+	scwin.sbm_searchProgram_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+		
+			var ids = dma_search.get("PROG_CD_IDS");
+			com.excludeItemsByGrid(grd_program, ids, "PROG_CD");
+		}
+	};
+		
+		
+	/**
+	 * 프로그램에 등록되지 않은 권한을 조회한다.
+	 */			
+	scwin.btn_search_onclick = function() {
+		com.executeSubmission(sbm_excludeSearchProgramAuthority);
+	};
+	
+	/**
+	 * 선택된 권한 정보를 반환한다.
+	 */
+	scwin.btn_confirm_onclick = function() {
+		var data = grd_program.getCheckedJSON("chk");
+		com.closePopup(scwin.closeCallbackFncName, data);
+	};
+		
+	/**
+	 * 권한 선택을 취소한다.
+	 */
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();
+	};
+
+	scwin.grd_excludeProgramAuthority_onrowindexchange = function(row,oldRow) {
+	
+		if(SI0401P2.getCellChecked(row,"chk")){
+			SI0401P2.setCellChecked(row,"chk",false)
+		}
+		else {
+			SI0401P2.setCellChecked(row,"chk",true)
+		}
+	}
+
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
+		if (info.newValue == "ALL") {
+			search_input.setValue("");
+			search_input.setPlaceholder("권한코드 또는 권한명");
+		} else if (info.newValue == "AUTH_CD") {
+			search_input.setValue("");
+			search_input.setPlaceholder("권한코드");
+		} else if (info.newValue == "AUTH_NM") {
+			search_input.setValue("");
+			search_input.setPlaceholder("권한명");
+		}
+	};
+	
+	
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+				<xf:group class="gr_search" id="" style="">
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="검색항목"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<xf:select1 id="" disabledClass="w2selectbox_disabled" ref="data:dma_search.TYPE" appearance="minimal"
+							style="" class="search_type" direction="auto" chooseOption="" displayMode="label" allOption=""
+							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" optionOrder="false" submenuSize="auto"
+							disabled="false" textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[권한코드]]></xf:label>
+									<xf:value><![CDATA[AUTH_CD]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[권한명]]></xf:label>
+									<xf:value><![CDATA[AUTH_NM]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="권한코드 또는 권한명"></xf:input>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group>
+			<xf:group style="" id="" class="popup_content">
+				<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.grd_program_onrowindexchange" editModeEvent="onclick"
+						groupbyZoneHeight="" showSortableImage="" useShiftKey="true" scrollByColumn="false" sortable="true" rowStatusHeaderValue="상태"
+						 rowStatusVisible="false" fixedColumnWithHidden="true" dataList="dlt_program" keyMoveEditMode="true"
+						ignoreCellClick="false" style="" autoFit="lastColumn" visibleRowNum="" id="grd_program" ev:onafteredit="" class="cm_grid left"
+						autoFitMinWidth="" rowNumHeaderValue="순서" rowNumVisible="true" focusMode="row">
+						<w2:header id="header1" style="">
+							<w2:row id="row2" style="">
+								<w2:column id="chk" blockSelect="false" style="height:20px;" width="40" inputType="checkbox" value=""
+									displayMode="label" fixColumnWidth="true">
+								</w2:column>
+								<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px;" id="column27"
+									value="프로그램그룹" blockSelect="false" displayMode="label">
+								</w2:column>
+								<w2:column id="column16" blockSelect="false" style="height:20px;" width="80" inputType="text" value="프로그램코드"
+									displayMode="label" class="req">
+								</w2:column>
+								<w2:column id="column11" blockSelect="false" style="height:20px;" width="150" inputType="text" value="프로그램명"
+									displayMode="label" class="req">
+								</w2:column>
+								<w2:column id="column26" blockSelect="false" width="200" inputType="text" value="프로그램소스경로" textAlign="left"
+									style="height:20px;">
+								</w2:column>
+								<w2:column id="column24" blockSelect="false" width="60" inputType="text" value="사용여부" style="height:20px;"></w2:column>
+								<w2:column id="column22" blockSelect="false" width="100%" inputType="text" value="비고" style="height:20px;"></w2:column>
+							</w2:row>
+						</w2:header>
+						<w2:gBody id="gBody4" style="">
+							<w2:row id="row5" style="">
+								<w2:column id="chk" blockSelect="false" style="height:20px;" width="40" inputType="checkbox"
+									displayMode="label">
+								</w2:column>
+								<w2:column removeBorderStyle="false" width="131" inputType="select" style="" id="PROG_GRP_CD" value=""
+									blockSelect="false" displayMode="label" userData1="M"  class="req" readOnly="true">
+									<w2:choices></w2:choices>
+								</w2:column>
+								<w2:column id="PROG_CD" blockSelect="false" readOnly="true" style="height:20px" hidden="false" width=""
+									inputType="text" customFormatter="" displayMode="label" class="req" userData1="M">
+								</w2:column>
+								<w2:column depthColumn="" id="PROG_NM" blockSelect="false" showDepth="3" style="height:20px;" depthType="div"
+									width="" inputType="text" displayMode="label" textAlign="left" class="req" userData1="M" readOnly="true">
+								</w2:column>
+								<w2:column id="PROG_PH" blockSelect="false" width="" inputType="text" textAlign="left" readOnly="true"></w2:column>
+								<w2:column id="USE_YN" blockSelect="false" trueValue="Y" falseValue="N" width="" inputType="checkbox"
+									valueType="other" fixColumnWidth="true" readOnly="true">
+								</w2:column>
+								<w2:column id="REMARK" blockSelect="false" width="" inputType="text" readOnly="true"></w2:column>
+							</w2:row>
+						</w2:gBody>
+						<w2:footer style="" id="footer1">
+							<w2:row style="" id="row3">
+								<w2:column removeBorderStyle="false" width="" inputType="expression" style="height:20px;" id="column42" value=""
+									blockSelect="false" displayMode="label" colSpan="15" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')"
+									textAlign="left">
+								</w2:column>
+								<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column51" value=""
+									blockSelect="false" displayMode="label">
+								</w2:column> -->
+							</w2:row>
+						</w2:footer>
+					</w2:gridView>
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

@@ -1,8 +1,8 @@
 package kr.tracom.util;
 
 public class Constants {
-	public static final Integer SYSTEM_BIS = 1; //통합운영관리
-	public static final Integer SYSTEM_BRT = 2; //차량운행관리
+	public static final Integer SYSTEM_BIMS = 1; //통합운영관리
+	public static final Integer SYSTEM_SBRT = 2; //차량운행관리
 	public static final Integer SYSTEM_ALL = 3; //전체
 	
 	public static final String NODE_TYPE_CROSS = "NT001"; //교차로
@@ -162,5 +162,6 @@ public class Constants {
     	
     }
 
-    
+    public static String Separator = "TRACOM";
+    public static String SsoCookieName = "TracomSSO";
 }

@@ -19,6 +19,76 @@
 		</where>
 		ORDER BY P.PROG_CD
 	</select>
+	
+	<select id="searchUserAuthProgram" resultType="Map" parameterType="Map">
+		SELECT A.USER_ID,
+		       A.PROG_CD,
+		       A.AUTH_CHECK,
+		       A.SCH_AH,
+		       A.SAV_AH,
+		       A.GEX_AH,
+		       A.IEX_AH,
+		       A.EXL_AH,
+		       A.DEL_AH,
+		       A.FN1_AH,
+		       A.FN2_AH,
+		       A.FN3_AH,
+		       A.FN4_AH,
+		       A.FN5_AH,
+		       A.FN6_AH,
+		       A.FN7_AH,
+		       A.FN8_AH,
+		       A.HELP_AH,
+		       B.PROG_NM, 
+		       B.PROG_GRP_CD, 
+		       B.PROG_PH,
+		       C.DL_CD_NM AS PROGRAM_GROUP_NM
+		  FROM 
+		  	BMS_USER_AUTH_INFO A
+		  	LEFT JOIN BMS_PROG_MST B
+		   	ON A.PROG_CD = B.PROG_CD
+		   	INNER JOIN BMS_DL_CD_INFO C 
+		   	ON C.DL_CD = B.PROG_GRP_CD AND C.CO_CD = 'PROG_GRP_CD'
+		  WHERE
+		  	A.USER_ID = #{USER_ID}
+		ORDER BY 
+			A.PROG_CD
+	</select>
+	
+	<select id="searchOrgAuthProgram" resultType="Map" parameterType="Map">
+		SELECT A.ORG_ID,
+		       A.PROG_CD,
+		       A.AUTH_CHECK,
+		       A.SCH_AH,
+		       A.SAV_AH,
+		       A.GEX_AH,
+		       A.IEX_AH,
+		       A.EXL_AH,
+		       A.DEL_AH,
+		       A.FN1_AH,
+		       A.FN2_AH,
+		       A.FN3_AH,
+		       A.FN4_AH,
+		       A.FN5_AH,
+		       A.FN6_AH,
+		       A.FN7_AH,
+		       A.FN8_AH,
+		       A.HELP_AH,
+		       B.PROG_NM, 
+		       B.PROG_GRP_CD, 
+		       B.PROG_PH,
+		       C.DL_CD_NM AS PROGRAM_GROUP_NM
+		  FROM 
+		  	BMS_ORG_AUTH_INFO A
+		  	LEFT JOIN BMS_PROG_MST B
+		   	ON A.PROG_CD = B.PROG_CD
+		   	INNER JOIN BMS_DL_CD_INFO C 
+		   	ON C.DL_CD = B.PROG_GRP_CD AND C.CO_CD = 'PROG_GRP_CD'
+		  WHERE
+		  	A.ORG_ID = #{ORG_ID}
+		ORDER BY 
+			A.PROG_CD
+	</select>
 
 	<insert id="insertProgram" parameterType="Map">
 		INSERT INTO BMS_PROG_MST(PROG_CD, PROG_NM, PROG_GRP_CD, PROG_PH, USE_YN, REMARK, UPD_DTM, UPD_ID)
@@ -87,5 +157,159 @@
 		<if test="AUTH_CD != null and AUTH_CD != ''">
 		   AND AUTH_CD = #{AUTH_CD}
 		</if>
+	</delete>
+	
+	<insert id="insertUserAuthProgram" parameterType="Map">
+		INSERT INTO BMS_USER_AUTH_INFO(
+				USER_ID
+				,PROG_CD
+				,AUTH_CHECK
+				,SCH_AH
+				,SAV_AH
+				,GEX_AH
+				,IEX_AH
+				,EXL_AH
+				,DEL_AH
+				,FN1_AH
+				,FN2_AH
+				,FN3_AH
+				,FN4_AH
+				,FN5_AH
+				,FN6_AH
+				,FN7_AH
+				,FN8_AH
+				,HELP_AH
+				,UPD_DTM
+				,UPD_ID)
+		VALUES (
+				#{USER_ID}
+				,#{PROG_CD}
+				,#{AUTH_CHECK}
+				,#{SCH_AH}
+				,#{SAV_AH}
+				,#{GEX_AH}
+				,#{IEX_AH}
+				,#{EXL_AH}
+				,#{DEL_AH}
+				,#{FN1_AH}
+				,#{FN2_AH}
+				,#{FN3_AH}
+				,#{FN4_AH}
+				,#{FN5_AH}
+				,#{FN6_AH}
+				,#{FN7_AH}
+				,#{FN8_AH}
+				,#{HELP_AH}
+				,#{SSN_UPD_DTM}
+				,#{UPD_ID}
+				)
+	</insert>
+	
+	<update id="updateUserAuthProgram" parameterType="java.util.HashMap">
+		UPDATE BMS_USER_AUTH_INFO
+		   SET USER_ID = #{USER_ID}
+				,PROG_CD = #{PROG_CD}
+				,AUTH_CHECK = #{AUTH_CHECK}
+				,SCH_AH = #{SCH_AH}
+				,SAV_AH = #{SAV_AH}
+				,GEX_AH = #{GEX_AH}
+				,IEX_AH = #{IEX_AH}
+				,EXL_AH = #{EXL_AH}
+				,DEL_AH = #{DEL_AH}
+				,FN1_AH = #{FN1_AH}
+				,FN2_AH = #{FN2_AH}
+				,FN3_AH = #{FN3_AH}
+				,FN4_AH = #{FN4_AH}
+				,FN5_AH = #{FN5_AH}
+				,FN6_AH = #{FN6_AH}
+				,FN7_AH = #{FN7_AH}
+				,FN8_AH = #{FN8_AH}
+				,HELP_AH = #{HELP_AH}
+				,UPD_DTM = #{SSN_UPD_DTM}
+				,UPD_ID = #{UPD_ID}
+		 WHERE 
+		 	USER_ID = #{USER_ID} AND PROG_CD = #{PROG_CD}
+	</update>
+
+	<delete id="deleteUserAuthProgram" parameterType="Map">
+		DELETE FROM BMS_USER_AUTH_INFO 
+		 WHERE USER_ID = #{USER_ID} AND PROG_CD = #{PROG_CD}
+	</delete>
+	
+	<insert id="insertOrgAuthProgram" parameterType="Map">
+		INSERT INTO BMS_ORG_AUTH_INFO(
+				ORG_ID
+				,PROG_CD
+				,AUTH_CHECK
+				,SCH_AH
+				,SAV_AH
+				,GEX_AH
+				,IEX_AH
+				,EXL_AH
+				,DEL_AH
+				,FN1_AH
+				,FN2_AH
+				,FN3_AH
+				,FN4_AH
+				,FN5_AH
+				,FN6_AH
+				,FN7_AH
+				,FN8_AH
+				,HELP_AH
+				,UPD_DTM
+				,UPD_ID)
+		VALUES (
+				#{ORG_ID}
+				,#{PROG_CD}
+				,#{AUTH_CHECK}
+				,#{SCH_AH}
+				,#{SAV_AH}
+				,#{GEX_AH}
+				,#{IEX_AH}
+				,#{EXL_AH}
+				,#{DEL_AH}
+				,#{FN1_AH}
+				,#{FN2_AH}
+				,#{FN3_AH}
+				,#{FN4_AH}
+				,#{FN5_AH}
+				,#{FN6_AH}
+				,#{FN7_AH}
+				,#{FN8_AH}
+				,#{HELP_AH}
+				,#{SSN_UPD_DTM}
+				,#{UPD_ID}
+				)
+	</insert>
+	
+	<update id="updateOrgAuthProgram" parameterType="java.util.HashMap">
+		UPDATE BMS_ORG_AUTH_INFO
+		   SET ORG_ID = #{ORG_ID}
+				,PROG_CD = #{PROG_CD}
+				,AUTH_CHECK = #{AUTH_CHECK}
+				,SCH_AH = #{SCH_AH}
+				,SAV_AH = #{SAV_AH}
+				,GEX_AH = #{GEX_AH}
+				,IEX_AH = #{IEX_AH}
+				,EXL_AH = #{EXL_AH}
+				,DEL_AH = #{DEL_AH}
+				,FN1_AH = #{FN1_AH}
+				,FN2_AH = #{FN2_AH}
+				,FN3_AH = #{FN3_AH}
+				,FN4_AH = #{FN4_AH}
+				,FN5_AH = #{FN5_AH}
+				,FN6_AH = #{FN6_AH}
+				,FN7_AH = #{FN7_AH}
+				,FN8_AH = #{FN8_AH}
+				,HELP_AH = #{HELP_AH}
+				,UPD_DTM = #{SSN_UPD_DTM}
+				,UPD_ID = #{UPD_ID}
+		 WHERE 
+		 	ORG_ID = #{ORG_ID} AND PROG_CD = #{PROG_CD}
+	</update>
+
+	<delete id="deleteOrgAuthProgram" parameterType="Map">
+		DELETE FROM BMS_ORG_AUTH_INFO 
+		 WHERE ORG_ID = #{ORG_ID} AND PROG_CD = #{PROG_CD}
 	</delete>
 </mapper>

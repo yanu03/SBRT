@@ -219,25 +219,25 @@ public class SI0404Service extends ServiceSupport {
 			returnList = DataInterface.generalNode2(staList,nodeList);
 			DataInterface.insertNodeToNode(returnList, staList);
 			
-			map.put("NODE_TYPE","NT001");
+			map.put("NODE_TYPE",Constants.NODE_TYPE_CROSS);
 			List<Map<String, Object>> crsList = routMapper.selectNodeListByRout(map);
 			if(crsList!=null && crsList.size() > 0) {
 				returnList = DataInterface.generalNode2(crsList,returnList);
 				DataInterface.insertNodeToNode(returnList, crsList);
 			}
-			map.put("NODE_TYPE","NT006");
+			map.put("NODE_TYPE",Constants.NODE_TYPE_SOUND);
 			List<Map<String, Object>> sndList = routMapper.selectNodeListByRout(map);
 			if(sndList!=null && sndList.size() > 0) {
 				DataInterface.insertNodeToNode(returnList, sndList);
 			}
 		}else if(nodeList!=null && nodeList.size() > 0) {
-			map.put("NODE_TYPE","NT001");
+			map.put("NODE_TYPE",Constants.NODE_TYPE_CROSS);
 			List<Map<String, Object>> crsList = routMapper.selectNodeListByRout(map);
 			if(crsList!=null && crsList.size() > 0) {
 				returnList = DataInterface.generalNode2(crsList,nodeList);
 				DataInterface.insertNodeToNode(returnList, crsList);
 				
-				map.put("NODE_TYPE","NT006");
+				map.put("NODE_TYPE",Constants.NODE_TYPE_SOUND);
 				List<Map<String, Object>> sndList = routMapper.selectNodeListByRout(map);
 				if(sndList!=null && sndList.size() > 0) {
 					DataInterface.insertNodeToNode(returnList, sndList);
