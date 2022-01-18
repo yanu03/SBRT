@@ -6264,7 +6264,7 @@ com.saveGridForm = function(grid,form,sbmObj,searchSbmObj,yesno_str,str){
 }
 
 //엑셀 다운로드
-com.exlGrid = function(grid,str){
+com.exlGrid = function(grid, str, type){
 	if(	(typeof str == "undefined") || (str.trim() == ""))
 		str = com.getParameter().menuNm;
 
@@ -6291,7 +6291,7 @@ com.exlUploadGrid = function(grid){
 /**
  * 그리드 Excel 포맷을 다운로드 하는 기능 ( 업로드용  Excel 포맷 )
  */
-com.exlFrmGrid = function(grid){
+com.exlFrmGrid = function(grid, codeOption){
 	var options = {};
 	options.fileName = "header.xls";
 	options.dataProvider = "com.inswave.template.provider.ExcelDownHeader";

@@ -74,6 +74,7 @@
 						<w2:column id="USE_YN" name="사용여부" dataType="text" defaultValue="N"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
 						<w2:column id="HOLI_YN" name="휴일노선여부" dataType="text" defaultValue="N"></w2:column>
+						<w2:column id="PUB_ROUT_ID" name="공공연계아이디" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_TRANSCOMP_MST" saveRemovedData="true">
@@ -640,22 +641,30 @@
 									</w2:attributes>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
-									<w2:attributes></w2:attributes>
+									<w2:attributes><w2:colspan>3</w2:colspan><w2:rowspan>1</w2:rowspan></w2:attributes>
 									<xf:select1 allOption="" appearance="minimal" chooseOption="" chooseOptionLabel="전체" direction="auto" disabled="false"
 										disabledClass="w2selectbox_disabled" displayMode="label" id="AREA" labelWidthAuto="" mandatory="true" optionOrder=""
-										ref="data:dlt_BMS_ROUT_MST.AREA" renderType="component" style="height:24px;" submenuSize="auto">
+										ref="data:dlt_BMS_ROUT_MST.AREA" renderType="component" style="height:24px;width: 36%;" submenuSize="auto">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
-								<xf:group class="w2tb_th" style="" tagname="th">연계 노선 ID</xf:group>
-								<xf:group class="w2tb_td" style="" tagname="td">
-									<xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="INT_ROUT_ID" initValue="" mandatory=""
-										ref="data:dlt_BMS_ROUT_MST.INT_ROUT_ID" style="width:100%;height:21px;" validateOnInput="false" validator="" maskFormat=""
-										ioFormat="">
+							</xf:group>
+							<xf:group tagname="tr" style=""><xf:group tagname="th" class="w2tb_th">세종&amp;nbsp;연계&amp;nbsp;노선&amp;nbsp;ID<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes></w2:attributes>
+									<xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="INT_ROUT_ID" initValue="" ioFormat=""
+										mandatory="" maskFormat="" ref="data:dlt_BMS_ROUT_MST.INT_ROUT_ID" style="width:100%;height:21px;" validateOnInput="false"
+										validator="">
 									</xf:input>
 								</xf:group>
-							</xf:group>
-							<xf:group style="" tagname="tr">
+								<xf:group tagname="th" class="w2tb_th">공공&amp;nbsp;연계&amp;nbsp;노선&amp;nbsp;ID<w2:attributes><w2:scope>row</w2:scope></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes><w2:colspan>3</w2:colspan><w2:rowspan>1</w2:rowspan></w2:attributes>
+									<xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="PUB_ROUT_ID" initValue=""
+										ioFormat="" mandatory="" maskFormat="" ref="data:dlt_BMS_ROUT_MST.PUB_ROUT_ID" style="width:36%;height:21px;"
+										validateOnInput="false" validator="">
+									</xf:input>
+								</xf:group></xf:group><xf:group style="" tagname="tr">
 								<xf:group class="w2tb_th" style="" tagname="th">기점</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<w2:attributes>
@@ -750,19 +759,10 @@
 									<w2:attributes></w2:attributes>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
-									<w2:attributes></w2:attributes>
+									<w2:attributes><w2:colspan>3</w2:colspan><w2:rowspan>1</w2:rowspan></w2:attributes>
 									<xf:input adjustMaxLength="" allowChar="" class="" disabled="" id="CURVATURE" initValue="" ioFormat="" mandatory=""
-										maskFormat="" ref="data:dlt_BMS_ROUT_MST.CURVATURE" style="width:100%;height:21px;" validateOnInput="false" validator="">
+										maskFormat="" ref="data:dlt_BMS_ROUT_MST.CURVATURE" style="width:36%;height:21px;" validateOnInput="false" validator="">
 									</xf:input>
-								</xf:group>
-								<xf:group class="w2tb_th" style="" tagname="th">공동배차여부</xf:group>
-								<xf:group class="w2tb_td" style="" tagname="td">
-									<xf:group id="" style=""></xf:group>
-									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto" disabled="false"
-										disabledClass="w2selectbox_disabled" displayMode="label" id="JIT_DSPCH_YN" labelWidthAuto="" mandatory="true" optionOrder=""
-										ref="data:dlt_BMS_ROUT_MST.JIT_DSPCH_YN" renderType="component" style="height:24px;" submenuSize="auto">
-										<xf:choices></xf:choices>
-									</xf:select1>
 								</xf:group>
 							</xf:group>
 							<xf:group style="" tagname="tr">
@@ -801,41 +801,29 @@
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group class="w2tb_th" style="" tagname="th">예비노선여부</xf:group>
+								<xf:group class="w2tb_th" style="" tagname="th">공동배차여부</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<w2:attributes>
 										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto" disabled="false"
-										disabledClass="w2selectbox_disabled" displayMode="label" id="RSV_ROUT_YN" labelWidthAuto="" mandatory="true" optionOrder=""
-										ref="data:dlt_BMS_ROUT_MST.RSV_ROUT_YN" renderType="component" style="height:24px;" submenuSize="auto">
-										<xf:choices>
-											<xf:item>
-												<xf:label><![CDATA[예]]></xf:label>
-												<xf:value><![CDATA[Y]]></xf:value>
-											</xf:item>
-											<xf:item>
-												<xf:label><![CDATA[아니오]]></xf:label>
-												<xf:value><![CDATA[N]]></xf:value>
-											</xf:item>
-										</xf:choices>
+									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto"
+										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="JIT_DSPCH_YN" labelWidthAuto="" mandatory="true"
+										optionOrder="" ref="data:dlt_BMS_ROUT_MST.JIT_DSPCH_YN" renderType="component" style="height:24px;" submenuSize="auto">
+										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
-								<xf:group tagname="th" class="w2tb_th">
-									사용여부
-									<w2:attributes>
+								<xf:group tagname="th" class="w2tb_th">예비노선여부<w2:attributes>
 										<w2:scope>row</w2:scope>
-									</w2:attributes>
-								</xf:group>
+									</w2:attributes></xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<w2:attributes>
-										<w2:colspan>3</w2:colspan>
+										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:select1 allOption="" appearance="minimal" chooseOption="false" chooseOptionLabel="" direction="auto"
-										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="USE_YN" labelWidthAuto="" mandatory="true"
-										optionOrder="" ref="data:dlt_BMS_ROUT_MST.USE_YN" renderType="component" style="height:24px;width:21%;" submenuSize="auto">
+									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto"
+										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="RSV_ROUT_YN" labelWidthAuto="" mandatory="true"
+										optionOrder="" ref="data:dlt_BMS_ROUT_MST.RSV_ROUT_YN" renderType="component" style="height:24px;" submenuSize="auto">
 										<xf:choices>
 											<xf:item>
 												<xf:label><![CDATA[예]]></xf:label>
@@ -848,7 +836,24 @@
 										</xf:choices>
 									</xf:select1>
 								</xf:group>
-							</xf:group>
+								<xf:group tagname="td" class="w2tb_th">사용여부<w2:attributes></w2:attributes></xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes></w2:attributes>
+									<xf:select1 allOption="" appearance="minimal" chooseOption="false" chooseOptionLabel="" direction="auto"
+										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="USE_YN" labelWidthAuto="" mandatory="true"
+										optionOrder="" ref="data:dlt_BMS_ROUT_MST.USE_YN" renderType="component" style="height:24px;" submenuSize="auto">
+										<xf:choices>
+											<xf:item>
+												<xf:label><![CDATA[예]]></xf:label>
+												<xf:value><![CDATA[Y]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[아니오]]></xf:label>
+												<xf:value><![CDATA[N]]></xf:value>
+											</xf:item>
+										</xf:choices>
+									</xf:select1>
+								</xf:group></xf:group>
 							<xf:group tagname="tr" style="">
 								<xf:group tagname="th" class="w2tb_th" style="height: 110px;" id="" tabIndex="">
 									비고

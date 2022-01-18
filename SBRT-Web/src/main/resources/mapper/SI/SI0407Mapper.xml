@@ -4,6 +4,96 @@
 <mapper namespace="kr.tracom.bms.domain.SI0407.SI0407Mapper">
 
 <select id="SI0407G0R0" resultType="Map">
+	SELECT 			MOCK_NODE_ID
+				,	NODE_TYPE
+				,	NODE_NAME
+				,	TURN_P
+				,	REMARK
+				,	GPS_X
+				,	GPS_Y
+				,	TM_X
+				,	TM_Y
+				
+	FROM 			BMS_MOCK_NODE A
+	<where>
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND MOCK_NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || NODE_NAME LIKE CONCAT('%',#{CONTENT},'%')  
+		</if>
+		<if test="TYPE == 'MOCK_NODE_ID'">
+			AND MOCK_NODE_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'NODE_NAME'">
+			AND NODE_NAME LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+	</where>	
+</select>
+
+<select id="SI0407SHI0" resultType="Map">
+	SELECT 			MOCK_NODE_ID
+				,	NODE_NAME
+				
+	FROM			BMS_MOCK_NODE
+	ORDER BY		MOCK_NODE_ID			
+</select>
+
+<select id="SI0407SHI1" resultType="Map">
+	SELECT			A.MOCK_LINK_ID
+				, 	B.NODE_NAME AS F_NODE_NAME
+				, 	C.NODE_NAME AS T_NODE_NAME
+				
+	FROM			BMS_MOCK_LINK A
+	LEFT JOIN		BMS_MOCK_NODE B
+		ON			A.F_NODE = B.MOCK_NODE_ID
+	LEFT JOIN		BMS_MOCK_NODE C
+		ON			A.T_NODE = C.MOCK_NODE_ID	
+	ORDER BY 		A.MOCK_LINK_ID
+</select>
+
+<select id="SI0407SHI2" resultType="Map">
+	SELECT			MOCK_NODE_ID
+				,	NODE_NAME
+				
+	FROM			BMS_MOCK_NODE
+</select>
+
+<insert id="SI0407G0I0" parameterType="Map">
+	INSERT INTO BMS_REP_ROUT_MST
+			(
+			REP_ROUT_ID,
+			REP_ROUT_NM,
+			USE_YN,
+			REMARK,
+			UPD_DTM,
+			UPD_ID
+			)
+	VALUES		
+			(
+			#{REP_ROUT_ID},
+			#{REP_ROUT_NM},
+			#{USE_YN},
+			#{REMARK},
+			#{UPD_DTM},
+			#{SSN_USER_ID}
+			)				
+</insert>
+
+<update id="SI0407G0U0" parameterType="Map">
+	UPDATE BMS_REP_ROUT_MST
+	SET 	REP_ROUT_NM = #{REP_ROUT_NM},
+			USE_YN = #{USE_YN},
+			REMARK = #{REMARK},
+			UPD_DTM = #{UPD_DTM},
+			UPD_ID  = #{SSN_USER_ID}
+	WHERE REP_ROUT_ID = #{REP_ROUT_ID}
+</update>
+
+<delete id="SI0407G0D0" parameterType="Map">
+	DELETE
+	FROM BMS_REP_ROUT_MST
+	WHERE REP_ROUT_ID = #{REP_ROUT_ID}
+</delete>
+
+<select id="SI0407G1R0" resultType="Map">
 	SELECT 			A.MOCK_LINK_ID
 				,	A.F_NODE
 				,	A.T_NODE
@@ -44,20 +134,7 @@
 	</where>	
 </select>
 
-<select id="SI0407SHI0" resultType="Map">
-	SELECT			A.MOCK_LINK_ID
-				, 	B.NODE_NAME AS F_NODE_NAME
-				, 	C.NODE_NAME AS T_NODE_NAME
-				
-	FROM			BMS_MOCK_LINK A
-	LEFT JOIN		BMS_MOCK_NODE B
-		ON			A.F_NODE = B.MOCK_NODE_ID
-	LEFT JOIN		BMS_MOCK_NODE C
-		ON			A.T_NODE = C.MOCK_NODE_ID	
-	ORDER BY 		A.MOCK_LINK_ID
-</select>
-
-<insert id="SI0407G0I0" parameterType="Map">
+<insert id="SI0407G1I0" parameterType="Map">
 	INSERT INTO BMS_REP_ROUT_MST
 			(
 			REP_ROUT_ID,
@@ -78,7 +155,7 @@
 			)				
 </insert>
 
-<update id="SI0407G0U0" parameterType="Map">
+<update id="SI0407G1U0" parameterType="Map">
 	UPDATE BMS_REP_ROUT_MST
 	SET 	REP_ROUT_NM = #{REP_ROUT_NM},
 			USE_YN = #{USE_YN},
@@ -88,7 +165,7 @@
 	WHERE REP_ROUT_ID = #{REP_ROUT_ID}
 </update>
 
-<delete id="SI0407G0D0" parameterType="Map">
+<delete id="SI0407G1D0" parameterType="Map">
 	DELETE
 	FROM BMS_REP_ROUT_MST
 	WHERE REP_ROUT_ID = #{REP_ROUT_ID}
