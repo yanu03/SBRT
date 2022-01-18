@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+	 <head>
+	<w2:type>DEFAULT</w2:type>
+	<w2:buildDate/>
+	<xf:model>
+		<xf:instance>
+			<data xmlns="" />
+		</xf:instance>
+		<w2:dataCollection baseNode="map">
+			<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_MOCK_LINK" saveRemovedData="true">
+				<w2:columnInfo>
+					<w2:column id="chk" name="체크" dataType="text"></w2:column>
+					<w2:column id="MOCK_LINK_ID" name="표준링크아이디" dataType="text"></w2:column>
+					<w2:column id="F_NODE" name="시작노드ID" dataType="text"></w2:column>
+					<w2:column id="T_NODE" name="종료노드ID" dataType="text"></w2:column>
+					<w2:column id="LANES" name="차로수" dataType="text"></w2:column>
+					<w2:column id="ROAD_RANK" name="도로등급" dataType="text"></w2:column>
+					<w2:column id="ROAD_TYPE" name="도로유형" dataType="text"></w2:column>
+					<w2:column id="ROAD_NO" name="도로번호" dataType="text"></w2:column>
+					<w2:column id="ROAD_NAME" name="도로명" dataType="text"></w2:column>
+					<w2:column id="ROAD_USE" name="도로사용여부" dataType="text"></w2:column>
+					<w2:column id="MULTI_LINK" name="중용구간여부" dataType="text"></w2:column>
+					<w2:column id="CONNECT" name="연결로코드" dataType="text"></w2:column>
+					<w2:column id="MAX_SPD" name="최고제한속도" dataType="text"></w2:column>
+					<w2:column id="REST_VEH" name="통과제한차량" dataType="text"></w2:column>
+					<w2:column id="REST_W" name="통과제한하중" dataType="text"></w2:column>
+					<w2:column id="REST_H" name="통과제한높이" dataType="text"></w2:column>
+					<w2:column id="LENGTH" name="도로길이" dataType="text"></w2:column>
+					<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+					<w2:column id="F_NODE_NAME" name="시작노드명" dataType="text"></w2:column>
+					<w2:column id="T_NODE_NAME" name="종료노드명" dataType="text"></w2:column>
+
+				</w2:columnInfo>
+			</w2:dataList>
+			<w2:dataMap baseNode="map" id="dma_result">
+				<w2:keyInfo>
+					<w2:key id="STATUS" name="STATUS" dataType="text"></w2:key>
+					<w2:key id="ICNT" name="입력건수" dataType="text"></w2:key>
+					<w2:key id="UCNT" name="수정건수" dataType="text"></w2:key>
+					<w2:key id="DCNT" name="삭제건수" dataType="text"></w2:key>
+					<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
+				</w2:keyInfo>
+			</w2:dataMap>
+		</w2:dataCollection>
+		<w2:workflowCollection></w2:workflowCollection>
+		<xf:submission id="sub_SI0406P0R0" ref="" target="data:json,dlt_BMS_MOCK_LINK" action="/si/SI0406P0R0"
+			method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+			processMsg="" ev:submit="" ev:submitdone="scwin.sub_SI0406P0R0_submitdone" ev:submiterror="" abortTrigger="">
+		</xf:submission>
+		<xf:submission id="sub_SI0406P0S0" ref="data:json,dlt_BMS_MOCK_LINK" target="data:json,dma_result" action="/si/SI0406P0S0"
+			method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+			processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+		</xf:submission>
+	</xf:model>
+	<script type="text/javascript" lazy="false"><![CDATA[
+
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		
+		
+		var autoOptions = {
+			Main : { grid : SI0406P0, srchSbm : sub_SI0406P0R0, srchGrp : popup_header,  name : "노선 목록"}
+		 };	
+		 
+		var mainOptions = {
+			SEARCH:{dsip:"hide"},
+			ADD:{disp:"hide"},
+			DEL:{disp:"hide"},
+			CNL:{disp:"hide"},
+		};		 
+		 
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions, mainOptions);	 	
+		
+		com.executeSubmission(sub_SI0406P0R0);		
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	scwin.btn_confirm_onclick = function() {
+		var data = SI0406P0.getCheckedJSON("chk");
+		com.closePopup(scwin.closeCallbackFncName, data);		
+	};
+	
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();		
+	};
+	
+	scwin.SI0406P0_oncellclick = function(row,col) {
+		if(col==0)return;
+		if(SI0406P0.getCellChecked(row,"chk")){
+			SI0406P0.setCellChecked(row,"chk",false)
+		}
+		else {
+			SI0406P0.setCellChecked(row,"chk",true)
+		}
+	};
+	
+	scwin.sub_SI0406P0R0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+		
+			var ids=dma_GRG_MST.get("GRG_ECPT_ID");
+			com.excludeItemsByGrid(SI0406P0, ids, "GRG_ID");
+		}
+	};
+]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+				<xf:group class="gr_search" id="" style="">
+					<!-- <xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="검색"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<xf:input id="search_input" class="search_input" ref="data:dma_GRG_MST.CONTENT" placeholder="차고지ID 또는 차고지명"></xf:input>
+					</xf:group> -->
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group>
+			
+			<xf:group style="" id="" class="popup_content">
+				<w2:gridView fixedColumnWithHidden="true" dataList="data:dlt_BMS_MOCK_LINK" useShiftKey="false" readOnly="true"
+					scrollByColumn="false" id="SI0406P0" autoFit="lastColumn" class="cm_grid popup" ev:oncellclick="scwin.SI0406P0_oncellclick"
+					focusMode="row" focusFlow="">
+					<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
+					<w2:header style="" id="header1">
+						<w2:row style="" id="row1">
+							<w2:column width="39" inputType="checkbox" style="height:20px" id="chkHeader" value="선택" blockSelect="false" upperColumn="" sortable="false">
+							</w2:column>						
+							<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column17"
+								value="표준링크아이디" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column16"
+								value="시작노드명" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column15"
+								value="종료노드명" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column14"
+								value="차로수" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column10"
+								value="도로명" blockSelect="false" displayMode="label">
+							</w2:column>
+						</w2:row>
+					</w2:header>
+					<w2:gBody style="" id="gBody1">
+						<w2:row style="" id="row2">
+		    				<w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px"
+		    					inputType="checkbox" id="chk" blockSelect="false">
+		    				</w2:column>						
+							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="MOCK_LINK_ID"
+								value="" blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="F_NODE_NAME" value=""
+								blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="T_NODE_NAME" value=""
+								blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="LANES" value=""
+								blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="ROAD_NAME" value=""
+								blockSelect="false" displayMode="label">
+							</w2:column>
+						</w2:row>
+					</w2:gBody>
+					<w2:footer id="footer1" style="">
+						<w2:row id="row3" style="">
+							<w2:column blockSelect="false" colSpan="14" displayMode="label"
+								expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" id="column42" inputType="expression" removeBorderStyle="false"
+								style="height:20px;" textAlign="left" width="1830">
+							</w2:column>
+						</w2:row>
+					</w2:footer>					
+				</w2:gridView>
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

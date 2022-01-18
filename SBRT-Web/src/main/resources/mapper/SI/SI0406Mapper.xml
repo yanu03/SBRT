@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.bms.domain.SI0406.SI0406Mapper">
+
+<select id="SI0406G1R0" resultType="Map">
+	SELECT A.ROUT_ID, A.NODE_ID, A.NODE_SN, A.NODE_NM, A.NODE_TYPE, A.LINK_ID, A.STTN_ID, A.STTN_NO, A.CRS_ID,
+			A.GPS_X, A.GPS_Y, A.LINK_NODE_YN, B.MORN_STD
+	FROM BMS_ROUT_NODE_CMPSTN A INNER JOIN BMS_ROUT_MST R ON A.ROUT_ID = R.ROUT_ID AND R.DEL_YN !='Y' 
+	LEFT OUTER JOIN BMS_ROUT_LINK_CMPSTN B ON A.ROUT_ID = B.ROUT_ID AND A.LINK_ID = B.LINK_ID
+	WHERE A.ROUT_ID = #{ROUT_ID}
+	<!-- <if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">	
+		<if test="TYPE == 'ALL'||TYPE == ''">
+			AND (A.NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || A.NODE_NM LIKE CONCAT('%',#{CONTENT},'%'))
+		</if>
+		<if test="TYPE == 'NODE_ID'">
+			A.NODE_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'NODE_NM'">
+			A.NODE_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</if> -->
+	 ORDER BY NODE_SN
+</select>
+
+<select id="SI0406G2R0" resultType="Map">
+	SELECT 			A.MOCK_LINK_ID
+				,	A.F_NODE
+				,	A.T_NODE
+				,	B.NODE_NAME AS F_NODE_NAME
+				,	C.NODE_NAME AS T_NODE_NAME
+				,	A.LANES
+				,	A.ROAD_RANK
+				,	A.ROAD_TYPE
+				,	A.ROAD_NO
+				,	A.ROAD_NAME
+				,	A.ROAD_USE
+				,	A.MULTI_LINK
+				,	A.CONNECT
+				,	A.MAX_SPD
+				,	A.REST_VEH
+				,	A.REST_W
+				,	A.REST_H
+				,	A.LENGTH
+				,	A.REMARK
+	FROM 			BMS_MOCK_LINK A
+	LEFT JOIN		BMS_MOCK_NODE B
+		ON			A.F_NODE = B.MOCK_NODE_ID
+	LEFT JOIN		BMS_MOCK_NODE C
+		ON			A.T_NODE = C.MOCK_NODE_ID	
+</select>
+
+<select id="SI0406G1K0" resultType="Map">
+	SELECT CONCAT('ND', LPAD(NEXTVAL(SEQ_BMS_NODE_MST_0), 8, '0')) AS 'SEQ'
+</select>
+
+<select id="SI0406G1K1" resultType="Map">
+	SELECT CONCAT('LK', LPAD(NEXTVAL(SEQ_BMS_LINK_MST_0), 8, '0')) AS 'SEQ'
+</select>
+
+<select id="SI0406G1K2" resultType="Map">
+	SELECT CONCAT('ST', LPAD(NEXTVAL(SEQ_BMS_STTN_MST_0), 8, '0')) AS 'SEQ'
+</select>
+
+<insert id="SI0406G1I0" parameterType="Map">
+	INSERT INTO BMS_NODE_MST
+		(NODE_ID, NODE_NM,NODE_TYPE,GPS_X, GPS_Y,USE_YN,UPD_DTM,UPD_ID)
+	VALUES (#{NODE_ID}, #{NODE_NM}, #{NODE_TYPE}, #{GPS_X}, #{GPS_Y}, 'Y', #{UPD_DTM}, #{SSN_USER_ID})
+	ON DUPLICATE KEY UPDATE
+	NODE_NM	= VALUES(NODE_NM)
+ 	, NODE_TYPE		= VALUES(NODE_TYPE)
+	, GPS_X	= VALUES(GPS_X)
+	, GPS_Y		= VALUES(GPS_Y)
+	, USE_YN	= 'Y'
+	, UPD_DTM	= VALUES(UPD_DTM)
+	, UPD_ID	= VALUES(UPD_ID);
+	
+	INSERT INTO BMS_ROUT_NODE_CMPSTN
+		(ROUT_ID,NODE_ID,NODE_SN,NODE_NM,NODE_TYPE,LINK_ID,STTN_ID,STTN_NO,GPS_X,GPS_Y,LINK_NODE_YN,UPD_DTM,UPD_ID)
+	VALUES(#{ROUT_ID},#{NODE_ID},#{NODE_SN},#{NODE_NM},#{NODE_TYPE},#{LINK_ID},#{STTN_ID},#{STTN_NO},#{GPS_X},#{GPS_Y},'Y',#{UPD_DTM}, #{SSN_USER_ID});
+ 
+ <if test="STTN_ID != '' and STTN_ID != null">
+	INSERT INTO BMS_STTN_MST
+		(STTN_ID,STTN_NM,AREA,STTN_NO,WAY_DIV,GPS_X,GPS_Y,USE_YN,DEL_YN,UPD_DTM,UPD_ID)
+	VALUES(#{STTN_ID},#{NODE_NM},#{AREA},#{STTN_NO},#{WAY_DIV},#{GPS_X},#{GPS_Y},'Y','N',#{UPD_DTM},#{SSN_USER_ID})
+	ON DUPLICATE KEY UPDATE
+	STTN_NM	= VALUES(STTN_NM)
+ 	, AREA		= VALUES(AREA)
+	, STTN_NO	= VALUES(STTN_NO)
+	, WAY_DIV	= VALUES(WAY_DIV)
+	, GPS_X		= VALUES(GPS_X)
+	, GPS_Y		= VALUES(GPS_Y)
+	, USE_YN	= VALUES(USE_YN)
+	, DEL_YN	= VALUES(DEL_YN)
+	, UPD_DTM	= VALUES(UPD_DTM)
+	, UPD_ID	= VALUES(UPD_ID);
+</if>
+	
+	UPDATE BRT_MAIN_ROUT_NODE_INFO
+		SET NODE_TYPE= #{NODE_TYPE}
+			, NODE_NM= #{NODE_NM}, STTN_ID= #{STTN_ID}, STTN_NO= #{STTN_NO}, GPS_X= #{GPS_X}, GPS_Y= #{GPS_Y}, UPD_DTM= #{UPD_DTM}, UPD_ID= #{SSN_USER_ID}
+	WHERE ROUT_ID= #{ROUT_ID} AND NODE_ID= #{NODE_ID} AND NODE_SN= #{NODE_SN};
+</insert>
+
+<insert id="SI0406G1I1" parameterType="Map">
+	INSERT INTO BMS_LINK_MST(LINK_ID,LINK_NM,ST_NODE_ID,ED_NODE_ID,LEN,USE_YN,SBRT_YN,UPD_DTM,UPD_ID)
+	VALUES(#{LINK_ID},#{LINK_NM},#{ST_NODE_ID},#{ED_NODE_ID},#{LEN},'Y','Y',#{UPD_DTM},#{SSN_USER_ID});
+
+	INSERT INTO BMS_ROUT_LINK_CMPSTN(ROUT_ID,LINK_ID,LINK_SN,MORN_STD,UPD_DTM,UPD_ID)
+	VALUES(#{ROUT_ID},#{LINK_ID},#{LINK_SN},'MS001',#{UPD_DTM},#{SSN_USER_ID});
+</insert>
+
+<delete id="SI0406G1DA0" parameterType="Map">
+	UPDATE BMS_NODE_MST A
+	INNER JOIN
+		BMS_ROUT_NODE_CMPSTN B 
+		ON A.NODE_ID = B.NODE_ID
+		SET A.USE_YN='N'
+	WHERE B.ROUT_ID = #{ROUT_ID};
+	 
+	DELETE FROM BMS_ROUT_NODE_CMPSTN
+	WHERE ROUT_ID = #{ROUT_ID};
+</delete>
+
+<delete id="SI0406G1DA1" parameterType="Map">
+	UPDATE BMS_LINK_MST A
+	INNER JOIN
+		BMS_ROUT_LINK_CMPSTN B 
+		ON A.LINK_ID = B.LINK_ID
+		SET A.USE_YN='N'
+	WHERE B.ROUT_ID = #{ROUT_ID};
+
+	DELETE FROM BMS_ROUT_LINK_CMPSTN
+	WHERE ROUT_ID = #{ROUT_ID}
+</delete>
+
+<select id="SI0406P0R0" resultType="Map">
+	SELECT 			A.MOCK_LINK_ID
+				,	A.F_NODE
+				,	A.T_NODE
+				,	B.NODE_NAME AS F_NODE_NAME
+				,	C.NODE_NAME AS T_NODE_NAME
+				,	A.LANES
+				,	A.ROAD_RANK
+				,	A.ROAD_TYPE
+				,	A.ROAD_NO
+				,	A.ROAD_NAME
+				,	A.ROAD_USE
+				,	A.MULTI_LINK
+				,	A.CONNECT
+				,	A.MAX_SPD
+				,	A.REST_VEH
+				,	A.REST_W
+				,	A.REST_H
+				,	A.LENGTH
+				,	A.REMARK
+	FROM 			BMS_MOCK_LINK A
+	LEFT JOIN		BMS_MOCK_NODE B
+		ON			A.F_NODE = B.MOCK_NODE_ID
+	LEFT JOIN		BMS_MOCK_NODE C
+		ON			A.T_NODE = C.MOCK_NODE_ID
+</select>
+
+<insert id="SI0406P0I0" parameterType="Map">
+	insert into BMS_TRANSCOMP_MST(COMP_ID, AREA, COMP_NM, COMP_ENM, REP_NM, COMP_REG_NO, ADDR,
+		   PHONE, FAX, EMAIL, DRV_CNT, SVC_ROUT_CNT, LIC_VHC_CNT, SPR_VHC_CNT, REMARK, UPD_DTM, UPD_ID, 
+		   GPS_X, GPS_Y, TM_X, TM_Y )
+	values (#{COMP_ID}, #{AREA}, #{COMP_NM}, #{COMP_ENM}, #{REP_NM}, #{COMP_REG_NO}, #{ADDR},
+		   #{PHONE}, #{FAX}, #{EMAIL}, #{DRV_CNT}, #{SVC_ROUT_CNT}, #{LIC_VHC_CNT}, #{SPR_VHC_CNT}, #{REMARK}, #{UPD_DTM}, #{SSN_USER_ID},
+		   127.256252, 36.502246, 333824.0303, 222954.4859)
+</insert>
+
+<update id="SI0406P0U0" parameterType="Map">
+	update BMS_TRANSCOMP_MST
+	set AREA = #{AREA}
+	,	COMP_NM = #{COMP_NM}
+	,	COMP_ENM = #{COMP_ENM}
+	,	REP_NM = #{REP_NM}
+	,	COMP_REG_NO = #{COMP_REG_NO}
+	,	ADDR = #{ADDR}
+	,	PHONE = #{PHONE} 
+	,	FAX = #{FAX}
+	,	EMAIL = #{EMAIL}
+	,	DRV_CNT = #{DRV_CNT}
+	,	SVC_ROUT_CNT = #{SVC_ROUT_CNT}
+	,	LIC_VHC_CNT = #{LIC_VHC_CNT}
+	,	SPR_VHC_CNT = #{SPR_VHC_CNT}
+	,	REMARK = #{REMARK}
+	,	UPD_DTM = #{UPD_DTM}
+	,	UPD_ID = #{SSN_USER_ID}
+	,	GPS_X = #{GPS_X}
+	,	GPS_Y = #{GPS_Y}
+	,	TM_X = #{TM_X}
+	,	TM_Y = #{TM_Y}
+	where COMP_ID = #{COMP_ID}
+</update>
+
+<delete id="SI0406P0D0" parameterType="Map">
+	delete
+	from BMS_TRANSCOMP_MST
+	where COMP_ID = #{COMP_ID}
+</delete>
+
+<select id="SI0406P1R0" resultType="Map">
+	SELECT REP_ROUT_ID, REP_ROUT_NM, USE_YN, REMARK
+	FROM BMS_REP_ROUT_MST
+	<where>
+		<if test="TYPE == 'REP_ROUT_ID'">
+			AND REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'REP_ROUT_NM'">
+			AND REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>
+</select>
+
+<select id="SI0406P1K0" resultType="Map">
+	SELECT CONCAT('RR', LPAD(NEXTVAL(SEQ_BMS_ROUT_MST_0), 8, '0')) AS 'SEQ'
+</select>
+
+<insert id="SI0406P1I0" parameterType="Map">
+	INSERT INTO BMS_REP_ROUT_MST
+			(
+			REP_ROUT_ID,
+			REP_ROUT_NM,
+			USE_YN,
+			REMARK,
+			UPD_DTM,
+			UPD_ID
+			)
+	VALUES		
+			(
+			#{REP_ROUT_ID},
+			#{REP_ROUT_NM},
+			#{USE_YN},
+			#{REMARK},
+			#{UPD_DTM},
+			#{SSN_USER_ID}
+			)				
+</insert>
+
+<update id="SI0406P1U0" parameterType="Map">
+	UPDATE BMS_REP_ROUT_MST
+	SET 	REP_ROUT_NM = #{REP_ROUT_NM},
+			USE_YN = #{USE_YN},
+			REMARK = #{REMARK},
+			UPD_DTM = #{UPD_DTM},
+			UPD_ID  = #{SSN_USER_ID}
+	WHERE REP_ROUT_ID = #{REP_ROUT_ID}
+</update>
+
+<delete id="SI0406P1D0" parameterType="Map">
+	DELETE
+	FROM BMS_REP_ROUT_MST
+	WHERE REP_ROUT_ID = #{REP_ROUT_ID}
+</delete>
+
+<select id="SI0406P2R0" resultType="Map">
+	SELECT STTN_ID, STTN_NM, STTN_ENM
+	FROM BMS_STTN_MST
+	WHERE DEL_YN!='Y'
+		<if test="TYPE == 'STTN_ID'">
+			AND STTN_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'STTN_NM'">
+			AND STTN_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+</select>
+
+</mapper>
