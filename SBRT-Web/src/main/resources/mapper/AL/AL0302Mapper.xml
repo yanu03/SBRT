@@ -176,7 +176,9 @@
 		,#{ALLOC_NO}
 		,#{VHC_ID}
 		,#{UPD_DTM}
-	)
+	)ON DUPLICATE KEY UPDATE
+		VHC_ID = VALUES(VHC_ID)
+		,UPD_DTM = VALUES(UPD_DTM)
 </insert>
 
 <insert id="AL0302G1I1" parameterType="Map">
@@ -200,7 +202,12 @@
 		,#{THR_DRV_ID}
 		,#{SEC_TRAN_TM}
 		,#{THR_TRAN_TM}
-	)
+	)ON DUPLICATE KEY UPDATE
+		DRV_ID = VALUES(DRV_ID)
+		,SEC_DRV_ID = VALUES(SEC_DRV_ID)
+		,THR_DRV_ID = VALUES(THR_DRV_ID)
+		,SEC_TRAN_TM = VALUES(SEC_TRAN_TM)
+		,THR_TRAN_TM = VALUES(THR_TRAN_TM)
 </insert>
 
 <update id="AL0302G2U0" parameterType="Map">
