@@ -4,21 +4,38 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
+import kr.tracom.platform.attribute.common.AtBrtAction;
+import kr.tracom.platform.attribute.common.AtTimeStamp;
+import kr.tracom.platform.net.config.TimsConfig;
+import kr.tracom.platform.net.protocol.TimsMessage;
+import kr.tracom.platform.net.protocol.TimsMessageBuilder;
+import kr.tracom.platform.service.TService;
+import kr.tracom.platform.service.config.KafkaTopics;
+import kr.tracom.tims.kafka.KafkaProducer;
 import kr.tracom.util.Constants;
+import kr.tracom.util.DateUtil;
 import kr.tracom.util.Result;
 
 @Service
 public class AL0302Service extends ServiceSupport {
+	
+	Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	
 	@Autowired
+    KafkaProducer kafkaProducer;
+	
+	@Autowired
 	private AL0302Mapper al0302Mapper;
+	
 	
 	public List AL0302G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
@@ -174,6 +191,25 @@ public class AL0302Service extends ServiceSupport {
 		}
 		
 		Map result = saveResult(iCnt, uCnt, dCnt);
+		
+		
+		//차량배차 배포 시 운행계획 생성 완료되었다고 BRT서비스에 알림
+		AtBrtAction brtRequest = new AtBrtAction();
+
+		brtRequest.setTimeStamp(new AtTimeStamp(DateUtil.now("yyyyMMddHHmmssSSS")));
+		brtRequest.setActionCode(AtBrtAction.makeOperDone);
+		brtRequest.setData("");
+		brtRequest.setReserved("");
+
+        
+        TimsConfig timsConfig = TService.getInstance().getTimsConfig();
+        TimsMessageBuilder builder = new TimsMessageBuilder(timsConfig);
+        TimsMessage tMessage = builder.actionRequest(brtRequest);
+        
+        logger.info("======== 운행계획 생성 완료 전송 : {}", tMessage);		
+        
+        kafkaProducer.sendKafka(KafkaTopics.T_BRT, tMessage, "");	
+		
 		
 		return result;	
 	}
