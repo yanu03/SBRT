@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import kr.tracom.bms.domain.FM0201.FM0201Service;
 import kr.tracom.brt.domain.MO0203.MO0203Service;
 import kr.tracom.cm.support.ControllerSupport;
 
