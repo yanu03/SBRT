@@ -20,4 +20,9 @@ public class VH0400Service extends ServiceSupport {
 		return vh0400Mapper.VH0400G0R0(param);
 	}
 	
+	public List<Map> VH0400EVT() throws Exception{
+		Map param = getSimpleDataMap("dma_search");
+		return vh0400Mapper.VH0400EVT(param);
+	}
+	
 }

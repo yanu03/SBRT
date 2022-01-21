@@ -9,5 +9,6 @@ import org.apache.ibatis.annotations.Mapper;
 public interface VH0400Mapper {
 	
 	public List<Map> VH0400G0R0(Map param);
+	public List<Map> VH0400EVT(Map param);
 	
 }

@@ -16,6 +16,7 @@
 						<w2:key id="CONTENT1" name="name1" dataType="text"></w2:key>
 						<w2:key id="CONTENT2" name="name2" dataType="text"></w2:key>
 						<w2:key id="CONTENT3" name="name3" dataType="text"></w2:key>
+						<w2:key id="CONTENT4" name="name3" dataType="text"></w2:key>
 						<w2:key id="F_DATE" name="name4" dataType="date"></w2:key>
 						<w2:key id="L_DATE" name="name5" dataType="date"></w2:key>
 						<w2:key id="ROUT_ID" name="name6" dataType="text"></w2:key>
@@ -38,6 +39,11 @@
 					<w2:columnInfo>
 						<w2:column id="ROUT_ID" name="name1" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="name2" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_evtType" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="EVT_TYPE" name="이벤트유형" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN" saveRemovedData="true"><!-- 맵 노선 그리기용 -->
@@ -76,6 +82,7 @@
 						<w2:column id="VHC_ID" name="차량ID" dataType="text"></w2:column>
 						<w2:column id="CUR_SPD" name="현재속도" dataType="text"></w2:column>
 						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
+						<w2:column id="EVE_NODE_NM" name="이벤트노드명" dataType="text"></w2:column>
 						<w2:column id="LINK_NM" name="링크명" dataType="text"></w2:column>
 						<w2:column id="OCR_DTM" name="발생시간" dataType="text"></w2:column>
 						<w2:column id="OPER_STS" name="운행상태" dataType="text"></w2:column>
@@ -99,7 +106,11 @@
 				ev:submit="" ev:submitdone="scwin.sub_repRoutItem_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_routItem" ref="data:json,dma_search" target="data:json,dlt_routItem" action="/rout/selectRoutItem" method="post" mediatype="application/json"
-				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
+				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_routItem_submitdone"
+				ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_evtType" ref="data:json,dma_search" target="data:json,dlt_evtType" action="/vh/VH0400EVT" method="post" mediatype="application/json"
+				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_evtType_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_vhcItem" ref="" target="data:json,dlt_vhcItem" action="/vhc/selectVhcItem" method="post"
@@ -153,6 +164,15 @@
 		com.executeSubmission(sub_routItem);
 	};
 	
+	scwin.sub_routItem_submitdone = function(e) {
+		com.executeSubmission(sub_evtType);
+	};
+	
+	scwin.sub_evtType_submitdone = function(e) {
+		var codeOptions = [ {code : "OPER_EVT_TYPE", compID : "TYPE3" }];	
+		com.setCommonDtl(codeOptions);
+	};
+	
 	scwin.sub_VH0400G0R0_submitdone = function(e) {
 		com.setFocusedCell(VH0400G0, "OPER_DT");
 		
@@ -163,27 +183,27 @@
 			
 			switch(eventType) {
 				case "ET001":
-				eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "NODE_NM") + "에 도착하였습니다.";
+				eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "EVE_NODE_NM") + "에 도착하였습니다.";
 				break;
 				
 				case "ET002":
-				eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "NODE_NM") + "에서 출발하였습니다.";
+				eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "EVE_NODE_NM") + "에서 출발하였습니다.";
 				break;
 				
 				case "ET003":
-				eventMessage = "기점에 도착하였습니다.";
+				eventMessage = "기점"+"("+dlt_BRT_OPER_EVENT_HIS.getCellData(i, 'EVE_NODE_NM')+")"+"에 도착하였습니다.";
 				break;
 				
 				case "ET004":
-				eventMessage = "기점에서 출발하였습니다.";
+				eventMessage = "기점"+"("+dlt_BRT_OPER_EVENT_HIS.getCellData(i, 'EVE_NODE_NM')+")"+"에서 출발하였습니다.";
 				break;
 				
 				case "ET005":
-				eventMessage = "종점에 도착하였습니다.";
+				eventMessage = "종점"+"("+dlt_BRT_OPER_EVENT_HIS.getCellData(i, 'EVE_NODE_NM')+")"+"에 도착하였습니다.";
 				break;
 				
 				case "ET006":
-				eventMessage = "종점에서 출발하였습니다.";
+				eventMessage = "종점"+"("+dlt_BRT_OPER_EVENT_HIS.getCellData(i, 'EVE_NODE_NM')+")"+"에서 출발하였습니다.";
 				break;
 				
 				case "ET007":
@@ -202,6 +222,38 @@
 				
 				case "ET010":
 				eventMessage = "버스 문이 닫혔습니다.";
+				break;
+				
+				case "ET011":
+				eventMessage = "무정차 주행하였습니다.";
+				break;
+				
+				case "ET012":
+				eventMessage = "과속 주행하였습니다.";
+				break;
+				
+				case "ET013":
+				eventMessage = "급가속하였습니다.";
+				break;
+				
+				case "ET014":
+				eventMessage = "급감속하였습니다.";
+				break;
+				
+				case "ET015":
+				eventMessage = "급출발하였습니다.";
+				break;
+				
+				case "ET016":
+				eventMessage = "급정지하였습니다.";
+				break;
+				
+				case "ET017":
+				eventMessage = "개문주행하였습니다.";
+				break;
+				
+				case "ET018":
+				eventMessage = "노선이탈하였습니다.";
 				break;
 			}//end switch
 			
@@ -228,7 +280,9 @@
 		com.searchGrid(VH0400G0, sub_VH0400G0R0);
 	};
 	
-	
+	scwin.TYPE3_onviewchange = function(info) {		
+		com.searchGrid(VH0400G0, sub_VH0400G0R0);
+	};
 	
 	scwin.F_DATE_onviewchange = function(info) {
 		var ldate = L_DATE.getValue();
@@ -252,6 +306,10 @@
 			com.messagBox("alert", "지정할 수 없는 날짜입니다.",scwin.checkCLoseL(info));
 		}
 	};
+	
+	
+	
+	
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -309,6 +367,21 @@
 							</w2:choices>
 						</w2:autoComplete>
 						<xf:group class="label" id="" style="margin-left: 10px;">
+							<w2:span class="" id="" label="이벤트 유형"></w2:span>
+						</xf:group>
+						<xf:group class="search" id="" style="">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE3_onviewchange" id="TYPE3" optionOrder="false"
+							ref="data:dma_search.CONTENT4" class="search_type_100" style="" submenuSize="auto" textAlign="center" chooseOptionLabel="-전체-">
+							<xf:choices>
+								<xf:itemset nodeset="data:dlt_evtType">
+									<xf:label ref="EVT_TYPE"></xf:label>
+									<xf:value ref="EVT_TYPE"></xf:value>
+								</xf:itemset>
+							</xf:choices>
+						</xf:select1>
+						</xf:group>
+						<xf:group class="label" id="" style="margin-left: 10px;">
 							<w2:span class="" id="" label="기간"></w2:span>
 						</xf:group>
 						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
@@ -347,32 +420,26 @@
 									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column7"
 										value="운행일" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column8"
-										value="노선명" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column9"
-										value="배차" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column10"
-										value="순번" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="75" inputType="text" style="height:20px" id="column12"
+										value="발생시간" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column11"
 										value="차량번호" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="75" inputType="text" style="height:20px" id="column12"
-										value="발생시간" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column8"
+										value="노선명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column13"
-										value="경도" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="75" inputType="text" style="height:20px" id="column9"
+										value="배차번호" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column14"
-										value="위도" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="75" inputType="text" style="height:20px" id="column10"
+										value="운행순번" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column15"
-										value="노드명" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="85" inputType="text" style="height:20px" id="column19"
+										value="이벤트유형" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="260" inputType="text" style="height:20px" id="column16"
-										value="링크명" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="300" inputType="text" style="height:20px" id="column20"
+										value="이벤트내용" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column17"
 										value="운행상태" blockSelect="false" displayMode="label">
@@ -380,11 +447,17 @@
 									<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px" id="column18"
 										value="헤딩" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="85" inputType="text" style="height:20px" id="column19"
-										value="이벤트유형" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column13"
+										value="경도" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="300" inputType="text" style="height:20px" id="column20"
-										value="이벤트값유형" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column14"
+										value="위도" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column15"
+										value="지나온 노드명" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="260" inputType="text" style="height:20px" id="column16"
+										value="링크명" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
 							</w2:header>
@@ -393,19 +466,31 @@
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="OPER_DT"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_NM"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-								<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ALLOC_NO"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-										<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="OPER_SN"
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="OCR_DTM"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="VHC_NO"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="OCR_DTM"
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_NM"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ALLOC_NO"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+										<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="OPER_SN"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="EVT_TYPE"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="EVT_DATA"
+										value="" blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="OPER_STS"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="DRV_ANGLE"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="=" inputType="text" style="height:20px" id="GPS_X"
@@ -419,18 +504,6 @@
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="LINK_NM"
 										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="OPER_STS"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="DRV_ANGLE"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="EVT_TYPE"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="EVT_DATA"
-										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
