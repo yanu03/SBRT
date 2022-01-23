@@ -45,6 +45,7 @@ public class OperPlanController extends ControllerSupport {
 	@RequestMapping("/operPlan/selectOperAllocRealNode")
 	public @ResponseBody Map<String, Object> selectOperAllocRealNode() throws Exception {
 		result.setData("dlt_BRT_OPER_ALLOC_RL_NODE_INFO", operPlanService.selectOperAllocRealNode());
+		result.setData("dlt_BRT_OPER_ALLOC_PL_NODE_CNT", operPlanService.selectOperAllocRealNodeCnt());
 		return result.getResult();	
 	}
 	@RequestMapping("/operPlan/selectOperPlanRout2")
