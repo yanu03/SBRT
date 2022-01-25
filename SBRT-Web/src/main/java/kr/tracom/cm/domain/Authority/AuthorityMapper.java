@@ -39,7 +39,7 @@ public interface AuthorityMapper {
 	 * @date 2016. 12. 05.
 	 * @param
 	 * @returns
-	 * @author InswaveSystems
+	 * @author tracom
 	 */
 	public int deleteAuthorityMemberAll(Map param);
 	

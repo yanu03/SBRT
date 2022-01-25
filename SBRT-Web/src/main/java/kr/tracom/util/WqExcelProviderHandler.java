@@ -42,7 +42,7 @@ public class WqExcelProviderHandler implements ResultHandler {
 	 * 
 	 * @date 2016.08.17
 	 * @returns <Object> String[]
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 * @todo 추가해야 할 작업
 	 */

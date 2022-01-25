@@ -24,7 +24,7 @@ public class AuthorityController extends ControllerSupport {
 	 * @date 2017.12.22
 	 * @param {} 없음
 	 * @returns mv dlt_authroitySearchItem ( 권한 아이템 리스트 )
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/authority/selectAuthoritySearchItem")
@@ -39,7 +39,7 @@ public class AuthorityController extends ControllerSupport {
 	 * @date 2017.12.22
 	 * @param {} dma_search { TYPE :"권한명 또는 권한 코드", CONTENTS :"검색어", USE_YN :"사용여부" }
 	 * @returns mv dlt_authroity ( 권한 리스트 )
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/authority/selectAuthorityList")
@@ -54,7 +54,7 @@ public class AuthorityController extends ControllerSupport {
 	 * @date 2017.12.22
 	 * @param {} dma_authority { AUTH_CD :"권한 코드" }
 	 * @returns mv dlt_authroityMember ( 권한이 부여된 사용자 리스트 )
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/authority/selectAuthorityMemberList")
@@ -69,7 +69,7 @@ public class AuthorityController extends ControllerSupport {
 	 * @date 2017.12.22
 	 * @param {} dma_search { TYPE :"사원코드  또는 사원명", CONTENTS :"검색어", AUTH_CD :"권한코드" }
 	 * @returns mv dlt_member ( 권한이 부여되지 않은 직원 리스트 )
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/authority/excludeSelectAuthorityMemberList")
@@ -84,7 +84,7 @@ public class AuthorityController extends ControllerSupport {
 	 * @date 2017.12.22
 	 * @param {} dlt_authority ( 권한관리 상태인( C,U,D ) 리스트 ), dma_search ( 조회조건 )
 	 * @returns mv dlt_result ( 입력,수정,삭제된 건수 및 상태 ), dlt_authority( 변경된 권한리스트 )
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/authority/saveAuthority")
@@ -102,7 +102,7 @@ public class AuthorityController extends ControllerSupport {
 	 * @date 2017.12.22
 	 * @param {} dlt_authorityMember ( 권한관리 상태인( C,U,D ) 리스트 ), dma_search ( 조회조건 )
 	 * @returns mv dlt_result ( 입력,수정,삭제된 건수 및 상태 ), dlt_authorityMember( 변경된 권한 사용자 리스트 )
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/authority/saveAuthorityMember")

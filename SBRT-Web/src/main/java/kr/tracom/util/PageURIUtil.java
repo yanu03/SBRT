@@ -74,7 +74,7 @@ public class PageURIUtil {
 	 * 
 	 * @date 2016. 08. 08
 	 * @returns {String} login page uri
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example getLoginPage(); return 예시 : "/test/test.xml"
 	 */
 	public static String getLoginPage() {
@@ -86,7 +86,7 @@ public class PageURIUtil {
 	 * 
 	 * @date 2016. 09. 12
 	 * @returns {String} 권한없는 페이지 호출시 보여주는 page url
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example getLoginPage(); return 예시 : "/test/test.xml"
 	 */
 	public static String getAuthCheck() {

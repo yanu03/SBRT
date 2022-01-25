@@ -246,7 +246,7 @@ public class LoginController extends ControllerSupport {
 	 * @date 2018.11.29
 	 * @param dma_password { PASSWORD: "현재 비밀번호", NEW_PASSWORD: "새로운 비밀번호", RETRY_PASSWORD: "새로운 비밀번호(재입력)" }
 	 * @returns mv dlt_result { FOCUS:"포커스를 이동할 컬럼 ID" }
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/main/updatePassword")

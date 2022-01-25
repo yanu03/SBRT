@@ -7,7 +7,7 @@ requires("uiplugin.popup");
  * gcm 객체는 WFrame Scope별로 생성되지 않고, 전역 객체로 1개만 생성된다.
  * 
  * @version 3.0
- * @author InswaveSystems
+ * @author tracom
  * @type gcm
  * @class gcm
  * @namespace gcm
@@ -395,10 +395,10 @@ var gcm = {
 /**
  * 유효성 검사 실패에 대한 Alert 메시지 창이 닫힌 후에 수행되는 콜백 함수이다.
  * 
- * @date 2018.04.15
+ * @date 2021.04.15
  * @private
  * @memberOf
- * @author InswaveSystems
+ * @author tracom
  * @returns
  */
 gcm._groupValidationCallback = function() {
@@ -423,11 +423,11 @@ gcm._groupValidationCallback = function() {
  * submission 통신 직전 호출.
  * return true일 경우 통신 수행, return false일 경우 통신 중단
  *
- * @date 2016.11.11
+ * @date 2021.11.11
  * @private
  * @param {Object} sbmObj 서브미션 객체
  * @memberOf
- * @author InswaveSystems
+ * @author tracom
  * @return {Boolean} true or false
  */
 gcm._sbm_preSubmission = function(sbmObj) {
@@ -439,11 +439,11 @@ gcm._sbm_preSubmission = function(sbmObj) {
  * config.xml에 설정
  * 
  * @private
- * @date 2016.11.15
+ * @date 2021.11.15
  * @param {Object} resObj responseData 객체
  * @param {Object} subObj Submission 객체
  * @memberOf
- * @author InswaveSystems
+ * @author tracom
  */
 gcm._sbm_defCallbackSubmission = function(resObj, subObj) {
 
@@ -477,11 +477,11 @@ gcm._sbm_defCallbackSubmission = function(resObj, subObj) {
 /**
  * submission중 에러가 발생한 경우 호출되는 함수 - 서버 오류(500 error)
  * 
- * @date 2016.11.15
+ * @date 2021.11.15
  * @private
  * @param {Object} resObj responseData 객체
  * @memberOf
- * @author InswaveSystems
+ * @author tracom
  */
 gcm._sbm_errorHandler = function(resObj) {
 	var scopeCom = gcm._getScope(resObj.id).com;
@@ -507,11 +507,11 @@ gcm._sbm_errorHandler = function(resObj) {
 /**
  * 특정 컴포넌트가 속한 WFrame Scope을 반환한다.
  * 
- * @date 2018.06.11
+ * @date 2021.06.11
  * @private
  * @param {Object} 컴포넌트 객체 또는 ID(WFrame Scope 경로를 포함한 Full Path Id)
  * @memberOf
- * @author InswaveSystems
+ * @author tracom
  */
 gcm._getScope = function(comObj) {
 	if (typeof comObj === "string") {
@@ -532,7 +532,7 @@ gcm._getScope = function(comObj) {
  * 해당 함수를 호출한 화면의 WFrame Scope 내의 $p를 참조하게 된다.
  * 
  * @version 3.0
- * @author InswaveSystems
+ * @author tracom
  * @type com
  * @class com
  * @namespace com
@@ -545,9 +545,9 @@ var com = {
 /**
  * 메인 화면에서 업무 화면을 오픈하는 Frame Mode 정보를 반환한다.
  * 
- * @date 2018.11.14
+ * @date 2021.11.14
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  */
 com.getFrameMode = function() {
 	return gcm.FRAME_MODE;
@@ -556,9 +556,9 @@ com.getFrameMode = function() {
 /**
  * 사용자의 권한에 따른 화면 컴포넌트 제어를 한다.
  * 
- * @date 2018.12.07
+ * @date 2021.12.07
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  */
 com._setProgramAuthority = function() {
 
@@ -612,9 +612,9 @@ com._setProgramAuthority = function() {
 /**
  * 로그인한 사용자가 시스템 관리자 인지의 여부를 반환한다.
  * 
- * @date 2018.12.01
+ * @date 2021.12.01
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  */
 com.isAdmin = function() {
 	scwin.isAdmin = $p.top().wfm_header.getWindow().dma_defInfo.get("IS_ADMIN");
@@ -628,9 +628,9 @@ com.isAdmin = function() {
 /**
  * 로그인한 사용자의 ID(사원번호)를 반환한다.
  * 
- * @date 2018.12.01
+ * @date 2021.12.01
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  */
 com.getLoginUserId = function() {
 	return $p.top().wfm_header.getWindow().dma_defInfo.get("USER_ID");
@@ -639,12 +639,12 @@ com.getLoginUserId = function() {
 /**
  * Submission를 실행합니다.
  *
- * @date 2017.01.19
+ * @date 2021.01.19
  * @param {Object} options com.createSubmission의 options 참고
  * @param {Object} requestData 요청 데이터
  * @param {Object} obj 전송중 disable시킬 컴퍼넌트
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @example
  * var searchCodeCoOption = {
  *		 id : "sbm_searchCodeCo",
@@ -671,7 +671,7 @@ com.executeSubmission_dynamic = function(options, requestData, obj) {
 /**
  * Submission 객체를 동적으로 생성한다.
  *
- * @date 2017.11.30
+ * @date 2021.11.30
  * @param {Object} options Submission 생성 옵션 JSON 객체
  * @param {String} options.id submission 객체의 ID. 통신 모듈 실행 시 필요.
  * @param {String} options.ref 서버로 보낼(request) DataCollection의 조건 표현식.(조건에 때라 표현식이 복잡하다) 또는 Instance Data의 XPath.
@@ -697,7 +697,7 @@ com.executeSubmission_dynamic = function(options, requestData, obj) {
  * @param {requestCallback} options.submitDoneHandler {script type="javascript" ev:event="xforms-submit-done"} 에 대응하는 함수
  * @param {requestCallback} options.submitErrorHandler {script type="javascript" ev:event="xforms-submit-error"} 에 대응하는 함수
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @example
  * com.createSubmission(options);
  */
@@ -751,12 +751,12 @@ com.createSubmission = function(options) {
 /**
  * 서버 통신 확장 모듈, Submission를 실행합니다.
  * 
- * @date 2017.11.30
+ * @date 2021.11.30
  * @param {Object} sbmObj submission 객체
  * @param {Object} requestData [Default : null, JSON, XML] 요청 데이터로 submission에 등록된 ref를 무시하고 현재의 값이 할당된다.
  * @param {Object} compObj [Default : null] 전송중 disable시킬 컴퍼넌트
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @example 
  * // Submission ID : sbm_init 존재할 경우 
  * com.executeSubmission(sbm_Init); 
@@ -778,10 +778,10 @@ com.executeSubmission = function(sbmObj, requestData, compObj) {
  * 서버에서 전송한 통신 결과 코드를 반환한다.
  * 화면에 정의한 submission의 submitdone이벤트에서 호출하여 사용한다.
  * 
- * @date 2016.07.29
+ * @date 2021.07.29
  * @param {Object} e submission 후 callback의 상태값
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {String} 상태 코드
  * @example
  * // 통신결과 코드가 있을 경우
@@ -807,12 +807,12 @@ com.getResultCode = function(e) {
  * statusCode값에 따라 message를 출력한다.
  * 
  * @private
- * @date 2016.08.09
+ * @date 2021.08.09
  * @param {Object} resultData 상태코드값 및 메시지가 담긴 JSON.
  * @param {String} resultData.message 메시지
  * @param {String} resultData.statusCode 상태코드값
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  */
 com.resultMsg = function(resultData) {
 	resultData.message = resultData.message || "";
@@ -844,11 +844,11 @@ com.resultMsg = function(resultData) {
  * 코드성 데이터와 컴포넌트의 nodeSet(아이템 리스트)연동 기능을 제공한다.
  * code별로 JSON객체를 생성하여 array에 담아 첫번째 파라메터로 넘겨준다.
  *
- * @date 2018.04.13
+ * @date 2021.04.13
  * @param {Object} codeOptions {"code" : "코드넘버", "compID" : "적용할 컴포넌트명"}
  * @param {requestCallback} callbackFunc 콜백 함수
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @example
  * var codeOptions = [ { code : "00001", compID : "sbx_Duty" },
  *					 { code : "00002", compID : "sbx_Postion" },
@@ -968,7 +968,24 @@ com.setCommonDtl = function(codeOptions, callbackFunc) {
 	}
 	;
 };
-									
+
+/**
+ * prefix 기준으로 코드성 데이터와 컴포넌트의 nodeSet(아이템 리스트)연동 기능을 제공한다.
+ * code별로 JSON객체를 생성하여 array에 담아 첫번째 파라메터로 넘겨준다.
+ *
+ * @param {Object} codeOptions {"code" : "코드넘버", "compID" : "적용할 컴포넌트명"}
+ * @param {prefix} 코드를 분리하기 위한 prefix
+ * @param {requestCallback} callbackFunc 콜백 함수
+ * @memberOf com
+ * @author tracom
+ * @example
+ * var codeOptions = [ { code : "00001", compID : "sbx_Duty" },
+ *					 { code : "00002", compID : "sbx_Postion" },
+ *					 { code : "00021", compID : "sbx_JoinClass" },
+ *					 { code : "00005", compID : "sbx_CommCodePart1, sbx_CommCodePart2"},
+ *					 { code : "00024", compID :"grd_CommCodeSample:JOB_CD"} ];
+ *	 com.setCommonSubDtl(codeOptions);
+ */
 com.setCommonSubDtl = function(codeOptions, prefix, callbackFunc) {
 	var codeOptionsLen = 0;
 
@@ -1099,11 +1116,11 @@ com.setCommonSubDtl = function(codeOptions, prefix, callbackFunc) {
  * 시스템 코드 데이터와 컴포넌트의 nodeSet(아이템 리스트)연동 기능을 제공한다.
  * code별로 JSON객체를 생성하여 array에 담아 첫번째 파라메터로 넘겨준다.
  *
- * @date 2018.04.13
+ * @date 2021.04.13
  * @param {Object} systemOptions {"code" : "코드넘버", "compID" : "적용할 컴포넌트명"}
  * @param {requestCallback} callbackFunc 콜백 함수
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @example
  * var systemOptions = [ { code : "00001", compID : "sbx_Duty" },
  *					 { code : "00002", compID : "sbx_Postion" },
@@ -1229,9 +1246,9 @@ com.setSystemCode = function(systemOptions, callbackFunc) {
  * GridView에 삭제용 CheckBox가 있을 경우 onPageLoad 이벤트에서 com.setGridViewDelCheckBox 함수를 호출한다.
  * 이 함수가 정상 동작하려면 GridView의 Delete 처리용 CheckBox의 ColumnId와 Header Id를 "chk"로 설정해야 한다.
  * 
- * @date 2018.11.26
+ * @date 2021.11.26
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @param {Array} gridViewObj GridView 객체 배열
  * @example
  * com.setGridViewDelCheckBox(grd_OrganizationBasic);
@@ -1311,10 +1328,10 @@ com._deleteGridViewRow = function(gridViewObj, rowIndex, newValue) {
 /**
  * GridView와 바인딩된 DataList 객체를 반환한다.
  *
- * @date 2018.01.11
+ * @date 2021.01.11
  * @param {Object} gridViewObj 바인딩 된 DataList가 존재하는지 검증할 GridView 객체
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {Object} 바인딩 된 DataList 객체 반환 (바인된 객체가 없을 경우 null 반환)
  * @example
  * // 바인딩 되어있는 경우
@@ -1342,7 +1359,16 @@ com.getGridViewDataList = function(gridViewObj) {
 	}
 };
 
-/*삭제된 데이터를 제외한 인덱스 얻기*/
+/**
+ * 삭제된 데이터를 제외한 인덱스 얻기
+ *
+ * @date 2021.01.11
+ * @param {Object} grid 대상 grid
+ * @param {int} index 범위 index
+ * @memberOf com
+ * @author tracom
+ * @return {int} 삭제된 데이터 제외한 index
+ */
 com.getGridDispIndex = function(grid, index) {
 	var data = com.getGridViewDataList(grid);
 	var dispIndex = 0;
@@ -1354,7 +1380,15 @@ com.getGridDispIndex = function(grid, index) {
 	return dispIndex;
 };
 
-/*삭제를 제외한 데이터*/
+/**
+ * 그리드에서 삭제된 데이터를 제외한 데이터 가져오기
+ *
+ * @date 2021.01.11
+ * @param {Object} grid 대상 grid
+ * @memberOf com
+ * @author tracom
+ * @return {Object} retData 삭제 제외된 데이터 리스트
+ */
 com.getGridDispJsonData = function(grid) {
 	var data = com.getGridViewDataList(grid);
 	var rowData = data.getAllJSON();
@@ -1367,6 +1401,14 @@ com.getGridDispJsonData = function(grid) {
 	return retData;
 };
 
+/* 삭제된 데이터를 제외한 데이터 가져오기
+*
+* @date 2021.01.11
+* @param {Object} data 대상 data
+* @memberOf com
+* @author tracom
+* @return {Object} retData 삭제 제외된 데이터 리스트
+*/
 com.getGridDispJsonData2 = function(data) {
 	var rowData = data.getAllJSON();
 	var retData = [];
@@ -1382,7 +1424,7 @@ com.getGridDispJsonData2 = function(data) {
 /**
  * 특정 컴포넌트에 바인된 DataList나 DataMap의 컬럼 이름을 반환한다.
  * 
- * @date 2018.01.15
+ * @date 2021.01.15
  * @memberOf com
  * @param {Object} comObj 컴포넌트 객체
  * @return {String} 컬럼명
@@ -1417,7 +1459,7 @@ com.getColumnName = function(comObj) {
 /**
  * 특정 컴포넌트에 바인된 DataList나 DataMap의 정보를 반환한다.
  * 
- * @date 2018.01.15
+ * @date 2021.01.15
  * @memberOf com
  * @param {Object} comObj callerObj 컴포넌트 객체
  * @returns {Object} dataCollection정보
@@ -1451,10 +1493,10 @@ com.getDataCollection = function(comObj) {
 /**
  * DataCollection 객체의 변경된 데이터가 있는지 검사한다.
  * 
- * @date 2018.01.16
+ * @date 2021.01.16
  * @memberOf com
  * @param {Object} dcObjArr DataCollection 또는 배열
- * @author InswaveSystems
+ * @author tracom
  * @returns {Boolean} 검사결과 (true or false)
  */
 com.checkModified = function(dcObjArr) {
@@ -1490,12 +1532,12 @@ com.checkModified = function(dcObjArr) {
 /**
  * 엑셀 다운로드 옵션을 설정하고 확장자 별로 다른 함수(downLoadCSV || downLoadExcel)를 호출한다.
  *
- * @date 2016.11.16
+ * @date 2021.11.16
  * @param {Object} grdObj GridView Object
  * @param {Array} options JSON형태로 저장된 그리드의 엑셀 다운로드 옵션
  * @param {Array} infoArr 그리드에 대한 내용을 추가로 다른 셀에 표현하는 경우 사용하는 배열
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @example
  * var gridId = "grd_AdvancedExcel";
  * var infoArr = {};
@@ -1576,6 +1618,18 @@ com.gridDataDownLoad = function(grdObj, options, infoArr) {
 	}
 };
 
+/**
+ * 포커된 grid와 매핑된 frm의 focus 처리
+ *
+ * @date 2021.11.16
+ * @param {grdObj} 대상 GridView Object
+ * @param {frm} 대상 form
+ * @param {index} 대상 grid의 현재 focus index
+ * @param {focusColumn} focus column 명
+ * @param {editMode} grid의 mode를 editMode로 할지
+ * @memberOf com
+ * @author tracom
+ */
 com.focusGridFrm = function(grid,frm, index, focusColumn, editMode){
 	grid.setFocusedCell(index, focusColumn, editMode);
 	
@@ -1605,7 +1659,7 @@ com.focusGridFrm = function(grid,frm, index, focusColumn, editMode){
 /**
  * 설정된 옵션으로 엑셀을 다운로드 한다.
  *
- * @date 2017.11.30
+ * @date 2021.11.30
  * @param {Object} grdObj GridView 객체
  * @param {Object} options JSON형태로 저장된 그리드의 엑셀 다운로드 옵션
  * @param {String} options.fileName					[defalut: excel.xlsx] 다운로드하려는 파일의 이름으로 필수 입력 값 <br>지원하는 타입 => xls, xlsx
@@ -1668,7 +1722,7 @@ com.focusGridFrm = function(grid,frm, index, focusColumn, editMode){
  * @param {String} [options.subTotalRoundingMode]	[defalut: 없음] 다운로드시 subTotal 평균계산시 Round를 지정 한다. <br> "CEILING" => 소수점 올림 <br> "FLOOR" => 소수점 버림 <br>"HALF_UP" => 소수점 반올림
  * @param {String} [options.useStyle]				[defalut: false] 다운로드시 css를 제외한, style을 excel에도 적용할 지 여부 (배경색,폰트)
  * @param {String} [options.freezePane]				[defalut: ""] 틀고정을 위한 좌표값 및 좌표값의 오픈셋 <br>  freezePane="3,4" => X축 3, Y축 4에서 틀고정<br> freezePane="0,1,0,5" => X축 0, Y축 1에서 X축으로 0, Y축으로 5로 틀고정
- * @param {String} [options.autoSizeColumn]			[defalut: false] 너비자동맞춤 설정 여부 - 2016.08.18 옵션 설정을 true로 변경
+ * @param {String} [options.autoSizeColumn]			[defalut: false] 너비자동맞춤 설정 여부 - 2021.08.18 옵션 설정을 true로 변경
  * @param {String} [options.displayGridlines]		[defalut: false] 엑셀 전체 셀의 눈금선 제거 여부
  * @param {String} [options.colMerge]				[defalut: false] colMerge된 컬럼을 Merge해서 출력 할 지 여부
  * @param {String} [options.useDataFormat]			[defalut: 없음] 그리드 dataType이 text인 경우, 엑셀의 표시형식 '텍스트' 출력 여부<br> "true" => 표시형식 텍스트<br> "false" => 표시형식 일반 출력)
@@ -1697,7 +1751,7 @@ com.focusGridFrm = function(grid,frm, index, focusColumn, editMode){
  * @param {String} [infoArr.bgColor]					[defalut: ""] cell의 배경 color 설정 red, blue, green
  * @memberOf com
  * @return {file} <b>Excel file</b>
- * @author InswaveSystems
+ * @author tracom
  * @example
  * var gridId = "grd_AdvancedExcel";
  * var infoArr = {};
@@ -1730,7 +1784,7 @@ com.downLoadExcel = function(grdObj, options, infoArr) {
 				hiddenColIndex.push(idx);
 			}
 		}
-		// hidden 컬럼이 있는 경우만 추가할 수 있도록 (2016.10.28 추가)
+		// hidden 컬럼이 있는 경우만 추가할 수 있도록 (2021.10.28 추가)
 		if (hiddenColIndex.length > 0) {
 			if (options.removeColumns.length > 0) {
 				options.removeColumns = options.removeColumns + "," + hiddenColIndex.join(',');
@@ -1825,7 +1879,7 @@ com.downLoadExcel = function(grdObj, options, infoArr) {
 		useStyle : options.useStyle || "", // String, [defalut: false] 다운로드시 css를 제외한, style을 excel에도 적용할 지 여부 (배경색,폰트)
 		freezePane : options.freezePane || "", // String, [defalut: ""] 틀고정을 위한 좌표값 및 좌표값의 오픈셋 ( ex) freezePane="3,4" X축 3, Y축 4에서 틀고정,
 		// freezePane="0,1,0,5" X축 0, Y축 1에서 X축으로 0, Y축으로 5로 틀공정 )
-		autoSizeColumn : options.autoSizeColumn || "true", // String, [defalut: false] 너비자동맞춤 설정 여부 - 2016.08.18 옵션 설정을 true로 변경
+		autoSizeColumn : options.autoSizeColumn || "true", // String, [defalut: false] 너비자동맞춤 설정 여부 - 2021.08.18 옵션 설정을 true로 변경
 		displayGridlines : options.displayGridlines || "", // String, [defalut: false] 엑셀 전체 셀의 눈금선 제거 여부
 		colMerge : options.colMerge || "", // String, [defalut: false] colMerge된 컬럼을 Merge해서 출력 할 지 여부
 		useDataFormat : options.useDataFormat || "", // String, [defalut: 없음] 그리드 dataType이 text인 경우, 엑셀의 표시형식 '텍스트' 출력 여부( "true"인 경우
@@ -1864,7 +1918,7 @@ com.downLoadExcel = function(grdObj, options, infoArr) {
 /**
  * 설정된 옵션으로 CSV파일을 다운로드 한다.
  * 
- * @date 2017.11.30
+ * @date 2021.11.30
  * @param {Object} grdObj GridView Object
  * @param {Object[]} options JSON형태로 저장된 그리드의 엑셀 다운로드 옵션
  * @param {String} options.fileName [default: excel.csv] 저장 될 파일 이름
@@ -1877,7 +1931,7 @@ com.downLoadExcel = function(grdObj, options, infoArr) {
  * @param {String} [options.saveList] [default: 없음] hidden에 관계없이 저장할 column id들의 array
  * @memberOf com
  * @return {file} CSV file
- * @author InswaveSystems
+ * @author tracom
  * var gridId = "grd_AdvancedExcel";
  * var options = {
  *	 fileName : "downLoadCSV.csv" //[default : excel.csv] options.fileName 값이 없을 경우 default값 세팅
@@ -1903,12 +1957,12 @@ com.downLoadCSV = function(grdObj, options) {
 /**
  * 엑셀 업로드 옵션을 설정하고 확장자 별로 다른 함수(uploadCSV || uploadExcel)를 호출한다.
  * 
- * @date 2017.11.30
+ * @date 2021.11.30
  * @param {Object} grdObj 그리드뷰 ID
  * @param {Array} options JSON형태로 저장된 그리드의 엑셀 업로드 옵션
  * @param {String} type 타입(xls, xlsx, csv)을 구분 후, 적합한 API를 사용하여 업로드 한다.
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @example
  * var gridId = "grd_AdvancedExcel";
  * var type = "xlsx";
@@ -1933,7 +1987,7 @@ com.gridDataUpload = function(grdObj, type, options) {
 /**
  * 엑셀 xls, xlsx 업로드
  *
- * @date 2017.11.30
+ * @date 2021.11.30
  * @param {Object} grdObj GridView Object
  * @param {Object} options JSON형태로 저장된 그리드의 엑셀 업로드 옵션
  *
@@ -1961,7 +2015,7 @@ com.gridDataUpload = function(grdObj, type, options) {
  * @param {String} [options.status]				[defalut: R]업로드된 데이터의 초기 상태값, 설정하지 않으면 "R"로 설정되며 "C"값을 설정 할 수 있다.
  * @param {String} [options.pwd]				 엑셀파일에 암호가 걸려 있는 경우, 비밀번호
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @example
  * var options = {
  *	 type : "0"
@@ -2005,7 +2059,7 @@ com.uploadExcel = function(grdObj, options) {
 /**
  *  엑셀 CSV 업로드
  *
- * @date 2017.11.30
+ * @date 2021.11.30
  * @param {Object} grdObj GridView Object
  * @param {Object} options JSON형태로 저장된 그리드의 엑셀 업로드 옵션
  * @param {String} [options.type] [default: 1, 0] 데이터 형태 (0이면 실 데이터 형태,1이면 display 표시 방식)
@@ -2020,7 +2074,7 @@ com.uploadExcel = function(grdObj, options) {
  * @param {String} [options.expression] [defalut: 1, 0] expression 컬럼 데이터를 포함하고 있는지 여부, 기본값은 미포함(1이면 미포함, 0이면 포함)
  * @param {String} [options.popupUrl] 업로드시에 호출할 popup의 url
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @example
  * var gridId = "grd_AdvancedExcel";
  * var options = {};
@@ -2052,13 +2106,13 @@ com.uploadCSV = function(grdObj, options) {
 /**
  * 해당 그룹 안의 컴포넌트에서 엔터키가 발생하면 해당 컴포넌트의 값을 DataColletion에 저장하고 objFunc 함수를 실행한다.
  *
- * @date 2018.02.15
+ * @date 2021.02.15
  * @param {Object} grpObj 그룹 객체
  * @param {Object} objFunc 함수 객체
  * @param {Number} rowIndex DataList가 바인딩된 gridView인 경우 ==> 현재 포커스된 focusedRowIndex [ex. gridViewId.getFocusedRowIndex()]
  *				 <br/>아닌 경우 ==> rowIndex는 생략
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @example
  * com.setEnterKeyEvent(grp_AuthorityDetail, scwin.search);
  * // return 예시) "엔터키가 발생 -> 해당 함수 실행 및 DataColletion에 UI 컴포넌트에 입력된 데이터를 DataCollection에 저장"
@@ -2110,7 +2164,7 @@ com.setEnterKeyEvent = function(grpObj, objFunc) {
 /**
  * Alert 메시지 창을 호출한다.
  *
- * @date 2017.12.30
+ * @date 2021.12.30
  * @memberOf com
  * @param {String} messageStr 메시지
  * @param {String} closeCallbackFncName 콜백 함수명
@@ -2127,7 +2181,7 @@ com.alert = function(messageStr, closeCallbackFncName) {
 /**
  * 메세지 팝업을 호출한다.
  *
- * @date 2017.12.30
+ * @date 2021.12.30
  * @param {String} messageType 팝업창 타입 (alert || confirm)
  * @param {String} messageStr 메시지
  * @param {String} closeCallbackFncName 콜백 함수명
@@ -2193,7 +2247,7 @@ com.messagBox = function(messageType, messageStr, closeCallbackFncName, isReturn
 /**
  * Confirm 메시지 창을 호출한다.
  * 
- * @date 2016.10.09
+ * @date 2021.10.09
  * @memberOf com
  * @param {String} messageStr 메시지
  * @param {String} closeCallbackFncName 콜백 함수명
@@ -2206,15 +2260,16 @@ com.confirm = function(messageStr, closeCallbackFncName) {
 	com.messagBox("confirm", messageStr, closeCallbackFncName);
 };
 
-com.alert = function(messageStr, closeCallbackFncName) {
+
+/*com.alert = function(messageStr, closeCallbackFncName) {
 	com.messagBox("alert", messageStr, closeCallbackFncName);
-};
+};*/
 
 
 /**
  * 팝업창을 닫는다. callbackStr을 이용하여 부모창의 callback함수를 호출한다.
  * 
- * @date 2016.10.09
+ * @date 2021.10.09
  * @memberOf com
  * @param {String} popId popup창 id로 값이 없을 경우 현재창의 ID(this.popupID) close.
  * @param {String} [callbackStr] callbackFunction명으로 부모 객체는 opener || parent으로 참조한다. opener || parent가 없을 경우 window 참조.
@@ -2259,7 +2314,7 @@ com._closePopup = function(popId, callbackFnStr, retStr, winObj) {
 /**
  * 팝업창을 연다.
  * 
- * @date 2016.10.09
+ * @date 2021.10.09
  * @param {String} url url 화면경로
  * @param {Array} options Popup창 옵션
  * @param {String} [options.id] Popup창 ID
@@ -2353,7 +2408,7 @@ com._openPopup = function(url, opt, data) {
  * 컴포넌트 속성 유효성 검사를 수행하고, valInfoArr 유효성 검사 옵션에 대해서 유효성 검사를 수행한다.
  * valInfoArr 유효성 검사 옵션 파라미터를 전달하지 않은 경우 컴포넌트 속성(mandatory, allowChar, ignoreChar, maxLength, maxByteLength, minLength, minByteLength)에 대해서만 유효성 검사를 수행한다.
  * 
- * @date 2018.01.19
+ * @date 2021.01.19
  * @memberOf com
  * @param {Object} grpObj 그룹 컴포넌트 객체
  * @param {Object[]} options 유효성 검사 옵션 <br/>
@@ -2547,7 +2602,7 @@ com.validateGroup = function(grpObj, valInfoArr, tacObj, tabId) {
 /**
  * GridView를 통해서 입력된 데이터에 대해서 유효성을 검증한다.
  * 
- * @date 2018.01.19
+ * @date 2021.01.19
  * @memberOf com
  * @param {Object} gridViewObj GridView 객체
  * @param {Object[]} options 데이터 유효성 검증 옵션
@@ -2969,7 +3024,7 @@ com.validateGridTableView = function(gridViewObj, tableObj, tacObj, tabId) {
  * @date 2014.12.10
  * @private
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @returns {String} 유효성 검사 결과 메시지
  */
 com.validateMsg = function() {
@@ -3018,10 +3073,10 @@ com.validateMsg = function() {
 /**
  * 파라미터를 읽어 온다.
  * 
- * @date 2019.03.11
+ * @date 2021.03.11
  * @memberOf com
  * @param {String} 파라미터 키
- * @author InswaveSystems
+ * @author tracom
  * @return {Object} 파라미터 값
  * @example var code = com.getParameter("code"); // 특정 파라미터 값을 얻어오기 var param = com.getParameter(); // 전체 파라미터 값을 얻어오기
  */
@@ -3052,9 +3107,9 @@ com.getParameter = function(paramKey) {
 /**
  * 현재 화면의 웹스퀘어 page 경로를 반환한다.
  * 
- * @date 2016.07.19
+ * @date 2021.07.19
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {String} 현재 페이지의 경로
  * @example com.getPageUrl(); // return 예시) "/ui/BM/BM001M01.xml"
  */
@@ -3067,9 +3122,9 @@ com.getPageUrl = function() {
 /**
  * 최상위 page를 index화면으로 이동 (/)
  * 
- * @date 2016.08.05
+ * @date 2021.08.05
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  */
 com.goHome = function() {
 	if (gcm.CONTEXT_PATH == "") {
@@ -3084,9 +3139,9 @@ com.goHome = function() {
  * 정상 처리 : /로 이동.
  * 오류 발생 : 기존 화면으로 오류 메세지 전송
  * 
- * @date 2016.08.08
+ * @date 2021.08.08
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @example
  * com.logout();
  */
@@ -3104,7 +3159,7 @@ com.logout = function() {
 /**
  * contextRoot가 포함된 path를 반환한다.
  *
- * @date 2016.11.16
+ * @date 2021.11.16
  * @memberOf com
  * @param {String} path 파일경로(Context가 포함되지 않은)
  * @return {String} Context가 포함된 파일경로
@@ -3130,7 +3185,7 @@ com.getFullPath = function(path) {
  * @param {String} str 포멧터를 적용할 문자열
  * @param {Number} maxLen 0 으로 채울 길이
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {String} 일정길이 만큼 0 으로 채워진 문자열
  * @example
  * com.fillZero("24", 4);
@@ -3160,7 +3215,7 @@ com.fillZero = function(str, maxLen) {
  * @date 2014.12.09
  * @param {String} str JSON 문자열
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {Object} JSON 객체 or null
  * @example
  * // 유효하지 않은 JSON 문자열 일 경우
@@ -3186,7 +3241,7 @@ com.getJSON = function(str) {
  * @date 2014.12.09
  * @param {Object} object String으로 변환할 JSON 객체
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {String} String으로 변환된 객체
  */
 com.strSerialize = function(object) {
@@ -3207,7 +3262,7 @@ com.strSerialize = function(object) {
  * @date 2014.12.09
  * @param {Object} jsonObj JSON Object가 맞는지 검사할 JSON Object
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {Boolean} true or false
  * @example
  * com.isJSON("");
@@ -3232,7 +3287,7 @@ com.isJSON = function(jsonObj) {
  * @date 2014.12.09
  * @memberOf com
  * @param {Object} data XML Document 객체인지 여부를 검사한다.
- * @author InswaveSystems
+ * @author tracom
  * @return {Boolean} true or false
  */
 com.isXmlDoc = function(data) {
@@ -3248,9 +3303,9 @@ com.isXmlDoc = function(data) {
 /**
  * 객체의 typeof 값을 반환하며 typeof의 값이 object인 경우 array, json, xml, null로 체크하여 반환한다.
  * 
- * @date 2016.12.20
+ * @date 2021.12.20
  * @param {Object} obj type을 반환 받을 객체(string,boolean,number,object 등)
- * @author InswaveSystems
+ * @author tracom
  * @return {String} 객체의 타입으로 typeof가 object인 경우 array, json, xml, null로 세분화하여 반환한다. 그외 object타입이 아닌경우 원래의 type(string,boolean,number 등)을 반환한다.
  * @example
  * com.getObjectType("WebSquare");
@@ -3283,10 +3338,10 @@ com.getObjectType = function(obj) {
 /**
  * 주민번호 문자열에 Formatter(######-#######)를 적용하여 반환한다.
  *
- * @date 2016.08.02
+ * @date 2021.08.02
  * @param {String} str 주민번호 문자열
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {String} 포멧터가 적용된 주민번호 문자열
  * @example
  * com.transIdNum("1234561234567");
@@ -3303,10 +3358,10 @@ com.transIdNum = function(str) {
 /**
  * 전화번호, setDisplayFormat("###-####-####") - 입력된 str에 포메터를 적용하여 반환한다.
  *
- * @date 2016.08.02
+ * @date 2021.08.02
  * @param {String} str 포멧터를 적용할 문자열
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {String} 포멧터가 적용된 문자열
  * @example
  * com.transPhone("0212345678");
@@ -3325,10 +3380,10 @@ com.transPhone = function(str) {
 /**
  * 시간 - 입력된 String 또는 Number에 포메터를 적용하여 반환한다.
  *
- * @date 2016.08.02
+ * @date 2021.08.02
  * @param {String} value 시간 Formatter를 적용한 값 (String 또는 Number 타입 지원)
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {String} 포멧터가 적용된 문자열
  * @example
  * com.transTime("123402");
@@ -3349,7 +3404,7 @@ com.transTime = function(value) {
  * @date 2021.08.27
  * @param {String} value 시간 Formatter를 적용한 값 (String 또는 Number 타입 지원)
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {String} 포멧터가 적용된 문자열
  * @example
  * com.transTime("1234");
@@ -3369,10 +3424,10 @@ com.transTime2 = function(value) {
 /**
  * 소수점 2자리에서 반올림 처리를 한다.
  *
- * @date 2016.08.02
+ * @date 2021.08.02
  * @param {String} value 소수점 2자리 반올림 처리를 할 값 (String 또는 Number 타입 지원)
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {String} 소숫점 2자리 반올림 처리를 한 숫자 값
  * @example
  * com.transRound( "23.4567" );
@@ -3385,10 +3440,10 @@ com.transRound = function(value) {
 /**
  * 소수점 2자리에서 내림 처리를 한다.
  *
- * @date 2016.08.02
+ * @date 2021.08.02
  * @param {String} value 소수점 2자리 내림 처리를 할 값 (String 또는 Number 타입 지원)
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {Number} 소숫점 2자리 내림 처리를 한 숫자 값
  * @example
  * com.transFloor(23.4567);
@@ -3401,11 +3456,11 @@ com.transFloor = function(value) {
 /**
  * 소수점 2자리에서 올림 후 퍼센트(%)를 붙여서 반환한다.
  *
- * @date 2016.08.02
+ * @date 2021.08.02
  * @param {String} value Percent(%) 포맷터를 적용할 값  (String 또는 Number 타입 지원)
  * @param {String} type 적용할 포멧터 형식
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {String} 포멧터가 적용된 문자열
  * @example
  * com.transCeil(23.4567);
@@ -3426,11 +3481,11 @@ com.transCeil = function(value, type) {
 /**
  * 세번째자리마다 콤마 표시, 금액, setDisplayFormat("#,###&#46##0", "fn_userFormatter2") - 입력된 str에 포메터를 적용하여 반환한다.<p>
  *
- * @date 2016.08.02
+ * @date 2021.08.02
  * @param {String} value String or Number 포멧터를 적용할 값 (String 또는 Number 타입 지원)
  * @param {String} type 적용할 포멧터 형식(Default:null,dollar,plusZero,won)
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {String} 포멧터가 적용된 문자열
  * @example
  * com.transComma("12345");
@@ -3489,10 +3544,10 @@ com.transComma = function(value, type) {
 /**
  * 텍스트 - 입력된 str에 포메터를 적용하여 반환한다.
  * 
- * @date 2016.08.02
+ * @date 2021.08.02
  * @param {String} str String or Number 포멧터를 적용할 값
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {String} 포멧터가 적용된 문자열
  * @example 
  * com.transText("1"); 
@@ -3525,11 +3580,11 @@ com.transText = function(str) {
 /**
  * 날짜 - 입력된 str에 포메터를 적용하여 반환한다.
  *
- * @date 2016.08.02
+ * @date 2021.08.02
  * @param {String} str 포멧터를 적용할 파라메터 (String 또는 Number 타입 지원)
  * @param {String} type 적용할 포멧터 형식 Default:null,slash,date
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {String} 포멧터가 적용된 문자열
  * @example
  * com.transDate(20120319, "slash");
@@ -3572,10 +3627,10 @@ com.transDate = function(str, type) {
 /**
  * displayFormatter - 입력된 str에 포메터를 적용하여 반환한다.
  *
- * @date 2016.08.03
+ * @date 2021.08.03
  * @param {String} str 포멧터를 적용할 문자열
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {String} 포멧터가 적용된 문자열
  * @example
  * com.transUpper("google.com");
@@ -3588,10 +3643,10 @@ com.transUpper = function(str) {
 /**
  * 문자(char)의 유형을 리턴한다.
  *
- * @date 2016 08.02
+ * @date 2021 08.02
  * @param {String} str 어떤 유형인지 리턴받을 문자
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {Number} 유니코드 기준 <br><br>
  * 한글음절[ 44032 ~ 55203 ] => 1 <br>
  * 한글자모[ 4352 ~ 4601 ] => 2 <br>
@@ -3644,10 +3699,10 @@ com.getLocale = function(str) {
 /**
  * 입력받은 문자열이 한글이면 true, 아니면 false를 리턴한다.
  * 
- * @date 2016.08.02
+ * @date 2021.08.02
  * @param {String} str 한글 유형인지 검증할 문자열
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {Boolean} true or false
  * @example 
  * com.isKorean(""); 
@@ -3671,10 +3726,10 @@ com.isKorean = function(str) {
 /**
  * 종성이 존재하는지 여부를 검사한다.
  * 
- * @date 2016.08.02
+ * @date 2021.08.02
  * @param {String} str 종성의 여부를 검사할 문자열
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {Boolean} true or false
  * @example 
  * com.isFinalConsonant("종서") 
@@ -3700,10 +3755,10 @@ com.isFinalConsonant = function(str) {
 /**
  * 단어 뒤에 '은'이나 '는'을 붙여서 반환한다.
  * 
- * @date 2016.08.02
+ * @date 2021.08.02
  * @param {String} str 은, 는 붙일 문자열
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {String} 변환된 문자열
  * @example 
  * com.attachPostposition("나"); 
@@ -3727,10 +3782,10 @@ com.attachPostposition = function(str) {
 /**
  * 입력받은 문자열에 한글이 포함되어 있으면 true, 아니면 false를 리턴한다.
  * 
- * @date 2016.08.02
+ * @date 2021.08.02
  * @param {String} str 한글이 포함되어 있는지 검증 받을 문자열
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @return {Boolean} true or false
  * @example 
  * com.isKoreanWord("abcd무궁화"); //return 예시) true
@@ -3909,9 +3964,9 @@ com.checkEmail = function(str) {
 /**
  * 데이터 리스트 필터 설정 함수.
  * 
- * @date 2019.03.13
+ * @date 2021.03.13
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @param {String} _dataComp : 필터 설정 데이터콜렉션 객체ID(dataList 혹은 linkedDataList)
  * @param {String} _condition : 필터 상태값
  * @param {Boolean} _append targetPgCd : 설정 필터 추가 혹은 재정의 [default:true (추가), false(재정의)]
@@ -4128,9 +4183,9 @@ com.dataListFilter = function(_dataComp, _condition, _append, options) {
 /**
  * 컴포넌트 설정 이벤트 중지 함수.
  * 
- * @date 2019.03.13
+ * @date 2021.03.13
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @param {String} _targetComp : 설정 컴포넌트 객체ID
  * @param {Boolean} _flag : 이벤트 설정 여부 값 [default: false(실행), true(중지)]
  * @param {Object} _eventList : 중지 이벤트 리스트 값(배열) [default:null (모든 이벤트)]
@@ -4183,9 +4238,9 @@ com.setEventPause = function(_targetComp, _flag, _eventList) {
 /**
  * 실행 프레임 정보 조회
  * 
- * @date 2019.03.13
+ * @date 2021.03.13
  * @memberOf com
- * @author InswaveSystems
+ * @author tracom
  * @returns {Object} 현재 Active Window 정보 반환
  * @returns {String} activeinfo.type : 액티브 윈도우 타입 [P : 팝업, T: 탭컨텐츠, W: 윈도우컴포넌트]
  * @returns {Object} activeinfo.window : 액티브 윈도우 객체
@@ -4238,6 +4293,15 @@ com.getActiveWindowInfo = function() {
 	return activeInfo;
 }
 
+/**
+ * form write 권한 세팅
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} frm 해당 form
+ * @param {Boolean} yn readOnly로 할지(y이면 readOnly)
+*/
 com.enableWriteForm = function(frm,yn) {
 	try{
 		var objArr = WebSquare.util.getChildren(frm, {
@@ -4254,6 +4318,14 @@ com.enableWriteForm = function(frm,yn) {
 	}
 }
 
+/**
+ * 권한에 따른 쓰기 권한 처리(저장 권한이 없으면 쓰기 동작 하지 않음)
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {autoOpt} 현재 화면에 세팅된 grid 정보
+*/
 com.enableDisp = function(autoOpt) {
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
 	
@@ -4274,6 +4346,14 @@ com.enableDisp = function(autoOpt) {
 	}	
 }
 
+/**권한에 따른 메인 버튼 생성
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} btnOptions 버튼 정보
+ * @param {Object} generator 버튼 정보를 화면에 출력할 generator window
+*/
 com.setMainBtn = function(btnOptions, generator) {
 
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
@@ -4304,7 +4384,16 @@ com.setMainBtn = function(btnOptions, generator) {
 		}
 	}
 }
-/*
+/**권한에 따른 메인 버튼 생성(자동, 사용자 옵션에 따라 버튼 생성)
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {} wfm_mainBtn main 버튼 window
+ * @param {} type 화면 유형
+ * @param {} autoOpt 화면 자동 옵션
+ * @param {} usrOpt 사용자 옵션
+ * 
  사용 예
 var userOptions = {
 	SEARCH: function () {
@@ -4317,7 +4406,6 @@ var autoOptions = {
  };
 com.setMainBtn2(wfm_mainBtn, btnCom.TYPE.SINGLE_GRID, autoOptions, userOptions);
 */
-	
 com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
 	com.enableDisp(autoOpt);
@@ -5010,7 +5098,14 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt) {
 	return gcm.BTN;
 };
 
-/*
+/**권한에 따른 메인 버튼 생성
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {} wfm_mainBtn main 버튼 window
+ * @param {} btnOptions 버튼 옵션
+ * 
 사용 예
 var btnOptions = 
 [
@@ -5056,6 +5151,15 @@ com.setMainBtn3 = function(wfm_mainBtn, btnOptions) {
 	}
 }
 
+/**권한에 따른 팝업 버튼 생성(자동, 팝업 옵션에 따라 버튼 생성)
+* 
+* @date 2021.03.13
+* @memberOf com
+* @author tracom
+* @param {} wfm_mainBtn main 버튼 window
+* @param {} popOpt 팝업 옵션
+* @param {} autoOpt 화면 자동 옵션
+*/
 com.setPopupBtn = function(wfm_mainBtn, popOpt, autoOpt) {
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
 
@@ -5182,6 +5286,14 @@ com.setPopupBtn = function(wfm_mainBtn, popOpt, autoOpt) {
 	return gcm.BTN;
 }
 
+/**권한에 따른 서브 버튼 생성
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} btnOptions 버튼 정보
+ * @param {Object} generator 버튼 정보를 화면에 출력할 generator window
+*/
 com.setSubBtn = function(btnOptions, generator) {
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
 	
@@ -5211,6 +5323,17 @@ com.setSubBtn = function(btnOptions, generator) {
 		}
 	}
 }
+
+/**권한에 따른 서브 버튼 생성(자동, 서브 옵션에 따라 버튼 생성)
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {} wfm_subBtn 서브 버튼 window
+ * @param {} autoOpt 화면 자동 옵션
+ * @param {} subOpt 서브 옵션
+ * 
+ */
 com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 	
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
@@ -5379,6 +5502,29 @@ com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt) {
 	return gcm.BTN;
 };
 
+/**권한에 따른 서브 버튼 생성
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {} btnOptions 버튼 옵션
+ * @param {} wfm_subBtn sub 버튼 window
+ * 
+사용 예
+var btnOptions = 
+[
+	{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick},
+	{userStr:"추가", auth: gcm.BTN.ADD , cbFnc: scwin.btn_add_onclick},
+	{userStr:"삭제", auth: gcm.BTN.DEL, cbFnc: scwin.btn_del_onclick},
+	{userStr:"취소", auth: gcm.BTN.CNL, cbFnc: scwin.btn_cancel_onclick},
+	{userStr:"저장", auth: gcm.BTN.SAVE, cbFnc: scwin.btn_save_onclick},
+	{userStr:"엑셀", auth: gcm.BTN.EXL, cbFnc: scwin.btn_excel_onclick},
+	{userStr:"엑셀업로드", auth: gcm.BTN.EXL_I, cbFnc: scwin.btn_uploadExcel_onclick},
+	{userStr:"엑셀양식", auth: gcm.BTN.EXL_F, cbFnc: scwin.btn_excelForm_onclick},
+	{userStr:"닫기", auth: gcm.BTN.CLOSE, cbFnc: scwin.btn_close_onclick}
+];
+com.setMainBtn3(btnOptions, wfm_mainBtn);
+*/
 com.setSubBtn3 = function(btnOptions, wfm_subBtn) {
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
 	
@@ -5408,6 +5554,15 @@ com.setSubBtn3 = function(btnOptions, wfm_subBtn) {
 		}
 	}
 }
+
+/**그리드 수정 개수에 대한 문구 가져감
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 현재 그리드
+ * @return {String} 수정된 그리드 개수 문구
+ */
 com.strModifiedCnt = function(grid){
 	
 	var str = "";
@@ -5435,6 +5590,15 @@ com.strModifiedCnt = function(grid){
 	}
 	return str
 }
+
+/**복수 그리드 수정 개수에 대한 문구 가져감
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} gridArr 복수 그리드
+ * @return {String} 복수 그리드 개수 문구
+ */
 com.strModifiedCnt2 = function(gridArr){
 	var str = "";
 	var isFirst = true;
@@ -5472,6 +5636,15 @@ com.strModifiedCnt2 = function(gridArr){
 	return str
 }
 
+/**저장 submission 동작후 처리 : 저장전 상태 초기화 및 화면 검색 submission 동작하여 화면 초기화 함
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid1 첫번째 그리드 
+ * @param {Object} searchSbmObj1 검색 submission 객체
+ * @param {Object} grid2 두번째 그리드
+ */
 com.saveDone = function(grid1, searchSbmObj1, grid2){
 	
 	if((typeof grid1 !== "undefined") && (grid1 !== null)){
@@ -5485,6 +5658,15 @@ com.saveDone = function(grid1, searchSbmObj1, grid2){
 	}
 }
 
+/**데이터 저장 가능여부 확인후 저장 프로세스 수행
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드 
+ * @param {Object} form 대상 form
+ * @param {Object} saveSbmObj 저장 submission 객체
+ */
 com.saveData = function(grid,form,saveSbmObj){
 	
 	var isOk = false
@@ -5505,6 +5687,16 @@ com.saveData = function(grid,form,saveSbmObj){
 	}
 }
 
+/**모든 데이터 저장 가능여부 확인후 저장 프로세스 수행
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} mainGrid 대상 main 그리드
+ * @param {Object} subGrid 대상 sub 그리드 
+ * @param {Object} form 대상 form
+ * @param {Object} saveSbmObj 저장 submission 객체
+ */
 com.saveAllData = function(mainGrid,subGrid,form,saveSbmObj){
 
 	var isOk = false
@@ -5525,7 +5717,17 @@ com.saveAllData = function(mainGrid,subGrid,form,saveSbmObj){
 	return isOk;
 }
 
-
+/**검색후 grid에 갱신하는 함수 : 수정할 항목이 있으면 저장후 검색되도록 동작함
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {Object} searchSbmObj 검색 submission 객체
+ * @param {Object} saveSbmObj 저장 submission 객체
+ * @param {Object} param 검색 parameter
+ * @param {String} str 저장 동작시 확인여부 문구
+ */
 com.searchGrid = function(grid,searchSbmObj,saveSbmObj,param, str){
 	if(	(typeof saveSbmObj !== "undefined")&&(saveSbmObj !== null)){
 		var idx = grid.getModifiedIndex().length;
@@ -5562,9 +5764,21 @@ com.searchGrid = function(grid,searchSbmObj,saveSbmObj,param, str){
 	}
 }
 
+/**검색후 2개 grid에 갱신하는 함수 : 수정할 항목이 있으면 저장후 검색되도록 동작함
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} mainGrid 대상 그리드
+ * @param {Object} subGrid 대상 그리드
+ * @param {Object} form 대상 form
+ * @param {Object} searchSbmObj 검색 submission 객체
+ * @param {Object} mainSaveSbmObj main 저장 submission 객체
+ * @param {Object} allSaveSbmObj main/sub 저장 submission 객체
+ * @param {Object} subSaveSbmObj sub 저장 submission 객체
+ * @param {String} str 저장 동작시 확인여부 문구
+ */
 com.searchDualGrid = function(mainGrid, subGrid, form, searchSbmObj,mainSaveSbmObj,allSaveSbmObj,subSaveSbmObj,str){
-	
-	
 	var modifiedMainCnt = mainGrid.getModifiedIndex().length;
 	var modifiedSubCnt = 0;
 	if((typeof subGrid.getModifiedIndex !== "undefined")&&(subGrid.getModifiedIndex !== null))
@@ -5606,6 +5820,21 @@ com.searchDualGrid = function(mainGrid, subGrid, form, searchSbmObj,mainSaveSbmO
 	}
 }
 
+/**검색후 3개 grid에 갱신하는 함수 : 수정할 항목이 있으면 저장후 검색되도록 동작함
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} mainGrid 대상 그리드
+ * @param {Object} subGrid1 대상 그리드
+ * @param {Object} subGrid2 대상 그리드
+ * @param {Object} form 대상 form
+ * @param {Object} searchSbmObj 검색 submission 객체
+ * @param {Object} mainSaveSbmObj main 저장 submission 객체
+ * @param {Object} allSaveSbmObj main/sub 저장 submission 객체
+ * @param {Object} subSaveSbmObj sub 저장 submission 객체
+ * @param {String} str 저장 동작시 확인여부 문구
+ */
 com.searchThirdGrid = function(mainGrid, subGrid1, subGrid2, form, searchSbmObj,mainSaveSbmObj,allSaveSbmObj,subSaveSbmObj1,subSaveSbmObj2,str){
 	
 	
@@ -5659,7 +5888,18 @@ com.searchThirdGrid = function(mainGrid, subGrid1, subGrid2, form, searchSbmObj,
 	}
 }
 
-/*grid 추가시 db에서 key값을 받아와 처리함*/
+/**grid 추가 : db에서 key값을 받아와 처리함
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {Object} keyMap key 값을 가지고 있는 map
+ * @param {String} keyColumn key column 명
+ * @param {String} focusColumn focus column 명
+ * @return {Int} 추가된 index
+ */
+
 com.addGrid = function(grid,keyMap,keyColumn,focusColumn){
 	var data = com.getGridViewDataList(grid);
 	var insertIndex = data.insertRow();
@@ -5668,7 +5908,15 @@ com.addGrid = function(grid,keyMap,keyColumn,focusColumn){
 	return insertIndex;
 }
 
-/*일반적인 grid 추가*/
+/**grid 추가
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {String} focusColumn 대상 form
+ * @return {Int} 추가된 index
+ */
 com.addGrid2 = function(grid,focusColumn){
 	var data = com.getGridViewDataList(grid);
 	var insertIndex = data.insertRow();
@@ -5676,6 +5924,18 @@ com.addGrid2 = function(grid,focusColumn){
 	return insertIndex;
 }
 
+/**grid 추가 : db에서 key값을 받아와 처리함, form 포커스 처리
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {Object} form 대상 form
+ * @param {Object} keyMap key 값을 가지고 있는 map
+ * @param {String} keyColumn key column 명
+ * @param {String} focusColumn focus column 명
+ * @return {Int} 추가된 index
+ */
 com.addGridForm = function(grid,form,keyMap,keyColumn,focusID){
 	var data = com.getGridViewDataList(grid);
 	var insertIndex = data.insertRow();
@@ -5690,6 +5950,15 @@ com.addGridForm = function(grid,form,keyMap,keyColumn,focusID){
 	return insertIndex;
 }
 
+/**grid에 수정된 항목 취소
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {String} str 수정된 항목이 있을때 확인 문구
+ * @param {fnc} cnlGridCb 취소 이후 callback 함수
+ */
 com.cancelGrid = function(grid,str,cnlGridCb){
 
 	var idx = grid.getModifiedIndex().length;
@@ -5709,6 +5978,16 @@ com.cancelGrid = function(grid,str,cnlGridCb){
 	}
 }
 
+/**2개 grid에 수정된 항목 취소
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} mainGrid 대상 main 그리드
+ * @param {Object} subGrid 대상 sub 그리드
+ * @param {fnc} mainGridCb 취소 이후 main callback 함수
+ * @param {fnc} subGridCb 취소 이후 sub callback 함수
+ */
 com.cancelDualGrid = function(mainGrid,subGrid,mainGridCb,subGridCb){
 
 	var mainIdx = mainGrid.getModifiedIndex().length;
@@ -5732,6 +6011,15 @@ com.cancelDualGrid = function(mainGrid,subGrid,mainGridCb,subGridCb){
 	}
 }
 
+/**3개 grid에 수정된 항목 취소
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} mainGrid 대상 main 그리드
+ * @param {Object} subGrid1 대상 sub1 그리드
+ * @param {Object} subGrid2 대상 sub2 그리드
+ */
 com.cancelThirdGrid = function(mainGrid,subGrid1,subGrid2){
 
 	var mainIdx = mainGrid.getModifiedIndex().length;
@@ -5746,12 +6034,18 @@ com.cancelThirdGrid = function(mainGrid,subGrid1,subGrid2){
 				com.clearGrid(mainGrid);
 				com.clearGrid(subGrid1);
 				com.clearGrid(subGrid2);
-				com.clearGrid(subGrid3);
 			}
 		});
 	}
 }
 
+/**grid의 모든 항목을 화면에 보이도록 함
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ */
 com.allVisibleGrid = function(grid){
 	var data = com.getGridViewDataList(grid);
 
@@ -5760,6 +6054,13 @@ com.allVisibleGrid = function(grid){
 	}
 }
 
+/**grid의 모든 항목의 상태를 되돌림
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ */
 com.delUndoGrid = function(grid){
 	var data = com.getGridViewDataList(grid);
 	if((typeof data == "undefined")||(data == null))return;
@@ -5776,6 +6077,14 @@ com.delUndoGrid = function(grid){
 	}
 }
 
+/**grid의 화면 및 상태를 초기화 함
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {fnc} cnlGridCb 초기화 이후에 호출되는 callback 함수
+ */
 com.clearGrid = function(grid, cnlGridCb){
 	
 	 if(com.isEmpty(gcm.GRID_INFO[grid.org_id])==false && com.isEmpty(gcm.GRID_INFO[grid.org_id].undo)==false
@@ -5792,6 +6101,15 @@ com.clearGrid = function(grid, cnlGridCb){
 	}
 }
 
+/**포커스된 grid 삭제
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {String} str 삭제시 확인 문구
+ * @param {fnc} afterCb 삭제 이후에 호출되는 callback 함수
+ */
 com.delGrid = function(grid,str,afterCb){
 	var data = com.getGridViewDataList(grid);
 	var focusIdxs = grid.getAllFocusedRowIndex();
@@ -5870,6 +6188,14 @@ com.delGrid = function(grid,str,afterCb){
 	}
 }
 
+/**포커스된 grid 삭제
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {fnc} afterCb 삭제 이후에 호출되는 callback 함수
+ */
 com.delGrid2 = function(grid,afterCb){
 	var data = com.getGridViewDataList(grid);
 	var focusIdxs = grid.getAllFocusedRowIndex();
@@ -5908,6 +6234,15 @@ com.delGrid2 = function(grid,afterCb){
 	}
 }
 
+/**선택된 grid 삭제
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {String} str 삭제시 확인 문구
+ * @param {fnc} afterCb 삭제 이후에 호출되는 callback 함수
+ */
 com.delGridChecked = function(grid,str,afterCb){
 	var data = com.getGridViewDataList(grid);
 	var focusIdxs = grid.getCheckedIndex("chk");
@@ -5986,6 +6321,13 @@ com.delGridChecked = function(grid,str,afterCb){
 	}
 }
 
+/** grid의 모든 항목 삭제
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ */
 com.delAllGrid = function(grid){
 	var data = com.getGridViewDataList(grid);
 	var count = getTotalRow();
@@ -5995,7 +6337,15 @@ com.delAllGrid = function(grid){
 	}
 }
 
-//부모,자식 그리드 삭제
+/** 2개(부모,자식) 그리드 삭제
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} mainGrid 대상 main 그리드
+ * @param {Object} subGrid 대상 sub 그리드
+ * @param {String} str 삭제시 확인 문구
+ */
 com.delDualGrid = function(mainGrid,subGrid,str){ //듀얼 그리드에서 부모 자식 삭제
 	var data = com.getGridViewDataList(mainGrid);
 	var focusIdxs = mainGrid.getAllFocusedRowIndex();
@@ -6065,6 +6415,16 @@ com.delDualGrid = function(mainGrid,subGrid,str){ //듀얼 그리드에서 부�
 	}
 }
 
+/** 3개(부모,자식1, 자식2) 그리드 삭제
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} mainGrid 대상 main 그리드
+ * @param {Object} subGrid1 대상 sub1 그리드
+ * @param {Object} subGrid2 대상 sub2 그리드
+ * @param {String} str 삭제시 확인 문구
+ */
 com.delThirdGrid = function(mainGrid,subGrid1,subGrid2,str){ //3개 그리드에서 부모 자식 삭제
 	var data = com.getGridViewDataList(mainGrid);
 	var focusIdxs = mainGrid.getAllFocusedRowIndex();
@@ -6135,7 +6495,15 @@ com.delThirdGrid = function(mainGrid,subGrid1,subGrid2,str){ //3개 그리드에
 	}
 }
 
-
+/** 그리드의 수정된 항목 저장
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {String} yesno_str 저장시 yes no 팝업 문구
+ * @param {String} str 저장 오류시 alert 문구
+ */
 com.saveGrid = function(grid,sbmObj,yesno_str,str){
 	var idx = grid.getModifiedIndex().length;
 	
@@ -6163,7 +6531,17 @@ com.saveGrid = function(grid,sbmObj,yesno_str,str){
 	}
 }
 
-//부모,자식 그리드 저장
+/** 2개(부모,자식)그리드의 수정된 항목 저장
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} mainGrid 대상 main 그리드
+ * @param {Object} subGrid 대상 sub 그리드
+ * @param {Object} mainSaveSbmObj main 그리드 저장 submission
+ * @param {Object} allSaveSbmObj 그리드 전체 저장 submission
+ * @param {Object} subSaveSbmObj sub 그리드 저장 submission
+ */
 com.saveDualGrid = function(mainGrid,subGrid,form,mainSaveSbmObj,allSaveSbmObj,subSaveSbmObj){ //듀얼 그리드에서 부모 자식 저장
 	var mainData = com.getGridViewDataList(mainGrid);
 	var subData = com.getGridViewDataList(subGrid);
@@ -6197,6 +6575,19 @@ com.saveDualGrid = function(mainGrid,subGrid,form,mainSaveSbmObj,allSaveSbmObj,s
 	}
 }
 
+/** 3개(부모,자식1, 자식2)그리드의 수정된 항목 저장
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} mainGrid 대상 main 그리드
+ * @param {Object} subGrid1 대상 sub1 그리드
+ * @param {Object} subGrid2 대상 sub2 그리드
+ * @param {Object} mainSaveSbmObj main 그리드 저장 submission
+ * @param {Object} allSaveSbmObj 그리드 전체 저장 submission
+ * @param {Object} subSaveSbmObj1 sub1 그리드 저장 submission
+ * @param {Object} subSaveSbmObj1 sub2 그리드 저장 submission
+ */
 com.saveThirdGrid = function(mainGrid,subGrid1,subGrid2,form,mainSaveSbmObj,allSaveSbmObj,subSaveSbmObj1,subSaveSbmObj2){ //3개의 그리드에서 부모 자식 저장
 	var mainData = com.getGridViewDataList(mainGrid);
 	var subData1 = com.getGridViewDataList(subGrid1);
@@ -6235,6 +6626,18 @@ com.saveThirdGrid = function(mainGrid,subGrid1,subGrid2,form,mainSaveSbmObj,allS
 	}
 }
 
+/** 그리드,form의 수정된 항목 저장
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {Object} form 대상 form
+ * @param {Object} sbmObj 그리드 저장 submission
+ * @param {Object} searchSbmObj 그리드 검색 submission
+ * @param {String} yesno_str 저장시 yes no 팝업 문구
+ * @param {String} str 저장 오류시 alert 문구
+ */
 com.saveGridForm = function(grid,form,sbmObj,searchSbmObj,yesno_str,str){
 	var idx = grid.getModifiedIndex().length;
 	if (idx == 0) {
@@ -6263,8 +6666,15 @@ com.saveGridForm = function(grid,form,sbmObj,searchSbmObj,yesno_str,str){
 	}
 }
 
-//엑셀 다운로드
-com.exlGrid = function(grid, str, type){
+/** 엑셀 다운로드
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {String} str 다운받을 파일이름
+ */
+com.exlGrid = function(grid,str){
 	if(	(typeof str == "undefined") || (str.trim() == ""))
 		str = com.getParameter().menuNm;
 
@@ -6281,6 +6691,11 @@ com.exlGrid = function(grid, str, type){
 /**	 
  * 엑셀의 데이터를 그리드뷰로 업로드 한다.
  * 필요한 옵션이 있다면 options배열에 옵션을 넣는다.
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
  */
 com.exlUploadGrid = function(grid){
 	var options = {};
@@ -6290,8 +6705,12 @@ com.exlUploadGrid = function(grid){
 
 /**
  * 그리드 Excel 포맷을 다운로드 하는 기능 ( 업로드용  Excel 포맷 )
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
  */
-com.exlFrmGrid = function(grid, codeOption){
+com.exlFrmGrid = function(grid){
 	var options = {};
 	options.fileName = "header.xls";
 	options.dataProvider = "com.inswave.template.provider.ExcelDownHeader";
@@ -6300,6 +6719,17 @@ com.exlFrmGrid = function(grid, codeOption){
 	com.gridDataDownLoad(grid, options , infoArr);	
 }
 
+/**검색후 grid,form에 갱신하는 함수 : 수정할 항목이 있으면 저장후 검색되도록 동작함
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {Object} form 대상 form
+ * @param {Object} searchSbmObj 검색 submission 객체
+ * @param {Object} saveSbmObj 저장 submission 객체
+ * @param {String} str 저장 동작시 확인여부 문구
+ */
 com.searchGridForm = function(grid,form,searchSbmObj,saveSbmObj,str){
 	
 	if(	(typeof saveSbmObj !== "undefined")&&(saveSbmObj !== null)){
@@ -6335,6 +6765,12 @@ com.searchGridForm = function(grid,form,searchSbmObj,saveSbmObj,str){
 	}
 }
 
+/**탭 닫음
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ */
 com.tabClose = function(){
 	var tabComp = $w.getComponentById("mf_tac_layout");
 	var param = com.getParameter();
@@ -6347,6 +6783,15 @@ com.tabClose = function(){
 	}
 }
 
+/** 탭 닫음 : 수정할 항목이 있으면 yes no 팝업 출력후 탭 닫음 
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} mainGrid 대상 main 그리드
+ * @param {Object} subGrid 대상 sub 그리드
+ * @param {String} yesno_str 저장시 yes no 팝업 문구
+ */
 com.closeTab = function(mainGrid, subGrid, yesno_str){
 	var mainIdx = mainGrid.getModifiedIndex().length;
 	var subIdx = 0;
@@ -6369,6 +6814,16 @@ com.closeTab = function(mainGrid, subGrid, yesno_str){
 	else com.tabClose();
 }
 
+/** grid에서 특정 column 들의 값 가지고 index를 찾음
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} data 대상 그리드 data
+ * @param {Object} indexs index 배열
+ * @param {Object} column 검색할 column 명
+ * @param {String} value index를 찾을 값
+ */
 com.recurMatchedIndex = function(data, indexs, column, value){
 
 	var retValue  = new Array();
@@ -6380,6 +6835,16 @@ com.recurMatchedIndex = function(data, indexs, column, value){
 	return retValue;
 }
 
+/** grid에서 특정 column 들의 값 가지고 index를 찾음
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} data 대상 그리드 data
+ * @param {Object} keyColumn 검색할 column 명
+ * @param {String} keyValue index를 찾을 값
+ * 
+ */
 com.getMatchedIndex = function(data, keyColumn, keyValue){
 	var keyColumnArr = keyColumn.split(',');
 	var keyValueArr = keyValue.split(',');
@@ -6392,6 +6857,15 @@ com.getMatchedIndex = function(data, keyColumn, keyValue){
 	return indexs;
 }
 
+/** grid에서  특정 column으로 포커스 이동
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {Object} focusColumn 포커스할 column 명
+ * 
+ */
 com.setFocusedCell = function(grid, focusColumn) {
 	try{
 		var gridInfo = gcm.GRID_INFO[grid.org_id];
@@ -6414,6 +6888,16 @@ com.setFocusedCell = function(grid, focusColumn) {
 	}
 };
 
+/** grid에서 특정 값을 가진 column으로 포커스 이동
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {Object} searchColumn 검색할 column 명
+ * @param {Object} searchValue 검색할 column 값
+ * 
+ */
 com.setFocusedCell2 = function(grid, searchColumn, searchValue) {
 	
 	try{
@@ -6425,7 +6909,14 @@ com.setFocusedCell2 = function(grid, searchColumn, searchValue) {
 	}
 };
 
-/*grid정보 초기화*/
+/** grid정보 가지고 있는 object 초기화
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} options 초기화 할 옵션
+ * 
+ */
 com.initGridInfo = function(options){
 	try{
 		
@@ -6494,7 +6985,18 @@ com.initGridInfo = function(options){
 	}
 }
 
-/*포커스된 grid정보 저장함*/
+/** 포커스된 grid정보 세팅함
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {Object} focusOption 포커스를 위한 옵션 정보
+ * @param {int} curIndex 현재 index
+ * @param {String} curKeyValue 현재 key값
+ * @param {oldIndex} oldIndex 이전 index
+ * @param {errIndex} errIndex 오류 index
+ */
 com.setGridInfo = function(grid,focusOption,curIndex,curKeyValue,oldIndex,errIndex){
 	try{
 		gridInfo = gcm.GRID_INFO[grid.org_id];
@@ -6521,7 +7023,16 @@ com.setGridInfo = function(grid,focusOption,curIndex,curKeyValue,oldIndex,errInd
 	}
 }
 
-/*그리드의 key column명 및 value을 업데이트 함*/
+/** 그리드의 key column명 및 value을 업데이트 함
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {String} mainGridNm main grid 명
+ * @param {String} subGridNm1 sub grid1 명
+ * @param {String} subGridNm2 sub grid2 명
+ */
 com.setNameGridInfo = function(grid,mainGridNm, subGridNm1, subGridNm2){
 	try{
 		gridInfo.mainGridNm = mainGridNm;
@@ -6532,7 +7043,13 @@ com.setNameGridInfo = function(grid,mainGridNm, subGridNm1, subGridNm2){
 	}
 }
 
-/*그리드의 메인 항목 명, 서브 항목명 저장*/
+/** 그리드의 현재 index 및 현재 key 값 세팅
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ */
 com.setKeyGridInfo = function(grid){
 	try{
 		gridInfo = gcm.GRID_INFO[grid.org_id];
@@ -6547,8 +7064,19 @@ com.setKeyGridInfo = function(grid){
 	}
 }
 
-/**
-  부모 그리드의 row 인덱스 위치가 바뀔때 마다 실행되며 프로그램코드에 해당하는 자식 그리드를 가져온다.
+/** 2개(main, sub)의 grid change시 처리 : 부모 그리드의 row 인덱스 위치가 바뀔때 마다 실행되며 프로그램코드에 해당하는 자식 그리드를 가져옴
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} mainGrid 대상 main 그리드
+ * @param {Object} subGrid 대상 sub 그리드
+ * @param {Object} subSaveSbmObj sub grid 저장 submission 객체
+ * @param {Object} subSrchSbmObj sub grid 검색 submission 객체
+ * @param {Object} focusOption 포커스를 위한 옵션 정보
+ * @param {int} row 위치 변경시 row index
+ * @param {int} oldRow 이전 row index
+ * @param {String} subNm 서브 grid 명
  */
 com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, focusOption, row, oldRow, subNm) {	
 	var mainData = com.getGridViewDataList(mainGrid);
@@ -6629,6 +7157,20 @@ com.changeDualGrid = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, f
 	gcm.GRID_INFO[mainGrid.org_id].dualSaving = false;
 };
 
+/** 2개(main, sub)의 grid change시 처리 : sub grid 수정사항을 저장하지 않을때 main grid를 초기화 함
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} mainGrid 대상 main 그리드
+ * @param {Object} subGrid 대상 sub 그리드
+ * @param {Object} subSaveSbmObj sub grid 저장 submission 객체
+ * @param {Object} subSrchSbmObj sub grid 검색 submission 객체
+ * @param {Object} focusOption 포커스를 위한 옵션 정보
+ * @param {int} row 위치 변경시 row index
+ * @param {int} oldRow 이전 row index
+ * @param {String} subNm 서브 grid 명
+ */
 com.changeDualGrid2 = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, focusOption, row, oldRow, subNm) {	
 	var mainData = com.getGridViewDataList(mainGrid);
 	var subData = com.getGridViewDataList(subGrid);
@@ -6708,6 +7250,23 @@ com.changeDualGrid2 = function(mainGrid, subGrid, subSaveSbmObj, subSrchSbmObj, 
 	gcm.GRID_INFO[mainGrid.org_id].dualSaving = false;
 };
 
+/** 3개(main, sub1, sub2)의 grid change시 처리 : 부모 그리드의 row 인덱스 위치가 바뀔때 마다 실행되며 프로그램코드에 해당하는 자식 그리드를 가져옴
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} mainGrid 대상 main 그리드
+ * @param {Object} subGrid1 대상 sub1 그리드
+ * @param {Object} subGrid2 대상 sub2 그리드
+ * @param {Object} subSaveSbmObj1 sub1 grid 저장 submission 객체
+ * @param {Object} subSaveSbmObj2 sub2 grid 저장 submission 객체
+ * @param {Object} subSrchSbmObj1 sub1 grid 검색 submission 객체
+ * @param {Object} subSrchSbmObj2 sub2 grid 검색 submission 객체
+ * @param {Object} focusOption 포커스를 위한 옵션 정보
+ * @param {int} row 위치 변경시 row index
+ * @param {int} oldRow 이전 row index
+ * @param {String} subNm 서브 grid 명
+ */
 com.changeThirdGrid = function(mainGrid, subGrid1, subGrid2, subSaveSbmObj1, subSaveSbmObj2, subSrchSbmObj1, subSrchSbmObj2, focusOption, row, oldRow, subNm) {	
 	
 	
@@ -6792,7 +7351,7 @@ com.changeThirdGrid = function(mainGrid, subGrid1, subGrid2, subSaveSbmObj1, sub
 	gcm.GRID_INFO[mainGrid.org_id].dualSaving = false;
 };
 
-com.changeThirdGrid2 = function(mainGrid, subGrid1, subGrid2, subSrchSbmObj1, subSrchSbmObj2, focusOption, row, oldRow, subNm, subSaveSbmObj1, subSaveSbmObj2) {	
+/*com.changeThirdGrid2 = function(mainGrid, subGrid1, subGrid2, subSrchSbmObj1, subSrchSbmObj2, focusOption, row, oldRow, subNm, subSaveSbmObj1, subSaveSbmObj2) {	
 	
 	
 	var mainData = com.getGridViewDataList(mainGrid);
@@ -6873,8 +7432,17 @@ com.changeThirdGrid2 = function(mainGrid, subGrid1, subGrid2, subSrchSbmObj1, su
 		}
 	}
 	gcm.GRID_INFO[mainGrid.org_id].dualSaving = false;
-};
+};*/
 
+/** 1개의 grid change시 처리
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} mainGrid 대상 main 그리드
+ * @param {int} row 위치 변경시 row index
+ * @param {int} oldRow 이전 row index
+ */
 com.changeSingleGrid = function(mainGrid, row, oldRow) {
 	
 	var curKeyValue = "";
@@ -6897,6 +7465,7 @@ com.changeSingleGrid = function(mainGrid, row, oldRow) {
 	}
 };
 
+/*사용안함*/
 com.insertMappingGrid = function(targetGrid, sourceObj, pKeyMap, pKey, key){
 	var data = com.getGridViewDataList(targetGrid);
 	var dLength = obj.length;
@@ -6911,7 +7480,15 @@ com.insertMappingGrid = function(targetGrid, sourceObj, pKeyMap, pKey, key){
 	}
 }
 
-
+/** 특정 grid 값을 제외한 grid 추출
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {Object} items 제외할 grid 데이터를 가지고 있는 item 배열
+ * @param {String} matchedColumn 매칭할 column
+ */
 com.excludeItemsByGrid = function(grid, items, matchedColumn){
 	var data = com.getGridViewDataList(grid);
 	for (i = 0; i < items.length; i++) {
@@ -6930,7 +7507,7 @@ if (shortcutTargetElement.attachEvent) {
 
 
 
-/**
+/** 사용안함
  * 실행 프레임 정보 조회
  * 
  * @date 2021.05.17
@@ -7006,10 +7583,25 @@ com.searchPopup = function(url, opt, column, data) {
 	
 }
 
+/** xss decoding
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {String} str 대상 문구
+ */
 com.decodeXss = function(str) {
 	return str.replaceAll("&#40;", "(").replaceAll("&#41;", ")");
 }
 
+/** 노선의 노드 순번을 그리드 순서대로 재 할당함.
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {String} column 대상 column 명
+ */
 com.setSerialNumberToData= function(grid, column){
 	var data = com.getGridViewDataList(grid);
 	var rowData = data.getAllJSON();
@@ -7027,10 +7619,18 @@ com.setSerialNumberToData= function(grid, column){
 	return nodeSn;
 }
 
+/** 문구가 비었는지 확인
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {String} str 대상 문구
+ */
 com.isEmpty = function(str){
 	return str == ''||str == null||typeof str == "undefined";
 }
 
+/* 사용 안함 */
 com.loadingBar = function(isShowLoadinBar){
 	if(com.isEmpty(isShowLoadinBar))
 	{
@@ -7064,9 +7664,19 @@ com.loadingBar = function(isShowLoadinBar){
 	}
 }
 
+/** 특정 column의 값보다 큰 index 찾음
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} data 대상 그리드의 data
+ * @param {String} column 대상 column 명
+ * @param {int} value 비교할 column의 값
+ * @return {int} 특정 column의 값보다 큰 index
+ */
 com.indexGridNear = function(data, column, value){
 	var i = 0;
-	for(i = 0; i < data.getRowCount(); i++) { //노선의 노드 순번을 그리드 순서대로 재 할당함.
+	for(i = 0; i < data.getRowCount(); i++) {
 		if(data.getRowStatus(i)!="D"){
 			if(data.getCellData(i,column) > value){
 				return i;
@@ -7076,7 +7686,16 @@ com.indexGridNear = function(data, column, value){
 	return i;
 }
 
-//grid 이동
+/** grid에서 검색하여 해당 값이 있는 위치로 포커스 이용
+ * 
+ * @date 2021.03.13
+ * @memberOf com
+ * @author tracom
+ * @param {Object} grid 대상 그리드
+ * @param {String} searchColumn 검색할 column 명
+ * @param {int} content 검색어
+ * @return {int} index 현재 index
+ */
 com.gridMove = function(grid,searchColumn, content, index){
 	var data = com.getGridViewDataList(grid);
 	var rowData = data.getAllJSON();

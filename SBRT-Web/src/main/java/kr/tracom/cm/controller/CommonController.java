@@ -32,7 +32,7 @@ public class CommonController extends ControllerSupport {
 	 * @date 2017.12.22
 	 * @param {} 없음
 	 * @returns mv dlt_commonSearchItem ( 공통코드 아이템 리스트 )
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/common/selectCommonSearchItem")
@@ -47,7 +47,7 @@ public class CommonController extends ControllerSupport {
 	 * @date 2017.12.22
 	 * @param {} 없음
 	 * @returns mv List : 공통코드 전체 리스트
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/common/selectCommonDtl")
@@ -62,7 +62,7 @@ public class CommonController extends ControllerSupport {
 	 * @date 2017.12.22
 	 * @param {} dma_userInfo { SSN_USER_ID :"사용자 ID" }
 	 * @returns mv List ( 사용자의 메뉴 리스트 )
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	/*@RequestMapping("/common/selectMenuList")
@@ -77,7 +77,7 @@ public class CommonController extends ControllerSupport {
 	 * @date 2017.12.22
 	 * @param {} dma_commonCO { CO_CD : "공통그룹 코드" }
 	 * @returns mv dlt_commonDtl ( 공통코드 리스트 );
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/common/selectCommonDtlList")
@@ -99,7 +99,7 @@ public class CommonController extends ControllerSupport {
 	 * @date 2017.12.22
 	 * @param {} dlt_commonCo ( 공통코드그룹 상태인( C,U,D ) 리스트 ), dlt_commonDtl ( 공통코드 상태인( C,U,D ) 리스트 )
 	 * @returns mv dlt_result (입력,수정,삭제된 건수 및 상태)
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/common/updateCommonCoAll")
@@ -116,7 +116,7 @@ public class CommonController extends ControllerSupport {
 	 * @date 2017.12.22
 	 * @param {} dlt_commonCo ( 공통코드그룹 상태인( C,U,D ) 리스트 ), dma_search ( 조회조건 )
 	 * @returns mv dlt_result (입력,수정,삭제된 건수 및 상태), dlt_commonCo ( 공통코드 그룹 리스트 )
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/common/updateCommonCo")
@@ -133,7 +133,7 @@ public class CommonController extends ControllerSupport {
 	 * @date 2017.12.22
 	 * @param {} dlt_commonDtl ( 공통코드 상태인( C,U,D ) 리스트 ), dma_commonCO ( 조회조건 )
 	 * @returns mv dma_result ( 입력,수정,삭제된 건수 및 상태 ), dlt_commonDtl ( 공통코드 리스트 )
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/common/selectCommonDtlUpdate")
@@ -150,7 +150,7 @@ public class CommonController extends ControllerSupport {
 	 * 
 	 * @date 2017.12.22
 	 * @param param {dma_commonDtl : {CO_CD:"02,01", DATA_PREFIX:"dlt_code"}}
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/common/selectCodeList")
@@ -195,7 +195,7 @@ public class CommonController extends ControllerSupport {
 	 * 
 	 * @date 2017.12.22
 	 * @param param {dma_commonDtl : {CO_CD:"02,01", DATA_PREFIX:"dlt_code"}}
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/common/selectCodeList2")
@@ -243,7 +243,7 @@ public class CommonController extends ControllerSupport {
 	 * 
 	 * @date 2021.04.28
 	 * @param param {dma_commonDtl : {CO_CD:"02,01", DATA_PREFIX:"dlt_code"}}
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/common/selectSystemList")

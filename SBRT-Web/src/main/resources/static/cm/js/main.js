@@ -1,7 +1,7 @@
 /**
  * 화면 초기 로딩
  * @lastUpdate 2016.08.28 
- * @author InswaveSystems
+ * @author tracom
  * @since 2016.08.28
  */
 scwin.initMainLoad = function() {
@@ -15,7 +15,7 @@ scwin.initMainLoad = function() {
  * WindowContainer의 닫기 이벤트
  * @lastUpdate 2016.08.28
  * @param <String> windowTitle
- * @author InswaveSystems
+ * @author tracom
  * @since 2016.08.28
  * @example
  */

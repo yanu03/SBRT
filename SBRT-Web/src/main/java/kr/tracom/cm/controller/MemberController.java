@@ -27,7 +27,7 @@ public class MemberController extends ControllerSupport{
 	 * 
 	 * @date 2017.12.22
 	 * @returns mv dlt_memberOrganization ( 인사관리 소속 )
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/member/searchMemberBasicOrganization")
@@ -42,7 +42,7 @@ public class MemberController extends ControllerSupport{
 	 * @date 2017.12.22
 	 * @param {} 없음
 	 * @returns mv dlt_memberSearchItem ( 인사기본관리 아이템 리스트 )
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/member/selectMemberSearchItem")
@@ -57,7 +57,7 @@ public class MemberController extends ControllerSupport{
 	 * @date 2017.12.22
 	 * @param {} dma_search { TYPE:"사원명 또는 사원코드 또는 직위 또는 소속", CONTENTS:"검색어", USE_YN:"사용여부" }
 	 * @returns mv dlt_memberBasic ( 인사기본관리 리스트 )
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/member/searchMemberBasic")
@@ -72,7 +72,7 @@ public class MemberController extends ControllerSupport{
 	 * @date 2017.12.22
 	 * @param {} dlt_memberBasic ( 인사기본관리 상태인( C,U,D ) 리스트 )
 	 * @returns mv dlt_result ( 입력,수정,삭제된 건수 및 상태 ), dlt_memberBasic ( 인사기본관리 리스트 )
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example
 	 */
 	@RequestMapping("/member/updateMemberBasic")
