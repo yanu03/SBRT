@@ -27,15 +27,17 @@
 					,	A.EVT_DATA
 					,	A.STOP_TM
 					,	DATE_FORMAT(A.OCR_DTM, '%H:%i:%s') OCR_DTM
-					,	B.NODE_NM
+					<!--  ,   MAX(CASE A.EVT_DATA )-->
+					,	B.NODE_NM AS EVE_NODE_NM
 					,	B.NODE_TYPE
 					, 	C.ROUT_NM
 					,	D.ORGA_NM
 					,	E.DRV_NM
 					,	F.LINK_NM
+					,   G.NODE_NM AS NODE_NM
 	FROM				BRT_OPER_EVENT_HIS A
 	LEFT JOIN 			BMS_NODE_MST B
-	ON 					A.NODE_ID = B.NODE_ID	
+	ON 					A.EVT_DATA = B.NODE_ID
 	LEFT JOIN			BMS_ROUT_MST C	
 	ON					A.ROUT_ID = C.ROUT_ID
 	LEFT JOIN	  		BMS_VOC_ORGA_INFO D
@@ -44,6 +46,8 @@
 	ON					A.DRV_ID = E.DRV_ID
 	LEFT JOIN	  		BMS_LINK_MST F
 	ON					A.LINK_ID = F.LINK_ID
+	LEFT JOIN 			BMS_NODE_MST G
+	ON 					A.NODE_ID = G.NODE_ID
 	WHERE				A.OPER_DT IS NOT NULL
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT1)">
 				AND A.REP_ROUT_ID = #{CONTENT1}
@@ -53,6 +57,9 @@
 		</if>
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT3)">
 				AND A.VHC_ID LIKE CONCAT('%', #{CONTENT3}, '%')
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT4)">
+				AND A.EVT_TYPE LIKE CONCAT('%', #{CONTENT4}, '%')
 		</if>
 		
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(F_DATE) and @kr.tracom.util.CommonUtil@empty(L_DATE)">
@@ -65,6 +72,17 @@
 			AND A.OPER_DT between #{F_DATE} and #{L_DATE}
 		</if>
 	ORDER BY			A.OPER_DT DESC, A.OCR_DTM DESC
+</select>
+
+<select id="VH0400EVT" parameterType="Map" resultType="Map">
+	SELECT
+		EVT_TYPE
+	FROM
+		BRT_OPER_EVENT_HIS
+	GROUP BY
+		EVT_TYPE
+	ORDER BY
+		EVT_TYPE
 </select>
 
 </mapper>

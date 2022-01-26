@@ -1,22 +1,14 @@
 package kr.tracom.brt.domain.ST0604;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import kr.tracom.bms.domain.PI0503.PI0503Mapper;
-import kr.tracom.bms.ftp.FTPHandler;
 import kr.tracom.cm.support.ServiceSupport;
-import kr.tracom.cm.support.exception.MessageException;
-import kr.tracom.util.Constants;
-import kr.tracom.util.Result;
 
 @Service
 public class ST0604Service extends ServiceSupport {

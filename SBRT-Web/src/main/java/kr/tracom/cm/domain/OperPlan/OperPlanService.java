@@ -1407,7 +1407,11 @@ public class OperPlanService extends ServiceSupport {
 		return operPlanMapper.selectOperAllocRealNode(map);
 	}
 
-
+	public List selectOperAllocRealNodeCnt() throws Exception {
+		Map param = getSimpleDataMap("dma_sub_search");
+		return operPlanMapper.selectOperAllocRealNodeCnt(param);
+	}
+	
 	public List<Map<String, Object>> selectOperPlanRoutDesc() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
 		map.put("WAY_DIV", "WD002");

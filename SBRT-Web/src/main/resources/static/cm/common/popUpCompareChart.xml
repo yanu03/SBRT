@@ -24,7 +24,7 @@
 					<w2:column id="CNT" name="개수" dataType="number" defaultValue="0"></w2:column>
 				</w2:columnInfo>
 			</w2:dataList>
-			<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_OPER_ALLOC_PL_NODE_INFO" saveRemovedData="true">
+			<!-- <w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_OPER_ALLOC_PL_NODE_INFO" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
 						<w2:column id="DAY_DIV" name="요일구분" dataType="text"></w2:column>
@@ -46,7 +46,7 @@
 						<w2:column id="WAY_DESC_NM" name="하행명" dataType="text"></w2:column>
 						<w2:column id="ACCRU_LEN" name="누적길이" dataType="text"></w2:column>
 					</w2:columnInfo>
-				</w2:dataList>
+				</w2:dataList> -->
 				<w2:dataMap baseNode="map" id="dma_sub_search">
 					<w2:keyInfo>
 						<w2:key id="DAY_DIV" name="요일구분" dataType="text"></w2:key>
@@ -82,12 +82,12 @@
 				</w2:dataList>
 		</w2:dataCollection>
 		<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_AL0203G1R0" ref="data:json,dma_sub_search" target='data:json,dlt_BRT_OPER_ALLOC_PL_NODE_CNT'
+			<!-- <xf:submission id="sub_AL0203G1R0" ref="data:json,dma_sub_search" target='data:json,dlt_BRT_OPER_ALLOC_PL_NODE_CNT'
 				action="/al/AL0203G0P1" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0203G1R0_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_AL0203G0P0" ref="data:json,dma_sub_search" target='data:json,dlt_BRT_OPER_ALLOC_PL_NODE_INFO'
+			<xf:submission id="sub_AL0203G0P0" ref="data:json,dma_sub_search" target='data:json,dlt_BRT_OPER_ALLOC_RL_NODE_INFO'
 				action="/operPlan/selectOperAllocPlanNode" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0203G0P0_submitdone" ev:submiterror=""
 				abortTrigger="">
@@ -95,7 +95,7 @@
 			<xf:submission id="sub_OPER_ALL_REAL_NODE" ref="data:json,dma_sub_search" target="data:json,dlt_BRT_OPER_ALLOC_RL_NODE_INFO"
 				action="/operPlan/selectOperAllocRealNode" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
 				errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_OPER_ALL_REAL_NODE_submitdone" ev:submiterror="" abortTrigger="">
-			</xf:submission>
+			</xf:submission> -->
 	</xf:model>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
@@ -109,20 +109,24 @@
 		scwin.closeCallbackFncName = scwin.param.callbackFn;
 		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
 		
-		dlt_BRT_OPER_ALLOC_PL_NODE_INFO.setJSON(scwin.param.data5, true);
+		//dlt_BRT_OPER_ALLOC_PL_NODE_INFO.setJSON(scwin.param.data5, true);
 		dlt_BRT_OPER_ALLOC_RL_NODE_INFO.setJSON(scwin.param.data6, true);
+		popup_title.setValue(scwin.param.data3 + " " + scwin.param.data4 + "회차");
 		
-		dma_sub_search.set("ROUT_ID", scwin.param.data);
-		dma_sub_search.set("DAY_DIV", scwin.param.data2);
-		dma_sub_search.set("ROUT_NM", scwin.param.data3);
-		dma_sub_search.set("OPER_SN", scwin.param.data4);
+		/* 삭제
+			dma_sub_search.set("ROUT_ID", scwin.param.data);
+			dma_sub_search.set("DAY_DIV", scwin.param.data2);
+			dma_sub_search.set("ROUT_NM", scwin.param.data3);
+			dma_sub_search.set("OPER_SN", scwin.param.data4);
+			
+			com.executeSubmission(sub_AL0203G1R0);		
+			com.executeSubmission(sub_AL0203G0P0);
+			com.executeSubmission(sub_OPER_ALL_REAL_NODE);
+			
+			dma_sub_search.set("OPER_SN", dma_sub_search.get("OPER_SN")+'회차');		
+			scwin.drawChart();
+		*/
 		
-		//com.executeSubmission(sub_AL0203G1R0);		
-		//com.executeSubmission(sub_AL0203G0P0);
-		//com.executeSubmission(sub_OPER_ALL_REAL_NODE);
-		
-		dma_sub_search.set("OPER_SN", dma_sub_search.get("OPER_SN")+'회차');		
-		//scwin.drawChart();
 		scwin.testDrawChart2();		
 	};
 	
@@ -132,13 +136,13 @@
 	
 	
 	
-	scwin.sub_AL0203G0P0_submitdone = function(e) {
+	/*scwin.sub_AL0203G0P0_submitdone = function(e) {
 	
 	};
 	
 	scwin.sub_OPER_ALL_REAL_NODE_submitdone = function(e) {
 	
-	};
+	};*/
 	
 	
 	
@@ -167,8 +171,8 @@
 		var j = 0;
 		var num = 0;
 
-		var rowCount = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getRowCount();
-		var jsonData = dlt_BRT_OPER_ALLOC_PL_NODE_INFO.getAllJSON();
+		var rowCount = dlt_BRT_OPER_ALLOC_RL_NODE_INFO.getRowCount();
+		var jsonData = dlt_BRT_OPER_ALLOC_RL_NODE_INFO.getAllJSON();
 		var rlAllJson = dlt_BRT_OPER_ALLOC_RL_NODE_INFO.getAllJSON();
 		
 		var data = new Array();
@@ -226,7 +230,7 @@
 			var accruLen = rlAllJson[y].ACCRU_LEN;
 			var nodeType = rlAllJson[y].NODE_TYPE;
 			
-			if(nodeType=='NT002'){
+			if((nodeType=='NT002')&&(com.isEmpty(arrvTm)==false)){
 				var categoryJson = new Object();
 				
 				categoryJson.x = new Date(updDtm+' '+arrvTm);
@@ -235,7 +239,7 @@
 				
 			}
 			
-			if((nodeType=='NT002')&&(arrvTm!=dprtTm)){
+			if((nodeType=='NT002')&&(arrvTm!=dprtTm)&&(com.isEmpty(dprtTm)==false)){
 				var categoryJson = new Object();
 			
 				categoryJson.x = new Date(updDtm+' '+dprtTm);
@@ -309,8 +313,7 @@
 	 		<xf:group id="popup_header" style="" class="popup_header">
 	 			<xf:group class="gr_search" id="" style="">
 	 				<xf:group class="label" id="" style="">
-	 					<w2:span class="" id="" label="" ref="data:dma_sub_search.ROUT_NM"></w2:span>
-	 					<w2:span class="" id="" label="" ref="data:dma_sub_search.OPER_SN"></w2:span>
+	 					<w2:span class="" id="popup_title" label="" ref=""></w2:span>
 	 				</xf:group>
 	 			</xf:group>
 	 		</xf:group>

@@ -35,7 +35,7 @@ public class WqLargeResultHandler implements ResultHandler {
 	 * 
 	 * @date 2016.08.17
 	 * @param rowMap row단위의 Map객체
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example 샘플 코드
 	 * @todo 추가해야 할 작업
 	 */
@@ -63,7 +63,7 @@ public class WqLargeResultHandler implements ResultHandler {
 	 * 
 	 * @date 2016.08.17
 	 * @returns <Object> [Map, String]반환 받은 뒤 type변환 필요.
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example new LargeDataHandler()<br/>
 	 *		  - return Map 객체 : {columnInfo:[],data:[],rowCount:0,colCount:0}<br/>
 	 * @todo 추가해야 할 작업

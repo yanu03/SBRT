@@ -475,7 +475,7 @@
 		var rowIndex = 0;
 		var rowCnt = 0;
 		
-		
+		var firstIndex = 0;
 		for(var i = 0; i < rowCntArr.length; i++) {
 			var j = 0;
 			rowIndex += rowCnt;
@@ -486,6 +486,7 @@
 			dlt_VIEW_CUR_OPER_ALLOC_PL_NODE_INFO_HIS.setCellData(idx, "OPER_SN", columnVal);
 			
 			for(j = 0; j < rowCnt; j++) {
+
 				var nodeStTm = dlt_BRT_CUR_CHG_OPER_DTL_INFO_HIS.getCellData(rowIndex+j, "DPRT_TM");
 				var nodeEdTm = dlt_BRT_CUR_CHG_OPER_DTL_INFO_HIS.getCellData(rowIndex+j, "ARRV_TM");
 				dlt_VIEW_CUR_OPER_ALLOC_PL_NODE_INFO_HIS.setCellData(idx, "ARRV_TM_"+j, nodeEdTm);
@@ -495,13 +496,16 @@
 				var chgArrvTm = dlt_BRT_CUR_CHG_OPER_DTL_INFO_HIS.getCellData(rowIndex+j, "CHG_ARRV_TM");
 				dlt_VIEW_CUR_OPER_ALLOC_PL_NODE_INFO_HIS.setCellData(idx, "CHG_ARRV_TM_"+j, chgArrvTm);
 				dlt_VIEW_CUR_OPER_ALLOC_PL_NODE_INFO_HIS.setCellData(idx, "CHG_DPRT_TM_"+j, chgDprtTm);
-				
+
+				if((com.isEmpty(chgArrvTm)==false)&&(firstIndex==0)){
+					firstIndex = i;
+				}
 			}
 		}
 		
 		//gridView 정보 정의 
 		//xml 형식을 정의 하면 <w2:gridView 에 xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" 포함 합니다.
-		var gridStr = '<w2:gridView xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" dataList="dlt_VIEW_CUR_OPER_ALLOC_PL_NODE_INFO_HIS" '
+		var gridStr = '<w2:gridView xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" dataList="dlt_VIEW_CUR_OPER_ALLOC_PL_NODE_INFO_HIS" focusMode="row" '
 						+ 'scrollByColumn="true" id="VH0200G1" ev:onrowindexchange="scwin.VH0200G1_onrowindexchange" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" readOnly="true" mergeCol="OPER_SN, WAY_DIV" >'
 		+ '<w2:header id="header1" style="text-align:left">'
 		+ gridHeader
@@ -516,9 +520,9 @@
 		VH0200G1.setGridStyle(WebSquare.xml.parse( gridStr , true ));
 		autoOptions.Sub1.grid = VH0200G1;
 		VH0200G1.setFixedColumn(1);
-		
 
-		dlt_VIEW_CUR_OPER_ALLOC_PL_NODE_INFO_HIS.modifyAllStatus("R")
+		dlt_VIEW_CUR_OPER_ALLOC_PL_NODE_INFO_HIS.modifyAllStatus("R");
+		VH0200G1.setFocusedCell(firstIndex, "OPER_SN", false);
 	};
        
     //빈 그리드 그리기(FOR 엑셀)
@@ -552,7 +556,7 @@
 		
 		//gridView 정보 정의 
 		//xml 형식을 정의 하면 <w2:gridView 에 xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" 포함 합니다.
-		var gridStr = '<w2:gridView xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" dataList="dlt_VIEW_CUR_OPER_ALLOC_PL_NODE_INFO_HIS" '
+		var gridStr = '<w2:gridView xmlns:w2="http://www.inswave.com/websquare" xmlns:ev="http://www.w3.org/2001/xml-events" dataList="dlt_VIEW_CUR_OPER_ALLOC_PL_NODE_INFO_HIS" focusMode="row" '
 						+ 'scrollByColumn="true" id="VH0200G1" ev:onrowindexchange="scwin.VH0200G1_onrowindexchange" class ="cm_grid right" fixedColumnWithHidden="true" useShiftKey="false" mergeCells="byrestriccol" mergeCol="OPER_SN, WAY_DIV" >'
 		+ '<w2:header id="header1" style="text-align:left">'
 		+ gridHeader

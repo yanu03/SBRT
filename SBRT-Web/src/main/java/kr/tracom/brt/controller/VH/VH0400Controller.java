@@ -24,4 +24,10 @@ public class VH0400Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/vh/VH0400EVT")
+	public @ResponseBody Map<String, Object> VH0400EVT() throws Exception {
+		result.setData("dlt_evtType", vh0400Service.VH0400EVT());
+		return result.getResult();
+	}
+	
 }

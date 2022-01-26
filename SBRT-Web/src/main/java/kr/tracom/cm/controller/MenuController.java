@@ -26,7 +26,7 @@ public class MenuController extends ControllerSupport{
 	 * 
 	 * @date 2017.12.22
 	 * @param {} dma_search { TYPE:"메뉴명 또는 메뉴코드 또는 부모메뉴명 또는 메뉴레벨", CONTENTS:"검색어", USE_YN:"사용여부" }
-	 * @returns mv dlt_menu ( 메뉴관리 리스트 ) author InswaveSystems
+	 * @returns mv dlt_menu ( 메뉴관리 리스트 ) author tracom
 	 * @example
 	 */
 	@RequestMapping("/menu/searchMenu")
@@ -50,7 +50,7 @@ public class MenuController extends ControllerSupport{
 	 * @date 2017.12.22
 	 * @param {} dlt_menu ( 메뉴관리 상태인( C,U,D ) 리스트 ), dma_search { TYPE:"메뉴명 또는 메뉴코드 또는 부모메뉴명 또는 메뉴레벨", CONTENTS:"검색어" }
 	 * @throws Exception 
-	 * @returns mv dlt_result ( 입력,수정,삭제된 건수 및 상태 ), dlt_menu ( 메뉴관리 리스트 ) author InswaveSystems
+	 * @returns mv dlt_result ( 입력,수정,삭제된 건수 및 상태 ), dlt_menu ( 메뉴관리 리스트 ) author tracom
 	 * @example
 	 */
 	@RequestMapping("/menu/updateMenu")
