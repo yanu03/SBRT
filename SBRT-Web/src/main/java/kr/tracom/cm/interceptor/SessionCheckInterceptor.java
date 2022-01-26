@@ -76,7 +76,7 @@ public class SessionCheckInterceptor extends HandlerInterceptorAdapter {
 	 * @param argument
 	 *			파라미터 정보
 	 * @returns <boolean> 반환 변수 및 객체
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example 샘플 코드
 	 */
 	private boolean isSkipURI(HttpServletRequest request) {

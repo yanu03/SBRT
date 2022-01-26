@@ -537,7 +537,7 @@
 		
 		
 		map.setLevel(4);
-		map.setZoomable(false);
+		//map.setZoomable(false);
 		
 		com.executeSubmission(sub_selectCommuMap);
 		com.executeSubmission(sub_selectSigPeriod);
@@ -629,19 +629,19 @@
 							break;
 							
 							case "ET003":
-							eventMessage = "기점에 도착하였습니다.";
+							eventMessage = "기점"+"("+jsonObj.NODE_NM+")"+"에 도착하였습니다.";
 							break;
 							
 							case "ET004":
-							eventMessage = "기점에서 출발하였습니다.";
+							eventMessage = "기점"+"("+jsonObj.NODE_NM+")"+"에서 출발하였습니다.";
 							break;
 							
 							case "ET005":
-							eventMessage = "종점에 도착하였습니다.";
+							eventMessage = "종점"+"("+jsonObj.NODE_NM+")"+"에 도착하였습니다.";
 							break;
 							
 							case "ET006":
-							eventMessage = "종점에서 출발하였습니다.";
+							eventMessage = "종점"+"("+jsonObj.NODE_NM+")"+"에서 출발하였습니다.";
 							break;
 							
 							case "ET007":
@@ -660,7 +660,39 @@
 							
 							case "ET010":
 							eventMessage = "버스 문이 닫혔습니다.";
-							break;							
+							break;		
+							
+							case "ET011":
+							eventMessage = jsonObj.NODE_NM + "에서 무정차 주행하였습니다.";
+							break;
+							
+							case "ET012":
+							eventMessage = "과속 주행하였습니다. 현재속도 " + jsonObj.SPEED + "km/h입니다," ;
+							break;
+							
+							case "ET013":
+							eventMessage = "급가속하였습니다.";
+							break;
+							
+							case "ET014":
+							eventMessage = "급감속하였습니다.";
+							break;
+							
+							case "ET015":
+							eventMessage = "급출발하였습니다.";
+							break;
+							
+							case "ET016":
+							eventMessage = "급정지하였습니다.";
+							break;
+							
+							case "ET017":
+							eventMessage = "개문주행하였습니다.";
+							break;
+							
+							case "ET018":
+							eventMessage = "노선이탈하였습니다.";
+							break;												
 						}
 						dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_DATA", eventMessage);
 						
@@ -760,13 +792,15 @@
 						
 						var min = "";
 						var sec = "";
-							
+						
+						//디스패치가 일반메시지가 아닐경우	
 						if(parseInt(dsptchConts) != "undefined" && dsptchDiv != "DP001") {
 							if(Math.abs(parseInt(dsptchConts) >= 60)) {
 								 min = Math.abs(parseInt(dsptchConts/60)) + "분 ";
 							}
 							 sec = Math.abs(parseInt(dsptchConts%60)) + "초 ";
-							 
+							
+							//운행중 디스패치일 경우 
 							if(dsptchDiv == "DP002") {
 								if(dsptchKind == "DK001") {
 									contsResult = "정상 운행중입니다.";
@@ -788,11 +822,13 @@
 //								}
 							}
 							
+							//정차중 디스패치일 경우
 							else if(dsptchDiv == "DP003") {
 								contsResult = min + sec + "정차하세요.";	
 							}
 							dlt_BRT_DSPTCH_LOG.setCellData(0, "DSPTCH_CONTS", contsResult);			
 						} 
+						//디스패치 메시지가 일반메시지일 경우
 						else if(parseInt(dsptchConts) == "undefined" || dsptchDiv == "DP001") {
 							dlt_BRT_DSPTCH_LOG.setCellData(0, "DSPTCH_CONTS", jsonObj.MESSAGE);	
 						}
@@ -811,7 +847,7 @@
 						}
 							
 						routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
-						dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0);				
+						dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0, jsonObj);				
 						
 					}
 	//			},100);	
@@ -1402,11 +1438,11 @@
 				break;
 				
 				case "ET005":
-				eventMessage = "종점에 도착하였습니다.";
+				eventMessage = "종점"+"("+dlt_BRT_OPER_EVENT_HIS.getCellData(i, 'NODE_NM')+")"+"에 도착하였습니다.";
 				break;
 				
 				case "ET006":
-				eventMessage = "종점에서 출발하였습니다.";
+				eventMessage = "종점"+"("+dlt_BRT_OPER_EVENT_HIS.getCellData(i, 'NODE_NM')+")"+"에서 출발하였습니다.";
 				break;
 				
 				case "ET007":
@@ -1426,6 +1462,38 @@
 				case "ET010":
 				eventMessage = "버스 문이 닫혔습니다.";
 				break;
+
+				case "ET011":
+				eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "NODE_NM") + "에서 무정차 주행하였습니다.";
+				break;
+				
+				case "ET012":
+				eventMessage = "과속 주행하였습니다. 현재속도 " + dlt_BRT_OPER_EVENT_HIS.getCellData(i, "CUR_SPD") + "km/h입니다," ;
+				break;
+				
+				case "ET013":
+				eventMessage = "급가속하였습니다.";
+				break;
+				
+				case "ET014":
+				eventMessage = "급감속하였습니다.";
+				break;
+				
+				case "ET015":
+				eventMessage = "급출발하였습니다.";
+				break;
+				
+				case "ET016":
+				eventMessage = "급정지하였습니다.";
+				break;
+				
+				case "ET017":
+				eventMessage = "개문주행하였습니다.";
+				break;
+				
+				case "ET018":
+				eventMessage = "노선이탈하였습니다.";
+				break;				
 			}//end switch
 			
 			dlt_BRT_OPER_EVENT_HIS.setCellData(i, "EVT_DATA", eventMessage);

@@ -94,7 +94,7 @@ public class UserInfo implements Serializable {
 	 * 
 	 * @date 2016.08.22
 	 * @returns <Map> USER_ID가 담긴 map
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example 샘플 코드
 	 * @todo 추가해야 할 작업
 	 */
@@ -109,11 +109,12 @@ public class UserInfo implements Serializable {
 	 * 
 	 * @date 2016.08.19
 	 * @param session 사용자 정보가 담긴 session객체
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example 샘플 코드
 	 * @todo 추가해야 할 작업
 	 */
 	public void setUserInfo(HttpSession session) {
+		if(session.getAttribute(Constants.SSN_USER_ID)==null)return;
 		this.setUserId((String) session.getAttribute(Constants.SSN_USER_ID));
 		this.setUserName((String) session.getAttribute(Constants.SSN_USER_NM));
 		this.setIsAdmin((boolean) session.getAttribute(Constants.SSN_IS_ADMIN));
@@ -128,7 +129,7 @@ public class UserInfo implements Serializable {
 	 * 
 	 * @date 2016. 8. 19.
 	 * @param memberInfo 사용자 정보가 담긴 map객체
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example 샘플 코드
 	 * @todo 추가해야 할 작업
 	 */
@@ -143,7 +144,7 @@ public class UserInfo implements Serializable {
 	 * 
 	 * @date 2016. 8. 19.
 	 * @returns <void> 반환 변수 및 객체
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example 샘플 코드
 	 * @todo 추가해야 할 작업
 	 */
@@ -157,7 +158,7 @@ public class UserInfo implements Serializable {
 	 * 
 	 * @date 2016. 8. 19.
 	 * @returns <Boolean> 반환 변수 및 객체
-	 * @author InswaveSystems
+	 * @author tracom
 	 * @example 샘플 코드
 	 * @todo 추가해야 할 작업
 	 */

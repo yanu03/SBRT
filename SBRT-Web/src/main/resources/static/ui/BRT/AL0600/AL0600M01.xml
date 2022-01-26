@@ -567,6 +567,13 @@
 	};
 	
 	scwin.openPopUpChart = function(){
+		var operSn = dlt_VIEW_OPER_PL_NODE_INFO.getCellData(AL0600G1.getFocusedRowIndex(), "OPER_SN");
+
+		if(com.isEmpty(operSn)){
+			com.alert("운행회차를 선택하고 시공도 보기를 클릭 하시기 바랍니다.");
+			return;
+		}
+
 		var jsonData = dlt_BRT_OPER_ALLOC_RL_NODE_INFO.getAllJSON();
 		var transData = new Array();
 		var realData = new Array();
@@ -581,7 +588,6 @@
 		var routId = dlt_BMS_ROUT_MST.getCellData(AL0600G0.getFocusedRowIndex(), "ROUT_ID");
 		var dayDiv = dlt_BMS_ROUT_MST.getCellData(AL0600G0.getFocusedRowIndex(), "DAY_DIV");
 		var routNm = dlt_BMS_ROUT_MST.getCellData(AL0600G0.getFocusedRowIndex(), "ROUT_NM");
-		var operSn = dlt_VIEW_OPER_PL_NODE_INFO.getCellData(AL0600G1.getFocusedRowIndex(), "OPER_SN");
 		
 		 var data = { data : routId, data2 : dayDiv, data3 : routNm, data4 : operSn, data5:transData, data6:realData, callbackFn : "" };
          var options = { id : "AL0600P0",

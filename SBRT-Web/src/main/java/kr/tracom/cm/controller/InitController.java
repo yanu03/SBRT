@@ -126,6 +126,9 @@ public class InitController {
 				userInfo.setUserInfo(session);
 			}
 		}
+		else {
+			userInfo.setUserInfo(session);
+		}
 		model.addAttribute("movePage", getLoginPage(request.getParameter("w2xPath")));
 		return "websquare/websquare";
 	}
