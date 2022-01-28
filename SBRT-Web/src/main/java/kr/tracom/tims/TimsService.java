@@ -15,6 +15,7 @@ import kr.tracom.platform.net.protocol.TimsMessage;
 import kr.tracom.platform.net.protocol.TimsMessageBuilder;
 import kr.tracom.platform.service.TService;
 import kr.tracom.platform.service.config.KafkaTopics;
+import kr.tracom.tims.domain.CurInfoMapper;
 import kr.tracom.tims.kafka.KafkaProducer;
 import kr.tracom.util.DateUtil;
 
@@ -25,6 +26,9 @@ public class TimsService {
 	
 	@Autowired
     KafkaProducer kafkaProducer;
+	
+	@Autowired
+	CurInfoMapper curInfoMapper;
 	
 	
     @PostConstruct
@@ -39,7 +43,17 @@ public class TimsService {
     }
 
 
+    public void refreshCurOperAllocPL() {
+    	curInfoMapper.refreshCurOperAllocPLRoutInfo();
+    	curInfoMapper.refreshCurOperAllocPLNodeInfo();
+    }
+    
+    
     public void notifyOperAllocCompleted() {
+    	
+    	
+    	refreshCurOperAllocPL(); //현재운행계획 갱신
+    	
     	
     	AtBrtAction brtRequest = new AtBrtAction();
 
