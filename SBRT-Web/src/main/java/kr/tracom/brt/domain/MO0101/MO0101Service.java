@@ -2,23 +2,26 @@ package kr.tracom.brt.domain.MO0101;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.tracom.cm.domain.Vhc.VhcMapper;
 import kr.tracom.cm.support.ServiceSupport;
-import kr.tracom.platform.attribute.BrtAtCode;
 import kr.tracom.platform.attribute.brt.AtDispatch;
+import kr.tracom.platform.attribute.brt.AtTrafficLightStatusRequest;
 import kr.tracom.platform.attribute.common.AtBrtAction;
 import kr.tracom.platform.attribute.common.AtTimeStamp;
 import kr.tracom.platform.net.config.TimsConfig;
 import kr.tracom.platform.net.protocol.TimsAddress;
 import kr.tracom.platform.net.protocol.TimsMessage;
 import kr.tracom.platform.net.protocol.TimsMessageBuilder;
+import kr.tracom.platform.net.protocol.attribute.AtMessage;
+import kr.tracom.platform.net.protocol.payload.PlGetResponse;
 import kr.tracom.platform.service.TService;
 import kr.tracom.platform.service.config.KafkaTopics;
 import kr.tracom.tims.kafka.KafkaProducer;
@@ -29,6 +32,8 @@ import kr.tracom.ws.WsClient;
 @Service
 public class MO0101Service extends ServiceSupport{
 
+	 Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	@Autowired
 	private MO0101Mapper mo0101Mapper;
 	
@@ -175,37 +180,84 @@ public class MO0101Service extends ServiceSupport{
 	public List<Map> MO0101SCK2() throws Exception{
 		
 		List<Map<String, Object>> param = getSimpleList("dlt_BMS_ROUT_NODE_CMPSTN4");
-		HashSet<String> crsList = new HashSet<>(); //교차로 리스트
+		List<String> crsList = new ArrayList<>(); //교차로 리스트
+		
 		try {
 			
 			String currTime = DateUtil.now();
 			List<HashMap <String, Object>> phaseInfoMapList = new ArrayList<>();       
 			
-			for (int i=0; i<param.size(); i++) {
-				Map data = (Map) param.get(i);
-				String crsId = (String)data.get("CRS_ID");
-				crsList.add(crsId);
-				
-				Map<String, Object> paramMap = new HashMap<String, Object>();
-				paramMap.put("CRS_ID", crsId);
-				paramMap.put("UPD_DTM", currTime);
-				
-				int phaseNo = mo0101Mapper.selectCurPhaseNo(paramMap);
-				
-				HashMap<String, Object> phaseInfoMap = new HashMap<>();
-				//phaseInfoMap.put("CRS_ID", BrtAtCode.TRAFFIC_LIGHT_STATUS_RESPONSE);
-				phaseInfoMap.put("CRS_ID", crsId);
-				phaseInfoMap.put("PHASE_NO", phaseNo);
-				
-				phaseInfoMapList.add(phaseInfoMap);
-			}
 			
-			//웹소켓 데이터 세팅
-	    	Map<String, Object> wsDataMap = new HashMap<>();
-        	wsDataMap.put("ATTR_ID", BrtAtCode.TRAFFIC_LIGHT_STATUS_RESPONSE);
-        	wsDataMap.put("LIST", phaseInfoMapList);
-        	
-    		webSocketClient.sendMessage(wsDataMap);
+			//bhmin 현시 받아오는 로직은 실제 신호데이터 받아오도록 변경
+			/*
+			if(false) { //DB에서 TOD에 따른 현시 조회
+				for (int i=0; i<param.size(); i++) {
+					Map data = (Map) param.get(i);
+					String crsId = (String)data.get("CRS_ID");
+					crsList.add(crsId);
+					
+					Map<String, Object> paramMap = new HashMap<String, Object>();
+					paramMap.put("CRS_ID", crsId);
+					paramMap.put("UPD_DTM", currTime);
+					
+					int phaseNo = mo0101Mapper.selectCurPhaseNo(paramMap);
+					
+					HashMap<String, Object> phaseInfoMap = new HashMap<>();
+					phaseInfoMap.put("CRS_ID", crsId);
+					phaseInfoMap.put("PHASE_NO", phaseNo);
+					
+					phaseInfoMapList.add(phaseInfoMap);
+				}
+				
+				
+				//웹소켓 데이터 세팅
+		    	Map<String, Object> wsDataMap = new HashMap<>();
+	        	wsDataMap.put("ATTR_ID", BrtAtCode.TRAFFIC_LIGHT_STATUS_RESPONSE);
+	        	wsDataMap.put("LIST", phaseInfoMapList);
+	        	
+	        	
+	        	logger.info("현시정보 : {}", phaseInfoMapList);
+	        	
+	    		webSocketClient.sendMessage(wsDataMap);
+	    		
+	    		
+			} else
+			*/
+			{ //실 신호데이터 연계				
+				
+				for (int i=0; i<param.size(); i++) {
+					Map data = (Map) param.get(i);
+					String crsId = (String)data.get("CRS_ID");
+					
+					if(crsList.contains(crsId) == false) {
+						
+						crsList.add(crsId);
+						
+						AtTrafficLightStatusRequest request = new AtTrafficLightStatusRequest();
+		
+						request.setUpdateTm(new AtTimeStamp(DateUtil.now("yyyyMMddHHmmss")));
+						request.setCrossNodeId(crsId);
+				        
+				        
+				        PlGetResponse getResponse = new PlGetResponse();
+				        AtMessage atMessage = new AtMessage();
+	
+				        atMessage.setAttrId(request.getAttrId());
+				        atMessage.setAttrSize((short) request.getSize());
+				        atMessage.setAttrData(request);
+	
+				        getResponse.addAttribute(atMessage);
+	
+				        TimsConfig timsConfig = TService.getInstance().getTimsConfig();
+				        TimsMessageBuilder builder = new TimsMessageBuilder(timsConfig);
+				        TimsMessage timsMessage = builder.getResponse(getResponse);
+				        
+				        
+				        //통신서버로 현시 요청 날림
+				        kafkaProducer.sendKafka(KafkaTopics.T_COMMUNICATION, timsMessage, "TRF0000001");	
+					}
+				}
+			}
 			
 			
 		} catch(Exception e) {

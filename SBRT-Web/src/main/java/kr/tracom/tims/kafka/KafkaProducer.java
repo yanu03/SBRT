@@ -46,7 +46,7 @@ public class KafkaProducer {
     
     public void sendKafka(String topic, TimsMessage timsMessage, String deviceId) {
     	
-    	logger.info("sendKafka() >> topic:{}", topic);
+    	//logger.info("sendKafka() >> topic:{}, timsMessage:{}", topic, timsMessage);
     	
 
         if(timsMessage == null) {
