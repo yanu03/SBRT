@@ -283,6 +283,9 @@ public class EventThread extends Thread{
                          //통플에서 정류장통과시에도 노드 통과 이벤트를 준다?
                          //brtMapper.insertLinkSpeed(busEventMap);
                      case 0x08: //음성 출력
+                     case 0x09: //차고지 도착
+                     case 0x0a: //차고지 출발
+                    	 
                      /**특정 이벤트 **/
                      case 0x11: //문 열림
                      case 0x12: //문 닫힘
