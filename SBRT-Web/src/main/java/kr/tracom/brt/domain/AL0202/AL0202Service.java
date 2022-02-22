@@ -14,6 +14,7 @@ import kr.tracom.cm.domain.OperPlan.OperPlanMapper;
 import kr.tracom.cm.domain.OperPlan.OperPlanService;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
+import kr.tracom.tims.TimsService;
 import kr.tracom.util.CommonUtil;
 import kr.tracom.util.Result;
 
@@ -35,6 +36,11 @@ public class AL0202Service extends ServiceSupport {
 	
 	@Autowired
 	private AL0201Mapper al0201Mapper;
+	
+	
+	@Autowired
+	TimsService TimsService;
+	
 	
 	public List AL0202G0R0() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
@@ -179,6 +185,9 @@ public class AL0202Service extends ServiceSupport {
 
 
 		Map result = saveResult(iCnt, uCnt, dCnt);
+		
+		//운행계획 생성되었다고 BRT 서비스에 알림
+		TimsService.notifyOperAllocCompleted();
 		
 		return result;		
 	}
