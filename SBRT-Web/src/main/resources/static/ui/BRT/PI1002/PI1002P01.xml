@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="/cm/css/all.css" type="text/css"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_VHC_MST" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="chk" name="chk" dataType="text"></w2:column>
+						<w2:column id="VHC_ID" name="차량ID" dataType="text"></w2:column>
+						<w2:column id="COMP_ID" name="운수사ID" dataType="text"></w2:column>
+						<w2:column id="AREA" name="권역" dataType="text"></w2:column>
+						<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
+						<w2:column id="CHAS_NO" name="차대번호" dataType="text"></w2:column>
+						<w2:column id="MAKER" name="제조사" dataType="text"></w2:column>
+						<w2:column id="RELS_DT" name="출고일자" dataType="text"></w2:column>
+						<w2:column id="MODEL_NM" name="모델명" dataType="text"></w2:column>
+						<w2:column id="VHC_KIND" name="차량종류" dataType="text"></w2:column>
+						<w2:column id="ROUT_TYPE" name="노선유형" dataType="text"></w2:column>
+						<w2:column id="VHC_TYPE" name="차량유형" dataType="text"></w2:column>
+						<w2:column id="VHC_FUEL" name="차량연료" dataType="text"></w2:column>
+						<w2:column id="VHC_STS" name="버스상태" dataType="text"></w2:column>
+						<w2:column id="PSG_CNT" name="승차인원" dataType="text"></w2:column>
+						<w2:column id="SPARE_YN" name="예비차여부" dataType="text"></w2:column>
+						<w2:column id="SCRAP_YN" name="대폐차여부" dataType="text"></w2:column>
+						<w2:column id="APPL_ST_DT" name="적용시작일" dataType="text"></w2:column>
+						<w2:column id="APPL_ED_DT" name="적용종료일" dataType="text"></w2:column>
+						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
+						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="text"></w2:column>
+						<w2:column id="UPD_ID" name="갱신ID" dataType="text"></w2:column>
+						<w2:column id="COMP_NM" name="운수사명" dataType="text"></w2:column>
+						<w2:column id="NOTICE_ID" name="공지ID" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="VHC_ECPT_IDS" name="제외차량ID" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="CONTENT" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_PI1002P0R0" ref='data:json,dma_search' target='data:json,dlt_BMS_VHC_MST'
+				action="/pi/PI1002P0R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
+				errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI1002P0R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		dma_search.set("VHC_ECPT_IDS" , scwin.param.data.VHC_IDS);
+		
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		var btnOptions = 
+		[
+			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
+		];
+		com.setMainBtn3(wfm_mainBtn, btnOptions);
+
+		var codeOptions = [ {code : "AREA", compID : "PI1002P0:AREA"}];
+		com.setCommonDtl(codeOptions, function() {
+			com.executeSubmission(sub_PI1002P0R0);
+		});		
+	};
+					
+	scwin.btn_search_onclick = function() {
+		com.executeSubmission(sub_PI1002P0R0);
+	};
+		
+	scwin.btn_confirm_onclick = function() {
+		var data = PI1002P0.getCheckedJSON( "chk" );
+		com.closePopup(scwin.closeCallbackFncName, data);
+	};
+		
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();
+	};
+	
+	scwin.PI1002P0_onrowindexchange = function(row,oldRow) {
+		PI1002P0.setCellChecked(row,"chk",true);
+	}
+	
+	scwin.sub_PI1002P0R0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+		
+			var ids=dma_search.get("VHC_ECPT_IDS");
+			com.excludeItemsByGrid(PI1002P0, ids, "VHC_ID");
+		}
+	};
+	
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
+		if (info.newValue == "ALL") {
+			search_input.setPlaceholder("차량ID 또는 차량번호");
+		} else if (info.newValue == "VHC_ID") {
+			search_input.setPlaceholder("차량ID");
+		} else if (info.newValue == "VHC_NO") {
+			search_input.setPlaceholder("차량번호");
+		}
+	};
+	
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+				<xf:group class="gr_search" id="" style="">
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="검색항목"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<xf:select1 id="" disabledClass="w2selectbox_disabled" ref="data:dma_search.TYPE" appearance="minimal"
+							style="" class="search_type" direction="auto" chooseOption="" displayMode="label" allOption=""
+							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" optionOrder="false" submenuSize="auto"
+							disabled="false" textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[차량ID]]></xf:label>
+									<xf:value><![CDATA[VHC_ID]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[차량번호]]></xf:label>
+									<xf:value><![CDATA[VHC_NO]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="차량ID 또는 차량번호"></xf:input>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group>
+			
+			<xf:group style="" id="" class="popup_content">
+				<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BMS_VHC_MST" useShiftKey="false" readOnly="true"
+					style="" scrollByColumn="false" id="PI1002P0" autoFit="allColumn" class="cm_grid popup" ev:onrowindexchange="scwin.PI1002P0_onrowindexchange">
+					<w2:header style="" id="header1">
+						<w2:row style="" id="row1">
+							<w2:column width="39" style="height:20px" inputType="checkbox" id="chkHeader" value="선택" blockSelect="false"></w2:column>
+							<w2:column removeBorderStyle="false" width="82" inputType="text" style="height:20px" id="column8" value="차량 ID"
+								blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column width="101" style="height:20px" inputType="text" id="column7" value="차량번호" blockSelect="false"></w2:column>
+							<w2:column width="90" style="height:20px" inputType="text" id="column5" value="차대번호" blockSelect="false"></w2:column>
+							<w2:column width="130" style="height:20px" inputType="text" id="column3" value="운수사" blockSelect="false"></w2:column>
+							<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column9" value="운수사 권역"
+								blockSelect="false" displayMode="label">
+							</w2:column>
+						</w2:row>
+					</w2:header>
+					<w2:gBody style="" id="gBody1">
+						<w2:row style="" id="row2">
+							<w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px" inputType="checkbox"
+								id="chk" blockSelect="false">
+							</w2:column>
+							<w2:column removeBorderStyle="false" width="82" inputType="text" style="height:20px" id="VHC_ID" value=""
+								blockSelect="false" displayMode="label">
+							</w2:column>
+							<w2:column width="101" style="height:20px" inputType="text" id="VHC_NO" blockSelect="false"></w2:column>
+							<w2:column width="90" style="height:20px" inputType="text" id="CHAS_NO" blockSelect="false"></w2:column>
+							<w2:column width="130" style="height:20px" inputType="text" id="COMP_NM" blockSelect="false"></w2:column>
+							<w2:column removeBorderStyle="false" width="80" inputType="select" style="height:20px" id="AREA" value=""
+								blockSelect="false" displayMode="label">
+							</w2:column>
+						</w2:row>
+					</w2:gBody>
+				</w2:gridView>
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>
