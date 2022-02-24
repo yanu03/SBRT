@@ -75,9 +75,9 @@ function onMessageReceived(payload) {
 		//content = jsonObj.VHC_ID + "," + jsonObj.GPS_X + ", " + jsonObj.GPS_Y;
 		
 		
-	} else if(attrId == 2022) { //2022: 정류장별 차량 도착 정보
+	} else if(attrId == 4015) { //4015: 정류장별 차량 도착 정보
 		
-		//payload.body >>>> {"ATTR_ID":2022,"LIST":[{"ROUT_ID":"RT00000080","REMAIN_TM":1364334,"REMAIN_STTN":2}],"STTN_ID":"ND00000017"}
+		//payload.body >>>> {"ATTR_ID":4015,"LIST":[{"ROUT_ID":"RT00000080","REMAIN_TM":1364334,"REMAIN_STTN":2}],"STTN_ID":"ND00000017"}
 		
 		//jsonObj.STTN_ID => 정류장아이디
 		//jsonObj.LIST => 도착정보 리스트

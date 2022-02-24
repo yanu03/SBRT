@@ -185,15 +185,17 @@
 	}
 	
 	scwin.MO0203SCK = function () {
-		com.executeSubmission(sub_MO0203SCK);
+		//com.executeSubmission(sub_MO0203SCK);
 	}
 	
-	//5초 간격으로 MO0203SCK 실행
-	//setInterval(scwin.MO0203SCK, 5000);
+	//15초 간격으로 MO0203SCK 실행
+	//setInterval(scwin.MO0203SCK, 15000);
 	
 	//정류장별 차량 도착 정보 테이블 생성
 	MO0203T0_setTable = function(dataList){
-		debugger;
+		var param = com.getParameter();
+		dlt_BMS_ETA_INFO.removeAll();
+		dlt_BMS_SOONETA_INFO.removeAll();
 		var tableStr = '';
 		var tableBody = '';
 		var talbeId = '';
@@ -214,6 +216,7 @@
 			dataList.sort(function(a,b) {
 				return parseFloat(a.REMAIN_TM) - parseFloat(b.REMAIN_TM);
 			});
+			
 			var j = 0;
 			for(var i = 0; i < dataList.length; i++){
 				//초 -> 분으로 변경. 0분 이하면 잠시후 도착
@@ -277,52 +280,6 @@
 							+'</td>'
 							+'</tr>';
 			}
-			//보내는게 2개
-			/*else if(dataList.length == 2){
-				tableBody += '<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
-					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
-					+dlt_BMS_ETA_INFO.getCellData(0, "ROUT_NM")
-					+'</span>'
-					+'</td>'
-					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px; color: yellow;" class="w2span ">'
-					+dlt_BMS_ETA_INFO.getCellData(0, "REMAIN_STTN")
-					+'</span>'
-					+'</td>'
-					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black;  text-align: right;" class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
-					+dlt_BMS_ETA_INFO.getCellData(0, "REMAIN_TM")
-					+'</span>'
-					+'</td>'
-					+'</tr>'
-					
-					+'<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_512" class="w2group">'
-					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_513" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_516" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
-					+dlt_BMS_ETA_INFO.getCellData(1, "ROUT_NM")
-					+'</span>'
-					+'</td>'
-					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_513" style="border-color: black; border-bottom-color:yellow; color: yellow;" class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_516" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
-					+dlt_BMS_ETA_INFO.getCellData(1, "REMAIN_STTN")
-					+'</span>'
-					+'</td>'
-					+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_518" style="border-color: black; border-bottom-color:yellow; text-align: right;" class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 15px;text-align: right;color: green;" class="w2span ">'
-					+dlt_BMS_ETA_INFO.getCellData(1, "REMAIN_TM")
-					+'</span>'
-					+'</td>'
-					+'</tr>'
-			
-				tableBody +='<tr id="mf_tac_layout_contents_MN00090201_body_wq_uuid_511" class="w2group">'
-							+'<td id="mf_tac_layout_contents_MN00090201_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow;" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="3" rowspan="1">'
-							+'<span id="mf_tac_layout_contents_MN00090201_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 15px;" class="w2span ">'
-							+"곧도착 : " + dlt_BMS_SOONETA_INFO.getCellData(0, "ROUT_NM");
-							+'</span>'
-							+'</td>'
-							+'</tr>';
-			}*/
 			//보내는게 2개 이상이면 동적으로 그리기
 			else if(dataList.length > 1){
 				for(var i = 0; i < dataList.length; i++){
@@ -398,7 +355,7 @@
 		
 		tableStr += tableBody + '</tbody></table>';
 		
-		$("#mf_tac_layout_contents_MN00090201_body_MO0203T0").html(tableStr);
+		$("#mf_tac_layout_contents_"+param.menuCode+"_body_MO0203T0").html(tableStr);
 	}
 	
 	
@@ -479,16 +436,13 @@
 	}	
 	
 	scwin.onMessageReceived = function(payload) {
-		
-		var nodeId = dlt_BMS_NODE_MST.getCellData(MO0203G0.getFocusedRowIndex(), "NODE_ID");
-		dlt_BMS_ETA_INFO.removeAll();
-		dlt_BMS_SOONETA_INFO.removeAll();
 		var jsonObj = JSON.parse(payload.body);
 		
 		var attrId = jsonObj.ATTR_ID;
 		var dataList = jsonObj.LIST;
+		var nodeId = dlt_BMS_NODE_MST.getCellData(MO0203G0.getFocusedRowIndex(), "NODE_ID");
 		
-		//attrId = 2022 : 정류장별 차량 도착 정보
+		//attrId = 4015 : 정류장별 차량 도착 정보
 		if(attrId == 2022 && nodeId == jsonObj.STTN_ID){
 			MO0203T0_setTable(dataList);
 		}
@@ -498,6 +452,10 @@
 		}
 		
 	}
+	
+	scwin.sub_MO0203SCK_submitdone = function(e) {
+		scwin.onMessageReceived();
+	};
 	
 	function showMessage(message) {
 		$("#mf_tac_layout_contents_MN00050202_body_message").append("<tr><td>" + message + "</td></tr>");
@@ -519,7 +477,7 @@
 		//카테고리 뿌리기
 		routMap.showCategory("map_MO0203", allDataList, focusIdx, MO0203G0);
 				
-		$p.executeSubmission(sub_MO0203SCK);
+		com.executeSubmission(sub_MO0203SCK);
 		
 		var nodeId = dlt_BMS_NODE_MST.getCellData(MO0203G0.getFocusedRowIndex(), "NODE_ID");
 		dma_NODE_ID.set("NODE_ID", "(정류소 ID : "+nodeId+")");
@@ -567,6 +525,8 @@
 	};
 
 
+	
+	
 	
 	]]></script>
 	</head>
@@ -675,7 +635,8 @@
 							<w2:textbox class="df_tt fl" id="" label="정류소 정보" style=""></w2:textbox>
 						</xf:group>
 						<xf:group></xf:group>
-						<xf:group adaptive="layout" class="w2tb tb" id="MO0203F0" style="" tagname="table">
+						<xf:group style="overflow:auto; position:relative;" id="">
+						<xf:group adaptive="layout" class="w2tb tb" id="MO0203F0" style="position:absolute" tagname="table">
 							<w2:attributes>
 								<w2:summary></w2:summary>
 							</w2:attributes>
@@ -688,13 +649,13 @@
 							<xf:group tagname="tr" style="">
 								<xf:group tagname="th" style="" class="w2tb_th">정류소ID</xf:group>
 								<xf:group tagname="td" style="" class="w2tb_td">
-									<xf:input adjustMaxLength="false" id="" style="width: 100px;height: 21px;"
+									<xf:input adjustMaxLength="false" id="" style="height: 21px;"
 										ref="data:dlt_BMS_NODE_MST.NODE_ID" maxlength="10" disabled="true">
 									</xf:input>
 								</xf:group>
 								<xf:group style="" class="w2tb_th" tagname="th">정류소명</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
-									<xf:input adjustMaxLength="false" id="" style="width: 110px;height: 21px;"
+									<xf:input adjustMaxLength="false" id="" style="height: 21px;"
 										ref="data:dlt_BMS_NODE_MST.NODE_NM" maxlength="10" readOnly="true">
 									</xf:input>
 								</xf:group>
@@ -702,13 +663,13 @@
 							<xf:group tagname="tr" style="">
 								<xf:group tagname="th" style="" class="w2tb_th">표준정류소ID</xf:group>
 								<xf:group tagname="td" style="" class="w2tb_td">
-									<xf:input adjustMaxLength="false" id="" style="width: 100px;height: 21px;"
+									<xf:input adjustMaxLength="false" id="" style="height: 21px;"
 										ref="data:dlt_BMS_NODE_MST.MOCK_NODE_ID" maxlength="10" readOnly="">
 									</xf:input>
 								</xf:group>
 								<xf:group style="" class="w2tb_th" tagname="th">영문정류소명</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
-									<xf:input adjustMaxLength="false" id="" style="width: 110px;height: 21px;"
+									<xf:input adjustMaxLength="false" id="" style="height: 21px;"
 										ref="data:dlt_BMS_NODE_MST.NODE_ENM" maxlength="20" readOnly="">
 									</xf:input>
 								</xf:group>
@@ -716,13 +677,13 @@
 							<xf:group tagname="tr" style="">
 								<xf:group tagname="th" style="" class="w2tb_th">위도</xf:group>
 								<xf:group tagname="td" style="" class="w2tb_td">
-									<xf:input adjustMaxLength="false" id="" style="width: 100px;height: 21px;"
+									<xf:input adjustMaxLength="false" id="" style="height: 21px;"
 										ref="data:dlt_BMS_NODE_MST.GPS_X" maxlength="16" allowChar="0-9" readOnly="true">
 									</xf:input>
 								</xf:group>
 								<xf:group style="" class="w2tb_th" tagname="th">경도</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
-									<xf:input adjustMaxLength="false" id="" style="width: 100px;height: 21px;"
+									<xf:input adjustMaxLength="false" id="" style="height: 21px;"
 										ref="data:dlt_BMS_NODE_MST.GPS_Y" maxlength="16" allowChar="0-9" readOnly="true">
 									</xf:input>
 								</xf:group>
@@ -745,9 +706,12 @@
 								</xf:group>
 							</xf:group>
 						</xf:group>
+						</xf:group>
 					</xf:group><!-- end pgm_subList -->
 				</xf:group><!-- pgm_list end -->
+				
 				<xf:group id="" class="vertical_line"></xf:group>
+				
 				<xf:group id="pgm_detail" class="pgm_detail grdr_20_a" style="">
 					<xf:group class="gr_map_header" id="" style="">
 						<xf:group class="defaultbox" id="" style="">
@@ -760,24 +724,27 @@
 						</div>
 					</xf:group>
 				</xf:group><!-- pgm_detail end -->
+				
 				<xf:group id="" class="vertical_line"></xf:group>
+				
 				<xf:group id="pgm_subDetail" class="pgm_detail grdr_20_2_200_25_20_20_50_a" style="">
 					<xf:group class="gr_map_header" id="" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="BIT" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
-					<xf:group id="" class="brt_bit" style=""></xf:group>
+					<xf:group style="width: 100%; height:100%" id="bit_img">
+						<xf:group id="" class="brt_bit" style=""></xf:group>
+					</xf:group>
 					<xf:group style="" id=""></xf:group>
-						<w2:span label="정류소명" style="color: white;font-size: 15px;text-align: center;" id=""
-							ref="data:dlt_BMS_NODE_MST.NODE_NM">
-						</w2:span>
-						<w2:span label="" style="color: white;font-size: 14px;text-align: center;" id=""
-							ref="data:dlt_BMS_NODE_MST.NODE_ENM">
-						</w2:span>
-						<w2:span label="NODE_ID" style="color: white;font-size: 14px;text-align: center;" id=""
-							ref="data:dma_NODE_ID.NODE_ID">
-						</w2:span>
+					<w2:span label="정류소명" style="color: white;font-size: 15px;text-align: center;" id=""
+						ref="data:dlt_BMS_NODE_MST.NODE_NM">
+					</w2:span>
+					<w2:span label="" style="color: white;font-size: 14px;text-align: center;" id="" ref="data:dlt_BMS_NODE_MST.NODE_ENM">
+					</w2:span>
+					<w2:span label="NODE_ID" style="color: white;font-size: 14px;text-align: center;" id=""
+						ref="data:dma_NODE_ID.NODE_ID">
+					</w2:span>
 					<xf:group style="" id=""></xf:group>
 					<xf:group tagname="table" style="" id="MO0203T0" class="w2tb bit_tb"></xf:group>
 				</xf:group><!-- pgm_detail end -->

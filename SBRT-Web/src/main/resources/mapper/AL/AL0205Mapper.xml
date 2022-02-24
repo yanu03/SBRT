@@ -18,7 +18,7 @@
 	<where>
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-				AND NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || NODE_NM LIKE CONCAT('%',#{CONTENT},'%')
+				AND (NODE_ID LIKE CONCAT('%',#{CONTENT},'%') || NODE_NM LIKE CONCAT('%',#{CONTENT},'%'))
 			</if>
 			<if test="TYPE == 'NODE_ID'">
 				AND NODE_ID LIKE CONCAT('%',#{CONTENT},'%')
@@ -29,7 +29,7 @@
 		</if>
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">
 			<if test="NODE_TYPE == 'ALL'">
-				AND NODE_TYPE = 'NT001' OR NODE_TYPE = 'NT002'
+				AND (NODE_TYPE = 'NT001' OR NODE_TYPE = 'NT002')
 			</if>
 			<if test="NODE_TYPE == 'NT001'">
 				AND NODE_TYPE = #{NODE_TYPE}

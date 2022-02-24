@@ -52,6 +52,7 @@
         				<w2:column id="OPER_DT" name="운행일" dataType="date"></w2:column>
         				<w2:column id="VIOLT_TYPE" name="위반유형" dataType="text"></w2:column>
         				<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
+        				<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
         				<w2:column id="GPS_X" name="GPS_X좌표" dataType="text"></w2:column>
         				<w2:column id="GPS_Y" name="GPS_Y좌표" dataType="text"></w2:column>
         				<w2:column id="JUDGE" name="조치자" dataType="text"></w2:column>
@@ -86,7 +87,7 @@
         	</xf:submission>
         	<xf:submission id="sub_VI0100G1S0" ref='data:json,[{"action":"modified","id":"dlt_BRT_OPER_VIOLT_HIS"},"dma_param_VI0100G1"]' target="data:json,dma_result"
         		action="/vi/VI0100G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-        		customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_VI0100G1S0_submitdone" ev:submiterror=""
+        		customHandler="" mode="asynchronous" processMsg="저장중입니다..." ev:submit="" ev:submitdone="scwin.sub_VI0100G1S0_submitdone" ev:submiterror=""
         		abortTrigger="">
         	</xf:submission>
         	<xf:submission id="sub_VI0100SHI0" ref="" target="data:json,dlt_searchitem" action="/vi/VI0100SHI0" method="post"
@@ -134,20 +135,28 @@
 	
 	scwin.sub_VI0100G1R0_submitdone = function(e) {
 		com.setFocusedCell(VI0100G1, "OCR_DTM");
+		
+		if(dlt_BRT_OPER_VIOLT_HIS.getRowCount() > 0){
+			var jsonObj = dlt_BRT_OPER_VIOLT_HIS.getRowJSON(VI0100G1.getFocusedRowIndex());
+			routMap.showVehicle3("map_VI0100", jsonObj, VI0100G1);
+		}
 	};
 	
 	scwin.VI0100G1_onrowindexchange = function(row,oldRow) {
-		//var curIndex = VI0100G1.getFocusedRowIndex();
-		//var curVhcId = dlt_BRT_OPER_VIOLT_HIS.getCellData(curIndex, "VHC_ID");
+		dlt_BRT_OPER_VIOLT_HIS.setCellData(row, "VHC_NO", dlt_BRT_CUR_ALLOC_PL_INFO.getCellData(VI0100G0.getFocusedRowIndex(), "VHC_NO"))
 		var jsonObj = dlt_BRT_OPER_VIOLT_HIS.getRowJSON(row);
 		
 		//차량 단일 마커
-		routMap.showVehicle3("map_VI0100", jsonObj, VI0100G1);
+		if(dlt_BRT_OPER_VIOLT_HIS.getCellData(row, "GPS_X") != ''){
+			routMap.showVehicle3("map_VI0100", jsonObj, VI0100G1);
+		}
+		
 	};
 	
 	//맵 클릭 이벤트
 	scwin.onClickMap = function(e) {
 		routMap.changeLocVehicleByClick("map_VI0100", VI0100G1, VI0100G1.getFocusedRowIndex(),e);
+		
 	}
 	
 	scwin.VI0100G0_onrowindexchange = function(row,oldRow) {
