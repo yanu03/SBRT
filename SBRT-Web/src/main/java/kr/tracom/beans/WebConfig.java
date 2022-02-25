@@ -28,10 +28,10 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	@Value("${static.resource.location}")
 	private String staticResouceLocation;
 
-	@Value("${windows.fileupload.location}")
+	@Value("${windows.fileupload.location2}")
 	protected String windowsFileuploadLocation;
 	
-	@Value("${fileupload.location}")
+	@Value("${fileupload.location2}")
 	protected String fileuploadLocation;
 
 	@Value("${static.webapp.location}")
