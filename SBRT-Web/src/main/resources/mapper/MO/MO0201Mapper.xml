@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.tracom.brt.domain.MO0101.MO0101Mapper">
-	<select id="MO0101G0R0" resultType="Map" parameterType="Map">
+<mapper namespace="kr.tracom.brt.domain.MO0201.MO0201Mapper">
+	<select id="MO0201G0R0" resultType="Map" parameterType="Map">
 		SELECT 				A.OPER_DT
 						,	A.REP_ROUT_ID
 						,	A.VHC_ID
@@ -64,7 +64,7 @@
 			
 		WHERE			A.OPER_DT = DATE_FORMAT(NOW(), '%Y/%m/%d')
 		AND				B.DEL_YN != 'Y'
-			<if test="CONTENT1 != null">
+			<if test="CONTENT1 != 'all'">
 				AND A.REP_ROUT_ID = #{CONTENT1}
 			</if>
 			<if test="CONTENT2 != ''">
@@ -76,11 +76,12 @@
 		ORDER BY		A.REP_ROUT_ID, A.ROUT_ID, VHC_ID	
 	</select>
 	
-	<select id="MO0101G1R0" resultType="Map" parameterType="Map">
+	<select id="MO0201G1R0" resultType="Map" parameterType="Map">
 		SELECT 			A.ROUT_ID
 					,	A.NODE_ID
 					, 	A.NODE_SN
 					, 	A.NODE_NM
+					,	A.NODE_ENM
 					,	A.NODE_TYPE
 					,	A.LINK_ID
 					, 	A.STTN_ID
@@ -111,7 +112,7 @@
 	  		ON E.NODE_ID = H.NODE_ID								
 		WHERE 			A.NODE_TYPE = 'NT002'
 		AND				C.DEL_YN != 'Y'
-		<if test="CONTENT1 != null">
+		<if test="CONTENT1 != 'all'">
 			AND D.REP_ROUT_ID = #{CONTENT1}			
 		</if>
 		<if test="CONTENT2 != ''">
@@ -125,7 +126,7 @@
 		ORDER BY 		NODE_SN
 	</select>
 	
-	<select id="MO0101SHI0" resultType="Map">
+	<select id="MO0201SHI0" resultType="Map">
 		SELECT			A.REP_ROUT_ID
 						,B.REP_ROUT_NM	
 		FROM			BRT_CUR_OPER_INFO A
@@ -135,16 +136,16 @@
 		ORDER BY		B.REP_ROUT_NM		
 	</select>	
 	
-	<select id="MO0101SHI1" resultType="Map">
+	<select id="MO0201SHI1" resultType="Map">
 		SELECT			ROUT_ID, ROUT_NM
 		FROM			BMS_ROUT_MST
 		WHERE			DEL_YN = 'N'	
-		<if test="CONTENT1 != null">
+		<if test="CONTENT1 != 'all'">
 			AND			REP_ROUT_ID = #{CONTENT1}	
 		</if>
 	</select>			
 	
-	<select id="MO0101G2R0" resultType="Map">
+	<select id="MO0201G2R0" resultType="Map">
 		SELECT 			A.ROUT_ID
 					,	A.NODE_ID
 					, 	A.NODE_SN
@@ -191,7 +192,7 @@
 									
 		WHERE			A.NODE_TYPE = 'NT001'
 		AND				C.DEL_YN != 'Y'
-		<if test="CONTENT1 != null">
+		<if test="CONTENT1 != 'all'">
 			AND D.REP_ROUT_ID = #{CONTENT1}			
 		</if>
 		<if test="CONTENT2 != ''">
@@ -204,6 +205,71 @@
 		GROUP BY	  	NODE_ID
 		ORDER BY 		NODE_SN
 	</select>	
+	
+	<select id="MO0201G3R0" resultType="Map">
+		SELECT			ROUT_ID
+					,	REP_ROUT_ID
+					,	INT_ROUT_ID
+					,	PUB_ROUT_ID
+					,	REP_ROUT_NM
+					,	ROUT_NM
+					,	ROUT_TYPE
+					,	ROUT_DIV
+					,	DVC_NM
+					,	RSV_ROUT_YN
+					,	ST_STTN_ID
+					,	ST_STTN_NM
+					,	ST_STTN_ENM
+					,	ED_STTN_ID
+					,	ED_STTN_ENM
+					,	ED_STTN_NM
+					,	RET_STTN_ID
+					,	RET_STTN_NM
+					,	RET_STTN_ENM
+					,	STTN_CNT
+					,	ROUT_LEN
+					,	ROUT_STRT_LEN
+					,	CURVATURE
+					,	JIT_DSPCH_YN
+					,	LIC_VHC_CNT
+					,	SPR_VHC_CNT
+					,	APPL_ST_DT
+					,	APPL_ED_DT
+					,	WAY_DIV
+					,	USER_WAY_DIV
+					,	WAY_INFO
+					,	AREA
+					,	SHAPE_DIV
+					,	HOLI_YN
+					,	USE_YN
+					,	DEL_YN
+					,	REMARK
+					,	UPD_DTM
+					,	UPD_ID
+					
+		FROM 			BMS_ROUT_MST
+		WHERE			DEL_YN = 'N'
+		<if test="CONTENT1 != 'all'">
+			AND			REP_ROUT_ID = #{CONTENT1}	
+		</if>				
+	
+	</select>
+	
+	<select id="MO0201G4R0" resultType="Map">
+		SELECT 				A.NODE_ID 
+						,	A.NODE_NM
+						,	A.GPS_X 
+						,	A.GPS_Y
+						,	B.NODE_SN
+						,	B.ROUT_ID
+								
+		FROM 				BMS_NODE_MST A 
+		INNER JOIN 			BMS_ROUT_NODE_CMPSTN B 
+		ON 					A.NODE_ID = B.NODE_ID 
+		AND 				B.NODE_TYPE = 'NT002'
+		WHERE 				B.ROUT_ID = #{ROUT_ID}
+		ORDER BY 			B.NODE_SN
+	</select>
 	
 	<select id="selectCategory" resultType="Map">
 		SELECT 			A.NODE_ID
@@ -240,7 +306,7 @@
 		  
 		WHERE			(A.NODE_TYPE = 'NT001'
 			OR				A.NODE_TYPE = 'NT002')
-			<if test="CONTENT1 != null">
+			<if test="CONTENT1 != 'all'">
 				AND G.REP_ROUT_ID = #{CONTENT1}			
 			</if>
 			<if test="CONTENT2 != ''">
@@ -294,7 +360,7 @@
 		AND				A.PHASE_NO IS NOT NULL
 		AND				C.DEL_YN != 'Y'
 		AND				E.CRS_ID IS NOT NULL
-		<if test="CONTENT1 != null">
+		<if test="CONTENT1 != 'all'">
 			AND D.REP_ROUT_ID = #{CONTENT1}			
 		</if>
 		<if test="CONTENT2 != ''">
@@ -315,7 +381,7 @@
 		AND				DL_CD = 'SY014'
 	</select>
 	
-	<select id="MO0101P0R0" resultType="Map">
+	<select id="MO0201P0R0" resultType="Map">
 	
 		SELECT			MSG_ID
 					,	MSG_NM
@@ -325,108 +391,7 @@
 	
 	</select>
 	
-	<select id="MO0101G3R0" resultType="Map" parameterType="Map">
-		SELECT			DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT
-					,	A.REP_ROUT_ID
-					,	A.VHC_ID
-					,	A.UPD_DTM
-					,	A.VHC_NO
-					,	A.DRV_ID
-					,	A.COR_ID
-					,	A.ROUT_ID
-					,	A.ALLOC_NO
-					,	A.OPER_SN
-					,	A.GPS_X_RAW
-					,	A.GPS_Y_RAW
-					,	A.DRV_ANGLE
-					,	A.GPS_X
-					,	A.GPS_Y
-					,	A.CUR_SPD
-					,	A.LINK_ID
-					,	A.NODE_ID
-					,	A.NODE_SN
-					,	A.OPER_STS
-					,	A.EVT_TYPE
-					,	A.EVT_DATA
-					,	A.STOP_TM
-					,	DATE_FORMAT(A.OCR_DTM, '%H:%i:%s') OCR_DTM
-					,	B.NODE_NM
-					,	C.ORGA_NM
-					,	D.ROUT_NM
-					
-		FROM			BRT_OPER_EVENT_HIS A
-		LEFT JOIN	  	BMS_NODE_MST B
-			ON			A.EVT_DATA = B.NODE_ID
-		LEFT JOIN	  	BMS_VOC_ORGA_INFO C
-			ON			A.EVT_DATA = C.ORGA_ID
-		LEFT JOIN		BMS_ROUT_MST D
-			ON			A.ROUT_ID = D.ROUT_ID
-	
-		WHERE			DATE_FORMAT(OPER_DT, '%Y-%m-%d') = CURDATE()
-		<if test="CONTENT1 != null">
-			AND A.REP_ROUT_ID = #{CONTENT1}
-		</if>
-		<if test="CONTENT2 != ''">
-			AND A.ROUT_ID = #{CONTENT2}
-		</if>
-		<if test="CONTENT3 != null and CONTENT3 != ''">
-			AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
-		</if>			
-		ORDER BY		UPD_DTM DESC
-		LIMIT			100;			
-		
-	</select>
-	
-	<select id="MO0101G4R0" resultType="Map" parameterType="Map">
-		SELECT			DATE_FORMAT(A.SEND_DATE, '%H:%i:%s') SEND_DATE			
-					,	A.OPER_DT
-					,	A.REP_ROUT_ID
-					,	A.VHC_ID
-					,	A.DSPTCH_DIV
-					,	A.ROUT_ID
-					,	A.ALLOC_NO
-					,	A.OPER_SN
-					,	A.COR_ID
-					,	A.REP_ROUT_NM
-					,	A.ROUT_NM
-					,	A.VHC_NO
-					,	A.LINK_ID
-					,	A.NODE_ID
-					,	A.DSPTCH_KIND
-					,	A.SEND_GPS_X
-					,	A.SEND_GPS_Y
-					,	A.SEND_TM_X
-					,	A.SEND_TM_Y
-					,	A.FRNT_GPS_Y
-					,	A.FRNT_GPS_X
-					,	A.FRNT_TM_X
-					,	A.FRNT_TM_Y
-					,	A.REAR_GPS_X
-					,	A.REAR_GPS_Y
-					,	A.REAR_TM_X
-					,	A.REAR_TM_Y
-					,	A.DSPTCH_CONTS
-					,	B.ROUT_NM
-					
-		FROM			BRT_DSPTCH_LOG A
-		LEFT JOIN		BMS_ROUT_MST B
-			ON A.ROUT_ID = B.ROUT_ID
-	
-		WHERE			DATE_FORMAT(SEND_DATE, '%Y-%m-%d') = CURDATE() 
-		<if test="CONTENT1 != null">
-			AND A.REP_ROUT_ID = #{CONTENT1}
-		</if>
-		<if test="CONTENT2 != ''">
-			AND A.ROUT_ID = #{CONTENT2}
-		</if>
-		<if test="CONTENT3 != null and CONTENT3 != ''">
-			AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
-		</if>					
-		ORDER BY		SEND_DATE DESC
-		LIMIT			100;			
-	</select>
-	
-	<select id="MO0101G5R0" resultType="Map" parameterType="Map">
+	<select id="MO0201G5R0" resultType="Map" parameterType="Map">
 		SELECT			DATE_FORMAT(A.SEND_DATE, '%H:%i:%s') SEND_DATE				
 					,	A.FCLT_COND
 					,	B.FCLT_KIND
@@ -444,7 +409,7 @@
 			
 		WHERE 			C.NODE_TYPE = 'NT002' 	
 		AND				DATE_FORMAT(SEND_DATE, '%Y-%m-%d') = CURDATE() 
-		<if test="CONTENT1 != null">
+		<if test="CONTENT1 != 'all'">
 			AND D.REP_ROUT_ID = #{CONTENT1}
 		</if>
 		<if test="CONTENT2 != ''">
@@ -459,42 +424,92 @@
 				
 	</select>
 	
-	<select id="MO0101G6R0" resultType="Map" parameterType="Map">
+	<select id="MO0201G6R0" resultType="Map" parameterType="Map">
 	
 	</select>
 	
-	<select id="MO0101G7R0" resultType="Map" parameterType="Map">
-		SELECT			DATE_FORMAT(A.UPD_DTM, '%H:%i:%s') UPD_DTM				
-					,	A.NODE_ID
-					,	A.REP_ROUT_ID
-					,	A.ROUT_ID
-					,	A.VHC_NO
-					,	A.CTRL_LV
-					,	A.STOP_SEC
-					,	A.CTRL_TYPE
-					,	A.CTRL_PHASE_NO
-					,	DATE_FORMAT(A.OCR_DTM, '%H:%i:%s') OCR_DTM
-					,	B.NODE_NM	
-					,	C.ROUT_NM	
-					
-		FROM	  		BMS_CRS_SIGOPER_EVENT_HIS A
-		LEFT JOIN		BMS_NODE_MST B
-			ON			A.NODE_ID = B.NODE_ID
-		LEFT JOIN		BMS_ROUT_MST C
-			ON			A.ROUT_ID = C.ROUT_ID	
+	<!--  교차로 시설물 상태 -> 우선신호 발생이력 수정 전
 		
-		WHERE			DATE_FORMAT(OCR_DTM, '%Y-%m-%d') = CURDATE() 	
-			<if test="CONTENT1 != null">
-				AND A.REP_ROUT_ID = #{CONTENT1}
+	<select id="MO0201G7R0" resultType="Map" parameterType="Map">
+		SELECT			DATE_FORMAT(A.SEND_DATE, '%H:%i:%s') SEND_DATE				
+					,	A.FCLT_COND
+					,	B.FCLT_KIND
+					,	C.NODE_NM
+					,	C.NODE_ID
+					,	D.ROUT_NM
+					
+		FROM	  		BMS_FCLT_COND_LOG A
+		LEFT JOIN	  	BMS_FCLT_INFO B
+			ON			A.MNG_ID = B.MNG_ID
+		LEFT JOIN	  	BMS_ROUT_NODE_CMPSTN C
+			ON			B.NODE_ID = C.NODE_ID
+		LEFT JOIN	  	BMS_ROUT_MST D
+			ON			C.ROUT_ID = D.ROUT_ID
+			
+		WHERE 			C.NODE_TYPE = 'NT001' 	
+		AND				DATE_FORMAT(SEND_DATE, '%Y-%m-%d') = CURDATE() 
+		<if test="CONTENT1 != 'all'">
+			AND D.REP_ROUT_ID = #{CONTENT1}
+		</if>
+		<if test="CONTENT2 != ''">
+			AND D.ROUT_ID = #{CONTENT2}
+		</if>
+		<if test="CONTENT3 != null and CONTENT3 != ''">
+			AND (C.NODE_ID LIKE CONCAT('%',#{CONTENT3},'%') || C.NODE_NM LIKE CONCAT('%',#{CONTENT3},'%'))
+		</if>
+		
+		GROUP BY		A.SEND_DATE, A.MNG_ID 									
+		ORDER BY		A.SEND_DATE DESC		
+	</select> -->
+	
+	<select id="MO0201G7R0" resultType="Map" parameterType="Map">
+		SELECT			DATE_FORMAT(A.SEND_DATE, '%H:%i:%s') SEND_DATE				
+					,	A.FCLT_COND
+					,	B.FCLT_KIND
+					,	C.NODE_NM
+					,	C.NODE_ID
+					,	D.ROUT_NM
+					
+		FROM	  		BMS_FCLT_COND_LOG A
+		LEFT JOIN	  	BMS_FCLT_INFO B
+			ON			A.MNG_ID = B.MNG_ID
+		LEFT JOIN	  	BMS_ROUT_NODE_CMPSTN C
+			ON			B.NODE_ID = C.NODE_ID
+		LEFT JOIN	  	BMS_ROUT_MST D
+			ON			C.ROUT_ID = D.ROUT_ID
+			
+		WHERE 			C.NODE_TYPE = 'NT001' 	
+		AND				DATE_FORMAT(SEND_DATE, '%Y-%m-%d') = CURDATE() 
+			<if test="CONTENT1 != 'all'">
+				AND D.REP_ROUT_ID = #{CONTENT1}
 			</if>
 			<if test="CONTENT2 != ''">
-				AND A.ROUT_ID = #{CONTENT2}
+				AND D.ROUT_ID = #{CONTENT2}
 			</if>
 			<if test="CONTENT3 != null and CONTENT3 != ''">
-				AND	A.NODE_ID LIKE CONCAT('%', #{CONTENT3}, '%')
-			</if>					
-		ORDER BY		OCR_DTM DESC
-		LIMIT			100;			
+				AND (C.NODE_ID LIKE CONCAT('%',#{CONTENT3},'%') || C.NODE_NM LIKE CONCAT('%',#{CONTENT3},'%'))
+			</if>
+		GROUP BY		A.SEND_DATE, A.MNG_ID 									
+		ORDER BY		A.SEND_DATE DESC		
+	</select>	
+	
+	<select id="MO0201G8R0" resultType="Map" parameterType="Map">
+		SELECT 			A.ROUT_ID, 
+						A.ROUT_NM, 
+						A.ROUT_TYPE, 
+						A.STTN_CNT, 
+						A.ROUT_LEN, 
+						A.CURVATURE, 
+						A.REMARK, 
+						B.STTN_ID
+								
+		FROM 			BMS_ROUT_MST A 
+		INNER JOIN BMS_ROUT_NODE_CMPSTN B 
+		ON A.ROUT_ID = B.ROUT_ID 
+		AND A.DEL_YN !="Y" 
+		AND B.NODE_TYPE != 'NT006'
+		WHERE B.STTN_ID = #{STTN_ID}		
+	
 	</select>
 	
 	<select id="selectCommuMap" resultType="Map">
