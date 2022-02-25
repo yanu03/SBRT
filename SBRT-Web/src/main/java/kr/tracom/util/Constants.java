@@ -57,12 +57,29 @@ public class Constants {
 	public static String SYS_INFO = "SYS_INFO";
 	public static String SY012 = "SY012"; //정류소 평균 정차시간
 	
+	//세종노선상세정보
+	public static String SEJONG_ROUT_ID = "IT00000004";
+	
+	//공공데이터포털 노선연계
+	public static String OPENAPI_ROUT_ID = "IT00000005";
+	
+	//공공데이터포털 노선_정류쟝연계
+	public static String OPENAPI_ROUT_STA_ID = "IT00000006";
+	
+	//공공데이터포털 버스현재위치
+	public static String OPENAPI_BUS_LOC_ID = "IT00000007";
+	
+	//공공데이터포털 도시코드 연계
+	public static String OPENAPI_CITY_CODE_ID = "IT00000021";
+	
+	//===================테이블 사용 이전 함수========================
 	//세종 노선검색 URL
 	public static String URL_CODE_SEJONG_ROUT = "IU001";
 	
 	//공공데이터포털 노선검색 URL
 	public static String URL_CODE_OPENAPI_ROUT = "IU002";
 	public static String URL_CODE_OPENAPI_ROUT_STA = "IU003";
+	//===================테이블 사용 이전 함수========================
 	
 	//공공데이터포털 노선검색 KEY
 	public static String KEY_CODE_OPENAPI_ROUT = "KEY01";
@@ -87,6 +104,8 @@ public class Constants {
     	public static final String ROUTE_LINK_TITLE			= "LINK_ID,ST_NODE,ED_NODE,LEN,MAX_SPD,EVENT_MS";
     	public static final String VIDEO_PLAY_LIST			="Seq_No,Video_Type,Video_File,Start_Date,Expire_Date,Runtime";
     	public static final String ELEC_ROUTER				="TIME_KO,TIME_EN,CATEGORY,FRAME,FONT";
+    	
+    	public static final String GARAGE_TITLE		= "GARAGE_ID,GARAGE_NAME,COUNT,SEQ,X,Y"; //차고지 bhmin 220119
     }
 	
     public static class PlayListVoiceTypes {
