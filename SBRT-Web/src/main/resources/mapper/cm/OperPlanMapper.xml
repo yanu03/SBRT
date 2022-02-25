@@ -447,7 +447,10 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
 				ON A.REP_ROUT_ID = B.REP_ROUT_ID
 			LEFT OUTER JOIN BMS_ROUT_MST C
 				ON A.ROUT_ID = C.ROUT_ID
-		WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.DAY_DIV = #{DAY_DIV} AND A.WAY_DIV = #{WAY_DIV}
+		WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.DAY_DIV = #{DAY_DIV}
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(WAY_DIV)"> 
+		AND A.WAY_DIV = #{WAY_DIV}
+		</if>
 		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
 			<if test="TYPE == 'ALL'||TYPE == ''">
 				AND (A.REP_ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || B.REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%'))
