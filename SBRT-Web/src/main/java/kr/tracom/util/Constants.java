@@ -166,6 +166,7 @@ public class Constants {
     	public static final int DISPATCH_TYPE_1 = 1; //일반메시지
     	public static final int DISPATCH_TYPE_2 = 2; //운행중 메시지
     	public static final int DISPATCH_TYPE_3 = 3; //정차중 메시지
+    	public static final int DISPATCH_TYPE_4 = 4; //공지사항
     	
     	public static final int DISPATCH_LV_1 = 1;
     	public static final int DISPATCH_LV_2 = 2;
