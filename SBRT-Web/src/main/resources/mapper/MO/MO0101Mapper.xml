@@ -464,35 +464,37 @@
 	</select>
 	
 	<select id="MO0101G7R0" resultType="Map" parameterType="Map">
-		SELECT			DATE_FORMAT(A.SEND_DATE, '%H:%i:%s') SEND_DATE				
-					,	A.FCLT_COND
-					,	B.FCLT_KIND
-					,	C.NODE_NM
-					,	C.NODE_ID
-					,	D.ROUT_NM
+		SELECT			DATE_FORMAT(A.UPD_DTM, '%H:%i:%s') UPD_DTM				
+					,	A.NODE_ID
+					,	A.REP_ROUT_ID
+					,	A.ROUT_ID
+					,	A.VHC_NO
+					,	A.CTRL_LV
+					,	A.STOP_SEC
+					,	A.CTRL_TYPE
+					,	A.CTRL_PHASE_NO
+					,	DATE_FORMAT(A.OCR_DTM, '%H:%i:%s') OCR_DTM
+					,	B.NODE_NM	
+					,	C.ROUT_NM	
 					
-		FROM	  		BMS_FCLT_COND_LOG A
-		LEFT JOIN	  	BMS_FCLT_INFO B
-			ON			A.MNG_ID = B.MNG_ID
-		LEFT JOIN	  	BMS_ROUT_NODE_CMPSTN C
-			ON			B.NODE_ID = C.NODE_ID
-		LEFT JOIN	  	BMS_ROUT_MST D
-			ON			C.ROUT_ID = D.ROUT_ID
-			
-		WHERE 			C.NODE_TYPE = 'NT001' 	
-		AND				DATE_FORMAT(SEND_DATE, '%Y-%m-%d') = CURDATE() 
-		<if test="CONTENT1 != null">
-			AND D.REP_ROUT_ID = #{CONTENT1}
-		</if>
-		<if test="CONTENT2 != ''">
-			AND D.ROUT_ID = #{CONTENT2}
-		</if>
-		<if test="CONTENT3 != null and CONTENT3 != ''">
-			AND (C.NODE_ID LIKE CONCAT('%',#{CONTENT3},'%') || C.NODE_NM LIKE CONCAT('%',#{CONTENT3},'%'))
-		</if>
+		FROM	  		BMS_CRS_SIGOPER_EVENT_HIS A
+		LEFT JOIN		BMS_NODE_MST B
+			ON			A.NODE_ID = B.NODE_ID
+		LEFT JOIN		BMS_ROUT_MST C
+			ON			A.ROUT_ID = C.ROUT_ID	
 		
-		GROUP BY		A.SEND_DATE, A.MNG_ID 									
-		ORDER BY		A.SEND_DATE DESC		
+		WHERE			DATE_FORMAT(OCR_DTM, '%Y-%m-%d') = CURDATE() 	
+			<if test="CONTENT1 != null">
+				AND A.REP_ROUT_ID = #{CONTENT1}
+			</if>
+			<if test="CONTENT2 != ''">
+				AND A.ROUT_ID = #{CONTENT2}
+			</if>
+			<if test="CONTENT3 != null and CONTENT3 != ''">
+				AND	A.NODE_ID LIKE CONCAT('%', #{CONTENT3}, '%')
+			</if>					
+		ORDER BY		OCR_DTM DESC
+		LIMIT			100;			
 	</select>
 	
 	<select id="selectCommuMap" resultType="Map">

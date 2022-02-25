@@ -230,16 +230,22 @@
 						<w2:column id="NODE_ID" name="노드아이디" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_FCLT_COND_LOG2" saveRemovedData="true"><!-- 교차로 시설물 -->
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_CRS_SIGOPER_EVENT_HIS" saveRemovedData="true">
 					<w2:columnInfo>
-						<w2:column id="SEND_DATE" name="전송일시" dataType="text"></w2:column>
-						<w2:column id="FCLT_COND" name="시설물상태" dataType="text"></w2:column>
-						<w2:column id="FCLT_KIND" name="시설물종류" dataType="text"></w2:column>
-						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
-						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드아이디" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선아이디" dataType="text"></w2:column>
+						<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
+						<w2:column id="CTRL_LV" name="우선신호제어단계" dataType="text"></w2:column>
+						<w2:column id="STOP_SEC" name="정류소요구대기시간" dataType="text"></w2:column>
+						<w2:column id="CTRL_TYPE" name="교차로우선신호제어방식" dataType="text"></w2:column>
+						<w2:column id="CTRL_PHASE_NO" name="교차로우선신호제어현시" dataType="text"></w2:column>
+						<w2:column id="OCR_DTM" name="발생일시" dataType="text"></w2:column>
+						<w2:column id="NODE_NM" name="교차로명" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 					</w2:columnInfo>
-				</w2:dataList>
+				</w2:dataList>				
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_LINK_MST" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="LINK_ID" name="링크아이디" dataType="text"></w2:column>
@@ -316,7 +322,7 @@
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0101G7R0" ref="data:json,dma_search" target="data:json,dlt_FCLT_COND_LOG2" action="/mo/MO0101G7R0"
+			<xf:submission id="sub_MO0101G7R0" ref="data:json,dma_search" target="data:json,dlt_BMS_CRS_SIGOPER_EVENT_HIS" action="/mo/MO0101G7R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -970,6 +976,7 @@
 		com.executeSubmission(sub_selectNodeListByRepRout);			
 	};
 	
+	//우선신호 발생이력 안나오는데 갔다와서 원인좀 봐보자
 	scwin.TYPE2_onviewchange = function(info) {
 		startMarker = 1;
 		com.searchGrid(MO0101G0, sub_MO0101G0R0);
@@ -1651,7 +1658,7 @@
 									</li>
 									<li id="li_crossimg" class="">
 										<!-- <span class="crossimg"></span> -->
-										교차로
+										신호
 									</li>
 									<li id="li_sttnimg" class="">
 										<!-- <span class="sttnimg"></span> -->
@@ -1661,7 +1668,7 @@
 							</xf:group>
 							<xf:group id="MO0101T0">
 								<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.MO0101G0_onrowindexchange" ev:oncellclick=""
-									showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서"
+									showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="순서"
 									sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 									fixedColumnWithHidden="true" dataList="data:dlt_BRT_CUR_OPER_INFO" ignoreCellClick="false" style="height:212px;"
 									autoFit="lastColumn" visibleRowNum="" id="MO0101G0" class="cm_grid left" tooltipPositionY="" focusMode="row">
@@ -1724,7 +1731,7 @@
 									<xf:group></xf:group>
 									<xf:group adaptive="layout" class="w2tb" id="MO0101F4" style="">
 										<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.MO0101G3_onrowindexchange"
-											ev:oncellclick="" showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false"
+											ev:oncellclick="" showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false"
 											rowNumHeaderValue="순서" sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 											fixedColumnWithHidden="true" dataList="data:dlt_BRT_OPER_EVENT_HIS" ignoreCellClick="false" style="height:160px;"
 											autoFit="lastColumn" visibleRowNum="" id="MO0101G3" class="cm_grid left" tooltipPositionY="" focusMode="row">
@@ -1777,7 +1784,7 @@
 									<xf:group></xf:group>
 									<xf:group adaptive="layout" class="w2tb" id="MO0101F0" style="">
 										<w2:gridView sortEvent="onclick" ev:onrowindexchange=""
-											ev:oncellclick="" showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false"
+											ev:oncellclick="" showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false"
 											rowNumHeaderValue="순서" sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 											fixedColumnWithHidden="true" dataList="data:dlt_BRT_DSPTCH_LOG" ignoreCellClick="false" style="height:160px;"
 											autoFit="lastColumn" visibleRowNum="" id="MO0101G4" class="cm_grid left" tooltipPositionY="" focusMode="row">
@@ -1826,7 +1833,7 @@
 							</xf:group> <!-- MO0101T0 -->
 							<xf:group id="MO0101T1" style="display: none;visibility:hidden; ">
 								<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.MO0101G1_onrowindexchange" ev:oncellclick=""
-									showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서"
+									showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="순서"
 									sortable="true" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 									fixedColumnWithHidden="false" dataList="dlt_BMS_ROUT_NODE_CMPSTN2" ignoreCellClick="false" style="height:394px;"
 									autoFit="lastColumn" visibleRowNum="" id="MO0101G1" class="cm_grid left" tooltipPositionY="" focusMode="row">
@@ -1877,7 +1884,7 @@
 									<xf:group></xf:group>
 										<xf:group adaptive="layout" class="w2tb" id="MO0101F5" style="">
 											<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.MO0101G5_onrowindexchange" ev:oncellclick="" showSortableImage=""
-												rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서" sortable="false"
+												rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="순서" sortable="false"
 												rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true"
 												dataList="data:dlt_FCLT_COND_LOG" ignoreCellClick="false" style="height:160px;" autoFit="lastColumn" visibleRowNum=""
 												id="MO0101G5" class="cm_grid left" tooltipPositionY="" focusMode="row" noResultMessage="금일 고장건수 없음">
@@ -1920,7 +1927,7 @@
 							</xf:group>
 							<xf:group id="MO0101T2" style="display: none;visibility:hidden" >
 								<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.MO0101G2_onrowindexchange" ev:oncellclick=""
-									showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서"
+									showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="순서"
 									sortable="true" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 									fixedColumnWithHidden="true" dataList="data:dlt_BMS_ROUT_NODE_CMPSTN3" ignoreCellClick="false" style="height:212px;"
 									autoFit="lastColumn" visibleRowNum="" id="MO0101G2" class="cm_grid left" tooltipPositionY="" focusMode="row">
@@ -1977,7 +1984,7 @@
 									<xf:group></xf:group>
 										<xf:group adaptive="layout" class="w2tb" id="MO0101F6" style="">
 										<w2:gridView sortEvent="onclick" ev:onrowindexchange=""
-											ev:oncellclick="" showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false"
+											ev:oncellclick="" showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false"
 											rowNumHeaderValue="순서" sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 											fixedColumnWithHidden="true" dataList="" ignoreCellClick="false" style="height:160px;"
 											autoFit="lastColumn" visibleRowNum="" id="MO0101G6" class="cm_grid left" tooltipPositionY="" focusMode="row" >
@@ -2013,45 +2020,54 @@
 								</xf:group>
 								<xf:group id="" class="pgm_subList grdr_20_2_a" style="">
 									<xf:group class="defaultbox" id="" style="margin-top: 5px;">
-										<w2:textbox class="df_tt fl" id="" label="교차로 시설물 상태" style=""></w2:textbox>
+										<w2:textbox class="df_tt fl" id="" label="우선신호 발생이력" style=""></w2:textbox>
 									</xf:group>
 									<xf:group></xf:group>
 									<xf:group adaptive="layout" class="w2tb" id="MO0101F7" style="">
 										<w2:gridView sortEvent="onclick" ev:onrowindexchange="" ev:oncellclick="" showSortableImage=""
-											rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서" sortable="false"
+											rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="순서" sortable="false"
 											rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true"
-											dataList="data:dlt_FCLT_COND_LOG2" ignoreCellClick="false" style="height:160px;" autoFit="lastColumn" visibleRowNum=""
-											id="MO0101G7" class="cm_grid left" tooltipPositionY="" focusMode="row" noResultMessage="금일 고장건수 없음">
+											dataList="data:dlt_BMS_CRS_SIGOPER_EVENT_HIS" ignoreCellClick="false" style="height:160px;" autoFit="lastColumn" visibleRowNum=""
+											id="MO0101G7" class="cm_grid left" tooltipPositionY="" focusMode="row" noResultMessage="금일 발생이력 없음">
 											<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 											<w2:header style="" id="header1">
 												<w2:row style="" id="row1">
+													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+														id="column3" value="노선명" blockSelect="false" displayMode="label">
+													</w2:column>
 													<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px"
-														id="column3" value="교차로명" blockSelect="false" displayMode="label">
+														id="column6" value="교차로명" blockSelect="false" displayMode="label">
 													</w2:column>
 													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
-														id="column6" value="전송시간" blockSelect="false" displayMode="label">
+														id="column4" value="발생시간" blockSelect="false" displayMode="label">
 													</w2:column>
 													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
-														id="column4" value="시설물종류" blockSelect="false" displayMode="label">
+														id="column5" value="제어단계" blockSelect="false" displayMode="label">
 													</w2:column>
-													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
-														id="column5" value="시설물상태" blockSelect="false" displayMode="label">
+													<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px"
+														id="column7" value="정류소 대기시간" blockSelect="false" displayMode="label">
 													</w2:column>
+													<!-- <w2:column removeBorderStyle="false" width="30" inputType="text" style="height:20px"
+														id="column8" value="우선신호 제어현시" blockSelect="false" displayMode="label">
+													</w2:column> -->
 												</w2:row>
 											</w2:header>
 											<w2:gBody style="" id="gBody1">
 												<w2:row style="" id="row2">
 													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+														id="ROUT_NM" value="" blockSelect="false" displayMode="label" textAlign="left">
+													</w2:column>
+													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
 														id="NODE_NM" value="" blockSelect="false" displayMode="label" textAlign="left">
 													</w2:column>
 													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
-														id="SEND_DATE" value="" blockSelect="false" displayMode="label">
+														id="OCR_DTM" value="" blockSelect="false" displayMode="label">
 													</w2:column>
-													<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px"
-														id="FCLT_KIND" value="" blockSelect="false" displayMode="label">
+													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+														id="CTRL_LV" value="" blockSelect="false" displayMode="label">
 													</w2:column>
-													<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px"
-														id="FCLT_COND" value="" blockSelect="false" displayMode="label">
+													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+														id="STOP_SEC" value="" blockSelect="false" displayMode="label">
 													</w2:column>
 												</w2:row>
 											</w2:gBody>
@@ -2074,7 +2090,7 @@
 						<div id="map_MO0101" style="">
 							<ul id="category_map_MO0101" class="category">
 					   		 </ul>
-					   		 <table class="map_status" id="map_busstatus">
+					   		 <table class="map_status" id="map_busstatus" style="display: none;">
 						   		 <tbody>
 						   		 	<tr>
 						   		 		<th colspan="2">버스 운행 현황</th>

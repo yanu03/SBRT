@@ -112,7 +112,7 @@ public class MO0101Controller extends ControllerSupport {
 	
 	@RequestMapping("/mo/MO0101G7R0")
 	public @ResponseBody Map<String, Object> MO0101G7R0() throws Exception {
-		result.setData("dlt_FCLT_COND_LOG", mo0101Service.MO0101G7R0());
+		result.setData("dlt_BMS_CRS_SIGOPER_EVENT_HIS", mo0101Service.MO0101G7R0());
 		return result.getResult();
 	}
 	
