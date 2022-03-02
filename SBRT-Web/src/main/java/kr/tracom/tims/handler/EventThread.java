@@ -335,7 +335,7 @@ public class EventThread extends Thread{
                         	 
                     		 historyMapper.insertOperVioltHistory(busEventMap); //운행위반이력 insert                    		 
                     	 } catch (Exception e) {
-                    		 logger.error("", e);
+                    		 //logger.error("", e);
                     	 }
                          
                          
