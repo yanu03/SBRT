@@ -439,6 +439,7 @@ public class EventThread extends Thread{
                 	String vhcNo = "";
                 	String dpDiv = "";
                 	String dpLv = "";
+                	String drvId = "";
                 	
                 	logger.info("디스패치 수신. {}", dispatch);
                 	
@@ -471,6 +472,7 @@ public class EventThread extends Thread{
                 		
                 			routId = String.valueOf(curInfo.get("ROUT_ID"));
                 			routNm = String.valueOf(curInfo.get("ROUT_NM"));
+                			drvId = String.valueOf(curInfo.get("DRV_ID"));
                 			
 	                		//디스패치 이력 넣기      
 	                		//디스패치 구분코드 가져오기
@@ -493,6 +495,7 @@ public class EventThread extends Thread{
 	                		dispatchLog.put("SEND_DATE", udpDtm);
 	                		dispatchLog.put("DSPTCH_DIV", dpDiv);
 	                		dispatchLog.put("DSPTCH_KIND", dpLv);
+	                		dispatchLog.put("DRV_ID", drvId);
 	                		dispatchLog.put("DSPTCH_CONTS", dispatch.getMessage());
 	                		
 	                		historyMapper.insertDispatchHistory(dispatchLog);
