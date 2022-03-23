@@ -53,10 +53,51 @@
 
 <update id="AL0201G0U0" parameterType="Map">
 	UPDATE BRT_OPER_PL_MST
-	SET ST_STTN_ID = #{ST_STTN_ID}, ED_STTN_ID = #{ED_STTN_ID}
-		, OPER_CNT = #{OPER_CNT}, ALLOC_CNT = #{ALLOC_CNT}, FST_TM = #{FST_TM}, LST_TM = #{LST_TM}, AM_PEAK_ST_TM = #{AM_PEAK_ST_TM}, AM_PEAK_ED_TM = #{AM_PEAK_ED_TM}
-		, PM_PEAK_ST_TM = #{PM_PEAK_ST_TM}, PM_PEAK_ED_TM = #{PM_PEAK_ED_TM}, AM_PEAK= #{AM_PEAK}, PM_PEAK = #{PM_PEAK}, NONE_PEAK = #{NONE_PEAK}, REMARK = #{REMARK}
-		, UPD_DTM = #{UPD_DTM}, UPD_ID = #{SSN_USER_ID} 
+	SET
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(ST_STTN_ID)">
+		ST_STTN_ID = #{ST_STTN_ID}, 
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(ED_STTN_ID)">
+		ED_STTN_ID = #{ED_STTN_ID},
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_CNT)">
+		OPER_CNT = #{OPER_CNT},
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(ALLOC_CNT)">
+		ALLOC_CNT = #{ALLOC_CNT},
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(FST_TM)">
+		FST_TM = #{FST_TM},
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(LST_TM)">	
+		LST_TM = #{LST_TM},
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(AM_PEAK_ST_TM)">
+		AM_PEAK_ST_TM = #{AM_PEAK_ST_TM},
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(AM_PEAK_ED_TM)">
+		AM_PEAK_ED_TM = #{AM_PEAK_ED_TM},
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(PM_PEAK_ST_TM)">
+		PM_PEAK_ST_TM = #{PM_PEAK_ST_TM},
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(PM_PEAK_ED_TM)">
+		PM_PEAK_ED_TM = #{PM_PEAK_ED_TM},
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(AM_PEAK)">
+		AM_PEAK= #{AM_PEAK},
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(PM_PEAK)">
+		PM_PEAK = #{PM_PEAK},
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(NONE_PEAK)">
+		NONE_PEAK = #{NONE_PEAK},
+	</if>
+	<if test="REMARK">
+		REMARK = #{REMARK},
+	</if>
+		UPD_DTM = #{UPD_DTM},
+		UPD_ID = #{SSN_USER_ID} 
 	WHERE REP_ROUT_ID = #{REP_ROUT_ID} AND DAY_DIV = #{DAY_DIV}  AND WAY_DIV = #{WAY_DIV} 
 </update>
 

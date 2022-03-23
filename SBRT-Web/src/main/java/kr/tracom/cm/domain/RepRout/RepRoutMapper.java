@@ -10,4 +10,7 @@ public interface RepRoutMapper {
 	public List<Map<String, Object>> selectRepRoutList(Map param);
 	
 	public List<Map<String, Object>> selectRepRoutItem();
+	
+	public List<Map<String, Object>> selectRepRoutListByNode(Map param);
+	
 }

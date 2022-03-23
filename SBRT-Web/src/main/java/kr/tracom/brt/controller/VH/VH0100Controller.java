@@ -30,35 +30,10 @@ public class VH0100Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
-	/*
-	@RequestMapping("/fm/FM0201G1R0")
-	public @ResponseBody Map<String, Object> FM0201G1R0() throws Exception {
-		result.setData("dlt_BMS_FCLT_INFO", fm0201Service.FM0201G1R0());
+	@RequestMapping("/vh/selectDsptchDivItem")
+	public @ResponseBody Map<String, Object> selectDsptchDivItem() throws Exception {
+		result.setData("dlt_dsptchDivItem", vh0100Service.selectDsptchDivItem());
 		return result.getResult();
 	}
-	
-	@RequestMapping("/fm/FM0201SHI0")
-	public @ResponseBody Map<String, Object> FM0201SHI0() throws Exception {
-		result.setData("dlt_searchitem", fm0201Service.FM0201SHI0());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/fm/FM0201SHI1")
-	public @ResponseBody Map<String, Object> FM0201SHI1() throws Exception {
-		result.setData("dlt_searchitem2", fm0201Service.FM0201SHI1());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/fm/FM0201SHI2")
-	public @ResponseBody Map<String, Object> FM0201SHI2() throws Exception {
-		result.setData("dlt_searchitem3", fm0201Service.FM0201SHI2());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/fm/FM0201SHI3")
-	public @ResponseBody Map<String, Object> FM0201SHI3() throws Exception {
-		result.setData("dlt_searchitem4", fm0201Service.FM0201SHI3());
-		return result.getResult();
-	}	*/
 	
 }

@@ -137,17 +137,18 @@ public class AL0202Service extends ServiceSupport {
 			}
 			for (int i = 0; i < param2.size(); i++) {
 				Map data = (Map) param2.get(i);
-				if(CommonUtil.empty(data.get("ROUT_ID")))break;
+				if(CommonUtil.empty(data.get("ROUT_ID")) || CommonUtil.empty(data.get("REP_ROUT_ID")) || CommonUtil.empty(data.get("ALLOC_NO")))break;
 				
 				String rowStatus = (String) data.get("rowStatus");
 				if (rowStatus.equals("C")) {
+					
 					al0202Mapper.AL0202G1I1(data);
 				} else if (rowStatus.equals("U")) {
 					al0202Mapper.AL0202G1U1(data);
 				} else if (rowStatus.equals("D")) {
 					al0202Mapper.AL0202G1D1(data);
 				} 
-			}			
+			}		
 		} catch(Exception e) {
 			if (e instanceof DuplicateKeyException)
 			{
@@ -159,7 +160,7 @@ public class AL0202Service extends ServiceSupport {
 			}		
 		}
 		
-		/*try {
+		try {
 			for (int i = 0; i < param3.size(); i++) {
 				Map data = (Map) param3.get(i);
 				
@@ -181,13 +182,13 @@ public class AL0202Service extends ServiceSupport {
 			{
 				throw e;
 			}		
-		}*/
+		}
 
 
 		Map result = saveResult(iCnt, uCnt, dCnt);
 		
 		//운행계획 생성되었다고 BRT 서비스에 알림
-		TimsService.notifyOperAllocCompleted();
+		//TimsService.notifyOperAllocCompleted();
 		
 		return result;		
 	}

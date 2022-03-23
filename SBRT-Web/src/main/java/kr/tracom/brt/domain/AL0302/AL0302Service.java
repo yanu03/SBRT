@@ -186,7 +186,7 @@ public class AL0302Service extends ServiceSupport {
 		
 		
 		//차량배차 배포 시 운행계획 생성 완료되었다고 BRT서비스에 알림
-		timsService.notifyOperAllocCompleted();
+		//timsService.notifyOperAllocCompleted();
 		
 		return result;	
 	}

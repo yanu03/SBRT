@@ -57,6 +57,9 @@
 			AND REP_ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
 	</if>
+	<if test="USE_YN != null and USE_YN != ''">
+		AND USE_YN = #{USE_YN}
+	</if>
 
 	ORDER BY REP_ROUT_NM, WAY_DIV
 </select>
@@ -77,6 +80,9 @@
 			REP_ROUT_ID,
 			<if test = "@kr.tracom.util.CommonUtil@notEmpty(INT_ROUT_ID)">
 			INT_ROUT_ID,
+			</if>
+			<if test = "@kr.tracom.util.CommonUtil@notEmpty(PUB_ROUT_ID)">
+			PUB_ROUT_ID,
 			</if>
 			REP_ROUT_NM,
 			ROUT_NM,
@@ -121,6 +127,9 @@
 			<if test = "@kr.tracom.util.CommonUtil@notEmpty(INT_ROUT_ID)">			
 			#{INT_ROUT_ID},
 			</if>
+			<if test = "@kr.tracom.util.CommonUtil@notEmpty(PUB_ROUT_ID)">
+			#{PUB_ROUT_ID},
+			</if>			
 			#{REP_ROUT_NM},
 			#{ROUT_NM},
 			#{ROUT_TYPE},
@@ -164,6 +173,9 @@
 			REP_ROUT_ID = #{REP_ROUT_ID},
 			<if test = "@kr.tracom.util.CommonUtil@notEmpty(INT_ROUT_ID)">
 			INT_ROUT_ID = #{INT_ROUT_ID},
+			</if>
+			<if test = "@kr.tracom.util.CommonUtil@notEmpty(PUB_ROUT_ID)">
+			PUB_ROUT_ID = #{PUB_ROUT_ID},
 			</if>
 			REP_ROUT_NM = #{REP_ROUT_NM},
 			ROUT_NM = #{ROUT_NM},
@@ -236,17 +248,11 @@
 </delete>
 
 <select id="SI0401P0R0" resultType="Map">
-	SELECT COMP_ID, COMP_NM
+	SELECT COMP_ID, COMP_NM, AREA, REMARK
 	FROM BMS_TRANSCOMP_MST
 		<where>
-			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-				AND COMP_ID LIKE CONCAT('%',#{CONTENT},'%') || COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
-			</if>
-			<if test="TYPE == 'COMP_ID'">
-				AND COMP_ID LIKE CONCAT('%',#{CONTENT},'%')
-			</if>
-			<if test="TYPE == 'COMP_NM'">
-				AND COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
+				COMP_ID LIKE CONCAT('%',#{CONTENT},'%') || COMP_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 		</where>
 </select>

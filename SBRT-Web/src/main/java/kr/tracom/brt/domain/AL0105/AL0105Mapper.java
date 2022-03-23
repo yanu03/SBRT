@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface AL0105Mapper {
 
-	public List AL0105G1R0();
+	public List AL0105G1R0(Map param);
 	
 	public List AL0105G2R0(Map param);
 	

@@ -10,7 +10,11 @@ public interface AL0205Mapper {
 	
 	public List AL0205G0R0(Map param);
 	
+	public List AL0205G0R1(Map param);
+	
 	public List AL0205SHI0();
+	
+	public List AL0205SHI1(Map param);
 	
 	public List AL0205G1R0(Map param);
 	

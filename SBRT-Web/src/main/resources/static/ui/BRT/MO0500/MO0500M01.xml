@@ -68,7 +68,7 @@
 						<w2:key id="VHC_NO" name="차량번호" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_DISP_VW" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
@@ -107,7 +107,7 @@
 				errorHandler="" customHandler="" mode="asynchronous" processMsg="저장 중입니다..." ev:submit=""
 				ev:submitdone="scwin.sub_MO0500G0S0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0500G1R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN" action="/rout/selectNodeListByRout" method="post" mediatype="application/json" encoding="UTF-8"
+			<xf:submission id="sub_MO0500G1R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_DISP_VW" action="/rout/selectNodeDispListByRout" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0500G1R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -230,20 +230,14 @@
    
 	scwin.sub_MO0500G1R0_submitdone = function(e) {
 		
-		routMap.showRoute("map_MO0500", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON());
+		routMap.showRoute("map_MO0500", dlt_BMS_ROUT_NODE_DISP_VW.getAllJSON());
 		
 		var curIndex = MO0500G0.getFocusedRowIndex();
 		var rowData = dlt_BRT_OPER_APPR_INFO.getCellData(curIndex, "VHC_ID");
 		var jsonObj = dlt_BRT_OPER_APPR_INFO.getRowJSON(curIndex);
 		routMap.showVehicle2("map_MO0500", jsonObj, rowData, MO0500G0, 0, 0);
 	};
-	
-	
-	
-	
-	
-	
-	]]></script>
+]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
@@ -291,7 +285,7 @@
 							</w2:choices>
 						</w2:autoComplete>
 						<xf:group style="" id="">
-							<w2:span label="발생일자 : " style="float: left;margin-left: 15px;" id=""></w2:span>
+							<w2:span label="발생일시 : " style="float: left;margin-left: 15px; margin-top:2px;" id=""></w2:span>
 							<w2:inputCalendar footerDiv="false" id="" style="width: 150px;height: 23px;float: left;margin-left: 10px;"
 								renderDiv="true" focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component"
 								ref="data:dma_search.OCR_DTM">
@@ -311,7 +305,7 @@
 					<xf:group></xf:group>
 					<xf:group id="" class="" style="">							
 						<w2:gridView id="MO0500G0" defaultCellHeight="20" rowNumVisible="true" useShiftKey="true" scrollByColumn="false"
-							owNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태" overflowX="scroll" overflowY="scroll" rowStatusVisible="false"
+							rowNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태" overflowX="scroll" overflowY="scroll" rowStatusVisible="false"
 							fixedColumnWithHidden="true" ignoreCellClick="false" dataList="data:dlt_BRT_OPER_APPR_INFO" class="cm_grid left" autoFit="lastColumn"
 							ev:onrowindexchange="scwin.MO0500G0_onrowindexchange" focusMode="row" ev:oncellclick="">
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>

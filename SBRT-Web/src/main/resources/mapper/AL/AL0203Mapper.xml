@@ -72,11 +72,13 @@
 		ON	A.REP_ROUT_ID = B.REP_ROUT_ID 
 		INNER JOIN BMS_ROUT_NODE_CMPSTN C
 		ON	 A.ROUT_ID =  C.ROUT_ID AND A.NODE_ID = C.NODE_ID AND A.NODE_SN = C.NODE_SN
-	<if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">			 
+		AND (C.NODE_TYPE = 'NT001' OR C.NODE_TYPE = 'NT002')
+	<!-- <if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">			 
 			AND C.NODE_TYPE = #{NODE_TYPE}
-	</if>
+	</if> -->
+	
 	WHERE
-		A.DAY_DIV = #{DAY_DIV} AND C.ROUT_ID = #{ROUT_ID} AND A.NODE_TYPE = 'NT002'
+		A.DAY_DIV = #{DAY_DIV} AND C.ROUT_ID = #{ROUT_ID} AND (A.NODE_TYPE = 'NT001' OR A.NODE_TYPE = 'NT002')
 	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 
 			AND A.OPER_SN = #{OPER_SN}
 	</if>
@@ -91,10 +93,11 @@
 			BRT_OPER_ALLOC_PL_NODE_INFO A
 			INNER JOIN BMS_ROUT_NODE_CMPSTN B
 				ON	 A.ROUT_ID =  B.ROUT_ID AND A.NODE_ID = B.NODE_ID AND A.NODE_SN = B.NODE_SN
-		<if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">			 
+				AND (B.NODE_TYPE = 'NT001' OR B.NODE_TYPE = 'NT002')
+		<!-- <if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">			 
 				AND B.NODE_TYPE = #{NODE_TYPE}
-		</if>
-		WHERE  A.DAY_DIV = #{DAY_DIV} AND B.ROUT_ID = #{ROUT_ID} AND A.NODE_TYPE = 'NT002'
+		</if> -->
+		WHERE  A.DAY_DIV = #{DAY_DIV} AND B.ROUT_ID = #{ROUT_ID} AND (A.NODE_TYPE = 'NT001' OR A.NODE_TYPE = 'NT002')
 		GROUP BY 
 			OPER_SN 
 		ORDER BY 
@@ -168,11 +171,12 @@
 		ON	A.REP_ROUT_ID = B.REP_ROUT_ID 
 		INNER JOIN BMS_ROUT_NODE_CMPSTN C
 		ON	 A.ROUT_ID =  C.ROUT_ID AND A.NODE_ID = C.NODE_ID AND A.NODE_SN = C.NODE_SN
-	<if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">			 
+		AND (C.NODE_TYPE = 'NT001' OR C.NODE_TYPE = 'NT002')
+	<!-- <if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">			 
 			AND C.NODE_TYPE = #{NODE_TYPE}
-	</if>
+	</if> -->
 	WHERE
-		A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.DAY_DIV = #{DAY_DIV} AND A.NODE_TYPE = 'NT002'
+		A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.DAY_DIV = #{DAY_DIV} AND (A.NODE_TYPE = 'NT001' OR A.NODE_TYPE = 'NT002')
 	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 
 			AND A.OPER_SN = #{OPER_SN}
 	</if>

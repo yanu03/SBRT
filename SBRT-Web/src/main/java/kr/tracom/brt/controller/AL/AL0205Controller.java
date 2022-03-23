@@ -20,13 +20,25 @@ public class AL0205Controller extends ControllerSupport{
 	
 	@RequestMapping("/al/AL0205G0R0")
 	public @ResponseBody Map<String, Object> AL0205G0R0() throws Exception {
-		result.setData("dlt_BMS_NODE_MST", al0205Service.AL0205G0R0());
+		result.setData("dlt_BMS_STTN_MST", al0205Service.AL0205G0R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/al/AL0205G0R1")
+	public @ResponseBody Map<String, Object> AL0205G0R1() throws Exception {
+		result.setData("dlt_BMS_CRS_MST", al0205Service.AL0205G0R1());
 		return result.getResult();
 	}
 	
 	@RequestMapping("/al/AL0205SHI0")
 	public @ResponseBody Map<String, Object> AL0205SHI0() throws Exception {
 		result.setData("dlt_searchitem", al0205Service.AL0205SHI0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/al/AL0205SHI1")
+	public @ResponseBody Map<String, Object> AL0205SHI1() throws Exception {
+		result.setData("dlt_searchitem2", al0205Service.AL0205SHI1());
 		return result.getResult();
 	}
 	

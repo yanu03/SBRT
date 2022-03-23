@@ -12,8 +12,10 @@
 					,ED_STTN_NM
 					,REMARK
 					
-		FROM		BMS_ROUT_MST			
-		<where>
+		FROM		BMS_ROUT_MST
+		
+		WHERE		USE_YN = 'Y'
+		AND			DEL_YN = 'N'					
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 				ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
@@ -23,7 +25,6 @@
 			<if test="TYPE == 'ROUT_NM'">
 				ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
-		</where>		
 	</select>	
 
 	<select id="PI0702G1K0" resultType="Map">

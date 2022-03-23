@@ -46,6 +46,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 		if(SystemUtils.IS_OS_WINDOWS) {
 			registry.addResourceHandler("/fileUpload/**").addResourceLocations(windowsFileuploadLocation);
 			registry.addResourceHandler("/cm/**").addResourceLocations(windowsStaticResouceLocation+"/static/cm/");
+			registry.addResourceHandler("/exl/**").addResourceLocations(windowsStaticResouceLocation+"/static/exl/");
 			registry.addResourceHandler("/ui/**").addResourceLocations(windowsStaticResouceLocation+"/static/ui/");
 			registry.addResourceHandler("/ClipReport/**").addResourceLocations(windowsStaticResouceLocation+"/static/ClipReport/");
 			registry.addResourceHandler("/websquare/**").addResourceLocations("/websquare/");
@@ -54,6 +55,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 		} else {
 			registry.addResourceHandler("/fileUpload/**").addResourceLocations(fileuploadLocation);
 			registry.addResourceHandler("/cm/**").addResourceLocations(staticResouceLocation+"/static/cm/");
+			registry.addResourceHandler("/exl/**").addResourceLocations(staticResouceLocation+"/static/exl/");
 			registry.addResourceHandler("/ui/**").addResourceLocations(staticResouceLocation+"/static/ui/");
 			registry.addResourceHandler("/ClipReport/**").addResourceLocations(staticResouceLocation+"/static/ClipReport/");
 			registry.addResourceHandler("/websquare/**").addResourceLocations(staticWebappLocation+"/websquare/");

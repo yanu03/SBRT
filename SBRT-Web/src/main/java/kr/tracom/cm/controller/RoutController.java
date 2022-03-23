@@ -47,15 +47,10 @@ public class RoutController extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	
 	@RequestMapping("/rout/selectNodeListByRout")
 	public @ResponseBody Map<String, Object> selectNodeListByRout() throws Exception {
 		result.setData("dlt_BMS_ROUT_NODE_CMPSTN", routService.selectNodeListByRout());
-		return result.getResult();
-	}
-	
-	@RequestMapping("/rout/selectMainNodeListByRout")
-	public @ResponseBody Map<String, Object> selectMainNodeListByRout() throws Exception {
-		result.setData("dlt_BRT_MAIN_ROUT_NODE_INFO", routService.selectMainNodeListByRout());
 		return result.getResult();
 	}
 	
@@ -65,6 +60,45 @@ public class RoutController extends ControllerSupport {
 		return result.getResult();
 	}
 	
+
+	@RequestMapping("/rout/selectNodeListByRepRouts")
+	public @ResponseBody Map<String, Object> selectNodeListByRepRouts() throws Exception {
+		result.setData("dlt_BMS_ROUT_NODE_CMPSTN", routService.selectNodeListByRepRouts());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/rout/selectNodeDispListByRouts")
+	public @ResponseBody Map<String, Object> selectNodeDispListByRouts() throws Exception {
+		result.setData("dlt_BMS_ROUT_NODE_DISP_VW", routService.selectNodeDispListByRout());
+		return result.getResult();
+	}
+	
+	
+	@RequestMapping("/rout/selectNodeDispListByRout")
+	public @ResponseBody Map<String, Object> selectNodeDispListByRout() throws Exception {
+		result.setData("dlt_BMS_ROUT_NODE_DISP_VW", routService.selectNodeDispListByRout());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/rout/selectNodeDispListByRepRout")
+	public @ResponseBody Map<String, Object> selectNodeDispListByRepRout() throws Exception {
+		result.setData("dlt_BMS_ROUT_NODE_DISP_VW", routService.selectNodeDispListByRepRout());
+		return result.getResult();
+	}
+	
+
+	@RequestMapping("/rout/selectNodeDispListByRepRouts")
+	public @ResponseBody Map<String, Object> selectNodeDispListByRepRouts() throws Exception {
+		result.setData("dlt_BMS_ROUT_NODE_DISP_VW", routService.selectNodeDispListByRepRouts());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/rout/selectMainNodeListByRout")
+	public @ResponseBody Map<String, Object> selectMainNodeListByRout() throws Exception {
+		result.setData("dlt_BRT_MAIN_ROUT_NODE_INFO", routService.selectMainNodeListByRout());
+		return result.getResult();
+	}
+		
 	@RequestMapping("/rout/selectSttnList")
 	public @ResponseBody Map<String, Object> selectSttnList() throws Exception {
 		result.setData("dlt_BMS_STTN_MST", routService.selectSttnList());

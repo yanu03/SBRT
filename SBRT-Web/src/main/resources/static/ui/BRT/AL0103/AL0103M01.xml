@@ -66,7 +66,7 @@
 						<w2:column id="ROUT_SN" name="노선순번" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_DISP_VW" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
@@ -86,6 +86,7 @@
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_sub_search">
 					<w2:keyInfo>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
 						<w2:key id="COR_ID" name="코스ID" dataType="text"></w2:key>
 						<w2:key id="ROUT_IDS" name="노선IDS" dataType="text"></w2:key>
 					</w2:keyInfo>
@@ -114,8 +115,8 @@
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0103G1R0_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_AL0103G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN"
-				action="/rout/selectNodeListByRouts" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+			<xf:submission id="sub_AL0103G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_DISP_VW"
+				action="/rout/selectNodeDispListByRouts" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_AL0103G2R0_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -126,11 +127,12 @@
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
         
+    var AL0103_isMapInit = false;
 	scwin.onpageload = function() {
 		var autoOptions = {
 			Main : { grid : AL0103G0, frm : AL0103F0, srchSbm : sub_AL0103G0R0, savSbm : sub_AL0103G0S0, 
 					 keySbm : sub_AL0103G0K0, srchGrp : pgm_header , keyColumn : "COR_ID", focusColumn : "COR_NM", name : "코스 관리"},
-			Sub1 : { grid : AL0103G1, srchSbm : sub_AL0103G1R0, savSbm : sub_AL0103G1S0,  name : "관련 노선" }	
+			Sub1 : { grid : AL0103G1, srchSbm : sub_AL0103G1R0, srchGrp : pgm_subList, savSbm : sub_AL0103G1S0,  name : "관련 노선" }	
 		 };
 		 
 		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM, autoOptions);
@@ -150,6 +152,7 @@
 		com.executeSubmission(sub_AL0103SHI0);
 		
 		var subOptions = {
+			SEARCH: scwin.btn_sub_move,
 			ADD: scwin.btn_add2_onclick, 
 			DEL:{},
         	SAVE:[{cbFnc:scwin.btn_up_onclick, nm:"상",class:"up"},{cbFnc:scwin.btn_down_onclick,nm:"하",class:"down"}
@@ -157,12 +160,44 @@
 		}
 
       	com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);	
+				
+		//$("#AL0103_TAB").attr("style", "width:200px; height:27px;  float:left");
+		pgm_sub_subList2.hide();
 		
-		routMap.initMap("map_AL0103", {width:"100%"
-			, height:"100%"
-			, onClick: scwin.onClickMap
-			, nodeChangeCb: scwin.nodeChangeCb
-			, draggable: false
+		//탭 목록 클릭 이벤트
+		$("#AL0103_TAB").find("li").click( function() {
+			var li_id = this.id;
+			$("#AL0103_TAB").find("li").removeClass("on");
+			$("#AL0103_TAB").find("#"+li_id).addClass("on");
+			
+			if(li_id == "li_cos") {
+				pgm_sub_subList.show("");
+				pgm_sub_subList2.hide();
+				gr_sub_header.show("");
+			}
+			else if(li_id == "li_map") {
+				pgm_sub_subList.hide();
+
+				var val_ROUT_ID = dlt_BRT_COR_DTL_INFO.getColData("ROUT_ID");
+				dma_sub_search.set("ROUT_IDS", val_ROUT_ID);
+		//		dma_sub_search.set("TYPE", "DISP_NODE");
+				com.executeSubmission(sub_AL0103G2R0);
+				setTimeout(function() {
+					if(AL0103_isMapInit==false){
+						routMap.initMap("map_AL0103", {width:"100%"
+							, height:"100%"
+							, onClick: scwin.onClickMap
+							, nodeChangeCb: scwin.nodeChangeCb
+							, draggable: false
+						});
+						AL0103_isMapInit = true;
+					}
+					routMap.showRoute("map_AL0103", dlt_BMS_ROUT_NODE_DISP_VW.getAllJSON(), dma_sub_search.get("STTN_ID"));
+				},100);
+				pgm_sub_subList2.show("");
+				gr_sub_header.hide();
+				//com.setFocusedCell(al0103G1, "UPD_DTM");
+			}
 		});
 	};
 	
@@ -222,15 +257,23 @@
 	};
 	
 	scwin.sub_AL0103G1R0_submitdone = function(e) {
-		var val_ROUT_ID = dlt_BRT_COR_DTL_INFO.getColData("ROUT_ID");
-		dma_sub_search.set("ROUT_IDS", val_ROUT_ID);
-//		dma_sub_search.set("TYPE", "DISP_NODE");
-		com.executeSubmission(sub_AL0103G2R0);
+		$("#AL0103_TAB").find("#li_map").removeClass("on");
+		$("#AL0103_TAB").find("#li_cos").addClass("on");	
+		pgm_sub_subList.show("");
+		pgm_sub_subList2.hide();
+		gr_sub_header.show("");
+		scwin.btn_sub_move();
 	};
 	
 	scwin.sub_AL0103G2R0_submitdone = function(e) {
-		routMap.showRoute("map_AL0103", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), dma_sub_search.get("STTN_ID"));
+		routMap.showRoute("map_AL0103", dlt_BMS_ROUT_NODE_DISP_VW.getAllJSON(), dma_sub_search.get("STTN_ID"));
 	};
+	
+	scwin.btn_sub_move = function() {
+		if(com.isEmpty(dma_sub_search.get("CONTENT"))==false){
+			com.gridMove(AL0103G1, "ROUT_ID,ROUT_NM", dma_sub_search.get("CONTENT"), AL0103G1.getFocusedRowIndex());
+		}
+	}
 	
 	scwin.btn_add2_onclick = function() {
 		var focusRowIdx = scwin.idxRow;
@@ -374,8 +417,8 @@
 					<w2:wframe class="" id="wfm_mainBtn" scope="true" src="/cm/common/wf_mainBtn.xml" style=""></w2:wframe>
 				</xf:group>
 			</xf:group>
-			<xf:group id="pgm_content" class="pgm_content grdc_500_20_a" style="">
-				<xf:group id="pgm_list" class="pgm_list grdr_20_2_1f_20_1f" style="">
+			<xf:group id="pgm_content" class="pgm_content grdc_5f_20_5f" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 					<xf:group class="defaultbox" id="" style="">
 						<w2:textbox class="df_tt fl" id="" label="코스 목록" style=""></w2:textbox>
 					</xf:group>
@@ -410,7 +453,10 @@
 										value="코스색" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column5"
-										value="소요시간" blockSelect="false" displayMode="label">
+										value="소요시간(분)" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column6"
+										value="비고" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
 							</w2:header>
@@ -432,7 +478,10 @@
 										value="" blockSelect="false" type="color">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="67" inputType="text" style="height:20px" id="MOVE_TM"
-										value="" blockSelect="false" displayMode="label">
+										value="" blockSelect="false" displayMode="label" textAlign="right">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="67" inputType="text" style="height:20px" id="REMARK"
+										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
@@ -446,10 +495,13 @@
 							</w2:footer>							
 						</w2:gridView>
 					</xf:group>
-				<xf:group id="" class="horizontal_line"></xf:group>
-				<xf:group id="pgm_sub_subList" class="pgm_sub_subList grdr_20_2_a" style="">
-						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="코스 상세 정보" style=""></w2:textbox>
+				
+				</xf:group>
+				
+				<xf:group id="" class="vertical_line"></xf:group>
+				<xf:group class="pgm_detail grdr_20_2_200_20_a">
+					<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="코스 정보" style=""></w2:textbox>
 						</xf:group>
 					<xf:group></xf:group>
 						<xf:group adaptive="layout" class="w2tb tb" id="AL0103F0" style="" tagname="table">
@@ -465,14 +517,14 @@
 							<xf:group tagname="tr" style="">
 								<xf:group tagname="th" style="" class="w2tb_th req">코스ID</xf:group>
 								<xf:group tagname="td" style="" class="w2tb_td">
-									<xf:input adjustMaxLength="false" id="" style="width: 100px;height: 21px;"
+									<xf:input adjustMaxLength="false" id="" style="width: 100px;"
 											ref="data:dlt_BRT_COR_MST.COR_ID" maxlength="10" disabled="true">
 									</xf:input>
 								</xf:group>
 								<xf:group tagname="th" class="w2tb_th" style="" id="" tabIndex="">대표노선명</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
 									<xf:input adjustMaxLength="" class="req" disabled="" fireEventOnInvalid="" id="REP_ROUT_NM" invalidMessageFunc="" mandatory=""
-										readOnly="" ref="data:dlt_BRT_COR_MST.REP_ROUT_NM" style="width:90px;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
+										readOnly="" ref="data:dlt_BRT_COR_MST.REP_ROUT_NM" style="width:90px;" validateOnCheckMaxByteLength="" validateOnInput=""
 										validator="" ev:oneditenter="" ev:onfocus="scwin.REP_ROUT_NM_onfocus">
 									</xf:input>
 									<xf:image class="btn" ev:onclick="scwin.REP_ROUT_NM_SEARCH_onclick" id="REP_ROUT_NM_SEARCH" longdesc=""
@@ -483,7 +535,7 @@
 							<xf:group tagname="tr" style="">
 								<xf:group tagname="th" style="" class="w2tb_th">코스명</xf:group>
 								<xf:group tagname="td" style="" class="w2tb_td">
-									<xf:input adjustMaxLength="false" id="COR_NM" style="width: 100%;height: 21px;"
+									<xf:input adjustMaxLength="false" id="COR_NM" style="width: 150px;"
 											ref="data:dlt_BRT_COR_MST.COR_NM" maxlength="30" readOnly="">
 									</xf:input>
 								</xf:group>
@@ -492,7 +544,7 @@
 								</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
 									<xf:select1 id="COR_TYPE" ref="data:dlt_BRT_COR_MST.COR_TYPE" chooseOption="true"
-										style="width: 100%;height: 21px;" submenuSize="auto" allOption="" disabled="false" direction="auto" appearance="minimal"
+										style="width: 150px;" submenuSize="auto" allOption="" disabled="false" direction="auto" appearance="minimal"
 										disabledClass="w2selectbox_disabled" chooseOptionLabel="-선택-" ev:onchange="scwin.COR_TYPE_onchange">
 									</xf:select1>
 								</xf:group>
@@ -500,19 +552,19 @@
 							<xf:group tagname="tr" style="">
 								<xf:group style="" class="w2tb_th" tagname="th">코스색</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
-									<xf:input adjustMaxLength="false" id="COR_COLOR" style="width: 100%;height: 21px;"
+									<xf:input adjustMaxLength="false" id="COR_COLOR" style="width: 150px;"
 										ref="data:dlt_BRT_COR_MST.COR_COLOR" readOnly="" allowChar="" maxByteLength="" type="color"> 
 									</xf:input>
 								</xf:group>
-								<xf:group style="" class="w2tb_th" tagname="th">소요시간</xf:group>
+								<xf:group style="" class="w2tb_th" tagname="th">소요시간(분)</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
-									<xf:input adjustMaxLength="false" id="MOVE_TM" style="width: 100%;height: 21px;"
+									<xf:input adjustMaxLength="false" id="MOVE_TM" style="width: 150px;"
 										ref="data:dlt_BRT_COR_MST.MOVE_TM" maxlength="5" readOnly="" allowChar="" disabled="true" maxByteLength="">
 									</xf:input>
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" class="w2tb_th" style="height: 70px;" id="" tabIndex="">
+								<xf:group tagname="th" class="w2tb_th" style="vertical-align: top;" id="" tabIndex="">
 									비고
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -524,133 +576,152 @@
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
 									<xf:textarea adjustMaxLength="" class="" disabled="" id="REMARK" mandatory=""
-										ref="data:dlt_BRT_COR_MST.REMARK" style="width:100%;height:70px;">
+										ref="data:dlt_BRT_COR_MST.REMARK" style="width:100%;">
 									</xf:textarea>
 								</xf:group>
 							</xf:group>
 						</xf:group>
-					</xf:group>
-				</xf:group>
-				
-				<xf:group id="" class="vertical_line"></xf:group>
-				<xf:group class="pgm_detail grdr_20_2_170_20_20_a">
-					<xf:group id="" class="gr_sub_header" style="">
-						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="관련 노선" style=""></w2:textbox>
-						</xf:group>
-						<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
-					</xf:group>
-					<xf:group class="" id="" style=""></xf:group>
-					<xf:group id="" class="" style="">
-						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" autoFitMinWidth="0" captionTitle=""
-							checkEditableInputClass="" class="cm_grid right" dataList="data:dlt_BRT_COR_DTL_INFO" disabledScrollHidden="" editModeEvent=""
-							editModeEventIcon="" enterKeyMove="" ev:onafteredit="" ev:onbeforecolumnmove="" ev:oncellclick="" ev:oneditkeyup="" ev:onkeyup=""
-							ev:onrowindexchange="" ev:ontextimageclick="" ev:onviewchange="" excludeDeletedRows="" fixedColumnWithHidden="true" focusMode="row"
-							id="AL0103G1" ignoreCellClick="false" ignoreNonEditableCellTabEnter="" keepDefaultColumnWidth="" keyMoveEditMode=""
-							moveKeyEditMode="" moveKeyEditModeAll="" nextTabID="" oddEvenColorDisplay="" readOnly="" rowNumHeaderValue="순번"
-							rowNumStatusResize="" rowNumStatusUniqueId="" rowNumVisible="true" rowNumWidth="" rowStatusHeaderValue="" rowStatusVisible="false"
-							rowStatusWidth="40" scrollByColumn="false" showSortableUseFilter="" sortOrderReverse="" sortable="" sortedIconPosition="" style=""
-							summaryAuto="" useCtrlOnMultisort="" useFilterList="" useFilterListSync="" useShiftKey="true" visibleRowNum="" wheelRows="">
-							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
-							<w2:header style="" id="header1">
-								<w2:row style="" id="row1">
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column12"
-										value="코스ID" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="137" inputType="text" style="height:20px" id="column10"
-										value="노선ID" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column9"
-										value="노선명" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column8"
-										value="노선유형" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column7"
-										value="정류장수" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column6"
-										value="노선거리" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column5"
-										value="굴곡도" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="108" inputType="text" style="height:20px" id="column4"
-										value="공동배차여부" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column3"
-										value="기점명" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column2"
-										value="종점명" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column1"
-										value="상하행" blockSelect="false" displayMode="label">
-									</w2:column>
-									<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column15"
-										value="코스색" blockSelect="false" displayMode="label">
-									</w2:column> -->
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column25"
-										value="휴게시간" blockSelect="false" displayMode="label">
-									</w2:column>									
-								</w2:row>
-							</w2:header>
-							<w2:gBody style="" id="gBody1">
-								<w2:row style="" id="row2">
-									<w2:column removeBorderStyle="false" width="144" inputType="text" style="height:20px" id="COR_ID"
-										value="" blockSelect="false" displayMode="label" readOnly="true">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="137" inputType="text" style="height:20px" id="ROUT_ID"
-										value="" blockSelect="false" displayMode="label" readOnly="true">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="ROUT_NM"
-										value="" blockSelect="false" displayMode="label" textAlign="left" readOnly="true">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="ROUT_TYPE"
-										value="" blockSelect="false" displayMode="label" readOnly="true">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="STTN_CNT"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="ROUT_LEN"
-										value="" blockSelect="false" displayMode="label" readOnly="true">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="CURVATURE"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="108" inputType="select" style="height:20px" id="JIT_DSPCH_YN"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="ST_STTN_NM"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="ED_STTN_NM"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="WAY_DIV"
-										value="" blockSelect="false" displayMode="label" readOnly="true">
-									</w2:column>
-									<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="COR_DTL_COLOR"
-										value="" blockSelect="false" displayMode="label" type="color">
-									</w2:column> -->
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="REST_TM"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>									
-								</w2:row>
-							</w2:gBody>
-						</w2:gridView>
-					</xf:group>
-					
+						
 					<xf:group id="" class="horizontal_line">
 					</xf:group>
-					<xf:group id="" class="gr_sub_header" style="">
-						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="지도" style=""></w2:textbox>
+					
+					<xf:group id="pgm_subList" class="pgm_list grdr_20_2_a">
+						<!-- <xf:group id="" class="gr_sub_header" style="">
+							<xf:group class="defaultbox" id="" style="">
+								<w2:textbox class="df_tt fl" id="" label="코스 상세 정보" style=""></w2:textbox>
+							</xf:group>
+						</xf:group> -->
+						<xf:group class="tab_div" id="">
+							<ul id="AL0103_TAB" class="tab_ul" style="width:200px">
+								<li id="li_cos" class="on">노선 정보</li>
+								<li id="li_map" class="">지도</li>
+							</ul>
+							<!-- <w2:wframe id="wfm_subBtn" class="" style="float: right;" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe> -->
 						</xf:group>
-					</xf:group>
-					<xf:group id="" class="" style="">
-						<div id="map_AL0103" style="overflow:hidden;"></div>
-						<!-- <xf:group id="map_SI0402" style="overflow:hidden;"></xf:group>  -->
+						<xf:group class="" id="">
+						</xf:group>
+						<xf:group id="pgm_sub_subList" class="pgm_sub_subList grdr_20_2_a" style="">
+							<xf:group id="gr_sub_header" class="gr_sub_header" style="">
+								<xf:group class="gr_sub_search" id="" style="">
+									<xf:group class="label" id="" style="">
+										<w2:span class="" id="" label="찾기"></w2:span>
+									</xf:group>
+									<xf:group class="search" id="" style="">
+										<xf:input id="search_sub_input" class="search_input" ref="data:dma_sub_search.CONTENT" placeholder="노선ID 또는 노선명"></xf:input>
+									</xf:group>
+									<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
+								</xf:group>
+							</xf:group>
+							<xf:group class="" id="" style=""></xf:group>
+							<xf:group id="" class="" style="">
+								<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" autoFitMinWidth="0" captionTitle=""
+									checkEditableInputClass="" class="cm_grid right" dataList="data:dlt_BRT_COR_DTL_INFO" disabledScrollHidden="" editModeEvent=""
+									editModeEventIcon="" enterKeyMove="" ev:onafteredit="" ev:onbeforecolumnmove="" ev:oncellclick="" ev:oneditkeyup="" ev:onkeyup=""
+									ev:onrowindexchange="" ev:ontextimageclick="" ev:onviewchange="" excludeDeletedRows="" fixedColumnWithHidden="true" focusMode="row"
+									id="AL0103G1" ignoreCellClick="false" ignoreNonEditableCellTabEnter="" keepDefaultColumnWidth="" keyMoveEditMode=""
+									moveKeyEditMode="" moveKeyEditModeAll="" nextTabID="" oddEvenColorDisplay="" readOnly="" rowNumHeaderValue="순번"
+									rowNumStatusResize="" rowNumStatusUniqueId="" rowNumVisible="true" rowNumWidth="" rowStatusHeaderValue="" rowStatusVisible="false"
+									rowStatusWidth="40" scrollByColumn="false" showSortableUseFilter="" sortOrderReverse="" sortable="" sortedIconPosition="" style=""
+									summaryAuto="" useCtrlOnMultisort="" useFilterList="" useFilterListSync="" useShiftKey="true" visibleRowNum="" wheelRows="">
+									<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
+									<w2:header style="" id="header1">
+										<w2:row style="" id="row1">
+											<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px"
+												id="column12" value="코스ID" blockSelect="false" displayMode="label">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="137" inputType="text" style="height:20px"
+												id="column10" value="노선ID" blockSelect="false" displayMode="label">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+												id="column9" value="노선명" blockSelect="false" displayMode="label">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+												id="column8" value="노선유형" blockSelect="false" displayMode="label">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+												id="column7" value="정류장수" blockSelect="false" displayMode="label">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+												id="column6" value="노선거리" blockSelect="false" displayMode="label">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+												id="column5" value="굴곡도" blockSelect="false" displayMode="label">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="108" inputType="text" style="height:20px"
+												id="column4" value="공동배차여부" blockSelect="false" displayMode="label">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px"
+												id="column3" value="기점명" blockSelect="false" displayMode="label">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px"
+												id="column2" value="종점명" blockSelect="false" displayMode="label">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+												id="column1" value="상하행" blockSelect="false" displayMode="label">
+											</w2:column>
+											<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column15"
+												value="코스색" blockSelect="false" displayMode="label">
+												</w2:column> -->
+											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+												id="column25" value="휴게시간" blockSelect="false" displayMode="label">
+											</w2:column>
+										</w2:row>
+									</w2:header>
+									<w2:gBody style="" id="gBody1">
+										<w2:row style="" id="row2">
+											<w2:column removeBorderStyle="false" width="144" inputType="text" style="height:20px"
+												id="COR_ID" value="" blockSelect="false" displayMode="label" readOnly="true">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="137" inputType="text" style="height:20px"
+												id="ROUT_ID" value="" blockSelect="false" displayMode="label" readOnly="true">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+												id="ROUT_NM" value="" blockSelect="false" displayMode="label" textAlign="left" readOnly="true">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px"
+												id="ROUT_TYPE" value="" blockSelect="false" displayMode="label" readOnly="true">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+												id="STTN_CNT" value="" blockSelect="false" displayMode="label">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+												id="ROUT_LEN" value="" blockSelect="false" displayMode="label" readOnly="true">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+												id="CURVATURE" value="" blockSelect="false" displayMode="label">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="108" inputType="select" style="height:20px"
+												id="JIT_DSPCH_YN" value="" blockSelect="false" displayMode="label">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+												id="ST_STTN_NM" value="" blockSelect="false" displayMode="label">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+												id="ED_STTN_NM" value="" blockSelect="false" displayMode="label">
+											</w2:column>
+											<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px"
+												id="WAY_DIV" value="" blockSelect="false" displayMode="label" readOnly="true">
+											</w2:column>
+											<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="COR_DTL_COLOR"
+												value="" blockSelect="false" displayMode="label" type="color">
+												</w2:column> -->
+											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+												id="REST_TM" value="" blockSelect="false" displayMode="label">
+											</w2:column>
+										</w2:row>
+									</w2:gBody>
+								</w2:gridView>
+							</xf:group>
+						</xf:group>
+
+						<xf:group id="pgm_sub_subList2" class="pgm_sub_subList grdr_2_a" style="">
+							<xf:group></xf:group>
+							<xf:group id="map_AL0103_DIV" class="" style="">
+								<div id="map_AL0103" style="overflow:hidden;"></div>
+								<!-- <xf:group id="map_SI0402" style="overflow:hidden;"></xf:group>  -->
+							</xf:group>
+						</xf:group>
+
 					</xf:group>
 				</xf:group> <!--end pgm_detail-->
 			</xf:group> <!-- end content --> 

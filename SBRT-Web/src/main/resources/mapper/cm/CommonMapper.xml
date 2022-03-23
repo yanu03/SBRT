@@ -46,13 +46,41 @@
 	
 	<!-- 코드 테이블의 데이타 읽어오기 CO_CD = ? -->
 	<select id="selectCommonDtlList" resultType="Map">
-		SELECT CO_CD, DL_CD, DL_CD_NM, SORT, USE_YN, TXT_VAL1, TXT_VAL2, TXT_VAL3, REMARK, NUM_VAL4, NUM_VAL5, NUM_VAL6
+		SELECT A.CO_CD, A.DL_CD, DL_CD_NM, SORT, USE_YN, TXT_VAL1, TXT_VAL2, TXT_VAL3, REMARK, NUM_VAL4, NUM_VAL5, NUM_VAL6
 		  FROM BMS_DL_CD_INFO A
 		 WHERE A.CO_CD = #{CO_CD} 
 		<if test="DL_CD != '' and DL_CD != null">
 			AND DL_CD = #{DL_CD}
 		</if>
 		 ORDER BY A.SORT
+	</select>
+	
+	<!-- <select id="selectCommonDtlList" resultType="Map">
+		SELECT A.CO_CD, A.DL_CD, DL_CD_NM, SORT, USE_YN, TXT_VAL1, TXT_VAL2, TXT_VAL3, REMARK, NUM_VAL4, NUM_VAL5, NUM_VAL6, B.IMG_PATH, B.IMG_NM, B.FOCUS, B.STATUS, B.IMG_PATH AS IMG_PATH_ORI
+		  FROM BMS_DL_CD_INFO A
+				LEFT JOIN BMS_DL_CD_IMG_INFO B
+				ON A.CO_CD = B.CO_CD AND A.DL_CD = B.DL_CD
+		 WHERE A.CO_CD = #{CO_CD} 
+		<if test="DL_CD != '' and DL_CD != null">
+			AND DL_CD = #{DL_CD}
+		</if>
+		 ORDER BY A.SORT
+	</select> -->
+	
+	<!-- 코드 테이블의 이미지 데이타 읽어오기 CO_CD = ? -->
+	<select id="selectCommonDtlImg" resultType="Map">
+		SELECT CO_CD, DL_CD, IMG_PATH, IMG_NM, FOCUS, STATUS, IMG_PATH AS IMG_PATH_ORI
+		  FROM BMS_DL_CD_IMG_INFO 
+		 WHERE CO_CD = #{CO_CD}
+		<if test="DL_CD != '' and DL_CD != null">
+			AND DL_CD = #{DL_CD}
+		</if>
+		<if test="STATUS != '' and STATUS != null">
+			AND STATUS = #{STATUS}
+		</if>
+		<if test="FOCUS != '' and FOCUS != null">
+			AND FOCUS = #{FOCUS}
+		</if>
 	</select>	
 	
 	<select id="selectCommonSearchItem" resultType="Map">
@@ -130,7 +158,10 @@
 	
 	<delete id="deleteCommonDtl" parameterType="java.util.Map">
 		DELETE FROM BMS_DL_CD_INFO 
-		 WHERE CO_CD = #{CO_CD} AND DL_CD = #{DL_CD_ORG}
+		 WHERE CO_CD = #{CO_CD} AND DL_CD = #{DL_CD_ORG};
+		 
+		DELETE FROM BMS_DL_CD_IMG_INFO
+		 WHERE CO_CD = #{CO_CD} AND DL_CD = #{DL_CD_ORG};
 	</delete>
 	
 	<insert id="insertCommonDtl" parameterType="java.util.Map" >
@@ -172,7 +203,40 @@
 			, NUM_VAL6 = #{NUM_VAL6}
 		</if>
 		 WHERE CO_CD = #{CO_CD}
-		   AND DL_CD = #{DL_CD_ORG}
+		   AND DL_CD = #{DL_CD_ORG};
+		   
+		   
+		UPDATE BMS_DL_CD_IMG_INFO 
+		SET 	DL_CD = #{DL_CD},
+				FOCUS = #{FOCUS},
+				STATUS = #{STATUS}
+		WHERE	CO_CD = #{CO_CD}
+				AND DL_CD = #{DL_CD_ORG}
+				AND IMG_PATH = #{IMG_PATH}
+	</update>
+	
+	<!-- 이미지경로 추가 -->
+	<insert id="insertCommonDtlImgPath" parameterType="Map">
+		INSERT INTO BMS_DL_CD_IMG_INFO(CO_CD, DL_CD, IMG_PATH, IMG_NM, FOCUS, STATUS)
+		VALUES (#{CO_CD}, #{DL_CD}, #{IMG_PATH}, #{IMG_NM}, #{FOCUS}, #{STATUS})
+		ON DUPLICATE KEY UPDATE
+		CO_CD = #{CO_CD},
+		DL_CD = #{DL_CD},
+		IMG_PATH = #{IMG_PATH},
+		IMG_NM = #{IMG_NM},
+		FOCUS = #{FOCUS},
+		STATUS = #{STATUS}
+	</insert>
+	
+	<!-- 이미지경로 수정 -->
+	<update id="updateCommonDtlImgPath" parameterType="Map">
+		UPDATE BMS_DL_CD_IMG_INFO 
+		SET 	IMG_PATH = #{IMG_PATH},
+				FOCUS = #{FOCUS},
+				STATUS = #{STATUS}
+		WHERE	CO_CD = #{CO_CD}
+				AND DL_CD = #{DL_CD_ORG}
+				AND IMG_PATH = #{IMG_PATH_ORI}
 	</update>
 
 	<!-- 시스템  테이블의  데이타 읽어오기 -->

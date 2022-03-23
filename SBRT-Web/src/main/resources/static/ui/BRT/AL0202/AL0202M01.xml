@@ -529,7 +529,11 @@
 		dlt_BRT_OPER_ALLOC_PL_COR_DTL_INFO.removeAll();
 		
 		ALLOC_CNT.setValue(dlt_BRT_OPER_PL_MST.getCellData(AL0202G0.getFocusedRowIndex(), "ALLOC_CNT"));
+		
+		
 		OPER_CNT.setValue(dlt_BRT_OPER_PL_MST.getCellData(AL0202G0.getFocusedRowIndex(), "OPER_CNT"));
+
+		
 		
 		var focusOption = {keyMap : dma_sub_search, keyMapColumn : "REP_ROUT_ID,DAY_DIV"};
 		com.changeDualGrid(AL0202G0, AL0202G3, sub_AL0202G1S0,
@@ -863,7 +867,7 @@
 	
 	
 	scwin.setCourse = function(focusIndex, colViewIndex, data){
-
+		
 		var index = parseInt(focusIndex/2);
 		var rIndex = scwin.getOperAllocIndexByView2(focusIndex, colViewIndex);
 		var allocOperCnt = scwin.getAllocCntData(index);
@@ -887,7 +891,8 @@
 
 		}
 		else {
-			for(var i = 0; i<data.length; i++){
+			var i = 0;
+			for(i = 0; i<data.length; i++){
 				var operSn = scwin.getOperAllocCellData(rIndex+i,"OPER_SN");
 				var color = data[i].COR_COLOR;
 				scwin.setOperAllocRowJsonData(rIndex+i, data[i]);
@@ -929,11 +934,12 @@
 
 				//index ++;
 				colViewIndex ++;
-			}
+			}	
 			var color = dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(index, "COR_COLOR");
 		}
-		
-		scwin.courseDtlToCourse();
+		for(var j=i-1; j<allocOperCnt; j++){
+			scwin.delOperAlloc(rIndex+j);
+		}
 	}
 	
 	scwin.insertCourse = function(returnValue) {
@@ -941,6 +947,7 @@
 		var focusIndex = AL0202G1.getFocusedRowIndex();
 		var colViewIndex = scwin.viewColumnIndex(AL0202G1.getFocusedColumnID());
 		var checkResult = scwin.checkCourse(focusIndex, colViewIndex, returnValue);
+		
 		if(checkResult==0){
 			var index = parseInt(focusIndex/2); 
 			var allocOperCnt = scwin.getAllocCntData(index);
@@ -975,7 +982,7 @@
 		
 		var focusIndex = AL0202G1.getFocusedRowIndex();
 		if(focusIndex<0){
-			com.alert("배차편성 상세를 선택하고 코스선택 하십시오.");
+			com.alert("배차를 선택하고 코스선택 하십시오.");
 			return;
 		}
 		if(focusIndex<0)focusIndex=0;
@@ -987,7 +994,7 @@
 		var dayDiv = dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rIndex, "DAY_DIV");
 		var wayDiv = dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rIndex, "WAY_DIV");
 		var allocNo = dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(rIndex, "ALLOC_NO");
-		var columnCnt = dlt_OPER_ALLOC_PL_ROUT_CNT.getCellData(rIndex, "CNT");
+		var columnCnt = dlt_OPER_ALLOC_PL_ROUT_CNT.getCellData(allocNo, "CNT");
 		
 		//dlt_SEL_BRT_OPER_ALLOC_PL_COR_INFO.removeAll();
 		var dltBrtOperAllocPlCorInfo = dlt_BRT_OPER_ALLOC_PL_COR_INFO.getAllJSON();
@@ -1014,8 +1021,8 @@
 		if(com.isEmpty(wayDescNm))wayDescNm = "하행";
 		var wayStr = (wayDiv=="WD001")?wayAscNm:wayDescNm;
 		var title = repRoutNm + " / " + dayStr + " / " + wayStr + " / " + allocNo + "회 배차";
-		var data = { data : dma_sub_search.getJSON(), callbackFn : "scwin.insertMultiCourse", wayStr : wayStr , columnCnt : columnCnt };
-		var options = { id : "popUpOperPlanRoutList",
+		var data = { data : dma_sub_search.getJSON(), callbackFn : "scwin.insertMultiCourse", wayStr : wayStr , columnCnt : columnCnt, allocNo : allocNo };
+		var options = { id : "popUpSelMultiCourseList",
 						popupName : title,
 						width : 1000, height: 800,
 						modal : true };
@@ -1048,6 +1055,10 @@
 					}
 				}
 			}
+		}
+		if((data.length+colViewIndex) < allocOperCnt){
+			result = 3; //현재보다 코스가 적음
+			return result;
 		}
 		else {
 			for(var i = 0; i<data.length; i++){
@@ -1097,6 +1108,15 @@
 		}
 		else if(checkResult==2){
 			com.confirm("현재 노선과 다릅니다. 재 구성하시겠습니까?", function(rtn){
+				if (rtn) {
+					scwin.setCourse(focusIndex, 0, returnValue);
+					scwin.reConstruction();
+				}
+				return;
+			});
+		}
+		else if(checkResult==3){
+			com.confirm("현재 코스보다  선택된 코스가 적습니다. 재 구성하시겠습니까?", function(rtn){
 				if (rtn) {
 					scwin.setCourse(focusIndex, 0, returnValue);
 					scwin.reConstruction();
@@ -1172,7 +1192,63 @@
 	}
 	
 	scwin.btn_init = function() {
+				
+		var operPlRoutInfoAscLength = dlt_BRT_OPER_PL_ROUT_INFO_ASC.getAllJSON().length;
+		var operPlRoutInfoDescLength = dlt_BRT_OPER_PL_ROUT_INFO_DESC.getAllJSON().length;
+		if(com.isEmpty(OPER_CNT.getValue())||OPER_CNT.getValue()==0){
+			OPER_CNT.setValue(operPlRoutInfoAscLength+operPlRoutInfoDescLength);
+		}
 		
+		if(com.isEmpty(ALLOC_CNT.getValue())||ALLOC_CNT.getValue()==0){
+			var allocCnt = 0;
+			if(operPlRoutInfoAscLength>0){
+				var ascFstStTmSec = util.timeToSecond(dlt_BRT_OPER_PL_ROUT_INFO_ASC.getAllJSON()[0].ROUT_ST_TM);
+				var ascFstEdTmSec = util.timeToSecond(dlt_BRT_OPER_PL_ROUT_INFO_ASC.getAllJSON()[0].ROUT_ED_TM);
+				var asclstEdTmSec = util.timeToSecond(dlt_BRT_OPER_PL_ROUT_INFO_ASC.getAllJSON()[operPlRoutInfoAscLength-1].ROUT_ED_TM);
+				var ascDiff = ascFstEdTmSec - ascFstStTmSec+600;
+				var i = 0;
+				var ascCnt = 0;
+				for(i=ascFstStTmSec;i<asclstEdTmSec;i+=ascDiff){
+					ascCnt++;
+				}
+				
+				var result = parseInt(operPlRoutInfoAscLength / ascCnt);
+				//var remainder = operPlRoutInfoAscLength % ascCnt;
+				allocCnt = result+1;
+			}
+			if(operPlRoutInfoDescLength>0){
+				var descFstStTmSec = util.timeToSecond(dlt_BRT_OPER_PL_ROUT_INFO_DESC.getAllJSON()[0].ROUT_ST_TM);
+				var descFstEdTmSec = util.timeToSecond(dlt_BRT_OPER_PL_ROUT_INFO_DESC.getAllJSON()[0].ROUT_ED_TM);
+				var desclstEdTmSec = util.timeToSecond(dlt_BRT_OPER_PL_ROUT_INFO_DESC.getAllJSON()[operPlRoutInfoDescLength-1].ROUT_ED_TM);
+				var descDiff = descFstEdTmSec - descFstStTmSec+600;
+				var i = 0;
+				var descCnt = 0;
+				for(i=descFstStTmSec;i<desclstEdTmSec;i+=descDiff){
+					descCnt++;
+				}
+				
+				var result = parseInt(operPlRoutInfoDescLength / descCnt);
+				//var remainder = operPlRoutInfoDescLength % descCnt;
+				allocCnt += result+1;
+			}
+		
+			var str = "최적의 배차횟수는 "+allocCnt+"입니다. 적용하시겠습니까?";
+			com.confirm(str, function(rtn) {
+				if (rtn) {
+					ALLOC_CNT.setValue(allocCnt);
+					scwin.btn_init2();
+				}
+				else{
+					scwin.btn_init2();
+				}
+			});
+		}
+		else {
+			scwin.btn_init2();
+		}
+	}
+	
+	scwin.btn_init2 = function() {
 		var operCnt = OPER_CNT.getValue();
 		var allocCnt = ALLOC_CNT.getValue();
 		if(com.isEmpty(operCnt)||operCnt==0){
@@ -1669,10 +1745,12 @@
 			gridBody += '<w2:column blockSelect="false" id="'+columnNmArr1[i]+'" style="height:25px" class="'+columnNmArr1[i]+'" inputType="text"></w2:column>'
 		}
 		
+		var operInfoIdx = 1;
 		if(rowData.length == 0 ) {
 			
 			gridHeader +='<w2:column blockSelect="false" id="hOPER_INFO" style="height:25px" inputType="text"'
-							+' width="" value="운행정보" colSpan="3"></w2:column>';
+							+' width="" value="운행정보(' +operInfoIdx+ ')" colSpan="3"></w2:column>';
+			operInfoIdx ++;
 			gridHeader +='</w2:row>';
 				
 			gridHeader +='<w2:row style="" id="second_row">';
@@ -1703,16 +1781,19 @@
 			return;
 		}
 		
+		operInfoIdx = 1;
 		for(var i = 0; i < maxCnt; i++) {
 			if(i==maxCnt-1){
 				gridHeader +='<w2:column blockSelect="false" id="hOPER_INFO'+'_'+i+'" style="height:25px" inputType="text"'
-								+' width="" value="운행정보" colSpan="5"></w2:column>';
+							+' width="" value="운행정보(' +operInfoIdx+ ')" colSpan="5"></w2:column>';
+				operInfoIdx ++;
 				gridHeader +='<w2:column blockSelect="false" id="dummy'+'_'+i+'" style="height:25px" inputType="text"'
 								+' width="" value="" colSpan="1"></w2:column>';
 			}
 			else {
 				gridHeader +='<w2:column blockSelect="false" id="hOPER_INFO'+'_'+i+'" style="height:25px" inputType="text"'
-								+' width="" value="운행정보" colSpan="6"></w2:column>';
+							+' width="" value="운행정보(' +operInfoIdx+ ')" colSpan="6"></w2:column>';
+				operInfoIdx ++;
 			}
 		}
 		gridHeader +='</w2:row>';
@@ -2034,11 +2115,12 @@
 	};
 	
 	scwin.AL0202G1_oncustompaste = function(e) {
-		
+	
+			
 		var colViewIndex = 0;
 		var fromAllocIndex = parseInt(copyViewIndex/2);
 		var fromOperAllocIndex = scwin.getOperAllocIndexByView2(copyViewIndex, colViewIndex);
-		var fromAllocOperCnt = scwin.getAllocCntData(fromOperAllocIndex);		
+		var fromAllocOperCnt = scwin.getAllocCntData(fromAllocIndex);		
 		var toViewIndex = AL0202G1.getFocusedRowIndex();
 		var toAllocIndex = parseInt(toViewIndex/2);
 		var toOperAllocIndex = scwin.getOperAllocIndexByView2(toViewIndex, colViewIndex);
@@ -2189,7 +2271,7 @@
 					<xf:group class="search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
-							optionOrder="false" ref="data:dma_search.TYPE" style="height:20px;width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+							optionOrder="false" ref="data:dma_search.TYPE" style="width:100px;margin-right: 10px;float:left;" submenuSize="auto"
 							textAlign="left">
 
 							<xf:choices>
@@ -2311,9 +2393,9 @@
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="배차편성 상세" style=""></w2:textbox>
 							<w2:span label="운행횟수 : " style="float: left; margin-left: 50px; margin-right: 8px;margin-top: 2px;" id=""></w2:span>
-							<xf:input adjustMaxLength="false" id="OPER_CNT" ref="data:dlt_BRT_OPER_PL_MST.OPER_CNT" style="width: 50px;height: 21px; float: left; margin-right:15px" ev:onkeyup="" ev:oneditkeyup='scwin.cnt_oneditkeyup'></xf:input>
+							<xf:input adjustMaxLength="false" id="OPER_CNT" ref="data:dlt_BRT_OPER_PL_MST.OPER_CNT" style="width: 50px; float: left; margin-right:15px" ev:onkeyup="" ev:oneditkeyup='scwin.cnt_oneditkeyup'></xf:input>
 							<w2:span label="배차횟수 : " style="float: left; margin-right: 8px;margin-top: 2px;" id=""></w2:span>
-							<xf:input adjustMaxLength="false" id="ALLOC_CNT" ref="data:dlt_BRT_OPER_PL_MST.ALLOC_CNT" style="width: 50px;height: 21px; float: left; margin-right:15px" ev:onkeyup="" ev:oneditkeyup="scwin.cnt_oneditkeyup"></xf:input>
+							<xf:input adjustMaxLength="false" id="ALLOC_CNT" ref="data:dlt_BRT_OPER_PL_MST.ALLOC_CNT" style="width: 50px; float: left; margin-right:15px" ev:onkeyup="" ev:oneditkeyup="scwin.cnt_oneditkeyup"></xf:input>
 							<!-- <w2:span label="시점방면 : " style="float: left; margin-right: 8px;margin-top: 2px;" id=""></w2:span>
 							<xf:select1 id="ST_WAY" selectedIndex="-1" appearance="full" style="width: auto;height: 21px;" cols="" rows="1" ref="" ev:onviewchange="scwin.ST_WAY_onviewchange">
 								<xf:choices>

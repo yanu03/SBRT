@@ -19,7 +19,8 @@ public class AL0105Service extends ServiceSupport{
 	private AL0105Mapper al0105Mapper;
 	
 	public List AL0105G1R0() throws Exception {
-		return al0105Mapper.AL0105G1R0();
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		return al0105Mapper.AL0105G1R0(map);
 	}
 	
 	public List AL0105G2R0() throws Exception {

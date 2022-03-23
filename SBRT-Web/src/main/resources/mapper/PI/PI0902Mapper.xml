@@ -54,8 +54,7 @@
 		WHERE
 			VHC.USE_YN = 'Y'
 			AND DVC.USE_YN = 'Y'
-			AND (DVC.DVC_KIND = 'DK004'
-			OR	DVC.DVC_KIND = 'DK010')
+			AND DVC.DVC_KIND = 'DK004'
 			AND DVC.MNG_ID IS NOT NULL
 			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT)">
 				AND	VHC.VHC_NO LIKE CONCAT('%',#{CONTENT},'%')
@@ -135,9 +134,7 @@
 			LEFT JOIN  	BMS_ED_RSV_INFO RSV
 			ON			RST.RSV_ID = RSV.RSV_ID
 		WHERE		VHC.VHC_ID = #{VHC_ID}
-		AND  		
-		(DVC.DVC_KIND = 'DK004'
-		OR			DVC.DVC_KIND = 'DK010') 
+		AND  		DVC.DVC_KIND = 'DK004'
 			<if test="RSV_STATE == '예약중'">
 				AND RST.COMPLETE_YN = 'N'
 			</if>
@@ -161,7 +158,6 @@
 			
 		WHERE
 		 		DVC.DVC_KIND = 'DK004'
-		OR		DVC.DVC_KIND = 'DK010'
 		AND 	MNG_ID IS NOT NULL
 	</select>
  

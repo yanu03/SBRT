@@ -72,12 +72,11 @@
 		};
 		
 		//추가/삭제 버튼 감추기
-		/*var mainOptions = {
-			ADD:{disp:"hide"},
-			DEL:{disp:"hide"}
-		};*/
+		var mainOptions = {
+			PLAY : {cbFnc:scwin.getHol, nm:"휴일복사", class:"play"}
+		};
 		
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions, mainOptions);
 		
 		var codeOptions = [{code : "DAY_DIV", compID : "AL0102G0:DAY_TYPE"}
 		
@@ -91,6 +90,10 @@
 		
 		$p.executeSubmission(sub_AL0102SHI0);
 	};
+	
+	scwin.getHol = function(){
+		com.alert("휴일복사. 작업중");
+	}
 	
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
@@ -210,6 +213,12 @@
 								</w2:itemset>
 							</w2:choices>
 						</w2:autoComplete>
+						<xf:group class="label" id="" style="">
+							<w2:span class="" id="" label="날짜 검색"></w2:span>
+						</xf:group>
+						<w2:inputCalendar footerDiv="false" id="SELC_HOLI_DATE" style="width: 120px;height: 23px; margin-top:1px; float: left;" renderDiv="true"
+							focusOnDateSelect="false" calendarValueType="year" rightAlign="false" renderType="component">
+						</w2:inputCalendar>
 					</xf:group>
 					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
@@ -256,7 +265,7 @@
 										displayMode="label" readOnly="true" userData1="M">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="84" inputType="text" style="height:20px" id="REMARK" value=""
-										blockSelect="false" displayMode="label" autoFitFilterList="">
+										blockSelect="false" displayMode="label" autoFitFilterList="" textAlign="left">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
@@ -302,7 +311,7 @@
 								</xf:group>
 								<xf:group style="" class="w2tb_th req" tagname="th">요일</xf:group>
 								<xf:group style="" class="w2tb_td" tagname="td">
-									<xf:input adjustMaxLength="false" id="DAY_OF_WEEK" style="height:24px;width: 80px;" placeholder=""
+									<xf:input adjustMaxLength="false" id="DAY_OF_WEEK" style="width: 80px;" placeholder=""
 										readOnly="" disabled="">
 									</xf:input>
 								</xf:group>
@@ -314,7 +323,7 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input adjustMaxLength="false" id="HOLI_NM" style="width:100%;height: 21px;"
+									<xf:input adjustMaxLength="false" id="HOLI_NM" style="width:100%;"
 										ref="data:dlt_BRT_HOLI_MST.HOLI_NM" maxlength="30">
 									</xf:input>
 								</xf:group>
@@ -326,7 +335,7 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:select1 id="DAY_TYPE" chooseOption="true" style="width: 148px;height: 21px;" submenuSize="auto"
+									<xf:select1 id="DAY_TYPE" chooseOption="true" style="width: 148px;" submenuSize="auto"
 										allOption="" disabled="false" direction="auto" appearance="minimal" disabledClass="w2selectbox_disabled"
 										ref="data:dlt_BRT_HOLI_MST.DAY_TYPE" chooseOptionLabel="-선택-">
 										<xf:choices>
@@ -343,7 +352,7 @@
 								</xf:group>
 							</xf:group>
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" class="w2tb_th" style="height: 70px;vertical-align: top" id="" tabIndex="">
+								<xf:group tagname="th" class="w2tb_th" style="vertical-align: top" id="" tabIndex="">
 									비고
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -354,7 +363,7 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:textarea id="REMARK" style="width: 100%;height: 100px;" ref="data:dlt_BRT_HOLI_MST.REMARK"
+									<xf:textarea id="REMARK" style="width: 100%;" ref="data:dlt_BRT_HOLI_MST.REMARK"
 										maxlength="200">
 									</xf:textarea>
 								</xf:group>
@@ -364,7 +373,7 @@
 					<xf:group style="" id="">
 					</xf:group>
 					<xf:group style="position: relative;" id="">
-						<xf:image src="/cm/images/add/bg_brt.png" style="width: 100%;height: 100%; position: absolute;" id=""></xf:image>
+						<xf:image src="/cm/images/add/bg_brt.png" style="width: 100%;height: 100%; position: absolute; object-fit: contain; cursor:default" id=""></xf:image>
 					</xf:group>
 				</xf:group><!-- pgm_detail -->
 			</xf:group>

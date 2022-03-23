@@ -126,9 +126,6 @@
 						,#{UPD_DTM}
 						,#{SSN_USER_ID}			
 					)
-	
-	
-						
 </insert>
 
 <update id="VD0300G2U0" parameterType="Map">
@@ -148,6 +145,40 @@
 	DELETE FROM 	BMS_DVC_HIS
 	WHERE			DVC_ID = #{DVC_ID}
 	AND				SN = #{SN}
+</delete>
+
+<insert id="VD0300G3I0" parameterType="Map">
+	INSERT INTO		BMS_DVC_COND_LOG	
+					(
+						SEND_DATE
+						,MNG_ID
+						,DVC_COND
+						,VER_INFO
+						,REMARK
+					)
+	VALUES			(
+						STR_TO_DATE(#{SEND_DATE}, '%Y%m%d')
+						,#{MNG_ID}
+						,#{DVC_COND}
+						,#{VER_INFO}
+						,#{REMARK}
+					)
+</insert>
+
+<update id="VD0300G3U0" parameterType="Map">
+	UPDATE			BMS_DVC_COND_LOG
+	SET				SEND_DATE = #{SEND_DATE}
+					,MNG_ID = #{MNG_ID}
+					,DVC_COND = #{DVC_COND}
+					,VER_INFO = #{VER_INFO}
+					,REMARK = #{REMARK}
+					
+	WHERE			MNG_ID = #{MNG_ID}
+</update>
+
+<delete id="VD0300G3D0" parameterType="Map">
+	DELETE FROM 	BMS_DVC_COND_LOG
+	WHERE			MNG_ID = #{MNG_ID}
 </delete>
 
 </mapper>

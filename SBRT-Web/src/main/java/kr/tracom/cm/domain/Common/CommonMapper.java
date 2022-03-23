@@ -23,6 +23,8 @@ public interface CommonMapper {
 	public List selectCommonDtl();
 
 	public List selectCommonDtlList(Map param);
+	
+	public List selectCommonDtlImg(Map param);
 
 	// 공통코드 그룹 C, U, D
 	public int deleteCommonCo(Map param);
@@ -37,6 +39,10 @@ public interface CommonMapper {
 	public int insertCommonDtl(Map param);
 
 	public int updateCommonDtl(Map param);
+	
+	public int insertCommonDtlImgPath(Map param);
+	
+	public int updateCommonDtlImgPath(Map param);
 
 	// 공통코드
 	public List<Map> selectCodeList(Map param);

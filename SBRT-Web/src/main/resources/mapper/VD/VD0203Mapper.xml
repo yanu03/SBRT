@@ -7,6 +7,7 @@
 			VM.VHC_NO
 			,MAX(IF(UL.COMPLETE_YN IS NULL, '', IF(UL.COMPLETE_YN = 'N', '예약중', ''))) AS COMPLETE_YN
 			,DI.DVC_KIND
+			,DI.ORG_ID
 			,OM.ORG_DIV
 			,DI.INST_LOC
 			,DI.DVC_ID
@@ -25,7 +26,7 @@
 		ON DI.ORG_ID = OM.ORG_ID
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-				AND USER_ID LIKE CONCAT('%',#{CONTENT},'%') || USER_NM LIKE CONCAT('%',#{CONTENT},'%')
+				AND VHC_NO LIKE CONCAT('%',#{CONTENT},'%') || COMPLETE_YN LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
 			<if test="TYPE == 'VHC_NO'">
 				AND VHC_NO LIKE CONCAT('%',#{CONTENT},'%')
@@ -41,7 +42,7 @@
 			</if>
 		</where>
 		GROUP BY DI.MNG_ID
-		ORDER BY VM.VHC_NO ASC, DI.MNG_ID ASC		
+		ORDER BY VM.VHC_NO ASC, DI.DVC_KIND ASC		
 	</select>
 	
 	<select id="VD0203G1R0" parameterType="Map"  resultType="Map">
@@ -52,6 +53,7 @@
 			,UL.PROCE_RST
 			,date_format(UL.SEND_DTM,'%Y-%m-%d') as SEND_DTM
 			,DI.MNG_ID
+			,DI.ORG_ID
 			,OM.ORG_DIV
 			,DI.DVC_KIND
 			,DI.INST_LOC
@@ -69,9 +71,12 @@
 			DI.VHC_ID = #{VHC_ID}
 			<if test="DVC_KIND != null and DVC_KIND != ''">
 				AND DI.DVC_KIND = #{DVC_KIND}
-			</if>			
+			</if>
+			<if test="SELC_REV_DATE != null and SELC_REV_DATE != ''">
+				AND DATE_FORMAT(URI.RSV_DT, '%Y%m') = #{SELC_REV_DATE}
+			</if>
 		ORDER BY 
-			VM.VHC_NO	
+			DI.DVC_KIND	
 	</select>
 
 	<select id="VD0203SHI0" resultType="Map">
@@ -84,6 +89,13 @@
 			ON VM.VHC_ID = DI.VHC_ID
 			LEFT JOIN BMS_UPD_LOG UL 
 			ON DI.MNG_ID = UL.MNG_ID
+	</select>
+	
+	<select id="VD0203SHI1" resultType="Map">
+		SELECT			ORG_ID
+						,ORG_NM
+		FROM	  		BMS_ORG_MST
+		WHERE			ORG_DIV = 'OD008'
 	</select>
 	
 	<insert id="VD0203G0I0" parameterType="Map">

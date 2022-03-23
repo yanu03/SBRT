@@ -61,7 +61,7 @@
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_DISP_VW" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
@@ -104,8 +104,8 @@
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="scwin.sub_AL0303SHI0_submit" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_AL0303G1R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN"
-				action="/rout/selectNodeListByRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+			<xf:submission id="sub_AL0303G1R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_DISP_VW"
+				action="/rout/selectNodeDispListByRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0303G1R0_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission>
@@ -209,7 +209,7 @@
 	};	
 	
 	scwin.REP_ROUT_NM_SEARCH_callback = function(obj) {
-		debugger;
+		
 		dlt_BRT_RPC_VHC_INFO.setCellData(AL0303G0.getFocusedRowIndex(), "REP_ROUT_ID", obj[0].REP_ROUT_ID);
 		dlt_BRT_RPC_VHC_INFO.setCellData(AL0303G0.getFocusedRowIndex(), "ROUT_ID", obj[0].ROUT_ID);
 		ROUT_NM.setValue(obj[0].ROUT_NM);
@@ -259,7 +259,7 @@
 	};
 	
 	scwin.RPC_VHC_NO_callback = function(obj) {
-		debugger;
+		
 		if(obj[0].VHC_NO != GRP_VHC_NO.getValue()){	
 			dlt_BRT_RPC_VHC_INFO.setCellData(AL0303G0.getFocusedRowIndex(), "RPC_VHC_ID", obj[0].VHC_ID);
 			dlt_BRT_RPC_VHC_INFO.setCellData(AL0303G0.getFocusedRowIndex(), "RPC_VHC_NO", obj[0].VHC_NO);
@@ -288,8 +288,8 @@
    };
 	
 	scwin.sub_AL0303G1R0_submitdone = function(e) {
-		debugger;
-		var allJson = dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON();
+		
+		var allJson = dlt_BMS_ROUT_NODE_DISP_VW.getAllJSON();
 		
 		if(allJson != '' && allJson != null){
 			routMap.showRoute("map_AL0303", allJson);
@@ -431,13 +431,19 @@
 									<w2:column width="100" style="height:25px;" inputType="text" id="column1" value="대체ID"
 										blockSelect="false" displayMode="label" userData1="" userData2="" class="req">
 									</w2:column>
-									<w2:column width="140" style="height:20px;" inputType="text" id="column2" value="발생일시" blockSelect="false"
-										displayMode="label" userData1="" class="req" displayFormat="" displayFormatFunc="">
-									</w2:column>
 									<w2:column width="80" style="height:20px;" inputType="text" id="column3" value="노선명"
 										blockSelect="false" displayMode="label" userData1="" class="req">
 									</w2:column>
+									<w2:column width="100" style="height:20px;" inputType="text" id="column11" value="운행일" blockSelect="false"
+										displayMode="label" userData1="" class="req" displayFormat="" displayFormatFunc="">
+									</w2:column>
+									<w2:column width="140" style="height:20px;" inputType="text" id="column2" value="발생일시" blockSelect="false"
+										displayMode="label" userData1="" class="req" displayFormat="" displayFormatFunc="">
+									</w2:column>
 									<w2:column width="100" style="height:20px;" inputType="text" id="column7" value="원차량"
+										blockSelect="false" class="req">
+									</w2:column>
+									<w2:column width="100" style="height:20px;" inputType="text" id="column15" value="원운전자"
 										blockSelect="false" class="req">
 									</w2:column>
 									<w2:column width="100" style="height:20px;" inputType="text" id="column8" value="대체차량"
@@ -446,8 +452,11 @@
 									<w2:column width="80" style="height:20px;" inputType="text" id="column9" value="대체운전사"
 										blockSelect="false">
 									</w2:column>
-									<w2:column width="100" style="height:20px;" inputType="text" id="column4" value="돌발유형"
+									<!-- <w2:column width="100" style="height:20px;" inputType="text" id="column4" value="돌발유형"
 										blockSelect="false">
+									</w2:column> -->
+									<w2:column width="140" style="height:20px;" inputType="text" id="column57" value="대체일시" blockSelect="false"
+										displayMode="label" userData1="" class="" displayFormat="" displayFormatFunc="">
 									</w2:column>
 									<w2:column width="350" style="height:20px;" inputType="text" id="column12" value="상세내역"
 										blockSelect="false">
@@ -459,13 +468,19 @@
 									<w2:column width="118" style="height:20px;" inputType="text" id="RPC_ID" blockSelect="false"
 										displayMode="label" readOnly="true" userData1="M" userData2="">
 									</w2:column>
-									<w2:column width="159" style="height:20px;" inputType="text" id="OCR_DTM" blockSelect="false"
-										displayMode="label" readOnly="true" userData1="M">
-									</w2:column>
 									<w2:column textAlign="center" width="80" style="height:20px;" inputType="text" id="ROUT_NM"
 										blockSelect="false" displayMode="label" readOnly="true" userData1="M">
 									</w2:column>
+									<w2:column width="159" style="height:20px;" inputType="text" id="OPER_DT" blockSelect="false"
+										displayMode="label" readOnly="true" userData1="M">
+									</w2:column>
+									<w2:column width="159" style="height:20px;" inputType="text" id="OCR_DTM" blockSelect="false"
+										displayMode="label" readOnly="true" userData1="M">
+									</w2:column>
 									<w2:column width="159" style="height:20px;" inputType="text" id="GRP_VHC_NO" blockSelect="false"
+										displayMode="label" readOnly="true" userData1="M">
+									</w2:column>
+									<w2:column width="159" style="height:20px;" inputType="text" id="GRP_DRV_NM" blockSelect="false"
 										displayMode="label" readOnly="true" userData1="M">
 									</w2:column>
 									<w2:column width="159" style="height:20px;" inputType="text" id="RPC_VHC_NO" blockSelect="false"
@@ -474,11 +489,14 @@
 									<w2:column width="159" style="height:20px;" inputType="text" id="RPC_DRV_NM" blockSelect="false"
 										displayMode="label" readOnly="true">
 									</w2:column>
-									<w2:column width="159" style="height:20px;" inputType="select" id="INCDNT_TYPE" blockSelect="false"
+									<!-- <w2:column width="159" style="height:20px;" inputType="select" id="INCDNT_TYPE" blockSelect="false"
 										displayMode="label" readOnly="true">
+									</w2:column> -->
+									<w2:column width="159" style="height:20px;" inputType="text" id="RPC_DTM" blockSelect="false"
+										displayMode="label" readOnly="true" userData1="">
 									</w2:column>
 									<w2:column width="159" style="height:20px;" inputType="text" id="DETAILS" blockSelect="false"
-										displayMode="label" readOnly="true">
+										displayMode="label" readOnly="true" textAlign="left">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
@@ -495,7 +513,7 @@
 				</xf:group><!-- pgm_list -->
 
 				<xf:group id="" class="vertical_line"></xf:group>
-				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_250_20_20_2_a" style="">
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_280_20_20_2_a" style="">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="대체차량 상세 정보" style=""></w2:textbox>
@@ -520,7 +538,7 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input adjustMaxLength="false" id="" style="width: 144px;height: 21px;"
+									<xf:input adjustMaxLength="false" id="" style="width: 144px;"
 										ref="data:dlt_BRT_RPC_VHC_INFO.RPC_ID" disabled="true">
 									</xf:input>
 								</xf:group>
@@ -545,7 +563,7 @@
 										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input id="ROUT_NM" class="req" chooseOption="true" style="width: 100px;height: 21px;"
+									<xf:input id="ROUT_NM" class="req" chooseOption="true" style="width: 100px;"
 										allOption="" disabled="" ev:onfocus="scwin.REP_ROUT_NM_onfocus" ref="data:dlt_BRT_RPC_VHC_INFO.ROUT_NM" >
 									</xf:input>
 									<xf:image class="btn" ev:onclick="scwin.REP_ROUT_NM_SEARCH_onclick" id="REP_ROUT_NM_SEARCH" longdesc=""
@@ -558,7 +576,7 @@
 										<w2:colspan>1</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:input id="INCDNT_ID" class="" chooseOption="true" style="width: 100px;height: 21px;"
+									<xf:input id="INCDNT_ID" class="" chooseOption="true" style="width: 100px;"
 										allOption="" disabled="" ev:onfocus="scwin.INCDNT_ID_onfocus" ref="data:dlt_BRT_RPC_VHC_INFO.INCDNT_ID" >
 									</xf:input>
 									<xf:image class="btn" ev:onclick="scwin.INCDNT_ID_SEARCH_onclick" id="INCDNT_ID_SEARCH" longdesc=""
@@ -591,7 +609,7 @@
 								<xf:group tagname="td" style="" class="w2tb_td">
 									<xf:input adjustMaxLength="" class="req" disabled="" ev:oneditenter=""
 										ev:onfocus="scwin.GRP_VHC_NO_onfocus" fireEventOnInvalid="" id="GRP_VHC_NO" invalidMessageFunc="" mandatory="" readOnly=""
-										ref="data:dlt_BRT_RPC_VHC_INFO.GRP_VHC_NO" style="width:80%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
+										ref="data:dlt_BRT_RPC_VHC_INFO.GRP_VHC_NO" style="width:80%;" validateOnCheckMaxByteLength="" validateOnInput=""
 										validator="" ev:onviewchange="scwin.GRP_VHC_NO_onviewchange">
 									</xf:input>
 									<xf:image class="btn" ev:onclick="scwin.GRP_VHC_NO_onclick" id="GRP_VHC_NO_SEARCH" longdesc=""
@@ -601,7 +619,7 @@
 									<xf:group style="" class="w2tb_td" tagname="td">
 										<xf:input adjustMaxLength="" class="req" disabled="" ev:oneditenter=""
 											ev:onfocus="" fireEventOnInvalid="" id="GRP_DRV_NM" invalidMessageFunc="" mandatory="" readOnly="true"
-											ref="data:dlt_BRT_RPC_VHC_INFO.GRP_DRV_NM" style="width:80%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
+											ref="data:dlt_BRT_RPC_VHC_INFO.GRP_DRV_NM" style="width:80%;" validateOnCheckMaxByteLength="" validateOnInput=""
 											validator="">
 										</xf:input>
 										<!--  <xf:image class="btn" ev:onclick="scwin.RPC_VHC_NO_onclick" id="RPC_VHC_NO_SEARCH" longdesc=""
@@ -615,7 +633,7 @@
 								<xf:group tagname="td" style="" class="w2tb_td">
 									<xf:input adjustMaxLength="" class="req" disabled="" ev:oneditenter=""
 										ev:onfocus="scwin.RPC_VHC_NO_onfocus" fireEventOnInvalid="" id="RPC_VHC_NO" invalidMessageFunc="" mandatory="" readOnly=""
-										ref="data:dlt_BRT_RPC_VHC_INFO.RPC_VHC_NO" style="width:80%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
+										ref="data:dlt_BRT_RPC_VHC_INFO.RPC_VHC_NO" style="width:80%;" validateOnCheckMaxByteLength="" validateOnInput=""
 										validator="">
 									</xf:input>
 									<xf:image class="btn" ev:onclick="scwin.RPC_VHC_NO_onclick" id="RPC_VHC_NO_SEARCH" longdesc=""
@@ -625,7 +643,7 @@
 									<xf:group style="" class="w2tb_td" tagname="td">
 										<xf:input adjustMaxLength="" class="" disabled="" ev:oneditenter=""
 											ev:onfocus="scwin.RPC_DRV_NM_onfocus" fireEventOnInvalid="" id="RPC_DRV_NM" invalidMessageFunc="" mandatory="" readOnly=""
-											ref="data:dlt_BRT_RPC_VHC_INFO.RPC_DRV_NM" style="width:80%;height:21px;" validateOnCheckMaxByteLength="" validateOnInput=""
+											ref="data:dlt_BRT_RPC_VHC_INFO.RPC_DRV_NM" style="width:80%;" validateOnCheckMaxByteLength="" validateOnInput=""
 											validator="">
 										</xf:input>
 										<xf:image class="btn" ev:onclick="scwin.RPC_DRV_NM_onclick" id="RPC_DRV_NM_SEARCH" longdesc=""
@@ -662,7 +680,7 @@
 								</xf:group>
 							</xf:group>-->
 							<xf:group tagname="tr" style="">
-								<xf:group tagname="th" class="w2tb_th" style="height: 70px;vertical-align: top;" id="" tabIndex="">
+								<xf:group tagname="th" class="w2tb_th" style="vertical-align: top;" id="" tabIndex="">
 									상세내역
 									<w2:attributes>
 										<w2:scope>row</w2:scope>
@@ -673,7 +691,7 @@
 										<w2:colspan>3</w2:colspan>
 										<w2:rowspan>1</w2:rowspan>
 									</w2:attributes>
-									<xf:textarea id="DETAILS" style="width: 100%;height: 70px;" ref="data:dlt_BRT_RPC_VHC_INFO.DETAILS"></xf:textarea>
+									<xf:textarea id="DETAILS" style="width: 100%;" ref="data:dlt_BRT_RPC_VHC_INFO.DETAILS"></xf:textarea>
 								</xf:group>
 							</xf:group>
 						</xf:group>

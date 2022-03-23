@@ -61,7 +61,7 @@
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN" saveRemovedData="true"><!-- 맵 노선 그리기용 -->
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_DISP_VW" saveRemovedData="true"><!-- 맵 노선 그리기용 -->
 					<w2:columnInfo>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
@@ -276,8 +276,8 @@
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_MO0101SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_selectNodeListByRepRout" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN"
-				action="/rout/selectNodeListByRepRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
+			<xf:submission id="sub_selectNodeListByRepRout" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_NODE_DISP_VW"
+				action="/rout/selectNodeDispListByRepRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
 				errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit=""
 				ev:submitdone="scwin.sub_selectNodeListByRepRout_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -397,10 +397,10 @@
 		com.executeSubmission(sub_MO0101SHI0);	
 		
 		//탭 목록 클릭 이벤트
-		$(".moni_img").find("li").click( function() {
+		$("#MO0101_TAB").find("li").click( function() {
 			var li_id = this.id;
-			$(".moni_img").find("li").removeClass("on");
-			$(".moni_img").find("#"+li_id).addClass("on");
+			$("#MO0101_TAB").find("li").removeClass("on");
+			$("#MO0101_TAB").find("#"+li_id).addClass("on");
 			if(li_id == "li_busimg") {
 				search_input.setPlaceholder("차량번호");
 				busActive = 1;
@@ -506,7 +506,7 @@
 		$(".map-type").find(".map-type-03").click( function() {
 			if( $(this).hasClass("active")) {
 				$(this).removeClass("active");	
-				routMap.showRoute("map_MO0101", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), null, "ONLYLINE");
+				routMap.showRoute("map_MO0101", dlt_BMS_ROUT_NODE_DISP_VW.getAllJSON(), null, "ONLYLINE");
 				//routMap.removeOverMapType('map_MO0101',kakao.maps.MapTypeId.TRAFFIC);
 			} else {
 				$(this).addClass("active");
@@ -870,7 +870,7 @@
 			var phaseNo = null;
 			
 			var curIndexArr = dlt_BMS_ROUT_NODE_CMPSTN4.getMatchedIndex("CRS_ID", dataList[0].CRS_ID);
-			debugger;
+			
 			//교차로 Grid 매칭용
 			var gridIndexArr = dlt_BMS_ROUT_NODE_CMPSTN3.getMatchedIndex("CRS_ID", dataList[0].CRS_ID);
 			var phase_no = dataList[0].PHASE_NO.toString();
@@ -936,15 +936,15 @@
 	scwin.sub_selectNodeListByRepRout_submitdone = function(e) {
 		
 		com.executeSubmission(sub_selectCategory);
-		routMap.showRoute("map_MO0101", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), null, "ONLYLINE");			
-		if ($(".moni_img").find("#li_sttnimg").hasClass("on") || startMarker == 1) {
+		routMap.showRoute("map_MO0101", dlt_BMS_ROUT_NODE_DISP_VW.getAllJSON(), null, "ONLYLINE");			
+		if ($("#MO0101_TAB").find("#li_sttnimg").hasClass("on") || startMarker == 1) {
 			//routMap.removeAllBusOverlay("map_MO0101_vehicle");
 			//routMap.removeAllOverlay("map_MO0101_sttn");			
 			//routMap.initOverlay("map_MO0101_crs");
 			routMap.showMarkerListTab("map_MO0101_sttn", dlt_BMS_ROUT_NODE_CMPSTN2.getAllJSON(), MO0101G1.getFocusedRowIndex(), MO0101G1);
 		}
 		
-		if ($(".moni_img").find("#li_crossimg").hasClass("on") || startMarker == 1) {
+		if ($("#MO0101_TAB").find("#li_crossimg").hasClass("on") || startMarker == 1) {
 			//routMap.removeAllBusOverlay("map_MO0101_vehicle");			
 			//routMap.removeAllOverlay("map_MO0101_crs");			
 			//routMap.initOverlay("map_MO0101_sttn");
@@ -954,7 +954,7 @@
 			}
 		}
 		
-		if ($(".moni_img").find("#li_busimg").hasClass("on") || startMarker == 1) {
+		if ($("#MO0101_TAB").find("#li_busimg").hasClass("on") || startMarker == 1) {
 			//routMap.removeAllOverlay("map_MO0101_sttn");
 			//routMap.removeAllOverlay("map_MO0101_crs");		
 			routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
@@ -1193,7 +1193,7 @@
 	}
 	
 	scwin.onClickMapVehicle = function(index, mapId) {
-		$(".moni_img").find("li").removeClass("on");
+		$("#MO0101_TAB").find("li").removeClass("on");
 		
 		if (mapId == "map_MO0101_vehicle") {
 			
@@ -1202,7 +1202,7 @@
 				scwin.MO0101G1_onrowindexchange();					
 			}
 			
-			$(".moni_img").find("#li_busimg").addClass("on");
+			$("#MO0101_TAB").find("#li_busimg").addClass("on");
 			busActive = 1;
 			sttnActive = 0;
 			crossActive = 0;
@@ -1213,7 +1213,7 @@
 	}
 	
 	scwin.onClickMapSttn = function(index, mapId) {
-		$(".moni_img").find("li").removeClass("on");
+		$("#MO0101_TAB").find("li").removeClass("on");
 		
 		if (mapId == "map_MO0101_sttn") {
 			
@@ -1222,7 +1222,7 @@
 				scwin.MO0101G1_onrowindexchange();					
 			}
 			
-			$(".moni_img").find("#li_sttnimg").addClass("on");
+			$("#MO0101_TAB").find("#li_sttnimg").addClass("on");
 			busActive = 0;
 			sttnActive = 1;
 			crossActive = 0;
@@ -1233,7 +1233,7 @@
 	};
 	
 	scwin.onClickMapCrs = function(index, mapId) {
-		$(".moni_img").find("li").removeClass("on");
+		$("#MO0101_TAB").find("li").removeClass("on");
 				
 		if (mapId == "map_MO0101_crs") {
 			
@@ -1242,7 +1242,7 @@
 				scwin.MO0101G2_onrowindexchange();					
 			}			
 			
-			$(".moni_img").find("#li_crossimg").addClass("on");
+			$("#MO0101_TAB").find("#li_crossimg").addClass("on");
 			busActive = 0;
 			sttnActive = 0;
 			crossActive = 1;
@@ -1596,8 +1596,9 @@
 		}
 
 		sigTimeout = setTimeout(function showSig() {
-			$p.executeSubmission(sub_MO0101SCK2);
-			sigTimeout = setTimeout(showSig, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
+			//$p.executeSubmission(sub_MO0101SCK2);
+			com.executeSubmission(sub_MO0101SCK2);
+			//sigTimeout = setTimeout(showSig, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
 		}, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
 	};
 	]]></script>
@@ -1650,8 +1651,8 @@
 			<xf:group id="pgm_content" class="pgm_content grdc_600_20_a" style="" >
 					<xf:group id="pgm_list" class="pgm_list" style="">
 						<xf:group id="" style="">
-							<xf:group style="width: 303px;">
-								<ul id="" class="moni_img"  style="margin-bottom: 3px;">
+							<xf:group  class="tab_div" style="">
+								<ul id="MO0101_TAB" class="tab_ul"  style="width: 303px;">
 									<li id="li_busimg" class="on">
 										<!-- <span class="busimg"></span> -->
 										버스

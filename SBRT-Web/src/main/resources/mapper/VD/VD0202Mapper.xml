@@ -3,58 +3,34 @@
 <mapper namespace="kr.tracom.bms.domain.VD0202.VD0202Mapper">
 
 	<select id="VD0202G0R0" resultType="Map" parameterType="Map">
-		<!-- SELECT 			 A.OPER_DT 
-				  		, A.REP_ROUT_ID
-						, A.VHC_ID
-						, A.ROUT_ID
-						, A.VHC_NO
-						, A.GPS_X
-						, A.GPS_Y
-						, A.OPER_STS
-						, B.REP_ROUT_NM
-						, B.ROUT_NM
-						, C.VHC_KIND
+		SELECT A.REP_ROUT_ID, A.VHC_ID, B.VHC_KIND, B.VHC_NO, DATE_FORMAT( C.OPER_DT, '%Y-%m-%d') AS OPER_DT, C.ROUT_ID
+			, C.GPS_X, C.GPS_Y, C.OPER_STS, D.REP_ROUT_NM
 		
-		FROM  			BRT_CUR_OPER_INFO A
-		LEFT JOIN   	BMS_ROUT_MST B
-		ON				A.ROUT_ID = B.ROUT_ID
-		LEFT JOIN		BMS_VHC_MST C
-		ON				A.VHC_ID = C.VHC_ID
-		
-		WHERE			A.OPER_DT = DATE_FORMAT(NOW(), '%Y/%m/%d')
-		AND				B.DEL_YN != 'Y' -->
-		SELECT 			DATE_FORMAT( A.OPER_DT, '%Y-%m-%d') AS OPER_DT
-				  		, A.REP_ROUT_ID
-						, C.VHC_ID
-						, A.ROUT_ID
-						, C.VHC_NO
-						, A.GPS_X
-						, A.GPS_Y
-						, IFNULL(A.OPER_STS, "OS005") AS OPER_STS
-						, B.REP_ROUT_NM
-						, B.ROUT_NM
-						, C.VHC_KIND
-						, B.DEL_YN
-		
-		FROM	  		BMS_VHC_MST C	
-		LEFT JOIN  		BRT_CUR_OPER_INFO A
-		ON				C.VHC_ID = A.VHC_ID
-		LEFT JOIN   	BMS_ROUT_MST B
-		ON				A.ROUT_ID = B.ROUT_ID
-		
+		FROM  			
+		BRT_REP_ROUT_VHC_CMPSTN A
+		LEFT JOIN		BMS_VHC_MST B
+		ON				A.VHC_ID = B.VHC_ID
+		LEFT JOIN		BRT_CUR_OPER_INFO C
+		ON				A.REP_ROUT_ID = C.REP_ROUT_ID AND A.VHC_ID = C.VHC_ID AND C.OPER_DT = DATE_FORMAT(NOW(), '%Y/%m/%d')
+		LEFT JOIN		BMS_REP_ROUT_MST D
+		ON				A.REP_ROUT_ID = D.REP_ROUT_ID AND D.DEL_YN != 'Y'
 		<where>
-			<if test="CONTENT1 != ''">
-				AND C.VHC_KIND = #{CONTENT1}
+			<if test="CONTENT1 != '' and CONTENT1 != 'all'">
+				AND A.REP_ROUT_ID = #{CONTENT1}
+			</if>
+			<if test="CONTENT2 != ''">
+				AND B.VHC_KIND = #{CONTENT2}
 			</if>
 			<if test="CONTENT3 != null and CONTENT3 != ''">
-				AND	C.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
-			</if>
-		</where>	
+				AND	B.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
+			</if>	
+		</where>
 		<!-- ORDER BY		A.REP_ROUT_ID, A.ROUT_ID -->
-		ORDER BY		C.VHC_ID
+		ORDER BY		A.VHC_ID
 	</select>
 	
-	<select id="VD0202G1R0" resultType="Map" parameterType="Map">
+<!-- 수정전 차내장치 목록 	
+<select id="VD0202G1R0" resultType="Map" parameterType="Map">
 		SELECT 			A.VHC_ID
 						,A.DVC_ID
 						,A.ORG_ID
@@ -83,6 +59,10 @@
 		AND				A.USE_YN = 'Y'
 		
 		ORDER BY		A.DVC_KIND
+	</select> -->
+	
+	<select id="VD0202G1R0" resultType="Map" parameterType="Map">
+		CALL	PROC_DVC_MONITOR(#{VHC_ID})
 	</select>
 	
 	<select id="VD0202SHI1" resultType="Map">

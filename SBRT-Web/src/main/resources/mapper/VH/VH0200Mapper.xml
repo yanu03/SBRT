@@ -19,6 +19,55 @@ SELECT
 	,A.GPS_Y
 	,B.REP_ROUT_NM
 	,C.ROUT_NM
+	,COUNT(A.OPER_DT) AS CHG_CNT
+FROM
+	BRT_CUR_CHG_OPER_INFO_HIS A
+	LEFT OUTER JOIN BMS_REP_ROUT_MST B
+	ON A.REP_ROUT_ID = B.REP_ROUT_ID
+	LEFT OUTER JOIN BMS_ROUT_MST C
+	ON A.ROUT_ID = C.ROUT_ID
+<where>
+	A.OCR_NODE_TYPE = 'NT002'
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT1)">
+			AND A.REP_ROUT_ID = #{CONTENT1}
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT2)">
+			AND A.ROUT_ID = #{CONTENT2}
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT3)">
+			AND A.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
+	</if>
+	
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(F_DATE_VH0200) and @kr.tracom.util.CommonUtil@empty(L_DATE_VH0200)">
+		<![CDATA[AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') >= #{F_DATE_VH0200}]]>
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(L_DATE_VH0200) and @kr.tracom.util.CommonUtil@empty(F_DATE_VH0200)">
+		<![CDATA[AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') <= #{L_DATE_VH0200}]]>
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(F_DATE_VH0200) and @kr.tracom.util.CommonUtil@notEmpty(L_DATE_VH0200)">
+		AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') BETWEEN #{F_DATE_VH0200} AND #{L_DATE_VH0200}
+	</if>
+</where>
+GROUP BY
+	A.OPER_DT, A.ALLOC_NO
+ORDER BY
+	A.OPER_DT DESC, A.OCR_DTM DESC
+	
+<!-- SELECT
+	DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT 
+	,DATE_FORMAT(A.OCR_DTM, '%Y-%m-%d %H:%i:%s') OCR_DTM 
+	,A.REP_ROUT_ID
+	,A.ROUT_ID
+	,A.OPER_SN
+	,A.ALLOC_NO
+	,A.VHC_NO
+	,A.CHG_OPER_DIV
+	,A.OCR_NODE_ID
+	,A.OCR_LINK_ID
+	,A.GPS_X
+	,A.GPS_Y
+	,B.REP_ROUT_NM
+	,C.ROUT_NM
 FROM
 	BRT_CUR_CHG_OPER_INFO_HIS A
 	LEFT OUTER JOIN BMS_REP_ROUT_MST B
@@ -38,22 +87,58 @@ FROM
 				AND A.VHC_ID LIKE CONCAT('%', #{CONTENT3}, '%')
 		</if>
 		
-		<if test="@kr.tracom.util.CommonUtil@notEmpty(F_DATE) and @kr.tracom.util.CommonUtil@empty(L_DATE)">
-			<![CDATA[AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') >= #{F_DATE}]]>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(F_DATE_VH0200) and @kr.tracom.util.CommonUtil@empty(L_DATE_VH0200)">
+			<![CDATA[AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') >= #{F_DATE_VH0200}]]>
 		</if>
-		<if test="@kr.tracom.util.CommonUtil@notEmpty(L_DATE) and @kr.tracom.util.CommonUtil@empty(F_DATE)">
-			<![CDATA[AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') <= #{L_DATE}]]>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(L_DATE_VH0200) and @kr.tracom.util.CommonUtil@empty(F_DATE_VH0200)">
+			<![CDATA[AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') <= #{L_DATE_VH0200}]]>
 		</if>
-		<if test="@kr.tracom.util.CommonUtil@notEmpty(F_DATE) and @kr.tracom.util.CommonUtil@notEmpty(L_DATE)">
-			AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') BETWEEN #{F_DATE} AND #{L_DATE}
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(F_DATE_VH0200) and @kr.tracom.util.CommonUtil@notEmpty(L_DATE_VH0200)">
+			AND DATE_FORMAT(A.OPER_DT, '%Y%m%d') BETWEEN #{F_DATE_VH0200} AND #{L_DATE_VH0200}
 		</if>
 		
 	</where>
 ORDER BY
-	A.OPER_DT DESC, A.OCR_DTM DESC
+	A.OPER_DT DESC, A.OCR_DTM DESC  -->
 </select>
 
 <select id="VH0200G1R0" resultType="Map" parameterType="Map">
+<!-- SELECT 
+	A.REP_ROUT_ID 
+	,DATE_FORMAT(A.OCR_DTM, '%Y-%m-%d') OCR_DTM 
+	,DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') OPER_DT 
+	,A.ROUT_ID
+	,A.ALLOC_NO
+	,A.OPER_SN
+	,A.NODE_ID
+	,A.NODE_SN
+	,A.NODE_TYPE
+	,A.DPRT_TM AS CHG_DPRT_TM
+	,A.ARRV_TM AS CHG_ARRV_TM
+	,B.DPRT_TM
+	,B.ARRV_TM
+	,C.NODE_NM
+	,C.ACCRU_LEN
+	,(SELECT COUNT(DISTINCT OCR_DTM) 
+	FROM BRT_CUR_CHG_OPER_DTL_INFO_HIS 
+	WHERE OPER_DT = #{OPER_DT} 
+	AND ROUT_ID = #{ROUT_ID}) AS CNT
+FROM BRT_CUR_CHG_OPER_DTL_INFO_HIS A
+	LEFT JOIN BRT_OPER_ALLOC_PL_NODE_INFO B
+	ON A.NODE_ID = B.NODE_ID
+	AND A.ALLOC_NO = B.ALLOC_NO
+	AND A.OPER_SN = B.OPER_SN
+	LEFT JOIN BMS_ROUT_NODE_CMPSTN C
+	ON A.ROUT_ID = C.ROUT_ID
+	AND A.NODE_ID = C.NODE_ID
+WHERE 
+	A.OPER_DT = #{OPER_DT} 
+	AND A.ROUT_ID = #{ROUT_ID} 
+	AND A.ALLOC_NO = #{ALLOC_NO} 
+	AND (A.NODE_TYPE = 'NT001'||A.NODE_TYPE = 'NT002')
+ORDER BY 
+	A.OCR_DTM, A.NODE_SN -->
+
 SELECT 
 	A.REP_ROUT_ID 
 	,A.OPER_SN 
@@ -62,11 +147,8 @@ SELECT
 	,A.ALLOC_NO 
 	,A.COR_ID 
 	,A.NODE_TYPE 
-   	<!-- ,A.ARRV_TM 
-   	,A.DPRT_TM  -->
 	, IFNULL(B.ARRV_TM, A.ARRV_TM) AS ARRV_TM
 	, IFNULL(B.DPRT_TM, A.DPRT_TM) AS DPRT_TM
-   	<!-- ,DATE_FORMAT(A.UPD_DTM, '%Y-%m-%d') UPD_DTM  -->
    	,C.REP_ROUT_NM 
    	,C.WAY_ASC_NM 
    	,C.WAY_DESC_NM 
@@ -78,21 +160,21 @@ SELECT
 FROM 
 	BRT_OPER_ALLOC_PL_NODE_INFO A
 	LEFT JOIN BRT_DAY_OPER_ALLOC_PL_NODE_INFO B 
-	ON	B.OPER_DT = DATE_FORMAT(#{OCR_DTM}, '%Y-%m-%d') AND A.REP_ROUT_ID = B.REP_ROUT_ID AND A.DAY_DIV = B.DAY_DIV AND A.ROUT_ID = B.ROUT_ID 
+	ON	B.OPER_DT = DATE_FORMAT(#{OPER_DT}, '%Y-%m-%d') AND A.REP_ROUT_ID = B.REP_ROUT_ID AND A.DAY_DIV = B.DAY_DIV AND A.ROUT_ID = B.ROUT_ID 
 		AND A.OPER_SN = B.OPER_SN AND A.NODE_ID = B.NODE_ID AND A.NODE_SN = B.NODE_SN
    	LEFT JOIN BMS_REP_ROUT_MST C
     ON A.REP_ROUT_ID = C.REP_ROUT_ID 
   	LEFT JOIN BMS_ROUT_NODE_CMPSTN D 
     ON A.ROUT_ID = D.ROUT_ID AND A.NODE_ID = D.NODE_ID AND A.NODE_SN = D.NODE_SN 
    	LEFT OUTER JOIN  BRT_CUR_CHG_OPER_DTL_INFO_HIS E
- 	ON E.OCR_DTM = #{OCR_DTM} AND A.REP_ROUT_ID = E.REP_ROUT_ID AND A.ROUT_ID = E.ROUT_ID AND A.OPER_SN = E.OPER_SN AND A.NODE_ID = E.NODE_ID AND A.NODE_SN = E.NODE_SN
+ 	ON E.OPER_DT = #{OPER_DT} AND A.REP_ROUT_ID = E.REP_ROUT_ID AND A.ROUT_ID = E.ROUT_ID AND A.OPER_SN = E.OPER_SN AND A.NODE_ID = E.NODE_ID AND A.NODE_SN = E.NODE_SN
 WHERE 
 	A.ROUT_ID = #{ROUT_ID} AND (A.NODE_TYPE = 'NT001'||A.NODE_TYPE = 'NT002')
-	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 
+	<!-- <if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 
 		AND A.OPER_SN = #{OPER_SN}
-	</if>
-GROUP BY OPER_SN, NODE_SN
-ORDER BY OPER_SN, NODE_SN
+	</if> 
+GROUP BY OPER_SN, NODE_SN -->
+ORDER BY OPER_SN, E.OCR_DTM, NODE_SN
 	
 	
 <!--  SELECT 
@@ -137,10 +219,23 @@ SELECT
 FROM 
 	BRT_OPER_ALLOC_PL_NODE_INFO A
 	WHERE A.ROUT_ID = #{ROUT_ID} AND (A.NODE_TYPE = 'NT001'||A.NODE_TYPE = 'NT002')
-	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 
+	<!-- <if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 
 		AND A.OPER_SN = #{OPER_SN}
-	</if>
+	</if> -->
 	GROUP BY OPER_SN
+</select>
+
+<select id="VH0200G2CNT" resultType="Map" parameterType="Map">
+SELECT 
+	COUNT(DISTINCT OCR_DTM) AS CHG_CNT
+	,OPER_SN
+FROM 
+	BRT_CUR_CHG_OPER_DTL_INFO_HIS
+WHERE 
+	OPER_DT = #{OPER_DT}
+	AND ALLOC_NO = #{ALLOC_NO}
+GROUP BY 
+	OPER_SN
 </select>
 
 <select id="VH0200G2R0" resultType="Map" parameterType="Map">

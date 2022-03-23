@@ -14,7 +14,10 @@
 					,REMARK
 					
 		FROM		BMS_ROUT_MST			
-		<where>
+		
+		WHERE		USE_YN = 'Y'
+		AND			DEL_YN = 'N'
+		
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 				AND ROUT_ID LIKE CONCAT('%',#{CONTENT},'%') || ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
@@ -24,8 +27,9 @@
 			<if test="TYPE == 'ROUT_NM'">
 				AND ROUT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
-		</where>					
+		
 	
+		
 	</select>
 
 

@@ -57,7 +57,7 @@
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_SM0403SHI0" ref="" target="data:json,dlt_searchitem" action="/sm/SM0403SHI0" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				ev:submit="" ev:submitdone="scwin.sub_SM0403SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_SM0403G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_USER_HIS" action="/sm/SM0403G0R0" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_SM0403G0R0_submitdone"
@@ -82,9 +82,7 @@
 		var codeOptions = [ {code : "LOGIN_STS", compID : "SM0403G0:LOGIN_STS" } ];
 		
 		//코드옵션 실행
-		com.setCommonDtl(codeOptions, function() {
-			com.searchGrid(SM0403G0, sub_SM0403G0R0);
-		});
+		com.setCommonDtl(codeOptions)
 		
 		
 		var date = new Date();
@@ -94,16 +92,20 @@
 		
 		var today = year+month+day;
 		var firstday = year+month+"01";
-		F_DATE.setValue(firstday);
-		L_DATE.setValue(today);		
+		F_DATE.setValue(util.getCurrentDate2());
+		L_DATE.setValue(util.getCurrentDate2());		
 		
 //		$p.executeSubmission(sub_SI0101SHI0);
-		$p.executeSubmission(sub_SM0403SHI0);
+		com.executeSubmission(sub_SM0403SHI0);
 
 	};
 
 	scwin.onpageunload = function() {
 
+	};
+	
+	scwin.sub_SM0403SHI0_submitdone = function(e) {
+		com.executeSubmission(sub_SM0403G0R0);
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
@@ -158,6 +160,8 @@
 	scwin.checkCloseL = function(info) {
 		L_DATE.setValue(info.oldValue);
 	}
+	
+	
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -222,7 +226,8 @@
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 					<xf:group id="" class="" style="">
 						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="로그인 이력" style=""></w2:textbox></xf:group>
+							<w2:textbox class="df_tt fl" id="" label="로그인 이력" style=""></w2:textbox>
+						</xf:group>
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="" class="" style="">							
@@ -230,7 +235,6 @@
 							owNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태" overflowX="scroll" overflowY="scroll" rowStatusVisible="false"
 							fixedColumnWithHidden="true" ignoreCellClick="false" dataList="data:dlt_BMS_USER_HIS" class="cm_grid left" autoFit="lastColumn"
 							ev:oncellclick="scwin.SI0101G0_oncellclick" ev:onrowindexchange="scwin.SI0101G0_onrowindexchange" sortEvent="onclick" focusMode="row">
-
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">

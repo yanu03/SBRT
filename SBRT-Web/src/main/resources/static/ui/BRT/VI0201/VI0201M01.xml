@@ -175,7 +175,7 @@
 	};
 	
 	scwin.VI0201G0_onrowindexchange = function(row,oldRow) {
-		debugger;
+		
 		var jsonObj = dlt_BRT_CPLNT_HIS.getRowJSON(row);
 		
 		var cplntDiv = dlt_BRT_CPLNT_HIS.getCellData(row, "CPLNT_DIV");
@@ -331,7 +331,7 @@
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
-		debugger;
+		
 		if (info.newValue == "ALL") {
 			acb_autoChoiceBox.hide();
 			search_input.setValue("");
@@ -390,7 +390,7 @@
 									<xf:value><![CDATA[CPLNT_DIV]]></xf:value>
 								</xf:item>
 								<xf:item>
-									<xf:label><![CDATA[진행결과]]></xf:label>
+									<xf:label><![CDATA[진행상태]]></xf:label>
 									<xf:value><![CDATA[JUDG_RLT]]></xf:value>
 								</xf:item>
 								<xf:item>
@@ -399,7 +399,7 @@
 								</xf:item>
 							</xf:choices>
 						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="민원구분 또는 진행결과 또는 민원자명" style=""></xf:input>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="민원구분 또는 진행상태 또는 민원자명" style=""></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
 							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
 							ev:onviewchange="" id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
@@ -421,7 +421,7 @@
 					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
 			</xf:group>
-			<xf:group id="pgm_content" class="pgm_content grdc_a_20_900_minmax" style="">
+			<xf:group id="pgm_content" class="pgm_content grdc_5f_20_5f" style="">
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 					<xf:group id="" class="" style="">
 						<xf:group class="defaultbox" id="" style="">
@@ -548,8 +548,8 @@
 						</xf:group>
 					</xf:group>
 					<xf:group class="" id="" style=""></xf:group>
-					<xf:group class="" id="" style="">
-						<xf:group adaptive="layout" class="w2tb tb" id="VI0201F0" style="" tagname="table">
+					<xf:group class="" id="" style="position:relative; overflow:auto">
+						<xf:group adaptive="layout" class="w2tb tb" id="VI0201F0" style="position:absolute" tagname="table">
 							<w2:attributes>
 								<w2:summary></w2:summary>
 							</w2:attributes>
@@ -581,148 +581,148 @@
 								</xf:group>
 								<xf:group class="w2tb_th" style="" tagname="th">민원자전화번호</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
-									<xf:input allowChar="0-9-" customModelFormatter="" customModelUnformatter="" dataType="text" disabled="true"
-										displayFormatter="com.transPhone" id="CPLNT_PHONE" maskFormat="" maxlength="13" minByteLength=""
+									<xf:input allowChar="0-9-" customModelFormatter="" customModelUnformatter="" dataType="text"
+										disabled="true" displayFormatter="com.transPhone" id="CPLNT_PHONE" maskFormat="" maxlength="13" minByteLength=""
 										ref="data:dlt_BRT_CPLNT_HIS.CPLNT_PHONE" style="width:100%;height: 21px;" validator="" maxByteLength="" readOnly="true">
 									</xf:input>
 								</xf:group>
 							</xf:group>
 							<!--<xf:group tagname="tr" style="">
 								<xf:group tagname="th" class="w2tb_th" style="height: 24px;vertical-align: top;" id="" tabIndex="">
-									민원내용
-									<w2:attributes>
-										<w2:scope>row</w2:scope>
-									</w2:attributes>
+								민원내용
+								<w2:attributes>
+								<w2:scope>row</w2:scope>
+								</w2:attributes>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
-									<w2:attributes>
-										<w2:colspan>5</w2:colspan>
-										<w2:rowspan>1</w2:rowspan>
-									</w2:attributes>
-									<xf:textarea adjustMaxLength="" class="" disabled="" id="" mandatory=""
-										ref="data:dlt_BRT_CPLNT_HIS.CPLNT_CONTS" style="width:100%;height: 90px;" maxlength="2000">
-									</xf:textarea>
+								<w2:attributes>
+								<w2:colspan>5</w2:colspan>
+								<w2:rowspan>1</w2:rowspan>
+								</w2:attributes>
+								<xf:textarea adjustMaxLength="" class="" disabled="" id="" mandatory=""
+								ref="data:dlt_BRT_CPLNT_HIS.CPLNT_CONTS" style="width:100%;height: 90px;" maxlength="2000">
+								</xf:textarea>
 								</xf:group>
-							</xf:group>
-							  <xf:group style="" tagname="tr">
+								</xf:group>
+								<xf:group style="" tagname="tr">
 								<xf:group class="w2tb_th" style="" tagname="th">민원유형</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
-									<w2:attributes>
-										<w2:colspan>1</w2:colspan>
-										<w2:rowspan>1</w2:rowspan>
-									</w2:attributes>
-									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto"
-										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="CPLNT_TYPE" labelWidthAuto="" mandatory="true"
-										optionOrder="" ref="data:dlt_BRT_CPLNT_HIS.CPLNT_TYPE" renderType="component" style="height:24px;" submenuSize="auto">
-										<xf:choices></xf:choices>
-									</xf:select1>
+								<w2:attributes>
+								<w2:colspan>1</w2:colspan>
+								<w2:rowspan>1</w2:rowspan>
+								</w2:attributes>
+								<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto"
+								disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="CPLNT_TYPE" labelWidthAuto="" mandatory="true"
+								optionOrder="" ref="data:dlt_BRT_CPLNT_HIS.CPLNT_TYPE" renderType="component" style="height:24px;" submenuSize="auto">
+								<xf:choices></xf:choices>
+								</xf:select1>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_th">
-									민원위치
-									<w2:attributes></w2:attributes>
+								민원위치
+								<w2:attributes></w2:attributes>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
-									<xf:input adjustMaxLength="" class="" disabled="" fireEventOnInvalid="" id="NODE_NM"
-										invalidMessageFunc="" mandatory="" readOnly="" ref="data:dlt_BRT_CPLNT_HIS.NODE_NM" style="width: 130px;height: 21px;"
-										validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:oneditenter="" ev:onfocus="scwin.NODE_NM_onfocus">
-									</xf:input>
-									<xf:image class="btn" ev:onclick="scwin.btn_searchNode_onclick" id="btn_searchNode" longdesc=""
-										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
-									</xf:image>
-									<w2:attributes></w2:attributes>
+								<xf:input adjustMaxLength="" class="" disabled="" fireEventOnInvalid="" id="NODE_NM"
+								invalidMessageFunc="" mandatory="" readOnly="" ref="data:dlt_BRT_CPLNT_HIS.NODE_NM" style="width: 130px;height: 21px;"
+								validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:oneditenter="" ev:onfocus="scwin.NODE_NM_onfocus">
+								</xf:input>
+								<xf:image class="btn" ev:onclick="scwin.btn_searchNode_onclick" id="btn_searchNode" longdesc=""
+								src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
+								</xf:image>
+								<w2:attributes></w2:attributes>
 								</xf:group>
 								<xf:group class="w2tb_th" style="" tagname="th">발생일시</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
-									<w2:inputCalendar footerDiv="false" id="" style="width: 150px;height: 23px;" renderDiv="true"
-										focusOnDateSelect="false" calendarValueType="yearMonthDateTimeSec" rightAlign="false" renderType="component"
-										ref="data:dlt_BRT_CPLNT_HIS.OCR_DTM" readOnly="">
-									</w2:inputCalendar>
-									<w2:attributes>
-										<w2:colspan>1</w2:colspan>
-										<w2:rowspan>1</w2:rowspan>
-									</w2:attributes>
+								<w2:inputCalendar footerDiv="false" id="" style="width: 150px;height: 23px;" renderDiv="true"
+								focusOnDateSelect="false" calendarValueType="yearMonthDateTimeSec" rightAlign="false" renderType="component"
+								ref="data:dlt_BRT_CPLNT_HIS.OCR_DTM" readOnly="">
+								</w2:inputCalendar>
+								<w2:attributes>
+								<w2:colspan>1</w2:colspan>
+								<w2:rowspan>1</w2:rowspan>
+								</w2:attributes>
 								</xf:group>
-							</xf:group>
-							<xf:group style="" tagname="tr">
+								</xf:group>
+								<xf:group style="" tagname="tr">
 								<xf:group tagname="td" class="w2tb_th">
-									차량번호
-									<w2:attributes></w2:attributes>
+								차량번호
+								<w2:attributes></w2:attributes>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
-									<xf:input adjustMaxLength="" class="" disabled="" fireEventOnInvalid="" id="VHC_NO"
-										invalidMessageFunc="" mandatory="" readOnly="" ref="data:dlt_BRT_CPLNT_HIS.VHC_NO" style="width: 130px;height: 21px;"
-										validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:oneditenter="" ev:onfocus="scwin.VHC_NO_onfocus">
-									</xf:input>
-									<xf:image class="btn" ev:onclick="scwin.btn_searchVno_onclick" id="btn_searchVno" longdesc=""
-										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
-									</xf:image>
-									<w2:attributes>
-										<w2:colspan>1</w2:colspan>
-										<w2:rowspan>1</w2:rowspan>
-									</w2:attributes>
+								<xf:input adjustMaxLength="" class="" disabled="" fireEventOnInvalid="" id="VHC_NO"
+								invalidMessageFunc="" mandatory="" readOnly="" ref="data:dlt_BRT_CPLNT_HIS.VHC_NO" style="width: 130px;height: 21px;"
+								validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:oneditenter="" ev:onfocus="scwin.VHC_NO_onfocus">
+								</xf:input>
+								<xf:image class="btn" ev:onclick="scwin.btn_searchVno_onclick" id="btn_searchVno" longdesc=""
+								src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
+								</xf:image>
+								<w2:attributes>
+								<w2:colspan>1</w2:colspan>
+								<w2:rowspan>1</w2:rowspan>
+								</w2:attributes>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_th">
-									운수사명
-									<w2:attributes></w2:attributes>
+								운수사명
+								<w2:attributes></w2:attributes>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
-									<w2:attributes></w2:attributes>
-									<xf:input adjustMaxLength="" class="" disabled="" fireEventOnInvalid="" id="COMP_NM"
-										invalidMessageFunc="" mandatory="" readOnly="true" ref="data:dlt_BRT_CPLNT_HIS.COMP_NM" style="width: 130px;height: 21px;"
-										validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:oneditenter="" ev:onfocus="scwin.COMP_NM_onfocus">
-									</xf:input>
+								<w2:attributes></w2:attributes>
+								<xf:input adjustMaxLength="" class="" disabled="" fireEventOnInvalid="" id="COMP_NM"
+								invalidMessageFunc="" mandatory="" readOnly="true" ref="data:dlt_BRT_CPLNT_HIS.COMP_NM" style="width: 130px;height: 21px;"
+								validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:oneditenter="" ev:onfocus="scwin.COMP_NM_onfocus">
+								</xf:input>
 								</xf:group>
 								<xf:group tagname="th" class="w2tb_th">
-									노선명
-									<w2:attributes>
-										<w2:scope>row</w2:scope>
-									</w2:attributes>
+								노선명
+								<w2:attributes>
+								<w2:scope>row</w2:scope>
+								</w2:attributes>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
-									<xf:input adjustMaxLength="" class="" disabled="" fireEventOnInvalid="" id="ROUT_NM"
-										invalidMessageFunc="" mandatory="" readOnly="" ref="data:dlt_BRT_CPLNT_HIS.ROUT_NM" style="width: 130px;height: 21px;"
-										validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:oneditenter="" ev:onfocus="scwin.ROUT_NM_onfocus">
-									</xf:input>
-									<xf:image class="btn" ev:onclick="scwin.btn_searchRout_onclick" id="btn_searchRout" longdesc=""
-										src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
-									</xf:image>
-
+								<xf:input adjustMaxLength="" class="" disabled="" fireEventOnInvalid="" id="ROUT_NM"
+								invalidMessageFunc="" mandatory="" readOnly="" ref="data:dlt_BRT_CPLNT_HIS.ROUT_NM" style="width: 130px;height: 21px;"
+								validateOnCheckMaxByteLength="" validateOnInput="" validator="" ev:oneditenter="" ev:onfocus="scwin.ROUT_NM_onfocus">
+								</xf:input>
+								<xf:image class="btn" ev:onclick="scwin.btn_searchRout_onclick" id="btn_searchRout" longdesc=""
+								src="/cm/images/inc/icon_search.gif" style="width:21px;height:23px;margin-left:5px;">
+								</xf:image>
+								
 								</xf:group>
-							</xf:group>
-							<xf:group style="" tagname="tr">
+								</xf:group>
+								<xf:group style="" tagname="tr">
 								<xf:group tagname="td" class="w2tb_th">운행일</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
-									<w2:attributes></w2:attributes>
-									<w2:inputCalendar footerDiv="false" id="" style="height: 23px;" renderDiv="true"
-										focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component"
-										ref="data:dlt_BRT_CPLNT_HIS.OPER_DT">
-									</w2:inputCalendar>
+								<w2:attributes></w2:attributes>
+								<w2:inputCalendar footerDiv="false" id="" style="height: 23px;" renderDiv="true"
+								focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component"
+								ref="data:dlt_BRT_CPLNT_HIS.OPER_DT">
+								</w2:inputCalendar>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_th">
-									배차번호
-									<w2:attributes></w2:attributes>
+								배차번호
+								<w2:attributes></w2:attributes>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
-									<w2:attributes></w2:attributes>
-									<xf:input adjustMaxLength="" allowChar="0-9" class="" disabled="" id="ALLOC_NO" initValue="" ioFormat=""
-										mandatory="" maskFormat="" ref="data:dlt_BRT_CPLNT_HIS.ALLOC_NO" style="width:100%;height:21px;" validateOnInput="false"
-										validator="" maxlength="3">
-									</xf:input>
+								<w2:attributes></w2:attributes>
+								<xf:input adjustMaxLength="" allowChar="0-9" class="" disabled="" id="ALLOC_NO" initValue="" ioFormat=""
+								mandatory="" maskFormat="" ref="data:dlt_BRT_CPLNT_HIS.ALLOC_NO" style="width:100%;height:21px;" validateOnInput="false"
+								validator="" maxlength="3">
+								</xf:input>
 								</xf:group>
 								<xf:group tagname="th" class="w2tb_th">
-									운행순번
-									<w2:attributes>
-										<w2:scope>row</w2:scope>
-									</w2:attributes>
+								운행순번
+								<w2:attributes>
+								<w2:scope>row</w2:scope>
+								</w2:attributes>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
-									<w2:attributes></w2:attributes>
-									<xf:input adjustMaxLength="" allowChar="0-9" class="" disabled="" id="OPER_SN" initValue="" ioFormat=""
-										mandatory="" maskFormat="" maxlength="3" ref="data:dlt_BRT_CPLNT_HIS.OPER_SN" style="width:100%;height:21px;"
-										validateOnInput="false" validator="">
-									</xf:input>
+								<w2:attributes></w2:attributes>
+								<xf:input adjustMaxLength="" allowChar="0-9" class="" disabled="" id="OPER_SN" initValue="" ioFormat=""
+								mandatory="" maskFormat="" maxlength="3" ref="data:dlt_BRT_CPLNT_HIS.OPER_SN" style="width:100%;height:21px;"
+								validateOnInput="false" validator="">
+								</xf:input>
 								</xf:group>
-							</xf:group>-->
+								</xf:group>-->
 							<xf:group style="" tagname="tr">
 								<xf:group tagname="td" class="w2tb_th req">
 									조치자
@@ -769,7 +769,7 @@
 									</w2:attributes>
 								</xf:group>
 								<xf:group tagname="td" class="w2tb_td">
-									<w2:inputCalendar footerDiv="false" id="" style="width: 150px;height: 23px;" renderDiv="true"
+									<w2:inputCalendar footerDiv="false" id="" style="height: 23px;" renderDiv="true"
 										focusOnDateSelect="false" calendarValueType="yearMonthDateTimeSec" rightAlign="false" renderType="component"
 										ref="data:dlt_BRT_CPLNT_HIS.JUDG_DTM" readOnly="">
 									</w2:inputCalendar>
@@ -778,14 +778,15 @@
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto"
 										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="CPLNT_TYPE" labelWidthAuto="" mandatory="true"
-										optionOrder="" ref="" renderType="component" style="width:160px; height:24px;" submenuSize="auto" ev:onviewchange="scwin.CPLNT_TYPE_onviewchange">
+										optionOrder="" ref="" renderType="component" style="height:24px;" submenuSize="auto"
+										ev:onviewchange="scwin.CPLNT_TYPE_onviewchange">
 										<xf:choices></xf:choices>
 									</xf:select1>
 								</xf:group>
 								<xf:group class="w2tb_th" style="" tagname="th">진행상태</xf:group>
 								<xf:group class="w2tb_td" style="" tagname="td">
 									<xf:select1 id="JUDG_RLT" selectedIndex="-1" appearance="full"
-										style="width: 150px;height: 21px;margin-left: 10px;" cols="" rows="1" ref="data:dlt_BRT_CPLNT_HIS.JUDG_RLT">
+										style="width:140px;height: 21px;margin-left: 10px;" cols="" rows="1" ref="data:dlt_BRT_CPLNT_HIS.JUDG_RLT">
 										<xf:choices>
 											<xf:item>
 												<xf:label><![CDATA[처리완료]]></xf:label>
@@ -835,17 +836,19 @@
 							</xf:group>
 						</xf:group>
 					</xf:group>
-					<xf:image src="/cm/images/add/bg_brt.png" style="width: 100%;height: 100%;" id=""></xf:image>
-					<!--  <xf:group id="" class="horizontal_line"></xf:group>
-					  <xf:group id="" class="gr_sub_header" style="">
-						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="지도" style=""></w2:textbox>
-						</xf:group>
+					<xf:group style="position:relative;" id="">
+						<xf:image src="/cm/images/add/bg_brt.png" style="width: 100%;height: 100%; position:absolute; object-fit:contain; cursor:default" id=""></xf:image>
 					</xf:group>
-					<xf:group class="" id="" style=""></xf:group>
-					<xf:group id="" class="" style="">
+					<!--  <xf:group id="" class="horizontal_line"></xf:group>
+						<xf:group id="" class="gr_sub_header" style="">
+						<xf:group class="defaultbox" id="" style="">
+						<w2:textbox class="df_tt fl" id="" label="지도" style=""></w2:textbox>
+						</xf:group>
+						</xf:group>
+						<xf:group class="" id="" style=""></xf:group>
+						<xf:group id="" class="" style="">
 						<div id="map_VI0201" style="overflow:hidden;"></div>
-					</xf:group>-->
+						</xf:group>-->
 				</xf:group><!--end pgm_detail-->
 			</xf:group>
 		</xf:group>

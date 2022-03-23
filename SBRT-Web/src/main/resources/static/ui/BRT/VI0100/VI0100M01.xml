@@ -51,6 +51,9 @@
         				<w2:column id="OCR_DTM" name="발생일시" dataType="date"></w2:column>
         				<w2:column id="OPER_DT" name="운행일" dataType="date"></w2:column>
         				<w2:column id="VIOLT_TYPE" name="위반유형" dataType="text"></w2:column>
+        				<w2:column id="REP_ROUT_ID" name="" dataType="text"></w2:column>
+        				<w2:column id="REP_ROUT_NM" name="" dataType="text"></w2:column>
+        				<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
         				<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
         				<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
         				<w2:column id="GPS_X" name="GPS_X좌표" dataType="text"></w2:column>
@@ -60,14 +63,15 @@
         				<w2:column id="JUDG_TYPE" name="조치유형" dataType="text"></w2:column>
         				<w2:column id="JUDG_DESC" name="조치상세내역" dataType="text"></w2:column>
         				<w2:column id="NODE_NM" name="인근장소" dataType="text"></w2:column>
-        				<w2:column id="VHC_ID" name="차량ID" dataType="text"></w2:column>
         				<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
+        				<w2:column id="ROUT_NM" name="노선ID" dataType="text"></w2:column>
+        				<w2:column id="VHC_ID" name="차량ID" dataType="text"></w2:column>
         				<w2:column id="VHC_NO" name="차량번호" dataType="text"></w2:column>
         			</w2:columnInfo>
         		</w2:dataList>
         		<w2:dataMap baseNode="map" id="dma_param_VI0100G1">
         			<w2:keyInfo>
-        				<w2:key id="OPER_DT" name="운행일" dataType="text"></w2:key>
+        				<w2:key id="OCR_DTM" name="발생일시" dataType="text"></w2:key>
         				<w2:key id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:key>
         				<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
         				<w2:key id="VHC_ID" name="차량ID" dataType="text"></w2:key>
@@ -76,14 +80,14 @@
         		</w2:dataMap>
         	</w2:dataCollection>
         	<w2:workflowCollection></w2:workflowCollection>
-        	<xf:submission id="sub_VI0100G0R0" ref="data:json,dma_search" target="data:json,dlt_BRT_CUR_ALLOC_PL_INFO" action="/vi/VI0100G0R0"
+        	<!-- <xf:submission id="sub_VI0100G0R0" ref="data:json,dma_search" target="data:json,dlt_BRT_CUR_ALLOC_PL_INFO" action="/vi/VI0100G0R0"
         		method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
         		mode="asynchronous" processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_VI0100G0R0_submitdone" ev:submiterror=""
         		abortTrigger="">
-        	</xf:submission>
+        	</xf:submission> -->
         	<xf:submission id="sub_VI0100G1R0" ref="data:json,dma_param_VI0100G1" target="data:json,dlt_BRT_OPER_VIOLT_HIS"
         		action="/vi/VI0100G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-        		customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_VI0100G1R0_submitdone" ev:submiterror="" abortTrigger="">
+        		customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_VI0100G1R0_submitdone" ev:submiterror="" abortTrigger="">
         	</xf:submission>
         	<xf:submission id="sub_VI0100G1S0" ref='data:json,[{"action":"modified","id":"dlt_BRT_OPER_VIOLT_HIS"},"dma_param_VI0100G1"]' target="data:json,dma_result"
         		action="/vi/VI0100G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
@@ -99,19 +103,19 @@
         
 	scwin.onpageload = function() {
 		var autoOptions = {
-			Main : { grid : VI0100G0, srchSbm : sub_VI0100G0R0, srchGrp : pgm_header , keyColumn : "VHC_ID", focusColumn : "VHC_ID", name : "차량 목록"},
-			Sub1 : { grid : VI0100G1, srchSbm : sub_VI0100G1R0, savSbm : sub_VI0100G1S0, focusColumn : "OCR_DTM",  name : "위반 관리 목록" }	
+			Main : { grid : VI0100G1, frm : VI0100F0, srchSbm : sub_VI0100G1R0, savSbm : sub_VI0100G1S0, 
+						keyColumn : "OCR_DTM", focusColumn : "OCR_DTM",  name : "위반 관리 목록" }	
 		 };
 		 		
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID_FORM2, autoOptions );		
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions );		
 
-		var codeOptions = [ {code : "AREA", compID : "VI0100G0:AREA" }
-							,{code : "VIOLT_TYPE", compID : "VIOLT_TYPE, VI0100G1:VIOLT_TYPE" }
+		var codeOptions = [ 
+							{code : "VIOLT_TYPE", compID : "VIOLT_TYPE, VI0100G1:VIOLT_TYPE" }
 							,{code : "JUDG_TYPE", compID : "JUDG_TYPE, VI0100G1:JUDG_TYPE" }
 						];		
 	
 		com.setCommonDtl(codeOptions, function() {
-			com.searchGrid(VI0100G0, sub_VI0100G0R0);
+			com.searchGrid(VI0100G1, sub_VI0100G1R0);
 		});	
 		
 		routMap.initMap("map_VI0100", {width:"100%"
@@ -129,9 +133,9 @@
 		
 	};
 	
-	scwin.sub_VI0100G0R0_submitdone = function(e) {
+	/*scwin.sub_VI0100G0R0_submitdone = function(e) {
 		com.setFocusedCell(VI0100G0, "VHC_ID");		
-	};
+	};*/
 	
 	scwin.sub_VI0100G1R0_submitdone = function(e) {
 		com.setFocusedCell(VI0100G1, "OCR_DTM");
@@ -143,7 +147,7 @@
 	};
 	
 	scwin.VI0100G1_onrowindexchange = function(row,oldRow) {
-		dlt_BRT_OPER_VIOLT_HIS.setCellData(row, "VHC_NO", dlt_BRT_CUR_ALLOC_PL_INFO.getCellData(VI0100G0.getFocusedRowIndex(), "VHC_NO"))
+		//dlt_BRT_OPER_VIOLT_HIS.setCellData(row, "VHC_NO", dlt_BRT_CUR_ALLOC_PL_INFO.getCellData(VI0100G0.getFocusedRowIndex(), "VHC_NO"))
 		var jsonObj = dlt_BRT_OPER_VIOLT_HIS.getRowJSON(row);
 		
 		//차량 단일 마커
@@ -159,7 +163,7 @@
 		
 	}
 	
-	scwin.VI0100G0_onrowindexchange = function(row,oldRow) {
+	/*scwin.VI0100G0_onrowindexchange = function(row,oldRow) {
 		dma_param_VI0100G1.set("OPER_DT", VI0100G0.getCellData(row, "OPER_DT"));
 		dma_param_VI0100G1.set("REP_ROUT_ID", VI0100G0.getCellData(row, "REP_ROUT_ID"));
 		dma_param_VI0100G1.set("ROUT_ID", VI0100G0.getCellData(row, "ROUT_ID"));
@@ -168,7 +172,7 @@
 		
 		var focusOption = {keyMap : dma_param_VI0100G1};
 		com.changeDualGrid(VI0100G0, VI0100G1, sub_VI0100G1S0, sub_VI0100G1R0, focusOption, row, oldRow, "위반 이력 목록");
-	};
+	};*/
 	
 	scwin.sub_VI0100G1S0_submitdone = function(e) {
 		com.saveDone(VI0100G1, sub_VI0100G1R0);		
@@ -214,6 +218,12 @@
 	};
 	
 	
+	
+	scwin.OCR_DTM_SELECT_onviewchange = function(info) {
+		dma_param_VI0100G1.set("OCR_DTM", info.newValue);
+		
+		//$p.executeSubmission(sub_VI0100G1R0);
+	};
 	]]></script>
     </head>
     <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -258,124 +268,53 @@
 								</w2:itemset>
 							</w2:choices>
 						</w2:autoComplete>
+						<xf:group id="" style="margin-left:10px;" class="label">
+							<w2:span id="" class="" label="발생일시 : "></w2:span>
+						</xf:group>
+						<w2:inputCalendar footerDiv="false" id="OCR_DTM_SELECT" style="width: 130px;height: 23px; margin-top:2px; float: left;" renderDiv="true"
+							focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component" ev:onviewchange="scwin.OCR_DTM_SELECT_onviewchange">
+						</w2:inputCalendar>
 					</xf:group>
 					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
 			</xf:group> <!-- pgm_header -->
 			<xf:group id="pgm_content" class="pgm_content grdc_a_20_900_minmax" style="">
-				<xf:group id="pgm_list" class="pgm_list grdr_20_2_350_20_a" style="">
-					<xf:group id="" class="" style="">
-						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="차량 목록" style=""></w2:textbox>
-						</xf:group>
-					</xf:group>
-					<xf:group></xf:group>	
-					<xf:group id="" class="" style="">
-						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid left"
-							dataList="data:dlt_BRT_CUR_ALLOC_PL_INFO" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup=""
-							ev:onkeyup="" ev:onrowindexchange="scwin.VI0100G0_onrowindexchange" ev:ontextimageclick="" ev:onviewchange="" fixedColumnWithHidden="true" id="VI0100G0"
-							ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true" rowStatusHeaderValue="" rowStatusVisible="false"
-							rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true" visibleRowNum="" wheelRows="" autoFitMinWidth="0"
-							disabledScrollHidden="" editModeEvent="" editModeEventIcon="" checkEditableInputClass="" keyMoveEditMode="" moveKeyEditMode=""
-							moveKeyEditModeAll="" ignoreNonEditableCellTabEnter="" readOnly="true" keepDefaultColumnWidth="" oddEvenColorDisplay=""
-							rowNumWidth="" summaryAuto="" excludeDeletedRows="" useCtrlOnMultisort="" useFilterList="" useFilterListSync="" sortedIconPosition=""
-							sortable="" sortOrderReverse="" showSortableUseFilter="" focusMode="row" rowNumStatusUniqueId="" rowNumStatusResize=""
-							ev:onbeforecolumnmove="" userData1="">
-							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
-							<w2:header style="" id="header1">
-								<w2:row style="" id="row1">
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column6"
-										value="대표노선ID" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column7"
-										value="대표노선명" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column8"
-										value="노선ID" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column9"
-										value="노선명" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column1"
-										value="차량 ID" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column2"
-										value="차량번호" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column3"
-										value="운수사" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column4"
-										value="운수사 권역" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column5"
-										value="등록상태" blockSelect="false" displayMode="label">
-									</w2:column>
-								</w2:row>
-							</w2:header>
-							<w2:gBody style="" id="gBody1">
-								<w2:row style="" id="row2">
-									<w2:column removeBorderStyle="false" width="114" inputType="text" style="height:20px" id="REP_ROUT_ID"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="114" inputType="text" style="height:20px" id="REP_ROUT_NM"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="114" inputType="text" style="height:20px" id="ROUT_ID"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="114" inputType="text" style="height:20px" id="ROUT_NM"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="165" inputType="text" style="height:20px" id="VHC_ID"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="VHC_NO"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="COMP_NM"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="AREA"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="USE_YN"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-								</w2:row>
-							</w2:gBody>
-							<w2:footer id="footer2" style="">
-								<w2:row id="row3" style="">
-									<w2:column blockSelect="false" colSpan="15" displayMode="label"
-										expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" id="column42" inputType="expression" removeBorderStyle="false"
-										style="height:20px;" textAlign="left" width="1830">
-									</w2:column>
-								</w2:row>
-							</w2:footer>							
-						</w2:gridView>
-					</xf:group>
-				<xf:group id="" class="horizontal_line"></xf:group>
-				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_a" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="위반 이력 목록" style=""></w2:textbox>
+							<w2:textbox class="df_tt fl" id="" label="위반 이력 정보" style=""></w2:textbox>
 						</xf:group>
 						<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
 					</xf:group>
 					<xf:group></xf:group> <!-- margin-->												
 					<xf:group id="" class="" style="">
-						<w2:gridView ignoreCellClick="false" ev:onrowindexchange="scwin.VI0100G1_onrowindexchange" autoFit="lastColumn" rowNumHeaderValue="순번"
-							visibleRowNum="8" class="cm_grid right" fixedColumnWithHidden="true" rowNumVisible="true" dataList="data:dlt_BRT_OPER_VIOLT_HIS"
+						<w2:gridView ignoreCellClick="false" ev:onrowindexchange="scwin.VI0100G1_onrowindexchange" autoFit="lastColumn"
+							rowNumHeaderValue="순번" class="cm_grid right" fixedColumnWithHidden="true" rowNumVisible="true" dataList="data:dlt_BRT_OPER_VIOLT_HIS"
 							id="VI0100G1" readOnly="" style="" useShiftKey="true" scrollByColumn="false" rowStatusVisible="false" rowStatusHeaderValue="상태"
 							ev:oncellclick="" focusMode="row">
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
 									<w2:column removeBorderStyle="false" width="140" inputType="text" style="height:20px" id="column9"
-										value="발생일시" blockSelect="false" displayMode="label" class="req" userData1 = "M">
+										value="발생일시" blockSelect="false" displayMode="label" class="req" userData1="M">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column7"
+										value="대표노선ID" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column7"
+										value="대표노선명" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column7"
+										value="노선명" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column7"
+										value="차량ID" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="104" inputType="text" style="height:20px" id="column7"
-										value="위반유형" blockSelect="false" displayMode="label" class="req" userData1 = "M">
+										value="차량번호" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="104" inputType="text" style="height:20px" id="column7"
+										value="위반유형" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px" id="column8"
 										value="인근장소" blockSelect="false" displayMode="label">
@@ -395,7 +334,7 @@
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column4"
 										value="조치유형" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column1"
+									<w2:column removeBorderStyle="false" width="250" inputType="text" style="height:20px" id="column1"
 										value="조치상세내역" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
@@ -403,22 +342,37 @@
 							<w2:gBody style="" id="gBody1">
 								<w2:row style="" id="row2">
 									<w2:column removeBorderStyle="false" width="106" inputType="text" style="height:20px" id="OCR_DTM"
-										value="" blockSelect="false" displayMode="label" readOnly="true" userData1 = "M">
+										value="" blockSelect="false" displayMode="label" readOnly="true" userData1="M">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="REP_ROUT_ID"
+										value="" blockSelect="false" displayMode="label" readOnly="false">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="REP_ROUT_NM"
+										value="" blockSelect="false" displayMode="label" readOnly="false">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="ROUT_NM"
+										value="" blockSelect="false" displayMode="label" readOnly="false">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="VHC_ID"
+										value="" blockSelect="false" displayMode="label" readOnly="false">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="VHC_NO"
+										value="" blockSelect="false" displayMode="label" readOnly="false">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="104" inputType="select" style="height:20px" id="VIOLT_TYPE"
-										value="" blockSelect="false" displayMode="label" readOnly="false" userData1 = "M">
+										value="" blockSelect="false" displayMode="label" readOnly="false">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="NODE_NM"
 										value="" blockSelect="false" displayMode="label" readOnly="false">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="GPS_X" value=""
-										blockSelect="false" displayMode="label" readOnly="false">
+										blockSelect="false" displayMode="label" readOnly="false" textAlign="right">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="GPS_Y" value=""
-										blockSelect="false" displayMode="label" readOnly="false">
+										blockSelect="false" displayMode="label" readOnly="false" textAlign="right">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="JUDGE"
-										value="" blockSelect="false" displayMode="label" readOnly="false">
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="JUDGE" value=""
+										blockSelect="false" displayMode="label" readOnly="false">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="JUDG_ORG"
 										value="" blockSelect="false" displayMode="label" readOnly="false">
@@ -431,9 +385,17 @@
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
+							<w2:footer id="footer3" style="">
+								<w2:row id="row4" style="">
+									<w2:column blockSelect="false" colSpan="15" displayMode="label"
+										expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" id="column45" inputType="expression" removeBorderStyle="false"
+										style="height:20px;" textAlign="left" width="1830">
+									</w2:column>
+								</w2:row>
+							</w2:footer>
 						</w2:gridView>
-					</xf:group>	
-					</xf:group>											
+						
+					</xf:group>
 				</xf:group><!-- pgm_detail -->
 				<xf:group id="" class="vertical_line"></xf:group>
 				<xf:group class="pgm_detail grdr_20_2_200_20_20_2_a">
@@ -461,7 +423,7 @@
 									<w2:inputCalendar footerDiv="false" id="" style="width: 150px;height: 23px;" renderDiv="true"
 										focusOnDateSelect="false" calendarValueType="yearMonthDateTimeSec" rightAlign="false" renderType="component" ref="data:dlt_BRT_OPER_VIOLT_HIS.OCR_DTM" readOnly="">
 									</w2:inputCalendar>
-									<xf:group style="" class="w2tb_th req" tagname="th">
+									<xf:group style="" class="w2tb_th" tagname="th">
 										위반유형
 									</xf:group>
 									<xf:group style="" class="w2tb_td" tagname="td">
