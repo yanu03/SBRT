@@ -20,7 +20,7 @@ public class VI0100Controller extends ControllerSupport {
 	
 	@RequestMapping("/vi/VI0100G0R0")
 	public @ResponseBody Map<String, Object> VI0100G0R0() throws Exception {
-		result.setData("dlt_BRT_CUR_ALLOC_PL_INFO", vi0100Service.VI0100G0R0());
+		result.setData("dlt_BRT_DAY_ALLOC_PL_INFO", vi0100Service.VI0100G0R0());
 		return result.getResult();
 	}
 	

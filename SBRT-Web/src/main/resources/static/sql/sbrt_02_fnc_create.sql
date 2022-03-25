@@ -19,7 +19,7 @@ BEGIN
 		
 	SELECT ALLOC_NO
 		INTO var_alloc_no
-	FROM BRT_CUR_ALLOC_PL_INFO
+	FROM BRT_DAY_ALLOC_PL_INFO
 	WHERE OPER_DT = param_date
 		AND REP_ROUT_ID = var_rep_rout_id
 		AND WAY_DIV = var_way_div
