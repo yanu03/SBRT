@@ -66,7 +66,7 @@
 						<w2:column id="NODE_NM" name="이전노드명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_CUR_ALLOC_PL_INFO" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_DAY_ALLOC_PL_INFO" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="OPER_DT" name="운행일" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_ID" name="대표노선아이디" dataType="text"></w2:column>
@@ -93,7 +93,7 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0303P3R1_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_allocVhcList" ref="data:json,dma_search" target="data:json,dlt_BRT_CUR_ALLOC_PL_INFO"
+			<xf:submission id="sub_allocVhcList" ref="data:json,dma_search" target="data:json,dlt_BRT_DAY_ALLOC_PL_INFO"
 				action="/mo/allocVhcList" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_allocVhcList_submitdone" ev:submiterror=""
 				abortTrigger="">
@@ -284,14 +284,14 @@
 		var incdnt_rep_rout_id = scwin.param.incdnt_rep_rout_id;
 		var circleLatLng = new kakao.maps.LatLng(scwin.param.incdnt_gps_y, scwin.param.incdnt_gps_x);	
 	
-		for(i=0; i<dlt_BRT_CUR_ALLOC_PL_INFO.getDataLength(); i++) {
+		for(i=0; i<dlt_BRT_DAY_ALLOC_PL_INFO.getDataLength(); i++) {
 			
-			if(dlt_BRT_CUR_ALLOC_PL_INFO.getCellData(i, "REP_ROUT_ID") == incdnt_rep_rout_id) {
+			if(dlt_BRT_DAY_ALLOC_PL_INFO.getCellData(i, "REP_ROUT_ID") == incdnt_rep_rout_id) {
 				var insertIndex = dlt_BRT_CUR_OPER_INFO.insertRow();
 				dlt_BRT_CUR_OPER_INFO.setCellData(insertIndex, "REP_ROUT_ID", incdnt_rep_rout_id);
-				dlt_BRT_CUR_OPER_INFO.setCellData(insertIndex, "VHC_ID", dlt_BRT_CUR_ALLOC_PL_INFO.getCellData(i, "VHC_ID"));
-				dlt_BRT_CUR_OPER_INFO.setCellData(insertIndex, "VHC_NO", dlt_BRT_CUR_ALLOC_PL_INFO.getCellData(i, "VHC_NO"));
-				dlt_BRT_CUR_OPER_INFO.setCellData(insertIndex, "COMP_NM", dlt_BRT_CUR_ALLOC_PL_INFO.getCellData(i, "COMP_NM"));
+				dlt_BRT_CUR_OPER_INFO.setCellData(insertIndex, "VHC_ID", dlt_BRT_DAY_ALLOC_PL_INFO.getCellData(i, "VHC_ID"));
+				dlt_BRT_CUR_OPER_INFO.setCellData(insertIndex, "VHC_NO", dlt_BRT_DAY_ALLOC_PL_INFO.getCellData(i, "VHC_NO"));
+				dlt_BRT_CUR_OPER_INFO.setCellData(insertIndex, "COMP_NM", dlt_BRT_DAY_ALLOC_PL_INFO.getCellData(i, "COMP_NM"));
 			}
 		}
 
