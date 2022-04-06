@@ -1,19 +1,49 @@
 <%@page import="com.clipsoft.clipreport.oof.OOFFile"%>
 <%@page import="com.clipsoft.clipreport.oof.OOFDocument"%>
-<%@page import="java.io.File"%>
+<%@page import="java.io.File,java.util.*,java.net.*"%>
 <%@page import="com.clipsoft.clipreport.server.service.ReportUtil"%>
 <%@page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%
+String reportPath = request.getParameter("reportPath");
+
+String paramArr[] = request.getParameter("param").split(":");
 OOFDocument oof = OOFDocument.newOOF();
-OOFFile file = oof.addFile("crf.root", "%root%/crf/CLIP.crf");
-oof.addConnectionData("*", "oracle1");
 
-oof.addField("PARAM1", "param&&&#---1value");
-oof.addField("한 글 123 abc", " param&&&#---1value");
+OOFFile file = null;
 
+if(reportPath==null || reportPath.isEmpty())
+	file = oof.addFile("crf.root", "%root%/crf/CLIP.crf");
+else 
+	file = oof.addFile("crf.root", "%root%/crf/"+reportPath);
+
+oof.addConnectionData("*","sbrt");
+for(String param:paramArr){
+	String tempArr[] = param.split("=");
+	if(tempArr==null||tempArr.length<2)continue;
+	String key = tempArr[0].replace(" ", "");
+	String value = tempArr[1].replace(" ", "");
+	value = URLDecoder.decode(value, "UTF-8");	
+	file.addField(key, value);
+}
+
+String style = request.getParameter("style");
+if (null != style) {
+	style = style.replaceAll(" ", "");
+} else {
+	style = "";
+}
+Map<String, Object> styleMap = new HashMap<String, Object>();
+String parseArr[] = {"position","top","left","right","bottom","width","height"};
+for(String parse: parseArr){
+	if(style.indexOf(parse)!=-1){
+		String value = style.substring(style.indexOf(parse)+parse.length()+1);
+		value = value.indexOf(";")!=-1?value.substring(0,value.indexOf(";")):value;
+		styleMap.put(parse,value);
+	}
+}
 
 String propertyPath  = request.getSession().getServletContext().getRealPath("/") + File.separator +  "WEB-INF" + File.separator + "clipreport5" + File.separator + "clipreport5.properties";
-//String propertyPath  = "C:\\sbrt-web\\workspace\\SBRT-Web\\src\\main\\webapp\\WEB-INF\\clipreport5\\clipreport5.properties";
+//String propertyPath  = "C:\\sbrt-web\\workspace\\BMS-Web\\src\\main\\webapp\\WEB-INF\\clipreport5\\clipreport5.properties";
 
 %><%
 //세션을 활용하여 리포트키들을 관리하지 않는 옵션
@@ -45,6 +75,16 @@ String resultKey =  ReportUtil.createReport(request, oof, "false", "false", requ
 <script type='text/javascript' src='./ClipReport/js/UserConfig5.js'></script>
 <script type='text/javascript'>
 	
+$(document).ready(function()
+{	
+	//document.getElementById("reportSupport").style = "<%=style%>";
+	//position:absolute;top:100px;left:15px;right:5px;bottom:5px;width:1024px;height:700px
+	
+	$( "#reportSupport" ).css({position:'<%=styleMap.get("position")%>', top:'<%=styleMap.get("top")%>'
+		, left:'<%=styleMap.get("left")%>', right:'<%=styleMap.get("right")%>', bottom:'<%=styleMap.get("bottom")%>'
+		, width:'<%=styleMap.get("width")%>', height:'<%=styleMap.get("height")%>'});
+	html2xml('reportSupport');
+});
 function html2xml(divPath){	
     var reportkey = "<%=resultKey%>";
 	var report = createReport("./report_server", reportkey, document.getElementById(divPath));
@@ -54,10 +94,7 @@ function html2xml(divPath){
 }
 </script>
 </head>
-<body onload="html2xml('targetDiv1')">
-<div id='targetDiv1' style='position:absolute;top:5px;left:5px;right:5px;bottom:5px;'>
-	<span style="visibility: hidden; font-family:나눔고딕">.</span>
-	<span style="visibility: hidden; font-family:NanumGothic">.</span>
-</div>
+<body onload="">
+<div id='reportSupport' class='reportSupport' style='position:absolute;top:100px;left:15px;right:5px;bottom:5px;width:100%;height:100%'></div>
 </body>
 </html>
