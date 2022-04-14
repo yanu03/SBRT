@@ -35,7 +35,7 @@
 			<if test="GPS_Y != null and GPS_Y != ''">
 			GPS_Y, 
 			</if>
-			<!-- APPL_ST_DT, APPL_ED_DT, --> REMARK)
+			<!-- APPL_ST_DT, APPL_ED_DT, --> REMARK,UPD_DTM,UPD_ID)
 	values (#{GRG_ID}, #{GRG_NM}, #{GRG_ENM}, #{OWNER_TYPE}, #{ADDR}, #{PHONE}, #{FAX}, #{EMAIL}, #{CNG_YN}, #{ELEC_YN}, #{USE_YN}, 
 			<if test="LEGAL_AREA != null and LEGAL_AREA != ''">
 				#{LEGAL_AREA},
@@ -49,7 +49,33 @@
 			<if test="GPS_Y != null and GPS_Y != ''">
 				#{GPS_Y}, 
 			</if>			
-			 <!-- #{APPL_ST_DT}, #{APPL_ED_DT}, --> #{REMARK})
+			 <!-- #{APPL_ST_DT}, #{APPL_ED_DT}, --> #{REMARK},#{UPD_DTM},#{SSN_USER_ID})
+	ON DUPLICATE KEY UPDATE
+		GRG_NM	= VALUES(GRG_NM)
+		, GRG_ENM	= VALUES(GRG_ENM)
+		, OWNER_TYPE	= VALUES(OWNER_TYPE)
+		, ADDR	= VALUES(ADDR)
+		, PHONE	=  VALUES(PHONE)
+		, FAX	= VALUES(FAX)
+		, EMAIL 	= VALUES(EMAIL)
+		, CNG_YN	= VALUES(CNG_YN)
+		, ELEC_YN	= VALUES(ELEC_YN)
+		, USE_YN	= VALUES(USE_YN)
+		<if test="LEGAL_AREA != null and LEGAL_AREA != ''">
+		, LEGAL_AREA		= VALUES(LEGAL_AREA)
+		</if>
+		<if test="SECURE_AREA != null and SECURE_AREA != ''">
+		, SECURE_AREA		= VALUES(SECURE_AREA)
+		</if>
+		<if test="GPS_X != null and GPS_X != ''">
+		, GPS_X		= VALUES(GPS_X)
+		</if>
+		<if test="GPS_Y != null and GPS_Y != ''">
+		, GPS_Y		= VALUES(GPS_Y)
+		</if>
+		, REMARK		= VALUES(REMARK)
+		, UPD_DTM		= VALUES(UPD_DTM)
+		, UPD_ID		= VALUES(UPD_ID);
 </insert>
 
 <update id="SI0101G0U0" parameterType="Map">
@@ -87,6 +113,9 @@
 	from BMS_GRG_MST
 </select>
 
+<delete id="deleteAllGrgMst" parameterType="Map">
+	DELETE FROM BMS_GRG_MST
+</delete>
 
 <delete id="SI0101G0D0" parameterType="Map">
 	delete

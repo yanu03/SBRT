@@ -39,17 +39,17 @@
 			ON a.ROUT_ID = d.ROUT_ID
 		<where>
 			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-				AND OCR_DTM LIKE CONCAT('%',#{CONTENT},'%') || RPC_VHC_ID LIKE CONCAT('%',#{CONTENT},'%') 
+				AND a.OCR_DTM LIKE CONCAT('%',#{CONTENT},'%') || RPC_VHC_ID LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 			<if test="TYPE == 'OCR_DTM'">
-				AND OCR_DTM LIKE CONCAT('%',#{CONTENT},'%')
+				AND a.OCR_DTM LIKE CONCAT('%',#{CONTENT},'%')
 			</if>
 			<if test="TYPE == 'RPC_VHC_ID'">
 				AND RPC_VHC_ID LIKE CONCAT('%',#{CONTENT},'%') 
 			</if>
 		</where>
 		ORDER BY
-			OCR_DTM
+			RPC_ID, OCR_DTM
 	</select>
 	
 	<select id="AL0303G0K0" resultType="Map">

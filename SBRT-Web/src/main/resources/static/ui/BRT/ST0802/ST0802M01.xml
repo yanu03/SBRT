@@ -164,11 +164,36 @@
 		
 		$("#ST0802_TAB1").attr("style", "width:200px; margin-top: 10px;");
 		
-		//탭 목록 클릭 이벤트 - 그래프
-		$(".stat_pnctlty").find("li").click( function() {
+		//탭 목록 클릭 이벤트 - 그리드
+		$("#ST0802_TAB1").find("li").click( function() {
 			var li_id = this.id;
-			$(".stat_pnctlty").find("li").removeClass("on");
-			$(".stat_pnctlty").find("#"+li_id).addClass("on");
+			$("#ST0802_TAB1").find("li").removeClass("on");
+			$("#ST0802_TAB1").find("#"+li_id).addClass("on");
+			if(li_id == "li_bus") {
+				dma_sub_search.set("TAB_DIV_G1", "BUS");
+				com.executeSubmission(sub_ST0802G1R0);
+				ST0802G1T0.show();
+				ST0802G1T1.hide();
+				ST0802T0.show();
+				ST0802T1.hide();
+				ST0802T2.hide();
+			}
+			else if(li_id == "li_drv") {
+				dma_sub_search.set("TAB_DIV_G1", "DRV");
+				com.executeSubmission(sub_ST0802G1R0);
+				ST0802G1T1.show();
+				ST0802G1T0.hide();
+				ST0802T2.show();
+				ST0802T1.hide();
+				ST0802T0.hide();
+			}
+		});
+		
+		//탭 목록 클릭 이벤트 - 그래프
+		$("#ST0802_TAB2").find("li").click( function() {
+			var li_id = this.id;
+			$("#ST0802_TAB2").find("li").removeClass("on");
+			$("#ST0802_TAB2").find("#"+li_id).addClass("on");
 			if(li_id == "li_PNCTLTY_CNT") {
 				dma_sub_search.set("TAB_DIV", "PNCTLTY_CNT");
 				pivot_ST0802.setVals("PNCTLTY_CNT");
@@ -191,32 +216,6 @@
 				com.executeSubmission(sub_ST0802G1R1);
 			}
 		});
-		
-		//탭 목록 클릭 이벤트 - 그리드
-		$(".moni_img").find("li").click( function() {
-			var li_id = this.id;
-			$(".moni_img").find("li").removeClass("on");
-			$(".moni_img").find("#"+li_id).addClass("on");
-			if(li_id == "li_bus") {
-				dma_sub_search.set("TAB_DIV_G1", "BUS");
-				com.executeSubmission(sub_ST0802G1R0);
-				ST0802G1T0.show();
-				ST0802G1T1.hide();
-				ST0802T0.show();
-				ST0802T1.hide();
-				ST0802T2.hide();
-			}
-			else if(li_id == "li_drv") {
-				dma_sub_search.set("TAB_DIV_G1", "DRV");
-				com.executeSubmission(sub_ST0802G1R0);
-				ST0802G1T1.show();
-				ST0802G1T0.hide();
-				ST0802T2.show();
-				ST0802T1.hide();
-				ST0802T0.hide();
-			}
-		});
-		
 	};
 	
 	scwin.onpageunload = function() {
@@ -1000,8 +999,8 @@
 						</w2:gridView>
 					</xf:group>
 					<xf:group style="" id=""></xf:group>
-					<xf:group id="" class="" style="">
-						<ul id="ST0802_TAB1" class="moni_img"  style="margin-bottom: 3px;">
+					<xf:group id="" class="tab_div" style="">
+						<ul id="ST0802_TAB1" class="tab_ul"  style="">
 							<li id="li_bus" class="on">
 								버스
 							</li>
@@ -1143,17 +1142,19 @@
 								style="width: 120px;margin-top: 3px;" id="L_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate"
 								ref="data:dma_sub_search.L_DATE" ev:onviewchange="scwin.L_DATE_onviewchange">
 							</w2:inputCalendar>
-							<ul id="ST0802_TAB2" class="stat_pnctlty"  style="margin-top: 10px;">
-								<li id="li_PNCTLTY_CNT" class="on" >
-									정시성횟수
-								</li>
-								<li id="li_PNCTLTY_VIOLT_DELAY_CNT" class="" >
-									위반지연횟수
-								</li>
-								<li id="li_PNCTLTY_VIOLT_FAST_CNT" class="" >
-									위반신속횟수
-								</li>
-							</ul>
+							<xf:group id="" class="tab_div" style="">
+								<ul id="ST0802_TAB2" class="tab_ul stat_pnctlty"  style="margin-top:10px">
+									<li id="li_PNCTLTY_CNT" class="on" >
+										정시성횟수
+									</li>
+									<li id="li_PNCTLTY_VIOLT_DELAY_CNT" class="" >
+										위반지연횟수
+									</li>
+									<li id="li_PNCTLTY_VIOLT_FAST_CNT" class="" >
+										위반신속횟수
+									</li>
+								</ul>
+							</xf:group>
 						</xf:group>
 						<w2:wframe id="wfm_subBtn2" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
 					</xf:group>
@@ -1166,7 +1167,7 @@
 					<xf:group id="" class="horizontal_line"></xf:group>
 
 					<xf:group style="" id="" class="label">
-						<w2:span label="단위 : [평균통행속도:km/h]" style="float: left;margin-right: 3px; margin-top:5px;" id=""></w2:span>
+						<!-- <w2:span label="단위 : [평균통행속도:km/h]" style="float: left;margin-right: 3px; margin-top:5px;" id=""></w2:span> -->
 					</xf:group>
 					<xf:group id="ST0802T0" class="" style="position: relative;">
 						<w2:pivot style="position: absolute;height:100%;width:100%;" dataList="data:dlt_BRT_OPER_PNCTLTY_STAT_PIVOT" vals="PNCTLTY_CNT"

@@ -32,4 +32,26 @@
 		ORDER BY REP_ROUT_ID
 	</select>
 	
+	
+	<select id="selectRepRoutListByNode" resultType="Map">
+		SELECT REP_ROUT_ID, REP_ROUT_NM, ROUT_TYPE, ROUT_DIV, ST_STTN_ID, 
+		(SELECT STTN_NM FROM BMS_STTN_MST WHERE STTN_ID = ST_STTN_ID AND DEL_YN!='Y') ST_STTN_NM,
+		(SELECT STTN_ENM FROM BMS_STTN_MST WHERE STTN_ID = ST_STTN_ID AND DEL_YN!='Y') ST_STTN_ENM,
+		ED_STTN_ID, 
+		(SELECT STTN_NM FROM BMS_STTN_MST WHERE STTN_ID = ED_STTN_ID AND DEL_YN!='Y') ED_STTN_NM,
+		(SELECT STTN_ENM FROM BMS_STTN_MST WHERE STTN_ID = ED_STTN_ID AND DEL_YN!='Y') ED_STTN_ENM,
+		WAY_YN, HOLI_YN, REMARK
+		FROM BMS_REP_ROUT_MST WHERE USE_YN = 'Y' 
+			AND REP_ROUT_ID IN (SELECT DISTINCT A.REP_ROUT_ID
+								FROM BMS_ROUT_MST A INNER JOIN BMS_ROUT_NODE_CMPSTN B ON A.ROUT_ID = B.ROUT_ID AND A.DEL_YN !="Y" AND B.NODE_TYPE != 'NT006'
+								WHERE 
+								<if test="@kr.tracom.util.CommonUtil@notEmpty(STTN_ID)">
+									B.STTN_ID = #{STTN_ID})
+								</if>
+								<if test="@kr.tracom.util.CommonUtil@notEmpty(CRS_ID)">
+									B.CRS_ID = #{CRS_ID})
+								</if>
+	</select>
+	
+	
 </mapper>

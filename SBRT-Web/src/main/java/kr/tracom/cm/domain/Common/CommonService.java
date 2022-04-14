@@ -1,5 +1,7 @@
 package kr.tracom.cm.domain.Common;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +9,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import kr.tracom.bms.ftp.FTPHandler;
 import kr.tracom.cm.support.ServiceSupport;
 
 
@@ -16,6 +19,8 @@ public class CommonService extends ServiceSupport {
 	@Autowired
 	private CommonMapper commonMapper;
 
+	@Autowired
+	FTPHandler ftpHandler;
 	/**
 	 * 헤더메뉴, 사이드메뉴 조회 (로그인 사용자에게 권한이 있는 메뉴만 조회함)
 	 * 
@@ -64,6 +69,10 @@ public class CommonService extends ServiceSupport {
 
 	public List selectCommonDtlList() throws Exception {
 		return commonMapper.selectCommonDtlList(getSimpleDataMap("dma_commonCO"));
+	}
+	
+	public List selectCommonDtlImg() throws Exception {
+		return commonMapper.selectCommonDtlImg(getSimpleDataMap("dma_search"));
 	}
 
 	/**
@@ -185,11 +194,60 @@ public class CommonService extends ServiceSupport {
 			data.put("CO_CD", CO_CD);
 			String rowStatus = (String) data.get("rowStatus");
 			if (rowStatus.equals("C")) {
+				String imgPathNm = data.get("IMG_PATH").toString()+data.get("IMG_NM").toString();
+				data.put("IMG_PATH", imgPathNm);
 				iCnt += commonMapper.insertCommonDtl(data);
+				if((data.get("IMG_NM")!=null)&&(data.get("IMG_NM").toString().isEmpty()==false)) {
+					
+					//doMoveFile("up/","common/code/",data.get("IMG_NM").toString(),data.get("CO_CD").toString()+data.get("DL_CD").toString()+data.get("IMG_NM").toString()+".png");
+					doMoveFile("up/","common/code/",data.get("IMG_NM").toString(),data.get("CO_CD").toString()+data.get("DL_CD").toString()+data.get("IMG_NM").toString());
+					commonMapper.insertCommonDtlImgPath(data);
+					
+		    		/*  2020-09-29 추가
+		    		 *  설명: .jpg 이미지와 CERTI 이미지가 없을 경우 운전자 단말기에서 로그인이 되지 않음. 따라서 아래 코드 추가함
+		    		 */
+					/*String imgFileName = data.get("DRV_ID").toString();
+					String pngExtName = ".png";
+					doCopyFile("common/employee/", "common/employee/", imgFileName+pngExtName, imgFileName+".jpg");
+					doCopyFile("common/employee/", "common/employee/", imgFileName+pngExtName, imgFileName+"_CERTI.jpg");*/
+					
+					//ftp sync
+					//ftpHandler.uploadSI0300();
+					
+				}
 			} else if (rowStatus.equals("U")) {
+				String imgPathNm = data.get("IMG_PATH").toString()+data.get("IMG_NM").toString();
+				data.put("IMG_PATH", imgPathNm);
 				uCnt += commonMapper.updateCommonDtl(data);
+				if((data.get("IMG_NM")!=null)&&(data.get("IMG_NM").toString().isEmpty()==false)) {
+					commonMapper.insertCommonDtlImgPath(data);
+					
+					if(data.get("IMG_PATH").equals(data.get("IMG_PATH_ORI")) == false) {
+						doMoveFile("up/","common/code/",data.get("IMG_NM").toString(),data.get("CO_CD").toString()+data.get("DL_CD").toString()+data.get("IMG_NM").toString());
+						//doMoveFile("up/","common/code/",data.get("IMG_NM").toString(),data.get("CO_CD").toString()+data.get("DL_CD").toString()+data.get("IMG_NM").toString()+".png");
+						commonMapper.updateCommonDtlImgPath(data);
+					}
+					
+					
+					/*  2020-09-29 추가
+		    		 *  설명: .jpg 이미지와 CERTI 이미지가 없을 경우 운전자 단말기에서 로그인이 되지 않음. 따라서 아래 코드 추가함
+		    		 */
+					/*String imgFileName = data.get("DRV_ID").toString();
+					String pngExtName = ".png";
+					doCopyFile("common/employee/", "common/employee/", imgFileName+pngExtName, imgFileName+".jpg");
+					doCopyFile("common/employee/", "common/employee/", imgFileName+pngExtName, imgFileName+"_CERTI.jpg");*/
+					
+					//ftp sync
+					//ftpHandler.uploadSI0300();
+					
+				}
+				
 			} else if (rowStatus.equals("D")) {
 				dCnt += commonMapper.deleteCommonDtl(data);
+				
+				/*if((data.get("IMG_PATH")!=null)&&(data.get("IMG_PATH").toString().isEmpty()==false)) {
+					Files.delete((Path) data.get("IMG_PATH"));
+				}*/
 			}
 		}
 		Map result = new HashMap();

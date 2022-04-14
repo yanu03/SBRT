@@ -117,6 +117,9 @@
 		dma_search.set("REP_ROUT_ID" , scwin.param.data.REP_ROUT_ID);
 		dma_search.set("DAY_DIV", scwin.param.data.DAY_DIV);
 		dma_search.set("WAY_DIV", scwin.param.data.WAY_DIV);
+		
+		columnCntLabel.setLabel(scwin.param.allocNo+"회 배차 노선가능개수");
+		
 		columnCnt.setValue(scwin.param.columnCnt);
 		
 		//allData.removeAll();
@@ -126,7 +129,8 @@
 		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
 		var btnOptions = 
 		[
-			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
+			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick},
+			{userStr:"전체적용", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_all_apply_onclick}
 		];
 		com.setMainBtn3(wfm_mainBtn, btnOptions);
 		var subOptions = {
@@ -162,6 +166,17 @@
 	scwin.btn_search_onclick = function() {
 		com.executeSubmission(sub_corList);
 	};
+
+	scwin.btn_all_apply_onclick = function() {
+		var focusIdx = corGrid.getFocusedRowIndex();
+		dlt_BRT_TARET_COR_MST.removeAll();
+		for(i = 0 ; i<scwin.param.columnCnt; i++){
+			var data = dlt_BRT_COR_MST.getAllJSON()[focusIdx];
+			var idx = dlt_BRT_TARET_COR_MST.insertRow();
+			dlt_BRT_TARET_COR_MST.setRowJSON(idx, data, true);
+		}
+		scwin.targetCorGrid_submit(false)
+	};	
 	
 	scwin.btn_confirm_onclick = function() {
 		
@@ -376,7 +391,7 @@
 					</xf:group>
 					<xf:group class="search" id="" style="">
 						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="대표노선ID 또는 대표노선명"></xf:input>
-						<xf:select id="allData" selectedIndex="-1" appearance="full" style="margin-left: 10px;float: left;margin-top: 2px;"
+						<!-- <xf:select id="allData" selectedIndex="-1" appearance="full" style="margin-left: 10px;float: left;margin-top: 2px;"
 							ev:onviewchange="scwin.allData_onviewchange" cols="" rows="" ref="">
 							<xf:choices>
 								<xf:item>
@@ -384,7 +399,7 @@
 									<xf:value><![CDATA[Y]]></xf:value>
 								</xf:item>
 							</xf:choices>
-						</xf:select>
+						</xf:select> -->
 					</xf:group>
 					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
@@ -616,7 +631,7 @@
 					<xf:group id="" class="pgm_sub_subList grdr_20_2_a" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="선택 된 코스 상세 정보" style=""></w2:textbox>
-							<w2:span label="노선개수 : " style="float: left; margin-left: 50px; margin-right: 8px;margin-top: 2px;" id=""></w2:span>
+							<w2:span id="columnCntLabel" label="노선개수 : " style="float: left; margin-left: 50px; margin-right: 8px;margin-top: 2px;"></w2:span>
 							<xf:input adjustMaxLength="false" id="columnCnt" ref="" style="width: 50px;height: 21px; float: left; margin-right:15px" ev:onkeyup="" disabled="true"></xf:input>
 						</xf:group>
 						<xf:group></xf:group>

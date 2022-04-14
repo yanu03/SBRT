@@ -96,6 +96,47 @@ public class OperPlanService extends ServiceSupport {
 		
 		List<Map<String, Object>> returnList = new ArrayList<>();
 		
+		float MAX_SPEED_DEFAULT = OperPlanCalc.MAX_SPEED_DEFAULT; //50.0f;
+    	float MAX_SPEED_LIMIT = OperPlanCalc.MAX_SPEED_LIMIT;//59.0f;
+    	float MIN_SPEED_LIMIT = OperPlanCalc.MIN_SPEED_LIMIT;//35.0f;
+    	int LIMIT_DIFF_SEC = OperPlanCalc.LIMIT_DIFF_SEC;//35;
+    	int MAX_DELAY_SEC = OperPlanCalc.MAX_DELAY_SEC;//20;
+    	float STD_AAC = OperPlanCalc.STD_AAC;//1.67f; //기준가속(1.67)
+    	float STD_DEC = OperPlanCalc.STD_DEC;//-2.5f; //기준감속(-2.5)
+    	
+    	//기준값 가져오기
+		param.put("CO_CD", Constants.SYS_INFO);
+		List<Map<String, Object>> cdList = commonMapper.selectCommonDtlList(param);
+		
+		for(Map<String, Object> cd : cdList) {
+			
+			
+			try {
+				String dlCd =  String.valueOf(cd.get("DL_CD"));
+				String val =  String.valueOf(cd.get("TXT_VAL1"));
+				
+				if(OperPlanCalc.DL_CD_MAX_SPEED_DEFAULT.equals(dlCd)) {
+					MAX_SPEED_DEFAULT = Float.valueOf(val);
+				} else if(OperPlanCalc.DL_CD_MAX_SPEED_LIMIT.equals(dlCd)) {
+					MAX_SPEED_LIMIT = Float.valueOf(val);
+				} else if(OperPlanCalc.DL_CD_MIN_SPEED_LIMIT.equals(dlCd)) {
+					MIN_SPEED_LIMIT = Float.valueOf(val);
+				} else if(OperPlanCalc.DL_CD_LIMIT_DIFF_SEC.equals(dlCd)) {
+					LIMIT_DIFF_SEC = Integer.valueOf(val);
+				} else if(OperPlanCalc.DL_CD_MAX_DELAY_SEC.equals(dlCd)) {
+					MAX_DELAY_SEC = Integer.valueOf(val);
+				} else if(OperPlanCalc.DL_CD_STD_AAC.equals(dlCd)) {
+					STD_AAC = Float.valueOf(val);
+				} else if(OperPlanCalc.DL_CD_STD_DEC.equals(dlCd)) {
+					STD_DEC = Float.valueOf(val);
+				}
+				
+			} catch (Exception e) {
+				logger.error("{}", e);
+			}
+			
+		}
+		
 		param.put("CO_CD", Constants.SYS_INFO);
 		param.put("DL_CD", Constants.SY012 );
 		List<Map<String, Object>>  list = commonMapper.selectCommonDtlList(param);
@@ -116,26 +157,13 @@ public class OperPlanService extends ServiceSupport {
 				routLen = CommonUtil.decimalToDouble(sttnPeakInfoList.get(i).get("ROUT_LEN"));
 				continue;
 			}
-			/*if(curRoutId.equals((String)sttnPeakInfoList.get(i).get("ROUT_ID"))==false){
-				routLen = CommonUtil.decimalToDouble(sttnPeakInfoList.get(i).get("ROUT_LEN"));
-				totalRoutLen += routLen;
-				Map<String, Object> map = new HashMap<String, Object>();
-				
-				curRoutId = (String)sttnPeakInfoList.get(i).get("ROUT_ID");
-				map.put("ROUT_ID", curRoutId);
-				map.put("TOTAL_STOP_TM_PEAK", totalStopTmPeak);
-				map.put("TOTAL_STOP_TM_NONE_PEAK", totalStopTmNonePeak);
-				totalStopTmPeak = "00:00:00";
-				totalStopTmNonePeak = "00:00:00";
-			}
-			*/
-			
+
 			int stopTmPeak = CommonUtil.empty(sttnPeakInfoList.get(i).get("STOP_TM_PEAK"))?averageSttnStopTm:CommonUtil.decimalToInt(sttnPeakInfoList.get(i).get("STOP_TM_PEAK"));
 			int stopTmNonePeak = CommonUtil.empty(sttnPeakInfoList.get(i).get("STOP_TM_NONE_PEAK"))?averageSttnStopTm:CommonUtil.decimalToInt(sttnPeakInfoList.get(i).get("STOP_TM_NONE_PEAK"));
 			totalStopTmPeak = DateUtil.addSeconds(totalStopTmPeak, "HH:mm:ss", stopTmPeak);
 			totalStopTmNonePeak = DateUtil.addSeconds(totalStopTmNonePeak, "HH:mm:ss", stopTmNonePeak);
 		}
-		routRunSec = (int)(routLen/(Constants.VHC_MAX_SPEED*1000/3600)); //노선 주행 시간
+		routRunSec = (int)(routLen/(MIN_SPEED_LIMIT*1000/3600)); //노선 주행 시간
 		
 		int operSn = 1;
 		
@@ -198,8 +226,6 @@ public class OperPlanService extends ServiceSupport {
 		
 		return returnList;
 	}
-	
-	
 	
 	/**
 	 * 운행배차계획노드정보 생성
@@ -1027,13 +1053,17 @@ public class OperPlanService extends ServiceSupport {
 							
 							if (max_speed <= (MIN_SPEED_LIMIT-20)) {
 								
-								logger.info("도착예정시각 변경 필요함!!!");
-								
-								max_speed = MAX_SPEED_DEFAULT; //최대속도 초기화			
-								
-								//변경운행에 도착예정시각 변경이 필요한경우
-								bNeedChgEdTm = true;
-								tryCount = 0;
+								if(!bNeedChgEdTm) {
+									logger.info("도착예정시각 변경 필요함!!!");
+									
+									max_speed = MAX_SPEED_DEFAULT; //최대속도 초기화	
+									
+									//changed_speed_amount = 0;
+									
+									//변경운행에 도착예정시각 변경이 필요한경우
+									bNeedChgEdTm = true;
+									tryCount = 0;
+								}
 							}
 						} 
 						
@@ -1079,13 +1109,17 @@ public class OperPlanService extends ServiceSupport {
 							
 							if (max_speed >= MAX_SPEED_LIMIT) {
 								
-								logger.info("도착예정시각 변경 필요함!!!");
-								
-								max_speed = MAX_SPEED_DEFAULT; //최대속도 초기화			
-								
-								//변경운행에 도착예정시각 변경이 필요한경우
-								bNeedChgEdTm = true;
-								tryCount = 0;
+								if(!bNeedChgEdTm) {
+									logger.info("도착예정시각 변경 필요함!!!");
+									
+									max_speed = MAX_SPEED_DEFAULT; //최대속도 초기화		
+									
+									//changed_speed_amount = 0;
+									
+									//변경운행에 도착예정시각 변경이 필요한경우
+									bNeedChgEdTm = true;
+									tryCount = 0;
+								}
 							}
 						} 						
 						

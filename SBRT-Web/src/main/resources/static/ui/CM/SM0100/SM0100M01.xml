@@ -52,6 +52,11 @@
 						<w2:column id="NUM_VAL4" name="속성4(숫자)" dataType="text" useFilter=""></w2:column>
 						<w2:column id="NUM_VAL5" name="속성5(숫자)" dataType="text"></w2:column>
 						<w2:column id="NUM_VAL6" name="속성6(숫자)" dataType="text"></w2:column>
+						<w2:column id="IMG_PATH" name="이미지경로" dataType="text"></w2:column>
+						<w2:column id="IMG_PATH_ORI" name="이미지경로원본" dataType="text"></w2:column>
+						<w2:column id="IMG_NM" name="이미지이름" dataType="text"></w2:column>
+						<w2:column id="FOCUS" name="포커스" dataType="text"></w2:column>
+						<w2:column id="STATUS" name="상태" dataType="text"></w2:column>
 						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
@@ -201,6 +206,13 @@
 		
 		com.changeDualGrid(grd_CoView, grd_dtlView, sbm_saveDtl,
 					sbm_commonDtl, focusOption, row, oldRow);
+		
+		if(dlt_commonCo.getCellData(row, "CO_CD") == "VHC_KIND" || dlt_commonCo.getCellData(row, "CO_CD") == "DVC_KIND" 
+				|| dlt_commonCo.getCellData(row, "CO_CD") == "STTN_FCLT_TYPE" || dlt_commonCo.getCellData(row, "CO_CD") == "FCLT_KIND"){
+			grd_dtlView.setColumnVisible(10, true);
+		}else{
+			grd_dtlView.setColumnVisible(10, false);
+		}
 	};
 	
 	/**
@@ -346,6 +358,49 @@
 		}
 	};
 
+	/**
+	 * 상세코드 그리드 이미지(경로) 팝업
+	 */
+	scwin.grd_dtlView_oncellclick = function(row,col,colId) {
+		if(colId == 'IMG_BUTTON'){
+			var data = { CO_CD : dlt_commonDtl.getCellData(grd_dtlView.getFocusedRowIndex(), "CO_CD"),
+						DL_CD : dlt_commonDtl.getCellData(grd_dtlView.getFocusedRowIndex(), "DL_CD"),
+						IMG_PATH : dlt_commonDtl.getCellData(grd_dtlView.getFocusedRowIndex(), "IMG_PATH"),
+						IMG_NM : dlt_commonDtl.getCellData(grd_dtlView.getFocusedRowIndex(), "IMG_NM"),
+						FOCUS : dlt_commonDtl.getCellData(grd_dtlView.getFocusedRowIndex(), "FOCUS"),
+						STATUS : dlt_commonDtl.getCellData(grd_dtlView.getFocusedRowIndex(), "STATUS"),
+						callbackFn : "scwin.imgPathCallback" };
+			
+			var dlCdNm = dlt_commonDtl.getCellData(row, "DL_CD_NM");
+			var opt = { id : "SM0100P01", 
+						popupName : dlCdNm + " 이미지 업로드",
+						width : 1050,
+						height : 500,
+						modal : true};
+			com.openPopup("/ui/CM/SM0100/SM0100P01.xml", opt, data);		
+			
+		}
+	};
+	
+	/**
+	 * 상세코드 그리드 이미지(경로) 콜백 메소드
+	 */
+	scwin.imgPathCallback = function(data){
+
+		var coCd = dlt_commonDtl.getCellData(grd_dtlView.getFocusedRowIndex(), "CO_CD");
+		var dlCd = dlt_commonDtl.getCellData(grd_dtlView.getFocusedRowIndex(), "DL_CD");
+		var imgNm = data[0].IMG_NM;
+		var focus = data[0].FOCUS;
+		var status = data[0].STATUS;
+		var imgPathOri = data[0].IMG_PATH_ORI;
+		var path = "/fileUpload/common/code/"
+		
+		dlt_commonDtl.setCellData(grd_dtlView.getFocusedRowIndex(), "FOCUS", focus);
+		dlt_commonDtl.setCellData(grd_dtlView.getFocusedRowIndex(), "STATUS", status);
+		dlt_commonDtl.setCellData(grd_dtlView.getFocusedRowIndex(), "IMG_NM", imgNm);
+		dlt_commonDtl.setCellData(grd_dtlView.getFocusedRowIndex(), "IMG_PATH_ORI", imgPathOri);
+		dlt_commonDtl.setCellData(grd_dtlView.getFocusedRowIndex(), "IMG_PATH", path+coCd+dlCd);
+	}
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -502,7 +557,7 @@
 						<w2:gridView ignoreCellClick="false" autoFit="lastColumn" visibleRowNum="" sortable="true" sortEvent="onclick"
 							class="cm_grid right" showSortableImage="" fixedColumnWithHidden="true" dataList="dlt_commonDtl" id="grd_dtlView" style=""
 							scrollByColumn="false" useShiftKey="true" overflowY="auto" rowStatusVisible="false" ev:onafteredit="" rowNumHeaderValue="순서" rowNumVisible="true"
-							keyMoveEditMode="true" editModeEvent="onclick"  autoFitMinWidth="" focusMode="row">
+							keyMoveEditMode="true" editModeEvent="onclick"  autoFitMinWidth="" focusMode="row" ev:oncellclick="scwin.grd_dtlView_oncellclick">
 							<w2:header id="header1" style="">
 								<w2:row id="row2" style="">
 									<!-- <w2:column id="chk" blockSelect="false" style="height:20px;" width="40" inputType="checkbox" value=""
@@ -536,6 +591,9 @@
 										displayMode="label">
 									</w2:column>
 									<w2:column id="column32" blockSelect="false" style="height:20px" width="90" inputType="number" value="속성6(숫자)"
+										displayMode="label">
+									</w2:column>
+									<w2:column id="IMG_COL" blockSelect="false" style="height:20px" width="90" inputType="number" value="이미지"
 										displayMode="label">
 									</w2:column>
 									<w2:column id="column33" blockSelect="false" style="height:20px" width="70" inputType="text" value="비고"
@@ -577,6 +635,9 @@
 									</w2:column>
 									<w2:column id="NUM_VAL6" blockSelect="false" style="height:20px" width="70" inputType="text"
 										displayMode="label" allowChar="0-9">
+									</w2:column>
+									<w2:column id="IMG_BUTTON" blockSelect="false" style="height:20px" width="70" inputType="button"
+										displayMode="label" value="보기">
 									</w2:column>
 									<w2:column id="REMARK" blockSelect="false" style="height:20px" width="70" inputType="text"
 										displayMode="label">

@@ -13,6 +13,13 @@
          a.LEVEL,
          a.SORT,
          a.PHONE,
+         a.PARTNER_ID,
+         a.PARTNER_NM,
+         a.PARTNER_ENM,
+         a.ADDR,
+         a.FAX,
+         a.EMAIL,
+         
          CONCAT(a.LEVEL,a.SORT) path
        FROM	   BMS_EMER_CLSFCTN_MST a
        WHERE   a.PARENT_ID = ""
@@ -25,21 +32,31 @@
           b.LEVEL,
           b.SORT,
           b.PHONE,
+          b.PARTNER_ID,
+          b.PARTNER_NM,
+          b.PARTNER_ENM,
+          b.ADDR,
+          b.FAX,
+          b.EMAIL,          
           CONCAT(c.path,b.LEVEL,b.SORT) path 
        FROM    CTE c
        INNER   JOIN BMS_EMER_CLSFCTN_MST b
        ON      c.CLSFCTN_ID = b.PARENT_ID
        )
-
-       
-       SELECT CLSFCTN_ID,
+      SELECT CLSFCTN_ID,
          CLSFCTN_NM,
          CLSFCTN_ENM,
          IFNULL(PARENT_ID, 0) AS PARENT_ID,
          LEVEL,
          SORT,
          path,
-         PHONE
+         PHONE,
+         PARTNER_ID,
+         PARTNER_NM,
+         PARTNER_ENM,
+         ADDR,
+         FAX,
+         EMAIL         
       FROM CTE 
 	  <where>
 		<if test="TYPE == 'ALL'">
@@ -61,27 +78,41 @@
 </select>
 
 <insert id="SI0600T0I0" parameterType="Map">
-	insert into BMS_EMER_CLSFCTN_MST
+	INSERT INTO BMS_EMER_CLSFCTN_MST
 			(	
 				CLSFCTN_ID,
 				CLSFCTN_NM,
+				CLSFCTN_ENM
 				PARENT_ID,
 				LEVEL,
 				SORT,
 				UPD_DTM,
 				UPD_ID,
-				PHONE
+				PHONE,
+				PARTNER_ID,
+				PARTNER_NM,
+				PARTNER_ENM,
+				FAX,
+				EMAIL,
+				ADDR
 			)
-	values
+	VALUES
 			(
 				#{CLSFCTN_ID},
 				#{CLSFCTN_NM},
+				#{CLSFCTN_ENM},
 				#{PARENT_ID},
 				#{LEVEL},
 				#{SORT},
 				#{UPD_DTM},
 				#{SSN_USER_ID},
-				#{PHONE}			
+				#{PHONE},
+				#{PARTNER_ID},
+				#{PARTNER_NM},
+				#{PARTNER_ENM},
+				#{FAX},
+				#{EMAIL},
+				#{ADDR}							
 			)
 </insert>
 
@@ -111,44 +142,76 @@
 			)				
 </insert> -->
 
+<!-- 
+수정전 담당자 등록
 <update id="SI0600G2I0" parameterType="Map">
 	UPDATE BMS_EMER_MEMBER_INFO
 	SET 	CLSFCTN_ID = #{CLSFCTN_ID}
 			
 	WHERE MEMER_ID = #{MEMER_ID}
-</update>
+</update> -->
+
+<insert id="SI0600G2I0" parameterType="Map">
+	INSERT INTO BMS_EMER_MEMBER_CMPSTN
+			(
+				CLSFCTN_ID
+			,	MEMBER_ID
+			
+			)
+	
+	VALUES 	
+			(
+				#{CLSFCTN_ID}
+			,	#{MEMBER_ID}
+			
+			)
+</insert>
 
 <delete id="SI0600G2D0" parameterType="Map">
-	UPDATE BMS_EMER_MEMBER_INFO
-	SET 	CLSFCTN_ID = ""
+	DELETE 
+	FROM 	BMS_EMER_MEMBER_CMPSTN
 			
-	WHERE MEMER_ID = #{MEMER_ID}
+	WHERE 	CLSFCTN_ID = #{CLSFCTN_ID}
+	AND		MEMBER_ID = #{MEMBER_ID}
 </delete>
 
 <update id="SI0600T0U0" parameterType="Map">
-	update BMS_EMER_CLSFCTN_MST
-	set		CLSFCTN_NM = #{CLSFCTN_NM},
+	UPDATE BMS_EMER_CLSFCTN_MST
+	SET		CLSFCTN_NM = #{CLSFCTN_NM},
 			PARENT_ID = #{PARENT_ID},
 			LEVEL = #{LEVEL},
 			SORT = #{SORT},
 			UPD_DTM = #{UPD_DTM},
 			UPD_ID = #{UPD_ID},
-			PHONE = #{PHONE}
+			PHONE = #{PHONE},
+			PARTNER_ID = #{PARTNER_ID},
+			PARTNER_NM = #{PARTNER_NM},
+			PARTNER_ENM = #{PARTNER_ENM},
+			FAX = #{FAX},
+			EMAIL = #{EMAIL},
+			ADDR = #{ADDR}			
 			
-	where 	CLSFCTN_ID = #{CLSFCTN_ID}			
+	WHERE 	CLSFCTN_ID = #{CLSFCTN_ID}			
 	
 </update>
 
 <delete id="SI0600T0D0" parameterType="Map">
-	delete
-	from BMS_EMER_CLSFCTN_MST
-	where CLSFCTN_ID = #{CLSFCTN_ID};
+	DELETE
+	FROM 	BMS_EMER_CLSFCTN_MST
+	WHERE 	CLSFCTN_ID = #{CLSFCTN_ID};
 	
+	<!-- 
+	수정전 구성원 삭제
 	delete
 	from BMS_EMER_MEMBER_INFO
-	where CLSFCTN_ID = #{CLSFCTN_ID}
+	where CLSFCTN_ID = #{CLSFCTN_ID} -->
+	
+	DELET
+	FROM 	BMS_PARTNER_MEMBER_INFO
+	WHERE 	CLSFCTN_ID = #{CLSFCTN_ID}
 </delete>
 
+<!-- 수정전 담당자 read
 <select id="SI0600G0R0" resultType="Map">
 	select  CLSFCTN_ID,
 			MEMER_ID,
@@ -166,8 +229,25 @@
 	where 	a.CLSFCTN_ID = #{CLSFCTN_ID}
 	AND		a.ORG_ID = b.ORG_ID	
 
+</select> -->
+
+<select id="SI0600G0R0" resultType="Map">
+	SELECT  		A.CLSFCTN_ID
+				,	A.MEMBER_ID
+				,	B.MEMBER_NM
+				,	B.PHONE
+				,	B.FAX
+				,	B.EMAIL
+				,	B.REMARK	
+			
+	FROM			BMS_EMER_MEMBER_CMPSTN A
+	LEFT JOIN		BMS_PARTNER_MEMBER_INFO B
+		ON			A.MEMBER_ID = B.MEMBER_ID
+	WHERE 			A.CLSFCTN_ID = #{CLSFCTN_ID}
+
 </select>
 
+<!-- 수정전 구성원 Read
 <select id="SI0600P0R0" resultType="Map">
 	select  MEMER_ID,
 			MEMER_NM,
@@ -190,8 +270,32 @@
 			AND MEMER_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
 	</where>		
+</select> -->
 
-
+<select id="SI0600P0R0" resultType="Map">
+	SELECT  	PARTNER_ID
+			,	MEMBER_ID
+			,	PARTNER_NM
+			,	SN
+			,	MEMBER_NM
+			,	MEMBER_DIV
+			,	PHONE
+			,	FAX
+			,	EMAIL
+			,	REMARK
+	
+	FROM 		BMS_PARTNER_MEMBER_INFO
+	WHERE		PARTNER_ID = #{PARTNER_ID}		
+		<if test="TYPE == 'ALL'">
+			AND (MEMBER_ID LIKE CONCAT('%',#{CONTENT},'%') || MEMBER_NM LIKE CONCAT('%',#{CONTENT},'%') )
+		</if>
+		<if test="TYPE == 'MEMBER_ID'">
+			AND MEMBER_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'MEMBER_NM'">
+			AND MEMBER_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	ORDER BY	SN, PARTNER_ID
 </select>
 
 </mapper>

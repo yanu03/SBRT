@@ -86,7 +86,7 @@
 	FROM			BMS_FCLT_COND_LOG	
 	
 	WHERE			MNG_ID = #{MNG_ID}
-	AND				FCLT_COND = 'DC021'
+	AND				(FCLT_COND = 'FC021' OR FCLT_COND = 'FC022')
 </select>
 
 <insert id="FM0300G2I0" parameterType="Map">
@@ -123,10 +123,44 @@
 	AND				SN = #{SN}							 	
 </update>
 
-<delete id="VD0300G2D0" parameterType="Map">
+<delete id="FM0300G2D0" parameterType="Map">
 	DELETE FROM 	BMS_FCLT_HIS
 	WHERE			FCLT_ID = #{FCLT_ID}
 	AND				SN = #{SN}
+</delete>
+
+<insert id="FM0300G3I0" parameterType="Map">
+	INSERT INTO		BMS_FCLT_COND_LOG	
+					(
+						SEND_DATE
+						,MNG_ID
+						,FCLT_COND
+						,VER_INFO
+						,REMARK
+					)
+	VALUES			(
+						STR_TO_DATE(#{SEND_DATE}, '%Y%m%d')
+						,#{MNG_ID}
+						,#{FCLT_COND}
+						,#{VER_INFO}
+						,#{REMARK}
+					)
+</insert>
+
+<update id="FM0300G3U0" parameterType="Map">
+	UPDATE			BMS_FCLT_COND_LOG
+	SET				SEND_DATE = #{SEND_DATE}
+					,MNG_ID = #{MNG_ID}
+					,FCLT_COND = #{FCLT_COND}
+					,VER_INFO = #{VER_INFO}
+					,REMARK = #{REMARK}
+					
+	WHERE			MNG_ID = #{MNG_ID} AND SEND_DATE = #{SEND_DATE}
+</update>
+
+<delete id="FM0300G3D0" parameterType="Map">
+	DELETE FROM 	BMS_FCLT_COND_LOG
+	WHERE			MNG_ID = #{MNG_ID} AND SEND_DATE = #{SEND_DATE}
 </delete>
 
 </mapper>

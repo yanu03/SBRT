@@ -323,8 +323,16 @@
 	};
 	
 	scwin.AL0305G0_onrowindexchange = function(row,oldRow) {
+		var operDt = dlt_BRT_OPER_DT_ALLOC_PL_MST.getCellData(row, 'OPER_DT');
+		operDt = new Date(operDt);
+		var today = new Date();
 		
-		dma_param_AL0305G1.set("REP_ROUT_ID", dlt_BRT_OPER_PL_MST.getCellData(row, "REP_ROUT_ID"));
+		//지난 배차는 수정 못하게
+		if(operDt.getFullYear() <= today.getFullYear() && operDt.getMonth() <= today.getMonth() && operDt.getDate() < today.getDate()){
+			AL0305G0.setReadOnly("row", row, true);
+		}
+		
+		/*dma_param_AL0305G1.set("REP_ROUT_ID", dlt_BRT_OPER_PL_MST.getCellData(row, "REP_ROUT_ID"));
 		dma_param_AL0305G1.set("DAY_DIV", dlt_BRT_OPER_PL_MST.getCellData(row, "DAY_DIV"));
 		dma_param_AL0305G1.set("WAY_DIV", dlt_BRT_OPER_PL_MST.getCellData(row, "WAY_DIV"));
 		dma_param_AL0305G1.set("F_OPERDATE", F_OPERDATE.getValue());
@@ -333,7 +341,7 @@
 		var focusOption = {keyMap : dma_param_AL0305G1};
 		com.changeDualGrid(AL0305G0, AL0305G1, sub_AL0305G1S0, sub_AL0305G1R0, focusOption, row, oldRow, "차량 배차(배포)");
 		com.changeDualGrid(AL0305G0, AL0305G0, sub_AL0305G0S0, sub_AL0305G0R0, focusOption, row, oldRow, "차량 배차(수정)");
-		//com.executeSubmission(sub_AL0305G1R0);
+		com.executeSubmission(sub_AL0305G1R0);*/
 	};
 	
 	scwin.sub_AL0305G1S0_submitdone = function(e) {
@@ -619,7 +627,7 @@
 					</xf:group>
 					<xf:group></xf:group>
 					<xf:group id="" class="" style="">
-						<w2:gridView ignoreCellClick="false" ev:onrowindexchange="" autoFit="allColumn" rowNumHeaderValue="순번"
+						<w2:gridView ignoreCellClick="false" ev:onrowindexchange="scwin.AL0305G0_onrowindexchange" autoFit="allColumn" rowNumHeaderValue="순번"
 							visibleRowNum="" class="cm_grid right" fixedColumnWithHidden="true" rowNumVisible="false"
 							dataList="data:dlt_BRT_OPER_DT_ALLOC_PL_MST" id="AL0305G0" readOnly="false" style="" useShiftKey="true" scrollByColumn="false"
 							rowStatusVisible="false" rowStatusHeaderValue="상태" ev:oncellclick="" focusMode="cell"

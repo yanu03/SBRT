@@ -87,6 +87,13 @@ public class CommonController extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/common/selectCommonDtlImg")
+	public @ResponseBody Map<String, Object> selectCommonDtlImg() throws Exception {
+		Result result = new Result();
+		result.setData("dlt_BMS_DL_CD_IMG_INFO", commonService.selectCommonDtlImg());
+		return result.getResult();
+	}
+	
 	@RequestMapping("/common/selectCommonCo")
 	public @ResponseBody Map<String, Object> selectCommonCo() throws Exception {
 		result.setData("dlt_commonCo", commonService.selectCommonCo());

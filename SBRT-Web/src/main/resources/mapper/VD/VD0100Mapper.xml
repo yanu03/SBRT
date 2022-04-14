@@ -64,6 +64,8 @@
 					,A.DVC_KIND
 					,A.DVC_COORDS
 					,A.INST_LOC
+					,A.LEVEL
+					,A.PARENT_ID
 					,A.DVC_IP
 					,A.MNG_ID	
 <!-- 					,A.DVC_TYPE
@@ -75,12 +77,20 @@
 					,A.REMARK
 					,B.ORG_NM
 					,C.CLSFCTN_NM
+					,D.DL_CD_NM AS DVC_KIND_NM
+					,CONCAT(D.DL_CD_NM, '(', E.DL_CD_NM, ')') AS DVC_KIND_NM_LOC
 					
 	FROM			BMS_DVC_INFO A	
 	LEFT JOIN	  	BMS_ORG_MST	B
 	ON				A.ORG_ID = B.ORG_ID
 	LEFT JOIN		BMS_EMER_CLSFCTN_MST C
 	ON				A.CLSFCTN_ID = C.CLSFCTN_ID
+	LEFT JOIN		BMS_DL_CD_INFO D
+	ON				A.DVC_KIND = D.DL_CD
+	AND				D.CO_CD = 'DVC_KIND'
+	LEFT JOIN		BMS_DL_CD_INFO E
+	ON				A.INST_LOC = E.DL_CD
+	AND				E.CO_CD = 'INST_LOC'
 	
 	WHERE			A.VHC_ID = #{VHC_ID}
 </select>
@@ -98,6 +108,8 @@
 						,DVC_KIND
 						,DVC_COORDS
 						,INST_LOC
+						,LEVEL
+						,PARENT_ID
 						,DVC_IP
 						,MNG_ID						
 <!-- 					,MODEL_NM	
@@ -117,6 +129,8 @@
 						,#{DVC_KIND}
 						,#{DVC_COORDS}
 						,#{INST_LOC}
+						,#{LEVEL}
+						,#{PARENT_ID}
 						,#{DVC_IP}
 						,#{MNG_ID}
 <!-- 					,#{MODEL_NM}
@@ -141,6 +155,8 @@
 					,DVC_KIND = #{DVC_KIND}
 					,DVC_COORDS = #{DVC_COORDS}
 					,INST_LOC = #{INST_LOC}
+					,LEVEL = #{LEVEL}
+					,PARENT_ID = #{PARENT_ID}
 					,DVC_IP = #{DVC_IP}
 					,MNG_ID = #{MNG_ID}	
 					,USE_YN = #{USE_YN}
@@ -206,7 +222,7 @@
 		PLF_IMP_DEV_MST
 	SET
 		  IMP_ID = #{MNG_ID}
-		, IMP_TYPE = ''
+		<!-- , IMP_TYPE = '' -->
 	WHERE
 		IMP_NM = (SELECT VHC_NO FROM BMS_VHC_MST WHERE VHC_ID = #{VHC_ID});
 		
@@ -214,7 +230,7 @@
 		PLF_IMP_SESS_INFO
 	SET
 		  SESS_ID = #{MNG_ID}
-		, REMOTE_TYPE = ''
+		<!-- , REMOTE_TYPE = '' -->
 	WHERE
 		SESS_NM = (SELECT VHC_NO FROM BMS_VHC_MST WHERE VHC_ID = #{VHC_ID});
 </update>

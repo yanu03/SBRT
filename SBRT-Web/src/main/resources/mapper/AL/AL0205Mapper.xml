@@ -4,7 +4,40 @@
 <mapper namespace="kr.tracom.brt.domain.AL0205.AL0205Mapper">
 
 <select id="AL0205G0R0" resultType="Map">
-	SELECT			
+	SELECT
+		A.STTN_ID
+		,A.STTN_NM
+		,A.AREA
+		,A.STTN_NO
+		,A.WAY_DIV
+		,A.UPD_DTM
+		,A.UPD_ID
+		,C.REP_ROUT_NM
+		,C.ROUT_NM
+		,D.DAY_DIV
+	FROM
+		BMS_STTN_MST A
+		LEFT JOIN BMS_ROUT_NODE_CMPSTN B
+		ON A.STTN_ID = B.NODE_ID
+		LEFT JOIN BMS_ROUT_MST C
+		ON B.ROUT_ID = C.ROUT_ID
+		LEFT JOIN BRT_OPER_ALLOC_PL_NODE_INFO D
+		ON C.REP_ROUT_ID = D.REP_ROUT_ID
+	<where>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT1)">
+			C.REP_ROUT_ID = #{CONTENT1}
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT2)">
+			AND C.ROUT_ID = #{CONTENT2}
+		</if>
+	</where>
+	GROUP BY
+		A.STTN_ID
+	ORDER BY
+		C.REP_ROUT_ID, C.ROUT_ID, D.DAY_DIV, A.WAY_DIV, A.STTN_ID
+
+
+	<!-- SELECT			
 		NODE_ID
 		,NODE_NM
 		,NODE_ENM
@@ -42,7 +75,37 @@
 	GROUP BY
 		NODE_ID
 	ORDER BY
-		NODE_ID
+		NODE_ID -->
+</select>
+
+<select id="AL0205G0R1" resultType="Map">
+	SELECT
+		A.CRS_ID
+		,A.CRS_NM
+		,A.CRS_KIND
+		,A.UPD_DTM
+		,A.UPD_ID
+		,C.REP_ROUT_NM
+		,C.ROUT_NM
+		,D.DAY_DIV
+	FROM
+		BMS_CRS_MST A
+		LEFT JOIN BMS_ROUT_NODE_CMPSTN B
+		ON A.CRS_ID = B.NODE_ID
+		LEFT JOIN BMS_ROUT_MST C
+		ON B.ROUT_ID = C.ROUT_ID
+		LEFT JOIN BRT_OPER_ALLOC_PL_NODE_INFO D
+		ON C.REP_ROUT_ID = D.REP_ROUT_ID
+	<where>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT1)">
+			C.REP_ROUT_ID = #{CONTENT1}
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT2)">
+			AND C.ROUT_ID = #{CONTENT2}
+		</if>
+	</where>
+	GROUP BY
+		A.CRS_ID
 </select>
 
 
@@ -52,6 +115,15 @@
 	FROM			BMS_NODE_MST
 	WHERE			NODE_TYPE = 'NT002'
 </select>
+
+<select id="AL0205SHI1" resultType="Map">
+	SELECT			ROUT_ID, ROUT_NM
+	FROM			BMS_ROUT_MST
+	WHERE			DEL_YN = 'N'	
+	<if test="CONTENT1 != 'all'">
+		AND			REP_ROUT_ID = #{CONTENT1}	
+	</if>
+</select>		
 
 <select id="AL0205G1R0" resultType="Map" parameterType="Map">
 	SELECT

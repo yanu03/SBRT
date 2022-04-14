@@ -30,6 +30,9 @@
 						<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_TYPE" name="노드타입" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+						<w2:column id="DRV_ID" name="운전자아이디" dataType="text"></w2:column>
+						<w2:column id="DRV_NM" name="운전자명" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
@@ -41,6 +44,7 @@
 						<w2:key id="L_DATE" name="name5" dataType="date"></w2:key>
 						<w2:key id="ROUT_ID" name="name6" dataType="text"></w2:key>
 						<w2:key id="TYPE" name="name7" dataType="text" defaultValue="ROUT_MODE"></w2:key>
+						<w2:key id="DSPTCH_DIV" name="name8" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_vhcItem" saveRemovedData="true">
@@ -79,6 +83,12 @@
 						<w2:column id="MORN_STD" name="집중모니터링기준" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_dsptchDivItem" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="DL_CD" name="상세코드" dataType="text"></w2:column>
+						<w2:column id="DL_CD_NM" name="상세코드명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_VH0100G0R0" ref='data:json,dma_search' target="data:json,dlt_BRT_DSPTCH_LOG" action="/vh/VH0100G0R0"
@@ -94,13 +104,17 @@
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_repRoutItem_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_routItem" ref="data:json,dma_search" target="data:json,dlt_routItem" action="/rout/selectRoutItem" method="post" mediatype="application/json"
-				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
-				ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_routItem" ref="data:json,dma_search" target="data:json,dlt_routItem" action="/rout/selectRoutItem"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_vhcItem" ref="" target="data:json,dlt_vhcItem" action="/vhc/selectVhcItem" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_dsptchDivItem" ref="" target="data:json,dlt_dsptchDivItem" action="/vh/selectDsptchDivItem" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
+				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
@@ -115,31 +129,50 @@
 						focusColumn : "SEND_DATE"}
 		 };
 		 
-		com.setMainBtn2(wfm_mainBtn,
-		
-		gcm.DISP_TYPE.SINGLE_GRID, autoOptions);
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions);
 
-		dma_search.F_DATE = util.getCurrentDate2(-7);
-		F_DATE.setValue(util.getCurrentDate2(-7));
+		var date = new Date();
+		var year = date.getFullYear().toString();
+		var month = (date.getMonth()+1).toString();
+		var day = date.getDate().toString();
+		var zero = 0;
 		
-		dma_search.L_DATE = util.getCurrentDate2();
-		L_DATE.setValue(util.getCurrentDate2());
+		//글자수 맞추기
+		if(day.length == 1){
+			day = zero + day;
+		}
 		
-		routMap.initMap2("map_VH0100", 
+		if(month.length == 1){
+			month = zero + month;
+		}
+		
+		var weekAgoDay = parseInt(day) - 7;
+		var todaysDate = year+month+day;
+		var weekAgoDate = year+month+weekAgoDay;
+		var firstday = year+month+"01";	
+
+		//F_DATE.setValue(weekAgoDate);
+		F_DATE.setValue(todaysDate);
+		L_DATE.setValue(todaysDate);
+		
+		var map = routMap.initMap2("map_VH0100", 
 				{width:"100%"
 				, height:"100%"
 				, onClick: scwin.onClickMap
 		});
 		
-		var codeOptions = [ {code : "DISPATCH_DIV", compID : "VH0100G0:DSPTCH_DIV" },{code : "DISPATCH_KIND", compID : "VH0100G0:DSPTCH_KIND" }
+		var codeOptions = [ {code : "DISPATCH_DIV", compID : "VH0100G0:DSPTCH_DIV" },
+							{code : "DISPATCH_KIND", compID : "VH0100G0:DSPTCH_KIND" }
 		 ];			
 		 
 		com.setCommonDtl(codeOptions, function() {
 			com.searchGrid(VH0100G0, sub_VH0100G0R0);
 		});
-
+		
+		map.setLevel(7);
 		com.executeSubmission(sub_repRoutItem);
 		com.executeSubmission(sub_vhcItem);	
+		com.executeSubmission(sub_dsptchDivItem);	
 		
 	};	
 	
@@ -152,6 +185,32 @@
 	
 	scwin.sub_VH0100G0R0_submitdone = function(e) {
 		com.setFocusedCell(VH0100G0, "SEND_DATE");
+		var dsptchType = "";
+		
+		for (i=0; i<dlt_BRT_DSPTCH_LOG.getDataLength(); i++) {
+			dsptchType = dlt_BRT_DSPTCH_LOG.getCellData(i, "DSPTCH_DIV");
+			
+			switch(dsptchType) {
+				//일반 메시지	
+				case "DP001":
+				VH0100G0.setCellClass(i, "DSPTCH_DIV", "color_div1");
+				break;
+				
+				//운행중 디스패치
+				case "DP002":
+				VH0100G0.setCellClass(i, "DSPTCH_DIV", "color_div2");
+				break;
+				
+				//정차중 디스패치
+				case "DP003":
+				VH0100G0.setCellClass(i, "DSPTCH_DIV", "color_div3");
+				break;
+			}
+			
+			
+		}
+		
+		
 	};
 
 	scwin.sub_repRoutItem_submitdone = function(e) {
@@ -167,19 +226,15 @@
 		routMap.showVehicle3("map_VH0100", focusDataList,  VH0100G0);
 	};
 	
+	//이력은 onviewchagne 막아놓았음
 	scwin.TYPE1_onviewchange = function(info) {	
 		com.executeSubmission(sub_routItem);
-		com.searchGrid(VH0100G0, sub_VH0100G0R0);
+		//com.searchGrid(VH0100G0, sub_VH0100G0R0);
 	};
 	
 	scwin.TYPE2_onviewchange = function(info) {		
-		com.searchGrid(VH0100G0, sub_VH0100G0R0);
+		//com.searchGrid(VH0100G0, sub_VH0100G0R0);
 	};
-	
-	
-	
-	
-	
 	
 	scwin.F_DATE_onviewchange = function(info) {
 		var ldate = L_DATE.getValue();
@@ -188,6 +243,11 @@
 		if (fdate > ldate && ldate != ""){
 			com.messagBox("alert", "지정할 수 없는 날짜입니다.",scwin.checkCLoseF(info));
 		}
+		
+		else{
+			calendar_radio.setValue("DIRECT");
+		}
+		
 	};
 	scwin.checkCLoseF = function(info) {
 		F_DATE.setValue(info.oldValue);
@@ -203,6 +263,75 @@
 			com.messagBox("alert", "지정할 수 없는 날짜입니다.",scwin.checkCLoseL(info));
 		}
 	};
+	
+	//라디오 버튼에 따라 날짜 설정
+	scwin.calendar_radio_onviewchange = function(info) {
+		var date = new Date();
+		var year = date.getFullYear().toString();
+		var month = (date.getMonth()+1).toString();
+		var day = date.getDate().toString();
+		var zero = 0;
+		
+		//글자수 맞추기
+		if(day.length == 1){
+			day = zero + day;
+		}
+		
+		if(month.length == 1){
+			month = zero + month;
+		}
+		
+		var weekAgoDay = parseInt(day) - 7;
+		var todaysDate = year+month+day;
+		var weekAgoDate = year+month+weekAgoDay;
+		var firstday = year+month+"01";		
+		
+		if(info.value == "DIRECT") {
+			F_DATE.setValue();
+			L_DATE.setValue();
+		}
+		
+		else if(info.value == "TODAY") {
+			F_DATE.setValue(todaysDate);
+			L_DATE.setValue(todaysDate);	
+		}
+		
+		else if(info.value == "WEEK") {
+			F_DATE.setValue(weekAgoDate);
+			L_DATE.setValue(todaysDate);			
+		}
+		
+		else if(info.value == "MONTH") {
+			F_DATE.setValue(firstday);
+			L_DATE.setValue(todaysDate);				
+		}
+	};
+	
+	scwin.getFooterDiv = function(data, dataType) {
+		var sum = 0;
+		var count01 = 0;
+		var count02 = 0;
+		var count03 = 0; 
+		var result = "";
+		
+		if (data.length > 0) {
+			sum = data.length;
+			for (var i=0; i<data.length; i++) {
+				if(data[i] == "DP001") {
+					count01++;
+				}
+				else if(data[i] == "DP002") {
+					count02++;
+				}					
+				else if(data[i] == "DP003") {
+					count03++;
+				}					
+			}
+			
+			result = "총계 : " + sum + "건, 일반 메시지 : " + count01 + "건, 운행중 디스패치 : " + count02 + "건, 정차중 디스패치 : " + count03 + "건";
+			return result;
+		}
+	};		
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
@@ -228,7 +357,7 @@
 							</xf:choices>
 						</xf:select1>
 					</xf:group>
-					<xf:group class="label" id="" style="">
+					<!-- <xf:group class="label" id="" style="">
 						<w2:span class="" id="" label="노선"></w2:span>
 					</xf:group>
 					<xf:group class="search" id="" style="">
@@ -242,16 +371,16 @@
 								</xf:itemset>
 							</xf:choices>
 						</xf:select1>
+					</xf:group> -->
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="차량번호" style=""></w2:span>
 					</xf:group>
-					<xf:group class="search" id="" style="margin-left: 10px;">
-						<xf:group class="label" id="" style="">
-							<w2:span class="" id="" label="차량번호" style=""></w2:span>
-						</xf:group>
+					<xf:group class="search" id="" style="">
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
 							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
 							ev:onviewchange="" id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT3" search="start"
-							selectedData="" style="" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="" nextTabByEnter=""
-							disableEdit="">
+							selectedData="" style="width: 110px;" submenuSize="auto" textAlign="" useKeywordHighlight="false" visibleRowNum=""
+							nextTabByEnter="" disableEdit="">
 							<w2:choices>
 								<w2:itemset nodeset="data:dlt_vhcItem">
 									<w2:label ref="VHC_NO"></w2:label>
@@ -259,22 +388,64 @@
 								</w2:itemset>
 							</w2:choices>
 						</w2:autoComplete>
-						<xf:group class="label" id="" style="margin-left: 10px;">
-							<w2:span class="" id="" label="기간"></w2:span>
-						</xf:group>
+					</xf:group>
+					<xf:group class="label" id="" style="margin-left: 10px;">
+						<w2:span class="" id="" label="구분" style=""></w2:span>
+					</xf:group>	
+					<xf:group class="search" id="" style="width:">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE2_onviewchange" id="" optionOrder="false"
+							ref="data:dma_search.DSPTCH_DIV" class="search_type_100" style="width: 125px;" submenuSize="auto" textAlign="center"
+							chooseOptionLabel="-전체-">
+							<xf:choices>
+								<xf:itemset nodeset="data:dlt_dsptchDivItem">
+									<xf:label ref="DL_CD_NM"></xf:label>
+									<xf:value ref="DL_CD"></xf:value>
+								</xf:itemset>
+							</xf:choices>
+						</xf:select1>
+					</xf:group>									
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="기간"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
 						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
 							style="width:120px; margin-right: 10px; float: left;margin-top: 3px;" id="F_DATE" renderType="component" renderDiv="true"
-							calendarValueType="yearMonthDate" ref="data:dma_search.F_DATE" ev:onviewchange="scwin.F_DATE_onviewchange">
+							calendarValueType="yearMonthDate" ref="data:dma_search.F_DATE" ev:onviewchange="scwin.F_DATE_onviewchange" placeholder="yyyymmdd">
 						</w2:inputCalendar>
 						<w2:span label="~" style="float: left;margin-right: 10px;margin-top: 5px;" id=""></w2:span>
 						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
-							style="width: 120px;float: left;margin-top: 3px;" id="L_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate" ref="data:dma_search.L_DATE" ev:onviewchange="scwin.L_DATE_onviewchange">
+							style="width: 120px;float: left;margin-top: 3px;" id="L_DATE" renderType="component" renderDiv="true"
+							calendarValueType="yearMonthDate" ref="data:dma_search.L_DATE" ev:onviewchange="scwin.L_DATE_onviewchange" placeholder="yyyymmdd">
 						</w2:inputCalendar>
+						<xf:group id="" style="margin-left: 10px;" class="radio">
+							<xf:select1 id="calendar_radio" ref="" selectedIndex="1" cols="" appearance="full"
+								style="margin-light: 10px;min-width: 200px;" rows="1" ev:onviewchange="scwin.calendar_radio_onviewchange">
+								<xf:choices>
+									<xf:item>
+										<xf:label><![CDATA[직접입력]]></xf:label>
+										<xf:value><![CDATA[DIRECT]]></xf:value>
+									</xf:item>
+									<xf:item>
+										<xf:label><![CDATA[금일]]></xf:label>
+										<xf:value><![CDATA[TODAY]]></xf:value>
+									</xf:item>
+									<xf:item>
+										<xf:label><![CDATA[일주일]]></xf:label>
+										<xf:value><![CDATA[WEEK]]></xf:value>
+									</xf:item>
+									<xf:item>
+										<xf:label><![CDATA[1개월]]></xf:label>
+										<xf:value><![CDATA[MONTH]]></xf:value>
+									</xf:item>
+								</xf:choices>
+							</xf:select1>
+						</xf:group>
 					</xf:group>
 					<w2:wframe class="" id="wfm_mainBtn" scope="true" src="/cm/common/wf_mainBtn.xml" style=""></w2:wframe>
 				</xf:group>
 			</xf:group>
-			<xf:group id="pgm_content" class="pgm_content grdc_1200_20_a" style="" >
+			<xf:group id="pgm_content" class="pgm_content grdc_1400_20_a" style="" >
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
 					<xf:group class="defaultbox" id="" style="">
 						<w2:textbox class="df_tt fl" id="" label="Dispatch 전송 이력" style=""></w2:textbox>
@@ -291,38 +462,44 @@
 							readOnly="true" keepDefaultColumnWidth="" oddEvenColorDisplay="" rowNumWidth="" summaryAuto="" excludeDeletedRows=""
 							useCtrlOnMultisort="" useFilterList="" useFilterListSync="" sortedIconPosition="" sortable="true" sortOrderReverse=""
 							showSortableUseFilter="" focusMode="row" rowNumStatusUniqueId="" rowNumStatusResize="" ev:onbeforecolumnmove="" userData1=""
-							preventMultisort="" showSortableImage="true" sortEvent="onclick">
+							preventMultisort="" showSortableImage="false" sortEvent="onclick" noResultMessage="기간내 이력 없음">
 							<w2:caption style="" id="caption2" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header2">
 								<w2:row style="" id="row3">
 									<w2:column removeBorderStyle="false" width="140" inputType="text" style="height:20px" id="column61"
 										value="전송일시" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column57"
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column10"
+										value="대표노선명" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column58"
 										value="노선명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column57"
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column59"
 										value="차량번호" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column1"
+									<w2:column removeBorderStyle="false" width="87" inputType="text" style="height:20px" id="column11"
+										value="운전자명" blockSelect="false" displayMode="label">
+									</w2:column>
+									<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column1"
 										value="경도" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column2"
 										value="위도" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="120" inputType="text" style="height:20px" id="column1"
+									</w2:column> -->
+									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column1"
 										value="노드명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column2"
+									<w2:column removeBorderStyle="false" width="300" inputType="text" style="height:20px" id="column3"
 										value="링크명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="55" inputType="text" style="height:20px" id="column56"
+									<!-- <w2:column removeBorderStyle="false" width="55" inputType="text" style="height:20px" id="column56"
 										value="단계" blockSelect="false" displayMode="label">
+									</w2:column> -->
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column4"
+										value="구분" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column2"
-										value="사유" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column2"
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column5"
 										value="디스패치 내용" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
@@ -332,40 +509,46 @@
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="SEND_DATE"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="REP_ROUT_NM"
+										value="" blockSelect="false" displayMode="label" expression="">
+									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="ROUT_NM"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="VHC_NO"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="=" inputType="text" style="height:20px" id="GPS_X"
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="DRV_NM"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<!-- <w2:column removeBorderStyle="false" width="=" inputType="text" style="height:20px" id="GPS_X"
 										value="" blockSelect="false" displayMode="label">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="GPS_Y"
 										value="" blockSelect="false" displayMode="label">
-									</w2:column>
+									</w2:column> -->
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="NODE_NM"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="LINK_NM"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="DSPTCH_KIND"
 										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
+									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="LINK_NM"
+										value="" blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column>
+									<!-- <w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="DSPTCH_KIND"
+										value="" blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column> -->
 									<w2:column removeBorderStyle="false" width="" inputType="select" style="height:20px" id="DSPTCH_DIV"
 										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="" inputType="text" style="height:20px" id="DSPTCH_CONTS"
-										value="" blockSelect="false" displayMode="label">
+										value="" blockSelect="false" displayMode="label" textAlign="left">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
 							<w2:footer id="footer1" style="">
 								<w2:row id="row3" style="">
 									<w2:column blockSelect="false" colSpan="14" displayMode="label"
-										expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" id="column42" inputType="expression" removeBorderStyle="false"
-										style="height:20px;" textAlign="left" width="2386">
+										expression="custom(scwin.getFooterDiv, 'DSPTCH_DIV')" id="column42" inputType="expression" removeBorderStyle="false"
+										style="height:28px;" textAlign="left" width="" importExp="" excelExpression="">
 									</w2:column>
 								</w2:row>
 							</w2:footer>

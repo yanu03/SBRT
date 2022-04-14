@@ -166,26 +166,11 @@
 		$("#ST0602_TAB1").attr("style", "width:200px; margin-top: 10px;");
 		$("#ST0602_TAB2").attr("style", "width:200px; margin-top: 10px;");
 		
-		//탭 목록 클릭 이벤트 - 그래프
-		$(".stat_dsptch").find("li").click( function() {
-			var li_id = this.id;
-			$(".stat_dsptch").find("li").removeClass("on");
-			$(".stat_dsptch").find("#"+li_id).addClass("on");
-			if(li_id == "li_DP001") {
-				dma_sub_search.set("TAB_DIV", "DP001");
-				com.executeSubmission(sub_ST0602G1R1);
-			}
-			else if(li_id == "li_DP002") {
-				dma_sub_search.set("TAB_DIV", "DP002");
-				com.executeSubmission(sub_ST0602G1R1);
-			}
-		});
-		
 		//탭 목록 클릭 이벤트 - 그리드
-		$(".moni_img").find("li").click( function() {
+		$("#ST0602_TAB1").find("li").click( function() {
 			var li_id = this.id;
-			$(".moni_img").find("li").removeClass("on");
-			$(".moni_img").find("#"+li_id).addClass("on");
+			$("#ST0602_TAB1").find("li").removeClass("on");
+			$("#ST0602_TAB1").find("#"+li_id).addClass("on");
 			if(li_id == "li_bus") {
 				dma_sub_search.set("TAB_DIV_G1", "BUS");
 				com.executeSubmission(sub_ST0602G1R0);
@@ -206,6 +191,20 @@
 			}
 		});
 		
+		//탭 목록 클릭 이벤트 - 그래프
+		$("#ST0602_TAB2").find("li").click( function() {
+			var li_id = this.id;
+			$("#ST0602_TAB2").find("li").removeClass("on");
+			$("#ST0602_TAB2").find("#"+li_id).addClass("on");
+			if(li_id == "li_DP001") {
+				dma_sub_search.set("TAB_DIV", "DP001");
+				com.executeSubmission(sub_ST0602G1R1);
+			}
+			else if(li_id == "li_DP002") {
+				dma_sub_search.set("TAB_DIV", "DP002");
+				com.executeSubmission(sub_ST0602G1R1);
+			}
+		});		
 	};
 	
 	scwin.onpageunload = function() {
@@ -968,8 +967,8 @@
 						</w2:gridView>
 					</xf:group>
 					<xf:group style="" id=""></xf:group>
-					<xf:group id="" class="" style="">
-						<ul id="ST0602_TAB1" class="moni_img"  style="margin-bottom: 3px;">
+					<xf:group id="" class="tab_div" style="">
+						<ul id="ST0602_TAB1" class="tab_ul"  style="">
 							<li id="li_bus" class="on">
 								버스
 							</li>
@@ -1111,17 +1110,12 @@
 								style="width: 120px;margin-top: 3px;" id="L_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate"
 								ref="data:dma_sub_search.L_DATE" ev:onviewchange="scwin.L_DATE_onviewchange">
 							</w2:inputCalendar>
-							<ul id="ST0602_TAB2" class="stat_dsptch"  style="margin-top: 10px;">
-								<li id="li_DP001" class="on" >
-									일반메시지
-								</li>
-								<li id="li_DP002" class="" >
-									운행중 디스패치
-								</li>
-								<!--  <li id="li_PNCTLTY_VIOLT_FAST_CNT" class="" >
-									위반신속횟수
-								</li>-->
-							</ul>
+							<xf:group class="tab_div" id="">
+								<ul id="ST0602_TAB2" class="tab_ul" style="width:200px">
+									<li id="li_DP001" class="on" >일반메시지</li>
+									<li id="li_DP002" class="">운행중 디스패치</li>
+								</ul>
+							</xf:group>
 						</xf:group>
 						<w2:wframe id="wfm_subBtn2" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
 					</xf:group>
@@ -1134,7 +1128,7 @@
 					<xf:group id="" class="horizontal_line"></xf:group>
 
 					<xf:group style="" id="" class="label">
-						<w2:span label="단위 : [평균통행속도:km/h]" style="float: left;margin-right: 3px; margin-top:5px;" id=""></w2:span>
+						<!-- <w2:span label="단위 : [평균횟수]" style="float: left;margin-right: 3px; margin-top:5px;" id=""></w2:span> -->
 					</xf:group>
 					<xf:group id="ST0602T0" class="" style="position: relative;">
 						<w2:pivot style="position: absolute;height:100%;width:100%;" dataList="data:dlt_BRT_OPER_DSPTCH_STAT_PIVOT" vals="DSPTCH_CNT"

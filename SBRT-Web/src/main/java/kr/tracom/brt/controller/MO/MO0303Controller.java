@@ -83,7 +83,7 @@ public class MO0303Controller extends ControllerSupport{
 	
 	@RequestMapping("/mo/allocVhcList")
 	public @ResponseBody Map<String, Object> allocVhcList() throws Exception {
-		result.setData("dlt_BRT_CUR_ALLOC_PL_INFO", mo0303Service.allocVhcList());
+		result.setData("dlt_BRT_DAY_ALLOC_PL_INFO", mo0303Service.allocVhcList());
 		return result.getResult();
 	}
 	

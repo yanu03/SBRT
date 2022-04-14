@@ -55,6 +55,37 @@ public class RoutService extends ServiceSupport {
 		return routMapper.selectNodeListByRepRout(map);
 	}
 	
+	public List<Map<String, Object>> selectNodeListByRepRouts() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		String temp[] = map.get("REP_ROUT_IDS").toString().replace("[","").replace("]","").replace(" ","").split(",");
+		map.put("REP_ROUT_IDS", temp);
+		return routMapper.selectNodeListByRepRouts(map);
+	}
+	
+	public List<Map<String, Object>> selectNodeDispListByRouts() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		String temp[] = map.get("ROUT_IDS").toString().replace("[","").replace("]","").replace(" ","").split(",");
+		map.put("ROUT_IDS", temp);
+		return routMapper.selectNodeDispListByRouts(map);
+	}
+	
+	public List<Map<String, Object>> selectNodeDispListByRout() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		return routMapper.selectNodeDispListByRout(map);
+	}
+	
+	public List<Map<String, Object>> selectNodeDispListByRepRout() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search");
+		return routMapper.selectNodeDispListByRepRout(map);
+	}
+	
+	public List<Map<String, Object>> selectNodeDispListByRepRouts() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		String temp[] = map.get("REP_ROUT_IDS").toString().replace("[","").replace("]","").replace(" ","").split(",");
+		map.put("REP_ROUT_IDS", temp);
+		return routMapper.selectNodeDispListByRepRouts(map);
+	}
+	
 	public List<Map<String, Object>> selectMainNodeListByRout() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
 		return routMapper.selectMainNodeListByRout(map);

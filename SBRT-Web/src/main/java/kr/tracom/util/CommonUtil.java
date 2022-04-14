@@ -483,6 +483,19 @@ public class CommonUtil {
 		return result;
 	}
 	
+	public static String bigDecimalToString(Object object) {
+		String result = "";
+		try {
+			result = (object==null)?"":String.valueOf(object);
+		}catch (Exception e) {
+			try {
+				result = (String) object;
+			} catch (Exception e2) {
+			}
+		}
+		return result;
+	}
+	
 	
 	/**
 	 * Object type 변수가 비어있는지 체크

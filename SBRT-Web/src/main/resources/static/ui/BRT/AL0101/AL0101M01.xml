@@ -76,7 +76,7 @@
 						<w2:column id="ACCRU_LEN" name="누적길이" dataType="number" defaultValue="0"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN" saveRemovedData="true">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_DISP_VW" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
 						<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
@@ -112,7 +112,7 @@
 				action="/al/AL0101G1S0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
 				mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0101G1S0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_AL0101G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_CMPSTN" action="/rout/selectNodeListByRout"
+			<xf:submission id="sub_AL0101G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_DISP_VW" action="/rout/selectNodeDispListByRout"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_AL0101G2R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -243,11 +243,11 @@
 			}
 		}
 		com.executeSubmission(sub_AL0101G2R0);
-		//routMap.showRoute("map_AL0101", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), null, "ONLYLINE");
+		//routMap.showRoute("map_AL0101", dlt_BMS_ROUT_NODE_DISP_VW.getAllJSON(), null, "ONLYLINE");
 	};
 	
 	scwin.sub_AL0101G2R0_submitdone = function(e) {
-		routMap.showRoute("map_AL0101", dlt_BMS_ROUT_NODE_CMPSTN.getAllJSON(), null, "ONLYLINE");
+		routMap.showRoute("map_AL0101", dlt_BMS_ROUT_NODE_DISP_VW.getAllJSON(), null, "ONLYLINE");
 		routMap.showNode("map_AL0101", dlt_BRT_MAIN_ROUT_NODE_INFO.getAllJSON(),AL0101G1.getFocusedRowIndex());
 	};
 	
@@ -409,7 +409,7 @@
 						<xf:group id="" class="gr_sub_header" style="">
 							<xf:group class="gr_sub_search" id="" style="">
 								<xf:group class="label" id="" style="">
-									<w2:span class="" id="" label="검색 항목"></w2:span>
+									<w2:span class="" id="" label="찾기"></w2:span>
 								</xf:group>
 								<xf:group class="search" id="" style="">
 									<xf:input id="search_sub_input" class="search_input" ref="data:dma_sub_search.CONTENT" placeholder="노드ID 또는 노드명"></xf:input>

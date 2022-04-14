@@ -22,5 +22,11 @@ public class RepRoutService extends ServiceSupport {
 	public List<Map<String, Object>> selectRepRoutItem() throws Exception {
 		return reproutMapper.selectRepRoutItem();
 	}
+
+	public List<Map<String, Object>> selectRepRoutListByNode() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+		return reproutMapper.selectRepRoutListByNode(map);
+	}
+	
 	
 }

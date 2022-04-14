@@ -26,6 +26,77 @@
 		</where>
 	</select>
 
+	<select id="PI0801G1R0" resultType="Map" parameterType="Map">
+		SELECT
+			VOC_ID
+			,VOC_NM
+			,PLAY_TYPE
+			,PLAY_TM
+			,DATE_FORMAT(PLAY_ST_DT, '%Y%m%d') AS PLAY_ST_DT
+			,DATE_FORMAT(PLAY_ED_DT, '%Y%m%d') AS PLAY_ED_DT
+			,KR_TTS
+			,EN_TTS
+			,SCR_TXT
+			,SCR_TXT_EN
+			,STTN_TEXT_A
+			,STTN_TEXT_B
+			,STTN_TEXT_A_EN
+			,STTN_TEXT_B_EN
+			,REMARK
+			,CONCAT(DATE_FORMAT(PLAY_ST_DT, '%Y-%m-%d'), ' ~ ', DATE_FORMAT(PLAY_ED_DT, '%Y-%m-%d')) PLAY_DATE
+		FROM
+			BMS_VOC_INFO
+		
+		<where>
+			VOC_DIV = 'VD001'
+			<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+				AND VOC_ID LIKE CONCAT('%',#{CONTENT},'%') || VOC_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+			<if test="TYPE == 'VOC_ID'">
+				AND VOC_ID LIKE CONCAT('%',#{CONTENT},'%')
+			</if>
+			<if test="TYPE == 'VOC_NM'">
+				AND VOC_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			</if>
+		</where>
+	</select>
+	
+	<select id="PI0801G2R0" resultType="Map" parameterType="Map">
+    	SELECT
+		    		  VOC.VOC_ID
+		    		, VOC.VOC_NM
+		    		, DATE_FORMAT(VOC.PLAY_ST_DT, '%Y%m%d') PLAY_ST_DT
+		    		, VOC.PLAY_TYPE
+		    		, VOC.KR_TTS
+		    		, VOC.SCR_TXT
+		    		, VOC.VOC_DIV
+		    		, VOC.REMARK
+		    		, VOC.PLAY_TM
+		    		, DATE_FORMAT(VOC.PLAY_ED_DT, '%Y%m%d') PLAY_ED_DT
+		    		, CONCAT(DATE_FORMAT(VOC.PLAY_ST_DT, '%Y-%m-%d'), ' ~ ', DATE_FORMAT(VOC.PLAY_ED_DT, '%Y-%m-%d')) PLAY_DATE
+		    		, LED.TXT_A
+		    		, LED.TXT_B
+    	FROM
+    				BMS_VOC_INFO VOC
+    				
+    	LEFT JOIN 	BMS_INNER_LED_INFO LED
+    	ON			CONCAT(VOC.VOC_ID, 'K') = LED.VOC_ID
+    				
+    	WHERE
+    				VOC.VOC_DIV = 'VD003'
+    				
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND VOC.VOC_ID LIKE CONCAT('%',#{CONTENT},'%') || VOC_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'VOC_ID'">
+			AND VOC.VOC_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'VOC_NM'">
+			AND VOC_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>			
+    	ORDER BY	VOC.VOC_ID						
+	</select>	
+
 	<select id="PI0801SHI0" resultType="Map">
 		SELECT		ILD_ID
 					,ILD_NM
@@ -103,4 +174,201 @@
 		
 		WHERE		ILD_ID = #{ILD_ID}
 	</delete>
+	
+	<select id="PI0801SHI1" resultType="Map" parameterType="Map">
+		select  VOC_ID, VOC_NM
+		from 	BMS_VOC_INFO
+	</select>	
+	
+	<select id="PI0801G1K0" resultType="Map">
+		SELECT CONCAT('BV', LPAD(NEXTVAL(SEQ_BMS_VOC_INFO_1), 8, '0')) AS 'SEQ'
+	</select>		
+	
+	<insert id="PI0801G1I0" parameterType="Map">	
+		INSERT INTO BMS_VOC_INFO(
+			VOC_ID
+			,ROUT_ID
+			,VOC_NM
+			,PLAY_ST_DT
+			,PLAY_TYPE
+			,KR_TTS
+			,EN_TTS
+			,SCR_TXT
+			,SCR_TXT_EN
+			,REMARK
+			,PLAY_TM
+			,VOC_DIV
+			,CON_ID
+			,PLAY_ED_DT
+			,STTN_TEXT_A
+			,STTN_TEXT_A_EN
+			,STTN_TEXT_B
+			,STTN_TEXT_B_EN
+			,UPD_DTM
+			,UPD_ID
+			) 
+		VALUES (
+			#{VOC_ID}
+			,#{ROUT_ID}
+			,#{VOC_NM}
+			,STR_TO_DATE(#{PLAY_ST_DT}, '%Y%m%d')
+			,#{PLAY_TYPE}
+			,#{KR_TTS}
+			,#{EN_TTS}
+			,#{SCR_TXT}
+			,#{SCR_TXT_EN}
+			,#{REMARK}
+			,#{PLAY_TM}
+			,'VD001'
+			,#{CON_ID}
+			,STR_TO_DATE(#{PLAY_ED_DT}, '%Y%m%d')
+			,#{STTN_TEXT_A}
+			,#{STTN_TEXT_A_EN}
+			,#{STTN_TEXT_B}
+			,#{STTN_TEXT_B_EN}
+			,#{UPD_DTM}
+			,#{UPD_ID}
+			)
+	</insert>
+
+	<delete id="PI0801G1D0" parameterType="Map">
+		DELETE FROM BMS_VOC_INFO 
+		WHERE VOC_ID = #{VOC_ID};
+	</delete>
+	
+	<update id="PI0801G1U0" parameterType="Map">
+		UPDATE 
+			BMS_VOC_INFO 
+		SET 
+			ROUT_ID = #{ROUT_ID}
+			,VOC_NM = #{VOC_NM}
+			,PLAY_ST_DT = STR_TO_DATE(#{PLAY_ST_DT}, '%Y%m%d')
+			,PLAY_TYPE = #{PLAY_TYPE}
+			,KR_TTS = #{KR_TTS}
+			,EN_TTS = #{EN_TTS}
+			,SCR_TXT = #{SCR_TXT}
+			,SCR_TXT_EN = #{SCR_TXT_EN}
+			,REMARK = #{REMARK}
+			,PLAY_TM = #{PLAY_TM}
+			,VOC_DIV = 'VD001'
+			,CON_ID = #{CON_ID}
+			,PLAY_ED_DT = STR_TO_DATE(#{PLAY_ED_DT}, '%Y%m%d')
+			,STTN_TEXT_A = #{STTN_TEXT_A}
+			,STTN_TEXT_A_EN = #{STTN_TEXT_A_EN}
+			,STTN_TEXT_B = #{STTN_TEXT_B}
+			,STTN_TEXT_B_EN = #{STTN_TEXT_B_EN}
+			,UPD_DTM = #{UPD_DTM}
+			,UPD_ID = #{UPD_ID} 
+		WHERE 
+			VOC_ID = #{VOC_ID}
+	</update>	
+
+	<select id="PI0801G2K0" resultType="Map">
+		SELECT 		  CONCAT('EV', LPAD(NEXTVAL(SEQ_BMS_VOC_INFO_3), 8, '0')) AS 'SEQ'
+	</select>
+		
+	<select id="PI0801SHI2" resultType="Map">
+		SELECT    	VOC_ID
+					,VOC_NM
+					
+		FROM		BMS_VOC_INFO
+		WHERE		VOC_DIV = 'VD003'
+	</select>	
+
+	<insert id="PI0801G2I0" parameterType="Map">	
+     	<selectKey keyProperty="ILD_ID" resultType="String" order="BEFORE">
+    		SELECT CONCAT('IL', LPAD(NEXTVAL(SEQ_BMS_INNER_LED_INFO_0), 8, '0'))
+    	</selectKey>
+    	   	
+    	INSERT INTO BMS_VOC_INFO
+    		(
+    		  VOC_ID
+    		, VOC_NM
+    		, PLAY_ST_DT
+    		, PLAY_TYPE
+    		, KR_TTS
+    		, SCR_TXT
+    		, REMARK
+    		, PLAY_TM
+    		, VOC_DIV
+    		, PLAY_ED_DT
+			, UPD_DTM
+			, UPD_ID    		
+    		)
+   		VALUES
+   			(
+   			  #{VOC_ID}
+   			, #{VOC_NM}
+   			, STR_TO_DATE(#{PLAY_ST_DT}, '%Y%m%d')
+   			, #{PLAY_TYPE}
+   			, #{KR_TTS}
+   			, #{SCR_TXT}
+   			, #{REMARK}
+   			, #{PLAY_TM}
+   			, 'VD003'
+   			, STR_TO_DATE(#{PLAY_ED_DT}, '%Y%m%d')   			
+   			, #{UPD_DTM}
+   			, #{SSN_USER_ID}
+   			);
+   		
+      	INSERT INTO BMS_INNER_LED_INFO
+      		(
+    		  ILD_ID
+    		, TXT_A
+    		, TXT_B
+    		, VOC_ID
+    		, TXT_CD
+    		, UPD_DTM
+    		, UPD_ID
+    		)
+    	VALUES
+    		(
+    		  #{ILD_ID}
+    		, REPLACE(REPLACE(#{TXT_A}, '\r\n', ' '), '\r', '')
+    		, REPLACE(REPLACE(#{TXT_B}, '\r\n', ' '), '\r', '')
+    		, CONCAT(#{VOC_ID}, 'K')
+    		, 'TC006'
+    		, #{UPD_DTM}
+    		, #{SSN_USER_ID}
+    		) 		
+   		
+	</insert>
+
+	<delete id="PI0801G2D0" parameterType="Map">
+		DELETE FROM BMS_VOC_INFO 
+		WHERE VOC_ID = #{VOC_ID};
+		
+		DELETE FROM BMS_INNER_LED_INFO
+		WHERE VOC_ID = CONCAT(#{VOC_ID}, 'K')
+	</delete>
+	
+	<update id="PI0801G2U0" parameterType="Map">
+		UPDATE		 BMS_VOC_INFO 
+		SET
+					  VOC_NM = #{VOC_NM}
+					, PLAY_ST_DT = STR_TO_DATE(#{PLAY_ST_DT}, '%Y%m%d')
+					, PLAY_TYPE = #{PLAY_TYPE}
+					, KR_TTS = #{KR_TTS}
+					, EN_TTS = #{EN_TTS}
+					, SCR_TXT = #{SCR_TXT}
+					, SCR_TXT_EN = #{SCR_TXT_EN}
+					, REMARK = #{REMARK}
+					, PLAY_TM = #{PLAY_TM}
+					, VOC_DIV = #{VOC_DIV}
+					, PLAY_ED_DT = STR_TO_DATE(#{PLAY_ED_DT}, '%Y%m%d')
+					, UPD_DTM = #{UPD_DTM}
+					, UPD_ID = #{SSN_USER_ID} 
+		
+		WHERE 		VOC_ID = #{VOC_ID};
+		
+		
+		UPDATE		BMS_INNER_LED_INFO
+		SET			
+		    		  TXT_A			=	REPLACE(REPLACE(#{TXT_A}, '\r\n', ' '), '\r', '')
+		    		, TXT_B			=	REPLACE(REPLACE(#{TXT_B}, '\r\n', ' '), '\r', '')
+		    		, TXT_CD		=	'TC006'
+		WHERE	
+					VOC_ID = CONCAT(#{VOC_ID}, 'K')	
+	</update>
+		
 </mapper>

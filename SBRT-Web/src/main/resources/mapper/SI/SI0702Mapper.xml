@@ -4,94 +4,122 @@
 <mapper namespace="kr.tracom.bms.domain.SI0702.SI0702Mapper">
 
 <select id="SI0702G0R0" resultType="Map">
-	SELECT MEMER_ID, MEMER_NM, PHONE, FAX, CLSFCTN_ID, ORG_NM, EMAIL, REMARK
-	FROM BMS_EMER_MEMBER_INFO
+	SELECT 			PARTNER_ID
+				,	MEMBER_ID
+				,	PARTNER_NM
+				,	SN
+				,	MEMBER_NM
+				,	MEMBER_DIV
+				,	PHONE
+				,	FAX
+				,	EMAIL
+				,	REMARK
+				,	UPD_DTM
+				,	UPD_ID
+				
+	FROM			BMS_PARTNER_MEMBER_INFO			
 	<where>
 		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-			AND MEMER_ID LIKE CONCAT('%',#{CONTENT},'%') || MEMER_NM LIKE CONCAT('%',#{CONTENT},'%')
+			AND MEMBER_ID LIKE CONCAT('%',#{CONTENT},'%') || MEMBER_NM LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
 		<if test="TYPE == 'MEMER_ID'">
-			AND MEMER_ID LIKE CONCAT('%',#{CONTENT},'%')
+			AND MEMBER_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
 		<if test="TYPE == 'MEMER_NM'">
-			AND MEMER_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			AND MEMBER_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
 	</where>
 </select>
  
 <select id="SI0702SHI0" resultType="Map">
-	SELECT 	MEMER_ID, MEMER_NM
-	FROM BMS_EMER_MEMBER_INFO
+	SELECT 			MEMBER_ID, MEMBER_NM
+	FROM 			BMS_PARTNER_MEMBER_INFO
 </select>
 
 <select id="SI0702G0K0" resultType="Map">
-	SELECT CONCAT('MM', LPAD(NEXTVAL(SEQ_BMS_EMER_MEMBER_INFO_0), 8, '0')) AS 'SEQ'
+	SELECT CONCAT('PM', LPAD(NEXTVAL(SEQ_BMS_PARTNER_MEMBER_INFO_0), 8, '0')) AS 'SEQ'
 </select>
 
 <insert id="SI0702G0I0" parameterType="Map">
-	INSERT INTO BMS_EMER_MEMBER_INFO
+	INSERT INTO BMS_PARTNER_MEMBER_INFO
 			(
-			MEMER_ID,
-			MEMER_NM,
-			PHONE,
-			FAX,
-			ORG_NM,
-			EMAIL,
-			REMARK,
-			UPD_DTM,
-			UPD_ID
+				PARTNER_ID
+			,	MEMBER_ID
+			,	PARTNER_NM
+			<if test = "@kr.tracom.util.CommonUtil@notEmpty(SN)">			
+			,	SN
+			</if>	
+			,	MEMBER_NM
+			,	MEMBER_DIV
+			,	PHONE
+			,	FAX
+			,	EMAIL
+			,	REMARK
+			,	UPD_DTM
+			,	UPD_ID
 			)
 	VALUES		
 			(
-			#{MEMER_ID},
-			#{MEMER_NM},
-			#{PHONE},
-			#{FAX},
-			#{ORG_NM},
-			#{EMAIL},
-			#{REMARK},
-			#{UPD_DTM},
-			#{SSN_USER_ID}
+				#{PARTNER_ID}
+			,	#{MEMBER_ID}
+			,	#{PARTNER_NM}
+			<if test = "@kr.tracom.util.CommonUtil@notEmpty(SN)">			
+			,	#{SN}
+			</if>				
+			,	#{MEMBER_NM}
+			,	#{MEMBER_DIV}
+			,	#{PHONE}
+			,	#{FAX}
+			,	#{EMAIL}
+			,	#{REMARK}
+			,	#{UPD_DTM}
+			,	#{SSN_USER_ID}
 			)				
 </insert>
 
 <update id="SI0702G0U0" parameterType="Map">
-	UPDATE BMS_EMER_MEMBER_INFO
-	SET 	MEMER_ID = #{MEMER_ID},
-			MEMER_NM = #{MEMER_NM},
-			ORG_NM = #{ORG_NM},
+	UPDATE BMS_PARTNER_MEMBER_INFO
+	SET 	
+			PARTNER_ID = #{PARTNER_ID},
+			MEMBER_DIV = #{MEMBER_DIV},
+			MEMBER_NM = #{MEMBER_NM},
+			<if test = "@kr.tracom.util.CommonUtil@notEmpty(SN)">			
+			SN = #{SN},
+			</if>			
+			PARTNER_NM = #{PARTNER_NM},
 			PHONE = #{PHONE},
 			FAX = #{FAX},
 			EMAIL = #{EMAIL},
 			REMARK = #{REMARK},
 			UPD_DTM = #{UPD_DTM},
-			UPD_ID = #{UPD_ID}
-	WHERE MEMER_ID = #{MEMER_ID}
+			UPD_ID = #{SSN_USER_ID}
+			
+	WHERE MEMBER_ID = #{MEMBER_ID}
 </update>
 
 <delete id="SI0702G0D0" parameterType="Map">
-	DELETE FROM BMS_EMER_MEMBER_INFO
-	WHERE MEMER_ID = #{MEMER_ID}
+	DELETE FROM BMS_PARTNER_MEMBER_INFO
+	WHERE MEMBER_ID = #{MEMBER_ID}
 </delete>
 
 
 <select id="SI0702P0R0" resultType="Map">
-	select  ORG_ID,
-			ORG_NM,
-			ORG_DIV,
+	SELECT  PARTNER_ID,
+			PARTNER_NM,
+			PARTNER_DIV,
 			PHONE,
 			EMAIL
 	
-	from 	BMS_ORG_MST
+	FROM 	BMS_PARTNER_MST
 	<where>
-		<if test="TYPE == 'ALL'">
-			AND ORG_ID LIKE CONCAT('%',#{CONTENT},'%') || ORG_NM LIKE CONCAT('%',#{CONTENT},'%')
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND PARTNER_ID LIKE CONCAT('%',#{CONTENT},'%') || PARTNER_NM LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
-		<if test="TYPE == 'ORG_ID'">
-			AND ORG_ID LIKE CONCAT('%',#{CONTENT},'%')
+		<if test="TYPE == 'PARTNER_ID'">
+			AND PARTNER_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
-		<if test="TYPE == 'ORG_NM'">
-			AND ORG_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		<if test="TYPE == 'PARTNER_NM'">
+			AND PARTNER_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
 	</where>		
 

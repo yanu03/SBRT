@@ -31,5 +31,10 @@ public class RepRoutController extends ControllerSupport {
 		return result.getResult();
 	}
 	
-
+	@RequestMapping("/repRout/selectRepRoutListByNode")
+	public @ResponseBody Map<String, Object> selectRepRoutListByNode() throws Exception {
+		result.setData("dlt_BMS_REP_ROUT_MST", reproutService.selectRepRoutListByNode());
+		return result.getResult();
+	}
+	
 }

@@ -22,24 +22,8 @@ public class VH0100Service extends ServiceSupport{
 	public List<Map> VH0100SHI0() throws Exception{
 		return vh0100Mapper.VH0100SHI0();
 	}
-	/*
-	public List<Map> FM0201G1R0() throws Exception{
-		Map param = getSimpleDataMap("dma_sub_search");
-		return fm0201Mapper.FM0201G1R0(param);
+	
+	public List<Map> selectDsptchDivItem() throws Exception{
+		return vh0100Mapper.selectDsptchDivItem();
 	}
-	
-	
-	
-	public List FM0201SHI1() throws Exception {
-		return fm0201Mapper.FM0201SHI1();
-	}
-	
-	public List FM0201SHI2() throws Exception {
-		return fm0201Mapper.FM0201SHI2();
-	}
-	
-	public List FM0201SHI3() throws Exception {
-		Map param = getSimpleDataMap("dma_search");		
-		return fm0201Mapper.FM0201SHI3(param);
-	}	*/
 }
