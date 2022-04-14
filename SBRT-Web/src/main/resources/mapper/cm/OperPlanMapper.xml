@@ -349,6 +349,7 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,ROUT_ID
             ,ALLOC_NO
             ,OPER_SN
+            ,LINK_ID
             ,VHC_ID
             ,VHC_NO
             ,OCR_NODE_ID
@@ -363,6 +364,8 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,CHG_APPR_DIV-->
             ,OCR_DTM
             ,UPD_DTM
+            ,GPS_X
+            ,GPS_Y
         )
         VALUES
         (
@@ -371,12 +374,15 @@ WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND A.WAY_DIV = #{WAY_DIV}
             ,#{ROUT_ID}
             ,#{ALLOC_NO}
             ,#{OPER_SN}            
+            ,#{LINK_ID}            
             ,#{VHC_ID}
             ,(SELECT VHC_NO FROM BMS_VHC_MST WHERE VHC_ID = #{VHC_ID})
             ,#{OCR_NODE_ID}
             ,(SELECT NODE_TYPE FROM BMS_NODE_MST WHERE NODE_ID = #{OCR_NODE_ID})            
             ,#{OCR_DTM}
             ,#{UPD_DTM}
+            ,#{GPS_X}
+            ,#{GPS_Y}
         )
    		ON DUPLICATE KEY UPDATE
 			OCR_DTM = VALUES(OCR_DTM)	

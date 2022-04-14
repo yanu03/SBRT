@@ -1170,17 +1170,20 @@ public class OperPlanService extends ServiceSupport {
 	public List makeChgOperAllocPlNodeInfo(String vhcId, String routId, String operDt, int operSn
 			,String stNodeId
 			,int stNodeSn //변경운행 //변경운행 시작 노드
+			,String linkId
 			,int offsetTm //변경운행 //도착 예정시간과의 차이(초))
 			,String timeMin //변경운행이 발생하지 않는 최소도착시각
 			,String timeMax //변경운행이 발생하지 않는 최대도착시각			
+			,String gps_x 		
+			,String gps_y 		
 			,boolean bSave
 	) {
 		List chgPlList = null;
 		
 		try {
 			
-			logger.info("변경운행 생성 시작 >> routId:{}, operDt:{}, operSn:{}, stNodeSn:{}, diffTm:{}, timeMin:{}, timeMax:{}"
-					, routId, operDt, operSn, stNodeSn, offsetTm, timeMin, timeMax);
+			logger.info("변경운행 생성 시작 >> routId:{}, operDt:{}, operSn:{}, stNodeSn:{}, linkId:{}, diffTm:{}, timeMin:{}, timeMax:{}, gps_x:{}, gps_y:{}"
+					, routId, operDt, operSn, stNodeSn, linkId, offsetTm, timeMin, timeMax, gps_x, gps_y);
 			
 			String dayDiv = operPlanMapper.selectDayDiv(operDt);
 			
@@ -1201,9 +1204,12 @@ public class OperPlanService extends ServiceSupport {
 		            insertMap.put("ROUT_ID", routId);
 		            insertMap.put("ALLOC_NO", chgInfo.get("ALLOC_NO"));
 		            insertMap.put("OPER_SN", operSn);
+		            insertMap.put("LINK_ID", linkId);
 		            insertMap.put("OCR_DTM", Instant.now(Clock.systemUTC()));
 		            insertMap.put("VHC_ID", vhcId);
 		            insertMap.put(Constants.UPD_DTM, Instant.now(Clock.systemUTC()));
+		            insertMap.put("GPS_X", gps_x);
+		            insertMap.put("GPS_Y", gps_y);
 		            operPlanMapper.insertChgOperInfo(insertMap);
 		            
 	

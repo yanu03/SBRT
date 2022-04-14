@@ -96,14 +96,17 @@ public class ActionRequest {
 	            		int operSn = Integer.valueOf(dataArr[6]);
 	            		String stNodeId = dataArr[7];
 	            		int stNodeSn = Integer.valueOf(dataArr[8]);
-	            		int timeDiff = Integer.valueOf(dataArr[9]);
-	            		String timeMin = String.valueOf(dataArr[10]);
-	            		String timeMax = String.valueOf(dataArr[11]);
+	            		String linkId = String.valueOf(dataArr[9]);
+	            		int timeDiff = Integer.valueOf(dataArr[10]);
+	            		String timeMin = String.valueOf(dataArr[11]);
+	            		String timeMax = String.valueOf(dataArr[12]);
+	            		String gps_x = String.valueOf(dataArr[13]);
+	            		String gps_y = String.valueOf(dataArr[14]);
 	            		
 	            		timeMin = timeMin.substring(11);
 	            		timeMax = timeMax.substring(11);
 	            		
-	            		List<Map<String, Object>> operPlanList = operPlanService.makeChgOperAllocPlNodeInfo(busId, routId, operDt, operSn, stNodeId, stNodeSn, timeDiff, timeMin, timeMax, true);
+	            		List<Map<String, Object>> operPlanList = operPlanService.makeChgOperAllocPlNodeInfo(busId, routId, operDt, operSn, stNodeId, stNodeSn, linkId, timeDiff, timeMin, timeMax, gps_x, gps_y,true);
 	            		
             		} else {
             			//변경운행 데이터 오류
