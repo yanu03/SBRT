@@ -102,8 +102,7 @@ public class KafkaConsumer {
 				break;
 				
 			case PlCode.OP_SET_REQ:
-				//map = setRequest.handle(timsMessage, sessionId);
-				eventRequest.receiveKafka(kafkaMessage); 
+				map = setRequest.handle(timsMessage, sessionId);
 				break;
 				
 			case PlCode.OP_SET_RES:
