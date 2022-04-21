@@ -1791,7 +1791,7 @@ com.downLoadExcel = function(grdObj, options, infoArr) {
 
 	// excel 다운로드시 기본 설정으로 화면내의 hidden컬럼을 removeColumns에 포함시킨다.
 	// 이를 원치 않을 경우 options.hiddenVisible = 'true' 로 설정한다.
-	if (!options.hiddenVisible) {
+	if (!options.hiddenVisible && typeof options.hiddenVisible !== "undefined") {
 		var grdCnt = grdObj.getTotalCol();
 
 		var hiddenColIndex = [];
@@ -7449,6 +7449,7 @@ com.saveGridForm = function(grid,form,sbmObj,searchSbmObj,yesno_str,str){
  * @param {String} str 다운받을 파일이름
  */
 com.exlGrid = function(exlGrid,grid,str){
+
 	if(	(typeof str == "undefined") || (str.trim() == "")){
 		if(	typeof grid != "undefined"){
 			str = gcm.GRID_INFO[grid.org_id].name; //com.getParameter().menuNm;

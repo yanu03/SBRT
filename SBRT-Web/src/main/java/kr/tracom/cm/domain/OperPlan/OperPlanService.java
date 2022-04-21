@@ -1027,7 +1027,7 @@ public class OperPlanService extends ServiceSupport {
 					//#도착시간이 빠른 경우
 					if (diffSec < 0) {
 
-						if (max_speed > (MIN_SPEED_LIMIT-5)) {
+						if (max_speed > (MIN_SPEED_LIMIT-20)) {
 
 							if (Math.abs(Math.abs(diffSec) - LIMIT_DIFF_SEC) <= 5) {
 								max_speed -= 0.2;
@@ -1051,15 +1051,19 @@ public class OperPlanService extends ServiceSupport {
 
 						if(chgType == OperPlanCalc.CHG_TYPE_CHG_OPER) {
 							
-							if (max_speed <= (MIN_SPEED_LIMIT-5)) {
+							if (max_speed <= (MIN_SPEED_LIMIT-20)) {
 								
-								logger.info("도착예정시각 변경 필요함!!!");
-								
-								max_speed = MAX_SPEED_DEFAULT; //최대속도 초기화			
-								
-								//변경운행에 도착예정시각 변경이 필요한경우
-								bNeedChgEdTm = true;
-								tryCount = 0;
+								if(!bNeedChgEdTm) {
+									logger.info("도착예정시각 변경 필요함!!!");
+									
+									max_speed = MAX_SPEED_DEFAULT; //최대속도 초기화	
+									
+									//changed_speed_amount = 0;
+									
+									//변경운행에 도착예정시각 변경이 필요한경우
+									bNeedChgEdTm = true;
+									tryCount = 0;
+								}
 							}
 						} 
 						
@@ -1105,13 +1109,17 @@ public class OperPlanService extends ServiceSupport {
 							
 							if (max_speed >= MAX_SPEED_LIMIT) {
 								
-								logger.info("도착예정시각 변경 필요함!!!");
-								
-								max_speed = MAX_SPEED_DEFAULT; //최대속도 초기화			
-								
-								//변경운행에 도착예정시각 변경이 필요한경우
-								bNeedChgEdTm = true;
-								tryCount = 0;
+								if(!bNeedChgEdTm) {
+									logger.info("도착예정시각 변경 필요함!!!");
+									
+									max_speed = MAX_SPEED_DEFAULT; //최대속도 초기화		
+									
+									//changed_speed_amount = 0;
+									
+									//변경운행에 도착예정시각 변경이 필요한경우
+									bNeedChgEdTm = true;
+									tryCount = 0;
+								}
 							}
 						} 						
 						
@@ -1196,17 +1204,20 @@ public class OperPlanService extends ServiceSupport {
 	public List makeChgOperAllocPlNodeInfo(String vhcId, String routId, String operDt, int operSn
 			,String stNodeId
 			,int stNodeSn //변경운행 //변경운행 시작 노드
+			,String linkId
 			,int offsetTm //변경운행 //도착 예정시간과의 차이(초))
 			,String timeMin //변경운행이 발생하지 않는 최소도착시각
 			,String timeMax //변경운행이 발생하지 않는 최대도착시각			
+			,String gps_x 		
+			,String gps_y 		
 			,boolean bSave
 	) {
 		List chgPlList = null;
 		
 		try {
 			
-			logger.info("변경운행 생성 시작 >> routId:{}, operDt:{}, operSn:{}, stNodeSn:{}, diffTm:{}, timeMin:{}, timeMax:{}"
-					, routId, operDt, operSn, stNodeSn, offsetTm, timeMin, timeMax);
+			logger.info("변경운행 생성 시작 >> routId:{}, operDt:{}, operSn:{}, stNodeSn:{}, linkId:{}, diffTm:{}, timeMin:{}, timeMax:{}, gps_x:{}, gps_y:{}"
+					, routId, operDt, operSn, stNodeSn, linkId, offsetTm, timeMin, timeMax, gps_x, gps_y);
 			
 			String dayDiv = operPlanMapper.selectDayDiv(operDt);
 			
@@ -1227,9 +1238,12 @@ public class OperPlanService extends ServiceSupport {
 		            insertMap.put("ROUT_ID", routId);
 		            insertMap.put("ALLOC_NO", chgInfo.get("ALLOC_NO"));
 		            insertMap.put("OPER_SN", operSn);
+		            insertMap.put("LINK_ID", linkId);
 		            insertMap.put("OCR_DTM", Instant.now(Clock.systemUTC()));
 		            insertMap.put("VHC_ID", vhcId);
 		            insertMap.put(Constants.UPD_DTM, Instant.now(Clock.systemUTC()));
+		            insertMap.put("GPS_X", gps_x);
+		            insertMap.put("GPS_Y", gps_y);
 		            operPlanMapper.insertChgOperInfo(insertMap);
 		            
 	

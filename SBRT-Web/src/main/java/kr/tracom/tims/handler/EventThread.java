@@ -322,13 +322,13 @@ public class EventThread extends Thread{
                          try {
                         	 paramMap = new HashMap<>();
                         	 paramMap.put("COL", "DL_CD");
-                        	 paramMap.put("CO_CD", "VIOLT_TYPE");
+                        	 paramMap.put("CO_CD", "OPER_EVT_TYPE");
                         	 paramMap.put("COL3", "NUM_VAL4");
                         	 paramMap.put("COL_VAL3", (int)eventCode);
                         	 eventCd = commonMapper.selectDlCdCol(paramMap);
                         	 
                         	 paramMap.put("COL", "DL_CD_NM");
-                        	 paramMap.put("CO_CD", "VIOLT_TYPE");
+                        	 paramMap.put("CO_CD", "OPER_EVT_TYPE");
                         	 paramMap.put("COL3", "NUM_VAL4");
                         	 paramMap.put("COL_VAL3", (int)eventCode);
                         	 eventType = commonMapper.selectDlCdCol(paramMap);

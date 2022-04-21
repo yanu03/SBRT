@@ -50,11 +50,12 @@
    	var Upload_msg16 = "";
    	var Upload_msg17 = "";
    	var Grid_warning9 = "";
+   	var codeDataList = {};
     
 	window.onload = doInit;
 	window.onbeforeunload = doFinish;
 	function doInit() {
-
+		
 		var uploadInfo;
         try {
         	domain = getParameter("domain");
@@ -85,15 +86,15 @@
             Upload_ignore_spaces = opener.WebSquare.language.getMessage( "Upload_ignore_spaces" ) || "공백무시";
             Upload_include_spaces = opener.WebSquare.language.getMessage( "Upload_include_spaces" ) || "공백포함";
 			Upload_advanced = opener.WebSquare.language.getMessage( "Upload_advanced" ) || "고급설정";
-			Upload_hidden_values = opener.WebSquare.language.getMessage( "Upload_hidden_values" ) || "히든값유무";
+			Upload_hidden_values = opener.WebSquare.language.getMessage( "Upload_hidden_values" ) || "히든값여부";
 			Upload_include = opener.WebSquare.language.getMessage( "Upload_include" ) || "포함";
 			Upload_not_include = opener.WebSquare.language.getMessage( "Upload_not_include" ) || "미포함";
 			Upload_fill_hidden = opener.WebSquare.language.getMessage( "Upload_fill_hidden" ) || "히든 채움";
 			Upload_sheet_no = opener.WebSquare.language.getMessage( "Upload_sheet_no" ) || "시트 No";
 			Upload_starting_row = opener.WebSquare.language.getMessage( "Upload_starting_row" ) || "시작 row";
 			Upload_starting_col = opener.WebSquare.language.getMessage( "Upload_starting_col" ) || "시작 col";
-			Upload_header = opener.WebSquare.language.getMessage( "Upload_header" ) || "헤더 유무";
-			Upload_footer = opener.WebSquare.language.getMessage( "Upload_footer" ) || "푸터 유무";
+			Upload_header = opener.WebSquare.language.getMessage( "Upload_header" ) || "헤더 여부";
+			Upload_footer = opener.WebSquare.language.getMessage( "Upload_footer" ) || "푸터 여부";
 			Upload_file = opener.WebSquare.language.getMessage( "Upload_file" ) || "파일 업로드";
 			Upload_fill = opener.WebSquare.language.getMessage( "Upload_fill" ) || "채움";
 			Upload_ignore = opener.WebSquare.language.getMessage( "Upload_ignore" ) || "무시";
@@ -189,6 +190,7 @@
 		useMaxByteLength = uploadInfo.useMaxByteLength;
 		dateFormat = uploadInfo.dateFormat;
 		byteCheckEncoding = uploadInfo.byteCheckEncoding;
+		codeDataList = uploadInfo.codeDataList;
 
 		var header_Exist =document.getElementsByName("header");
 		//skipSpace 처리
@@ -380,6 +382,7 @@
 	}
 
 	function returnData( vData ) {
+
 		if( processMsg != "" ) {
 			hideProcessMessage();
 		}
@@ -447,9 +450,45 @@
 			}
 			
 			try {
-
+				var columnList = columnIds.split(",");
+				var columnListLength = columnList.length;
+				
+				var orgGridId = gridID.substring(gridID.lastIndexOf("_") + 1);
+				
+				var codeDataList = opener.gcm.GRID_INFO[orgGridId].codeDataList;
+				var codeDataListLength = codeDataList.length;
+				var dataArr = child.split("\",\"");
+				for (var i = 0; i < columnListLength; i++) {
+					if(codeDataList[columnList[i]]!=null&&(typeof codeDataList[columnList[i]] !== "undefined") && (codeDataList[columnList[i]].length!=0)){
+						var codeArr = codeDataList[columnList[i]];
+						for (var x = 0; x*columnListLength + i < dataArr.length; x++) {
+							for (var y = 0; y < codeArr.length; y++) {
+								if(dataArr[x*columnListLength + i].replace(/ /g,"").indexOf(codeArr[y].DL_CD_NM.replace(/ /g,""))>=0){
+									//dataArr[x*columnListLength + i]="\""+codeArr[y].DL_CD+"\"";
+									dataArr[x*columnListLength + i]=codeArr[y].DL_CD;
+								}
+							}
+						}
+					}
+				}
+				
+				/*for (var i = 0; i < columnListLength; i++) {
+					var columnStr = columnList[i];
+					var underBarIndex = columnStr.lastIndexOf("_");
+					if(columnStr!=null && columnStr.length!=0 && underBarIndex!=-1
+						&&columnStr.substring(underBarIndex+1,columnStr.length)=="TM"){
+						var x = 0;
+						for (x = 0; x*columnListLength + i < dataArr.length; x++) {
+							if(dataArr[x*columnListLength + i].length>5){
+								
+							}
+						} 
+					}
+				}*/
+				child = dataArr.join("\",\"");
+				
 				var jsonArray = {
-						columnInfo:columnIds.split(","),
+						columnInfo:columnList,
 						data:child
 		     	}
 
@@ -507,6 +546,8 @@
 				var fileName = fileNameDom.value;
 				var fileNameArr = fileName.split("\\"); //fileName에 대해서 IE에서는 파일 경로가 나오는데 FF chrome은 나오지 않는다. 따라서 '\\'기준으로 나눠준다.
 				opener.window[gridID].fireFileReadEnd( fileNameArr[fileNameArr.length-1] );
+				//opener.gcm.GRID_INFO[orgGridId].exlUpdate = true;
+				opener.gcm.GRID_INFO[orgGridId].search_map.set("EXL_UPDATE", true);
 				window.self.close();
 			} catch (e) {
 				opener.WebSquare.exception.printStackTrace(e);
@@ -772,7 +813,7 @@
 			<div class="filebox">
 				<input type="file" id="filename" name="filename" />
 			</div>
-			<table id="sub" class="tbl none" summary="공백무시,히든값유무,히든채움,푸터유무,시작Row,시작col,시트no">
+			<table id="sub" class="tbl none" summary="공백무시,히든값여부,히든채움,푸터여부,시작Row,시작col,시트no">
 			<caption id="advaned">파일 업로드 고급설정</caption>
 				<tr>
 					<th><label id="space_option" for="spaceSelect" class="dot">공백 무시 :</label></th>
@@ -788,7 +829,7 @@
 					</td>
 				</tr>
 				<tr>
-					<th><label id="hidden_option" for="hiddenSelect" class="dot">히든값유무 :</label></th>
+					<th><label id="hidden_option" for="hiddenSelect" class="dot">히든값여부 :</label></th>
 					<td><select name="hidden" id="hiddenSelect" class="sel">
 						<option value="true">포함</option>
 						<option value="false">미포함</option>
@@ -811,14 +852,14 @@
 					<td><input type="text" class="ipt" name="gridSheetNo" id="gridSheetNo" /></td>
 				</tr>  
 				<tr>
-					<th><label id="isHeader" for="header" class="dot">헤더 유무 :</label></th>
+					<th><label id="isHeader" for="header" class="dot">헤더 여부 :</label></th>
 					<td>
 						<select name="header" id="header">
 						<option value="true">포함</option>
 						<option value="false">미포함</option>
 						</select>
 					</td>
-					<th><label id="isFooter" for="footer" class="dot">푸터 유무 :</label></th>
+					<th><label id="isFooter" for="footer" class="dot">푸터 여부 :</label></th>
 					<td>
 						<select name="footer" id="footer">
 						<option value="true">포함</option>
