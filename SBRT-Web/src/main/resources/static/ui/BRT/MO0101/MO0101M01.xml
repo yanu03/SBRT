@@ -345,6 +345,10 @@
 		</style>
 
 		<script type="text/javascript" lazy="false"><![CDATA[
+	//소켓으로 받았을 때 검색조건과 다를경우 추가 안되게 수정해야함
+	//curinfo 위치 튀었을때 막아야함
+	
+	
 	var gbMap = null;
 	scwin.onpageload = function() {
 		scwin.connect();
@@ -584,6 +588,44 @@
 		
 		var attrId = jsonObj.ATTR_ID;
 		var dataList = jsonObj.LIST;
+		var repRoutItem = dma_search.get("CONTENT1");
+		var checkRepRout = 0;
+		var routItem = dma_search.get("CONTENT2");
+		var vhcNoItem = dma_search.get("CONTENT3");
+		
+		//GPS값 튈 경우 아무 동작도 안되게 처리
+		if(typeof(jsonObj.GPS_X) != "undefined" && typeof(jsonObj.GPS_Y) != "undefined"){
+			if (jsonObj.GPS_X<120 || jsonObj.GPS_Y>130) {
+				return;	
+			}
+			if (jsonObj.GPS_Y<30 || jsonObj.GPS_Y>40) {
+				return;	
+			}
+		}
+		
+		if (repRoutItem != "") {
+			//소켓 데이터에 대표노선이 없어 대표노선에 포함된 노선 ID들과 비교			
+			for(var i=0; i<dlt_searchitem2.getDataLength(); i++) {
+				var routItemOfList = dlt_searchitem2.getCellData(i, "ROUT_ID");		
+				if(routItemOfList == jsonObj.ROUT_ID) {
+					checkRepRout = 1;	
+				}	
+			}
+			if (checkRepRout == 0){
+				return;
+			}
+		}
+		
+		if (routItem != "") {
+			if(routItem != jsonObj.ROUT_ID) {
+				return;
+			}		
+		}
+		
+		if (vhcNoItem != "") {
+				
+		}
+		
 		
 		
 		//attrId = 4015 : 정류소별 차량 도착 정보
@@ -604,7 +646,6 @@
 		else if(attrId == 4012) {
 		//console.log(payload.body);
 			try {
-				
 		//		setTimeout(function() {	
 
 					var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
@@ -628,77 +669,77 @@
 						
 						switch(eventCode) {
 							case "ET001":
-							eventMessage = jsonObj.NODE_NM + "에 도착하였습니다.";
+							eventMessage = jsonObj.NODE_NM + "에 도착";
 							break;
 							
 							case "ET002":
-							eventMessage = jsonObj.NODE_NM + "에서 출발하였습니다.";
+							eventMessage = jsonObj.NODE_NM + "에서 출발";
 							break;
 							
 							case "ET003":
-							eventMessage = "기점"+"("+jsonObj.NODE_NM+")"+"에 도착하였습니다.";
+							eventMessage = "기점"+"("+jsonObj.NODE_NM+")"+"에 도착";
 							break;
 							
 							case "ET004":
-							eventMessage = "기점"+"("+jsonObj.NODE_NM+")"+"에서 출발하였습니다.";
+							eventMessage = "기점"+"("+jsonObj.NODE_NM+")"+"에서 출발";
 							break;
 							
 							case "ET005":
-							eventMessage = "종점"+"("+jsonObj.NODE_NM+")"+"에 도착하였습니다.";
+							eventMessage = "종점"+"("+jsonObj.NODE_NM+")"+"에 도착";
 							break;
 							
 							case "ET006":
-							eventMessage = "종점"+"("+jsonObj.NODE_NM+")"+"에서 출발하였습니다.";
+							eventMessage = "종점"+"("+jsonObj.NODE_NM+")"+"에서 출발";
 							break;
 							
 							case "ET007":
-							eventMessage = "현재속도 " + jsonObj.SPEED+ "km/h, 평균 "+ 
-											jsonObj.EVT_DATA + "km/h 입니다.";						
+							eventMessage = "현재속도 " + jsonObj.CUR_SPD+ "km/h, 평균 "+ 
+											jsonObj.EVT_DATA + "km/h";						
 							break;
 							
 							case "ET008":
-							//eventMessage = jsonObj.EVT_DATA + " 음성 방송 출력되었습니다.";
-							eventMessage = "음성 방송 출력되었습니다. " + "("+jsonObj.EVT_DATA+")";						
+							eventMessage = "음성 방송 출력";
+							//eventMessage = "음성 방송 출력되었습니다. " + "("+jsonObj.EVT_DATA+")";						
 							break;
 							
 							case "ET009":
-							eventMessage = "버스 문이 열렸습니다.";
+							eventMessage = "버스 문 열림";
 							break;
 							
 							case "ET010":
-							eventMessage = "버스 문이 닫혔습니다.";
+							eventMessage = "버스 문 닫힘";
 							break;		
 							
 							case "ET011":
-							eventMessage = jsonObj.NODE_NM + "에서 무정차 주행하였습니다.";
+							eventMessage = jsonObj.NODE_NM + "에서 무정차 주행";
 							break;
 							
 							case "ET012":
-							eventMessage = "과속 주행하였습니다. 현재속도 " + jsonObj.SPEED + "km/h입니다," ;
+							eventMessage = "과속 주행 현재속도 " + jsonObj.CUR_SPD + "km/h" ;
 							break;
 							
 							case "ET013":
-							eventMessage = "급가속하였습니다.";
+							eventMessage = "급가속";
 							break;
 							
 							case "ET014":
-							eventMessage = "급감속하였습니다.";
+							eventMessage = "급감속";
 							break;
 							
 							case "ET015":
-							eventMessage = "급출발하였습니다.";
+							eventMessage = "급출발";
 							break;
 							
 							case "ET016":
-							eventMessage = "급정지하였습니다.";
+							eventMessage = "급정지";
 							break;
 							
 							case "ET017":
-							eventMessage = "개문주행하였습니다.";
+							eventMessage = "개문주행";
 							break;
 							
 							case "ET018":
-							eventMessage = "노선이탈하였습니다.";
+							eventMessage = "노선이탈";
 							break;												
 						}
 						dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_DATA", eventMessage);
@@ -743,7 +784,6 @@
 		//content = jsonObj.VHC_ID + "," + jsonObj.GPS_X + ", " + jsonObj.GPS_Y;
 			try {
 		//		setTimeout(function() {
-				
 					var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 					
 					if(curIndexArr.length != 0) {
@@ -772,6 +812,7 @@
 			//jsonObj.MESSAGE => 디스패치 메시지
 			
 			try {
+				debugger;
 	//			setTimeout(function() {				
 	//				routMap.removeAllBusOverlay("map_MO0101_vehicle");				
 	//				routMap.removeAllOverlay("map_MO0101_sttn");
@@ -929,7 +970,7 @@
 	};
 		
 	scwin.TYPE1_onviewchange = function(info) {
-		startMarker = 1;		
+		startMarker = 1;
 		$p.executeSubmission(sub_MO0101SHI1);
 	};
 	
@@ -1445,77 +1486,96 @@
 			
 			switch(eventType) {
 				case "ET001":
-				eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "NODE_NM") + "에 도착하였습니다.";
+				//eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "NODE_NM") + "에 도착하였습니다.";
+				eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "NODE_NM") + "에 도착";
 				break;
 				
 				case "ET002":
-				eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "NODE_NM") + "에서 출발하였습니다.";
+				//eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "NODE_NM") + "에서 출발하였습니다.";
+				eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "NODE_NM") + "에서 출발";
 				break;
 				
 				case "ET003":
-				eventMessage = "기점에 도착하였습니다.";
+				//eventMessage = "기점에 도착하였습니다.";
+				eventMessage = "기점에 도착";
 				break;
 				
 				case "ET004":
-				eventMessage = "기점에서 출발하였습니다.";
+				//eventMessage = "기점에서 출발하였습니다.";
+				eventMessage = "기점에서 출발";
 				break;
 				
 				case "ET005":
-				eventMessage = "종점"+"("+dlt_BRT_OPER_EVENT_HIS.getCellData(i, 'NODE_NM')+")"+"에 도착하였습니다.";
+				//eventMessage = "종점"+"("+dlt_BRT_OPER_EVENT_HIS.getCellData(i, 'NODE_NM')+")"+"에 도착하였습니다.";
+				eventMessage = "종점"+"("+dlt_BRT_OPER_EVENT_HIS.getCellData(i, 'NODE_NM')+")"+"에 도착";
 				break;
 				
 				case "ET006":
-				eventMessage = "종점"+"("+dlt_BRT_OPER_EVENT_HIS.getCellData(i, 'NODE_NM')+")"+"에서 출발하였습니다.";
+				//eventMessage = "종점"+"("+dlt_BRT_OPER_EVENT_HIS.getCellData(i, 'NODE_NM')+")"+"에서 출발하였습니다.";
+				eventMessage = "종점"+"("+dlt_BRT_OPER_EVENT_HIS.getCellData(i, 'NODE_NM')+")"+"에서 출발";
 				break;
 				
 				case "ET007":
+				//eventMessage = "현재속도 " + dlt_BRT_OPER_EVENT_HIS.getCellData(i, "CUR_SPD")+ "km/h, 평균 "+ 
+				//				dlt_BRT_OPER_EVENT_HIS.getCellData(i, "EVT_DATA") + "km/h 입니다.";
 				eventMessage = "현재속도 " + dlt_BRT_OPER_EVENT_HIS.getCellData(i, "CUR_SPD")+ "km/h, 평균 "+ 
-								dlt_BRT_OPER_EVENT_HIS.getCellData(i, "EVT_DATA") + "km/h 입니다.";
+								dlt_BRT_OPER_EVENT_HIS.getCellData(i, "EVT_DATA") + "km/h";
 				break;
 				
 				case "ET008":
 				//eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "ORGA_NM") + " 음성 방송 출력되었습니다.";
-				eventMessage = "음성 방송 출력되었습니다. " + "("+dlt_BRT_OPER_EVENT_HIS.getCellData(i, "EVT_DATA") +")";
+				//eventMessage = "음성 방송 출력되었습니다. "; //+ "("+dlt_BRT_OPER_EVENT_HIS.getCellData(i, "EVT_DATA") +")";
+				eventMessage = "음성 방송 출력 ";
 				break;
 				
 				case "ET009":
-				eventMessage = "버스 문이 열렸습니다.";
+				//eventMessage = "버스 문이 열렸습니다.";
+				eventMessage = "버스 문 열림";
 				break;
 				
 				case "ET010":
-				eventMessage = "버스 문이 닫혔습니다.";
+				//eventMessage = "버스 문이 닫혔습니다.";
+				eventMessage = "버스 문 닫힘";
 				break;
 
 				case "ET011":
-				eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "NODE_NM") + "에서 무정차 주행하였습니다.";
+				//eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "NODE_NM") + "에서 무정차 주행하였습니다.";
+				eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "NODE_NM") + "에서 무정차 주행";
 				break;
 				
 				case "ET012":
-				eventMessage = "과속 주행하였습니다. 현재속도 " + dlt_BRT_OPER_EVENT_HIS.getCellData(i, "CUR_SPD") + "km/h입니다," ;
+				//eventMessage = "과속 주행하였습니다. 현재속도 " + dlt_BRT_OPER_EVENT_HIS.getCellData(i, "CUR_SPD") + "km/h입니다," ;
+				eventMessage = "과속 주행, 현재속도 " + dlt_BRT_OPER_EVENT_HIS.getCellData(i, "CUR_SPD") + "km/h" ;
 				break;
 				
 				case "ET013":
-				eventMessage = "급가속하였습니다.";
+				//eventMessage = "급가속하였습니다.";
+				eventMessage = "급가속";
 				break;
 				
 				case "ET014":
-				eventMessage = "급감속하였습니다.";
+				//eventMessage = "급감속하였습니다.";
+				eventMessage = "급감속";
 				break;
 				
 				case "ET015":
-				eventMessage = "급출발하였습니다.";
+				//eventMessage = "급출발하였습니다.";
+				eventMessage = "급출발";
 				break;
 				
 				case "ET016":
-				eventMessage = "급정지하였습니다.";
+				//eventMessage = "급정지하였습니다.";
+				eventMessage = "급정지";
 				break;
 				
 				case "ET017":
-				eventMessage = "개문주행하였습니다.";
+				//eventMessage = "개문주행하였습니다.";
+				eventMessage = "개문주행";
 				break;
 				
 				case "ET018":
-				eventMessage = "노선이탈하였습니다.";
+				//eventMessage = "노선이탈하였습니다.";
+				eventMessage = "노선이탈";
 				break;				
 			}//end switch
 			
@@ -1615,10 +1675,9 @@
 						<w2:span class="" id="" label="대표 노선"></w2:span>
 					</xf:group>
 					<xf:group class="search" id="" style="">
-						<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
-							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE1_onviewchange" id="TYPE1"
-							optionOrder="false" ref="data:dma_search.CONTENT1" class="search_type_100" style="" submenuSize="auto" textAlign="center"
-							chooseOptionLabel="-선택-">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE1_onviewchange" id="TYPE1" optionOrder="false"
+							ref="data:dma_search.CONTENT1" class="search_type_100" style="" submenuSize="auto" textAlign="center" chooseOptionLabel="">
 							<xf:choices>
 								<xf:itemset nodeset="data:dlt_repRoutItem">
 									<xf:label ref="REP_ROUT_NM"></xf:label>
@@ -1689,15 +1748,18 @@
 											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column10"
 												value="속도(km/h)" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="65" inputType="text" style="height:20px" id="column5"
+											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column5"
 												value="위도" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="65" inputType="text" style="height:20px" id="column8"
+											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column8"
 												value="경도" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column9"
-												value="운행상태" blockSelect="false" displayMode="label">
+											<w2:column removeBorderStyle="false" width="65" inputType="text" style="height:20px" id="column0"
+												value="" blockSelect="false" displayMode="label">
 											</w2:column>
+											<!-- <w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column9"
+												value="운행상태" blockSelect="false" displayMode="label">
+											</w2:column> -->
 										</w2:row>
 									</w2:header>
 									<w2:gBody style="" id="gBody1">
@@ -1720,9 +1782,12 @@
 											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="GPS_X"
 												value="" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="OPER_STS" value=""
-												blockSelect="false" displayMode="label">
+											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id=""
+												value="" blockSelect="false" displayMode="label">
 											</w2:column>
+											<!-- <w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="OPER_STS" value=""
+												blockSelect="false" displayMode="label">
+											</w2:column> -->
 										</w2:row>
 									</w2:gBody>
 								</w2:gridView>
@@ -2093,7 +2158,7 @@
 							<ul id="category_map_MO0101" class="category">
 					   		 </ul>
 					   		 <table class="map_status" id="map_busstatus" style="">
-						   		 <tbody>
+<!-- 						   		 <tbody>
 						   		 	<tr>
 						   		 		<th colspan="2">버스 운행 현황</th>
 						   		 	</tr>
@@ -2101,19 +2166,19 @@
 						   		 		<td class="status_kinds status_black">전체대수</td>
 						   		 		<td class="status_count" id="allBus">0</td>
 						   		 	</tr>
-<!-- 						   		 	<tr>
+						   		 	<tr>
 						   		 		<td class="status_kinds status_green">정상버스</td>
 						   		 		<td class="status_count" id="runBus">0</td>						   		 	
 						   		 	</tr>
 						   		 	<tr>
 						   		 		<td class="status_kinds status_red">고장버스</td>
 						   		 		<td class="status_count" id="breakDownBus">0</td>					   		 	
-						   		 	</tr>	 -->					   		 	
+						   		 	</tr>						   		 	
 						   		 	<tr>
 						   		 		<td class="status_kinds status_green">정상운행</td>
 						   		 		<td class="status_count" id="operBus">0</td>					   		 	
 						   		 	</tr>						   		 	
-<!-- 						   		 	<tr>
+						   		 	<tr>
 						   		 		<td class="status_kinds">막차</td>
 						   		 		<td class="status_count" id="lastBus">0</td>					   		 	
 						   		 	</tr>						   		 	
@@ -2140,7 +2205,7 @@
 						   		 	<tr>
 						   		 		<td class="status_kinds status_red">사고</td>
 						   		 		<td class="status_count" id="acciBus">0</td>					   		 	
-						   		 	</tr> -->
+						   		 	</tr>
 						   		 	<tr>
 						   		 		<td class="status_kinds">운행종료</td>
 						   		 		<td class="status_count" id="lastBus">0</td>					   		 	
@@ -2169,10 +2234,10 @@
 						   		 		<td class="status_kinds">터미널행</td>
 						   		 		<td class="status_count" id="acciBus">0</td>					   		 	
 						   		 	</tr>							   		 							   		 	
-						   		 </tbody>
+						   		 </tbody> -->
 						   	 </table>
 					   		 <table class="map_status status_hide" id="map_sttnstatus">
-						   		 <tbody>
+<!-- 						   		 <tbody>
 						   		 	<tr>
 						   		 		<th colspan="2">정류소 현황</th>
 						   		 	</tr>
@@ -2188,10 +2253,10 @@
 						   		 		<td class="status_kinds status_red">고장정류소</td>
 						   		 		<td class="status_count" id="breakDownSttn">0</td>					   		 	
 						   		 	</tr>						   		 	
-						   		 </tbody>
+						   		 </tbody> -->
 						   	 </table>
 					   		 <table class="map_status status_hide" id="map_crsstatus">
-						   		 <tbody>
+<!-- 						   		 <tbody>
 						   		 	<tr>
 						   		 		<th colspan="2">교차로 현황</th>
 						   		 	</tr>
@@ -2207,7 +2272,7 @@
 						   		 		<td class="status_kinds status_red">고장교차로</td>
 						   		 		<td class="status_count" id="breakDownCrs">0</td>					   		 	
 						   		 	</tr>						   		 	
-						   		 </tbody>
+						   		 </tbody> -->
 						   	 </table>
 						   	 <div class="map-type" style="z-index: 10000;">
 						   	 	<div>

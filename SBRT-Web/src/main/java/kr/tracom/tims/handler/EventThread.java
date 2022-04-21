@@ -422,7 +422,7 @@ public class EventThread extends Thread{
                  	
                  	wsDataMap.put("EVT_CODE", eventCd);
                  	wsDataMap.put("EVT_TYPE", eventType);
-                 	wsDataMap.put("SPEED", busEventMap.get("SPEED"));
+                 	wsDataMap.put("CUR_SPD", busEventMap.get("SPEED"));
                  	wsDataMap.put("EVT_DATA", busEventMap.get("EVENT_DATA"));
                 	
                 	
@@ -602,6 +602,15 @@ public class EventThread extends Thread{
     		
 		}
 		*/
+    	
+    	//좌표값 튀는거 insert/update 방지
+    	if((float)(curOperInfo.get("LONGITUDE")) < 120 || (float)(curOperInfo.get("LONGITUDE")) > 130) {
+    		return 0;
+    	}
+    	
+    	if((float)(curOperInfo.get("LATITUDE")) < 30 || (float)(curOperInfo.get("LATITUDE")) > 40) {
+    		return 0;
+    	}
     	
     	setOperEventData(curOperInfo);
     	

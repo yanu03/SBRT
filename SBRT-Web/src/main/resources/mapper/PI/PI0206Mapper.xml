@@ -288,43 +288,43 @@
  	</select> 	
  	
  	
- 	<!-- 정류장노드, 음성노드 리스트 JH -->
- 	<select id="selectStnAudioList" resultType="Map">
- 		SELECT DISTINCT
-			STTN_ID AS NODE_ID
-		    , REPLACE(STTN_NM, ',', '.') AS NODE_NM
-		    , '1' AS 'NODE_TYPE'
-		    , '30' AS 'RANGE'
-		    , TRUNCATE(GPS_X, 6) AS X
-		    , TRUNCATE(GPS_Y, 6) AS Y
-		    , IFNULL(REPLACE(STTN_ENM, ',', '.'), '') AS NODE_ENAME
- 	<![CDATA[, IF(IFNULL(IF(LINE_CNT >= 3, 2, LINE_CNT -1), 0) < 0, 0, IFNULL(IF(LINE_CNT >= 3, 2, LINE_CNT -1), 0)) AS TRANSIT_CODE]]>
- 			, IFNULL(B.TXT_VAL1, "") AS DOOR
-		FROM
-			(BMS_STTN_MST A
+    <!-- 정류장노드, 음성노드 리스트 JH -->
+    <select id="selectStnAudioList" resultType="Map">
+       SELECT DISTINCT
+         STTN_ID AS NODE_ID
+          , REPLACE(STTN_NM, ',', '.') AS NODE_NM
+          , '1' AS 'NODE_TYPE'
+          , '30' AS 'RANGE'
+          , TRUNCATE(GPS_X, 6) AS X
+          , TRUNCATE(GPS_Y, 6) AS Y
+          , IFNULL(REPLACE(STTN_ENM, ',', '.'), '') AS NODE_ENAME
+    <![CDATA[, IF(IFNULL(IF(LINE_CNT >= 3, 2, LINE_CNT -1), 0) < 0, 0, IFNULL(IF(LINE_CNT >= 3, 2, LINE_CNT -1), 0)) AS TRANSIT_CODE]]>
+          , IFNULL(B.TXT_VAL1, "") AS DOOR
+      FROM
+         (BMS_STTN_MST A
             LEFT JOIN BMS_DL_CD_INFO B
-            ON A.VHC_DOOR_DIR_TYPE = B.DL_CD  AND A.DEL_YN!='Y') 
-		WHERE
-			A.USE_YN = 'Y'
-		
-		UNION ALL
-		
-		SELECT DISTINCT
-			ORGA_ID AS NODE_ID
-		    , REPLACE(ORGA_NM, ',', '.') AS NODE_NM
-		    , '898' AS 'NODE_TYPE'
-		    , '30' AS 'RANGE'
-		    , TRUNCATE(GPS_X, 6) AS X
-		    , TRUNCATE(GPS_Y, 6) AS Y
-		    , "" AS NODE_ENAME
-		    , "" AS TRANSIT_CODE
-		    , "" AS DOOR 
-		FROM
-			BMS_VOC_ORGA_INFO
-		WHERE
-			GPS_X IS NOT NULL
-			AND GPS_Y IS NOT NULL
- 	</select>
+            ON B.CO_CD = 'VHC_DOOR_DIR_TYPE' AND A.VHC_DOOR_DIR_TYPE = B.DL_CD) 
+      WHERE
+         A.USE_YN = 'Y' AND A.DEL_YN!='Y'
+      
+      UNION ALL
+      
+      SELECT DISTINCT
+         ORGA_ID AS NODE_ID
+          , REPLACE(ORGA_NM, ',', '.') AS NODE_NM
+          , '898' AS 'NODE_TYPE'
+          , '30' AS 'RANGE'
+          , TRUNCATE(GPS_X, 6) AS X
+          , TRUNCATE(GPS_Y, 6) AS Y
+          , "" AS NODE_ENAME
+          , "" AS TRANSIT_CODE
+          , "" AS DOOR 
+      FROM
+         BMS_VOC_ORGA_INFO
+      WHERE
+         GPS_X IS NOT NULL
+         AND GPS_Y IS NOT NULL
+    </select>
  	
  	<!-- 노선별 노드 리스트 오름차순 JH -->
  	<select id="selectRoutNodeList" resultType="Map" parameterType="String">
