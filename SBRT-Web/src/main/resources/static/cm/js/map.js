@@ -1740,7 +1740,6 @@ routMap.showClickBusOverlay = function(mapId, data, idx, focusIdx, marker) {
  * @param marker : 대상마커
  */
 routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
-	debugger;
 	var zIndex = 100000;
 	var showMessage = "";
 	var min = "";
@@ -1774,12 +1773,6 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 			else if(dsptchKind == "DK003") {
 				showMessage = min + sec + "빠릅니다."; 
 			}
-			
-			//삭제해야됨
-			else {
-				showMessage = "DK없음";
-			}
-			
 		}	
 		var dsptchMsg = "";
 		

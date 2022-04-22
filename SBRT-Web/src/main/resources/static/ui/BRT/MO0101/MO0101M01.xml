@@ -39,6 +39,8 @@
 						<w2:column id="EVT_TYPE" name="이벤트타입" dataType="text"></w2:column>
 						<w2:column id="NEXT_NODE_TYPE" name="다음노드유형" dataType="text"></w2:column>
 						<w2:column id="NODE_NM" name="이전노드명" dataType="text"></w2:column>
+						<w2:column id="DSPTCH_KIND" name="디스패치종류" dataType="text"></w2:column>
+						<w2:column id="DSPTCH_DIV" name="디스패치구분" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
@@ -812,7 +814,6 @@
 			//jsonObj.MESSAGE => 디스패치 메시지
 			
 			try {
-				debugger;
 	//			setTimeout(function() {				
 	//				routMap.removeAllBusOverlay("map_MO0101_vehicle");				
 	//				routMap.removeAllOverlay("map_MO0101_sttn");
@@ -884,8 +885,6 @@
 						routMap.mapInfo["map_MO0101_vehicle"].isDsptch = "on";
 						dlt_BRT_CUR_OPER_INFO.setCellData(curIndexArr[0], "MESSAGE", jsonObj.MESSAGE);
 						
-						var dsptchDiv = jsonObj.DSPTCH_DIV;
-						
 						if (dsptchDiv == "DP001") { //일반메시지
 							routMap.mapInfo["map_MO0101_vehicle"].divDsptch = "DP001";
 						} else if (dsptchDiv == "DP002") { //운행중디스패치
@@ -893,7 +892,8 @@
 						} else if (dsptchDiv == "DP003") { //정차중디스패치
 							routMap.mapInfo["map_MO0101_vehicle"].divDsptch = "DP003";
 						}
-							
+
+						dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);								
 						routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
 						dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0, jsonObj);				
 						
@@ -1584,7 +1584,6 @@
 	};
 	
 	scwin.sub_MO0101G4R0_submitdone = function(e) {
-
 		for(var i=0; i<dlt_BRT_DSPTCH_LOG.getDataLength(); i++) {
 			var dsptchDiv = ""; 
 			var dsptchConts = "";
@@ -1594,30 +1593,32 @@
 			dsptchDiv =  dlt_BRT_DSPTCH_LOG.getCellData(i, "DSPTCH_DIV");
 			dsptchConts = dlt_BRT_DSPTCH_LOG.getCellData(i, "DSPTCH_CONTS");
 			
-			if(parseInt(dsptchConts) != "undefined") {
-				if(Math.abs(parseInt(dsptchConts) >= 60)) {
-					 min = Math.abs(parseInt(dsptchConts/60)) + "분 ";
-				}
-				 sec = Math.abs(parseInt(dsptchConts%60)) + "초 ";
-				 
-				if(dsptchDiv == "DP002") {
-					if(parseInt(dsptchConts) > 0) {
-						contsResult = min + sec + "느립니다."; 
+			if(dsptchDiv != "DP001"){
+				if(parseInt(dsptchConts) != "undefined") {
+					if(Math.abs(parseInt(dsptchConts) >= 60)) {
+						 min = Math.abs(parseInt(dsptchConts/60)) + "분 ";
 					}
-					else if(parseInt(dsptchConts) < 0) {
-						contsResult = min + sec + "빠릅니다."; 
+					 sec = Math.abs(parseInt(dsptchConts%60)) + "초 ";
+					 
+					if(dsptchDiv == "DP002") {
+						if(parseInt(dsptchConts) > 0) {
+							contsResult = min + sec + "느립니다."; 
+						}
+						else if(parseInt(dsptchConts) < 0) {
+							contsResult = min + sec + "빠릅니다."; 
+						}
+						else if(parseInt(dsptchConts) == 0) {
+							contsResult = "정상 운행중입니다.";
+						}
 					}
-					else if(parseInt(dsptchConts) == 0) {
-						contsResult = "정상 운행중입니다.";
-					}
-				}
-				
-				else if(dsptchDiv == "DP003") {
-					contsResult = min + sec + "정차하세요.";	
+					
+					else if(dsptchDiv == "DP003") {
+						contsResult = min + sec + "정차하세요.";	
+					}				
+				dlt_BRT_DSPTCH_LOG.setCellData(i, "DSPTCH_CONTS", contsResult);			
 				}
 			} //end ifx1
 			
-			dlt_BRT_DSPTCH_LOG.setCellData(i, "DSPTCH_CONTS", contsResult);			
 		}//end for
 	};
 	
