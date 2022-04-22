@@ -34,10 +34,13 @@
 		) 
 		VALUES (
 			#{OPER_DT}
-			,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})			
-			,(SELECT VHC_ID FROM BMS_VHC_MST WHERE VHC_NO = #{BUS_NO})
+			<!-- ,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID}) -->			
+			<!-- ,(SELECT VHC_ID FROM BMS_VHC_MST WHERE VHC_NO = #{BUS_NO}) -->
+			,#{REP_ROUT_ID}
+			,#{VHC_ID}
 			,#{ROUT_ID}											
-			,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, #{OPER_DT}))  <!--alloc no 찾기 -->
+			<!-- ,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, #{OPER_DT})) -->  <!--alloc no 찾기 -->
+			,#{ALLOC_NO}
 			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, #{UPD_DTM})) <!--oper sn 찾기 -->
 			,#{NODE_ID}
 			,#{COURSE_ID}
@@ -58,7 +61,7 @@
 			,#{UPD_DTM}
 		)
 		ON DUPLICATE KEY UPDATE
-			ROUT_ID = VALUES(ROUT_ID)
+			,ROUT_ID = VALUES(ROUT_ID)
 			,ALLOC_NO = VALUES(ALLOC_NO)
 			,OPER_SN = VALUES(OPER_SN)	
 			,NODE_ID = VALUES(NODE_ID)
@@ -76,7 +79,81 @@
 			,PRV_PLCE_NM = VALUES(PRV_PLCE_NM)	
 			,UPD_DTM = VALUES(UPD_DTM);
 	</insert>
+
+   <!-- 버스 아이디를 받아오기 위함 -->
+    <select id="getBusId" resultType="String" parameterType="HashMap" >
+        SELECT
+            VHC_ID
+        FROM
+            BMS_VHC_MST
+        WHERE
+            VHC_NO = #{BUS_NO}
+    </select>
+
+    <!-- 노선정보를 받아옴 -->
+    <select id="getRoutMst" resultType="Map" parameterType="Map" >
+        SELECT * FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID} LIMIT 0, 1
+    </select>
+    
+
+	<select id="getCurAllocPlInfo" resultType="Map" parameterType="Map">
+	SELECT
+		OPER_DT,
+		REP_ROUT_ID,
+		ALLOC_NO,
+		WAY_DIV,
+		VHC_ID,
+		OPER_VHC_ID
+	FROM BRT_CUR_ALLOC_PL_INFO
+	WHERE OPER_DT = #{OPER_DT}
+		AND REP_ROUT_ID = #{ROUT_ID}
+		AND WAY_DIV = #{WAY_DIV}
+		AND VHC_ID = #{VHC_ID}
+	LIMIT 0, 1
+	</select>
 	
+    <!-- 현재운행중인 배차계획 정보를 받아옴-->
+	<select id="getCurAllocPlInfoByOperVhcId" resultType="HashMap" parameterType="HashMap" >
+	SELECT
+		OPER_DT,
+		REP_ROUT_ID,
+		ALLOC_NO,
+		WAY_DIV,
+		VHC_ID,
+		OPER_VHC_ID
+	FROM BRT_CUR_ALLOC_PL_INFO
+	WHERE OPER_DT = GET_OPER_DT()/*SUBSTRING(NOW(), 0, 10)*/
+		AND REP_ROUT_ID = #{ROUT_ID}
+		AND WAY_DIV = #{WAY_DIV}
+		AND OPER_VHC_ID = #{VHC_ID}
+	LIMIT 0, 1
+	</select>
+
+	<select id="getCurNearAllocPlInfo" resultType="Map" parameterType="Map">
+		SELECT A.OPER_DT, A.REP_ROUT_ID, A.ALLOC_NO, A.ROUT_ID, A.COR_ID, B.VHC_ID, B.OPER_VHC_ID, 
+		ABS(TIME_TO_SEC(TIMEDIFF(TIME_FORMAT(#{UPD_DTM},'%H:%i:%S'), TIME_FORMAT(ROUT_ST_TM, '%H:%i:%S')))) AS DIFF
+		FROM BRT_CUR_OPER_ALLOC_PL_ROUT_INFO A
+		LEFT JOIN BRT_CUR_ALLOC_PL_INFO B ON A.OPER_DT = B.OPER_DT AND A.REP_ROUT_ID = B.REP_ROUT_ID AND
+		A.ALLOC_NO = B.ALLOC_NO
+		WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND B.WAY_DIV = #{WAY_DIV}
+		ORDER BY DIFF ASC
+		LIMIT 0, 1;
+	</select>
+
+	<insert id="insertCurAllocPlInfo" parameterType="Map">
+		INSERT INTO BRT_CUR_ALLOC_PL_INFO(
+		OPER_DT,REP_ROUT_ID,ALLOC_NO,WAY_DIV,VHC_ID,OPER_VHC_ID,UPD_DTM )
+		VALUES( #{OPER_DT}, #{REP_ROUT_ID}, #{ALLOC_NO}, #{WAY_DIV}, #{VHC_ID},
+		#{OPER_VHC_ID}, NOW() );
+	</insert>
+
+	<update id="updateOperVhcIdCurAllocPlInfo" parameterType="Map">
+		UPDATE BRT_CUR_ALLOC_PL_INFO SET OPER_VHC_ID = '', UPD_DTM = NOW()
+		WHERE OPER_DT = #{OPER_DT} AND ALLOC_NO != #{ALLOC_NO} AND OPER_VHC_ID = #{OPER_VHC_ID};
+		
+		UPDATE BRT_CUR_ALLOC_PL_INFO SET OPER_VHC_ID = #{OPER_VHC_ID}, UPD_DTM = NOW()
+		WHERE OPER_DT = #{OPER_DT} AND REP_ROUT_ID = #{REP_ROUT_ID} AND ALLOC_NO = #{ALLOC_NO};
+	</update>    
 	
 	<!-- 차량의 현재운행정보 가져오기  -->
 	<select id="selectCurOperInfo" resultType="Map" parameterType="Map">
@@ -135,11 +212,14 @@
 		VALUES (
 			(SELECT CONCAT('IC', LPAD(NEXTVAL(SEQ_BRT_INCDNT_INFO_0), 8, '0')) AS 'INCDNT_ID')		
 			,#{OPER_DT}
-			,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})			
-			,(SELECT VHC_ID FROM BMS_VHC_MST WHERE VHC_NO = #{BUS_NO})
+			<!-- ,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})			
+			,(SELECT VHC_ID FROM BMS_VHC_MST WHERE VHC_NO = #{BUS_NO}) -->
+			,#{REP_ROUT_ID}
+			,#{VHC_ID}
 			,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'INCDNT_TYPE' AND NUM_VAL4 = #{EVENT_CD}) <!-- 운행위반유형  -->
 			,#{ROUT_ID}
-			,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, #{OPER_DT}))  <!--alloc no 찾기 -->
+			<!-- ,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, #{OPER_DT})) -->  <!--alloc no 찾기 -->
+			,#{ALLOC_NO}
 			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, #{UPD_DTM})) <!--oper sn 찾기 -->			
 			,#{COURSE_ID}
 			,#{UPD_DTM}
