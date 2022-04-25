@@ -62,7 +62,7 @@
 		LEFT JOIN		BMS_NODE_MST F
 			ON				A.NEXT_NODE_ID = F.NODE_TYPE	
 			
-		WHERE			A.OPER_DT = DATE_FORMAT(NOW(), '%Y/%m/%d')
+		WHERE			A.OPER_DT = FN_DATE_TO_OPER_DT(NOW()) <!-- DATE_FORMAT(NOW(), '%Y/%m/%d') -->
 		AND				B.DEL_YN != 'Y'
 			<if test="CONTENT1 != null">
 				AND A.REP_ROUT_ID = #{CONTENT1}
@@ -362,7 +362,7 @@
 		LEFT JOIN		BMS_ROUT_MST D
 			ON			A.ROUT_ID = D.ROUT_ID
 	
-		WHERE			DATE_FORMAT(OPER_DT, '%Y-%m-%d') = CURDATE()
+		WHERE			DATE_FORMAT(OPER_DT, '%Y-%m-%d') = FN_DATE_TO_OPER_DT(NOW()) <!-- CURDATE() -->
 		AND				A.GPS_X BETWEEN 120 AND 130
 		AND				A.GPS_Y BETWEEN 30 AND 40
 		<if test="CONTENT1 != null">
