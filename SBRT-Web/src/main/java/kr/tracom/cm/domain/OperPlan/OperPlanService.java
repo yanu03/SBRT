@@ -436,12 +436,19 @@ public class OperPlanService extends ServiceSupport {
 
 		min_stop_sec = Integer.valueOf(minStopSec);
 		max_stop_sec = Integer.valueOf(maxStopSec);
-
-		am_peak_st_tm = String.valueOf(peakTmMap.get("AM_PEAK_ST_TM")) + ":00";
-		am_peak_ed_tm = String.valueOf(peakTmMap.get("AM_PEAK_ED_TM")) + ":00";
-
-		pm_peak_st_tm = String.valueOf(peakTmMap.get("PM_PEAK_ST_TM")) + ":00";
-		pm_peak_ed_tm = String.valueOf(peakTmMap.get("PM_PEAK_ED_TM")) + ":00";
+		if(peakTmMap!=null){
+			if(CommonUtil.notEmpty(peakTmMap.get("AM_PEAK_ST_TM")))
+				am_peak_st_tm = String.valueOf(peakTmMap.get("AM_PEAK_ST_TM")) + ":00";
+			
+			if(CommonUtil.notEmpty(peakTmMap.get("AM_PEAK_ED_TM")))
+				am_peak_ed_tm = String.valueOf(peakTmMap.get("AM_PEAK_ED_TM")) + ":00";
+	
+			if(CommonUtil.notEmpty(peakTmMap.get("PM_PEAK_ST_TM")))
+				pm_peak_st_tm = String.valueOf(peakTmMap.get("PM_PEAK_ST_TM")) + ":00";
+			
+			if(CommonUtil.notEmpty(peakTmMap.get("PM_PEAK_ED_TM")))
+				pm_peak_ed_tm = String.valueOf(peakTmMap.get("PM_PEAK_ED_TM")) + ":00";
+		}
 
 
 		//변수 초기화
@@ -546,8 +553,10 @@ public class OperPlanService extends ServiceSupport {
 					nextNodePhaseInfo = (Map<String, Object>) nextNodeMap.get(String.valueOf(next_node_sn));
 
 					//다음노드 진입현시 정보 확인
-					next_node_type = String.valueOf(nextNodePhaseInfo.get("NODE_TYPE"));
-					next_cross_id = String.valueOf(nextNodePhaseInfo.get("CRS_ID"));
+					if(nextNodePhaseInfo != null ) {
+						next_node_type = String.valueOf(nextNodePhaseInfo.get("NODE_TYPE"));
+						next_cross_id = String.valueOf(nextNodePhaseInfo.get("CRS_ID"));
+					}
 
 					acc_len = 0;
 					dec_len = 0;
@@ -1263,6 +1272,7 @@ public class OperPlanService extends ServiceSupport {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("{}", e);
 		}
 		
 		return chgPlList;

@@ -86,7 +86,7 @@ public class ActionRequest {
             		
             		logger.info("======== 변경운행 요청 수신 : {}", actionData);
             		
-            		if(dataArr.length == 12) {
+            		if(dataArr.length == 15) {
 	            		String operDt = dataArr[0];
 	            		String busId = dataArr[1];
 	            		String repRoutId = dataArr[2];

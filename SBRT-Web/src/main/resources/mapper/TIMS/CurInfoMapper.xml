@@ -61,7 +61,7 @@
 			,#{UPD_DTM}
 		)
 		ON DUPLICATE KEY UPDATE
-			,ROUT_ID = VALUES(ROUT_ID)
+			ROUT_ID = VALUES(ROUT_ID)
 			,ALLOC_NO = VALUES(ALLOC_NO)
 			,OPER_SN = VALUES(OPER_SN)	
 			,NODE_ID = VALUES(NODE_ID)
@@ -95,8 +95,7 @@
         SELECT * FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID} LIMIT 0, 1
     </select>
     
-
-	<select id="getCurAllocPlInfo" resultType="Map" parameterType="Map">
+<select id="getCurAllocPlInfo" resultType="Map" parameterType="Map">
 	SELECT
 		OPER_DT,
 		REP_ROUT_ID,
@@ -106,7 +105,22 @@
 		OPER_VHC_ID
 	FROM BRT_CUR_ALLOC_PL_INFO
 	WHERE OPER_DT = #{OPER_DT}
-		AND REP_ROUT_ID = #{ROUT_ID}
+		AND REP_ROUT_ID = #{REP_ROUT_ID}
+		AND ALLOC_NO = #{ALLOC_NO}
+	LIMIT 0, 1
+	</select>
+
+	<select id="getCurAllocPlInfoByVhcId" resultType="Map" parameterType="Map">
+	SELECT
+		OPER_DT,
+		REP_ROUT_ID,
+		ALLOC_NO,
+		WAY_DIV,
+		VHC_ID,
+		OPER_VHC_ID
+	FROM BRT_CUR_ALLOC_PL_INFO
+	WHERE OPER_DT = #{OPER_DT}
+		AND REP_ROUT_ID = #{REP_ROUT_ID}
 		AND WAY_DIV = #{WAY_DIV}
 		AND VHC_ID = #{VHC_ID}
 	LIMIT 0, 1
@@ -122,22 +136,23 @@
 		VHC_ID,
 		OPER_VHC_ID
 	FROM BRT_CUR_ALLOC_PL_INFO
-	WHERE OPER_DT = GET_OPER_DT()/*SUBSTRING(NOW(), 0, 10)*/
-		AND REP_ROUT_ID = #{ROUT_ID}
+	WHERE OPER_DT = #{OPER_DT}/*SUBSTRING(NOW(), 0, 10)*/
+		AND REP_ROUT_ID = #{REP_ROUT_ID}
 		AND WAY_DIV = #{WAY_DIV}
 		AND OPER_VHC_ID = #{VHC_ID}
 	LIMIT 0, 1
 	</select>
 
-	<select id="getCurNearAllocPlInfo" resultType="Map" parameterType="Map">
-		SELECT A.OPER_DT, A.REP_ROUT_ID, A.ALLOC_NO, A.ROUT_ID, A.COR_ID, B.VHC_ID, B.OPER_VHC_ID, 
+	<select id="getCurNearAllocPlInfo" resultType="String" parameterType="Map">
+		SELECT FN_GET_CUR_NEAR_ALLOC_PL_INFO(#{UPD_DTM},#{REP_ROUT_ID},#{WAY_DIV});
+		<!-- SELECT A.OPER_DT, A.REP_ROUT_ID, A.ALLOC_NO, A.ROUT_ID, A.COR_ID, B.VHC_ID, B.OPER_VHC_ID, 
 		ABS(TIME_TO_SEC(TIMEDIFF(TIME_FORMAT(#{UPD_DTM},'%H:%i:%S'), TIME_FORMAT(ROUT_ST_TM, '%H:%i:%S')))) AS DIFF
 		FROM BRT_CUR_OPER_ALLOC_PL_ROUT_INFO A
 		LEFT JOIN BRT_CUR_ALLOC_PL_INFO B ON A.OPER_DT = B.OPER_DT AND A.REP_ROUT_ID = B.REP_ROUT_ID AND
 		A.ALLOC_NO = B.ALLOC_NO
 		WHERE A.REP_ROUT_ID = #{REP_ROUT_ID} AND B.WAY_DIV = #{WAY_DIV}
 		ORDER BY DIFF ASC
-		LIMIT 0, 1;
+		LIMIT 0, 1; -->
 	</select>
 
 	<insert id="insertCurAllocPlInfo" parameterType="Map">

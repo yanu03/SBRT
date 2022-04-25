@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -560,5 +564,19 @@ public class CommonUtil {
 			ipAddress = request.getRemoteAddr();
 		}
 		return ipAddress;
+	}
+	
+	public static String getOperDt() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		DateFormat df = new SimpleDateFormat("yyyy-MM-ddHH");
+		String today = df.format(cal.getTime());
+		String hh = today.substring(10, 12);
+
+		if ("00".equals(hh) || "01".equals(hh) || "02".equals(hh) || "03".equals(hh)) {
+			cal.add(Calendar.DATE, -1);
+			today = df.format(cal.getTime());
+		}
+		return today.substring(0, 10);
 	}
 }
