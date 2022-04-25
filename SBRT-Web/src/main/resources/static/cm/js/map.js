@@ -1776,7 +1776,7 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 		}	
 		var dsptchMsg = "";
 		if(routMap.mapInfo[mapId].eventOverArr.length != 0) {
-			dsptchMsg += '<div class="dsptchMessagePopup clickoverlay" id="busInfo-closer" style="position: absolute; bottom:180px;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
+			dsptchMsg += '<div class="dsptchMessagePopup clickoverlay" id="busInfo-closer" style="position: absolute; bottom:210px;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
 		}	
 		else {
 			dsptchMsg += '<div class="dsptchMessagePopup clickoverlay" id="busInfo-closer" style="position: absolute;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'	
@@ -1836,7 +1836,7 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 		setTimeout(function() {
 			if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
 				routMap.mapInfo[mapId].dsptchOverArr[0].setMap(null);
-				routMap.mapInfo[mapId].dsptchOverArr[0] = null;
+				routMap.mapInfo[mapId].dsptchOverArr = null;
 			}
 		},5000);
 	} 
@@ -1846,7 +1846,7 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 			//$(".busInfoPopup").show();
 			if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
 				routMap.mapInfo[mapId].dsptchOverArr[0].setMap(null);
-				routMap.mapInfo[mapId].dsptchOverArr[0] = null;
+				routMap.mapInfo[mapId].dsptchOverArr = null;
 			}			
 		},3000);		
 	}
@@ -1962,7 +1962,7 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 				clearInterval(addStopTime);
 				if (routMap.mapInfo[mapId].eventOverArr[0] != null) {
 					routMap.mapInfo[mapId].eventOverArr[0].setMap(null);
-					routMap.mapInfo[mapId].eventOverArr[0] = null;		
+					routMap.mapInfo[mapId].eventOverArr = null;		
 				}
 			},1500);
 			
