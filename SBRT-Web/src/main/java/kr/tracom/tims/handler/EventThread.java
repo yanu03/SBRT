@@ -175,6 +175,7 @@ public class EventThread extends Thread {
 				wsDataMap.put("ROUT_NM", busInfoMap.get("ROUT_NM"));
 				wsDataMap.put("VHC_NO", busInfoMap.get("BUS_NO"));
 
+				wsDataMap.put("CUR_SPD", busInfoMap.get("SPEED"));
 				wsDataMap.put("VHC_ID", vhcInfo.get("VHC_ID"));
 				wsDataMap.put("DVC_ID", vhcInfo.get("DVC_ID"));
 				wsDataMap.put("GPS_X", busInfoMap.get("LONGITUDE"));

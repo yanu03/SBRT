@@ -649,8 +649,22 @@
 		//console.log(payload.body);
 			try {
 		//		setTimeout(function() {	
-
 					var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+					
+					//order 순서 A.REP_ROUT_ID, A.ROUT_ID, VHC_ID
+					if(curIndexArr.length == 0) {
+						dlt_BRT_CUR_OPER_INFO.insertRow(0);	
+						dlt_BRT_CUR_OPER_INFO.setRowJSON(0, jsonObj, true);
+						
+						var sortOptions = {};
+						//정렬 컬럼 ID
+						sortOptions.sortIndex = "REP_ROUT_ID ROUT_ID VHC_ID";
+						//오름차
+						sortOptions.sortOrder = "1 1 1";
+						dlt_BRT_CUR_OPER_INFO.multisort(sortOptions);
+					}
+					
+					curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 					
 					if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
 						dlt_BRT_OPER_EVENT_HIS.insertRow(0);
@@ -787,6 +801,21 @@
 			try {
 		//		setTimeout(function() {
 					var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+					
+					//order 순서 A.REP_ROUT_ID, A.ROUT_ID, VHC_ID
+					if(curIndexArr.length == 0) {
+						dlt_BRT_CUR_OPER_INFO.insertRow(0);	
+						dlt_BRT_CUR_OPER_INFO.setRowJSON(0, jsonObj, true);
+						
+						var sortOptions = {};
+						//정렬 컬럼 ID
+						sortOptions.sortIndex = "REP_ROUT_ID ROUT_ID VHC_ID";
+						//오름차
+						sortOptions.sortOrder = "1 1 1";
+						dlt_BRT_CUR_OPER_INFO.multisort(sortOptions);
+					}		
+					
+					curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);			
 					
 					if(curIndexArr.length != 0) {
 						dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);

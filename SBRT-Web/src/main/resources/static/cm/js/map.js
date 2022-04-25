@@ -1775,8 +1775,13 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 			}
 		}	
 		var dsptchMsg = "";
-		
-		dsptchMsg += '<div class="dsptchMessagePopup clickoverlay" id="busInfoPopup" style="position: absolute;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
+		if(routMap.mapInfo[mapId].eventOverArr.length != 0) {
+			dsptchMsg += '<div class="dsptchMessagePopup clickoverlay" id="busInfo-closer" style="position: absolute; bottom:180px;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
+		}	
+		else {
+			dsptchMsg += '<div class="dsptchMessagePopup clickoverlay" id="busInfo-closer" style="position: absolute;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'	
+		}		
+		//dsptchMsg += '<div class="dsptchMessagePopup clickoverlay" id="busInfoPopup" style="position: absolute;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
 		dsptchMsg += '<a href="javascript:void(0)" id="busInfo-closer" class="close"><span class="blind">닫기</span></a>'
 		dsptchMsg += '<div id="popup-content">'
 		dsptchMsg += '<div class="tit"><span style="margin-right: 40px; word-wrap:break-word; white-space: normal;"><strong>'+data.VHC_NO+'</strong></span></div>' 
@@ -1836,14 +1841,14 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 		},5000);
 	} 
 	else if(routMap.mapInfo[mapId].dsptchOverArr.length != 0 && routMap.mapInfo[mapId].eventOverArr.length != 0) {
-		$(".busInfoPopup").hide();
+		//$(".busInfoPopup").hide();
 		setTimeout(function() {
-			$(".busInfoPopup").show();
+			//$(".busInfoPopup").show();
 			if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
 				routMap.mapInfo[mapId].dsptchOverArr[0].setMap(null);
 				routMap.mapInfo[mapId].dsptchOverArr[0] = null;
 			}			
-		},2000);		
+		},3000);		
 	}
 	
 }
@@ -1879,7 +1884,13 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 	}
 	
 	if (routMap.mapInfo[mapId].divEvent == "ET001") {
-		eventMsg += '<div class="busInfoPopup clickoverlay" id="busInfoPopup" style="position: absolute;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
+		if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
+			eventMsg += '<div class="busInfoPopup clickoverlay" id="busInfoPopup" style="position: absolute; bottom:154px;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
+		}	
+		else {
+			eventMsg += '<div class="busInfoPopup clickoverlay" id="busInfoPopup" style="position: absolute;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'	
+		}
+		//eventMsg += '<div class="busInfoPopup clickoverlay" id="busInfoPopup" style="position: absolute;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
 		eventMsg += '<a href="javascript:void(0)" id="busInfo-closer" class="close"><span class="blind">닫기</span></a>'
 		eventMsg += '<div id="popup-content">'
 		eventMsg += '<div class="tit"><span id="event_type" style="margin-right: 40px; word-wrap:break-word; white-space: normal;"><strong>'+data.EVT_TYPE+'</strong></span></div>' 
@@ -1939,7 +1950,8 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 	else {
 		if (routMap.mapInfo[mapId].eventOverArr[0] != null) {
 			if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
-				$(".dsptchMessagePopup").hide();
+				//출발할 때 운행중 디스패치가 발생하여 주석처리하였음
+				//$(".dsptchMessagePopup").hide();
 			}
 			
 		/*	if(routMap.mapInfo[mapId].divEvent == "ET001"){
@@ -1981,6 +1993,7 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 	
 	//도착 이벤트
 	if (routMap.mapInfo[mapId].divEvent == "ET001") {
+	
 		eventOverlay = new kakao.maps.CustomOverlay({
 			content: eventMsg,
 			position: marker.getPosition(),
@@ -1998,8 +2011,8 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 		routMap.mapInfo[mapId].eventOverArr[0] = routMap.mapInfo[mapId].eventOverlay;
 		eventOverlay.setMap(routMap.mapInfo[mapId].map);
 		
-		routMap.mapInfo[mapId].isEvent = "off";
-		routMap.mapInfo[mapId].divEvent = "";
+		//routMap.mapInfo[mapId].isEvent = "off";
+		//routMap.mapInfo[mapId].divEvent = "";
 		
 		/*setTimeout(function() {
 			routMap.mapInfo[mapId].eventOverArr[0].setMap(null);
@@ -2007,6 +2020,8 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 		},5000);*/
 		
 	}
+	routMap.mapInfo[mapId].isEvent = "off";
+	routMap.mapInfo[mapId].divEvent = ""; 	
 }
 
 /**
@@ -3426,7 +3441,8 @@ routMap.removeAllBusOverlay = function(mapId){
 		}
 		routMap.mapInfo[mapId].busClickOverArr = [];
 	}
-	
+	 // 디스패치가 정상적으로 작동하지 않아 주석처리
+	  /*	
 	if(routMap.mapInfo[mapId].dsptchOverArr.length != 0){
 		for(var i=0; i<routMap.mapInfo[mapId].dsptchOverArr.length; i++){
 			if(routMap.mapInfo[mapId].dsptchOverArr[i] != null) {
@@ -3436,6 +3452,7 @@ routMap.removeAllBusOverlay = function(mapId){
 		}
 		routMap.mapInfo[mapId].dsptchOverArr = [];
 	}
+	*/
 }
 
 /**
