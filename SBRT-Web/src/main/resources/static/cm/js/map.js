@@ -1744,10 +1744,26 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 	var showMessage = "";
 	var min = "";
 	var sec = "";
-	if(Math.abs(parseInt(data.MESSAGE) >= 60)) {
-		min = Math.abs(parseInt(data.MESSAGE/60)) + "분 ";
+	var dsptchMessage = "";
+
+	if(data.MESSAGE.split(',').length>0){
+		dsptchMessage = data.MESSAGE.split(',')[0];
 	}
-		sec = Math.abs(parseInt(data.MESSAGE%60)) + "초 ";
+	else{
+		dsptchMessage = data.MESSAGE;
+	}	
+	
+	if(isNaN(dsptchMessage)) {
+		dsptchMessage = 0;
+	}
+	
+	else {
+		if(Math.abs(parseInt(dsptchMessage) >= 60)) {
+			min = Math.abs(parseInt(dsptchMessage/60)) + "분 ";
+		}
+			sec = Math.abs(parseInt(dsptchMessage%60)) + "초 ";		
+	}
+	
 
 	if (routMap.mapInfo[mapId].divDsptch == "DP001" || routMap.mapInfo[mapId].divDsptch == "DP002") {
 		//일반 메시지
@@ -1775,7 +1791,8 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 			}
 		}	
 		var dsptchMsg = "";
-		if(routMap.mapInfo[mapId].eventOverArr.length != 0) {
+		//if(routMap.mapInfo[mapId].eventOverArr.length != 0) {
+		if(routMap.mapInfo[mapId].eventOverArr[0] != null) {
 			dsptchMsg += '<div class="dsptchMessagePopup clickoverlay" id="busInfo-closer" style="position: absolute; bottom:210px;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
 		}	
 		else {
@@ -1832,23 +1849,33 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 	
 	routMap.mapInfo[mapId].isDsptch = "off";
 	
-	if(routMap.mapInfo[mapId].dsptchOverArr.length != 0 && routMap.mapInfo[mapId].eventOverArr.length == 0) {
-		setTimeout(function() {
-			if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
-				routMap.mapInfo[mapId].dsptchOverArr[0].setMap(null);
-				routMap.mapInfo[mapId].dsptchOverArr = null;
-			}
-		},5000);
-	} 
-	else if(routMap.mapInfo[mapId].dsptchOverArr.length != 0 && routMap.mapInfo[mapId].eventOverArr.length != 0) {
-		//$(".busInfoPopup").hide();
-		setTimeout(function() {
-			//$(".busInfoPopup").show();
-			if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
-				routMap.mapInfo[mapId].dsptchOverArr[0].setMap(null);
-				routMap.mapInfo[mapId].dsptchOverArr = null;
-			}			
-		},3000);		
+	if(routMap.mapInfo[mapId].dsptchOverArr != null && routMap.mapInfo[mapId].eventOverArr != null) {
+		//if(routMap.mapInfo[mapId].dsptchOverArr.length != 0 && routMap.mapInfo[mapId].eventOverArr.length == 0) {
+		if(routMap.mapInfo[mapId].dsptchOverArr[0] != null && routMap.mapInfo[mapId].eventOverArr[0] == null) {
+			setTimeout(function() {
+				if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
+					routMap.mapInfo[mapId].dsptchOverArr[0].setMap(null);
+					routMap.mapInfo[mapId].dsptchOverArr[0] = null;
+					//routMap.mapInfo[mapId].dsptchOverArr = null;
+				}
+			},2500);
+		} 
+	//	else if(routMap.mapInfo[mapId].dsptchOverArr.length != 0 && routMap.mapInfo[mapId].eventOverArr.length != 0) {	
+		else if(routMap.mapInfo[mapId].dsptchOverArr[0] != null && routMap.mapInfo[mapId].eventOverArr[0] != null) {	
+			//$("#busInfoPopup").css("bottom", "42px");		
+			$(".busInfoPopup").css("bottom", "42px");		
+			//$(".busInfoPopup").hide();
+			setTimeout(function() {
+				//$(".busInfoPopup").show();
+				//if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
+				if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
+					routMap.mapInfo[mapId].dsptchOverArr[0].setMap(null);
+					//추후 바꿔야함
+					routMap.mapInfo[mapId].dsptchOverArr[0] = null;
+					//routMap.mapInfo[mapId].dsptchOverArr = null;
+				}			
+			},2500);		
+		}		
 	}
 	
 }
@@ -1884,7 +1911,8 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 	}
 	
 	if (routMap.mapInfo[mapId].divEvent == "ET001") {
-		if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
+		//if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
+		if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
 			eventMsg += '<div class="busInfoPopup clickoverlay" id="busInfoPopup" style="position: absolute; bottom:154px;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
 		}	
 		else {
@@ -1948,21 +1976,28 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 	}
 	
 	else {
-		if (routMap.mapInfo[mapId].eventOverArr[0] != null) {
-			if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
-				//출발할 때 운행중 디스패치가 발생하여 주석처리하였음
-				//$(".dsptchMessagePopup").hide();
-			}
+		if (routMap.mapInfo[mapId].eventOverArr != null) {
 			
 		/*	if(routMap.mapInfo[mapId].divEvent == "ET001"){
 				$("#event_type").text(data.EVT_TYPE);
 			}*/
 			
 			setTimeout(function() {
+				//if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
+				if(routMap.mapInfo[mapId].dsptchOverArr != null) {
+					if(routMap.mapInfo[mapId].dsptchOverArr[0] != 0) {
+						//$("#busInfo-closer").css("bottom", "42px");
+						$(".dsptchMessagePopup").css("bottom", "42px");
+						//출발할 때 운행중 디스패치가 발생하여 주석처리하였음
+						//$(".dsptchMessagePopup").hide();
+					}						
+				}
+				
 				clearInterval(addStopTime);
 				if (routMap.mapInfo[mapId].eventOverArr[0] != null) {
 					routMap.mapInfo[mapId].eventOverArr[0].setMap(null);
-					routMap.mapInfo[mapId].eventOverArr = null;		
+					routMap.mapInfo[mapId].eventOverArr[0] = null;
+					//routMap.mapInfo[mapId].eventOverArr = null;		
 				}
 			},1500);
 			
@@ -5233,17 +5268,28 @@ routMap.showVehicleClickOverlay2 = function(mapId, json, cur_vhc_id, grid, index
  * @param focusIdx : 포커스된 index
  */
 routMap.moveVehicle = function(mapId, json, index, focusIdx) {
+	if(typeof routMap.mapInfo[mapId].busMarkers[index] == "undefined" || typeof routMap.mapInfo[mapId].busOverArr[index] == "undefined"){
+		
+	}
 	var latLng = new kakao.maps.LatLng(json.GPS_Y, json.GPS_X);
 	
-	routMap.mapInfo[mapId].busMarkers[index].setPosition(latLng);
-	routMap.mapInfo[mapId].busOverArr[index].setPosition(latLng);
+	if(typeof routMap.mapInfo[mapId].busMarkers[index] != "undefined"){
+		routMap.mapInfo[mapId].busMarkers[index].setPosition(latLng);
+	}
+	if(typeof routMap.mapInfo[mapId].busOverArr[index] != "undefined"){
+		routMap.mapInfo[mapId].busOverArr[index].setPosition(latLng);
+	}	
 	
-	if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
-		routMap.mapInfo[mapId].dsptchOverArr[0].setPosition(latLng);
+	if(routMap.mapInfo[mapId].dsptchOverArr != null) {
+		if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
+			routMap.mapInfo[mapId].dsptchOverArr[0].setPosition(latLng);
+		}
 	}
 	
-	if(routMap.mapInfo[mapId].eventOverArr[0] != null) {
-		routMap.mapInfo[mapId].eventOverArr[0].setPosition(latLng);
+	if(routMap.mapInfo[mapId].eventOverArr != null) {
+		if(routMap.mapInfo[mapId].eventOverArr[0] != null) {
+			routMap.mapInfo[mapId].eventOverArr[0].setPosition(latLng);
+		}
 	}
 	
 	if(json != null){

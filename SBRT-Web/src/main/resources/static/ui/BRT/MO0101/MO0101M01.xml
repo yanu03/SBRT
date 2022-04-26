@@ -870,13 +870,22 @@
 						
 						var min = "";
 						var sec = "";
+						var dsptchMessage = "";
 						
+						if(dsptchConts.split(',').length>0){
+							dsptchMessage = dsptchConts.split(',')[0];
+						}
+						else{
+							dsptchMessage = dsptchConts;
+						}
 						//디스패치가 일반메시지가 아닐경우	
-						if(parseInt(dsptchConts) != "undefined" && dsptchDiv != "DP001") {
-							if(Math.abs(parseInt(dsptchConts) >= 60)) {
-								 min = Math.abs(parseInt(dsptchConts/60)) + "분 ";
+						if(parseInt(dsptchMessage) != "undefined" && dsptchDiv != "DP001") {
+							
+							
+							if(Math.abs(parseInt(dsptchMessage) >= 60)) {
+								 min = Math.abs(parseInt(dsptchMessage/60)) + "분 ";
 							}
-							 sec = Math.abs(parseInt(dsptchConts%60)) + "초 ";
+							 sec = Math.abs(parseInt(dsptchMessage%60)) + "초 ";
 							
 							//운행중 디스패치일 경우 
 							if(dsptchDiv == "DP002") {
@@ -1621,13 +1630,21 @@
 			var sec = "";			
 			dsptchDiv =  dlt_BRT_DSPTCH_LOG.getCellData(i, "DSPTCH_DIV");
 			dsptchConts = dlt_BRT_DSPTCH_LOG.getCellData(i, "DSPTCH_CONTS");
+			var dsptchMessage = "";
+			
+			if(dsptchConts.split(',').length>0){
+				dsptchMessage = dsptchConts.split(',')[0];
+			}
+			else{
+				dsptchMessage = dsptchConts;
+			}
 			
 			if(dsptchDiv != "DP001"){
-				if(parseInt(dsptchConts) != "undefined") {
-					if(Math.abs(parseInt(dsptchConts) >= 60)) {
-						 min = Math.abs(parseInt(dsptchConts/60)) + "분 ";
+				if(parseInt(dsptchMessage) != "undefined") {
+					if(Math.abs(parseInt(dsptchMessage) >= 60)) {
+						 min = Math.abs(parseInt(dsptchMessage/60)) + "분 ";
 					}
-					 sec = Math.abs(parseInt(dsptchConts%60)) + "초 ";
+					 sec = Math.abs(parseInt(dsptchMessage%60)) + "초 ";
 					 
 					if(dsptchDiv == "DP002") {
 						if(parseInt(dsptchConts) > 0) {
@@ -1680,18 +1697,18 @@
 	  return zero + n;
 	}
 
-	
+	/*
 	scwin.sub_selectSigOper_submitdone = function(e) {
 		if(sigTimeout) {
 			clearInterval(sigTimeout);	
 		}
-
 		sigTimeout = setTimeout(function showSig() {
 			//$p.executeSubmission(sub_MO0101SCK2);
-			com.executeSubmission(sub_MO0101SCK2);
-			//sigTimeout = setTimeout(showSig, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
+			$p.executeSubmission(sub_MO0101SCK2);
+			sigTimeout = setTimeout(showSig, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
 		}, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
-	};
+		//}, 1000);
+	};*/
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
