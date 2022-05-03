@@ -25,6 +25,7 @@ public interface CurInfoMapper {
     Map<String, Object> getCurAllocPlInfoByOperVhcId(Map<String, Object> paramMap);
 
 	String getCurNearAllocPlInfo(Map<String, Object> paramMap);
+	String getCurNearAllocPlInfo2(Map<String, Object> paramMap);
     int insertCurAllocPlInfo(Map<String, Object> paramMap);
     int updateOperVhcIdCurAllocPlInfo(Map<String, Object> paramMap);
 	

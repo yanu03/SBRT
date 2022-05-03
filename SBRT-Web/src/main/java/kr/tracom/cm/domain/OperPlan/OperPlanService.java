@@ -801,6 +801,7 @@ public class OperPlanService extends ServiceSupport {
 								} catch (Exception e) {
 									//필요정차시간이 없는 경우
 									//e.printStackTrace();
+									logger.error("{}", e);
 									
 									dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, stop_sec_none_peak); //비첨두시정차시간 추가
 								}
@@ -853,11 +854,18 @@ public class OperPlanService extends ServiceSupport {
 
 						//현시정보 확인이 가능한 경우 [[
 						if(!StringUtils.isEmpty(sig_ctr_type)){
-
-							enter_phase_no1 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_1"));
-							enter_phase_no2 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_2"));
-							enter_phase_no3 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_3"));
-
+							try {
+								enter_phase_no1 = Integer.parseInt((String)nextNodePhaseInfo.get("ENT_PHASE_NO_1"));
+								enter_phase_no2 = Integer.parseInt((String)nextNodePhaseInfo.get("ENT_PHASE_NO_2"));
+								enter_phase_no3 = Integer.parseInt((String)nextNodePhaseInfo.get("ENT_PHASE_NO_3"));
+							} catch (Exception e) {
+								e.printStackTrace();
+								logger.error("{}", e);
+								/*enter_phase_no1 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_1"));
+								enter_phase_no2 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_2"));
+								enter_phase_no3 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_3"));*/
+							}
+							
 							if(enter_phase_no1 != 0) {
 								//교차로 도착예정 시각의 진입현시 확인
 								paramMap.put("NODE_ID", next_cross_id);
