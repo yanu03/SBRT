@@ -148,26 +148,30 @@ public class EventThread extends Thread {
 
 				// insert to BRT_CUR_OPER_INFO
 				Map<String, Object> busInfoMap = busInfo.toMap();
+
 				busInfoMap.put("VHC_ID", curInfoMapper.getBusId(busInfoMap));
+				if (CommonUtil.empty(busInfoMap.get("VHC_ID")))
+					break;
 				Map<String, Object> routMap = curInfoMapper.getRoutMst(busInfoMap);
 				busInfoMap.put("REP_ROUT_ID", routMap.get("REP_ROUT_ID"));
 				busInfoMap.put("WAY_DIV", routMap.get("WAY_DIV"));
 				busInfoMap.put("ROUT_NM", routMap.get("ROUT_NM"));
-				if(CommonUtil.empty(busInfoMap.get("OPER_DT"))) {
-					busInfoMap.put("OPER_DT",CommonUtil.getOperDt());
+				if (CommonUtil.empty(busInfoMap.get("OPER_DT"))) {
+					busInfoMap.put("OPER_DT", CommonUtil.getOperDt());
 				}
 
 				try {
 					Map<String, Object> curAllocPlInfo = curInfoMapper.getCurAllocPlInfoByOperVhcId(busInfoMap);
 					if (curAllocPlInfo == null || CommonUtil.empty(curAllocPlInfo.get("OPER_VHC_ID"))) {
-						/*Map<String, Object> curAllocPlInfo2 = curInfoMapper.getCurAllocPlInfoByVhcId(busInfoMap);
-						if(curAllocPlInfo2!=null) {
-							busInfoMap.put("ALLOC_NO", curAllocPlInfo2.get("ALLOC_NO"));
-						}*/
+						/*
+						 * Map<String, Object> curAllocPlInfo2 =
+						 * curInfoMapper.getCurAllocPlInfoByVhcId(busInfoMap); if(curAllocPlInfo2!=null)
+						 * { busInfoMap.put("ALLOC_NO", curAllocPlInfo2.get("ALLOC_NO")); }
+						 */
 						busInfoMap.put("ALLOC_NO", 0);
 					}
 					insertCurOperInfo(busInfoMap);
-					
+
 				} catch (DuplicateKeyException e) {
 					// logger.error("", e);
 				} catch (Exception e) {
@@ -249,48 +253,96 @@ public class EventThread extends Thread {
 				byte eventCode = busEvent.getEventCode();
 				Map<String, Object> busEventMap = busEvent.toMap();
 				busEventMap.put("VHC_ID", curInfoMapper.getBusId(busEventMap));
+				if (CommonUtil.empty(busEventMap.get("VHC_ID")))break;
 				Map<String, Object> routMap2 = curInfoMapper.getRoutMst(busEventMap);
 				busEventMap.put("REP_ROUT_ID", routMap2.get("REP_ROUT_ID"));
 				busEventMap.put("WAY_DIV", routMap2.get("WAY_DIV"));
 				busEventMap.put("ROUT_NM", routMap2.get("ROUT_NM"));
-				
-				if(CommonUtil.empty(busEventMap.get("OPER_DT"))) {
-					busEventMap.put("OPER_DT",CommonUtil.getOperDt());
+
+				if (CommonUtil.empty(busEventMap.get("OPER_DT"))) {
+					busEventMap.put("OPER_DT", CommonUtil.getOperDt());
 				}
 
 				try {
-					if (eventCode == (byte) 0x03 || eventCode == (byte) 0x04) {
-						// 현재운행정보도 업데이트
-						
-						String curNearStr = curInfoMapper.getCurNearAllocPlInfo(busEventMap);
-						String curNearArr[] = curNearStr.split(","); 
-						Map<String, Object> curNearAllocPlInfo = new HashMap<String, Object>();
-						busEventMap.put("ROUT_ID", curNearArr[0]);
-						busEventMap.put("COR_ID", curNearArr[1]);
-						busEventMap.put("ALLOC_NO", curNearArr[2]);
-						
+					if ("RR00000002".equals(busEventMap.get("REP_ROUT_ID"))) {
+						if (("ND00000787".equals(busEventMap.get("NODE_ID")) || 
+								"293055002".equals(busEventMap.get("NODE_ID"))&&"WD001".equals(busEventMap.get("WAY_DIV"))||
+								"293055001".equals(busEventMap.get("NODE_ID"))&&"WD002".equals(busEventMap.get("WAY_DIV"))
+							)&& (eventCode == (byte) 0x03 || eventCode == (byte) 0x04)) {
+							String curNearStr = curInfoMapper.getCurNearAllocPlInfo(busEventMap);
+							String curNearArr[] = curNearStr.split(",");
+							Map<String, Object> curNearAllocPlInfo = new HashMap<String, Object>();
+							busEventMap.put("ROUT_ID", curNearArr[0]);
+							busEventMap.put("COR_ID", curNearArr[1]);
+							busEventMap.put("ALLOC_NO", curNearArr[2]);
 
-						Map<String, Object> curAllocPlInfo = curInfoMapper.getCurAllocPlInfo(busEventMap);
-						if (curAllocPlInfo == null) {
-							busEventMap.put("OPER_VHC_ID", busEventMap.get("VHC_ID"));
-							curInfoMapper.insertCurAllocPlInfo(busEventMap);
+							Map<String, Object> curAllocPlInfo = curInfoMapper.getCurAllocPlInfo(busEventMap);
+							if (curAllocPlInfo == null) {
+								busEventMap.put("OPER_VHC_ID", busEventMap.get("VHC_ID"));
+								curInfoMapper.insertCurAllocPlInfo(busEventMap);
+							} else {
+								busEventMap.put("OPER_VHC_ID", busEventMap.get("VHC_ID"));
+								if (CommonUtil.notEmpty(busEventMap.get("ALLOC_NO"))
+										&& ((int) (busEventMap.get("ALLOC_NO")) != 0)) {
+									curInfoMapper.updateOperVhcIdCurAllocPlInfo(busEventMap);
+								}
+							}
+							busEventMap.put("ALLOC_NO", curNearAllocPlInfo.get("ALLOC_NO"));
 						} else {
-							busEventMap.put("OPER_VHC_ID", busEventMap.get("VHC_ID"));
-							curInfoMapper.updateOperVhcIdCurAllocPlInfo(busEventMap);
+							Map<String, Object> curAllocPlInfo = curInfoMapper
+									.getCurAllocPlInfoByOperVhcId(busEventMap);
+							if (curAllocPlInfo == null || CommonUtil.empty(curAllocPlInfo.get("OPER_VHC_ID"))) {
+							} else {
+								busEventMap.put("ALLOC_NO", curAllocPlInfo.get("ALLOC_NO"));
+								if ((eventCode == (byte) 0x03 || eventCode == (byte) 0x04)) {
+									String routeCourseId = curInfoMapper.getCurNearAllocPlInfo2(busEventMap);
+									logger.info("routeCourseId = ", routeCourseId);
+									String routeCourseStr[] = routeCourseId.split(",");
+									busEventMap.put("ROUT_ID", routeCourseStr[0]);
+									busEventMap.put("COR_ID", routeCourseStr[1]);
+								}
+							}
 						}
-						busEventMap.put("ALLOC_NO", curNearAllocPlInfo.get("ALLOC_NO"));
-					}
-					else {
-						Map<String, Object> curAllocPlInfo = curInfoMapper.getCurAllocPlInfoByOperVhcId(busEventMap);
-						if (curAllocPlInfo == null || CommonUtil.empty(curAllocPlInfo.get("OPER_VHC_ID"))) {
-							/*Map<String, Object> curAllocPlInfo2 = curInfoMapper.getCurAllocPlInfoByVhcId(busEventMap);
+					} else {
+						if (eventCode == (byte) 0x03 || eventCode == (byte) 0x04) {
+							// 현재운행정보도 업데이트
 
-							busEventMap.put("ALLOC_NO", curAllocPlInfo2.get("ALLOC_NO"));
-							*/
-							busEventMap.put("ALLOC_NO", 0);
+							String curNearStr = curInfoMapper.getCurNearAllocPlInfo(busEventMap);
+							String curNearArr[] = curNearStr.split(",");
+							Map<String, Object> curNearAllocPlInfo = new HashMap<String, Object>();
+							busEventMap.put("ROUT_ID", curNearArr[0]);
+							busEventMap.put("COR_ID", curNearArr[1]);
+							busEventMap.put("ALLOC_NO", curNearArr[2]);
+
+							Map<String, Object> curAllocPlInfo = curInfoMapper.getCurAllocPlInfo(busEventMap);
+							if (curAllocPlInfo == null) {
+								busEventMap.put("OPER_VHC_ID", busEventMap.get("VHC_ID"));
+								curInfoMapper.insertCurAllocPlInfo(busEventMap);
+							} else {
+								busEventMap.put("OPER_VHC_ID", busEventMap.get("VHC_ID"));
+								if (CommonUtil.notEmpty(busEventMap.get("ALLOC_NO"))
+										&& ((int) (busEventMap.get("ALLOC_NO")) != 0)) {
+									curInfoMapper.updateOperVhcIdCurAllocPlInfo(busEventMap);
+								}
+							}
+							busEventMap.put("ALLOC_NO", curNearAllocPlInfo.get("ALLOC_NO"));
+						} else {
+							Map<String, Object> curAllocPlInfo = curInfoMapper
+									.getCurAllocPlInfoByOperVhcId(busEventMap);
+							if (curAllocPlInfo == null || CommonUtil.empty(curAllocPlInfo.get("OPER_VHC_ID"))) {
+								/*
+								 * Map<String, Object> curAllocPlInfo2 =
+								 * curInfoMapper.getCurAllocPlInfoByVhcId(busEventMap);
+								 * 
+								 * busEventMap.put("ALLOC_NO", curAllocPlInfo2.get("ALLOC_NO"));
+								 */
+								busEventMap.put("ALLOC_NO", 0);
+							} else {
+								busEventMap.put("ALLOC_NO", curAllocPlInfo.get("ALLOC_NO"));
+							}
 						}
 					}
-					
+
 					if (CommonUtil.empty(busEventMap.get("ALLOC_NO")) == false
 							&& CommonUtil.empty(busEventMap.get("REP_ROUT_ID")) == false) {
 						logger.debug("[" + busEventMap.get("ALLOC_NO") + "," + busEventMap.get("REP_ROUT_ID") + ","
@@ -573,7 +625,8 @@ public class EventThread extends Thread {
 		try {
 
 			// 운행일 생성. 시간에 따라 0시(24시) ~ 02시까지는 이전 날짜로 운행일 설정
-			operEventMap.put("OPER_DT", OperDtUtil.convertTimeToOperDt(operEventMap.get("UPD_DTM").toString(), "yyyy-MM-dd HH:mm:ss"));
+			operEventMap.put("OPER_DT",
+					OperDtUtil.convertTimeToOperDt(operEventMap.get("UPD_DTM").toString(), "yyyy-MM-dd HH:mm:ss"));
 
 			// 다음노드(교차로 or 정류소)
 			Map<String, Object> realNodeInfo = timsMapper.selectNodeByLinkSn(operEventMap); // 통플에서 넘어온 노드순번(실제로는 링크순번)
@@ -627,12 +680,12 @@ public class EventThread extends Thread {
 		 * }
 		 */
 
-    	//좌표값 튀는거 insert/update 방지
-		if((float)(curOperInfo.get("LONGITUDE")) < 120 || (float)(curOperInfo.get("LONGITUDE")) > 130) {
+		// 좌표값 튀는거 insert/update 방지
+		if ((float) (curOperInfo.get("LONGITUDE")) < 120 || (float) (curOperInfo.get("LONGITUDE")) > 130) {
 			return 0;
 		}
-    	
-		if((float)(curOperInfo.get("LATITUDE")) < 30 || (float)(curOperInfo.get("LATITUDE")) > 40) {
+
+		if ((float) (curOperInfo.get("LATITUDE")) < 30 || (float) (curOperInfo.get("LATITUDE")) > 40) {
 			return 0;
 		}
 		setOperEventData(curOperInfo);
