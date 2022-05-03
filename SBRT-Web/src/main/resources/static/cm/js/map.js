@@ -1288,7 +1288,7 @@ routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid
 		rightClickMsg += '<div class="rightclickoverlay" style="cursor: default;">'
 		rightClickMsg += '<div class="contextWrap">'
 		rightClickMsg += '    <a data-id="here" href="javascript:void(0)" class="busInfo" onclick="">'
-		rightClickMsg += '	            <span class="text">버스 상세정보</span>'
+		rightClickMsg += '	            <span class="text">버스 상태정보</span>'
 		rightClickMsg += '     </a>'
 		rightClickMsg += '      <a data-id="newplace" href="javascript:void(0)" class="dispatchMessage">'
 		rightClickMsg += '         <span class="text">메시지 전송</span>'
@@ -2627,6 +2627,41 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 			}
 		}
 	});
+	
+	kakao.maps.event.addListener(marker, 'rightclick', function() {
+		routMap.removeRightClickOverlay(mapId);
+		
+		var rightClickOverlay = null;
+		var rightClickMsg = "";
+		var focusCell = "";
+		
+		switch(data.NODE_TYPE) {
+			case routMap.NODE_TYPE.BUSSTOP:
+				rightClickMsg += '<div class="rightclickoverlay" style="cursor: default;">'
+				rightClickMsg += '<div class="contextWrap">'
+				rightClickMsg += '    <a data-id="here" href="javascript:void(0)" class="busInfo" onclick="">'
+				rightClickMsg += '	            <span class="text">정류소 상태정보</span>'
+				rightClickMsg += '     </a>'
+		        rightClickMsg += '  	</div>	'
+		        rightClickMsg += '  </div>	';
+		        focusCell = "VHC_NO";
+				break;
+		}
+		
+		rightClickOverlay = new kakao.maps.CustomOverlay({
+			content: rightClickMsg,
+			position: marker.getPosition(),
+			zIndex : 999
+		});		
+	
+		routMap.mapInfo[mapId].rightClickOverlay = rightClickOverlay;
+		rightClickOverlay.setMap(routMap.mapInfo[mapId].map);	
+		
+		if(typeof grid != "undefined") {
+			grid.setFocusedCell(idx, focusCell);
+		}		
+		
+	}); //end rightclick	
 	
 	/*kakao.maps.event.addListener(marker, 'dragstart', function() {
 		overlay.setMap(null);
