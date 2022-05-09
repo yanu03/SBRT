@@ -436,12 +436,19 @@ public class OperPlanService extends ServiceSupport {
 
 		min_stop_sec = Integer.valueOf(minStopSec);
 		max_stop_sec = Integer.valueOf(maxStopSec);
-
-		am_peak_st_tm = String.valueOf(peakTmMap.get("AM_PEAK_ST_TM")) + ":00";
-		am_peak_ed_tm = String.valueOf(peakTmMap.get("AM_PEAK_ED_TM")) + ":00";
-
-		pm_peak_st_tm = String.valueOf(peakTmMap.get("PM_PEAK_ST_TM")) + ":00";
-		pm_peak_ed_tm = String.valueOf(peakTmMap.get("PM_PEAK_ED_TM")) + ":00";
+		if(peakTmMap!=null){
+			if(CommonUtil.notEmpty(peakTmMap.get("AM_PEAK_ST_TM")))
+				am_peak_st_tm = String.valueOf(peakTmMap.get("AM_PEAK_ST_TM")) + ":00";
+			
+			if(CommonUtil.notEmpty(peakTmMap.get("AM_PEAK_ED_TM")))
+				am_peak_ed_tm = String.valueOf(peakTmMap.get("AM_PEAK_ED_TM")) + ":00";
+	
+			if(CommonUtil.notEmpty(peakTmMap.get("PM_PEAK_ST_TM")))
+				pm_peak_st_tm = String.valueOf(peakTmMap.get("PM_PEAK_ST_TM")) + ":00";
+			
+			if(CommonUtil.notEmpty(peakTmMap.get("PM_PEAK_ED_TM")))
+				pm_peak_ed_tm = String.valueOf(peakTmMap.get("PM_PEAK_ED_TM")) + ":00";
+		}
 
 
 		//변수 초기화
@@ -546,8 +553,10 @@ public class OperPlanService extends ServiceSupport {
 					nextNodePhaseInfo = (Map<String, Object>) nextNodeMap.get(String.valueOf(next_node_sn));
 
 					//다음노드 진입현시 정보 확인
-					next_node_type = String.valueOf(nextNodePhaseInfo.get("NODE_TYPE"));
-					next_cross_id = String.valueOf(nextNodePhaseInfo.get("CRS_ID"));
+					if(nextNodePhaseInfo != null ) {
+						next_node_type = String.valueOf(nextNodePhaseInfo.get("NODE_TYPE"));
+						next_cross_id = String.valueOf(nextNodePhaseInfo.get("CRS_ID"));
+					}
 
 					acc_len = 0;
 					dec_len = 0;
@@ -792,6 +801,7 @@ public class OperPlanService extends ServiceSupport {
 								} catch (Exception e) {
 									//필요정차시간이 없는 경우
 									//e.printStackTrace();
+									logger.error("{}", e);
 									
 									dprt_tm = DateUtil.addSeconds2(arrv_tm, TIME_PATTERN, stop_sec_none_peak); //비첨두시정차시간 추가
 								}
@@ -844,11 +854,18 @@ public class OperPlanService extends ServiceSupport {
 
 						//현시정보 확인이 가능한 경우 [[
 						if(!StringUtils.isEmpty(sig_ctr_type)){
-
-							enter_phase_no1 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_1"));
-							enter_phase_no2 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_2"));
-							enter_phase_no3 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_3"));
-
+							try {
+								enter_phase_no1 = Integer.parseInt((String)nextNodePhaseInfo.get("ENT_PHASE_NO_1"));
+								enter_phase_no2 = Integer.parseInt((String)nextNodePhaseInfo.get("ENT_PHASE_NO_2"));
+								enter_phase_no3 = Integer.parseInt((String)nextNodePhaseInfo.get("ENT_PHASE_NO_3"));
+							} catch (Exception e) {
+								e.printStackTrace();
+								logger.error("{}", e);
+								/*enter_phase_no1 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_1"));
+								enter_phase_no2 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_2"));
+								enter_phase_no3 = CommonUtil.bigDecimalToInt(nextNodePhaseInfo.get("ENT_PHASE_NO_3"));*/
+							}
+							
 							if(enter_phase_no1 != 0) {
 								//교차로 도착예정 시각의 진입현시 확인
 								paramMap.put("NODE_ID", next_cross_id);
@@ -1263,6 +1280,7 @@ public class OperPlanService extends ServiceSupport {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("{}", e);
 		}
 		
 		return chgPlList;

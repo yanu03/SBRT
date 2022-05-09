@@ -17,11 +17,15 @@ public interface CurInfoMapper {
 	void refreshCurOperAllocPLRoutInfo();
 	void refreshCurOperAllocPLNodeInfo();
 	
-	Map<String, Object> getBusId(Map<String, Object> paramMap);
+	String getBusId(Map<String, Object> paramMap);
     Map<String, Object> getRoutMst(Map<String, Object> paramMap);
+    
     Map<String, Object> getCurAllocPlInfo(Map<String, Object> paramMap);
+    Map<String, Object> getCurAllocPlInfoByVhcId(Map<String, Object> paramMap);
     Map<String, Object> getCurAllocPlInfoByOperVhcId(Map<String, Object> paramMap);
-    Map<String, Object> getCurNearAllocPlInfo(Map<String, Object> paramMap);
+
+	String getCurNearAllocPlInfo(Map<String, Object> paramMap);
+	String getCurNearAllocPlInfo2(Map<String, Object> paramMap);
     int insertCurAllocPlInfo(Map<String, Object> paramMap);
     int updateOperVhcIdCurAllocPlInfo(Map<String, Object> paramMap);
 	

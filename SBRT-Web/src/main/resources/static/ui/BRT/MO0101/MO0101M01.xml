@@ -605,7 +605,7 @@
 			}
 		}
 		
-		if (repRoutItem != "") {
+		if (repRoutItem != "" && attrId != 4360) {
 			//소켓 데이터에 대표노선이 없어 대표노선에 포함된 노선 ID들과 비교			
 			for(var i=0; i<dlt_searchitem2.getDataLength(); i++) {
 				var routItemOfList = dlt_searchitem2.getCellData(i, "ROUT_ID");		
@@ -649,8 +649,22 @@
 		//console.log(payload.body);
 			try {
 		//		setTimeout(function() {	
-
 					var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+					
+					//order 순서 A.REP_ROUT_ID, A.ROUT_ID, VHC_ID
+					if(curIndexArr.length == 0) {
+						dlt_BRT_CUR_OPER_INFO.insertRow(0);	
+						dlt_BRT_CUR_OPER_INFO.setRowJSON(0, jsonObj, true);
+						
+						var sortOptions = {};
+						//정렬 컬럼 ID
+						sortOptions.sortIndex = "REP_ROUT_ID ROUT_ID VHC_ID";
+						//오름차
+						sortOptions.sortOrder = "1 1 1";
+						dlt_BRT_CUR_OPER_INFO.multisort(sortOptions);
+					}
+					
+					curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 					
 					if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
 						dlt_BRT_OPER_EVENT_HIS.insertRow(0);
@@ -788,6 +802,21 @@
 		//		setTimeout(function() {
 					var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 					
+					//order 순서 A.REP_ROUT_ID, A.ROUT_ID, VHC_ID
+					if(curIndexArr.length == 0) {
+						dlt_BRT_CUR_OPER_INFO.insertRow(0);	
+						dlt_BRT_CUR_OPER_INFO.setRowJSON(0, jsonObj, true);
+						
+						var sortOptions = {};
+						//정렬 컬럼 ID
+						sortOptions.sortIndex = "REP_ROUT_ID ROUT_ID VHC_ID";
+						//오름차
+						sortOptions.sortOrder = "1 1 1";
+						dlt_BRT_CUR_OPER_INFO.multisort(sortOptions);
+					}		
+					
+					curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);			
+					
 					if(curIndexArr.length != 0) {
 						dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
 						
@@ -841,13 +870,22 @@
 						
 						var min = "";
 						var sec = "";
+						var dsptchMessage = "";
 						
+						if(dsptchConts.split(',').length>0){
+							dsptchMessage = dsptchConts.split(',')[0];
+						}
+						else{
+							dsptchMessage = dsptchConts;
+						}
 						//디스패치가 일반메시지가 아닐경우	
-						if(parseInt(dsptchConts) != "undefined" && dsptchDiv != "DP001") {
-							if(Math.abs(parseInt(dsptchConts) >= 60)) {
-								 min = Math.abs(parseInt(dsptchConts/60)) + "분 ";
+						if(parseInt(dsptchMessage) != "undefined" && dsptchDiv != "DP001") {
+							
+							
+							if(Math.abs(parseInt(dsptchMessage) >= 60)) {
+								 min = Math.abs(parseInt(dsptchMessage/60)) + "분 ";
 							}
-							 sec = Math.abs(parseInt(dsptchConts%60)) + "초 ";
+							 sec = Math.abs(parseInt(dsptchMessage%60)) + "초 ";
 							
 							//운행중 디스패치일 경우 
 							if(dsptchDiv == "DP002") {
@@ -1592,13 +1630,21 @@
 			var sec = "";			
 			dsptchDiv =  dlt_BRT_DSPTCH_LOG.getCellData(i, "DSPTCH_DIV");
 			dsptchConts = dlt_BRT_DSPTCH_LOG.getCellData(i, "DSPTCH_CONTS");
+			var dsptchMessage = "";
+			
+			if(dsptchConts.split(',').length>0){
+				dsptchMessage = dsptchConts.split(',')[0];
+			}
+			else{
+				dsptchMessage = dsptchConts;
+			}
 			
 			if(dsptchDiv != "DP001"){
-				if(parseInt(dsptchConts) != "undefined") {
-					if(Math.abs(parseInt(dsptchConts) >= 60)) {
-						 min = Math.abs(parseInt(dsptchConts/60)) + "분 ";
+				if(parseInt(dsptchMessage) != "undefined") {
+					if(Math.abs(parseInt(dsptchMessage) >= 60)) {
+						 min = Math.abs(parseInt(dsptchMessage/60)) + "분 ";
 					}
-					 sec = Math.abs(parseInt(dsptchConts%60)) + "초 ";
+					 sec = Math.abs(parseInt(dsptchMessage%60)) + "초 ";
 					 
 					if(dsptchDiv == "DP002") {
 						if(parseInt(dsptchConts) > 0) {
@@ -1651,18 +1697,18 @@
 	  return zero + n;
 	}
 
-	
+	/*
 	scwin.sub_selectSigOper_submitdone = function(e) {
 		if(sigTimeout) {
 			clearInterval(sigTimeout);	
 		}
-
 		sigTimeout = setTimeout(function showSig() {
 			//$p.executeSubmission(sub_MO0101SCK2);
-			com.executeSubmission(sub_MO0101SCK2);
-			//sigTimeout = setTimeout(showSig, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
+			$p.executeSubmission(sub_MO0101SCK2);
+			sigTimeout = setTimeout(showSig, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
 		}, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
-	};
+		//}, 1000);
+	};*/
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
