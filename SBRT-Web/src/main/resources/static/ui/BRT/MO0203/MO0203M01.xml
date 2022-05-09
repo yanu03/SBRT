@@ -33,6 +33,7 @@
 						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
 						<w2:key id="CONTENT1" name="name2" dataType="text"></w2:key>
 						<w2:key id="CONTENT2" name="name3" dataType="text"></w2:key>
+						<w2:key id="CONTENT3" name="name4" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_sub_search">
@@ -73,18 +74,6 @@
 						<w2:row></w2:row>
 					</w2:data>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_routItem2" saveRemovedData="true">
-					<w2:columnInfo>
-						<w2:column id="ORG_ID" name="기관ID" dataType="text"></w2:column>
-						<w2:column id="ORG_NM" name="기관명" dataType="text"></w2:column>
-					</w2:columnInfo>
-				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dlt_routItem3" saveRemovedData="true">
-					<w2:columnInfo>
-						<w2:column id="CLSFCTN_ID" name="분류ID" dataType="text"></w2:column>
-						<w2:column id="CLSFCTN_NM" name="분류명" dataType="text"></w2:column>
-					</w2:columnInfo>
-				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_DISP_VW" saveRemovedData="true">
 					<w2:columnInfo>
 						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
@@ -108,31 +97,70 @@
 						<w2:key id="NODE_ID" name="노드ID" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_CUR_OPER_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="VHC_NO" name="차번" dataType="text"></w2:column>
+						<w2:column id="OPER_DT" name="운행일" dataType="text"></w2:column>
+						<w2:column id="VHC_ID" name="차량ID" dataType="text"></w2:column>
+						<w2:column id="GPS_X" name="현재GPS_X좌표" dataType="text"></w2:column>
+						<w2:column id="GPS_Y" name="현재GPS_Y좌표" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
+						<w2:column id="CHAS_NO" name="차대번호" dataType="text"></w2:column>
+						<w2:column id="MAKER" name="제조사" dataType="text"></w2:column>
+						<w2:column id="DRV_NM" name="운전자" dataType="text"></w2:column>
+						<w2:column id="COMP_NM" name="운수사" dataType="text"></w2:column>
+						<w2:column id="BUS_STS" name="버스상태" dataType="text"></w2:column>
+						<w2:column id="OPER_STS" name="운행상태" dataType="text"></w2:column>
+						<w2:column id="ALLOC_NO" name="배차번호" dataType="text"></w2:column>
+						<w2:column id="CUR_SPD" name="현재속도" dataType="text"></w2:column>
+						<w2:column id="CUR_STOP_TM" name="현재정차시간" dataType="text"></w2:column>
+						<w2:column id="NEXT_NODE_ID" name="다음노드아이디" dataType="text"></w2:column>
+						<w2:column id="NEXT_NODE_NM" name="다음노드명" dataType="text"></w2:column>
+						<w2:column id="PRV_PLCE_NM" name="이전장소명" dataType="text"></w2:column>
+						<w2:column id="NODE_TYPE" name="노드유형" dataType="text"></w2:column>
+						<w2:column id="MESSAGE" name="디스패치메시지" dataType="text"></w2:column>
+						<w2:column id="EVT_TYPE" name="이벤트타입" dataType="text"></w2:column>
+						<w2:column id="NEXT_NODE_TYPE" name="다음노드유형" dataType="text"></w2:column>
+						<w2:column id="NODE_NM" name="이전노드명" dataType="text"></w2:column>
+						<w2:column id="DSPTCH_KIND" name="디스패치종류" dataType="text"></w2:column>
+						<w2:column id="DSPTCH_DIV" name="디스패치구분" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_repRoutItem" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_MO0203G0R0" ref='data:json,dma_search' target='data:json,dlt_BMS_NODE_MST' action="/mo/MO0203G0R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_MO0203G0R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0203SHI0" ref="data:json,dma_search" target="data:json,dlt_routItem" action="/rout/selectRoutItem" method="post"
-				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="scwin.sub_MO0203SHI0_submitdone" ev:submiterror="" abortTrigger="">
-			</xf:submission>
-			<xf:submission id="sub_MO0203SHI1" ref="" target="data:json,dlt_routItem2" action="/mo/MO0203SHI1" method="post"
-				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
-			</xf:submission>
-			<xf:submission id="sub_MO0203SHI2" ref="" target="data:json,dlt_routItem3" action="/mo/MO0203SHI2" method="post"
-				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_MO0203SHI0" ref="data:json,dma_search" target="data:json,dlt_routItem" action="/rout/selectRoutItem"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0203SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_MO0203G2R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ROUT_NODE_DISP_VW"
-				action="/rout/selectNodeDispListByRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				action="/rout/selectNodeDispListByRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
+				errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="" ev:submiterror=""
+				abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0203SCK" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ETA_INFO" action="/mo/MO0203SCK" method="post"
+			<xf:submission id="sub_MO0203SCK" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ETA_INFO" action="/mo/MO0203SCK"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0203SCK_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_MO0203G1R0" ref="data:json,dma_search" target="data:json,dlt_BRT_CUR_OPER_INFO" action="/mo/MO0101G0R0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_MO0203SHI1" ref="" target="data:json,dlt_repRoutItem" action="/repRout/selectRepRoutItem" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="scwin.sub_MO0203SCK_submitdone" ev:submiterror="" abortTrigger="">
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
@@ -173,15 +201,12 @@
 
 		MO0203G0.mergeCol(2,false);
 		MO0203G0.mergeCells("byrestriccol");
-		$p.executeSubmission(sub_MO0203SHI0);	
+		sub_MO0203G1R0	
 		$p.executeSubmission(sub_MO0203SHI1);
-		$p.executeSubmission(sub_MO0203SHI2);			
-		
-		
 	};	
 	
 	scwin.btn_sub_move = function(){
-		com.gridMove(MO0203G0,"NODE_ID", dma_search.get("CONTENT2"), MO0203G0.getFocusedRowIndex());
+		com.gridMove(MO0203G0,"NODE_ID", dma_search.get("CONTENT3"), MO0203G0.getFocusedRowIndex());
 	}
 	
 	scwin.MO0203SCK = function () {
@@ -525,7 +550,9 @@
 	};
 
 
-	
+	scwin.TYPE1_onviewchange = function(info) {
+		$p.executeSubmission(sub_MO0203SHI0);
+	}
 	
 	
 	]]></script>
@@ -542,8 +569,18 @@
 					</xf:group>
 					<xf:group class="search" id="" style="">
 						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE1_onviewchange" id="TYPE1" optionOrder="false"
+							ref="data:dma_search.CONTENT1" class="search_type_100" style="" submenuSize="auto" textAlign="center" chooseOptionLabel="">
+							<xf:choices>
+								<xf:itemset nodeset="data:dlt_repRoutItem">
+									<xf:label ref="REP_ROUT_NM"></xf:label>
+									<xf:value ref="REP_ROUT_ID"></xf:value>
+								</xf:itemset>
+							</xf:choices>
+						</xf:select1>					
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
 							ev:onviewchange="scwin.TYPE_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE" optionOrder="false"
-							ref="data:dma_search.CONTENT1" class="search_type_100" style="" submenuSize="auto" textAlign="left">
+							ref="data:dma_search.CONTENT2" class="search_type_100" style="" submenuSize="auto" textAlign="left">
 							<xf:choices>
 								<xf:itemset nodeset="data:dlt_routItem">
 									<xf:label ref="ROUT_NM"></xf:label>
@@ -551,7 +588,7 @@
 								</xf:itemset>
 							</xf:choices>
 						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT2" placeholder="정류소ID 또는 정류소명"></xf:input>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT3" placeholder="정류소ID 또는 정류소명"></xf:input>
 						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
 							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
 							id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT1" search="start" selectedData=""

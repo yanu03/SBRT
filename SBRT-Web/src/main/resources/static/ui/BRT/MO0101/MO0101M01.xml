@@ -484,6 +484,7 @@
 //		});
 
 		$(".map-type").find(".map-type-01").click( function() {
+			
 			$(".map-type").find(".map-type-02").removeClass("active");
 			$(".map-type").find(".maptype2-text").removeClass("active");
 			
@@ -666,7 +667,8 @@
 					
 					curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 					
-					if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
+				//	if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
+					if(curIndexArr.length != 0) {
 						dlt_BRT_OPER_EVENT_HIS.insertRow(0);
 						var today = new Date();   
 						var hours = leadingZeros(today.getHours(), 2);
@@ -759,21 +761,24 @@
 							break;												
 						}
 						dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_DATA", eventMessage);
-						
-						routMap.mapInfo["map_MO0101_vehicle"].isEvent = "on";
 						dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
 						
-						//정류소 도착
-						if(eventCode == "ET001") {
-							routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ET001";
-						}
-						//정류소 출발
-						else if(eventCode == "ET002") {
-							routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ET002";
-						}
-						
-						else{
-							routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ETC";	
+						if (curIndexArr[0] == MO0101G0.getFocusedRowIndex()) {
+							routMap.mapInfo["map_MO0101_vehicle"].isEvent = "on";
+							
+							//정류소 도착
+							if(eventCode == "ET001") {
+								routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ET001";
+							}
+							//정류소 출발
+							else if(eventCode == "ET002") {
+								routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ET002";
+							}
+							
+							else{
+								routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ETC";	
+								
+							}
 							
 						}
 						routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
@@ -975,8 +980,9 @@
 	scwin.MO0101G0_onrowindexchange = function(row,oldRow) {
 		gbMap.setLevel(4);
 		busFocus = row;		 
-		com.executeSubmission(sub_selectNodeListByRepRout);		 
-		 			
+		com.executeSubmission(sub_selectNodeListByRepRout);
+		 
+		//routMap.moveMap("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getCellData(row, "GPS_Y"), dlt_BRT_CUR_OPER_INFO.getCellData(row, "GPS_X")); 			
 	};
 	
 	scwin.sub_MO0101G0R0_submitdone = function(e) {
