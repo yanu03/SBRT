@@ -2431,10 +2431,12 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 
 	}
 	else if (routMap.mapInfo[mapId].isShowIncdnt == "on"){
+		imageSize = new kakao.maps.Size(19, 19);
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/incdnt.png", imageSize);
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/incdnt_selected.png", imageSize);
 	}
 	else if (routMap.mapInfo[mapId].isShowViolt == "on"){
+		imageSize = new kakao.maps.Size(19, 19);
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/violt.png", imageSize);
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/violt_selected.png", imageSize);
 	}
@@ -5303,6 +5305,7 @@ routMap.showVehicleClickOverlay2 = function(mapId, json, cur_vhc_id, grid, index
  * @param focusIdx : 포커스된 index
  */
 routMap.moveVehicle = function(mapId, json, index, focusIdx) {
+	debugger;
 	if(typeof routMap.mapInfo[mapId].busMarkers[index] == "undefined" || typeof routMap.mapInfo[mapId].busOverArr[index] == "undefined"){
 		
 	}
@@ -5410,7 +5413,7 @@ routMap.showVehicleClickOverlay = function(mapId, list, vhc_id, grid, gridChk, s
 				routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
 			}
 			else {
-				routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
+				//routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
 			}
 		}
 	}
