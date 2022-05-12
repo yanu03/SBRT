@@ -161,10 +161,10 @@ public class EventThread extends Thread {
 				}
 
 				try {
-					Map<String, Object> curAllocPlInfo = curInfoMapper.getCurAllocPlInfoByOperVhcId(busInfoMap);
+					Map<String, Object> curAllocPlInfo = curInfoMapper.selectCurAllocPlInfoByOperVhcId(busInfoMap);
 					if (curAllocPlInfo == null || CommonUtil.empty(curAllocPlInfo.get("OPER_VHC_ID"))) {
 						
-						 curAllocPlInfo = curInfoMapper.getCurAllocPlInfoByVhcId(busInfoMap); 
+						 curAllocPlInfo = curInfoMapper.selectCurAllocPlInfoByVhcId(busInfoMap); 
 						 if(curAllocPlInfo!=null) busInfoMap.put("ALLOC_NO", curAllocPlInfo.get("ALLOC_NO")); 
 						 else busInfoMap.put("ALLOC_NO", 0);
 					}
@@ -266,9 +266,9 @@ public class EventThread extends Thread {
 
 				try {
 					
-					Map<String, Object> curAllocPlInfo = curInfoMapper.getCurAllocPlInfoByOperVhcId(busEventMap);
+					Map<String, Object> curAllocPlInfo = curInfoMapper.selectCurAllocPlInfoByOperVhcId(busEventMap);
 					if (curAllocPlInfo == null || CommonUtil.empty(curAllocPlInfo.get("OPER_VHC_ID"))) {
-						curAllocPlInfo = curInfoMapper.getCurAllocPlInfoByVhcId(busEventMap);
+						curAllocPlInfo = curInfoMapper.selectCurAllocPlInfoByVhcId(busEventMap);
 			            if(curAllocPlInfo==null){
 			            }
 			            else{
@@ -287,7 +287,7 @@ public class EventThread extends Thread {
 							//busEventMap.put("COR_ID", routeCourseStr[1]);
 						//}
 					}
-					if ("RR00000002".equals(busEventMap.get("REP_ROUT_ID"))) {
+					/*if ("RR00000002".equals(busEventMap.get("REP_ROUT_ID"))) {
 						if(curAllocPlInfo==null) {
 							if (("ND00000787".equals(busEventMap.get("NODE_ID")) || 
 									"293055002".equals(busEventMap.get("NODE_ID"))&&"WD001".equals(busEventMap.get("WAY_DIV"))||
@@ -316,7 +316,8 @@ public class EventThread extends Thread {
 							}
 						}
 					}
-					else {
+					else */
+					{
 						
 						if(curAllocPlInfo==null) {
 							if (eventCode == (byte) 0x03 || eventCode == (byte) 0x04) {
@@ -348,7 +349,7 @@ public class EventThread extends Thread {
 						logger.debug("[" + busEventMap.get("ALLOC_NO") + "," + busEventMap.get("REP_ROUT_ID") + ","
 								+ busEventMap.get("WAY_DIV") + "] In BusOperEvent alloc no");
 					}
-					insertCurOperInfo(busEventMap);
+					//insertCurOperInfo(busEventMap);
 				} catch (DuplicateKeyException e) {
 					// logger.error("", e);
 				} catch (Exception e) {
