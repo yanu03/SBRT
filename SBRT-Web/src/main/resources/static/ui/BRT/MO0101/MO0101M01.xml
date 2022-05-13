@@ -596,6 +596,31 @@
 		var routItem = dma_search.get("CONTENT2");
 		var vhcNoItem = dma_search.get("CONTENT3");
 		
+		//운행상태가 운행 종료일때 List에 있으면 제거함
+		if(jsonObj.OPER_STS = "OS002") {
+			var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+			if(curIndexArr.length != 0) {
+				dlt_BRT_CUR_OPER_INFO.removeRow(curIndexArr[0]);
+				
+				//운행 종료된 차량이 그리드 focus라면 focus를 변경함
+				//차량 그리드 목록이 한 개일땐 오류 날 듯 
+				if(curIndexArr[0] == MO0101G0.getFocusedRowIndex()) {
+					if(dlt_BRT_CUR_OPER_INFO.getAllJSON().length != MO0101G0.getFocusedRowIndex()+1) {
+						MO0101G0.setFocusedCell(MO0101G0.getFocusedRowIndex+1, "VHC_NO");
+					}
+					else {
+						MO0101G0.setFocusedCell(MO0101G0.getFocusedRowIndex-1, "VHC_NO");
+					}
+				}
+				
+				routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
+					dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0, jsonObj);					
+			}
+			
+			return;
+		}
+		
+		
 		//GPS값 튈 경우 아무 동작도 안되게 처리
 		if(typeof(jsonObj.GPS_X) != "undefined" && typeof(jsonObj.GPS_Y) != "undefined"){
 			if (jsonObj.GPS_X<120 || jsonObj.GPS_Y>130) {
