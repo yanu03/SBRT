@@ -631,7 +631,7 @@
 			}
 		}
 		
-		if (repRoutItem != "" && attrId != 4360) {
+		if (repRoutItem != "" && attrId != util.ATTR_ID.TRAFFIC_LIGHT_STATUS_RESPONSE) {
 			//소켓 데이터에 대표노선이 없어 대표노선에 포함된 노선 ID들과 비교			
 			for(var i=0; i<dlt_searchitem2.getDataLength(); i++) {
 				var routItemOfList = dlt_searchitem2.getCellData(i, "ROUT_ID");		
@@ -656,8 +656,7 @@
 		
 		
 		
-		//attrId = 4015 : 정류소별 차량 도착 정보
-		if(attrId == 4015){
+		if(attrId == util.ATTR_ID.BUS_ARRIVAL_INFO){
 		//payload.body >>>> {"ATTR_ID":4015,"LIST":[{"ROUT_ID":"RT00000080","REMAIN_TM":1364334,"REMAIN_STTN":2}],"STTN_ID":"ND00000017"}
 		
 		//jsonObj.STTN_ID => 정류소아이디
@@ -671,7 +670,7 @@
 		
 		
 		//4012: 운행이벤트
-		else if(attrId == 4012) {
+		else if(attrId == util.ATTR_ID.BUS_OPER_EVENT) {
 		//console.log(payload.body);
 			try {
 		//		setTimeout(function() {	
@@ -820,7 +819,7 @@
 		} 
 		
 		//attrId = 4014 : 실시간 차량 위치 정보
-		else if(attrId == 4014){
+		else if(attrId == util.ATTR_ID.BUS_INFO){
 				//payload.body >>>> {"GPS_Y":36.484005,"ATTR_ID":4014,"DVC_ID":"DV00000002","GPS_X":127.25973,"VHC_ID":"VH00000002"}		
 		
 		//jsonObj.VHC_ID => 차량아이디
@@ -865,7 +864,7 @@
 			}	
 		}
 		
-		else if(attrId == 4020) { //4020: 디스패치
+		else if(attrId == util.ATTR_ID.DISPATCH) { //4020: 디스패치
 			//payload.body >>>> {MESSAGE=천천히가세요, DSPTCH_DIV=DP001, ATTR_ID=4020, DSPTCH_KIND=DK002, VHC_ID=VH00000002}
 			
 			//jsonObj.DSPTCH_DIV => 디스패치 구분코드 : DP001(일반메시지), DP002(운행중디스패치), DP003(정차중디스패치)
@@ -974,7 +973,7 @@
 		}
 		
 		//신호등 현시 수신
-		else if (attrId == 4360) {
+		else if (attrId == util.ATTR_ID.TRAFFIC_LIGHT_STATUS_RESPONSE) {
 			var crsId = null;
 			var phaseNo = null;
 			
