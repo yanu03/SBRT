@@ -95,7 +95,7 @@
         SELECT * FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID} LIMIT 0, 1
     </select>
     
-<select id="getCurAllocPlInfo" resultType="Map" parameterType="Map">
+<select id="selectCurAllocPlInfo" resultType="Map" parameterType="Map">
 	SELECT
 		OPER_DT,
 		REP_ROUT_ID,
@@ -103,14 +103,14 @@
 		WAY_DIV,
 		VHC_ID,
 		OPER_VHC_ID
-	FROM BRT_CUR_ALLOC_PL_INFO
+	FROM BRT_CUR_ALLOC_PL_VW 
 	WHERE OPER_DT = #{OPER_DT}
 		AND REP_ROUT_ID = #{REP_ROUT_ID}
 		AND ALLOC_NO = #{ALLOC_NO}
 	LIMIT 0, 1
 	</select>
 
-	<select id="getCurAllocPlInfoByVhcId" resultType="Map" parameterType="Map">
+	<select id="selectCurAllocPlInfoByVhcId" resultType="Map" parameterType="Map">
 	SELECT
 		OPER_DT,
 		REP_ROUT_ID,
@@ -118,7 +118,7 @@
 		WAY_DIV,
 		VHC_ID,
 		OPER_VHC_ID
-	FROM BRT_CUR_ALLOC_PL_INFO
+	FROM BRT_CUR_ALLOC_PL_VW
 	WHERE OPER_DT = #{OPER_DT}
 		AND REP_ROUT_ID = #{REP_ROUT_ID}
 		AND WAY_DIV = #{WAY_DIV}
@@ -127,7 +127,7 @@
 	</select>
 	
     <!-- 현재운행중인 배차계획 정보를 받아옴-->
-	<select id="getCurAllocPlInfoByOperVhcId" resultType="HashMap" parameterType="HashMap" >
+	<select id="selectCurAllocPlInfoByOperVhcId" resultType="HashMap" parameterType="HashMap" >
 	SELECT
 		OPER_DT,
 		REP_ROUT_ID,
@@ -135,7 +135,7 @@
 		WAY_DIV,
 		VHC_ID,
 		OPER_VHC_ID
-	FROM BRT_CUR_ALLOC_PL_INFO
+	FROM BRT_CUR_ALLOC_PL_VW
 	WHERE OPER_DT = #{OPER_DT}/*SUBSTRING(NOW(), 0, 10)*/
 		AND REP_ROUT_ID = #{REP_ROUT_ID}
 		AND WAY_DIV = #{WAY_DIV}

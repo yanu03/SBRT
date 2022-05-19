@@ -1,21 +1,48 @@
+//util ì „ì—­ë³€ìˆ˜
 var util = {
-	
+	ATTR_ID : {
+		BUS_ARRIVAL_INFO : 2022 //ì •ë¥˜ì†Œ ì°¨ëŸ‰ ë„ì°©ì •ë³´
+	,	TRAFFIC_STATION_ARRIVAL : 4110
+	,	TRAFFIC_STATION_LEAVE : 4112
+	,	TRAFFIC_SBRT_LOCATION_GPS : 4120
+	,	TRAFFIC_BUS_LOCATION_GPS : 4122
+	,	TRAFFIC_LINK_SPEED : 4130
+	,	TRAFFIC_DOOR_OPEN_CLOSE : 4140
+	,	TRAFFIC_OPER_ALLOC_PLAN : 4150
+	,	TRAFFIC_PLAN_INFO_REQUEST : 4210
+	,	TRAFFIC_TOD_PLAN_RESPONSE : 4220
+	,	TRAFFIC_BASE_PLAN_RESPONSE : 4230
+	,	TRAFFIC_HOLIDAY_PLAN_RESPONSE : 4240
+	,	TRAFFIC_WEEKLY_PLAN_RESPONSE : 4250
+	,	TRAFFIC_MODULE_ONE : 4310
+	,	TRAFFIC_MODULE_TWO : 4320
+	,	TRAFFIC_MODULE_THREE : 4330
+	,	TRAFFIC_CHANGED_TOD_INFO : 4340
+	,	TRAFFIC_LIGHT_STATUS_REQUEST : 4350
+	,	TRAFFIC_LIGHT_STATUS_RESPONSE : 4360 //ì‹ í˜¸ë“± í˜„ì‹œ
+	,	STANDARD_VIOLATE_INFORMATION : 4000
+	,	POWER_ON_OFF : 4010
+	,	BUS_OPER_EVENT : 4012 //ìš´í–‰ ì´ë²¤íŠ¸
+	,	BUS_INFO : 4014 //ì‹¤ì‹œê°„ ì°¨ëŸ‰ ìœ„ì¹˜ ì •ë³´
+	,	DISPATCH : 4020 //ë””ìŠ¤íŒ¨ì¹˜
+	,	DISPATCH_LIST : 4021
+	}
 }
 
 /**
- * ÁÂÃø¹®ÀÚ¿­Ã¤¿ì±â
- * @param str : ´ë»ó ¹®ÀÚ¿­
- * @param padLen : ÃÖ´ë Ã¤¿ì°íÀÚ ÇÏ´Â ±æÀÌ
- * @param padStr : Ã¤¿ì°íÀÚÇÏ´Â ¹®ÀÚ(char)
- * @return string : °á°ú ¹®±¸
+ * ì¢Œì¸¡ë¬¸ìì—´ì±„ìš°ê¸°
+ * @param str : ëŒ€ìƒ ë¬¸ìì—´
+ * @param padLen : ìµœëŒ€ ì±„ìš°ê³ ì í•˜ëŠ” ê¸¸ì´
+ * @param padStr : ì±„ìš°ê³ ìí•˜ëŠ” ë¬¸ì(char)
+ * @return string : ê²°ê³¼ ë¬¸êµ¬
  */
 util.lpad = function (str, padLen, padStr) {
     if (padStr.length > padLen) {
-        console.log("¿À·ù : Ã¤¿ì°íÀÚ ÇÏ´Â ¹®ÀÚ¿­ÀÌ ¿äÃ» ±æÀÌº¸´Ù Å®´Ï´Ù");
+        console.log("ì˜¤ë¥˜ : ì±„ìš°ê³ ì í•˜ëŠ” ë¬¸ìì—´ì´ ìš”ì²­ ê¸¸ì´ë³´ë‹¤ í½ë‹ˆë‹¤");
         return str;
     }
-    str += ""; // ¹®ÀÚ·Î
-    padStr += ""; // ¹®ÀÚ·Î
+    str += ""; // ë¬¸ìë¡œ
+    padStr += ""; // ë¬¸ìë¡œ
     while (str.length < padLen)
         str = padStr + str;
     str = str.length >= padLen ? str.substring(0, padLen) : str;
@@ -24,20 +51,20 @@ util.lpad = function (str, padLen, padStr) {
 
 
 /**
- * ¿ìÃø¹®ÀÚ¿­Ã¤¿ì±â
+ * ìš°ì¸¡ë¬¸ìì—´ì±„ìš°ê¸°
 
- * @param str : ´ë»ó ¹®ÀÚ¿­
- * @param padLen : ÃÖ´ë Ã¤¿ì°íÀÚ ÇÏ´Â ±æÀÌ
- * @param padStr : Ã¤¿ì°íÀÚÇÏ´Â ¹®ÀÚ(char)
- * @return string : °á°ú ¹®±¸
+ * @param str : ëŒ€ìƒ ë¬¸ìì—´
+ * @param padLen : ìµœëŒ€ ì±„ìš°ê³ ì í•˜ëŠ” ê¸¸ì´
+ * @param padStr : ì±„ìš°ê³ ìí•˜ëŠ” ë¬¸ì(char)
+ * @return string : ê²°ê³¼ ë¬¸êµ¬
  */
 util.rpad = function (str, padLen, padStr) {
     if (padStr.length > padLen) {
-        console.log("¿À·ù : Ã¤¿ì°íÀÚ ÇÏ´Â ¹®ÀÚ¿­ÀÌ ¿äÃ» ±æÀÌº¸´Ù Å®´Ï´Ù");
+        console.log("ì˜¤ë¥˜ : ì±„ìš°ê³ ì í•˜ëŠ” ë¬¸ìì—´ì´ ìš”ì²­ ê¸¸ì´ë³´ë‹¤ í½ë‹ˆë‹¤");
         return str + "";
     }
-    str += ""; // ¹®ÀÚ·Î
-    padStr += ""; // ¹®ÀÚ·Î
+    str += ""; // ë¬¸ìë¡œ
+    padStr += ""; // ë¬¸ìë¡œ
     while (str.length < padLen)
         str += padStr;
     str = str.length >= padLen ? str.substring(0, padLen) : str;
@@ -45,9 +72,9 @@ util.rpad = function (str, padLen, padStr) {
 }
 
 /**
- * ÇöÀç ³¯Â¥ °¡Á®¿À±â(³â¿ùÀÏ½ÃºĞÃÊ)
+ * í˜„ì¬ ë‚ ì§œ ê°€ì ¸ì˜¤ê¸°(ë…„ì›”ì¼ì‹œë¶„ì´ˆ)
 
- * @param day : ´ë»ó ³¯Â¥
+ * @param day : ëŒ€ìƒ ë‚ ì§œ
  */
 util.getCurrentDate = function(day) {
 	var date = new Date();
@@ -73,11 +100,11 @@ util.getCurrentDate = function(day) {
 }
 
 /**
- * Æ¯Á¤ ÀÚ¸®¼ö¸¸Å­ gps °ªÀ» ÀÚ¸§
+ * íŠ¹ì • ìë¦¬ìˆ˜ë§Œí¼ gps ê°’ì„ ìë¦„
 
- * @param in_gps : ´ë»ó gps °ª
- * @param point : ¼Ò¼öÁ¡ ÀÚ¸®¼ö
- * @return float : °á°ú°ª
+ * @param in_gps : ëŒ€ìƒ gps ê°’
+ * @param point : ì†Œìˆ˜ì  ìë¦¬ìˆ˜
+ * @return float : ê²°ê³¼ê°’
  */
 util.getDispGps = function(in_gps, point) {
 	var index = Math.pow(10, point);
@@ -85,10 +112,10 @@ util.getDispGps = function(in_gps, point) {
 }
 
 /**
- * ½ÃºĞÃÊ¸¦ ÃÊ·Î ¹Ù²Ş
+ * ì‹œë¶„ì´ˆë¥¼ ì´ˆë¡œ ë°”ê¿ˆ
 
- * @param time : ½ÃºĞÃÊ ¹®±¸
- * @return int : º¯°æµÈ ÃÊ
+ * @param time : ì‹œë¶„ì´ˆ ë¬¸êµ¬
+ * @return int : ë³€ê²½ëœ ì´ˆ
  */
 util.timeToSecond = function(time){
 	var hour = time.substring(0, 2);
@@ -100,10 +127,10 @@ util.timeToSecond = function(time){
 
 
 /**
- * ÃÊ¸¦ ½ÃºĞÃÊ·Î ¹Ù²Ş
+ * ì´ˆë¥¼ ì‹œë¶„ì´ˆë¡œ ë°”ê¿ˆ
 
- * @param second : ÃÊ
- * @return String : º¯°æµÈ ½ÃºĞÃÊ
+ * @param second : ì´ˆ
+ * @return String : ë³€ê²½ëœ ì‹œë¶„ì´ˆ
  */
 util.secondToTime = function(second){
 	var hour = parseInt(second/3600);
@@ -114,11 +141,11 @@ util.secondToTime = function(second){
 }
 
 /**
- * ½Ã°£ »©±â : 2°³ÀÇ ½ÃºĞÃÊ¸¦ »©¼­ ÃÊ·Î return ÇÔ
+ * ì‹œê°„ ë¹¼ê¸° : 2ê°œì˜ ì‹œë¶„ì´ˆë¥¼ ë¹¼ì„œ ì´ˆë¡œ return í•¨
 
- * @param stTm : ½ÃÀÛ½ÃºĞÃÊ
- * @param edTm : Á¾·á½ÃºĞÃÊ
- * @return int : °è»êµÈ ÃÊ
+ * @param stTm : ì‹œì‘ì‹œë¶„ì´ˆ
+ * @param edTm : ì¢…ë£Œì‹œë¶„ì´ˆ
+ * @return int : ê³„ì‚°ëœ ì´ˆ
  */
 util.dateMinus = function(stTm, edTm){
 	var stTmSec = util.timeToSecond(stTm);
@@ -128,11 +155,11 @@ util.dateMinus = function(stTm, edTm){
 }
 
 /**
- * ½Ã°£ ´õÇÏ±â : 2°³ÀÇ ½ÃºĞÃÊ¸¦ ´õÇØ¼­ ÃÊ·Î return ÇÔ
+ * ì‹œê°„ ë”í•˜ê¸° : 2ê°œì˜ ì‹œë¶„ì´ˆë¥¼ ë”í•´ì„œ ì´ˆë¡œ return í•¨
 
- * @param stTm : ½ÃÀÛ½ÃºĞÃÊ
- * @param edTm : Á¾·á½ÃºĞÃÊ
- * @return int : °è»êµÈ ÃÊ
+ * @param stTm : ì‹œì‘ì‹œë¶„ì´ˆ
+ * @param edTm : ì¢…ë£Œì‹œë¶„ì´ˆ
+ * @return int : ê³„ì‚°ëœ ì´ˆ
  */
 util.datePlus = function(stTm, edTm){
 	var stTmSec = util.timeToSecond(stTm);
@@ -142,11 +169,11 @@ util.datePlus = function(stTm, edTm){
 }
 
 /**
- * ½Ã°£ »©±â : 2°³ÀÇ ½ÃºĞÃÊ¸¦ »©¼­ ½ÃºĞÃÊ·Î return ÇÔ
+ * ì‹œê°„ ë¹¼ê¸° : 2ê°œì˜ ì‹œë¶„ì´ˆë¥¼ ë¹¼ì„œ ì‹œë¶„ì´ˆë¡œ return í•¨
 
- * @param stTm : ½ÃÀÛ½ÃºĞÃÊ
- * @param edTm : Á¾·á½ÃºĞÃÊ
- * @return int : °è»êµÈ ½ÃºĞÃÊ
+ * @param stTm : ì‹œì‘ì‹œë¶„ì´ˆ
+ * @param edTm : ì¢…ë£Œì‹œë¶„ì´ˆ
+ * @return int : ê³„ì‚°ëœ ì‹œë¶„ì´ˆ
  */
 util.dateMinus2 = function(stTm, edTm){
 	var stTmSec = util.timeToSecond(stTm);
@@ -157,11 +184,11 @@ util.dateMinus2 = function(stTm, edTm){
 }
 
 /**
- * ½Ã°£ ´õÇÏ±â : 2°³ÀÇ ½ÃºĞÃÊ¸¦ ´õÇØ¼­ ½ÃºĞÃÊ·Î return ÇÔ
+ * ì‹œê°„ ë”í•˜ê¸° : 2ê°œì˜ ì‹œë¶„ì´ˆë¥¼ ë”í•´ì„œ ì‹œë¶„ì´ˆë¡œ return í•¨
 
- * @param stTm : ½ÃÀÛ½ÃºĞÃÊ
- * @param edTm : Á¾·á½ÃºĞÃÊ
- * @return int : °è»êµÈ ½ÃºĞÃÊ
+ * @param stTm : ì‹œì‘ì‹œë¶„ì´ˆ
+ * @param edTm : ì¢…ë£Œì‹œë¶„ì´ˆ
+ * @return int : ê³„ì‚°ëœ ì‹œë¶„ì´ˆ
  */
 util.datePlus2 = function(stTm, edTm){
 	var stTmSec = util.timeToSecond(stTm);
@@ -171,9 +198,9 @@ util.datePlus2 = function(stTm, edTm){
 }
 
 /**
- * ÇöÀç ³¯Â¥ °¡Á®¿À±â(³â¿ùÀÏ)
+ * í˜„ì¬ ë‚ ì§œ ê°€ì ¸ì˜¤ê¸°(ë…„ì›”ì¼)
 
- * @param day : ´ë»ó ³¯Â¥
+ * @param day : ëŒ€ìƒ ë‚ ì§œ
  */
 util.getCurrentDate2 = function(day){
 	var date = new Date();
@@ -190,9 +217,9 @@ util.getCurrentDate2 = function(day){
 }
 
 /**
- * ÇöÀç ³¯Â¥ °¡Á®¿À±â(³â-¿ù-ÀÏ)
+ * í˜„ì¬ ë‚ ì§œ ê°€ì ¸ì˜¤ê¸°(ë…„-ì›”-ì¼)
 
- * @param day : ´ë»ó ³¯Â¥
+ * @param day : ëŒ€ìƒ ë‚ ì§œ
  */
 util.getCurrentDate3 = function(day){
 	var date = new Date();
@@ -209,10 +236,10 @@ util.getCurrentDate3 = function(day){
 }
 
 /**
- * ¿¢¼¿ ³¯Â¥¸¦ ºĞÃÊ·Î º¯È¯
+ * ì—‘ì…€ ë‚ ì§œë¥¼ ë¶„ì´ˆë¡œ ë³€í™˜
 
- * @param exlDate : ¿¢¼¿ ³¯Â¥
- * @return string : º¯È¯ÇÑ ºĞÃÊ
+ * @param exlDate : ì—‘ì…€ ë‚ ì§œ
+ * @return string : ë³€í™˜í•œ ë¶„ì´ˆ
  */
 util.getExlDateToMinSec = function(exlDate) {
 	if(exlDate.length>5){
