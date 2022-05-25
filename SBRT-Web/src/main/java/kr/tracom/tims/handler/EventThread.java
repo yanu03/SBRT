@@ -55,6 +55,135 @@ public class EventThread extends Thread {
 
 	// @Autowired
 	WsClient webSocketClient;
+	
+	private static Map<String, Object> g_busOperInfoMap = new HashMap<>();
+	
+	private static Map<String, Object> g_busIdMap = new HashMap<>();
+	
+	private static Map<String, Object> g_routMap = new HashMap<>();
+	
+	private static Map<String, Object> g_operStsMap  = new HashMap<>();
+	
+	private boolean checkChangeRunTypeBusOperInfo(AtBusInfo busInfo) {
+		String impId = busInfo.getImpId();
+		if ((impId != null) && (impId.isEmpty() == false)) {
+			AtBusInfo oldBusInfo = (AtBusInfo) g_busOperInfoMap.get(impId);
+			if (oldBusInfo == null || oldBusInfo.getRunType() != busInfo.getRunType()) {
+				if (busInfo != null && oldBusInfo != null) {
+					logger.info("checkChangeRunTypeBusInfo busInfo: {}, oldBusInfo: {}", busInfo, oldBusInfo);
+				}
+                if(g_busOperInfoMap!=null) {
+                	g_busOperInfoMap.put(impId, busInfo);
+                }
+                else{
+                	g_busOperInfoMap = new HashMap<>();
+                	g_busOperInfoMap.put(impId, busInfo);
+                }
+				return true;
+			}
+			return false;
+		}
+		return false;
+	}
+	
+	private String getBusId(Map<String, Object> paramMap) {
+		String  busNo = (String)paramMap.get("BUS_NO");
+		logger.debug("getBusId() busNo="+busNo);
+		String busId = null;
+		if(g_busIdMap==null) {
+			g_busIdMap = new HashMap<>();
+			busId = curInfoMapper.getBusId(paramMap);
+			g_busIdMap.put(busNo, busId);
+			return busId;
+		}
+		
+		
+		if ((busNo != null) && (busNo.isEmpty() == false)) {
+			busId = (String)g_busIdMap.get(busNo); 
+			if ((busId != null) && (busId.isEmpty() == false)) {
+				return busId;
+			}
+			else {
+				busId = curInfoMapper.getBusId(paramMap);
+				g_busIdMap.put(busNo, busId);
+				return busId;
+			}
+		}
+		else {
+			return null;
+		}
+	}
+	
+	private Map<String, Object> getRoutMst(Map<String, Object> paramMap) {
+		String routId= (String)paramMap.get("ROUT_ID");
+		logger.debug("getRoutMst() routId="+routId);
+		Map<String, Object> routInfo = null;
+		
+		if(routId==null)return null;
+		
+		if(g_routMap==null) {
+			g_routMap = new HashMap<>();
+			routInfo = getRoutMst(paramMap);
+			g_routMap.put(routId, routInfo);
+			return routInfo;
+		}
+		
+		if ((routId != null) && (routId.isEmpty() == false)) {
+			routInfo = (Map<String, Object>)g_routMap.get(routId); 
+			if ((routInfo != null)) {
+				return routInfo;
+			}
+			else {
+				routInfo = curInfoMapper.getRoutMst(paramMap);
+				g_routMap.put(routId, routInfo);
+				return routInfo;
+			}
+		}
+		else {
+			return null;
+		}
+	}
+	
+	private String getOperSts(Map<String, Object> paramMap) {
+		String runType = paramMap.get("RUN_TYPE")+"";
+		logger.debug("getOperSts() runType="+runType);
+		Map<String, Object> param = new HashMap<>();
+		param.put("CO_CD", "OPER_STS");
+		param.put("NUM_VAL4", paramMap.get("RUN_TYPE"));
+
+		String operSts = null;
+		if(g_operStsMap==null) {
+			g_operStsMap = new HashMap<>();
+			operSts = curInfoMapper.getEventCode(param);
+			g_operStsMap.put(runType, operSts);
+			return operSts;
+		}
+		
+		if ((runType != null) && (runType.isEmpty() == false)) {
+			operSts = (String)g_operStsMap.get(runType); 
+			if ((operSts != null)) {
+				return operSts;
+			}
+			else {
+				operSts = curInfoMapper.getEventCode(param);
+				g_operStsMap.put(runType, operSts);
+				return operSts;
+			}
+		}
+		else {
+			return null;
+		}
+	}
+	
+	private void insertCurAllocPlInfo(Map<String, Object> map) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("OPER_DT", map.get("OPER_DT"));
+		param.put("REP_ROUT_ID", map.get("REP_ROUT_ID"));
+		param.put("ALLOC_NO", map.get("ALLOC_NO"));
+		param.put("WAY_DIV", map.get("WAY_DIV"));
+		param.put("OPER_VHC_ID", map.get("OPER_VHC_ID"));
+		curInfoMapper.insertCurAllocPlInfo(param);
+	}
 
 	public EventThread(String sessionId) {
 		this.sessionId = sessionId;
@@ -66,6 +195,7 @@ public class EventThread extends Thread {
 		webSocketClient = (WsClient) BeanUtil.getBean(WsClient.class);
 
 	}
+	
 
 	public void stop(boolean bStop) {
 
@@ -77,7 +207,8 @@ public class EventThread extends Thread {
 
 		while (bRunning) {
 
-			 //logger.info("HandleThread Running...kafkaQ.size:{}", getKafkaSize());
+			if(getKafkaSize()>0)
+			logger.debug("HandleThread Running...kafkaQ.size:{}", getKafkaSize());
 
 			try {
 				KafkaMessage msg = getKafkaMessage();
@@ -95,7 +226,9 @@ public class EventThread extends Thread {
 
 					// 웹소켓 전송이 필요한 경우
 					if (map != null) {
+						//logger.info("webSocketClient.sendMessage before");
 						webSocketClient.sendMessage(map);
+						//logger.info("webSocketClient.sendMessage after");
 					}
 
 					 //logger.info("===================== END >> sessionId:{}", sessionId);
@@ -104,7 +237,7 @@ public class EventThread extends Thread {
 				Thread.sleep(1);
 
 			} catch (InterruptedException e) {
-				logger.error("", e);
+				logger.error("Exception {}", e);
 			}
 		}
 
@@ -125,6 +258,8 @@ public class EventThread extends Thread {
 		return kafkaQ.size();
 	}
 
+	//static public Map<String, Object> busInfoMap = new HashMap<>();
+    
 	public Map<String, Object> handle(TimsMessage timsMessage, String sessionId) {
 
 		// 웹소켓 전송이 필요한 경우 데이터 세팅
@@ -146,377 +281,412 @@ public class EventThread extends Thread {
 			switch (attrId) {
 			case BrtAtCode.BUS_INFO: // 정주기 버스 정보
 
-				logger.debug("Received BrtAtCode.BUS_INFO >> {}", atMessage);
-
-				AtBusInfo busInfo = (AtBusInfo) atMessage.getAttrData();
-
-				// insert to BRT_CUR_OPER_INFO
-				Map<String, Object> busInfoMap = busInfo.toMap();
-
-				busInfoMap.put("VHC_ID", curInfoMapper.getBusId(busInfoMap));
-				if (CommonUtil.empty(busInfoMap.get("VHC_ID")))
-					break;
-				Map<String, Object> routMap = curInfoMapper.getRoutMst(busInfoMap);
-				busInfoMap.put("REP_ROUT_ID", routMap.get("REP_ROUT_ID"));
-				busInfoMap.put("WAY_DIV", routMap.get("WAY_DIV"));
-				busInfoMap.put("ROUT_NM", routMap.get("ROUT_NM"));
-				if (CommonUtil.empty(busInfoMap.get("OPER_DT"))) {
-					busInfoMap.put("OPER_DT", CommonUtil.getOperDt());
-				}
-
+				logger.info("BUS_INFO >> {}", atMessage);
 				try {
-					Map<String, Object> curAllocPlInfo = curInfoMapper.selectCurAllocPlInfoByOperVhcId(busInfoMap);
-					if (curAllocPlInfo == null || CommonUtil.empty(curAllocPlInfo.get("OPER_VHC_ID"))) {
-						
-						 curAllocPlInfo = curInfoMapper.selectCurAllocPlInfoByVhcId(busInfoMap); 
-						 if(curAllocPlInfo!=null) busInfoMap.put("ALLOC_NO", curAllocPlInfo.get("ALLOC_NO")); 
-						 else busInfoMap.put("ALLOC_NO", 0);
+					AtBusInfo busInfo = (AtBusInfo) atMessage.getAttrData();
+	
+					// insert to BRT_CUR_OPER_INFO
+					Map<String, Object> busInfoMap = busInfo.toMap();
+	
+					busInfoMap.put("VHC_ID", getBusId(busInfoMap));
+					if (CommonUtil.empty(busInfoMap.get("VHC_ID")))
+						break;
+					
+					Map<String, Object> routMap = getRoutMst(busInfoMap);
+					if(routMap!=null) {
+						busInfoMap.put("REP_ROUT_ID", routMap.get("REP_ROUT_ID"));
+						busInfoMap.put("WAY_DIV", routMap.get("WAY_DIV"));
+						busInfoMap.put("ROUT_NM", routMap.get("ROUT_NM"));
+						busInfoMap.put("REP_ROUT_NM", routMap.get("REP_ROUT_NM"));
 					}
-					else {
-						busInfoMap.put("ALLOC_NO", curAllocPlInfo.get("ALLOC_NO"));
+					if (CommonUtil.empty(busInfoMap.get("OPER_DT"))) {
+						busInfoMap.put("OPER_DT", CommonUtil.getOperDt());
 					}
-					insertCurOperInfo(busInfoMap);
-
-				} catch (DuplicateKeyException e) {
-					// logger.error("", e);
-				} catch (Exception e) {
-					logger.error("", e);
+		
+					busInfoMap.put("OPER_STS", getOperSts(busInfoMap));
+	
+					try {
+						Map<String, Object> curAllocPlInfo = curInfoMapper.selectCurAllocPlInfoByOperVhcId(busInfoMap);
+						if (curAllocPlInfo == null || CommonUtil.empty(curAllocPlInfo.get("OPER_VHC_ID"))) {
+							
+							 curAllocPlInfo = curInfoMapper.selectCurAllocPlInfoByVhcId(busInfoMap); 
+							 if(curAllocPlInfo!=null) busInfoMap.put("ALLOC_NO", curAllocPlInfo.get("ALLOC_NO")); 
+							 else {
+								 logger.info("allocPl not BUS_INFO >> {}", atMessage);
+								 break;
+							 }
+						}
+						else {
+							busInfoMap.put("ALLOC_NO", curAllocPlInfo.get("ALLOC_NO"));
+						}
+						if(checkChangeRunTypeBusOperInfo(busInfo)==true) {
+							insertCurOperInfo(busInfoMap);
+						}
+	
+					} catch (DuplicateKeyException e) {
+						logger.error("Exception {}", e);
+					}
+	
+					// 모니터링용 웹소켓 데이터
+					paramMap = new HashMap<>();
+					paramMap.put("MNG_ID", sessionId);
+	
+					vhcInfo = timsMapper.selectVhcInfo(paramMap);
+					// Map<String, Object> dataMap =busInfo.toMap();
+	
+					wsDataMap = new HashMap<>();
+					wsDataMap.put("ATTR_ID", attrId);
+					wsDataMap.put("ROUT_ID", busInfoMap.get("ROUT_ID"));
+					wsDataMap.put("ROUT_NM", busInfoMap.get("ROUT_NM"));
+					wsDataMap.put("VHC_NO", busInfoMap.get("BUS_NO"));
+	
+					wsDataMap.put("CUR_SPD", busInfoMap.get("SPEED"));
+					wsDataMap.put("VHC_ID", vhcInfo.get("VHC_ID"));
+					wsDataMap.put("DVC_ID", vhcInfo.get("DVC_ID"));
+					wsDataMap.put("GPS_X", busInfoMap.get("LONGITUDE"));
+					wsDataMap.put("GPS_Y", busInfoMap.get("LATITUDE"));
+					wsDataMap.put("PREV_NODE_NM", busInfoMap.get("PREV_NODE_NM")); // 이전 정류소/교차로
+					wsDataMap.put("NEXT_NODE_ID", busInfoMap.get("NEXT_NODE_ID")); // 다음 정류소/교차로
+					wsDataMap.put("NEXT_NODE_NM", busInfoMap.get("NEXT_NODE_NM"));
+					wsDataMap.put("NEXT_NODE_TYPE", busInfoMap.get("NEXT_NODE_TYPE"));
+					wsDataMap.put("OPER_STS", busInfoMap.get("OPER_STS"));
 				}
-
-				// 모니터링용 웹소켓 데이터
-				paramMap = new HashMap<>();
-				paramMap.put("MNG_ID", sessionId);
-
-				vhcInfo = timsMapper.selectVhcInfo(paramMap);
-				// Map<String, Object> dataMap =busInfo.toMap();
-
-				wsDataMap = new HashMap<>();
-				wsDataMap.put("ATTR_ID", attrId);
-				wsDataMap.put("ROUT_ID", busInfoMap.get("ROUT_ID"));
-				wsDataMap.put("ROUT_NM", busInfoMap.get("ROUT_NM"));
-				wsDataMap.put("VHC_NO", busInfoMap.get("BUS_NO"));
-
-				wsDataMap.put("CUR_SPD", busInfoMap.get("SPEED"));
-				wsDataMap.put("VHC_ID", vhcInfo.get("VHC_ID"));
-				wsDataMap.put("DVC_ID", vhcInfo.get("DVC_ID"));
-				wsDataMap.put("GPS_X", busInfoMap.get("LONGITUDE"));
-				wsDataMap.put("GPS_Y", busInfoMap.get("LATITUDE"));
-				wsDataMap.put("PREV_NODE_NM", busInfoMap.get("PREV_NODE_NM")); // 이전 정류소/교차로
-				wsDataMap.put("NEXT_NODE_ID", busInfoMap.get("NEXT_NODE_ID")); // 다음 정류소/교차로
-				wsDataMap.put("NEXT_NODE_NM", busInfoMap.get("NEXT_NODE_NM"));
-				wsDataMap.put("NEXT_NODE_TYPE", busInfoMap.get("NEXT_NODE_TYPE"));
-
+				catch (Exception e) {
+					logger.error("Exception {}", e);
+				}
 				break;
 
 			case BrtAtCode.BUS_ARRIVAL_INFO: // 차량 도착정보
 
-				logger.info("Received BrtAtCode.BUS_ARRIVAL_INFO >> {}", atMessage);
-
-				AtBusArrivalInfo busArrivalInfo = (AtBusArrivalInfo) atMessage.getAttrData();
-
-				/* 모니터링용 데이터 생성 */
-				wsDataMap = new HashMap<>();
-				wsDataMap.put("ATTR_ID", attrId);
-				wsDataMap.put("STTN_ID", busArrivalInfo.getStopId());
-
-				List<AtBusArrivalInfoItem> arrivalInfoList = busArrivalInfo.getList();
-				List<HashMap<String, Object>> arrivalInfoMapList = new ArrayList<>();
-
-				for (AtBusArrivalInfoItem arrivalInfoItem : arrivalInfoList) {
-					HashMap<String, Object> arrivalInfoMap = new HashMap<>();
-
-					String routId = arrivalInfoItem.getRoutId();
-					int loc = arrivalInfoItem.getLocation();
-					long remainSec = arrivalInfoItem.getTime();
-
-					String routNm = timsMapper.selectRoutName(routId);
-
-					arrivalInfoMap.put("ROUT_ID", routId);
-					arrivalInfoMap.put("ROUT_NM", routNm);
-					arrivalInfoMap.put("VHC_TYPE", "VT" + arrivalInfoItem.getBusType());
-					arrivalInfoMap.put("REMAIN_STTN", loc);
-					arrivalInfoMap.put("REMAIN_TM", remainSec);
-
-					arrivalInfoMapList.add(arrivalInfoMap);
+				logger.info("BUS_ARRIVAL_INFO >> {}", atMessage);
+				try {
+					AtBusArrivalInfo busArrivalInfo = (AtBusArrivalInfo) atMessage.getAttrData();
+	
+					/* 모니터링용 데이터 생성 */
+					wsDataMap = new HashMap<>();
+					wsDataMap.put("ATTR_ID", attrId);
+					wsDataMap.put("STTN_ID", busArrivalInfo.getStopId());
+	
+					List<AtBusArrivalInfoItem> arrivalInfoList = busArrivalInfo.getList();
+					List<HashMap<String, Object>> arrivalInfoMapList = new ArrayList<>();
+	
+					for (AtBusArrivalInfoItem arrivalInfoItem : arrivalInfoList) {
+						HashMap<String, Object> arrivalInfoMap = new HashMap<>();
+	
+						String routId = arrivalInfoItem.getRoutId();
+						int loc = arrivalInfoItem.getLocation();
+						long remainSec = arrivalInfoItem.getTime();
+	
+						String routNm = timsMapper.selectRoutName(routId);
+	
+						arrivalInfoMap.put("ROUT_ID", routId);
+						arrivalInfoMap.put("ROUT_NM", routNm);
+						arrivalInfoMap.put("VHC_TYPE", "VT" + arrivalInfoItem.getBusType());
+						arrivalInfoMap.put("REMAIN_STTN", loc);
+						arrivalInfoMap.put("REMAIN_TM", remainSec);
+	
+						arrivalInfoMapList.add(arrivalInfoMap);
+					}
+	
+					wsDataMap.put("LIST", arrivalInfoMapList);
 				}
-
-				wsDataMap.put("LIST", arrivalInfoMapList);
-
+				catch (Exception e) {
+					logger.error("Exception {}", e);
+				}
 				break;
 
 			case BrtAtCode.BUS_OPER_EVENT: // 운행 이벤트 정보
 
-				logger.info("Received BrtAtCode.BUS_OPER_EVENT >> {}", atMessage);
+				logger.info(".BUS_OPER_EVENT >> {}", atMessage);
 
 				// 이벤트 이력정보에 insert
 
 				// String eventData = "";
-				String eventCd = "";
-				String eventType = "";
-				AtBusOperEvent busEvent = (AtBusOperEvent) atMessage.getAttrData();
-
-				byte eventCode = busEvent.getEventCode();
-				Map<String, Object> busEventMap = busEvent.toMap();
-				busEventMap.put("VHC_ID", curInfoMapper.getBusId(busEventMap));
-				if (CommonUtil.empty(busEventMap.get("VHC_ID")))break;
-				Map<String, Object> routMap2 = curInfoMapper.getRoutMst(busEventMap);
-				busEventMap.put("REP_ROUT_ID", routMap2.get("REP_ROUT_ID"));
-				busEventMap.put("WAY_DIV", routMap2.get("WAY_DIV"));
-				busEventMap.put("ROUT_NM", routMap2.get("ROUT_NM"));
-
-				if (CommonUtil.empty(busEventMap.get("OPER_DT"))) {
-					busEventMap.put("OPER_DT", CommonUtil.getOperDt());
-				}
-
 				try {
-					
-					Map<String, Object> curAllocPlInfo = curInfoMapper.selectCurAllocPlInfoByOperVhcId(busEventMap);
-					if (curAllocPlInfo == null || CommonUtil.empty(curAllocPlInfo.get("OPER_VHC_ID"))) {
-						curAllocPlInfo = curInfoMapper.selectCurAllocPlInfoByVhcId(busEventMap);
-			            if(curAllocPlInfo==null){
-			            }
-			            else{
-			                busEventMap.put("ALLOC_NO", curAllocPlInfo.get("ALLOC_NO"));
-			                busEventMap.put("OPER_VHC_ID", busEventMap.get("BUS_ID"));
-			                curInfoMapper.updateOperVhcIdCurAllocPlInfo(busEventMap);
-			            }
-					}
-					if(curAllocPlInfo != null && CommonUtil.notEmpty(curAllocPlInfo.get("OPER_VHC_ID"))) {
-						busEventMap.put("ALLOC_NO", curAllocPlInfo.get("ALLOC_NO"));
-						//if ((eventCode == (byte) 0x03 || eventCode == (byte) 0x04)) {
-							//String routeCourseId = curInfoMapper.getCurNearAllocPlInfo2(busEventMap);
-							//logger.info("routeCourseId = ", routeCourseId);
-							//String routeCourseStr[] = routeCourseId.split(",");
-							//busEventMap.put("ROUT_ID", routeCourseStr[0]);
-							//busEventMap.put("COR_ID", routeCourseStr[1]);
-						//}
-					}
-					/*if ("RR00000002".equals(busEventMap.get("REP_ROUT_ID"))) {
-						if(curAllocPlInfo==null) {
-							if (("ND00000787".equals(busEventMap.get("NODE_ID")) || 
-									"293055002".equals(busEventMap.get("NODE_ID"))&&"WD001".equals(busEventMap.get("WAY_DIV"))||
-									"293055001".equals(busEventMap.get("NODE_ID"))&&"WD002".equals(busEventMap.get("WAY_DIV"))
-								)&& (eventCode == (byte) 0x03 || eventCode == (byte) 0x04)) {
-								String curNearStr = curInfoMapper.getCurNearAllocPlInfo(busEventMap);
-								String curNearArr[] = curNearStr.split(",");
-								busEventMap.put("ROUT_ID", curNearArr[0]);
-								busEventMap.put("COR_ID", curNearArr[1]);
-								busEventMap.put("ALLOC_NO", curNearArr[2]);
-								busEventMap.put("OPER_VHC_ID", busEventMap.get("VHC_ID"));
-								curInfoMapper.insertCurAllocPlInfo(busEventMap);
-							} else {
+					String eventCd = "";
+					String eventType = "";
+					AtBusOperEvent busEvent = (AtBusOperEvent) atMessage.getAttrData();
 	
-							}
-						} else {
-							if (eventCode == (byte) 0x03 || eventCode == (byte) 0x04) {
-								// 현재운행정보도 업데이트
-
-								String curNearStr = curInfoMapper.getCurNearAllocPlInfo2(busEventMap);
-								String curNearArr[] = curNearStr.split(",");
-								busEventMap.put("ROUT_ID", curNearArr[0]);
-								busEventMap.put("COR_ID", curNearArr[1]);
-								//busEventMap.put("ALLOC_NO", curNearArr[2]);
+					byte eventCode = busEvent.getEventCode();
+					Map<String, Object> busEventMap = busEvent.toMap();
+					busEventMap.put("VHC_ID", getBusId(busEventMap));
+					if (CommonUtil.empty(busEventMap.get("VHC_ID")))break;
+					Map<String, Object> routMap2 = getRoutMst(busEventMap);
+					if(routMap2!=null) {
+						busEventMap.put("REP_ROUT_ID", routMap2.get("REP_ROUT_ID"));
+						busEventMap.put("WAY_DIV", routMap2.get("WAY_DIV"));
+						busEventMap.put("ROUT_NM", routMap2.get("ROUT_NM"));
+						busEventMap.put("REP_ROUT_NM", routMap2.get("REP_ROUT_NM"));
+					}
+					
+					busEventMap.put("OPER_STS", getOperSts(busEventMap));
+	
+					if (CommonUtil.empty(busEventMap.get("OPER_DT"))) {
+						busEventMap.put("OPER_DT", CommonUtil.getOperDt());
+					}
+	
+					try {
+						
+						Map<String, Object> curAllocPlInfo = curInfoMapper.selectCurAllocPlInfoByOperVhcId(busEventMap);
+						String allocOperVhcId = null;
+		                String allocVhcId = null;
+		                if(curAllocPlInfo!=null) {
+		                    allocOperVhcId = (String) curAllocPlInfo.get("OPER_VHC_ID");
+		                    allocVhcId = (String) curAllocPlInfo.get("VHC_ID");
+		                }
+						
+						if (curAllocPlInfo == null || CommonUtil.empty(allocOperVhcId)
+								||(CommonUtil.empty(allocVhcId)==false)&&(allocVhcId.equals(allocOperVhcId)==false)) {
+							curAllocPlInfo = curInfoMapper.selectCurAllocPlInfoByVhcId(busEventMap);
+				            if(curAllocPlInfo==null){
+				            }
+				            else{
+				                busEventMap.put("ALLOC_NO", curAllocPlInfo.get("ALLOC_NO"));
+				                busEventMap.put("OPER_VHC_ID", busEventMap.get("BUS_ID"));
+				                curInfoMapper.updateOperVhcIdCurAllocPlInfo(busEventMap);
+				            }
+						}
+						if(curAllocPlInfo != null && CommonUtil.notEmpty(curAllocPlInfo.get("OPER_VHC_ID"))) {
+							busEventMap.put("ALLOC_NO", curAllocPlInfo.get("ALLOC_NO"));
+							//if ((eventCode == (byte) 0x03 || eventCode == (byte) 0x04)) {
+								//String routeCourseId = curInfoMapper.getCurNearAllocPlInfo2(busEventMap);
+								//logger.info("routeCourseId = ", routeCourseId);
+								//String routeCourseStr[] = routeCourseId.split(",");
+								//busEventMap.put("ROUT_ID", routeCourseStr[0]);
+								//busEventMap.put("COR_ID", routeCourseStr[1]);
+							//}
+						}
+						/*if ("RR00000002".equals(busEventMap.get("REP_ROUT_ID"))) {
+							if(curAllocPlInfo==null) {
+								if (("ND00000787".equals(busEventMap.get("NODE_ID")) || 
+										"293055002".equals(busEventMap.get("NODE_ID"))&&"WD001".equals(busEventMap.get("WAY_DIV"))||
+										"293055001".equals(busEventMap.get("NODE_ID"))&&"WD002".equals(busEventMap.get("WAY_DIV"))
+									)&& (eventCode == (byte) 0x03 || eventCode == (byte) 0x04)) {
+									String curNearStr = curInfoMapper.getCurNearAllocPlInfo(busEventMap);
+									String curNearArr[] = curNearStr.split(",");
+									busEventMap.put("ROUT_ID", curNearArr[0]);
+									busEventMap.put("COR_ID", curNearArr[1]);
+									busEventMap.put("ALLOC_NO", curNearArr[2]);
+									busEventMap.put("OPER_VHC_ID", busEventMap.get("VHC_ID"));
+									curInfoMapper.insertCurAllocPlInfo(busEventMap);
+								} else {
+		
+								}
 							} else {
+								if (eventCode == (byte) 0x03 || eventCode == (byte) 0x04) {
+									// 현재운행정보도 업데이트
+	
+									String curNearStr = curInfoMapper.getCurNearAllocPlInfo2(busEventMap);
+									String curNearArr[] = curNearStr.split(",");
+									busEventMap.put("ROUT_ID", curNearArr[0]);
+									busEventMap.put("COR_ID", curNearArr[1]);
+									//busEventMap.put("ALLOC_NO", curNearArr[2]);
+								} else {
+								}
 							}
 						}
-					}
-					else */
-					{
-						
-						if(curAllocPlInfo==null) {
-							if (eventCode == (byte) 0x03 || eventCode == (byte) 0x04) {
-								String curNearStr = curInfoMapper.getCurNearAllocPlInfo(busEventMap);
-								String curNearArr[] = curNearStr.split(",");
-								busEventMap.put("ROUT_ID", curNearArr[0]);
-								busEventMap.put("COR_ID", curNearArr[1]);
-								busEventMap.put("ALLOC_NO", curNearArr[2]);
-								busEventMap.put("OPER_VHC_ID", busEventMap.get("VHC_ID"));
-								curInfoMapper.insertCurAllocPlInfo(busEventMap);
-							}
-						} else {
-							if (eventCode == (byte) 0x03 || eventCode == (byte) 0x04) {
-								// 현재운행정보도 업데이트
-
-								String curNearStr = curInfoMapper.getCurNearAllocPlInfo2(busEventMap);
-								String curNearArr[] = curNearStr.split(",");
-								busEventMap.put("ROUT_ID", curNearArr[0]);
-								busEventMap.put("COR_ID", curNearArr[1]);
-								//busEventMap.put("ALLOC_NO", curNearArr[2]);
+						else */
+						{
+							
+							if(curAllocPlInfo==null) {
+								if (eventCode == (byte) 0x03 || eventCode == (byte) 0x04) {
+									String curNearStr = curInfoMapper.getCurNearAllocPlInfo(busEventMap);
+									String curNearArr[] = curNearStr.split(",");
+									busEventMap.put("ROUT_ID", curNearArr[0]);
+									busEventMap.put("COR_ID", curNearArr[1]);
+									//busEventMap.put("ALLOC_NO", curNearArr[2]);
+									int minAllocNo = curInfoMapper.minAllocNoCurAllocPlInfo(busEventMap);
+									if(minAllocNo>0)minAllocNo=0;
+									else minAllocNo -= 1;
+									busEventMap.put("ALLOC_NO", minAllocNo);
+									busEventMap.put("OPER_VHC_ID", busEventMap.get("VHC_ID"));
+									insertCurAllocPlInfo(busEventMap); //배차가 없는 경우 0보다 작은수로 배차함
+								}
 							} else {
-							}
-						}						
+								if (eventCode == (byte) 0x03 || eventCode == (byte) 0x04) {
+									// 현재운행정보도 업데이트
+	
+									String curNearStr = curInfoMapper.getCurNearAllocPlInfo2(busEventMap);
+									String curNearArr[] = curNearStr.split(",");
+									busEventMap.put("ROUT_ID", curNearArr[0]);
+									busEventMap.put("COR_ID", curNearArr[1]);
+									//busEventMap.put("ALLOC_NO", curNearArr[2]);
+								} else {
+								}
+							}						
+							
+						}
+	
+						if (CommonUtil.empty(busEventMap.get("ALLOC_NO")) == false
+								&& CommonUtil.empty(busEventMap.get("REP_ROUT_ID")) == false) {
+							logger.debug("[" + busEventMap.get("ALLOC_NO") + "," + busEventMap.get("REP_ROUT_ID") + ","
+									+ busEventMap.get("WAY_DIV") + "] In BusOperEvent alloc no");
+							insertCurOperInfo(busEventMap);
+						}
 						
+					} catch (DuplicateKeyException e) {
+						logger.error("Exception {}", e);
+					} 
+	
+					try {
+						// 이력 insert
+						historyMapper.insertEventHistory(busEventMap);
+					} catch (DuplicateKeyException e) {
+						logger.error("Exception {}", e);
 					}
-
-					if (CommonUtil.empty(busEventMap.get("ALLOC_NO")) == false
-							&& CommonUtil.empty(busEventMap.get("REP_ROUT_ID")) == false) {
-						logger.debug("[" + busEventMap.get("ALLOC_NO") + "," + busEventMap.get("REP_ROUT_ID") + ","
-								+ busEventMap.get("WAY_DIV") + "] In BusOperEvent alloc no");
+	
+					switch (eventCode) {
+					/** 운행 이벤트 **/
+					case 0x01: // 정류장 도착
+					case 0x02: // 정류장 출발
+					case 0x03: // 기점 도착
+					case 0x04: // 기점 출발
+					case 0x05: // 종점 도착
+					case 0x06: // 종점 출발
+					case 0x07: // 노드 통과
+						// 통플에서 정류장통과시에도 노드 통과 이벤트를 준다?
+						// brtMapper.insertLinkSpeed(busEventMap);
+					case 0x08: // 음성 출력
+					case 0x09: // 차고지 도착
+					case 0x0a: // 차고지 출발
+	
+						/** 특정 이벤트 **/
+					case 0x11: // 문 열림
+					case 0x12: // 문 닫힘
+	
+						paramMap = new HashMap<>();
+	
+						paramMap.put("COL", "DL_CD");
+						paramMap.put("CO_CD", "OPER_EVT_TYPE");
+						paramMap.put("COL3", "NUM_VAL4");
+						paramMap.put("COL_VAL3", (int) eventCode);
+						eventCd = commonMapper.selectDlCdCol(paramMap);
+	
+						paramMap.put("COL", "DL_CD_NM");
+						paramMap.put("CO_CD", "OPER_EVT_TYPE");
+						paramMap.put("COL3", "NUM_VAL4");
+						paramMap.put("COL_VAL3", (int) eventCode);
+						eventType = commonMapper.selectDlCdCol(paramMap);
+	
+						// eventDesc = timsMapper.selectNodeInfo(paramMap);
+	
+						break;
+	
+					/** 운행위반 이벤트 **/
+					case 0x21: // 무정차 주행
+					case 0x22: // 과속 주행
+					case 0x23: // 급가속
+					case 0x24: // 급감속
+					case 0x25: // 급출발
+					case 0x26: // 급정지
+					case 0x27: // 개문주행
+					case 0x28: // 노선이탈
+						logger.info("운행위반 발생!! [IMP ID : " + busEvent.getImpId() + "]");
+	
+						try {
+							paramMap = new HashMap<>();
+							paramMap.put("COL", "DL_CD");
+							paramMap.put("CO_CD", "OPER_EVT_TYPE");
+							paramMap.put("COL3", "NUM_VAL4");
+							paramMap.put("COL_VAL3", (int) eventCode);
+							eventCd = commonMapper.selectDlCdCol(paramMap);
+	
+							paramMap.put("COL", "DL_CD_NM");
+							paramMap.put("CO_CD", "OPER_EVT_TYPE");
+							paramMap.put("COL3", "NUM_VAL4");
+							paramMap.put("COL_VAL3", (int) eventCode);
+							eventType = commonMapper.selectDlCdCol(paramMap);
+	
+							historyMapper.insertOperVioltHistory(busEventMap); // 운행위반이력 insert
+						} catch (Exception e) {
+							logger.error("Exception {}", e);
+						}
+	
+						break;
+	
+					/** 돌발 **/ // 2021.10.26일자 적용
+					case 0x31: // 사고
+					case 0x32: // 낙하
+					case 0x33: // 고장
+					case 0x34: // 기타
+						// case 0x35: //테러
+						logger.info("돌발 발생!! [IMP ID : " + busEvent.getImpId() + "]");
+	
+						try {
+							paramMap = new HashMap<>();
+							paramMap.put("COL", "DL_CD");
+							paramMap.put("CO_CD", "INCDNT_TYPE");
+							paramMap.put("COL3", "NUM_VAL4");
+							paramMap.put("COL_VAL3", (int) eventCode);
+							eventCd = commonMapper.selectDlCdCol(paramMap);
+	
+							paramMap.put("COL", "DL_CD_NM");
+							paramMap.put("CO_CD", "INCDNT_TYPE");
+							paramMap.put("COL3", "NUM_VAL4");
+							paramMap.put("COL_VAL3", (int) eventCode);
+							eventType = commonMapper.selectDlCdCol(paramMap);
+	
+							curInfoMapper.insertIncidentInfo(busEventMap); // 돌발정보 insert
+						} catch (Exception e) {
+							logger.error("Exception {}", e);
+						}
+	
+						break;
+	
 					}
-					//insertCurOperInfo(busEventMap);
-				} catch (DuplicateKeyException e) {
-					// logger.error("", e);
-				} catch (Exception e) {
-					logger.error("", e);
-				}
-
-				try {
-					// 이력 insert
-					historyMapper.insertEventHistory(busEventMap);
-				} catch (DuplicateKeyException e) {
-					// logger.error("", e);
-				} catch (Exception e) {
-					logger.error("", e);
-				}
-
-				switch (eventCode) {
-				/** 운행 이벤트 **/
-				case 0x01: // 정류장 도착
-				case 0x02: // 정류장 출발
-				case 0x03: // 기점 도착
-				case 0x04: // 기점 출발
-				case 0x05: // 종점 도착
-				case 0x06: // 종점 출발
-				case 0x07: // 노드 통과
-					// 통플에서 정류장통과시에도 노드 통과 이벤트를 준다?
-					// brtMapper.insertLinkSpeed(busEventMap);
-				case 0x08: // 음성 출력
-				case 0x09: // 차고지 도착
-				case 0x0a: // 차고지 출발
-
-					/** 특정 이벤트 **/
-				case 0x11: // 문 열림
-				case 0x12: // 문 닫힘
-
+	
+					// 모니터링용 웹소켓 데이터
 					paramMap = new HashMap<>();
-
-					paramMap.put("COL", "DL_CD");
-					paramMap.put("CO_CD", "OPER_EVT_TYPE");
-					paramMap.put("COL3", "NUM_VAL4");
-					paramMap.put("COL_VAL3", (int) eventCode);
-					eventCd = commonMapper.selectDlCdCol(paramMap);
-
-					paramMap.put("COL", "DL_CD_NM");
-					paramMap.put("CO_CD", "OPER_EVT_TYPE");
-					paramMap.put("COL3", "NUM_VAL4");
-					paramMap.put("COL_VAL3", (int) eventCode);
-					eventType = commonMapper.selectDlCdCol(paramMap);
-
-					// eventDesc = timsMapper.selectNodeInfo(paramMap);
-
-					break;
-
-				/** 운행위반 이벤트 **/
-				case 0x21: // 무정차 주행
-				case 0x22: // 과속 주행
-				case 0x23: // 급가속
-				case 0x24: // 급감속
-				case 0x25: // 급출발
-				case 0x26: // 급정지
-				case 0x27: // 개문주행
-				case 0x28: // 노선이탈
-					logger.info("운행위반 발생!! [IMP ID : " + busEvent.getImpId() + "]");
-
-					try {
-						paramMap = new HashMap<>();
-						paramMap.put("COL", "DL_CD");
-						paramMap.put("CO_CD", "OPER_EVT_TYPE");
-						paramMap.put("COL3", "NUM_VAL4");
-						paramMap.put("COL_VAL3", (int) eventCode);
-						eventCd = commonMapper.selectDlCdCol(paramMap);
-
-						paramMap.put("COL", "DL_CD_NM");
-						paramMap.put("CO_CD", "OPER_EVT_TYPE");
-						paramMap.put("COL3", "NUM_VAL4");
-						paramMap.put("COL_VAL3", (int) eventCode);
-						eventType = commonMapper.selectDlCdCol(paramMap);
-
-						historyMapper.insertOperVioltHistory(busEventMap); // 운행위반이력 insert
-					} catch (Exception e) {
-						// logger.error("", e);
+					paramMap.put("MNG_ID", sessionId);
+	
+					vhcInfo = timsMapper.selectVhcInfo(paramMap);
+					// Map<String, Object> dataMap =busInfo.toMap();
+	
+					wsDataMap = new HashMap<>();
+					wsDataMap.put("ATTR_ID", attrId);
+					wsDataMap.put("VHC_NO", busEvent.getBusNo());
+					wsDataMap.put("ROUT_ID", busEvent.getRouteId());
+					wsDataMap.put("ROUT_NM", busEventMap.get("ROUT_NM"));
+					wsDataMap.put("VHC_ID", vhcInfo.get("VHC_ID"));
+					wsDataMap.put("DVC_ID", vhcInfo.get("DVC_ID"));
+					wsDataMap.put("GPS_X", busEventMap.get("LONGITUDE"));
+					wsDataMap.put("GPS_Y", busEventMap.get("LATITUDE"));
+					wsDataMap.put("OPER_STS", busEventMap.get("OPER_STS"));
+	
+					if (eventCode == 0x01 || eventCode == 0x02 // 정류장 출/도착 인 경우
+							|| eventCode == 0x03 || eventCode == 0x04 // 기점 출/도착 인 경우
+							|| eventCode == 0x05 || eventCode == 0x06) // 종점점 출/도착 인 경우
+					{
+						Map<String, Object> sttnEventMap = new HashMap<String, Object>(busEventMap);
+	
+						sttnEventMap.put("NODE_ID", busEvent.getEventData()); // 정류장 출/도착인 경우 EVENT_DATA를 사용
+	
+						setOperEventData(sttnEventMap);
+	
+						wsDataMap.put("NODE_NM", sttnEventMap.get("NODE_NM")); // 출/도착 정류소명
+						wsDataMap.put("NODE_TYPE", sttnEventMap.get("NODE_TYPE"));
+						wsDataMap.put("PREV_NODE_NM", sttnEventMap.get("PREV_NODE_NM")); // 이전 정류소/교차로
+						wsDataMap.put("NEXT_NODE_ID", sttnEventMap.get("NEXT_NODE_ID")); // 다음 정류소/교차로
+						wsDataMap.put("NEXT_NODE_NM", sttnEventMap.get("NEXT_NODE_NM"));
+						wsDataMap.put("NEXT_NODE_TYPE", sttnEventMap.get("NEXT_NODE_TYPE"));
+	
+					} else {
+						wsDataMap.put("NODE_NM", busEventMap.get("NODE_NM")); // 지나온 노드명
+						wsDataMap.put("NODE_TYPE", busEventMap.get("NODE_TYPE")); // 지나온 노드 타입
+						wsDataMap.put("PREV_NODE_NM", busEventMap.get("PREV_NODE_NM")); // 이전 정류소/교차로
+						wsDataMap.put("NEXT_NODE_ID", busEventMap.get("NEXT_NODE_ID")); // 다음 정류소/교차로
+						wsDataMap.put("NEXT_NODE_NM", busEventMap.get("NEXT_NODE_NM"));
+						wsDataMap.put("NEXT_NODE_TYPE", busEventMap.get("NEXT_NODE_TYPE"));
 					}
-
-					break;
-
-				/** 돌발 **/ // 2021.10.26일자 적용
-				case 0x31: // 사고
-				case 0x32: // 낙하
-				case 0x33: // 고장
-				case 0x34: // 기타
-					// case 0x35: //테러
-					logger.info("돌발 발생!! [IMP ID : " + busEvent.getImpId() + "]");
-
-					try {
-						paramMap = new HashMap<>();
-						paramMap.put("COL", "DL_CD");
-						paramMap.put("CO_CD", "INCDNT_TYPE");
-						paramMap.put("COL3", "NUM_VAL4");
-						paramMap.put("COL_VAL3", (int) eventCode);
-						eventCd = commonMapper.selectDlCdCol(paramMap);
-
-						paramMap.put("COL", "DL_CD_NM");
-						paramMap.put("CO_CD", "INCDNT_TYPE");
-						paramMap.put("COL3", "NUM_VAL4");
-						paramMap.put("COL_VAL3", (int) eventCode);
-						eventType = commonMapper.selectDlCdCol(paramMap);
-
-						curInfoMapper.insertIncidentInfo(busEventMap); // 돌발정보 insert
-					} catch (Exception e) {
-						logger.error("", e);
-					}
-
-					break;
-
+	
+					wsDataMap.put("EVT_CODE", eventCd);
+					wsDataMap.put("EVT_TYPE", eventType);
+					wsDataMap.put("CUR_SPD", busEventMap.get("SPEED"));
+					wsDataMap.put("EVT_DATA", busEventMap.get("EVENT_DATA"));
 				}
-
-				// 모니터링용 웹소켓 데이터
-				paramMap = new HashMap<>();
-				paramMap.put("MNG_ID", sessionId);
-
-				vhcInfo = timsMapper.selectVhcInfo(paramMap);
-				// Map<String, Object> dataMap =busInfo.toMap();
-
-				wsDataMap = new HashMap<>();
-				wsDataMap.put("ATTR_ID", attrId);
-				wsDataMap.put("VHC_NO", busEvent.getBusNo());
-				wsDataMap.put("ROUT_ID", busEvent.getRouteId());
-				wsDataMap.put("ROUT_NM", busEventMap.get("ROUT_NM"));
-				wsDataMap.put("VHC_ID", vhcInfo.get("VHC_ID"));
-				wsDataMap.put("DVC_ID", vhcInfo.get("DVC_ID"));
-				wsDataMap.put("GPS_X", busEventMap.get("LONGITUDE"));
-				wsDataMap.put("GPS_Y", busEventMap.get("LATITUDE"));
-
-				if (eventCode == 0x01 || eventCode == 0x02 // 정류장 출/도착 인 경우
-						|| eventCode == 0x03 || eventCode == 0x04 // 기점 출/도착 인 경우
-						|| eventCode == 0x05 || eventCode == 0x06) // 종점점 출/도착 인 경우
-				{
-					Map<String, Object> sttnEventMap = new HashMap<String, Object>(busEventMap);
-
-					sttnEventMap.put("NODE_ID", busEvent.getEventData()); // 정류장 출/도착인 경우 EVENT_DATA를 사용
-
-					setOperEventData(sttnEventMap);
-
-					wsDataMap.put("NODE_NM", sttnEventMap.get("NODE_NM")); // 출/도착 정류소명
-					wsDataMap.put("NODE_TYPE", sttnEventMap.get("NODE_TYPE"));
-					wsDataMap.put("PREV_NODE_NM", sttnEventMap.get("PREV_NODE_NM")); // 이전 정류소/교차로
-					wsDataMap.put("NEXT_NODE_ID", sttnEventMap.get("NEXT_NODE_ID")); // 다음 정류소/교차로
-					wsDataMap.put("NEXT_NODE_NM", sttnEventMap.get("NEXT_NODE_NM"));
-					wsDataMap.put("NEXT_NODE_TYPE", sttnEventMap.get("NEXT_NODE_TYPE"));
-
-				} else {
-					wsDataMap.put("NODE_NM", busEventMap.get("NODE_NM")); // 지나온 노드명
-					wsDataMap.put("NODE_TYPE", busEventMap.get("NODE_TYPE")); // 지나온 노드 타입
-					wsDataMap.put("PREV_NODE_NM", busEventMap.get("PREV_NODE_NM")); // 이전 정류소/교차로
-					wsDataMap.put("NEXT_NODE_ID", busEventMap.get("NEXT_NODE_ID")); // 다음 정류소/교차로
-					wsDataMap.put("NEXT_NODE_NM", busEventMap.get("NEXT_NODE_NM"));
-					wsDataMap.put("NEXT_NODE_TYPE", busEventMap.get("NEXT_NODE_TYPE"));
+				catch (Exception e) {
+					logger.error("Exception {}", e);
 				}
-
-				wsDataMap.put("EVT_CODE", eventCd);
-				wsDataMap.put("EVT_TYPE", eventType);
-				wsDataMap.put("CUR_SPD", busEventMap.get("SPEED"));
-				wsDataMap.put("EVT_DATA", busEventMap.get("EVENT_DATA"));
-
 				break;
 
 			case BrtAtCode.DISPATCH:
@@ -593,26 +763,25 @@ public class EventThread extends Thread {
 					// vhcId);
 					// }
 
+					if (curInfo != null) {
+						// 웹소켓용 데이터 생성
+	
+						// 디스패치 메시지 넣기
+						wsDataMap = new HashMap<>();
+	
+						wsDataMap.put("ATTR_ID", attrId);
+						wsDataMap.put("VHC_ID", vhcId);
+						wsDataMap.put("VHC_NO", vhcNo);
+						wsDataMap.put("ROUT_ID", routId);
+						wsDataMap.put("ROUT_NM", routNm);
+						wsDataMap.put("DSPTCH_DIV", dpDiv);
+						wsDataMap.put("DSPTCH_KIND", dpLv);
+						wsDataMap.put("MESSAGE", dispatch.getMessage());
+					}
 				} catch (DuplicateKeyException e) {
-					// logger.error("", e);
+					logger.error("Exception {}", e);
 				} catch (Exception e) {
-					logger.error("", e);
-				}
-
-				if (curInfo != null) {
-					// 웹소켓용 데이터 생성
-
-					// 디스패치 메시지 넣기
-					wsDataMap = new HashMap<>();
-
-					wsDataMap.put("ATTR_ID", attrId);
-					wsDataMap.put("VHC_ID", vhcId);
-					wsDataMap.put("VHC_NO", vhcNo);
-					wsDataMap.put("ROUT_ID", routId);
-					wsDataMap.put("ROUT_NM", routNm);
-					wsDataMap.put("DSPTCH_DIV", dpDiv);
-					wsDataMap.put("DSPTCH_KIND", dpLv);
-					wsDataMap.put("MESSAGE", dispatch.getMessage());
+					logger.error("Exception {}", e);
 				}
 
 				break;
@@ -652,7 +821,7 @@ public class EventThread extends Thread {
 			}
 
 		} catch (Exception e) {
-			// logger.error("", e);
+			logger.error("Exception {}", e);
 		}
 
 	}
