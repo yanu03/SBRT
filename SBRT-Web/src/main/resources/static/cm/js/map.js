@@ -12,7 +12,9 @@ var routMap = {
 		DISP : "NT009"
 	},
 	MAX_NODE_CNT : 800,
-	LIMIT_SPEED : 50
+	LIMIT_SPEED : 50,
+	MIN_LEVEL : 4,
+	MAX_LEVEL : 7
 }
 
 
@@ -87,7 +89,9 @@ routMap.initMap = function(mapId,options) {
 	var mapOptions = {
 		center : new kakao.maps.LatLng(36.502212, 127.256300),
 		disableDoubleClickZoom: true,
-		level : 5
+		level : 5,
+		minLevel : routMap.MIN_LEVEL,
+		maxLevel : routMap.MAX_LEVEL
 	};
 	
 	if(typeof options.level !== "undefined") mapOptions.level = options.level;
