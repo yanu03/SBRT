@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import kr.tracom.platform.attribute.brt.AtBusInfo;
 
 
 public class CommonUtil {
@@ -25,6 +28,7 @@ public class CommonUtil {
 	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommonUtil.class);
 
+	
 	/**
 	 * 작성자: 트라콤
 	 * 작성일: 2016. 1. 6.
@@ -579,4 +583,5 @@ public class CommonUtil {
 		}
 		return today.substring(0, 10);
 	}
+	
 }

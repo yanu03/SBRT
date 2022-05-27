@@ -15,5 +15,8 @@ public interface HistoryMapper {
 	
 	//운행위반이력 insert
 	int insertOperVioltHistory(Map<String, Object> paramMap);
+	
+	//교차로 현시 상태 정보 update
+	int updateFcltCondParamInfo(Map<String, Object> paramMap);
 
 }

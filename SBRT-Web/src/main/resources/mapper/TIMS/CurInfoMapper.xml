@@ -41,7 +41,7 @@
 			,#{ROUT_ID}											
 			<!-- ,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, #{OPER_DT})) -->  <!--alloc no 찾기 -->
 			,#{ALLOC_NO}
-			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, #{UPD_DTM})) <!--oper sn 찾기 -->
+			,(SELECT FN_GET_OPER_SN3(#{ROUT_ID}, #{NODE_ID}, #{VHC_ID}, #{UPD_DTM}, #{ALLOC_NO})) <!--oper sn 찾기 -->
 			,#{NODE_ID}
 			,#{COURSE_ID}
 			,#{BUS_NO}
@@ -50,7 +50,8 @@
 			,#{LATITUDE}
 			,#{LONGITUDE_RAW}
 			,#{LATITUDE_RAW}			
-			,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'OPER_STS' AND NUM_VAL4 = #{RUN_TYPE}) <!-- 운행 유형  -->
+			<!-- ,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'OPER_STS' AND NUM_VAL4 = #{RUN_TYPE}) --> <!-- 운행 유형  -->
+			,#{OPER_STS}
 			,#{HEADING}
 			,#{SPEED}
 			,#{LINK_ID}
@@ -94,8 +95,12 @@
     <select id="getRoutMst" resultType="Map" parameterType="Map" >
         SELECT * FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID} LIMIT 0, 1
     </select>
-    
-<select id="getCurAllocPlInfo" resultType="Map" parameterType="Map">
+
+	<select id="getEventCode" resultType="String" parameterType="Map">
+		SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = #{CO_CD} AND NUM_VAL4 = #{NUM_VAL4}
+	</select>
+
+<select id="selectCurAllocPlInfo" resultType="Map" parameterType="Map">
 	SELECT
 		OPER_DT,
 		REP_ROUT_ID,
@@ -103,14 +108,14 @@
 		WAY_DIV,
 		VHC_ID,
 		OPER_VHC_ID
-	FROM BRT_CUR_ALLOC_PL_INFO
+	FROM BRT_CUR_ALLOC_PL_VW 
 	WHERE OPER_DT = #{OPER_DT}
 		AND REP_ROUT_ID = #{REP_ROUT_ID}
 		AND ALLOC_NO = #{ALLOC_NO}
 	LIMIT 0, 1
 	</select>
 
-	<select id="getCurAllocPlInfoByVhcId" resultType="Map" parameterType="Map">
+	<select id="selectCurAllocPlInfoByVhcId" resultType="Map" parameterType="Map">
 	SELECT
 		OPER_DT,
 		REP_ROUT_ID,
@@ -118,7 +123,7 @@
 		WAY_DIV,
 		VHC_ID,
 		OPER_VHC_ID
-	FROM BRT_CUR_ALLOC_PL_INFO
+	FROM BRT_CUR_ALLOC_PL_VW
 	WHERE OPER_DT = #{OPER_DT}
 		AND REP_ROUT_ID = #{REP_ROUT_ID}
 		AND WAY_DIV = #{WAY_DIV}
@@ -127,7 +132,7 @@
 	</select>
 	
     <!-- 현재운행중인 배차계획 정보를 받아옴-->
-	<select id="getCurAllocPlInfoByOperVhcId" resultType="HashMap" parameterType="HashMap" >
+	<select id="selectCurAllocPlInfoByOperVhcId" resultType="HashMap" parameterType="HashMap" >
 	SELECT
 		OPER_DT,
 		REP_ROUT_ID,
@@ -135,12 +140,24 @@
 		WAY_DIV,
 		VHC_ID,
 		OPER_VHC_ID
-	FROM BRT_CUR_ALLOC_PL_INFO
+	FROM BRT_CUR_ALLOC_PL_VW
 	WHERE OPER_DT = #{OPER_DT}/*SUBSTRING(NOW(), 0, 10)*/
 		AND REP_ROUT_ID = #{REP_ROUT_ID}
 		AND WAY_DIV = #{WAY_DIV}
 		AND OPER_VHC_ID = #{VHC_ID}
 	LIMIT 0, 1
+	</select>
+	
+	<select id="minAllocNoCurAllocPlInfo" resultType="int" parameterType="HashMap" >
+		SELECT
+			ALLOC_NO
+		FROM
+			BRT_CUR_ALLOC_PL_VW
+		WHERE
+			OPER_DT = #{OPER_DT}
+		  AND REP_ROUT_ID = #{REP_ROUT_ID}
+		ORDER BY ALLOC_NO ASC
+			LIMIT 0, 1
 	</select>
 
 	<select id="getCurNearAllocPlInfo" resultType="String" parameterType="Map">
@@ -239,13 +256,15 @@
 			,#{ROUT_ID}
 			<!-- ,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, #{OPER_DT})) -->  <!--alloc no 찾기 -->
 			,#{ALLOC_NO}
-			,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, #{UPD_DTM})) <!--oper sn 찾기 -->			
+			,(SELECT FN_GET_OPER_SN3(#{ROUT_ID}, #{NODE_ID}, #{VHC_ID}, #{UPD_DTM}, #{ALLOC_NO})) <!--oper sn 찾기 -->			
 			,#{COURSE_ID}
 			,#{UPD_DTM}
 			,#{BUS_NO}
 			,#{DRV_ID}
-			,(SELECT REP_ROUT_NM FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})
-			,(SELECT ROUT_NM FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})
+			,#{REP_ROUT_NM}
+			,#{ROUT_NM}
+			<!-- ,(SELECT REP_ROUT_NM FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})
+			,(SELECT ROUT_NM FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID}) -->
 			,#{LINK_ID}
 			,#{NODE_ID}
 			,#{LONGITUDE}
@@ -277,7 +296,20 @@
 	
 	<select id="refreshCurOperAllocPLNodeInfo" statementType="CALLABLE">
 	{call PROC_MAKE_CUR_OPER_ALLOC_PL_NODE_INFO()}
-	</select> 	
+	</select>
+
+	<select id="selectCurOperAllocPlRouteInfo" resultType="Map" parameterType="Map">
+		SELECT OPER_DT, REP_ROUT_ID, ROUT_ID, COR_ID, OPER_SN, NODE_ID, NODE_SN, ALLOC_NO, NODE_TYPE, DPRT_TM, ARRV_TM, UPD_DTM
+		FROM BRT_CUR_OPER_ALLOC_PL_ROUT_INFO
+		WHERE OPER_DT = #{OPER_DT}
+		AND REP_ROUT_ID = #{REP_ROUT_ID}
+		AND ROUT_ID = #{ROUT_ID}
+	</select>
 	
-	
+	<select id="selectNodeMst" resultType="Map" parameterType="Map">	
+		SELECT NODE_ID, MOCK_NODE_ID, NODE_NM, NODE_ENM, NODE_TYPE, GPS_X, GPS_Y, TM_X, TM_Y, 
+				ENTRY_RECOG_RADS, ADVNC_RECOG_RADS, USE_YN, UPD_DTM, UPD_ID
+		FROM BMS_NODE_MST
+		WHERE NODE_ID = #{NODE_ID}
+	</select>
 </mapper>

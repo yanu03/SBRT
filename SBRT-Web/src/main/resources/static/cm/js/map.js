@@ -1644,7 +1644,7 @@ routMap.showClickBusOverlay = function(mapId, data, idx, focusIdx, marker) {
 		if (data.OPER_STS == "OS001") {
 			oper_sts = "정상운행";
 		}
-		else if (data.OPER_STS == "OS002") {
+		else if (data.OPER_STS == "OS002" ||data.OPER_STS == "OS009") {
 			oper_sts = "운행종료";
 		}
 		else if (data.OPER_STS == "OS003") {

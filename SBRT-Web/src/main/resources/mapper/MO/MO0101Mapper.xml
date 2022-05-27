@@ -63,7 +63,8 @@
 			ON				A.NEXT_NODE_ID = F.NODE_TYPE	
 			
 		WHERE			A.OPER_DT = FN_DATE_TO_OPER_DT(NOW()) <!-- DATE_FORMAT(NOW(), '%Y/%m/%d') -->
-		AND				A.OPER_STS != 'OS002' 
+		AND				A.OPER_STS != 'OS002'
+		AND 			A.OPER_STS != 'OS009'
 		AND				B.DEL_YN != 'Y'
 			<if test="CONTENT1 != null">
 				AND A.REP_ROUT_ID = #{CONTENT1}
@@ -355,7 +356,7 @@
 					,	C.ORGA_NM
 					,	D.ROUT_NM
 					
-		FROM			BRT_OPER_EVENT_HIS A
+		FROM			BRT_MOVE_OPER_EVENT_HIS A
 		LEFT JOIN	  	BMS_NODE_MST B
 			ON			A.EVT_DATA = B.NODE_ID
 		LEFT JOIN	  	BMS_VOC_ORGA_INFO C
