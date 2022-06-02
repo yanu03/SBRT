@@ -318,6 +318,12 @@ public class EventThread extends Thread {
 						}
 						else {
 							busInfoMap.put("ALLOC_NO", curAllocPlInfo.get("ALLOC_NO"));
+							if(busInfoMap.get("REP_ROUT_ID")==null&&curAllocPlInfo.get("REP_ROUT_ID")!=null) {
+								busInfoMap.put("REP_ROUT_ID", curAllocPlInfo.get("REP_ROUT_ID"));
+							}
+							else {
+								busInfoMap.put("REP_ROUT_ID", "RR00000000");
+							}
 						}
 						if(checkChangeRunTypeBusOperInfo(busInfo)==true) {
 							insertCurOperInfo(busInfoMap);
@@ -443,6 +449,12 @@ public class EventThread extends Thread {
 				            else{
 				                busEventMap.put("ALLOC_NO", curAllocPlInfo.get("ALLOC_NO"));
 				                busEventMap.put("OPER_VHC_ID", busEventMap.get("BUS_ID"));
+								if(busEventMap.get("REP_ROUT_ID")==null&&curAllocPlInfo.get("REP_ROUT_ID")!=null) {
+									busEventMap.put("REP_ROUT_ID", curAllocPlInfo.get("REP_ROUT_ID"));
+								}
+								else {
+									busEventMap.put("REP_ROUT_ID", "RR00000000");
+								}
 				                curInfoMapper.updateOperVhcIdCurAllocPlInfo(busEventMap);
 				            }
 						}
