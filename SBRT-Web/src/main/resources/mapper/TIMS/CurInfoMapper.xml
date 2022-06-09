@@ -71,13 +71,16 @@
 			,DRV_ID = VALUES(DRV_ID)
 			,GPS_X = VALUES(GPS_X)
 			,GPS_Y = VALUES(GPS_Y)
+			,GPS_X_RAW = VALUES(GPS_X_RAW)
+			,GPS_Y_RAW = VALUES(GPS_Y_RAW)
 			,OPER_STS = VALUES(OPER_STS)
 			,DRV_ANGLE = VALUES(DRV_ANGLE)
 			,CUR_SPD = VALUES(CUR_SPD)
 			,LINK_ID = VALUES(LINK_ID)
 			,NODE_SN = VALUES(NODE_SN)
 			,NODE_TYPE = VALUES(NODE_TYPE)
-			,PRV_PLCE_NM = VALUES(PRV_PLCE_NM)	
+			,PRV_PLCE_NM = VALUES(PRV_PLCE_NM)
+			,NEXT_NODE_ID = #{NEXT_NODE_ID}	
 			,UPD_DTM = VALUES(UPD_DTM);
 	</insert>
 
@@ -125,8 +128,12 @@
 		OPER_VHC_ID
 	FROM BRT_CUR_ALLOC_PL_VW
 	WHERE OPER_DT = #{OPER_DT}
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(REP_ROUT_ID)">
 		AND REP_ROUT_ID = #{REP_ROUT_ID}
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(WAY_DIV)">
 		AND WAY_DIV = #{WAY_DIV}
+	</if>
 		AND VHC_ID = #{VHC_ID}
 	LIMIT 0, 1
 	</select>
@@ -142,8 +149,12 @@
 		OPER_VHC_ID
 	FROM BRT_CUR_ALLOC_PL_VW
 	WHERE OPER_DT = #{OPER_DT}/*SUBSTRING(NOW(), 0, 10)*/
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(REP_ROUT_ID)">
 		AND REP_ROUT_ID = #{REP_ROUT_ID}
+	</if>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(WAY_DIV)">
 		AND WAY_DIV = #{WAY_DIV}
+	</if>
 		AND OPER_VHC_ID = #{VHC_ID}
 	LIMIT 0, 1
 	</select>
@@ -155,7 +166,9 @@
 			BRT_CUR_ALLOC_PL_VW
 		WHERE
 			OPER_DT = #{OPER_DT}
-		  AND REP_ROUT_ID = #{REP_ROUT_ID}
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(REP_ROUT_ID)">
+		AND REP_ROUT_ID = #{REP_ROUT_ID}
+	</if>
 		ORDER BY ALLOC_NO ASC
 			LIMIT 0, 1
 	</select>
