@@ -33,6 +33,13 @@ var gcm = {
 
 	CUR_PROGRAM_AUTH : "" ,
 	
+	FILE_UPLOAD_ROOT : "",
+	FILE_UP : "",
+	FILE_AUDIO : "",
+	UPLOAD_BASE_PATH : "",
+	UPLOAD_PATH : "",
+	AUDIO_PATH : "",
+	
 	// 서버 통신 기본 모드 ( "asynchronous" / "synchronous")
 	DEFAULT_OPTIONS_MODE : "asynchronous",
 
@@ -562,6 +569,13 @@ com.getFrameMode = function() {
  */
 com._setProgramAuthority = function() {
 
+	gcm.FILE_UPLOAD_ROOT = $p.top().wfm_header.getWindow().dma_defInfo.get("FILE_UPLOAD_ROOT");
+	gcm.FILE_UP = $p.top().wfm_header.getWindow().dma_defInfo.get("FILE_UP");
+	gcm.FILE_AUDIO = $p.top().wfm_header.getWindow().dma_defInfo.get("FILE_AUDIO");
+	gcm.UPLOAD_BASE_PATH = $p.top().wfm_header.getWindow().dma_defInfo.get("UPLOAD_BASE_PATH");
+	gcm.UPLOAD_PATH = $p.top().wfm_header.getWindow().dma_defInfo.get("UPLOAD_PATH");
+	gcm.AUDIO_PATH = $p.top().wfm_header.getWindow().dma_defInfo.get("AUDIO_PATH");
+	
 	var param = com.getParameter();
 	if ((typeof param !== "undefined") && (typeof param.menuCode !== "undefined") && (param.menuCode.trim() !== "")) {
 		var menuCd = param.menuCode;
@@ -2413,7 +2427,8 @@ com._openPopup = function(url, opt, data) {
 		alwaysOnTop : opt.alwaysOnTop || false,
 		useModalStack : (opt.useModalStack == false) ? false : true,
 		resizable : (opt.resizable == false) ? false : true,
-		useMaximize : opt.useMaximize || false
+		useMaximize : opt.useMaximize || false,
+		useIFrame : opt.useIFrame || false
 	};
 
 	$p.openPopup(url, options);
@@ -3609,6 +3624,8 @@ com.transText = function(str) {
  * // return 예시) 2012/03/19
  * com.transDate(20120319, "colon");
  * // return 예시) 2012:03:19
+ * com.transDate(20120319, "dash");
+ * // return 예시) 2012-03-19
  * com.transDate(20120319);
  * // return 예시) 2012년 03월 19일
  */
@@ -3630,6 +3647,10 @@ com.transDate = function(str, type) {
 	} else if (type == "colon") {
 		if (date.length == 8) {
 			output = date.substr(0, 4) + ":" + date.substr(4, 2) + ":" + date.substr(6, 2);
+		}
+	} else if (type == "dash") {
+		if (date.length == 8) {
+			output = date.substr(0, 4) + "-" + date.substr(4, 2) + "-" + date.substr(6, 2);
 		}
 	} else {
 		var year = date.substr(0, 4);
@@ -3847,10 +3868,14 @@ com.checkBizID = function(str) {
 	} else {
 		temp1 = 0;
 	}
-	if (temp1 != aBizID[9]) {
-		return false;
+	if (temp1 != aBizID[9] || aBizID[9] == "") {
+		//return false;
+		//com.alert("사업자 등록번호가 유효하지 않습니다.");
+		return str;
 	}
-	return true;
+	//return true;
+	var result = aBizID[0]+aBizID[1]+aBizID[2]+'-'+aBizID[3]+aBizID[4]+'-'+aBizID[5]+aBizID[6]+aBizID[7]+aBizID[8]+aBizID[9];
+	return result;
 };
 
 /**
@@ -4423,7 +4448,7 @@ var autoOptions = {
 com.setMainBtn2(wfm_mainBtn, btnCom.TYPE.SINGLE_GRID, autoOptions, userOptions);
 */
 com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt, codeOptions) {
-	
+
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
 	com.enableDisp(autoOpt);
 	
@@ -4449,6 +4474,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt, codeOptions) {
 						mainBtn.addClass(item.class);
 						mainBtn.bind("onclick", eval("usrOpt."+i));
 						if ((i == gcm.BTN.SEARCH.nm)&&(typeof main.srchGrp !== "undefined")&&(main.srchGrp !== null)){
+							
 							com.setEnterKeyEvent(main.srchGrp, eval("usrOpt."+i));
 						}
 					}
@@ -4458,6 +4484,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt, codeOptions) {
 						var mainBtn = wfm_mainBtn.getWindow().btn_main_generator.getChild(tmpParentIdx, "btn_main");
 						if(typeof eval(usrOpt[i].cbFnc) === "function"){
 							mainBtn.bind("onclick", eval(usrOpt[i].cbFnc));
+							
 							if ((i == gcm.BTN.SEARCH.nm)&&(typeof main.srchGrp !== "undefined")&&(main.srchGrp !== null)){
 								com.setEnterKeyEvent(main.srchGrp, eval(usrOpt[i].cbFnc));
 							}
@@ -4767,7 +4794,7 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt, codeOptions) {
 							}
 						}
 					}
-					else if( type == gcm.DISP_TYPE.DUAL_GRID3){ //듀얼 그리드
+					else if( type == gcm.DISP_TYPE.DUAL_GRID3){ //3개 그리드
 						if(i == gcm.BTN.SEARCH.nm){
 							item.cbFnc = function(){
 								var sub = autoOpt.Sub2;
@@ -5101,6 +5128,169 @@ com.setMainBtn2 = function(wfm_mainBtn,type, autoOpt, usrOpt, codeOptions) {
 						}
 					}
 					
+					if(i == gcm.BTN.SEARCH.nm){
+
+						if ((typeof main.srchGrp !== "undefined")&&(main.srchGrp !== null)){
+							com.setEnterKeyEvent(main.srchGrp, item.cbFnc);
+						}
+					}
+					mainBtn.bind("onclick", item.cbFnc);
+				}
+			}
+		} catch (e) {
+			
+		}
+	}
+	return gcm.BTN;
+};
+
+
+com.setMainSrhBtn = function(wfm_mainBtn,type, autoOpt, usrOpt, codeOptions) {
+	
+	var programAuthority = gcm.CUR_PROGRAM_AUTH;
+	com.enableDisp(autoOpt);
+	
+	com.initGridInfo(autoOpt); //그리드 항목명 저장
+	
+	if(programAuthority.AUTH_CHECK != 'Y')return;
+	
+	wfm_mainBtn.getWindow().btn_main_srch_generator.removeAll();
+	
+	for(var i in gcm.BTN){
+		try {
+			if(i!="SEARCH")continue;
+			var item = gcm.BTN[i];
+			if(eval("programAuthority."+item.value) == "Y"){
+				
+				if ((typeof usrOpt !== "undefined")&&(usrOpt !== null)&&
+						((typeof eval("usrOpt."+i) === "function")||(typeof usrOpt[i] !== "undefined"))) {
+					var main = autoOpt.Main;
+					if (typeof eval("usrOpt."+i) === "function") {
+						var tmpParentIdx = wfm_mainBtn.getWindow().btn_main_srch_generator.insertChild();
+						var mainBtn = wfm_mainBtn.getWindow().btn_main_srch_generator.getChild(tmpParentIdx, "btn_main");
+						var str = item.str;
+						mainBtn.setValue(str);
+						mainBtn.addClass(item.class);
+						mainBtn.bind("onclick", eval("usrOpt."+i));
+						if ((i == gcm.BTN.SEARCH.nm)&&(typeof main.srchGrp !== "undefined")&&(main.srchGrp !== null)){
+							com.setEnterKeyEvent(main.srchGrp, eval("usrOpt."+i));
+						}
+					}
+					else if((typeof eval(usrOpt[i].cbFnc) === "function")||(typeof usrOpt[i].nm !== "undefined")
+							||(typeof usrOpt[i].class !== "undefined")){
+						var tmpParentIdx = wfm_mainBtn.getWindow().btn_main_srch_generator.insertChild();
+						var mainBtn = wfm_mainBtn.getWindow().btn_main_srch_generator.getChild(tmpParentIdx, "btn_main");
+						if(typeof eval(usrOpt[i].cbFnc) === "function"){
+							mainBtn.bind("onclick", eval(usrOpt[i].cbFnc));
+							if ((i == gcm.BTN.SEARCH.nm)&&(typeof main.srchGrp !== "undefined")&&(main.srchGrp !== null)){
+								com.setEnterKeyEvent(main.srchGrp, eval(usrOpt[i].cbFnc));
+							}
+						}
+						if(usrOpt[i].nm !== "undefined"){
+							mainBtn.setValue(usrOpt[i].nm);
+						}
+						if(usrOpt[i].class !== "undefined"){
+							mainBtn.addClass(usrOpt[i].class);
+						}
+					}
+					else{
+						
+					}
+				}
+				else if((typeof autoOpt !== "undefined")&&(autoOpt !== null)){
+					var tmpParentIdx = wfm_mainBtn.getWindow().btn_main_srch_generator.insertChild();
+					var mainBtn = wfm_mainBtn.getWindow().btn_main_srch_generator.getChild(tmpParentIdx, "btn_main");
+					var str = item.str;
+					mainBtn.setValue(str);
+					mainBtn.addClass(item.class);
+					
+					var main = autoOpt.Main;
+				
+					if( type == gcm.DISP_TYPE.SINGLE_GRID){ //단일 그리드
+						if(i == gcm.BTN.SEARCH.nm){
+							item.cbFnc = function(){
+								com.searchGrid(main.grid, main.srchSbm , main.savSbm);
+							}
+						}
+					}
+					else if( type == gcm.DISP_TYPE.SINGLE_GRID_FORM){ //단일 그리드와 폼
+						if(i == gcm.BTN.SEARCH.nm){
+							item.cbFnc = function(){
+								com.searchGridForm(main.grid, null, main.srchSbm , main.savSbm);
+							}
+						}
+					}
+					else if( type == gcm.DISP_TYPE.DUAL_GRID){ //듀얼 그리드
+						if(i == gcm.BTN.SEARCH.nm){
+							item.cbFnc = function(){
+								var sub = autoOpt.Sub1;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.searchDualGrid(main.grid, sub.grid, null, main.srchSbm, main.savSbm, main.allSavSbm, sub.savSbm)
+								}
+								else{
+									com.searchGrid(main.grid, main.srchSbm , main.savSbm);
+								}
+							}
+						}
+					}
+					else if( type == gcm.DISP_TYPE.DUAL_GRID2){ //듀얼 그리드 에서 서브그리드만 저장
+						if(i == gcm.BTN.SEARCH.nm){
+							item.cbFnc = function(){
+								var sub = autoOpt.Sub1;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.searchDualGrid(main.grid, sub.grid, null, main.srchSbm, main.savSbm, main.allSavSbm, sub.savSbm)
+								}
+								else{
+									com.searchGrid(main.grid, main.srchSbm , main.savSbm);
+								}
+							}
+						}
+					}
+					
+					else if( type == gcm.DISP_TYPE.DUAL_GRID_FORM2){ //복함 그리드와 폼
+						if(i == gcm.BTN.SEARCH.nm){
+							item.cbFnc = function(){
+								
+								var sub = autoOpt.Sub1;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.searchDualGrid(main.grid, sub.grid, main.frm, main.srchSbm, main.savSbm, main.allSavSbm, sub.savSbm)
+								}
+								else{
+									com.searchGrid(sub.grid, sub.srchSbm , sub.savSbm);
+								}
+							}
+						}
+					}
+					else if( type == gcm.DISP_TYPE.THIRD_GRID_FORM){ //3 그리드와 폼
+						if(i == gcm.BTN.SEARCH.nm){
+							item.cbFnc = function(){
+								
+								var sub1 = autoOpt.Sub1;
+								var sub2 = autoOpt.Sub2;
+								if ((typeof sub1 !== "undefined")&&(sub1 !== null)&&(typeof sub2 !== "undefined")&&(sub2 !== null)){
+									com.searchThirdGrid(main.grid, sub1.grid, sub1.grid, main.frm, main.srchSbm, main.savSbm,
+											main.allSavSbm, sub1.savSbm, sub2.savSbm)
+								}
+								else{
+									com.searchGrid(main.grid, main.srchSbm , main.savSbm);
+								}
+								
+							}
+						}
+					}
+					else if( type == gcm.DISP_TYPE.DUAL_GRID3){ //듀얼 그리드 에서 2번째 서브그리드만 검색
+						if(i == gcm.BTN.SEARCH.nm){
+							item.cbFnc = function(){
+								var sub = autoOpt.Sub2;
+								if ((typeof sub !== "undefined")&&(sub !== null)){
+									com.searchDualGrid(main.grid, sub.grid, null, main.srchSbm, main.savSbm, main.allSavSbm, sub.savSbm)
+								}
+								else{
+									com.searchGrid(main.grid, main.srchSbm , main.savSbm);
+								}
+							}
+						}
+					}
 					if(i == gcm.BTN.SEARCH.nm){
 
 						if ((typeof main.srchGrp !== "undefined")&&(main.srchGrp !== null)){
@@ -6047,7 +6237,6 @@ com.setSubBtn = function(btnOptions, generator) {
  * 
  */
 com.setSubBtn2 = function(wfm_subBtn,autoOpt, subOpt, codeOptions) {
-	
 	var programAuthority = gcm.CUR_PROGRAM_AUTH;
 
 	if(programAuthority.AUTH_CHECK != 'Y')return;
@@ -7055,6 +7244,69 @@ com.delGridChecked = function(grid,str,afterCb){
 				}
 			}		
 		});
+	}
+}
+
+com.delGridChecked2 = function(grid,afterCb){
+	var data = com.getGridViewDataList(grid);
+	var focusIdxs = grid.getCheckedIndex("chk");
+	var count = focusIdxs.length;
+	if (count > 0) {
+				
+		for(var i=count-1; i>=0; i--){
+			var isCreate = false;
+			try {
+				var modifiedIdx = data.getModifiedIndex();
+
+				for (var j = 0; j < modifiedIdx.length; j++) {
+					var index = modifiedIdx[j];
+					if(index==focusIdxs[i]){
+						var modifiedData = data.getRowJSON(index);
+						if (modifiedData.rowStatus === "C") { //생성된 경우 visible 하지 않고 삭제함 //getInsertedIndex 로 대신 구현해도 됨
+							isCreate = true;
+						}
+						break;
+					}
+				}
+			} catch (e) {
+				$p.log("[com.delGrid] Exception :: " + e.message);
+			}	
+		
+			if(isCreate==true){ //생성된 경우 데이터에서 삭제함
+				data.removeRow(focusIdxs[i]);
+			}
+			else {
+				grid.setCellChecked(focusIdxs[i], "chk", false);
+				grid.setRowVisible(focusIdxs[i], false);
+				data.deleteRow(focusIdxs[i]);
+			}
+		}
+		
+		var focusIndex = 0;
+		
+		if(count>0){
+			for(var i=0; i<count; i++){
+				if(grid.getRowVisible(focusIdxs[i])){
+					focusIndex = focusIdxs[i];
+					break;
+				}
+			}
+					
+			if(i==count){
+				if((focusIdxs[count-1] +1)<data.getTotalRow()){
+					focusIndex = focusIdxs[count-1] +1;
+				}
+				else{
+					focusIndex = data.getTotalRow();
+				}
+			}
+		}
+
+		grid.setFocusedCell(focusIndex, 0, false);
+		
+		if((afterCb != null) && (typeof afterCb != "undefined") && (typeof afterCb == "function")){
+			afterCb();
+		}		
 	}
 }
 
@@ -8319,6 +8571,16 @@ com.excludeItemsByGrid = function(grid, items, matchedColumn){
 	}
 }
 
+com.excludeItemsByGrid2 = function(grid, items, matchedColumn){
+	com.clearGrid(grid);
+	var data = com.getGridViewDataList(grid);
+	for (i = 0; i < items.length; i++) {
+		var curIndex = data.getMatchedIndex(matchedColumn, items[i]);
+		grid.setRowVisible(curIndex, false);
+		data.deleteRow(curIndex);
+	}
+}
+
 var shortcutTargetElement = document;
 if (shortcutTargetElement.attachEvent) {
 	shortcutTargetElement.detachEvent("keydown", gcm.shortcutEvent.keydownEvent);
@@ -8551,6 +8813,40 @@ com.gridMove = function(grid,searchColumn, content, index){
 	}
 }
 
+com.gridMove2 = function(grid,searchColumnVal,searchColumnID, content, index){
+
+	var data = com.getGridViewDataList(grid);
+	var rowData = data.getAllJSON();
+	var startIndex = 0;
+	var keyColumnValArr = searchColumnVal.split(',');
+	var keyColumnIdArr = searchColumnID.split(',');
+	
+	if(index<rowData.length-1){ //현재 포커스 다음 index 부터 검색
+		startIndex = index+1;
+	}
+	var nodeSn = 0;
+	for(var i = startIndex; i < rowData.length; i++) { //현재 포커스 다음 index 부터 마지막까지 검색
+		if(data.getRowStatus(i)!="D"){
+			for(var j = 0; j < keyColumnValArr.length; j++){
+				if(data.getCellData(i,keyColumnValArr[j]).indexOf(content)>=0){
+					grid.setFocusedCell(i, keyColumnIdArr[j]);
+					return;
+				}
+			}
+		}
+	}
+	
+	for(var i = 0; i < startIndex; i++) { //0 부터 현재 포커스 index 까지 검색
+		if(data.getRowStatus(i)!="D"){
+			for(var j = 0; j < keyColumnValArr.length; j++){
+				if(data.getCellData(i,keyColumnValArr[j]).indexOf(content)>=0){
+					grid.setFocusedCell(i, keyColumnIdArr[j]);
+					return;
+				}
+			}
+		}
+	}
+}
 /** 
  * 
  * @date 2022.03.11
@@ -8591,3 +8887,233 @@ com.checkGridSave = function(grid,saveSbmObj,str){
 		//com.clearGrid(grid);
 	}
 }
+
+com.getFileUploadRootPath = function() {
+	return gcm.FILE_UPLOAD_ROOT;
+}
+
+com.getFileUpPath = function() {
+	return gcm.FILE_UP;
+}
+
+com.getFileAudioPath = function() {
+	return gcm.FILE_AUDIO;
+}
+
+com.getUploadPath = function() {
+	return gcm.UPLOAD_PATH;
+}
+
+com.getAudioPath = function() {
+	return gcm.AUDIO_PATH;
+}
+
+
+com.clone = function(fromData, toData) {
+	var rowData = fromData.getAllJSON();
+	toData.setJSON(rowData);
+};
+
+com.moveGrid = function(fromGrid, toGrid, fromKeyColumn, toCellColumn, toCellValue){
+	var fromData = com.getGridViewDataList(fromGrid);
+	var toData = com.getGridViewDataList(toGrid);
+	
+	var checkedIdx = fromGrid.getCheckedIndex("chk");
+	var count = checkedIdx.length;
+	
+	if (count > 0) {
+		for(i = 0 ; i<count; i++){
+			var data = fromData.getAllJSON()[checkedIdx[i]];
+			
+			var value = eval("data."+fromKeyColumn);
+			
+			var index = com.getMatchedIndex(toData, fromKeyColumn, value); //동일한 index 찾기
+			if(index.length == 0){
+				index = com.indexGridNear(toData, fromKeyColumn, value);
+				var insertIndex = toData.insertRow(index);
+				toData.setRowJSON(insertIndex,data, true)
+				if(com.isEmpty(toCellColumn)==false && com.isEmpty(toCellValue)==false){
+					toData.setCellData(insertIndex, toCellColumn, toCellValue);
+				}
+			}
+			else {
+				toGrid.setRowVisible(index[0], true);
+				toData.undoRow(index[0]);
+			}
+		}
+		com.delGridChecked2(fromGrid);
+	}
+}
+
+/**
+* 라디오 버튼에 따라 inputCalendar 동작
+* @param F_DATE : 시작 기간 inputCalendar Id
+* @param L_DATE : 종료 기간 inputCalendar Id
+* @param info : websquare에서 onviewchange시 제공하는 radio 정보
+*/
+com.setCalendarRadioChange = function(F_DATE, L_DATE, info) {
+	var date = new Date();
+	var year = date.getFullYear().toString();
+	var month = (date.getMonth()+1).toString();
+	var day = date.getDate().toString();
+	var zero = 0;
+	
+	//글자수 맞추기
+	if(day.length == 1){
+		day = zero + day;
+	}
+	
+	if(month.length == 1){
+		month = zero + month;
+	}
+			
+	var weekAgoDate = new Date(date.setDate(date.getDate() - 7));
+	var weekAgoYear = weekAgoDate.getFullYear().toString();
+	var weekAgoMonth = (weekAgoDate.getMonth()+1).toString();
+	var weekAgoDay = weekAgoDate.getDate().toString();
+	if(weekAgoDay.length == 1){
+		weekAgoDay = zero + weekAgoDay;
+	}
+	
+	if(weekAgoMonth.length == 1){
+		weekAgoMonth = zero + weekAgoMonth;
+	}		
+	
+	
+	date = new Date();
+	var monthAgoDate = new Date(date.setMonth(date.getMonth() - 1));
+	var monthAgoYear = monthAgoDate.getFullYear().toString();
+	var monthAgoMonth = (monthAgoDate.getMonth()+1).toString();
+	var monthAgoDay = monthAgoDate.getDate().toString();		
+	if(monthAgoDay.length == 1){
+		monthAgoDay = zero + monthAgoDay;
+	}
+	
+	if(monthAgoMonth.length == 1){
+		monthAgoMonth = zero + monthAgoMonth;
+	}			
+	
+	var todaysDate = year+month+day;
+	weekAgoDate = weekAgoYear + weekAgoMonth + weekAgoDay;
+	monthAgoDate = monthAgoYear + monthAgoMonth + monthAgoDay;		
+	
+	if(info.value == "DIRECT") {
+		F_DATE.setValue();
+		L_DATE.setValue();
+	}
+	
+	else if(info.value == "TODAY") {
+		F_DATE.setValue(todaysDate);
+		L_DATE.setValue(todaysDate);	
+	}
+	
+	else if(info.value == "WEEK") {
+		F_DATE.setValue(weekAgoDate);
+		L_DATE.setValue(todaysDate);			
+	}
+	
+	else if(info.value == "MONTH") {
+		F_DATE.setValue(monthAgoDate);
+		L_DATE.setValue(todaysDate);				
+	}	
+}
+
+/**
+* 새 메뉴를 열음
+* @param menuNm : 메뉴명
+* @param url : 메뉴 xml url
+* @param menuCode : 메뉴 코드값
+* @param paramObj : 전달할 파라미터값
+* @param menuType : 
+*/
+com.openMenu = function(menuNm, url, menuCode, paramObj, menuType) {
+	// client에서 url 숨기기 메뉴일 경우에는 새 창으로 띄우기 적용 
+	if (url == "/") {
+		var url = document.location.href + "/";
+		window.open(url, "", "width=1200, height=700, left=450, top=100");
+	} else {
+		menuCode = menuCode || "";
+		var layout = $p.top().scwin.getLayoutId();
+		var tmpUrl;
+		var menuCodeParm = menuCode;
+		var frameMode;	// "wframe", "iframe"
+		var favStatus;
+		var data;
+
+		if (url.indexOf("/") !== 0) {
+			url = "/" + url;
+		}
+		url = gcm.CONTEXT_PATH + url;
+		if ((typeof paramObj !== "undefined") && (paramObj !== null)) {
+			data = {};
+			data.paramObj = paramObj;
+		} else {
+			data = {};
+		}
+		
+		data.menuNm = menuNm;
+		data.menuCode = menuCode;
+		data.favStatus = favStatus;
+		data.menuType = menuType;
+		
+		var _closable = true;
+		
+		var frameMode = "";
+		if (layout == "T") {
+			var tabObj = { closable : _closable, //main 페이지를 제외하고 탭 닫기 기능 제공
+						   openAction : "select", // exist 는 기존 탭을 갱신, new 는 항상 새로, select는 동일 id 가 존재하면 선택, last: 기존 tab을 마지막 tab으로 이동후 선택
+						   label : menuNm };
+			
+			if (com.getFrameMode()  === "wframe") {
+				frameMode = "wframePreload";
+			} else {
+				frameMode = "iframe";
+			}
+			
+			var contObj = {
+				frameMode : frameMode,
+				scope : true,
+				src : url,
+				alwaysDraw : false,
+				title : menuNm,
+				dataObject : {
+					type : "json", 
+					name : "param", 
+					data : data
+				}
+			};
+			var tabComp = $w.getComponentById("mf_tac_layout");
+			tabComp.addTab(menuCode, tabObj, contObj);
+
+			// tabObj의 openAction의 last값의 동작 특이 사항으로 선택이 되지 않은 경우 선택하는 로직 추가
+			if (tabComp.getSelectedTabID() !== menuCode) {
+				var tabIndex = tabComp.getTabIndex(menuCode);
+				if (tabIndex) {
+					tabComp.setSelectedTabIndex(tabIndex);
+				}
+			}
+		} else if (layout == "M") {
+			if (com.getFrameMode() === "wframe") {
+				frameMode = "wframe";
+			} else {
+				frameMode = "iframe";
+			}
+			
+			var options = {
+				title : menuNm,
+				src : url,
+				windowTitle : menuNm,
+				windowId : menuCode,
+				openAction : "existWindow",
+				frameMode : frameMode,
+				dataObject : { 
+					type : "json", 
+					name : "param", 
+					data : data
+				}
+			}
+			var wdcComp = $w.getComponentById("mf_wdc_main");
+			wdcComp.createWindow(options);
+		}
+	}
+};
