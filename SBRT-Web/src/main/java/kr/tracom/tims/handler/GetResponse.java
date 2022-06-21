@@ -47,7 +47,8 @@ public class GetResponse {
             short attrId = atMessage.getAttrId();
 
             switch(attrId){
-            
+            	
+            	//신호정보
             	case BrtAtCode.TRAFFIC_LIGHT_STATUS_RESPONSE:
             		
             		List<HashMap <String, Object>> phaseInfoMapList = new ArrayList<>();
@@ -69,7 +70,7 @@ public class GetResponse {
     				phaseInfoMap.put("PHASE_NO_B", phaseNoB);
     				phaseInfoMap.put("PHASE_TM_A", pahseTmA);
     				phaseInfoMap.put("PHASE_TM_B", pahseTmB);
-    				//historyMapper.updateFcltCondParamInfo(phaseInfoMap);
+    				historyMapper.updateSigFcltCondParamInfo(phaseInfoMap);
     				
     				/*phaseInfoMap.put("DATA_VAL", contSt);
     				phaseInfoMap.put("PARAM_DIV", "PD003");
@@ -85,7 +86,7 @@ public class GetResponse {
     				phaseInfoMap.put("PARAM_DIV", "PD003");
     				phaseInfoMap.put("PARAM_KIND", "PK040");
     				historyMapper.updateFcltCondParamInfo(phaseInfoMap);
-    				
+    			
     				phaseInfoMap.put("DATA_VAL", phaseNoB);
     				phaseInfoMap.put("PARAM_DIV", "PD003");
     				phaseInfoMap.put("PARAM_KIND", "PK042");
