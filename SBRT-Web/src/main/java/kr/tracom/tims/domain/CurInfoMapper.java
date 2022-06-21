@@ -33,6 +33,6 @@ public interface CurInfoMapper {
     Map<String, Object> selectCurOperAllocPlRouteInfo(Map<String, Object> paramMap);
     
     String getEventCode(Map<String, Object> paramMap);
-    
+    String selectCurNearAllocPl3(Map<String, Object> params);
 
 }

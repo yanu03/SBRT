@@ -1,5 +1,7 @@
 package kr.tracom.tims.handler;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -16,19 +18,25 @@ import org.springframework.dao.DuplicateKeyException;
 import kr.tracom.beans.BeanUtil;
 import kr.tracom.cm.domain.Common.CommonMapper;
 import kr.tracom.platform.attribute.BrtAtCode;
+import kr.tracom.platform.attribute.bis.AtSbrtRouteInfo;
 import kr.tracom.platform.attribute.brt.AtBusArrivalInfo;
 import kr.tracom.platform.attribute.brt.AtBusArrivalInfoItem;
 import kr.tracom.platform.attribute.brt.AtBusInfo;
 import kr.tracom.platform.attribute.brt.AtBusOperEvent;
 import kr.tracom.platform.attribute.brt.AtDispatch;
+import kr.tracom.platform.attribute.common.AtTimeStamp;
 import kr.tracom.platform.net.protocol.TimsMessage;
+import kr.tracom.platform.net.protocol.TimsMessageBuilder;
 import kr.tracom.platform.net.protocol.attribute.AtMessage;
 import kr.tracom.platform.net.protocol.payload.PlEventRequest;
+import kr.tracom.platform.service.TService;
+import kr.tracom.platform.service.config.PlatformConfig;
 import kr.tracom.platform.service.kafka.model.KafkaMessage;
 import kr.tracom.tims.OperDtUtil;
 import kr.tracom.tims.domain.CurInfoMapper;
 import kr.tracom.tims.domain.HistoryMapper;
 import kr.tracom.tims.domain.TimsMapper;
+import kr.tracom.tims.kafka.KafkaProducer;
 import kr.tracom.util.CommonUtil;
 import kr.tracom.ws.WsClient;
 
@@ -56,7 +64,12 @@ public class EventThread extends Thread {
 	// @Autowired
 	WsClient webSocketClient;
 	
+	// @Autowired
+	KafkaProducer kafkaProducer;	
+	
 	private static Map<String, Object> g_busOperInfoMap = new HashMap<>();
+	
+	private static Map<String, Object> g_busOperEventMap = new HashMap<>();
 	
 	private static Map<String, Object> g_busIdMap = new HashMap<>();
 	
@@ -81,6 +94,35 @@ public class EventThread extends Thread {
                 }
 				return true;
 			}
+			return false;
+		}
+		return false;
+	}
+	
+	private boolean checkRoutChangeBusOperEvent(AtBusOperEvent operEvent) {
+		String impId = operEvent.getImpId();
+		if ((impId != null) && (impId.isEmpty() == false)) {
+			AtBusOperEvent oldOperEvent = (AtBusOperEvent) g_busOperEventMap.get(impId);
+			if (oldOperEvent != null && (operEvent.getNodeSeq()<10 &&oldOperEvent.getNodeSeq() > operEvent.getNodeSeq())) {
+				if (operEvent != null && oldOperEvent != null) {
+					logger.info("checkRoutChangeBusOperEvent operEvent: {}, oldOperEvent: {}", operEvent, oldOperEvent);
+				}
+                if(g_busOperEventMap!=null) {
+                	g_busOperEventMap.put(impId, operEvent);
+                }
+                else{
+                	g_busOperEventMap = new HashMap<>();
+                	g_busOperEventMap.put(impId, operEvent);
+                }
+				return true;
+			}
+            if(g_busOperEventMap!=null) {
+            	g_busOperEventMap.put(impId, operEvent);
+            }
+            else{
+            	g_busOperEventMap = new HashMap<>();
+            	g_busOperEventMap.put(impId, operEvent);
+            }
 			return false;
 		}
 		return false;
@@ -193,7 +235,7 @@ public class EventThread extends Thread {
 		curInfoMapper = (CurInfoMapper) BeanUtil.getBean(CurInfoMapper.class);
 		commonMapper = (CommonMapper) BeanUtil.getBean(CommonMapper.class);
 		webSocketClient = (WsClient) BeanUtil.getBean(WsClient.class);
-
+		kafkaProducer = (KafkaProducer) BeanUtil.getBean(KafkaProducer.class);
 	}
 	
 
@@ -322,7 +364,7 @@ public class EventThread extends Thread {
 								busInfoMap.put("REP_ROUT_ID", curAllocPlInfo.get("REP_ROUT_ID"));
 							}
 							else {
-								busInfoMap.put("REP_ROUT_ID", "RR00000000");
+								busInfoMap.put("REP_ROUT_ID", "RR00000002"); //임시로
 							}
 						}
 						if(checkChangeRunTypeBusOperInfo(busInfo)==true) {
@@ -445,6 +487,7 @@ public class EventThread extends Thread {
 								||(CommonUtil.empty(allocVhcId)==false)&&(allocVhcId.equals(allocOperVhcId)==false)) {
 							curAllocPlInfo = curInfoMapper.selectCurAllocPlInfoByVhcId(busEventMap);
 				            if(curAllocPlInfo==null){
+				            	busEventMap.put("REP_ROUT_ID", "RR00000002"); //임시로
 				            }
 				            else{
 				                busEventMap.put("ALLOC_NO", curAllocPlInfo.get("ALLOC_NO"));
@@ -453,7 +496,7 @@ public class EventThread extends Thread {
 									busEventMap.put("REP_ROUT_ID", curAllocPlInfo.get("REP_ROUT_ID"));
 								}
 								else {
-									busEventMap.put("REP_ROUT_ID", "RR00000000");
+									busEventMap.put("REP_ROUT_ID", "RR00000002"); //임시로
 								}
 				                curInfoMapper.updateOperVhcIdCurAllocPlInfo(busEventMap);
 				            }
@@ -514,14 +557,66 @@ public class EventThread extends Thread {
 									busEventMap.put("OPER_VHC_ID", busEventMap.get("VHC_ID"));
 									insertCurAllocPlInfo(busEventMap); //배차가 없는 경우 0보다 작은수로 배차함
 								}
+								else {
+									int minAllocNo = curInfoMapper.minAllocNoCurAllocPlInfo(busEventMap);
+									if(minAllocNo>0)minAllocNo=0;
+									else minAllocNo -= 1;
+								}
 							} else {
-								if (eventCode == (byte) 0x03 || eventCode == (byte) 0x04) {
+								
+								if (eventCode == (byte) 0x03 || eventCode == (byte) 0x04 || checkRoutChangeBusOperEvent(busEvent)) {
 									// 현재운행정보도 업데이트
-	
-									String curNearStr = curInfoMapper.getCurNearAllocPlInfo2(busEventMap);
-									String curNearArr[] = curNearStr.split(",");
-									busEventMap.put("ROUT_ID", curNearArr[0]);
-									busEventMap.put("COR_ID", curNearArr[1]);
+									String curNearStr = "";
+									/*Map<String, Object> params = new HashMap<>();
+									if(CommonUtil.notEmpty(busEventMap.get("EVT_DATA"))
+											&&(busEventMap.get("EVT_DATA").equals(busEventMap.get("NODE_ID"))==false)) {
+										busEventMap.put("NODE_ID", busEventMap.get("EVT_DATA"));
+									}
+									
+									curNearStr = curInfoMapper.selectCurNearAllocPl3(busEventMap);
+									if(CommonUtil.notEmpty(curNearStr)) {
+										String routeCourseStr[] = curNearStr.split(","); 
+				                        logger.info("routeCourseId = " + curNearStr + ", routeCourseStr.length=" + routeCourseStr.length);
+				                        if (routeCourseStr.length == 2) {
+				                        	AtSbrtRouteInfo sbrtRouteInfo = new AtSbrtRouteInfo();
+				                            sbrtRouteInfo.setUpdateTm(new AtTimeStamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern(PlatformConfig.PLF_DT_FORMAT))));
+				                            sbrtRouteInfo.setRouteId(routeCourseStr[0]);
+				                            sbrtRouteInfo.setCourseId(routeCourseStr[1]);
+				                            sbrtRouteInfo.setSelectMode((byte) 0x01);
+				                            sbrtRouteInfo.setRunType((byte)0x01);
+
+				                            TimsMessageBuilder builder = new TimsMessageBuilder(TService.getInstance().getTimsConfig());
+				                            TimsMessage setRequest = builder.setRequest(sbrtRouteInfo);
+
+				                            //노선,코스 정보를 차량에 전달
+				                            kafkaProducer.sendKafka(setRequest, sessionId);
+				                        }
+									}*/
+									if(CommonUtil.empty(curNearStr)) {
+										curNearStr = curInfoMapper.getCurNearAllocPlInfo2(busEventMap);
+									}
+									
+									if(CommonUtil.notEmpty(curNearStr)) {
+										String curNearArr[] = curNearStr.split(",");
+										
+			                        	AtSbrtRouteInfo sbrtRouteInfo = new AtSbrtRouteInfo();
+			                            sbrtRouteInfo.setUpdateTm(new AtTimeStamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern(PlatformConfig.PLF_DT_FORMAT))));
+			                            sbrtRouteInfo.setRouteId(curNearArr[0]);
+			                            sbrtRouteInfo.setCourseId(curNearArr[1]);
+			                            sbrtRouteInfo.setSelectMode((byte) 0x01);
+			                            sbrtRouteInfo.setRunType((byte)0x01);
+
+			                            TimsMessageBuilder builder = new TimsMessageBuilder(TService.getInstance().getTimsConfig());
+			                            TimsMessage setRequest = builder.setRequest(sbrtRouteInfo);
+
+			                            //노선,코스 정보를 차량에 전달
+			                            kafkaProducer.sendKafka(setRequest, sessionId);
+			                            
+										busEventMap.put("ROUT_ID", curNearArr[0]);
+										busEventMap.put("COR_ID", curNearArr[1]);
+										
+										
+									}
 									//busEventMap.put("ALLOC_NO", curNearArr[2]);
 								} else {
 								}
@@ -565,7 +660,7 @@ public class EventThread extends Thread {
 						/** 특정 이벤트 **/
 					case 0x11: // 문 열림
 					case 0x12: // 문 닫힘
-	
+						
 						paramMap = new HashMap<>();
 	
 						paramMap.put("COL", "DL_CD");
@@ -811,8 +906,7 @@ public class EventThread extends Thread {
 		try {
 
 			// 운행일 생성. 시간에 따라 0시(24시) ~ 02시까지는 이전 날짜로 운행일 설정
-			operEventMap.put("OPER_DT",
-					OperDtUtil.convertTimeToOperDt(operEventMap.get("UPD_DTM").toString(), "yyyy-MM-dd HH:mm:ss"));
+			operEventMap.put("OPER_DT", OperDtUtil.convertTimeToOperDt(operEventMap.get("UPD_DTM").toString(), "yyyy-MM-dd HH:mm:ss"));
 
 			// 다음노드(교차로 or 정류소)
 			Map<String, Object> realNodeInfo = timsMapper.selectNodeByLinkSn(operEventMap); // 통플에서 넘어온 노드순번(실제로는 링크순번)

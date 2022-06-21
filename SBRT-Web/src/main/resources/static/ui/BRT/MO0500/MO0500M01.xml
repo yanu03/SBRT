@@ -52,7 +52,8 @@
 						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
 						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
 						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
-						<w2:key id="OCR_DTM" name="발생일자" dataType="date"></w2:key>
+						<w2:key id="F_DATE" name="" dataType="date"></w2:key>
+						<w2:key id="L_DATE" name="" dataType="date"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_grgSearchItem" saveRemovedData="true">
@@ -115,9 +116,13 @@
 
 		<script type="text/javascript"><![CDATA[
    scwin.onpageload = function() {
+      var codeOptions = [ {code : "OPER_APPR_STS", compID : "OPER_APPR_STS, MO0500G0:OPER_APPR_STS" } 
+                     ,{code : "OPER_APPR_DIV", compID : "OPER_APPR_DIV, MO0500G0:OPER_APPR_DIV" }
+                     ,{code : "VHC_TYPE", compID : "VHC_TYPE, MO0500G0:VHC_TYPE" }
+               ];
       var autoOptions = {
          Main : { grid : MO0500G0, srchSbm : sub_MO0500G0R0, savSbm : sub_MO0500G0S0, 
-               srchGrp : pgm_header, keyColumn : "OPER_APPR_ID", focusColumn : "OCR_DTM", name :  "전용도로 운행 인가 목록"}
+               srchGrp : pgm_search, keyColumn : "OPER_APPR_ID", focusColumn : "OCR_DTM", name :  "전용도로 운행 인가 목록"}
       };
       
       var mainOptions = {
@@ -125,14 +130,18 @@
 			,ADD:{cbFnc:scwin.btn_NOTALLOW_onclick, nm:"불가",class:"Intg"}
 			,DEL:{disp:"hide"}
 			,CNL:{disp:"hide"}
+			,SEARCH : {}
 		};
       
-      com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions, mainOptions);
-      
-      var codeOptions = [ {code : "OPER_APPR_STS", compID : "OPER_APPR_STS, MO0500G0:OPER_APPR_STS" } 
-                     ,{code : "OPER_APPR_DIV", compID : "OPER_APPR_DIV, MO0500G0:OPER_APPR_DIV" }
-                     ,{code : "VHC_TYPE", compID : "VHC_TYPE, MO0500G0:VHC_TYPE" }
-               ];
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions, mainOptions, codeOptions);
+		var mainSrhOptions = {
+		};		
+		com.setMainSrhBtn(wfm_mainSearchBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions, mainSrhOptions, codeOptions);
+		dma_search.F_DATE = util.getCurrentDate2();
+		F_DATE.setValue(util.getCurrentDate2());
+		
+		dma_search.L_DATE = util.getCurrentDate2();
+		L_DATE.setValue(util.getCurrentDate2());
                
       com.setCommonDtl(codeOptions, function(){
          com.searchGrid(MO0500G0, sub_MO0500G0R0);
@@ -237,82 +246,126 @@
 		var jsonObj = dlt_BRT_OPER_APPR_INFO.getRowJSON(curIndex);
 		routMap.showVehicle2("map_MO0500", jsonObj, rowData, MO0500G0, 0, 0);
 	};
+	
+	//라디오 버튼에 따라 날짜 설정
+	scwin.calendar_radio_onviewchange = function(info) {
+		com.setCalendarRadioChange(F_DATE, L_DATE, info);
+	};
 ]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
-		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
-			<xf:group id="pgm_navi" class="pgm_navi" style="">
-				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
-			</xf:group>
-			<xf:group id="pgm_header" class="pgm_header" style="">
-				<xf:group id="" style="" class="gr_search">
-					<xf:group id="" style="" class="label">
-						<w2:span id="" class="" label="검색 항목"></w2:span>
+		<xf:group id="pgm_container" class="pgm_container grdr_60_a" style="">
+		
+			<xf:group id="" class="grdc_2f_8f title-wrap" style="">
+				<xf:group id="pgm_header_left" class="pgm_header_left" style="">
+					<w2:wframe id="wfm_title" style="" src="/cm/common/wf_title.xml" scope="true"></w2:wframe>
+				</xf:group>
+				<xf:group id="pgm_header_right" class="pgm_header_right" style="">
+					<xf:group id="pgm_rightNavi" class="pgm_rightNavi" style="">
+						<w2:wframe id="rightNavi" class="" style="" src="/cm/common/wf_rightNavi.xml" scope="true"></w2:wframe>
 					</xf:group>
-					<xf:group id="" style="" class="search">
-						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
-							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
-							optionOrder="false" ref="data:dma_search.TYPE" style="" class="search_type" submenuSize="auto" textAlign="left">
-							<xf:choices>
-								<xf:item>
-									<xf:label><![CDATA[-전체-]]></xf:label>
-									<xf:value><![CDATA[ALL]]></xf:value>
-								</xf:item>
-								<xf:item>
-									<xf:label><![CDATA[운수사]]></xf:label>
-									<xf:value><![CDATA[COMP_NM]]></xf:value>
-								</xf:item>
-								<xf:item>
-									<xf:label><![CDATA[노선명]]></xf:label>
-									<xf:value><![CDATA[ROUT_NM]]></xf:value>
-								</xf:item>
-								<xf:item>
-									<xf:label><![CDATA[차량유형]]></xf:label>
-									<xf:value><![CDATA[VHC_TYPE]]></xf:value>
-								</xf:item>
-							</xf:choices>
-						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="운수사 또는 노선명"></xf:input>
-						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
-							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
-							ev:onviewchange="" id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
-							selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
-							<w2:choices>
-								<w2:itemset nodeset="data:dlt_grgSearchItem">
-									<w2:label ref="GRG_ID"></w2:label>
-									<w2:value ref="GRG_ID"></w2:value>
-								</w2:itemset>
-							</w2:choices>
-						</w2:autoComplete>
-						<xf:group style="" id="">
-							<w2:span label="발생일시 : " style="float: left;margin-left: 15px; margin-top:2px;" id=""></w2:span>
-							<w2:inputCalendar footerDiv="false" id="" style="width: 150px;height: 23px;float: left;margin-left: 10px;"
-								renderDiv="true" focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component"
-								ref="data:dma_search.OCR_DTM">
-							</w2:inputCalendar>
-						</xf:group>
+					<xf:group id="pgm_header" class="pgm_header" style="">
+						<w2:wframe id="wfm_mainBtn" class="main_Btn" style="float:right" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 					</xf:group>
-					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 				</xf:group>
 			</xf:group>
-			<xf:group id="pgm_content" class="pgm_content grdc_a_20_900" style="">
-				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
+		
+			<xf:group id="pgm_content" class="pgm_content grdc_a_0_900" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_50_a bms_box_wrap" style="">
 					<xf:group id="" class="" style="">
 						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="전용도로 운행 인가 목록" style=""></w2:textbox>
+							<w2:textbox class="df_tt fl list ico-list" id="" label="전용도로 운행 인가 목록" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
-					<xf:group></xf:group>
-					<xf:group id="" class="" style="">							
+					
+					<xf:group id="" class="" style="">
+						<xf:group id="" style="" class="gr_search">
+							<xf:group id="" style="" class="label">
+									<w2:span id="" class="" label="검색 항목"></w2:span>
+							</xf:group>
+							<xf:group id="pgm_search" style="" class="search">
+								<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false" 
+									disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
+									optionOrder="false" ref="data:dma_search.TYPE" style="width:70px" class="search_type" submenuSize="auto" textAlign="left">
+									<xf:choices>
+										<xf:item>
+											<xf:label><![CDATA[-전체-]]></xf:label>
+											<xf:value><![CDATA[ALL]]></xf:value>
+										</xf:item>
+										<xf:item>
+											<xf:label><![CDATA[운수사]]></xf:label>
+											<xf:value><![CDATA[COMP_NM]]></xf:value>
+										</xf:item>
+										<xf:item>
+											<xf:label><![CDATA[노선명]]></xf:label>
+											<xf:value><![CDATA[ROUT_NM]]></xf:value>
+										</xf:item>
+										<xf:item>
+											<xf:label><![CDATA[차량유형]]></xf:label>
+											<xf:value><![CDATA[VHC_TYPE]]></xf:value>
+										</xf:item>
+									</xf:choices>
+								</xf:select1>
+								<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" style="width:100px" placeholder="운수사, 노선명"></xf:input>
+								<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+									chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
+									ev:onviewchange="" id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
+									selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+									<w2:choices>
+										<w2:itemset nodeset="data:dlt_grgSearchItem">
+											<w2:label ref="GRG_ID"></w2:label>
+											<w2:value ref="GRG_ID"></w2:value>
+										</w2:itemset>
+									</w2:choices>
+								</w2:autoComplete>
+								<xf:group class="label" id="" style="margin-left:5px;">
+									<w2:span class="" id="" label="발생일시"></w2:span>
+								</xf:group>
+								<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
+									style="width:100px; margin-right: 5px; float: left;margin-top: 3px;" id="F_DATE" renderType="component" renderDiv="true"
+									calendarValueType="yearMonthDate" ref="data:dma_search.F_DATE" ev:onviewchange="scwin.F_DATE_onviewchange" placeholder="yyyymmdd">
+								</w2:inputCalendar>
+								<w2:span label="~" style="float: left;margin-right: 5px;margin-top: 5px;" id=""></w2:span>
+								<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
+									style="width: 100px;float: left;margin-top: 3px;" id="L_DATE" renderType="component" renderDiv="true" placeholder="yyyymmdd" calendarValueType="yearMonthDate" ref="data:dma_search.L_DATE" ev:onviewchange="scwin.L_DATE_onviewchange">
+								</w2:inputCalendar>
+								<xf:group id="" style="margin-left: 10px;" class="radio">
+									<xf:select1 id="calendar_radio" ref="" selectedIndex="1" cols="" appearance="full"
+										style="min-width: 200px;" rows="1" ev:onviewchange="scwin.calendar_radio_onviewchange">
+										<xf:choices>
+											<xf:item>
+												<xf:label><![CDATA[직접입력]]></xf:label>
+												<xf:value><![CDATA[DIRECT]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[금일]]></xf:label>
+												<xf:value><![CDATA[TODAY]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[일주일]]></xf:label>
+												<xf:value><![CDATA[WEEK]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[1개월]]></xf:label>
+												<xf:value><![CDATA[MONTH]]></xf:value>
+											</xf:item>
+										</xf:choices>
+									</xf:select1>
+								</xf:group>
+							</xf:group>
+							<w2:wframe id="wfm_mainSearchBtn" class="wfm_mainSearchBtn" style="" src="/cm/common/wf_mainSrhBtn.xml" scope="true"></w2:wframe>							
+						</xf:group>
+					</xf:group>
+					<xf:group id="" class="" style="">
 						<w2:gridView id="MO0500G0" defaultCellHeight="20" rowNumVisible="true" useShiftKey="true" scrollByColumn="false"
-							rowNumHeaderValue="순번" sortable="true" rowStatusHeaderValue="상태" overflowX="scroll" overflowY="scroll" rowStatusVisible="false"
+							rowNumHeaderValue="No." sortable="true" rowStatusHeaderValue="상태" overflowX="scroll" overflowY="scroll" rowStatusVisible="false"
 							fixedColumnWithHidden="true" ignoreCellClick="false" dataList="data:dlt_BRT_OPER_APPR_INFO" class="cm_grid left" autoFit="lastColumn"
 							ev:onrowindexchange="scwin.MO0500G0_onrowindexchange" focusMode="row" ev:oncellclick="">
 							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row1">
 									<w2:column removeBorderStyle="false" width="136" inputType="text" style="height:22px;" id="column16"
-										value="발생일시" blockSelect="false" displayMode="label">
+										value="발생일시" blockSelect="false" displayMode="label" checkboxLabelFormatter="">
 									</w2:column>
 									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:22px;" id="column13"
 										value="차량번호" blockSelect="false" displayMode="label">
@@ -383,9 +436,8 @@
 					</xf:group>
 				</xf:group><!-- pgm_list -->
 				
-				<xf:group id="" class="vertical_line">
-				</xf:group>
-				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_150_20_20_2_a" style="">
+				<xf:group id="" class=""></xf:group>
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_a bms_box_wrap" style="">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="전용도로 운행 정보" style=""></w2:textbox>
@@ -491,20 +543,25 @@
 									</xf:select1>
 								</xf:group>
 							</xf:group>
-						</xf:group>
-					</xf:group>
-					<xf:group id="" class="horizontal_line">
-					</xf:group>
-					<xf:group id="" class="gr_sub_header" style="">
-						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="지도" style=""></w2:textbox>
-						</xf:group>
-					</xf:group>
-					<xf:group class="" id="" style="">
-					</xf:group>
-					<xf:group id="" class="" style="">
-						<div id="map_MO0500" style="overflow:hidden;"></div>
-						<!-- <xf:group id="map_SI0402" style="overflow:hidden;"></xf:group>  -->
+							<xf:group tagname="tr" style="">
+								<xf:group tagname="td" class="w2tb_td"  style="background-color: #f7f7f7;">
+									<w2:attributes>
+										<w2:colspan>4</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:group style="padding:10px; background-color: #f7f7f7; display: grid; grid-template-rows: 30px minmax(415px, max-content);">
+										<xf:group id="" class="gr_sub_header" style="">
+											<xf:group class="defaultbox" id="" style="">
+												<w2:textbox class="df_tt fl map" id="" label="지도" style=""></w2:textbox>
+											</xf:group>
+										</xf:group>
+										<xf:group id="" class="" style="">
+											<div id="map_MO0500" style="overflow:hidden;"></div>
+										</xf:group>
+									</xf:group>
+								</xf:group>
+							</xf:group> <!-- /tr -->
+						</xf:group> <!-- MO0500F0 -->
 					</xf:group>
 				</xf:group><!-- pgm_detail -->
 			</xf:group>

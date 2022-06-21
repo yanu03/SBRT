@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head meta_vertical_guides="" meta_horizontal_guides="">
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataMap baseNode="map" id="dma_result" ev:onmodelchange="">
+					<w2:keyInfo>
+						<w2:key id="STATUS" name="STATUS" dataType="text"></w2:key>
+						<w2:key id="ICNT" name="입력건수" dataType="text"></w2:key>
+						<w2:key id="UCNT" name="수정건수" dataType="text"></w2:key>
+						<w2:key id="DCNT" name="삭제건수" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataMap baseNode="map" id="dma_SEQ_BMS_VDO_INFO_0">
+					<w2:keyInfo>
+						<w2:key id="SEQ" name="SEQ" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="VDO_ID" name="영상ID" dataType="text"></w2:column>
+						<w2:column id="VDO_NM" name="영상명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_VDO_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="VDO_ID" name="영상ID" dataType="text"></w2:column>
+						<w2:column id="VDO_NM" name="영상명" dataType="text"></w2:column>
+						<w2:column id="CON_ID" name="계약ID" dataType="text"></w2:column>
+						<w2:column id="PLAY_ST_DT" name="재생시작일" dataType="date"></w2:column>
+						<w2:column id="FILE_TYPE" name="파일유형" dataType="text"></w2:column>
+						<w2:column id="IMG_PLAY_TM" name="이미지재생시간" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="PLAY_TM" name="재생시간" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="PLAY_ED_DT" name="재생종료일" dataType="date"></w2:column>
+						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+						<w2:column id="FILE_NM" name="파일명" dataType="text"></w2:column>
+						<w2:column id="FILE_PATH" name="파일경로" dataType="text"></w2:column>
+						<w2:column id="FILE_EXTENSION" name="파일확장자" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataMap baseNode="map" id="dma_fileinfo">
+					<w2:keyInfo>
+						<w2:key id="FILE_PATH" name="파일경로" dataType="text"></w2:key>
+						<w2:key id="FILE_EXTENSION" name="파일확장자" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataMap baseNode="list" repeatNode="map" id="dma_filechk" saveRemovedData="true">
+					<w2:keyInfo>
+						<w2:key id="CHK" name="파일체크" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_PI0501G0R0" ref="data:json,dma_search" target="data:json,dlt_VDO_INFO" action='/pi/PI0501G0R0'
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="조회 중입니다..." ev:submit="" ev:submitdone="scwin.sub_PI0501G0R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_PI0501G0S0" ref="data:json,dlt_VDO_INFO" target="data:json,dma_result" action="/pi/PI0501G0S0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="저장 중입니다..." ev:submit="" ev:submitdone="scwin.sub_PI0501G0S0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_PI0501G0K0" ref="" target="data:json,dma_SEQ_BMS_VDO_INFO_0" action="/pi/PI0501G0K0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="scwin.sub_PI0501G0K0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_PI0501SHI0" ref="" target="data:json,dlt_searchitem" action="/pi/PI0501SHI0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_PI0501FCK0" ref="data:json,dma_fileinfo" target="data:json,dma_filechk" action="/file/doCheckFile" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0501FCK0_submitdone"
+				ev:submiterror="" abortTrigger="">
+			</xf:submission>
+		</xf:model>
+
+		<script type="text/javascript" lazy="false"><![CDATA[
+	scwin.onpageload = function() {
+		var autoOptions = {
+			Main : { grid : PI0501G0, frm : PI0501F0, srchSbm : sub_PI0501G0R0, savSbm : sub_PI0501G0S0, keySbm : sub_PI0501G0K0, 
+					srchGrp : pgm_header, keyColumn : "VDO_ID", focusColumn : "VDO_NM", name : "영상 목록"}
+		 };		
+	
+		var codeOptions = [ {code : "FILE_TYPE", compID : "FILE_TYPE, PI0501G0:FILE_TYPE" }
+						];		
+						
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);	
+		
+		com.setCommonDtl(codeOptions, function() {
+			com.searchGrid(PI0501G0, sub_PI0501G0R0);
+		});
+		
+		com.executeSubmission(sub_PI0501SHI0);		
+	};
+
+	scwin.onpageunload = function() {
+			
+	};
+	
+	scwin.PLAY_ST_DT_Check = function(e){
+	
+	};
+	
+	scwin.sub_PI0501G0R0_submitdone = function(e) {
+		com.setFocusedCell(PI0501G0, "VDO_ID");
+	};
+	
+	scwin.sub_PI0501G0K0_submitdone = function(e) {
+		com.addGridForm(PI0501G0, PI0501F0, dma_SEQ_BMS_VDO_INFO_0, "VDO_ID", "VDO_NM");
+	};
+	
+	scwin.sub_PI0501G0S0_submitdone = function(e) {
+		com.saveDone(PI0501G0, sub_PI0501G0R0);
+	};
+	
+	//파일 선택버튼 클릭 이벤트
+	/*scwin.btn_upload_onclick = function() {
+		var data = { FILE_NM : dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_NM"), 
+					callbackFn : "scwin.uploadFileCallback" 
+					};
+		var opt = { id : "PI0501P01", 
+					popupName : "파일 업로드",
+					width : "480", height : "220"
+					 }; 
+					
+		com.openPopup("/ui/BMS/PI0501/PI0501P01.xml", opt, data);
+	};	
+	
+	scwin.uploadFileCallback = function(returnValue) {
+		dlt_VDO_INFO.setCellData(PI0501G0.getFocusedRowIndex(), "FILE_NM", returnValue);
+		
+		var fileType = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_TYPE");
+		var src = "/fileUpload/up/" + returnValue; 
+		if (fileType == "FT001"){
+			var obj_video = document.getElementById("video1");
+			obj_video.addEventListener('loadedmetadata', function() {
+				var duration = parseInt(obj_video.duration);
+				dlt_VDO_INFO.setCellData(PI0501G0.getFocusedRowIndex(), "PLAY_TM", duration);
+			});			
+			$p.$("#video1").attr("src", src);
+		} else if (fileType == "FT002") {
+			$p.$("#image1").attr("src", src);
+		}
+	}*/
+	
+	scwin.upload0_onInputValueChange = function(returnValue){
+		
+		// 확장자 추출
+		var lastDot = returnValue.lastIndexOf('.'); 
+		var fileExtension = returnValue.substring(lastDot+1, returnValue.length);
+		
+		//파일명 추출
+		var fileNameIndex = returnValue.lastIndexOf('\\');
+		var fileName = returnValue.substring(fileNameIndex+1, returnValue.length);
+		
+		dlt_VDO_INFO.setCellData(PI0501G0.getFocusedRowIndex(), "FILE_NM", fileName);
+		dlt_VDO_INFO.setCellData(PI0501G0.getFocusedRowIndex(), "FILE_EXTENSION", fileExtension);
+		dma_fileinfo.set("EXTENSION", fileExtension);
+			
+		btn_upload.submit();
+		
+	}
+	
+	scwin.upload0_ondone = function(retXml) {
+		var fileType = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_TYPE");
+		var real_fileName = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_NM");
+		var src = "/fileUpload/up/" + real_fileName; 
+		
+		if (fileType == "FT001"){
+			var obj_video = document.getElementById("video1");
+			obj_video.addEventListener('loadedmetadata', function() {
+				var duration = parseInt(obj_video.duration);
+				dlt_VDO_INFO.setCellData(PI0501G0.getFocusedRowIndex(), "PLAY_TM", duration);
+			});			
+			$p.$("#video1").attr("src", src);
+		} else if (fileType == "FT002") {
+			$p.$("#image1").attr("src", src);
+		}			
+		
+	};
+
+	scwin.PI0501G0_onrowindexchange = function(row,oldRow) {
+		var path = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_PATH");		
+		dma_fileinfo.set("FILE_PATH", path);		
+		
+		com.executeSubmission(sub_PI0501FCK0);
+		
+		//파일 유형에 따라 미리보기 처리		
+		var fileType = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_TYPE");
+		if (fileType == "FT001"){
+			IMG_PLAY_TM.setDisabled(true);
+			$p.$("#image1").hide();
+			$p.$("#video1").show();
+			$p.$("#video1").attr("src", path);	
+			
+		} else if (fileType == "FT002") {
+			IMG_PLAY_TM.setDisabled(false);		
+			$p.$("#image1").show();
+			$p.$("#video1").hide();						
+			$p.$("#image1").attr("src", path);				
+		} else {
+			$p.$("#image1").hide();
+			$p.$("#video1").hide();				
+		}
+
+	};
+	
+	scwin.FILE_TYPE_onchange = function(info) {
+		var fileType = FILE_TYPE.getValue();
+		if (fileType == "FT001") {
+			IMG_PLAY_TM.setDisabled(true);
+			$p.$("#image1").hide();
+			$p.$("#video1").show();
+			var path = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_PATH");
+			$p.$("#video1").attr("src", path);	
+		} 
+		else if (fileType == "FT002") {
+			IMG_PLAY_TM.setDisabled(false);					
+			$p.$("#image1").show();
+			$p.$("#video1").hide();	
+			var path = dlt_VDO_INFO.getCellData(PI0501G0.getFocusedRowIndex(), "FILE_PATH");
+			$p.$("#image1").attr("src", path);	
+		} else {
+			$p.$("#image1").hide();
+			$p.$("#video1").hide();					
+		}
+	};
+	
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {
+		if (info.newValue == "ALL") {
+			acb_autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} 
+		else if (info.newValue == "VDO_ID") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "VDO_ID", "VDO_ID");
+			acb_autoChoiceBox.show("");
+		}
+		else if (info.newValue == "VDO_NM") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "VDO_NM", "VDO_NM");
+			acb_autoChoiceBox.show("");
+		}
+	};
+	
+	scwin.sub_PI0501FCK0_submitdone = function(e) {
+		var fileCheck = dma_filechk.get("CHK");
+		var fileurl = dma_fileinfo.get("FILE_PATH");
+		
+		if(fileCheck == "1") {
+			var fileNames = fileurl.split("/");
+			$p.$("#mf_tac_layout_contents_MN00040601_body_btn_upload_inputFile").attr("value", fileNames[fileNames.length-1]);
+		} else if(fileCheck == "0"){
+			$p.$("#mf_tac_layout_contents_MN00040601_body_btn_upload_inputFile").attr("value", null);			
+			$p.$("#mf_tac_layout_contents_MN00040601_body_btn_upload_inputFile").attr("placeholder", "등록된 파일이 없습니다.");		
+		}
+		
+
+	};
+	
+
+	scwin.PLAY_ED_DT_onviewchange = function(info) {
+		
+		
+		//var playStDt = document.getElementById("mf_tac_layout_contents_MN00040601_body_PLAY_ST_DT_input").value;
+		var playStDt = PLAY_ST_DT.getValue();
+		//var playEdDt = document.getElementById("mf_tac_layout_contents_MN00040601_body_PLAY_ED_DT_input").value;
+		var playEdDt = PLAY_ED_DT.getValue();
+		
+		if(playStDt > playEdDt){
+			com.messagBox("alert", "지정할 수 없는 날짜입니다.", scwin.checkClose(info))
+		}
+	};
+	
+
+	scwin.checkClose = function(info){
+	   PLAY_ED_DT.setValue(info.oldValue);
+	}
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
+			<xf:group id="pgm_navi" class="pgm_navi" style="">
+				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
+			</xf:group>
+			<xf:group id="pgm_header" class="pgm_header" style="">
+				<xf:group id="" style="" class="gr_search">
+					<xf:group id="" style="" class="label">
+							<w2:span id="" class="" label="검색 항목"></w2:span>
+					</xf:group>
+					<xf:group id="" style="" class="search">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" style="" submenuSize="auto"
+							textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[영상ID]]></xf:label>
+									<xf:value><![CDATA[VDO_ID]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[영상명]]></xf:label>
+									<xf:value><![CDATA[VDO_NM]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="영상ID 또는 영상명"></xf:input>
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange"
+							id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
+							class="search_auto" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+							<w2:choices>
+								<w2:itemset nodeset="data:dlt_searchitem">
+									<w2:label ref="VDO_ID"></w2:label>
+									<w2:value ref="VDO_ID"></w2:value>
+								</w2:itemset>
+							</w2:choices>
+						</w2:autoComplete>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group><!-- pgm_header -->
+			<xf:group id="pgm_content" class="pgm_content grdc_a_20_800" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
+					<xf:group id="" class="" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="영상 목록" style=""></w2:textbox>
+						</xf:group>
+					</xf:group>
+					<xf:group></xf:group>
+					<xf:group id="" class="" style="">
+						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid left"
+							dataList="data:dlt_VDO_INFO" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup=""
+							ev:onkeyup="" ev:onrowindexchange="scwin.PI0501G0_onrowindexchange" ev:ontextimageclick="" ev:onviewchange=""
+							fixedColumnWithHidden="true" id="PI0501G0" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true"
+							rowStatusHeaderValue="" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true"
+							visibleRowNum="" wheelRows="" autoFitMinWidth="0" disabledScrollHidden="" editModeEvent="" editModeEventIcon=""
+							checkEditableInputClass="" keyMoveEditMode="" moveKeyEditMode="" moveKeyEditModeAll="" ignoreNonEditableCellTabEnter=""
+							readOnly="true" keepDefaultColumnWidth="" oddEvenColorDisplay="" rowNumWidth="" summaryAuto="" excludeDeletedRows=""
+							useCtrlOnMultisort="" useFilterList="" useFilterListSync="" sortedIconPosition="" sortable="" sortOrderReverse=""
+							showSortableUseFilter="" focusMode="row" rowNumStatusUniqueId="" rowNumStatusResize="" ev:onbeforecolumnmove="" userData1="">
+							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
+							<w2:header style="" id="header1">
+								<w2:row style="" id="row1">
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column10"
+										value="영상ID" blockSelect="false" displayMode="label" class="req">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="250" inputType="text" style="height:20px" id="column9"
+										value="영상명" blockSelect="false" displayMode="label" class="req">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column6"
+										value="파일유형" blockSelect="false" displayMode="label" class="req">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="104" inputType="text" style="height:20px" id="column5"
+										value="이미지재생시간" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column3"
+										value="재생시간(초)" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column7"
+										value="재생시작일" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="90" inputType="text" style="height:20px" id="column2"
+										value="재생종료일" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column1"
+										value="비고" blockSelect="false" displayMode="label">
+									</w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody style="" id="gBody1">
+								<w2:row style="" id="row2">
+									<w2:column removeBorderStyle="false" width="103" inputType="text" style="height:20px" id="VDO_ID"
+										value="" blockSelect="false" displayMode="label" userData1="M">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="221" inputType="text" style="height:20px" id="VDO_NM"
+										value="" blockSelect="false" displayMode="label" userData1="M" textAlign="left">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="FILE_TYPE"
+										value="" blockSelect="false" displayMode="label" userData1="M">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="104" inputType="text" style="height:20px" id="IMG_PLAY_TM"
+										value="" blockSelect="false" displayMode="label" textAlign="right">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="88" inputType="text" style="height:20px" id="PLAY_TM"
+										value="" blockSelect="false" displayMode="label" textAlign="right">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="85" inputType="text" style="height:20px" id="PLAY_ST_DT"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="PLAY_ED_DT"
+										value="" blockSelect="false" displayMode="label">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="REMARK"
+										value="" blockSelect="false" displayMode="label" textAlign="left">
+									</w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer style="" id="footer1">
+								<w2:row style="" id="row3">
+									<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;" id="column42"
+										value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')"
+										textAlign="left">
+									</w2:column>
+								</w2:row>
+							</w2:footer>							
+						</w2:gridView>
+					</xf:group>
+				</xf:group><!-- pgm_list -->
+				
+				<xf:group id="" class="vertical_line">
+				</xf:group>
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_a" style="">
+					<xf:group id="" class="gr_sub_header" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="영상 정보" style=""></w2:textbox>
+						</xf:group>
+					</xf:group>
+					<xf:group></xf:group>
+					<xf:group class="" id="" style="">
+						<xf:group class="w2tb tb" id="PI0501F0" style="width:100%;" tagname="table">
+							<w2:attributes>
+								<w2:summary></w2:summary>
+							</w2:attributes>
+							<xf:group tagname="colgroup">
+								<xf:group style="width:90px;" tagname="col"></xf:group>
+								<xf:group style="width:120px;" tagname="col"></xf:group>
+								<xf:group style="width:90px;" tagname="col"></xf:group>
+								<xf:group style="width:120px;" tagname="col"></xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group class="w2tb_th req" style="" tagname="th">영상&amp;nbsp;ID</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:input class="" id="VDO_ID" mandatory="" ref="data:dlt_VDO_INFO.VDO_ID"
+										style="width:100px;height:21px;" disabled="true" adjustMaxLength="">
+									</xf:input>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group class="w2tb_th req" style="" tagname="th">영상명</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:input adjustMaxLength="" allowChar="" class="req" disabled="" id="VDO_NM" initValue=""
+										mandatory="" ref="data:dlt_VDO_INFO.VDO_NM" style="width:100%;height:21px;" validateOnInput="false" validator="" maxlength="20">
+									</xf:input>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group class="w2tb_th req" style="" tagname="th">파일&amp;nbsp;유형</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel=" " direction="auto"
+										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="FILE_TYPE" labelWidthAuto="" mandatory="true"
+										optionOrder="" ref="data:dlt_VDO_INFO.FILE_TYPE" renderType="component" style="width:100px;height:24px;" submenuSize="auto" ev:onchange="scwin.FILE_TYPE_onchange">
+										<xf:choices></xf:choices>
+									</xf:select1>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group class="w2tb_th" style="" tagname="th">파일선택</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<!--  <w2:anchor class="btn_com" ev:onclick="scwin.btn_upload_onclick" id="btn_upload" outerDiv="" style="">
+										<xf:label><![CDATA[파일 선택]]></xf:label>
+									</w2:anchor>-->
+									<w2:upload imageStyle="position:absolute;vertical-align:middle;word-wrap:break-word"
+										inputStyle="vertical-align:middle;word-wrap:break-word" style="width: 200px;height: 23px;" id="btn_upload" inputClass=""
+										ev:onInputValueChange="scwin.upload0_onInputValueChange" ev:ondone="scwin.upload0_ondone" accept=".png,.avi,.mp4,jpg" title="" type=""
+										disabled="false" class="">
+									</w2:upload>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group class="w2tb_th" style="height: 70px;vertical-align: top;" tagname="th">미리보기</xf:group>
+								<xf:group class="w2tb_td" style="" tagname="td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:group id="preview" style="">
+									    <video controls="" style="width: 320px;height: 240px;" id="video1"></video>
+										<xf:image id="image1" ref="data:dlt_VDO_INFO.FILE_PATH" src=""
+											style="height:150px;margin-left:2px;margin-bottom:3px;float:left;">
+										</xf:image>									    
+									</xf:group>    
+								</xf:group>
+							</xf:group>
+							<xf:group tagname="tr" style="">
+								<xf:group class="w2tb_th" tagname="th">이미지&amp;nbsp;재생시간<w2:attributes>
+										<w2:scope>row</w2:scope>
+									</w2:attributes></xf:group>
+								<xf:group class="w2tb_td" tagname="td">
+									<w2:attributes><w2:colspan>3</w2:colspan><w2:rowspan>1</w2:rowspan></w2:attributes>
+									<xf:input adjustMaxLength="" class="" disabled="" id="IMG_PLAY_TM" mandatory=""
+										ref="data:dlt_VDO_INFO.IMG_PLAY_TM" style="width:10%;height:21px;" allowChar="aA-zZ,0-9,@,." customModelFormatter=""
+										displayFormatter="" customModelUnformatter="" invalidMessageFunc="" validator="" tooltipFormatter="" initValue="">
+									</xf:input>
+									초
+								</xf:group>
+							</xf:group>
+							<xf:group tagname="tr" style="">
+								<xf:group class="w2tb_th" tagname="th">재생기간<w2:attributes>
+										<w2:scope>row</w2:scope>
+									</w2:attributes></xf:group>
+								<xf:group class="w2tb_td" tagname="td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<w2:inputCalendar calendarDisplayFormat="" calendarDisplayFormatFunc=""
+										calendarValueType="yearMonthDate" displayFormat="" editType="" focusOnDateSelect="false" footerDiv="false" id="PLAY_ST_DT"
+										ioFormat="" ref="data:dlt_VDO_INFO.PLAY_ST_DT" renderDiv="true" renderType="component" rightAlign="false"
+										style="height:23px;width: 110px;" invalidMessageFunc="" ev:onviewchange="scwin.PLAY_ST_DT_onviewchange">
+									</w2:inputCalendar>
+									~
+									<w2:inputCalendar calendarDisplayFormat="" calendarDisplayFormatFunc=""
+										calendarValueType="yearMonthDate" displayFormat="" editType="" focusOnDateSelect="false" footerDiv="false" id="PLAY_ED_DT"
+										ioFormat="" ref="data:dlt_VDO_INFO.PLAY_ED_DT" renderDiv="true" renderType="component" rightAlign="false"
+										style="height:23px;width: 110px;" ev:onviewchange="scwin.PLAY_ED_DT_onviewchange" dateValidSet="true" dateValidCheck="true" defaultDate="" disabled="" displayFormatFunc="">
+									</w2:inputCalendar>									
+								</xf:group>
+							</xf:group>
+							<xf:group tagname="tr" style="">
+								<xf:group tagname="th" class="w2tb_th" style="height: 70px;vertical-align: top;" id="" tabIndex="">
+									비고
+									<w2:attributes>
+										<w2:scope>row</w2:scope>
+									</w2:attributes>
+								</xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:textarea adjustMaxLength="" class="" disabled="" id="REMARK" mandatory=""
+										ref="data:dlt_VDO_INFO.REMARK" style="width:100%;height:70px;" maxlength="200">
+									</xf:textarea>
+								</xf:group>
+							</xf:group>
+						</xf:group>
+					</xf:group>
+				</xf:group><!-- pgm_detail -->
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

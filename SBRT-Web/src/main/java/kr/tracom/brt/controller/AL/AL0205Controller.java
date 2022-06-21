@@ -30,15 +30,15 @@ public class AL0205Controller extends ControllerSupport{
 		return result.getResult();
 	}
 	
-	@RequestMapping("/al/AL0205SHI0")
-	public @ResponseBody Map<String, Object> AL0205SHI0() throws Exception {
-		result.setData("dlt_searchitem", al0205Service.AL0205SHI0());
+	@RequestMapping("/al/sttnItem")
+	public @ResponseBody Map<String, Object> sttnItem() throws Exception {
+		result.setData("dlt_sttnItem", al0205Service.sttnItem());
 		return result.getResult();
 	}
 	
-	@RequestMapping("/al/AL0205SHI1")
-	public @ResponseBody Map<String, Object> AL0205SHI1() throws Exception {
-		result.setData("dlt_searchitem2", al0205Service.AL0205SHI1());
+	@RequestMapping("/al/crsItem")
+	public @ResponseBody Map<String, Object> crsItem() throws Exception {
+		result.setData("dlt_crsItem", al0205Service.crsItem());
 		return result.getResult();
 	}
 	
@@ -46,6 +46,7 @@ public class AL0205Controller extends ControllerSupport{
 	public @ResponseBody Map<String, Object> AL0205G1R0() throws Exception {
 		result.setData("dlt_BRT_OPER_ALLOC_PL_NODE_INFO", al0205Service.AL0205G1R0());
 		result.setData("dlt_BRT_OPER_ALLOC_PL_NODE_CNT", al0205Service.AL0205G1CNT());
+		result.setData("dlt_BRT_OPER_ALLOC_PL_NODE_ROUT_NM", al0205Service.AL0205G1RM());
 		return result.getResult();
 	}
 	

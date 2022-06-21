@@ -56,8 +56,6 @@
 		,A.NODE_TYPE
 		,A.ARRV_TM
 		,A.DPRT_TM
-		<!--  ,LEFT(A.ARRV_TM, 5) AS ARRV_TM
-		,LEFT(A.DPRT_TM, 5) AS DPRT_TM-->
 		,DATE_FORMAT(A.UPD_DTM, '%Y-%m-%d') UPD_DTM 
 		,A.UPD_ID
 		,B.REP_ROUT_NM
@@ -71,18 +69,22 @@
 		INNER JOIN BMS_REP_ROUT_MST B
 		ON	A.REP_ROUT_ID = B.REP_ROUT_ID 
 		INNER JOIN BMS_ROUT_NODE_CMPSTN C
-		ON	 A.ROUT_ID =  C.ROUT_ID AND A.NODE_ID = C.NODE_ID AND A.NODE_SN = C.NODE_SN
+		ON	 A.ROUT_ID =  C.ROUT_ID 
+		AND A.NODE_ID = C.NODE_ID 
+		<!-- AND A.NODE_SN = C.NODE_SN -->
 		AND (C.NODE_TYPE = 'NT001' OR C.NODE_TYPE = 'NT002')
 	<!-- <if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">			 
 			AND C.NODE_TYPE = #{NODE_TYPE}
 	</if> -->
-	
 	WHERE
 		A.DAY_DIV = #{DAY_DIV} AND C.ROUT_ID = #{ROUT_ID} AND (A.NODE_TYPE = 'NT001' OR A.NODE_TYPE = 'NT002')
 	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 
 			AND A.OPER_SN = #{OPER_SN}
 	</if>
-	ORDER BY OPER_SN, NODE_SN
+	GROUP BY
+		A.REP_ROUT_ID, A.DAY_DIV, A.WAY_DIV, A.OPER_SN, A.NODE_ID, A.NODE_SN
+	ORDER BY 
+		OPER_SN, NODE_SN
 </select>
 
 
@@ -91,13 +93,10 @@
 			COUNT(*) CNT
 		FROM 
 			BRT_OPER_ALLOC_PL_NODE_INFO A
-			INNER JOIN BMS_ROUT_NODE_CMPSTN B
-				ON	 A.ROUT_ID =  B.ROUT_ID AND A.NODE_ID = B.NODE_ID AND A.NODE_SN = B.NODE_SN
-				AND (B.NODE_TYPE = 'NT001' OR B.NODE_TYPE = 'NT002')
-		<!-- <if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">			 
-				AND B.NODE_TYPE = #{NODE_TYPE}
-		</if> -->
-		WHERE  A.DAY_DIV = #{DAY_DIV} AND B.ROUT_ID = #{ROUT_ID} AND (A.NODE_TYPE = 'NT001' OR A.NODE_TYPE = 'NT002')
+		WHERE  
+			A.DAY_DIV = #{DAY_DIV} 
+			AND A.ROUT_ID = #{ROUT_ID} 
+			AND (A.NODE_TYPE = 'NT001' OR A.NODE_TYPE = 'NT002')
 		GROUP BY 
 			OPER_SN 
 		ORDER BY 
@@ -135,7 +134,21 @@
 		,#{DPRT_TM}
 		,#{ARRV_TM}
 		,#{UPD_DTM}
-	)
+	)ON DUPLICATE KEY UPDATE
+		OPER_DT = #{OPER_DT}
+		,REP_ROUT_ID = #{REP_ROUT_ID}
+		,ROUT_ID = #{ROUT_ID}
+		,DAY_DIV = #{DAY_DIV}
+		,WAY_DIV = #{WAY_DIV}
+		,COR_ID = #{COR_ID}
+		,OPER_SN = #{OPER_SN}
+		,NODE_ID = #{NODE_ID}
+		,NODE_SN = #{NODE_SN}
+		,ALLOC_NO = #{ALLOC_NO}
+		,NODE_TYPE = #{NODE_TYPE}
+		,DPRT_TM = #{DPRT_TM}
+		,ARRV_TM = #{ARRV_TM}
+		,UPD_DTM = #{UPD_DTM}
 </insert>
 
 <update id="AL0203G0U0" parameterType="Map">

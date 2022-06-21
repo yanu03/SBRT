@@ -32,13 +32,12 @@ public class AL0205Service extends ServiceSupport {
 		return al0205Mapper.AL0205G0R1(map);
 	}
 	
-	public List AL0205SHI0() throws Exception {
-		return al0205Mapper.AL0205SHI0();
+	public List sttnItem() throws Exception {
+		return al0205Mapper.sttnItem();
 	}
 	
-	public List AL0205SHI1() throws Exception{
-		Map param = getSimpleDataMap("dma_search");		
-		return al0205Mapper.AL0205SHI1(param);
+	public List crsItem() throws Exception{
+		return al0205Mapper.crsItem();
 	}
 	
 	public List AL0205G1R0() throws Exception {
@@ -50,6 +49,11 @@ public class AL0205Service extends ServiceSupport {
 	public List AL0205G1CNT() throws Exception {
 		Map param = getSimpleDataMap("dma_sub_search");
 		return al0205Mapper.AL0205G1CNT(param);
+	}
+	
+	public List AL0205G1RM() throws Exception {
+		Map param = getSimpleDataMap("dma_sub_search");
+		return al0205Mapper.AL0205G1RM(param);
 	}
 	
 	

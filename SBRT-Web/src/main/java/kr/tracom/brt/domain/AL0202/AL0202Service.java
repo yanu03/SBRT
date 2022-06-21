@@ -83,6 +83,10 @@ public class AL0202Service extends ServiceSupport {
 		return al0202Mapper.AL0202P1R0(map);
 	}
 	
+	public List selectCorCnt() throws Exception {
+		return al0202Mapper.selectCorCnt();
+	}
+	
 	public Map AL0202G1S0() throws Exception {
 		int iCnt = 0;
 		int uCnt = 0;

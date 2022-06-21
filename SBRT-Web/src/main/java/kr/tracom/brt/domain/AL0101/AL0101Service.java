@@ -59,8 +59,9 @@ public class AL0101Service extends ServiceSupport {
 	}
 	
 	public List AL0101P0R0() throws Exception {
-		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return al0101Mapper.AL0101P0R0(map);
+		//Map<String, Object> map = getSimpleDataMap("dma_search");
+		Map param = getSimpleDataMap("dma_sub_search");
+		return al0101Mapper.AL0101P0R0(param);
 	}
 	
 		

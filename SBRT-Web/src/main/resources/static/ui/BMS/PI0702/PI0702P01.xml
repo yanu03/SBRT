@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head meta_vertical_guides = "" meta_horizontal_guides="184">
+	<w2:type>DEFAULT</w2:type>
+	<w2:buildDate />
+	<xf:model>
+		<xf:instance>
+			<data xmlns="" />
+		</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_TRANSCOMP_MST" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="chk" name="선택" dataType="text"></w2:column>
+						<w2:column id="COMP_ID" name="운수사ID" dataType="text"></w2:column>
+						<w2:column id="COMP_NM" name="운수사명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="COMP_ECPT_ID" name="운수사제외ID" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+			</w2:dataCollection>
+		<w2:workflowCollection></w2:workflowCollection>
+		<xf:submission id="sub_SI0401P0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_TRANSCOMP_MST" action="/si/SI0401P0R0" method="post"
+			mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+			ev:submit="" ev:submitdone="scwin.sub_SI0401P0R0_submitdone" ev:submiterror="" abortTrigger="">
+		</xf:submission>
+	</xf:model>
+	<script type="text/javascript" lazy="false"><![CDATA[
+	scwin.onpageload = function() {
+	
+		scwin.param = com.getParameter();
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		PI0702C0.setSize(250, 200);
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	scwin.btn_confirm_onclick = function() {
+		var data = PI0702C0.getValue();
+		for(i = 0; i<scwin.param.data.length; i++) {
+			scwin.param.data[i].RSV_DT = data;	
+		}
+		com.closePopup(scwin.closeCallbackFncName, scwin.param);			
+	};
+	
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();		
+	};
+	
+]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+			</xf:group>
+
+			<xf:group style="" id="" class="popup_content">
+				<w2:calendar footerDiv="false" id="PI0702C0" style="width: auto; height: auto;" useYearSelect="" summary="" tabIndex="" calendarClass="class1"></w2:calendar>
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="bcsstn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

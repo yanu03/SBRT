@@ -356,12 +356,12 @@
 		scwin.connect();
 		
 		 var autoOptions = {
-			Main : { grid : MO0101G0, srchSbm : sub_MO0101G0R0, keyColumn : "VHC_ID", srchGrp : pgm_header, name : "노선 목록"}
+			Main : { grid : MO0101G0, srchSbm : sub_MO0101G0R0, keyColumn : "VHC_ID", srchGrp : pgm_search, name : "노선 목록"}
 			
 		 };
 		 
 		 var mainOptions = {
-			SEARCH:scwin.btn_sub_move,
+			SEARCH:{},
 			CNL:{}
 		}; 
 		 
@@ -395,7 +395,11 @@
 		 
 		com.setCommonDtl(codeOptions);
 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions, mainOptions);		
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions, mainOptions, codeOptions);	
+		var mainSrhOptions = {
+			SEARCH:scwin.btn_sub_move
+		};	
+		com.setMainSrhBtn(wfm_mainSearchBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions, mainSrhOptions, codeOptions);	
 
 		MO0101G0.mergeCol(2,false);
 		MO0101G0.mergeCells("byrestriccol");
@@ -596,383 +600,385 @@
 		var routItem = dma_search.get("CONTENT2");
 		var vhcNoItem = dma_search.get("CONTENT3");
 		
-		//운행상태가 운행 종료일때 List에 있으면 제거함
-		if(jsonObj.OPER_STS == "OS002") {
-			var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
-			if(curIndexArr.length != 0) {
-				dlt_BRT_CUR_OPER_INFO.removeRow(curIndexArr[0]);
-				
-				//운행 종료된 차량이 그리드 focus라면 focus를 변경함
-				//차량 그리드 목록이 한 개일땐 오류 날 듯 
-				if(curIndexArr[0] == MO0101G0.getFocusedRowIndex()) {
-					if(dlt_BRT_CUR_OPER_INFO.getAllJSON().length != MO0101G0.getFocusedRowIndex()+1) {
-						MO0101G0.setFocusedCell(MO0101G0.getFocusedRowIndex+1, "VHC_NO");
+		if (attrId != util.ATTR_ID.TRAFFIC_LIGHT_STATUS_RESPONSE) {
+			//운행상태가 운행 종료일때 List에 있으면 제거함
+			if(jsonObj.OPER_STS = "OS002") {
+				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+				if(curIndexArr.length != 0) {
+					dlt_BRT_CUR_OPER_INFO.removeRow(curIndexArr[0]);
+					
+					//운행 종료된 차량이 그리드 focus라면 focus를 변경함
+					//차량 그리드 목록이 한 개일땐 오류 날 듯 
+					if(curIndexArr[0] == MO0101G0.getFocusedRowIndex()) {
+						if(dlt_BRT_CUR_OPER_INFO.getAllJSON().length != MO0101G0.getFocusedRowIndex()+1) {
+							MO0101G0.setFocusedCell(MO0101G0.getFocusedRowIndex+1, "VHC_NO");
+						}
+						else {
+							MO0101G0.setFocusedCell(MO0101G0.getFocusedRowIndex-1, "VHC_NO");
+						}
 					}
-					else {
-						MO0101G0.setFocusedCell(MO0101G0.getFocusedRowIndex-1, "VHC_NO");
-					}
+					
+					routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
+						dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0, jsonObj);					
 				}
 				
-				routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
-					dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0, jsonObj);					
+				return;
 			}
 			
-			return;
-		}
-		
-		
-		//GPS값 튈 경우 아무 동작도 안되게 처리
-		if(typeof(jsonObj.GPS_X) != "undefined" && typeof(jsonObj.GPS_Y) != "undefined"){
-			if (jsonObj.GPS_X<120 || jsonObj.GPS_Y>130) {
-				return;	
+			
+			//GPS값 튈 경우 아무 동작도 안되게 처리
+			if(typeof(jsonObj.GPS_X) != "undefined" && typeof(jsonObj.GPS_Y) != "undefined"){
+				if (jsonObj.GPS_X<120 || jsonObj.GPS_Y>130) {
+					return;	
+				}
+				if (jsonObj.GPS_Y<30 || jsonObj.GPS_Y>40) {
+					return;	
+				}
 			}
-			if (jsonObj.GPS_Y<30 || jsonObj.GPS_Y>40) {
-				return;	
+			
+			if (repRoutItem != "") {
+				//소켓 데이터에 대표노선이 없어 대표노선에 포함된 노선 ID들과 비교			
+				for(var i=0; i<dlt_searchitem2.getDataLength(); i++) {
+					var routItemOfList = dlt_searchitem2.getCellData(i, "ROUT_ID");		
+					if(routItemOfList == jsonObj.ROUT_ID) {
+						checkRepRout = 1;	
+					}	
+				}
+				if (checkRepRout == 0){
+					return;
+				}
 			}
-		}
-		
-		if (repRoutItem != "" && attrId != util.ATTR_ID.TRAFFIC_LIGHT_STATUS_RESPONSE) {
-			//소켓 데이터에 대표노선이 없어 대표노선에 포함된 노선 ID들과 비교			
-			for(var i=0; i<dlt_searchitem2.getDataLength(); i++) {
-				var routItemOfList = dlt_searchitem2.getCellData(i, "ROUT_ID");		
-				if(routItemOfList == jsonObj.ROUT_ID) {
-					checkRepRout = 1;	
-				}	
+			
+			if (routItem != "") {
+				if(routItem != jsonObj.ROUT_ID) {
+					return;
+				}		
 			}
-			if (checkRepRout == 0){
-				return;
+			
+			if (vhcNoItem != "") {
+					
 			}
-		}
-		
-		if (routItem != "") {
-			if(routItem != jsonObj.ROUT_ID) {
-				return;
-			}		
-		}
-		
-		if (vhcNoItem != "") {
+			
+			
+			
+			if(attrId == util.ATTR_ID.BUS_ARRIVAL_INFO){
+			//payload.body >>>> {"ATTR_ID":4015,"LIST":[{"ROUT_ID":"RT00000080","REMAIN_TM":1364334,"REMAIN_STTN":2}],"STTN_ID":"ND00000017"}
+			
+			//jsonObj.STTN_ID => 정류소아이디
+			//jsonObj.LIST => 도착정보 리스트
+			// ㄴ ROUT_ID => 노선아이디
+			// ㄴ REMAIN_TM => 남은시간(초)
+			// ㄴ REMAIN_STTN => 몇 정류소 전
 				
-		}
-		
-		
-		
-		if(attrId == util.ATTR_ID.BUS_ARRIVAL_INFO){
-		//payload.body >>>> {"ATTR_ID":4015,"LIST":[{"ROUT_ID":"RT00000080","REMAIN_TM":1364334,"REMAIN_STTN":2}],"STTN_ID":"ND00000017"}
-		
-		//jsonObj.STTN_ID => 정류소아이디
-		//jsonObj.LIST => 도착정보 리스트
-		// ㄴ ROUT_ID => 노선아이디
-		// ㄴ REMAIN_TM => 남은시간(초)
-		// ㄴ REMAIN_STTN => 몇 정류소 전
+				//scwin.vhcArriInfo(dataList);		
+			}
 			
-			//scwin.vhcArriInfo(dataList);		
-		}
-		
-		
-		//4012: 운행이벤트
-		else if(attrId == util.ATTR_ID.BUS_OPER_EVENT) {
-		//console.log(payload.body);
-			try {
-		//		setTimeout(function() {	
-					var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
-					
-					//order 순서 A.REP_ROUT_ID, A.ROUT_ID, VHC_ID
-					if(curIndexArr.length == 0) {
-						dlt_BRT_CUR_OPER_INFO.insertRow(0);	
-						dlt_BRT_CUR_OPER_INFO.setRowJSON(0, jsonObj, true);
+			
+			//4012: 운행이벤트
+			else if(attrId == util.ATTR_ID.BUS_OPER_EVENT) {
+			//console.log(payload.body);
+				try {
+			//		setTimeout(function() {	
+						var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 						
-						var sortOptions = {};
-						//정렬 컬럼 ID
-						sortOptions.sortIndex = "REP_ROUT_ID ROUT_ID VHC_ID";
-						//오름차
-						sortOptions.sortOrder = "1 1 1";
-						dlt_BRT_CUR_OPER_INFO.multisort(sortOptions);
-					}
-					
-					curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
-					
-				//	if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
-					if(curIndexArr.length != 0) {
-						dlt_BRT_OPER_EVENT_HIS.insertRow(0);
-						var today = new Date();   
-						var hours = leadingZeros(today.getHours(), 2);
-						var minutes = leadingZeros(today.getMinutes(), 2); 
-						var seconds = leadingZeros(today.getSeconds(), 2); 
-						var timeResult = hours + ':' + minutes + ':' + seconds
-						
-						dlt_BRT_OPER_EVENT_HIS.setCellData(0, "OCR_DTM", timeResult);
-						dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_TYPE", jsonObj.EVT_CODE);
-						dlt_BRT_OPER_EVENT_HIS.setCellData(0, "ROUT_NM", jsonObj.ROUT_NM);
-						dlt_BRT_OPER_EVENT_HIS.setCellData(0, "VHC_NO", jsonObj.VHC_NO);
-						//dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_CODE", jsonObj.EVT_CODE);
-						//var eventType = dlt_BRT_OPER_EVENT_HIS.getcellData(0, "EVT_CODE");
-						var eventCode = jsonObj.EVT_CODE;
-						var eventMessage = "";
-						
-						switch(eventCode) {
-							case "ET001":
-							eventMessage = jsonObj.NODE_NM + "에 도착";
-							break;
+						//order 순서 A.REP_ROUT_ID, A.ROUT_ID, VHC_ID
+						if(curIndexArr.length == 0) {
+							dlt_BRT_CUR_OPER_INFO.insertRow(0);	
+							dlt_BRT_CUR_OPER_INFO.setRowJSON(0, jsonObj, true);
 							
-							case "ET002":
-							eventMessage = jsonObj.NODE_NM + "에서 출발";
-							break;
-							
-							case "ET003":
-							eventMessage = "기점"+"("+jsonObj.NODE_NM+")"+"에 도착";
-							break;
-							
-							case "ET004":
-							eventMessage = "기점"+"("+jsonObj.NODE_NM+")"+"에서 출발";
-							break;
-							
-							case "ET005":
-							eventMessage = "종점"+"("+jsonObj.NODE_NM+")"+"에 도착";
-							break;
-							
-							case "ET006":
-							eventMessage = "종점"+"("+jsonObj.NODE_NM+")"+"에서 출발";
-							break;
-							
-							case "ET007":
-							eventMessage = "현재속도 " + jsonObj.CUR_SPD+ "km/h, 평균 "+ 
-											jsonObj.EVT_DATA + "km/h";						
-							break;
-							
-							case "ET008":
-							eventMessage = "음성 방송 출력";
-							//eventMessage = "음성 방송 출력되었습니다. " + "("+jsonObj.EVT_DATA+")";						
-							break;
-							
-							case "ET009":
-							eventMessage = "버스 문 열림";
-							break;
-							
-							case "ET010":
-							eventMessage = "버스 문 닫힘";
-							break;		
-							
-							case "ET011":
-							eventMessage = jsonObj.PREV_NODE_NM + "에서 무정차 주행";
-							break;
-							
-							case "ET012":
-							eventMessage = "과속 주행 현재속도 " + jsonObj.CUR_SPD + "km/h" ;
-							break;
-							
-							case "ET013":
-							eventMessage = "급가속";
-							break;
-							
-							case "ET014":
-							eventMessage = "급감속";
-							break;
-							
-							case "ET015":
-							eventMessage = "급출발";
-							break;
-							
-							case "ET016":
-							eventMessage = "급정지";
-							break;
-							
-							case "ET017":
-							eventMessage = "개문주행";
-							break;
-							
-							case "ET018":
-							eventMessage = "노선이탈";
-							break;												
+							var sortOptions = {};
+							//정렬 컬럼 ID
+							sortOptions.sortIndex = "REP_ROUT_ID ROUT_ID VHC_ID";
+							//오름차
+							sortOptions.sortOrder = "1 1 1";
+							dlt_BRT_CUR_OPER_INFO.multisort(sortOptions);
 						}
-						dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_DATA", eventMessage);
-						dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
 						
-						if (curIndexArr[0] == MO0101G0.getFocusedRowIndex()) {
-							routMap.mapInfo["map_MO0101_vehicle"].isEvent = "on";
+						curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+						
+					//	if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
+						if(curIndexArr.length != 0) {
+							dlt_BRT_OPER_EVENT_HIS.insertRow(0);
+							var today = new Date();   
+							var hours = leadingZeros(today.getHours(), 2);
+							var minutes = leadingZeros(today.getMinutes(), 2); 
+							var seconds = leadingZeros(today.getSeconds(), 2); 
+							var timeResult = hours + ':' + minutes + ':' + seconds
 							
-							//정류소 도착
-							if(eventCode == "ET001") {
-								routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ET001";
-							}
-							//정류소 출발
-							else if(eventCode == "ET002") {
-								routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ET002";
-							}
+							dlt_BRT_OPER_EVENT_HIS.setCellData(0, "OCR_DTM", timeResult);
+							dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_TYPE", jsonObj.EVT_CODE);
+							dlt_BRT_OPER_EVENT_HIS.setCellData(0, "ROUT_NM", jsonObj.ROUT_NM);
+							dlt_BRT_OPER_EVENT_HIS.setCellData(0, "VHC_NO", jsonObj.VHC_NO);
+							//dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_CODE", jsonObj.EVT_CODE);
+							//var eventType = dlt_BRT_OPER_EVENT_HIS.getcellData(0, "EVT_CODE");
+							var eventCode = jsonObj.EVT_CODE;
+							var eventMessage = "";
 							
-							else{
-								routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ETC";	
+							switch(eventCode) {
+								case "ET001":
+								eventMessage = jsonObj.NODE_NM + "에 도착";
+								break;
+								
+								case "ET002":
+								eventMessage = jsonObj.NODE_NM + "에서 출발";
+								break;
+								
+								case "ET003":
+								eventMessage = "기점"+"("+jsonObj.NODE_NM+")"+"에 도착";
+								break;
+								
+								case "ET004":
+								eventMessage = "기점"+"("+jsonObj.NODE_NM+")"+"에서 출발";
+								break;
+								
+								case "ET005":
+								eventMessage = "종점"+"("+jsonObj.NODE_NM+")"+"에 도착";
+								break;
+								
+								case "ET006":
+								eventMessage = "종점"+"("+jsonObj.NODE_NM+")"+"에서 출발";
+								break;
+								
+								case "ET007":
+								eventMessage = "현재속도 " + jsonObj.CUR_SPD+ "km/h, 평균 "+ 
+												jsonObj.EVT_DATA + "km/h";						
+								break;
+								
+								case "ET008":
+								eventMessage = "음성 방송 출력";
+								//eventMessage = "음성 방송 출력되었습니다. " + "("+jsonObj.EVT_DATA+")";						
+								break;
+								
+								case "ET009":
+								eventMessage = "버스 문 열림";
+								break;
+								
+								case "ET010":
+								eventMessage = "버스 문 닫힘";
+								break;		
+								
+								case "ET011":
+								eventMessage = jsonObj.PREV_NODE_NM + "에서 무정차 주행";
+								break;
+								
+								case "ET012":
+								eventMessage = "과속 주행 현재속도 " + jsonObj.CUR_SPD + "km/h" ;
+								break;
+								
+								case "ET013":
+								eventMessage = "급가속";
+								break;
+								
+								case "ET014":
+								eventMessage = "급감속";
+								break;
+								
+								case "ET015":
+								eventMessage = "급출발";
+								break;
+								
+								case "ET016":
+								eventMessage = "급정지";
+								break;
+								
+								case "ET017":
+								eventMessage = "개문주행";
+								break;
+								
+								case "ET018":
+								eventMessage = "노선이탈";
+								break;												
+							}
+							dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_DATA", eventMessage);
+							dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
+							
+							if (curIndexArr[0] == MO0101G0.getFocusedRowIndex()) {
+								routMap.mapInfo["map_MO0101_vehicle"].isEvent = "on";
+								
+								//정류소 도착
+								if(eventCode == "ET001") {
+									routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ET001";
+								}
+								//정류소 출발
+								else if(eventCode == "ET002") {
+									routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ET002";
+								}
+								
+								else{
+									routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ETC";	
+									
+								}
 								
 							}
+							routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
+							dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0);
+								
+							//나머지 필요하면 추가
 							
 						}
-						routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
-						dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0);
-							
-						//나머지 필요하면 추가
+			//		},100);				
+				} catch (e) {
+					console.log("[scwin.onMessageReceived] Exception :: " + e.message);					
+				}
+					
+			} 
+			
+			//attrId = 4014 : 실시간 차량 위치 정보
+			else if(attrId == util.ATTR_ID.BUS_INFO){
+					//payload.body >>>> {"GPS_Y":36.484005,"ATTR_ID":4014,"DVC_ID":"DV00000002","GPS_X":127.25973,"VHC_ID":"VH00000002"}		
+			
+			//jsonObj.VHC_ID => 차량아이디
+			//jsonObj.GPS_X => x좌표
+			//jsonObj.GPS_Y; => y좌표
+			
+			//content = jsonObj.VHC_ID + "," + jsonObj.GPS_X + ", " + jsonObj.GPS_Y;
+				try {
+			//		setTimeout(function() {
+						var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 						
-					}
-		//		},100);				
-			} catch (e) {
-				console.log("[scwin.onMessageReceived] Exception :: " + e.message);					
+						//order 순서 A.REP_ROUT_ID, A.ROUT_ID, VHC_ID
+						if(curIndexArr.length == 0) {
+							dlt_BRT_CUR_OPER_INFO.insertRow(0);	
+							dlt_BRT_CUR_OPER_INFO.setRowJSON(0, jsonObj, true);
+							
+							var sortOptions = {};
+							//정렬 컬럼 ID
+							sortOptions.sortIndex = "REP_ROUT_ID ROUT_ID VHC_ID";
+							//오름차
+							sortOptions.sortOrder = "1 1 1";
+							dlt_BRT_CUR_OPER_INFO.multisort(sortOptions);
+						}		
+						
+						curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);			
+						
+						if(curIndexArr.length != 0) {
+							dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
+							
+							dataRowJson = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndexArr[0]);
+							//var rowData = dlt_BRT_CUR_OPER_INFO.getMatchedColumnData("VHC_ID", dataRowJson.VHC_ID, "VHC_ID");
+							//var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID");
+							
+							//routMap.showVehicle2("map_MO0101_vehicle", dataRowJson, rowData, MO0101G0, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
+							//routMap.showVehicleClickOverlay2("map_MO0101_vehicle", dataRowJson, rowData, MO0101G0, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
+							routMap.moveVehicle("map_MO0101_vehicle", dataRowJson, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
+							
+						}
+			//		},100);	
+				} catch (e) {
+					console.log("[scwin.onMessageReceived] Exception :: " + e.message);			
+				}	
 			}
+			
+			else if(attrId == util.ATTR_ID.DISPATCH) { //4020: 디스패치
+				//payload.body >>>> {MESSAGE=천천히가세요, DSPTCH_DIV=DP001, ATTR_ID=4020, DSPTCH_KIND=DK002, VHC_ID=VH00000002}
 				
-		} 
-		
-		//attrId = 4014 : 실시간 차량 위치 정보
-		else if(attrId == util.ATTR_ID.BUS_INFO){
-				//payload.body >>>> {"GPS_Y":36.484005,"ATTR_ID":4014,"DVC_ID":"DV00000002","GPS_X":127.25973,"VHC_ID":"VH00000002"}		
-		
-		//jsonObj.VHC_ID => 차량아이디
-		//jsonObj.GPS_X => x좌표
-		//jsonObj.GPS_Y; => y좌표
-		
-		//content = jsonObj.VHC_ID + "," + jsonObj.GPS_X + ", " + jsonObj.GPS_Y;
-			try {
-		//		setTimeout(function() {
-					var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
-					
-					//order 순서 A.REP_ROUT_ID, A.ROUT_ID, VHC_ID
-					if(curIndexArr.length == 0) {
-						dlt_BRT_CUR_OPER_INFO.insertRow(0);	
-						dlt_BRT_CUR_OPER_INFO.setRowJSON(0, jsonObj, true);
+				//jsonObj.DSPTCH_DIV => 디스패치 구분코드 : DP001(일반메시지), DP002(운행중디스패치), DP003(정차중디스패치)
+				//jsonObj.DSPTCH_KIND => 디스패치 종류(레벨)코드 : DK001(1단계), DK002(2단계), DK003(3단계)
+				//jsonObj.MESSAGE => 디스패치 메시지
+				
+				try {
+		//			setTimeout(function() {				
+		//				routMap.removeAllBusOverlay("map_MO0101_vehicle");				
+		//				routMap.removeAllOverlay("map_MO0101_sttn");
+						routMap.removeAllOverlay("map_MO0101_crs");					
+						var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 						
-						var sortOptions = {};
-						//정렬 컬럼 ID
-						sortOptions.sortIndex = "REP_ROUT_ID ROUT_ID VHC_ID";
-						//오름차
-						sortOptions.sortOrder = "1 1 1";
-						dlt_BRT_CUR_OPER_INFO.multisort(sortOptions);
-					}		
-					
-					curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);			
-					
-					if(curIndexArr.length != 0) {
-						dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
-						
-						dataRowJson = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndexArr[0]);
-						//var rowData = dlt_BRT_CUR_OPER_INFO.getMatchedColumnData("VHC_ID", dataRowJson.VHC_ID, "VHC_ID");
-						//var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID");
-						
-						//routMap.showVehicle2("map_MO0101_vehicle", dataRowJson, rowData, MO0101G0, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
-						//routMap.showVehicleClickOverlay2("map_MO0101_vehicle", dataRowJson, rowData, MO0101G0, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
-						routMap.moveVehicle("map_MO0101_vehicle", dataRowJson, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
-						
-					}
-		//		},100);	
-			} catch (e) {
-				console.log("[scwin.onMessageReceived] Exception :: " + e.message);			
-			}	
-		}
-		
-		else if(attrId == util.ATTR_ID.DISPATCH) { //4020: 디스패치
-			//payload.body >>>> {MESSAGE=천천히가세요, DSPTCH_DIV=DP001, ATTR_ID=4020, DSPTCH_KIND=DK002, VHC_ID=VH00000002}
-			
-			//jsonObj.DSPTCH_DIV => 디스패치 구분코드 : DP001(일반메시지), DP002(운행중디스패치), DP003(정차중디스패치)
-			//jsonObj.DSPTCH_KIND => 디스패치 종류(레벨)코드 : DK001(1단계), DK002(2단계), DK003(3단계)
-			//jsonObj.MESSAGE => 디스패치 메시지
-			
-			try {
-	//			setTimeout(function() {				
-	//				routMap.removeAllBusOverlay("map_MO0101_vehicle");				
-	//				routMap.removeAllOverlay("map_MO0101_sttn");
-					routMap.removeAllOverlay("map_MO0101_crs");					
-					var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
-					
-					if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
-						dlt_BRT_DSPTCH_LOG.insertRow(0);
-						
-						var today = new Date();   
-						var hours = leadingZeros(today.getHours(), 2);
-						var minutes = leadingZeros(today.getMinutes(), 2); 
-						var seconds = leadingZeros(today.getSeconds(), 2); 
-						var timeResult = hours + ':' + minutes + ':' + seconds
-						dlt_BRT_DSPTCH_LOG.setCellData(0, "SEND_DATE", timeResult);
-						dlt_BRT_DSPTCH_LOG.setCellData(0, "ROUT_NM", jsonObj.ROUT_NM);
-						dlt_BRT_DSPTCH_LOG.setCellData(0, "VHC_NO", jsonObj.VHC_NO);
-						
-						dlt_BRT_DSPTCH_LOG.setCellData(0, "DSPTCH_DIV", jsonObj.DSPTCH_DIV);
-						
-						var dsptchDiv = jsonObj.DSPTCH_DIV;
-						var dsptchConts = jsonObj.MESSAGE;
-						var dsptchKind = jsonObj.DSPTCH_KIND;
-						var contsResult = "";
-						
-						var min = "";
-						var sec = "";
-						var dsptchMessage = "";
-						
-						if(dsptchConts.split(',').length>0){
-							dsptchMessage = dsptchConts.split(',')[0];
-						}
-						else{
-							dsptchMessage = dsptchConts;
-						}
-						//디스패치가 일반메시지가 아닐경우	
-						if(parseInt(dsptchMessage) != "undefined" && dsptchDiv != "DP001") {
+						if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
+							dlt_BRT_DSPTCH_LOG.insertRow(0);
 							
+							var today = new Date();   
+							var hours = leadingZeros(today.getHours(), 2);
+							var minutes = leadingZeros(today.getMinutes(), 2); 
+							var seconds = leadingZeros(today.getSeconds(), 2); 
+							var timeResult = hours + ':' + minutes + ':' + seconds
+							dlt_BRT_DSPTCH_LOG.setCellData(0, "SEND_DATE", timeResult);
+							dlt_BRT_DSPTCH_LOG.setCellData(0, "ROUT_NM", jsonObj.ROUT_NM);
+							dlt_BRT_DSPTCH_LOG.setCellData(0, "VHC_NO", jsonObj.VHC_NO);
 							
-							if(Math.abs(parseInt(dsptchMessage) >= 60)) {
-								 min = Math.abs(parseInt(dsptchMessage/60)) + "분 ";
+							dlt_BRT_DSPTCH_LOG.setCellData(0, "DSPTCH_DIV", jsonObj.DSPTCH_DIV);
+							
+							var dsptchDiv = jsonObj.DSPTCH_DIV;
+							var dsptchConts = jsonObj.MESSAGE;
+							var dsptchKind = jsonObj.DSPTCH_KIND;
+							var contsResult = "";
+							
+							var min = "";
+							var sec = "";
+							var dsptchMessage = "";
+							
+							if(dsptchConts.split(',').length>0){
+								dsptchMessage = dsptchConts.split(',')[0];
 							}
-							 sec = Math.abs(parseInt(dsptchMessage%60)) + "초 ";
-							
-							//운행중 디스패치일 경우 
-							if(dsptchDiv == "DP002") {
-								if(dsptchKind == "DK001") {
-									contsResult = "정상 운행중입니다.";
+							else{
+								dsptchMessage = dsptchConts;
+							}
+							//디스패치가 일반메시지가 아닐경우	
+							if(parseInt(dsptchMessage) != "undefined" && dsptchDiv != "DP001") {
+								
+								
+								if(Math.abs(parseInt(dsptchMessage) >= 60)) {
+									 min = Math.abs(parseInt(dsptchMessage/60)) + "분 ";
 								}
-								else if(dsptchKind == "DK002") {
-									contsResult = min + sec + "느립니다."; 
+								 sec = Math.abs(parseInt(dsptchMessage%60)) + "초 ";
+								
+								//운행중 디스패치일 경우 
+								if(dsptchDiv == "DP002") {
+									if(dsptchKind == "DK001") {
+										contsResult = "정상 운행중입니다.";
+									}
+									else if(dsptchKind == "DK002") {
+										contsResult = min + sec + "느립니다."; 
+									}
+									else if(dsptchKind == "DK003") {
+										contsResult = min + sec + "빠릅니다."; 
+									}
+	//								if(parseInt(dsptchConts) > 0) {
+	//									contsResult = min + sec + "느립니다."; 
+	//								}
+	//								else if(parseInt(dsptchConts) < 0) {
+	//									contsResult = min + sec + "빠릅니다."; 
+	//								}
+	//								else if(parseInt(dsptchConts) == 0) {
+	//									contsResult = "정상 운행중입니다.";
+	//								}
 								}
-								else if(dsptchKind == "DK003") {
-									contsResult = min + sec + "빠릅니다."; 
+								
+								//정차중 디스패치일 경우
+								else if(dsptchDiv == "DP003") {
+									contsResult = min + sec + "정차하세요.";	
 								}
-//								if(parseInt(dsptchConts) > 0) {
-//									contsResult = min + sec + "느립니다."; 
-//								}
-//								else if(parseInt(dsptchConts) < 0) {
-//									contsResult = min + sec + "빠릅니다."; 
-//								}
-//								else if(parseInt(dsptchConts) == 0) {
-//									contsResult = "정상 운행중입니다.";
-//								}
+								dlt_BRT_DSPTCH_LOG.setCellData(0, "DSPTCH_CONTS", contsResult);			
+							} 
+							//디스패치 메시지가 일반메시지일 경우
+							else if(parseInt(dsptchConts) == "undefined" || dsptchDiv == "DP001") {
+								dlt_BRT_DSPTCH_LOG.setCellData(0, "DSPTCH_CONTS", jsonObj.MESSAGE);	
 							}
 							
-							//정차중 디스패치일 경우
-							else if(dsptchDiv == "DP003") {
-								contsResult = min + sec + "정차하세요.";	
+							routMap.mapInfo["map_MO0101_vehicle"].isDsptch = "on";
+							dlt_BRT_CUR_OPER_INFO.setCellData(curIndexArr[0], "MESSAGE", jsonObj.MESSAGE);
+							
+							if (dsptchDiv == "DP001") { //일반메시지
+								routMap.mapInfo["map_MO0101_vehicle"].divDsptch = "DP001";
+							} else if (dsptchDiv == "DP002") { //운행중디스패치
+								routMap.mapInfo["map_MO0101_vehicle"].divDsptch = "DP002";
+							} else if (dsptchDiv == "DP003") { //정차중디스패치
+								routMap.mapInfo["map_MO0101_vehicle"].divDsptch = "DP003";
 							}
-							dlt_BRT_DSPTCH_LOG.setCellData(0, "DSPTCH_CONTS", contsResult);			
-						} 
-						//디스패치 메시지가 일반메시지일 경우
-						else if(parseInt(dsptchConts) == "undefined" || dsptchDiv == "DP001") {
-							dlt_BRT_DSPTCH_LOG.setCellData(0, "DSPTCH_CONTS", jsonObj.MESSAGE);	
+	
+							dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);								
+							routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
+							dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0, jsonObj);				
+							
 						}
-						
-						routMap.mapInfo["map_MO0101_vehicle"].isDsptch = "on";
-						dlt_BRT_CUR_OPER_INFO.setCellData(curIndexArr[0], "MESSAGE", jsonObj.MESSAGE);
-						
-						if (dsptchDiv == "DP001") { //일반메시지
-							routMap.mapInfo["map_MO0101_vehicle"].divDsptch = "DP001";
-						} else if (dsptchDiv == "DP002") { //운행중디스패치
-							routMap.mapInfo["map_MO0101_vehicle"].divDsptch = "DP002";
-						} else if (dsptchDiv == "DP003") { //정차중디스패치
-							routMap.mapInfo["map_MO0101_vehicle"].divDsptch = "DP003";
-						}
-
-						dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);								
-						routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
-						dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0, jsonObj);				
-						
-					}
-	//			},100);	
-			} catch (e) {
-				console.log("[scwin.onMessageReceived] Exception :: " + e.message);		
+		//			},100);	
+				} catch (e) {
+					console.log("[scwin.onMessageReceived] Exception :: " + e.message);		
+				}
+				
 			}
 			
+			//신호등 현시 수신
 		}
-		
-		//신호등 현시 수신
 		else if (attrId == util.ATTR_ID.TRAFFIC_LIGHT_STATUS_RESPONSE) {
 			var crsId = null;
 			var phaseNo = null;
@@ -1071,6 +1077,7 @@
 		}			 					 
 		startMarker = 0;			
 		
+				 
 	};
 	
 	scwin.sub_MO0101SHI1_submitdone = function(e) {
@@ -1741,54 +1748,76 @@
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
-		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
-			<xf:group id="pgm_navi" class="pgm_navi" style="">
-				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
-			</xf:group>
-			<xf:group class="pgm_header" id="pgm_header" style="">
-				<xf:group class="gr_search" id="" style="">
-					<xf:group class="label" id="" style="">
-						<w2:span class="" id="" label="대표 노선"></w2:span>
+		<xf:group id="pgm_container" class="pgm_container grdr_60_a" style="">
+
+			<xf:group id="" class="grdc_2f_8f title-wrap" style="">
+				<xf:group id="pgm_header_left" class="pgm_header_left" style="">
+					<w2:wframe id="wfm_title" style="" src="/cm/common/wf_title.xml" scope="true"></w2:wframe>
+				</xf:group>
+				<xf:group id="pgm_header_right" class="pgm_header_right" style="">
+					<xf:group id="pgm_rightNavi" class="pgm_rightNavi" style="">
+						<w2:wframe id="rightNavi" class="" style="" src="/cm/common/wf_rightNavi.xml" scope="true"></w2:wframe>
 					</xf:group>
-					<xf:group class="search" id="" style="">
-						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
-							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE1_onviewchange" id="TYPE1" optionOrder="false"
-							ref="data:dma_search.CONTENT1" class="search_type_100" style="" submenuSize="auto" textAlign="center" chooseOptionLabel="">
-							<xf:choices>
-								<xf:itemset nodeset="data:dlt_repRoutItem">
-									<xf:label ref="REP_ROUT_NM"></xf:label>
-									<xf:value ref="REP_ROUT_ID"></xf:value>
-								</xf:itemset>
-							</xf:choices>
-						</xf:select1>
-						<xf:group class="label" id="" style="">
-						<w2:span class="" id="" label="노선"></w2:span>
+					<xf:group id="pgm_header" class="pgm_header" style="">
+						<w2:wframe id="wfm_mainBtn" class="main_Btn" style="float:right" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 					</xf:group>
-					<xf:group class="search" id="" style="">
-						<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
-							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE2_onviewchange" id="TYPE2" optionOrder="false"
-							ref="data:dma_search.CONTENT2" class="search_type_100" style="" submenuSize="auto" textAlign="center" chooseOptionLabel="-전체-">
-							<xf:choices>
-								<xf:itemset nodeset="data:dlt_searchitem2">
-									<xf:label ref="ROUT_NM"></xf:label>
-									<xf:value ref="ROUT_ID"></xf:value>
-								</xf:itemset>
-							</xf:choices>
-						</xf:select1>
-					</xf:group>
-					<xf:group class="label" id="" style="">
-						<w2:span class="" id="" label="검색"></w2:span>
-					</xf:group>
-					<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT3" placeholder="차번"></xf:input>
-					</xf:group>
-					<w2:wframe class="" id="wfm_mainBtn" scope="true" src="/cm/common/wf_mainBtn.xml" style=""></w2:wframe>
 				</xf:group>
 			</xf:group>
-			<xf:group id="pgm_content" class="pgm_content grdc_600_20_a" style="" >
-					<xf:group id="pgm_list" class="pgm_list" style="">
-						<xf:group id="" style="">
+
+			<xf:group id="pgm_content" class="pgm_content grdc_600_0_a" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_50_a bms_box_wrap" style=""> <!-- auto 영역 -->
+					<xf:group id="" class="" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl list ico-list" id="" label="노선 목록" style=""></w2:textbox>
+						</xf:group>
+					</xf:group>
+
+					<xf:group id="" class="" style="">
+						<xf:group id="pgm_search" style="" class="gr_search">
+							<xf:group id="" style="" class="label">
+								<w2:span id="" class="" label="대표 노선"></w2:span>
+							</xf:group>
+							<xf:group id="" style="" class="search">
+								<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
+									disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE1_onviewchange" id="TYPE1" optionOrder="false"
+									ref="data:dma_search.CONTENT1" class="search_type_100" style="" submenuSize="auto" textAlign="center" chooseOptionLabel="-선택-">
+									<xf:choices>
+										<xf:itemset nodeset="data:dlt_repRoutItem">
+											<xf:label ref="REP_ROUT_NM"></xf:label>
+											<xf:value ref="REP_ROUT_ID"></xf:value>
+										</xf:itemset>
+									</xf:choices>
+								</xf:select1>
+							</xf:group>
+							<xf:group class="label" id="" style="">
+								<w2:span class="" id="" label="노선"></w2:span>
+							</xf:group>
+							<xf:group class="search" id="" style="">
+								<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
+									disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.TYPE2_onviewchange" id="TYPE2" optionOrder="false"
+									ref="data:dma_search.CONTENT2" class="search_type_100" style="" submenuSize="auto" textAlign="center" chooseOptionLabel="-전체-">
+									<xf:choices>
+										<xf:itemset nodeset="data:dlt_searchitem2">
+											<xf:label ref="ROUT_NM"></xf:label>
+											<xf:value ref="ROUT_ID"></xf:value>
+										</xf:itemset>
+									</xf:choices>
+								</xf:select1>
+							</xf:group>
+							<xf:group class="label" id="" style="">
+								<w2:span class="" id="" label="검색"></w2:span>
+							</xf:group>
+							<xf:input id="search_input" class="search_input" style="width:100px" ref="data:dma_search.CONTENT3" placeholder="차번"></xf:input>
+					
+							<w2:wframe id="wfm_mainSearchBtn" class="wfm_mainSearchBtn" style="" src="/cm/common/wf_mainSrhBtn.xml" scope="true"></w2:wframe>
+						</xf:group>
+					</xf:group>
+					
+					
+					<xf:group id="" class="" style="">
+						<xf:group id="" class="" style="display:grid; grid-template-rows: minmax(20px, max-content) 10px auto;">
 							<xf:group  class="tab_div" style="">
-								<ul id="MO0101_TAB" class="tab_ul"  style="width: 303px;">
+								<ul id="MO0101_TAB" class="tab_ul"  style="">
 									<li id="li_busimg" class="on">
 										<!-- <span class="busimg"></span> -->
 										버스
@@ -1803,9 +1832,10 @@
 									</li>
 								</ul>
 							</xf:group>
+							<xf:group  class="" style=""></xf:group>
 							<xf:group id="MO0101T0">
 								<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.MO0101G0_onrowindexchange" ev:oncellclick=""
-									showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="No."
+									showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="순서"
 									sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 									fixedColumnWithHidden="true" dataList="data:dlt_BRT_CUR_OPER_INFO" ignoreCellClick="false" style="height:212px;"
 									autoFit="lastColumn" visibleRowNum="" id="MO0101G0" class="cm_grid left" tooltipPositionY="" focusMode="row">
@@ -1869,14 +1899,14 @@
 								</w2:gridView>
 								<xf:group id="" class="pgm_subList grdr_20_2_a" style="">
 									<xf:group class="defaultbox" id="" style="margin-top: 5px;">
-										<w2:textbox class="df_tt fl" id="" label="이벤트 이력" style=""></w2:textbox>
+										<w2:textbox class="df_tt fl list" id="" label="이벤트 이력" style=""></w2:textbox>
 									</xf:group>
 									<xf:group></xf:group>
 									<xf:group adaptive="layout" class="w2tb" id="MO0101F4" style="">
 										<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.MO0101G3_onrowindexchange"
 											ev:oncellclick="" showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false"
-											rowNumHeaderValue="No." sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
-											fixedColumnWithHidden="true" dataList="data:dlt_BRT_OPER_EVENT_HIS" ignoreCellClick="false" style="height:160px;"
+											rowNumHeaderValue="순서" sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
+											fixedColumnWithHidden="true" dataList="data:dlt_BRT_OPER_EVENT_HIS" ignoreCellClick="false" style="height:130px;"
 											autoFit="lastColumn" visibleRowNum="" id="MO0101G3" class="cm_grid left" tooltipPositionY="" focusMode="row">
 											<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 											<w2:header style="" id="header1">
@@ -1922,14 +1952,14 @@
 								</xf:group>
 								<xf:group id="" class="pgm_subList grdr_20_2_a" style="">
 									<xf:group class="defaultbox" id="" style="margin-top: 5px;">
-										<w2:textbox class="df_tt fl" id="" label="디스패치 이력" style=""></w2:textbox>
+										<w2:textbox class="df_tt fl list" id="" label="디스패치 이력" style=""></w2:textbox>
 									</xf:group>
 									<xf:group></xf:group>
 									<xf:group adaptive="layout" class="w2tb" id="MO0101F0" style="">
 										<w2:gridView sortEvent="onclick" ev:onrowindexchange=""
 											ev:oncellclick="" showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false"
-											rowNumHeaderValue="No." sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
-											fixedColumnWithHidden="true" dataList="data:dlt_BRT_DSPTCH_LOG" ignoreCellClick="false" style="height:160px;"
+											rowNumHeaderValue="순서" sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
+											fixedColumnWithHidden="true" dataList="data:dlt_BRT_DSPTCH_LOG" ignoreCellClick="false" style="height:130px;"
 											autoFit="lastColumn" visibleRowNum="" id="MO0101G4" class="cm_grid left" tooltipPositionY="" focusMode="row">
 											<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 											<w2:header style="" id="header1">
@@ -1976,9 +2006,9 @@
 							</xf:group> <!-- MO0101T0 -->
 							<xf:group id="MO0101T1" style="display: none;visibility:hidden; ">
 								<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.MO0101G1_onrowindexchange" ev:oncellclick=""
-									showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="No."
+									showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="순서"
 									sortable="true" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
-									fixedColumnWithHidden="false" dataList="dlt_BMS_ROUT_NODE_CMPSTN2" ignoreCellClick="false" style="height:394px;"
+									fixedColumnWithHidden="false" dataList="dlt_BMS_ROUT_NODE_CMPSTN2" ignoreCellClick="false" style="height:342px;"
 									autoFit="lastColumn" visibleRowNum="" id="MO0101G1" class="cm_grid left" tooltipPositionY="" focusMode="row">
 									<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 									<w2:header style="" id="header1">
@@ -2022,12 +2052,12 @@
 								</w2:gridView>
 								<xf:group id="" class="pgm_subList grdr_20_2_a" style="">
 									<xf:group class="defaultbox" id="" style="margin-top: 5px;">
-										<w2:textbox class="df_tt fl" id="" label="정류소 시설물 상태" style=""></w2:textbox>
+										<w2:textbox class="df_tt fl list" id="" label="정류소 시설물 상태" style=""></w2:textbox>
 									</xf:group>
 									<xf:group></xf:group>
 										<xf:group adaptive="layout" class="w2tb" id="MO0101F5" style="">
 											<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.MO0101G5_onrowindexchange" ev:oncellclick="" showSortableImage=""
-												rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="No." sortable="false"
+												rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="순서" sortable="false"
 												rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true"
 												dataList="data:dlt_FCLT_COND_LOG" ignoreCellClick="false" style="height:160px;" autoFit="lastColumn" visibleRowNum=""
 												id="MO0101G5" class="cm_grid left" tooltipPositionY="" focusMode="row" noResultMessage="금일 고장건수 없음">
@@ -2070,7 +2100,7 @@
 							</xf:group>
 							<xf:group id="MO0101T2" style="display: none;visibility:hidden" >
 								<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.MO0101G2_onrowindexchange" ev:oncellclick=""
-									showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="No."
+									showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="순서"
 									sortable="true" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 									fixedColumnWithHidden="true" dataList="data:dlt_BMS_ROUT_NODE_CMPSTN3" ignoreCellClick="false" style="height:212px;"
 									autoFit="lastColumn" visibleRowNum="" id="MO0101G2" class="cm_grid left" tooltipPositionY="" focusMode="row">
@@ -2122,14 +2152,14 @@
 								</w2:gridView>
 								<xf:group id="" class="pgm_subList grdr_20_2_a" style="">
 									<xf:group class="defaultbox" id="" style="margin-top:5px;">
-										<w2:textbox class="df_tt fl" id="" label="현시 정보" style=""></w2:textbox>
+										<w2:textbox class="df_tt fl list" id="" label="현시 정보" style=""></w2:textbox>
 									</xf:group>
 									<xf:group></xf:group>
 										<xf:group adaptive="layout" class="w2tb" id="MO0101F6" style="">
 										<w2:gridView sortEvent="onclick" ev:onrowindexchange=""
 											ev:oncellclick="" showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false"
-											rowNumHeaderValue="No." sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
-											fixedColumnWithHidden="true" dataList="" ignoreCellClick="false" style="height:160px;"
+											rowNumHeaderValue="순서" sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
+											fixedColumnWithHidden="true" dataList="" ignoreCellClick="false" style="height:130px;"
 											autoFit="lastColumn" visibleRowNum="" id="MO0101G6" class="cm_grid left" tooltipPositionY="" focusMode="row" >
 											<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 											<w2:header style="" id="header1">
@@ -2163,14 +2193,14 @@
 								</xf:group>
 								<xf:group id="" class="pgm_subList grdr_20_2_a" style="">
 									<xf:group class="defaultbox" id="" style="margin-top: 5px;">
-										<w2:textbox class="df_tt fl" id="" label="우선신호 발생이력" style=""></w2:textbox>
+										<w2:textbox class="df_tt fl list" id="" label="우선신호 발생이력" style=""></w2:textbox>
 									</xf:group>
 									<xf:group></xf:group>
 									<xf:group adaptive="layout" class="w2tb" id="MO0101F7" style="">
 										<w2:gridView sortEvent="onclick" ev:onrowindexchange="" ev:oncellclick="" showSortableImage=""
-											rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="No." sortable="false"
+											rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="순서" sortable="false"
 											rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true"
-											dataList="data:dlt_BMS_CRS_SIGOPER_EVENT_HIS" ignoreCellClick="false" style="height:160px;" autoFit="lastColumn" visibleRowNum=""
+											dataList="data:dlt_BMS_CRS_SIGOPER_EVENT_HIS" ignoreCellClick="false" style="height:130px;" autoFit="lastColumn" visibleRowNum=""
 											id="MO0101G7" class="cm_grid left" tooltipPositionY="" focusMode="row" noResultMessage="금일 발생이력 없음">
 											<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 											<w2:header style="" id="header1">
@@ -2220,151 +2250,152 @@
 							</xf:group>
 						</xf:group><!-- pgm_list end -->
 					</xf:group><!-- pgm_sublist end -->
-					
-				<xf:group id="" class="vertical_line"></xf:group>				
-				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_a" style="">
-					<xf:group class="gr_map_header" id="" style="">
-						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="지도" style=""></w2:textbox>
-						</xf:group>
 					</xf:group>
-					<xf:group></xf:group>
-					<xf:group id="" style="">
-						<div id="map_MO0101" style="">
-							<ul id="category_map_MO0101" class="category">
-					   		 </ul>
-					   		 <table class="map_status" id="map_busstatus" style="">
-<!-- 						   		 <tbody>
-						   		 	<tr>
-						   		 		<th colspan="2">버스 운행 현황</th>
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds status_black">전체대수</td>
-						   		 		<td class="status_count" id="allBus">0</td>
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds status_green">정상버스</td>
-						   		 		<td class="status_count" id="runBus">0</td>						   		 	
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds status_red">고장버스</td>
-						   		 		<td class="status_count" id="breakDownBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds status_green">정상운행</td>
-						   		 		<td class="status_count" id="operBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds">막차</td>
-						   		 		<td class="status_count" id="lastBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds">대차</td>
-						   		 		<td class="status_count" id="steadBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds">정비</td>
-						   		 		<td class="status_count" id="fixBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds">운행종료</td>
-						   		 		<td class="status_count" id="notOperBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds">공차</td>
-						   		 		<td class="status_count" id="deadHeadBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds status_red">긴급</td>
-						   		 		<td class="status_count" id="emerBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds status_red">사고</td>
-						   		 		<td class="status_count" id="acciBus">0</td>					   		 	
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds">운행종료</td>
-						   		 		<td class="status_count" id="lastBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds">차고지행</td>
-						   		 		<td class="status_count" id="steadBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds">충전소행</td>
-						   		 		<td class="status_count" id="fixBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds">시범운행</td>
-						   		 		<td class="status_count" id="notOperBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds">노선교육</td>
-						   		 		<td class="status_count" id="deadHeadBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds">실기시험</td>
-						   		 		<td class="status_count" id="emerBus">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 	<tr>
-						   		 		<td class="status_kinds">터미널행</td>
-						   		 		<td class="status_count" id="acciBus">0</td>					   		 	
-						   		 	</tr>							   		 							   		 	
-						   		 </tbody> -->
-						   	 </table>
-					   		 <table class="map_status status_hide" id="map_sttnstatus">
-<!-- 						   		 <tbody>
-						   		 	<tr>
-						   		 		<th colspan="2">정류소 현황</th>
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds status_black">전체정류소</td>
-						   		 		<td class="status_count" id="allSttn">0</td>
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds status_green">정상정류소</td>
-						   		 		<td class="status_count" id="runSttn">0</td>						   		 	
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds status_red">고장정류소</td>
-						   		 		<td class="status_count" id="breakDownSttn">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 </tbody> -->
-						   	 </table>
-					   		 <table class="map_status status_hide" id="map_crsstatus">
-<!-- 						   		 <tbody>
-						   		 	<tr>
-						   		 		<th colspan="2">교차로 현황</th>
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds status_black">전체교차로</td>
-						   		 		<td class="status_count" id="allCrs">0</td>
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds status_green">정상교차로</td>
-						   		 		<td class="status_count" id="runCrs">0</td>						   		 	
-						   		 	</tr>
-						   		 	<tr>
-						   		 		<td class="status_kinds status_red">고장교차로</td>
-						   		 		<td class="status_count" id="breakDownCrs">0</td>					   		 	
-						   		 	</tr>						   		 	
-						   		 </tbody> -->
-						   	 </table>
-						   	 <div class="map-type" style="z-index: 10000;">
-						   	 	<div>
-									<a href="javascript:void(0)" class="map-type-01 active" onclick="routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.ROADMAP);" title="일반지도">
-										<span class="maptype1-text active">일반지도</span>
-									</a>
-									<a href="javascript:void(0)" class="map-type-02" onclick="routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.SKYVIEW);" title="위성지도">
-										<span class="maptype2-text">위성지도</span>
-									</a>
-									<a href="javascript:void(0)" class="map-type-03" title="소통지도">
-										<span class="maptype3-text">소통지도</span>
-									</a>
-								</div>		
-						   	 </div>	 											
-						</div>
-					</xf:group>					
+					<xf:group id="" class=""></xf:group>				
+					<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_a bms_box_wrap" style="">
+						<xf:group class="gr_map_header" id="" style="">
+							<xf:group class="defaultbox" id="" style="">
+								<w2:textbox class="df_tt fl map" id="" label="지도" style=""></w2:textbox>
+							</xf:group>
+						</xf:group>
+						<xf:group></xf:group>
+						<xf:group id="" style="">
+							<div id="map_MO0101" style="">
+								<ul id="category_map_MO0101" class="category">
+						   		 </ul>
+						   		 <table class="map_status" id="map_busstatus" style="">
+	<!-- 						   		 <tbody>
+							   		 	<tr>
+							   		 		<th colspan="2">버스 운행 현황</th>
+							   		 	</tr>
+							   		 	<tr>
+							   		 		<td class="status_kinds status_black">전체대수</td>
+							   		 		<td class="status_count" id="allBus">0</td>
+							   		 	</tr>
+							   		 	<tr>
+							   		 		<td class="status_kinds status_green">정상버스</td>
+							   		 		<td class="status_count" id="runBus">0</td>						   		 	
+							   		 	</tr>
+							   		 	<tr>
+							   		 		<td class="status_kinds status_red">고장버스</td>
+							   		 		<td class="status_count" id="breakDownBus">0</td>					   		 	
+							   		 	</tr>						   		 	
+							   		 	<tr>
+							   		 		<td class="status_kinds status_green">정상운행</td>
+							   		 		<td class="status_count" id="operBus">0</td>					   		 	
+							   		 	</tr>						   		 	
+							   		 	<tr>
+							   		 		<td class="status_kinds">막차</td>
+							   		 		<td class="status_count" id="lastBus">0</td>					   		 	
+							   		 	</tr>						   		 	
+							   		 	<tr>
+							   		 		<td class="status_kinds">대차</td>
+							   		 		<td class="status_count" id="steadBus">0</td>					   		 	
+							   		 	</tr>						   		 	
+							   		 	<tr>
+							   		 		<td class="status_kinds">정비</td>
+							   		 		<td class="status_count" id="fixBus">0</td>					   		 	
+							   		 	</tr>						   		 	
+							   		 	<tr>
+							   		 		<td class="status_kinds">운행종료</td>
+							   		 		<td class="status_count" id="notOperBus">0</td>					   		 	
+							   		 	</tr>						   		 	
+							   		 	<tr>
+							   		 		<td class="status_kinds">공차</td>
+							   		 		<td class="status_count" id="deadHeadBus">0</td>					   		 	
+							   		 	</tr>						   		 	
+							   		 	<tr>
+							   		 		<td class="status_kinds status_red">긴급</td>
+							   		 		<td class="status_count" id="emerBus">0</td>					   		 	
+							   		 	</tr>						   		 	
+							   		 	<tr>
+							   		 		<td class="status_kinds status_red">사고</td>
+							   		 		<td class="status_count" id="acciBus">0</td>					   		 	
+							   		 	</tr>
+							   		 	<tr>
+							   		 		<td class="status_kinds">운행종료</td>
+							   		 		<td class="status_count" id="lastBus">0</td>					   		 	
+							   		 	</tr>						   		 	
+							   		 	<tr>
+							   		 		<td class="status_kinds">차고지행</td>
+							   		 		<td class="status_count" id="steadBus">0</td>					   		 	
+							   		 	</tr>						   		 	
+							   		 	<tr>
+							   		 		<td class="status_kinds">충전소행</td>
+							   		 		<td class="status_count" id="fixBus">0</td>					   		 	
+							   		 	</tr>						   		 	
+							   		 	<tr>
+							   		 		<td class="status_kinds">시범운행</td>
+							   		 		<td class="status_count" id="notOperBus">0</td>					   		 	
+							   		 	</tr>						   		 	
+							   		 	<tr>
+							   		 		<td class="status_kinds">노선교육</td>
+							   		 		<td class="status_count" id="deadHeadBus">0</td>					   		 	
+							   		 	</tr>						   		 	
+							   		 	<tr>
+							   		 		<td class="status_kinds">실기시험</td>
+							   		 		<td class="status_count" id="emerBus">0</td>					   		 	
+							   		 	</tr>						   		 	
+							   		 	<tr>
+							   		 		<td class="status_kinds">터미널행</td>
+							   		 		<td class="status_count" id="acciBus">0</td>					   		 	
+							   		 	</tr>							   		 							   		 	
+							   		 </tbody> -->
+							   	 </table>
+						   		 <table class="map_status status_hide" id="map_sttnstatus">
+	<!-- 						   		 <tbody>
+							   		 	<tr>
+							   		 		<th colspan="2">정류소 현황</th>
+							   		 	</tr>
+							   		 	<tr>
+							   		 		<td class="status_kinds status_black">전체정류소</td>
+							   		 		<td class="status_count" id="allSttn">0</td>
+							   		 	</tr>
+							   		 	<tr>
+							   		 		<td class="status_kinds status_green">정상정류소</td>
+							   		 		<td class="status_count" id="runSttn">0</td>						   		 	
+							   		 	</tr>
+							   		 	<tr>
+							   		 		<td class="status_kinds status_red">고장정류소</td>
+							   		 		<td class="status_count" id="breakDownSttn">0</td>					   		 	
+							   		 	</tr>						   		 	
+							   		 </tbody> -->
+							   	 </table>
+						   		 <table class="map_status status_hide" id="map_crsstatus">
+	<!-- 						   		 <tbody>
+							   		 	<tr>
+							   		 		<th colspan="2">교차로 현황</th>
+							   		 	</tr>
+							   		 	<tr>
+							   		 		<td class="status_kinds status_black">전체교차로</td>
+							   		 		<td class="status_count" id="allCrs">0</td>
+							   		 	</tr>
+							   		 	<tr>
+							   		 		<td class="status_kinds status_green">정상교차로</td>
+							   		 		<td class="status_count" id="runCrs">0</td>						   		 	
+							   		 	</tr>
+							   		 	<tr>
+							   		 		<td class="status_kinds status_red">고장교차로</td>
+							   		 		<td class="status_count" id="breakDownCrs">0</td>					   		 	
+							   		 	</tr>						   		 	
+							   		 </tbody> -->
+							   	 </table>
+							   	 <div class="map-type" style="z-index: 10000;">
+							   	 	<div>
+										<a href="javascript:void(0)" class="map-type-01 active" onclick="routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.ROADMAP);" title="일반지도">
+											<span class="maptype1-text active">일반지도</span>
+										</a>
+										<a href="javascript:void(0)" class="map-type-02" onclick="routMap.addOverMapType('map_MO0101',kakao.maps.MapTypeId.SKYVIEW);" title="위성지도">
+											<span class="maptype2-text">위성지도</span>
+										</a>
+										<a href="javascript:void(0)" class="map-type-03" title="소통지도">
+											<span class="maptype3-text">소통지도</span>
+										</a>
+									</div>		
+							   	 </div>	 											
+							</div>
+						</xf:group>
+					
 				</xf:group><!-- pgm_detail end -->
 			</xf:group> <!-- end content --> 
 		</xf:group> <!-- end container -->

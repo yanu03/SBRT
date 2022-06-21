@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+			</w2:dataCollection>
+			<w2:workflowCollection>
+			</w2:workflowCollection>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		
+		var mapContainer = document.getElementById('map');
+		var mapOptions = {
+			center : new kakao.maps.LatLng(scwin.param.GPS_Y, scwin.param.GPS_X),
+			level : 3
+		};
+		
+		var map = new kakao.maps.Map(mapContainer, mapOptions); //지도 생성 및 객체 리턴
+
+		// 마커가 표시될 위치입니다 
+		var markerPosition  = new kakao.maps.LatLng(scwin.param.GPS_Y, scwin.param.GPS_X); 
+
+		// 마커를 생성합니다
+		var marker = new kakao.maps.Marker({
+    		position: markerPosition
+			});
+
+		// 마커가 지도 위에 표시되도록 설정합니다
+		marker.setMap(map);
+		
+	};
+
+	scwin.onpageunload = function() {
+
+	};
+]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<div id="map" style="width:890px;height:600px;"></div>
+	</body>
+</html>
