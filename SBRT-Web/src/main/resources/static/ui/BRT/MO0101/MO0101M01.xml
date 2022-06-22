@@ -20,6 +20,8 @@
 						<w2:column id="VHC_ID" name="차량ID" dataType="text"></w2:column>
 						<w2:column id="GPS_X" name="현재GPS_X좌표" dataType="text"></w2:column>
 						<w2:column id="GPS_Y" name="현재GPS_Y좌표" dataType="text"></w2:column>
+						<w2:column id="GPS_X_RAW" name="GPS_X(raw)" dataType="text"></w2:column>
+						<w2:column id="GPS_Y_RAW" name="GPS_Y(raw)" dataType="text"></w2:column>
 						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
 						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
 						<w2:column id="CHAS_NO" name="차대번호" dataType="text"></w2:column>
@@ -41,6 +43,13 @@
 						<w2:column id="NODE_NM" name="이전노드명" dataType="text"></w2:column>
 						<w2:column id="DSPTCH_KIND" name="디스패치종류" dataType="text"></w2:column>
 						<w2:column id="DSPTCH_DIV" name="디스패치구분" dataType="text"></w2:column>
+						<w2:column id="NODE_SN" name="노드순번" dataType="text"></w2:column>
+						<w2:column id="LINK_ID" name="링크아이디" dataType="text"></w2:column>
+						<w2:column id="LINK_SN" name="링크순번" dataType="text"></w2:column>
+						<w2:column id="ST_GPS_X" name="링크시작GPS_X" dataType="text"></w2:column>
+						<w2:column id="ST_GPS_Y" name="링크시작GPS_Y" dataType="text"></w2:column>
+						<w2:column id="ED_GPS_X" name="링크끝GPS_X" dataType="text"></w2:column>
+						<w2:column id="ED_GPS_Y" name="링크끝GPS_Y" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
@@ -48,6 +57,7 @@
 						<w2:key id="CONTENT1" name="name1" dataType="text"></w2:key>
 						<w2:key id="CONTENT2" name="name2" dataType="text"></w2:key>
 						<w2:key id="CONTENT3" name="name3" dataType="text"></w2:key>
+						<w2:key id="VHC_ID" name="name4" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_sub_search">
@@ -79,6 +89,10 @@
 						<w2:column id="ROUT_LEN" name="노선거리" dataType="number" defaultValue="0"></w2:column>
 						<w2:column id="AREA" name="권역" dataType="text"></w2:column>
 						<w2:column id="MORN_STD" name="집중모니터링기준" dataType="text"></w2:column>
+						<w2:column id="ST_GPS_X" name="링크시작GPS_X" dataType="text"></w2:column>
+						<w2:column id="ST_GPS_Y" name="링크시작GPS_Y" dataType="text"></w2:column>
+						<w2:column id="ED_GPS_X" name="링크끝GPS_X" dataType="text"></w2:column>
+						<w2:column id="ED_GPS_Y" name="링크끝GPS_Y" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_ROUT_NODE_CMPSTN2" saveRemovedData="true"><!-- 정류소 그리드용 -->
@@ -600,22 +614,21 @@
 		var routItem = dma_search.get("CONTENT2");
 		var vhcNoItem = dma_search.get("CONTENT3");
 		
-		if (attrId != util.ATTR_ID.TRAFFIC_LIGHT_STATUS_RESPONSE) {
-			//운행상태가 운행 종료일때 List에 있으면 제거함
-			if(jsonObj.OPER_STS = "OS002") {
-				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
-				if(curIndexArr.length != 0) {
-					dlt_BRT_CUR_OPER_INFO.removeRow(curIndexArr[0]);
-					
-					//운행 종료된 차량이 그리드 focus라면 focus를 변경함
-					//차량 그리드 목록이 한 개일땐 오류 날 듯 
-					if(curIndexArr[0] == MO0101G0.getFocusedRowIndex()) {
-						if(dlt_BRT_CUR_OPER_INFO.getAllJSON().length != MO0101G0.getFocusedRowIndex()+1) {
-							MO0101G0.setFocusedCell(MO0101G0.getFocusedRowIndex+1, "VHC_NO");
-						}
-						else {
-							MO0101G0.setFocusedCell(MO0101G0.getFocusedRowIndex-1, "VHC_NO");
-						}
+		/*
+		//운행상태가 운행 종료일때 List에 있으면 제거함
+		if(jsonObj.OPER_STS == "OS002") {
+			var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+			if(curIndexArr.length != 0) {
+				dlt_BRT_CUR_OPER_INFO.removeRow(curIndexArr[0]);
+				
+				//운행 종료된 차량이 그리드 focus라면 focus를 변경함
+				//차량 그리드 목록이 한 개일땐 오류 날 듯 
+				if(curIndexArr[0] == MO0101G0.getFocusedRowIndex()) {
+					if(dlt_BRT_CUR_OPER_INFO.getAllJSON().length != MO0101G0.getFocusedRowIndex()+1) {
+						MO0101G0.setFocusedCell(MO0101G0.getFocusedRowIndex+1, "VHC_NO");
+					}
+					else {
+						MO0101G0.setFocusedCell(MO0101G0.getFocusedRowIndex-1, "VHC_NO");
 					}
 					
 					routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON(),
@@ -625,15 +638,14 @@
 				return;
 			}
 			
-			
-			//GPS값 튈 경우 아무 동작도 안되게 처리
-			if(typeof(jsonObj.GPS_X) != "undefined" && typeof(jsonObj.GPS_Y) != "undefined"){
-				if (jsonObj.GPS_X<120 || jsonObj.GPS_Y>130) {
-					return;	
-				}
-				if (jsonObj.GPS_Y<30 || jsonObj.GPS_Y>40) {
-					return;	
-				}
+		}
+		*/
+		
+		
+		//GPS값 튈 경우 아무 동작도 안되게 처리
+		if(typeof(jsonObj.GPS_X) != "undefined" && typeof(jsonObj.GPS_Y) != "undefined"){
+			if (jsonObj.GPS_X<120 || jsonObj.GPS_Y>130) {
+				return;	
 			}
 			
 			if (repRoutItem != "") {
@@ -802,6 +814,14 @@
 								//정류소 출발
 								else if(eventCode == "ET002") {
 									routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ET002";
+								}
+								//차고지 도착
+								else if(eventCode == "ET019") {
+									routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ET019";
+								}
+								//차고지 출발
+								else if(eventCode == "ET020") {
+									routMap.mapInfo["map_MO0101_vehicle"].divEvent = "ET020";
 								}
 								
 								else{
@@ -1008,10 +1028,12 @@
 	};
 			
 	scwin.MO0101G0_onrowindexchange = function(row,oldRow) {
+		dma_search.set("VHC_ID", dlt_BRT_CUR_OPER_INFO.getCellData(row, "VHC_ID"));
+		com.executeSubmission(sub_MO0101G3R0);
+		
 		gbMap.setLevel(4);
 		busFocus = row;		 
 		com.executeSubmission(sub_selectNodeListByRepRout);
-		 
 		//routMap.moveMap("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO.getCellData(row, "GPS_Y"), dlt_BRT_CUR_OPER_INFO.getCellData(row, "GPS_X")); 			
 	};
 	

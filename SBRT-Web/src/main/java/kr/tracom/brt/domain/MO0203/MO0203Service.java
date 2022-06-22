@@ -71,4 +71,14 @@ public class MO0203Service extends ServiceSupport{
 		//return mo0203Mapper.MO0203SCK(param);
 	}
 	
+	public List MO0203P0R0() throws Exception {
+		// TODO Auto-generated method stub
+		Map param = getSimpleDataMap("dma_sub_search");
+		return mo0203Mapper.MO0203P0R0(param);
+	}
+
+	public List MO0203P0R1() throws Exception {
+		return mo0203Mapper.MO0203P0R1();
+	}
+	
 }

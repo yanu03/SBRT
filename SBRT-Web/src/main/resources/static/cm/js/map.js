@@ -13,7 +13,7 @@ var routMap = {
 	},
 	MAX_NODE_CNT : 800,
 	LIMIT_SPEED : 50,
-	MIN_LEVEL : 4,
+	MIN_LEVEL : 2,
 	MAX_LEVEL : 7
 }
 
@@ -364,9 +364,10 @@ routMap.drawLine = function(mapId, first, last, color, eventKinds, clickEvent, r
 	var polyline = new kakao.maps.Polyline({
 		path: path,
 		strokeColor: color, // 라인 색상
-		strokeWeight: 5, // 라인 두께
+		strokeWeight: 4, // 라인 두께
 		strokeStyle:'solid',
-		strokeOpacity: 0.8
+		strokeOpacity: 0.8, //선의 불투명도 1~0사이값
+		endArrow : true //화살표 여부
 	});
 
 	if(typeof eventKinds != "undefined") {
@@ -1013,7 +1014,7 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx, busGrid) {
 	var markerOverImage = null;
 	var markerSelImage = null;
 	
-	var zIndex= 5;
+	var zIndex= 6;
 	if(data.VHC_KIND == "VHK01"){
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/bus_red.png", imageSize);
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/bus_red_selected.png", imageSize);
@@ -1026,7 +1027,7 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx, busGrid) {
 	
 	var marker = null;
 	if(idx==focusIdx) {
-		zIndex = 6;
+		zIndex = 10;
 		// 마커 이미지를 생성합니다    
 		marker = new kakao.maps.Marker({
 			position : new kakao.maps.LatLng(data.GPS_Y, data.GPS_X), // Marker의 중심좌표 // 설정.
@@ -1150,12 +1151,73 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx, busGrid) {
  * @param busGrid : 버스 그리드
  */
 routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid, gridChk, socketVhcId) {
+	//완전 하드코딩 06/22 양현우
+	switch(data.ROUT_ID){
+		case "RT00000003": //B0상(출착)
+			if(data.NODE_SN > "212"){
+				data.GPS_X = data.GPS_X_RAW;
+				data.GPS_Y = data.GPS_Y_RAW;
+			}
+			break;
+		case "RT00000004": //B0상(순환)
+			if(data.NODE_SN > "206"){
+				data.GPS_X = data.GPS_X_RAW;
+				data.GPS_Y = data.GPS_Y_RAW;
+			}
+			break;
+		case "RT00000047": //B0상(착)
+			if(data.NODE_SN > "211"){
+				data.GPS_X = data.GPS_X_RAW;
+				data.GPS_Y = data.GPS_Y_RAW;
+			}
+			break;
+		case "RT00000084": //B0상(출)
+			if(data.NODE_SN > "208"){
+				data.GPS_X = data.GPS_X_RAW;
+				data.GPS_Y = data.GPS_Y_RAW;
+			}
+			break;
+		case "RT00000048": //B0하(출착)
+			if(data.NODE_SN > "212"){
+				data.GPS_X = data.GPS_X_RAW;
+				data.GPS_Y = data.GPS_Y_RAW;
+			}
+			break;
+		case "RT00000049": //B0하(순환)
+			if(data.NODE_SN > "205"){
+				data.GPS_X = data.GPS_X_RAW;
+				data.GPS_Y = data.GPS_Y_RAW;
+			}
+			break;
+		case "RT00000050": //B0하(착)
+			if(data.NODE_SN > "207"){
+				data.GPS_X = data.GPS_X_RAW;
+				data.GPS_Y = data.GPS_Y_RAW;
+			}
+			break;
+		case "RT00000085": //B0하(출)
+			if(data.NODE_SN > "210"){
+				data.GPS_X = data.GPS_X_RAW;
+				data.GPS_Y = data.GPS_Y_RAW;
+			}
+			break;
+		
+	}
+	//var gpsPoint = getPointToLine(data.GPS_X, data.GPS_Y, data.ED_GPS_X, data.ED_GPS_Y, data.ST_GPS_X, data.ST_GPS_Y);
+	
+	//직교 좌표 0622 양현우
+	/*var gpsPoint = getPointToLine(data.GPS_X, data.GPS_Y, data.ST_GPS_X, data.ST_GPS_Y, data.ED_GPS_X, data.ED_GPS_Y);
+	if(gpsPoint != null) {
+		data.GPS_X = gpsPoint.x;
+		data.GPS_Y = gpsPoint.y;
+	}
+	*/
 	// 마커 이미지의 이미지 크기 입니다
 	var imageSize = new kakao.maps.Size(35, 35); 
 	var markerImage = null;
 	var markerOverImage = null;
 	var markerSelImage = null;
-	var zIndex= 5;
+	var zIndex= 6;
 	if(data.VHC_KIND == "VHK01"){
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/bus_red.png", imageSize);
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/bus_red_selected.png", imageSize);
@@ -1169,7 +1231,7 @@ routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid
 	var marker = null;
 	
 	if(idx==focusIdx) {
-		zIndex = 6;
+		zIndex = 10;
 		if (typeof data.VHC_ID != "undefined") {
 			zIndex = 9999;	
 		}
@@ -1333,7 +1395,7 @@ routMap.showBusMarkerNotEvent = function(mapId, data, idx, focusIdx, busGrid) {
 	var markerOverImage = null;
 	var markerSelImage = null;
 	
-	var zIndex= 5;
+	var zIndex= 6;
 	if(data.VHC_KIND == "VHK01"){
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/bus_red.png", imageSize);
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/bus_red_selected.png", imageSize);
@@ -1346,7 +1408,7 @@ routMap.showBusMarkerNotEvent = function(mapId, data, idx, focusIdx, busGrid) {
 	
 	var marker = null;
 	if(idx==focusIdx) {
-		zIndex = 6;
+		zIndex = 10;
 		// 마커 이미지를 생성합니다    
 		marker = new kakao.maps.Marker({
 			position : new kakao.maps.LatLng(data.GPS_Y, data.GPS_X), // Marker의 중심좌표 // 설정.
@@ -1443,6 +1505,7 @@ routMap.showBubbleOverlay = function(mapId, data, marker, idx, focusIdx) {
 	//정류소 or 교차로
 	if (typeof data.VHC_ID == "undefined") {
 		if(data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP){
+			 zIndex = 5; 
 			 msg = "<div class = 'customoverlay busstop'>";
 			 
 			 //장치상태 에러일때
@@ -1453,6 +1516,7 @@ routMap.showBubbleOverlay = function(mapId, data, marker, idx, focusIdx) {
 		}
 		
 		else if(data.NODE_TYPE == routMap.NODE_TYPE.CROSS){
+			zIndex = 3;
 			msg = "<div class = 'customoverlay cross'>";
 			
 			 if(data.COND_ERROR == 'CE001') {
@@ -1468,6 +1532,7 @@ routMap.showBubbleOverlay = function(mapId, data, marker, idx, focusIdx) {
 	
 	//버스
 	else {
+		zIndex = 6;
 		overlayName = "번호없음";
 		if (typeof data.VHC_NO != "undefined") {
 			overlayName = data.VHC_NO
@@ -1580,7 +1645,7 @@ routMap.showClickOverlay = function(mapId, data, idx, focusIdx, marker, markerIm
 			clickOverlay = new kakao.maps.CustomOverlay({
 				content: clickMsg,
 				position: marker.getPosition(),
-				zIndex : 2
+				zIndex : 5
 			});
 		}
 			
@@ -1590,7 +1655,7 @@ routMap.showClickOverlay = function(mapId, data, idx, focusIdx, marker, markerIm
 			clickOverlay = new kakao.maps.CustomOverlay({
 				content: clickMsg,
 				position: marker.getPosition(),
-				zIndex : 2
+				zIndex : 3
 			});
 		}
 		
@@ -1744,6 +1809,10 @@ routMap.showClickBusOverlay = function(mapId, data, idx, focusIdx, marker) {
  * @param marker : 대상마커
  */
 routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
+	if(idx != focusIdx) {
+		return;
+	}
+	
 	var zIndex = 100000;
 	var showMessage = "";
 	var min = "";
@@ -1894,6 +1963,10 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
  * @param marker : 대상마커
  */
 routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
+	if(idx != focusIdx) {
+		return;
+	}
+	
 	var zIndex = 100000;
 	var eventMsg = "";
 	var stopTime = 0;
@@ -1914,7 +1987,7 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 		nextNodeType = "정류소";
 	}
 	
-	if (routMap.mapInfo[mapId].divEvent == "ET001") {
+	if (routMap.mapInfo[mapId].divEvent == "ET001" || routMap.mapInfo[mapId].divEvent == "ET019") {
 		//if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
 		if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
 			eventMsg += '<div class="busInfoPopup clickoverlay" id="busInfoPopup" style="position: absolute; bottom:154px;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
@@ -1979,7 +2052,10 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 		}, 1000);
 	}
 	
-	else {
+	//else  {
+	
+	//출발이벤트 or 차량 속력이 20km/h 이상일 때 이벤트 오버레이 삭제
+	else if (routMap.mapInfo[mapId].divEvent == "ET002" || data.CUR_SPD > 20 || routMap.mapInfo[mapId].divEvent == "ET020") {
 		if (routMap.mapInfo[mapId].eventOverArr != null) {
 			
 		/*	if(routMap.mapInfo[mapId].divEvent == "ET001"){
@@ -2399,16 +2475,16 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 	var markerSelImage = null;
 
 	
-	var zIndex= -1;
+	var zIndex= 2;
 	if(routMap.mapInfo[mapId].isShowCrs == "on" && data.NODE_TYPE == routMap.NODE_TYPE.CROSS){
-		zIndex = 1;
+		zIndex = 3;
 		imageSize = new kakao.maps.Size(19, 19);
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/cross.png", imageSize);
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/cross_selected.png", imageSize);
 	}
 	else if(routMap.mapInfo[mapId].isShowNormal == "on" && data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP && 
 			(typeof data.COND_ERROR == "undefined"||data.COND_ERROR == "CE002") ) {
-		zIndex = 2;
+		zIndex = 5;
 		imageSize = new kakao.maps.Size(25, 24);
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop.png", imageSize);
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_selected.png", imageSize);
@@ -2448,7 +2524,7 @@ routMap.showMarker = function(mapId, data, idx, focusIdx, grid) {
 	var marker = null;
 	
 	if(idx==focusIdx) {
-		zIndex = 3;
+		//zIndex = 3;
 		// 마커 이미지를 생성합니다    
 		marker = new kakao.maps.Marker({
 			position : new kakao.maps.LatLng(data.GPS_Y, data.GPS_X), // Marker의 중심좌표 // 설정.
@@ -3155,22 +3231,22 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid) {
 	var markerSelImage = null;
 
 	
-	var zIndex= -1;
+	var zIndex= 2;
 	if(routMap.mapInfo[mapId].isShowCrs == "on" && data.NODE_TYPE == routMap.NODE_TYPE.CROSS){
-		zIndex = 4;
+		zIndex = 3;
 		imageSize = new kakao.maps.Size(19, 19);
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/cross.png", imageSize);
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/cross_selected.png", imageSize);
 	}
 	else if(routMap.mapInfo[mapId].isShowNormal == "on" && data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP && 
 			(typeof data.COND_ERROR == "undefined"||data.COND_ERROR == "CE002") ) {
-		zIndex = 4;
+		zIndex = 5;
 		imageSize = new kakao.maps.Size(25, 24);
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop.png", imageSize);
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_selected.png", imageSize);
 	}
 	else if(typeof data.COND_ERROR != "undefined" && routMap.mapInfo[mapId].isShowAbnormal == "on" &&(data.COND_ERROR == "CE001")) {
-		zIndex = 4;
+		//zIndex = 4;
 		imageSize = new kakao.maps.Size(25, 24);
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);		
 		markerSelImage = new kakao.maps.MarkerImage("/cm/images/tmap/busstop_black.png", imageSize);
@@ -3180,7 +3256,7 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid) {
 	var marker = null;
 	
 	if(idx==focusIdx) {
-		zIndex = 4;
+		zIndex = 10;
 		// 마커 이미지를 생성합니다    
 		marker = new kakao.maps.Marker({
 			position : new kakao.maps.LatLng(data.GPS_Y, data.GPS_X), // Marker의 중심좌표 // 설정.
@@ -3263,7 +3339,7 @@ routMap.showSigMarker = function(mapId, baseData, socketData) {
 	
 	if(routMap.mapInfo[mapId].isShowCrs == "on"){
 		
-		zIndex = 3;
+		zIndex = 4;
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/light_red.png", imageSize);
 		if(socketData != null && typeof socketData != "undefined"){
 			var phaseNoArr = baseData.PHASE_NO.split(',');
@@ -4959,12 +5035,15 @@ routMap.showRoute = function(mapId, list, id, type) {
 					oldMornStd = list[i].MORN_STD;
 				}
 				
-				var color = "#3396ff";
+				//var color = "#3396ff";
+				var color = "#0bbe39";
 				if(mornStd=='MS002'){
-					color = "#cd6c15";
+					//color = "#cd6c15";
+					color = "#ffc700";
 				}
 				else if(mornStd=='MS003'){
-					color = "#FF005E";
+					//color = "#FF005E";
+					color = "#DE2121";
 				}
 				
 				if(list[i].ROUT_ID == list[i+1].ROUT_ID) //동일 노선끼리만 선 연결 되도록 함
@@ -5310,9 +5389,64 @@ routMap.showVehicleClickOverlay2 = function(mapId, json, cur_vhc_id, grid, index
  */
 routMap.moveVehicle = function(mapId, json, index, focusIdx) {
 
-	if(typeof routMap.mapInfo[mapId].busMarkers[index] == "undefined" || typeof routMap.mapInfo[mapId].busOverArr[index] == "undefined"){
+	/*if(typeof routMap.mapInfo[mapId].busMarkers[index] == "undefined" || typeof routMap.mapInfo[mapId].busOverArr[index] == "undefined"){
+		
+	}*/
+	
+	//완전 하드코딩 06/22 양현우
+	switch(json.ROUT_ID){
+		case "RT00000003": //B0상(출착)
+			if(json.NODE_SN > "212"){
+				json.GPS_X = json.GPS_X_RAW;
+				json.GPS_Y = json.GPS_Y_RAW;
+			}
+			break;
+		case "RT00000004": //B0상(순환)
+			if(json.NODE_SN > "206"){
+				json.GPS_X = json.GPS_X_RAW;
+				json.GPS_Y = json.GPS_Y_RAW;
+			}
+			break;
+		case "RT00000047": //B0상(착)
+			if(json.NODE_SN > "211"){
+				json.GPS_X = json.GPS_X_RAW;
+				json.GPS_Y = json.GPS_Y_RAW;
+			}
+			break;
+		case "RT00000084": //B0상(출)
+			if(json.NODE_SN > "208"){
+				json.GPS_X = json.GPS_X_RAW;
+				json.GPS_Y = json.GPS_Y_RAW;
+			}
+			break;
+		case "RT00000048": //B0하(출착)
+			if(json.NODE_SN > "212"){
+				json.GPS_X = json.GPS_X_RAW;
+				json.GPS_Y = json.GPS_Y_RAW;
+			}
+			break;
+		case "RT00000049": //B0하(순환)
+			if(json.NODE_SN > "205"){
+				json.GPS_X = json.GPS_X_RAW;
+				json.GPS_Y = json.GPS_Y_RAW;
+			}
+			break;
+		case "RT00000050": //B0하(착)
+			if(json.NODE_SN > "207"){
+				json.GPS_X = json.GPS_X_RAW;
+				json.GPS_Y = json.GPS_Y_RAW;
+			}
+			break;
+		case "RT00000085": //B0하(출)
+			if(json.NODE_SN > "210"){
+				json.GPS_X = json.GPS_X_RAW;
+				json.GPS_Y = json.GPS_Y_RAW;
+			}
+			break;
 		
 	}
+	
+	
 	var latLng = new kakao.maps.LatLng(json.GPS_Y, json.GPS_X);
 	
 	if(typeof routMap.mapInfo[mapId].busMarkers[index] != "undefined"){

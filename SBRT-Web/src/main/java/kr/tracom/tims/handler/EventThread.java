@@ -398,6 +398,8 @@ public class EventThread extends Thread {
 					wsDataMap.put("NEXT_NODE_NM", busInfoMap.get("NEXT_NODE_NM"));
 					wsDataMap.put("NEXT_NODE_TYPE", busInfoMap.get("NEXT_NODE_TYPE"));
 					wsDataMap.put("OPER_STS", busInfoMap.get("OPER_STS"));
+					wsDataMap.put("LINK_ID", busInfoMap.get("LINK_ID"));
+					wsDataMap.put("NODE_SN", busInfoMap.get("NODE_SN"));
 				}
 				catch (Exception e) {
 					logger.error("Exception {}", e);
@@ -759,6 +761,7 @@ public class EventThread extends Thread {
 					wsDataMap.put("GPS_X", busEventMap.get("LONGITUDE"));
 					wsDataMap.put("GPS_Y", busEventMap.get("LATITUDE"));
 					wsDataMap.put("OPER_STS", busEventMap.get("OPER_STS"));
+					wsDataMap.put("LINK_ID", busEventMap.get("LINK_ID"));
 	
 					if (eventCode == 0x01 || eventCode == 0x02 // 정류장 출/도착 인 경우
 							|| eventCode == 0x03 || eventCode == 0x04 // 기점 출/도착 인 경우
@@ -790,6 +793,7 @@ public class EventThread extends Thread {
 					wsDataMap.put("EVT_TYPE", eventType);
 					wsDataMap.put("CUR_SPD", busEventMap.get("SPEED"));
 					wsDataMap.put("EVT_DATA", busEventMap.get("EVENT_DATA"));
+					wsDataMap.put("NODE_SN", busEventMap.get("NODE_SN"));
 				}
 				catch (Exception e) {
 					logger.error("Exception {}", e);

@@ -16,5 +16,9 @@ public interface MO0203Mapper {
 	
 	public List MO0203SHI2();	
 	
-	public List MO0203G2R0(Map param);	
+	public List MO0203G2R0(Map param);
+	
+	public List MO0203P0R0(Map param);
+	
+	public List MO0203P0R1();
 }
