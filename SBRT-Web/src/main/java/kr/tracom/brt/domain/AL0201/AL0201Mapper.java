@@ -23,4 +23,7 @@ public interface AL0201Mapper {
 	public int AL0201G1D0(Map param);
 
 	public int AL0201G1U0(Map param);
+	
+	public int AL0201G1DA0(Map param);
+	
 }

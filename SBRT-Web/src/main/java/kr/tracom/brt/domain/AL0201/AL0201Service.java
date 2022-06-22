@@ -1,5 +1,6 @@
 package kr.tracom.brt.domain.AL0201;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import kr.tracom.brt.domain.AL0201.AL0201Mapper;
 import kr.tracom.cm.domain.Rout.RoutMapper;
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
+import kr.tracom.util.CommonUtil;
 import kr.tracom.util.Result;
 
 @Service
@@ -76,6 +78,18 @@ public class AL0201Service extends ServiceSupport {
 		
 		List<Map<String, Object>> param = getSimpleList("dlt_BRT_OPER_PL_ROUT_INFO");
 		try {
+			Map<String, Object> map = getSimpleDataMap("dma_sub_search");
+			String exl_update = (String) map.get("EXL_UPDATE");
+			
+			if(CommonUtil.notEmpty(exl_update)&&"true".equals(exl_update)) {
+				AL0201Mapper.AL0201G1DA0(map);
+				/*if(param.size()>0) {
+					Map delParam = new HashMap();
+					delParam.put("ROUT_ID", param.get(0).get("ROUT_ID"));
+					AL0201Mapper.AL0201G1DA0(delParam);
+				}*/
+			}
+
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
 				List<Map<String, Object>> routList = routMapper.selectRoutListByRepRout(data);

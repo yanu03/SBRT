@@ -18,6 +18,8 @@ public interface AL0202Mapper {
 	
 	public List AL0202P1R0(Map param);
 	
+	public List selectCorCnt();
+	
 	public int AL0202G1I0(Map param);
 	
 	public int AL0202G1D0(Map param);

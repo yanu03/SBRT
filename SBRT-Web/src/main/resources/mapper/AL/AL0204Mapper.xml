@@ -63,13 +63,18 @@
 		INNER JOIN BMS_REP_ROUT_MST B
 		ON	A.REP_ROUT_ID = B.REP_ROUT_ID 
 		INNER JOIN BMS_ROUT_NODE_CMPSTN C
-		ON	 A.ROUT_ID =  C.ROUT_ID AND A.NODE_ID = C.NODE_ID AND A.NODE_SN = C.NODE_SN
+		ON	 A.ROUT_ID =  C.ROUT_ID 
+		AND A.NODE_ID = C.NODE_ID 
+		AND A.NODE_SN = C.NODE_SN
 		AND (C.NODE_TYPE = 'NT001'||C.NODE_TYPE = 'NT002')
 	<!-- <if test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">			 
 			AND C.NODE_TYPE = #{NODE_TYPE}
 	</if> -->
 	WHERE
-		A.OPER_DT = #{OPER_DT} AND A.DAY_DIV = #{DAY_DIV} AND A.ROUT_ID = #{ROUT_ID} AND (A.NODE_TYPE = 'NT001'||A.NODE_TYPE = 'NT002')
+		A.OPER_DT = #{OPER_DT} 
+		AND A.DAY_DIV = #{DAY_DIV} 
+		AND A.ROUT_ID = #{ROUT_ID} 
+		AND (A.NODE_TYPE = 'NT001'||A.NODE_TYPE = 'NT002')
 	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">			 
 			AND A.OPER_SN = #{OPER_SN}
 	</if>

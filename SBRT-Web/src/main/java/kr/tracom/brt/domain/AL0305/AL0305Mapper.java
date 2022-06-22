@@ -32,6 +32,8 @@ public interface AL0305Mapper {
 	
 	public List AL0305G0R0(Map param);
 	
+	public void makeCurAllocPlInfo();
+	
 	/*
 	public List SI0502SHI0();
 	

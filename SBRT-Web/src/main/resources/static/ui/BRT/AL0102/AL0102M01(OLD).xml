@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="/cm/css/all.css" type="text/css"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="HOLI_DT" name="휴일일자" dataType="date"></w2:column>
+						<w2:column id="HOLI_NM" name="휴일명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_result">
+					<w2:keyInfo>
+						<w2:key id="STATUS" name="STATUS" dataType="text"></w2:key>
+						<w2:key id="ICNT" name="입력건수" dataType="text"></w2:key>
+						<w2:key id="UCNT" name="수정건수" dataType="text"></w2:key>
+						<w2:key id="DCNT" name="삭제건수" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BRT_HOLI_MST" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="HOLI_DT" name="휴일일자" dataType="date"></w2:column>
+						<w2:column id="DAY_OF_WEEK" name="요일" dataType="text"></w2:column>
+						<w2:column id="HOLI_NM" name="휴일명" dataType="text"></w2:column>
+						<w2:column id="HOLI_ENM" name="휴일영문명" dataType="text"></w2:column>
+						<w2:column id="DAY_TYPE" name="요일구분" dataType="text"></w2:column>
+						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="date"></w2:column>
+						<w2:column id="UPD_ID" name="갱신아이디" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_AL0102G0R0" ref='data:json,dma_search' target="data:json,dlt_BRT_HOLI_MST"
+				action="/al/AL0102G0R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_AL0102G0R0_submitdone" ev:submiterror=""
+				abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_AL0102G0S0" ref='data:json,{"action":"modified","id":"dlt_BRT_HOLI_MST"}' target="data:json,dma_result" action="/al/AL0102G0S0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="저장중입니다..." ev:submit="" ev:submitdone="scwin.sub_AL0102G0S0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_AL0102SHI0" ref="" target="data:json,dlt_searchitem" action="/al/AL0102SHI0"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="scwin.sub_AL0102SHI0_submit" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+	scwin.onpageload = function() {
+		//com.executeSubmission(sub_AL0102G0R0);
+		
+		var autoOptions = {
+			Main : { grid : AL0102G0, frm : AL0102F0, srchSbm : sub_AL0102G0R0, savSbm : sub_AL0102G0S0,  
+								srchGrp : pgm_header, keyColumn : "HOLI_DT", focusColumn : "HOLI_DT", name :  "요일(휴일/이벤트) 관리"}
+		};
+		
+		//추가/삭제 버튼 감추기
+		var mainOptions = {
+			PLAY : {cbFnc:scwin.getHol, nm:"휴일복사", class:"play"}
+		};
+		
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions, mainOptions);
+		
+		var codeOptions = [{code : "DAY_DIV", compID : "AL0102G0:DAY_TYPE"}
+		
+						];
+			
+		//코드옵션 실행	
+		com.setCommonDtl(codeOptions, function(){
+			com.searchGrid(AL0102G0, sub_AL0102G0R0);
+		});
+		
+		
+		$p.executeSubmission(sub_AL0102SHI0);
+	};
+	
+	scwin.getHol = function(){
+		com.alert("휴일복사. 작업중");
+	}
+	
+	
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
+		if (info.newValue == "ALL") {
+			acb_autoChoiceBox.hide();
+			search_input.setValue("");
+			search_input.show("");
+		} else if (info.newValue == "HOLI_DT") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "HOLI_DT", "HOLI_DT");
+			acb_autoChoiceBox.show("");
+		} else if (info.newValue == "HOLI_NM") {
+			search_input.hide();
+			acb_autoChoiceBox.setNodeSet("data:dlt_searchitem", "HOLI_NM", "HOLI_NM");
+			acb_autoChoiceBox.show("");
+		} 
+	};
+	
+	/*scwin.AL0102G0_onrowindexchange = function(row, oldRow) {
+		
+		var audioType = dlt_BRT_HOLI_MST.getCellData(AL0102G0.getFocusedRowIndex(), "HOLI_DT");
+		
+	};	*/
+	
+	scwin.sub_AL0102G0R0_submitdone = function(e) {
+		var rsCode = com.getResultCode(e)
+		if (rsCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+			com.setFocusedCell(AL0102G0, "HOLI_DT");
+		}
+	};
+	
+	scwin.sub_AL0102G0S0_submitdone = function(e) {
+		com.saveDone(AL0102G0, sub_AL0102G0R0);	
+	};
+	
+	//날짜 값대로 요일 가져와서 넣어주기
+	scwin.HOLI_DT_onchange = function(){
+		
+		
+		var HOLI_DT = HOLI_DT_T.getValue();
+		
+		if(HOLI_DT.toString().length < 9 && HOLI_DT != ""){
+		
+			var year = HOLI_DT.substr(0,4);
+			var month = HOLI_DT.substr(4,2);
+			var day = HOLI_DT.substr(6,2);
+			var DATE = year + "-" + month + "-" + day
+			
+			var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');
+
+	        var today = new Date(DATE).getDay();
+	        
+	        dlt_BRT_HOLI_MST.setCellData(AL0102G0.getFocusedRowIndex(), 'DAY_OF_WEEK', today);
+	        var todayLabel = week[today];
+	
+			DAY_OF_WEEK.setValue(todayLabel);
+			
+		}else if(HOLI_DT.toString().length > 9 && HOLI_DT != ""){
+		
+			var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');
+	
+	        var today = new Date(HOLI_DT).getDay();
+	        dlt_BRT_HOLI_MST.setCellData(AL0102G0.getFocusedRowIndex(), 'DAY_OF_WEEK', today);
+	        var todayLabel = week[today];
+	
+			DAY_OF_WEEK.setValue(todayLabel);
+		
+		}
+		
+		
+	}
+	
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="pgm_container grdr_41_36_a" id="pgm_container" style="">
+			<xf:group id="pgm_navi" class="pgm_navi" style="">
+				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
+			</xf:group>
+			<xf:group id="pgm_header" style="" class="pgm_header">
+				<xf:group class="gr_search" id="" style="">
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="검색 항목"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE"
+							optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" submenuSize="auto"
+							textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[-전체-]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[날짜]]></xf:label>
+									<xf:value><![CDATA[HOLI_DT]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[휴일명]]></xf:label>
+									<xf:value><![CDATA[HOLI_NM]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="날짜 또는 휴일명"
+							style="margin-right: 20px;">
+						</xf:input>
+						<xf:group id=""></xf:group>
+						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
+							ev:onviewchange="" id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
+							selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+							<w2:choices>
+								<w2:itemset nodeset="data:dlt_grgSearchItem">
+									<w2:label ref="VOC_ID"></w2:label>
+									<w2:value ref="VOC_ID"></w2:value>
+								</w2:itemset>
+							</w2:choices>
+						</w2:autoComplete>
+						<xf:group class="label" id="" style="">
+							<w2:span class="" id="" label="날짜 검색"></w2:span>
+						</xf:group>
+						<w2:inputCalendar footerDiv="false" id="SELC_HOLI_DATE" style="width: 120px;height: 23px; margin-top:1px; float: left;" renderDiv="true"
+							focusOnDateSelect="false" calendarValueType="year" rightAlign="false" renderType="component">
+						</w2:inputCalendar>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group><!-- pgm_header -->
+			<xf:group id="pgm_content" class="pgm_content grdc_5f_20_5f" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
+					<xf:group id="" class="" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox id="" style="" class="df_tt fl" label="요일(휴일/이벤트) 관리"></w2:textbox>
+						</xf:group>
+					</xf:group>
+					<xf:group></xf:group>
+					<xf:group id="" class="" style="">
+						<w2:gridView sortEvent="onclick" ev:onrowindexchange="" ev:oncellclick=""
+							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="No." sortable="true"
+							rowStatusHeaderValue="상태" overflowX="auto" overflowY="scroll" rowStatusVisible="false"
+							fixedColumnWithHidden="true" dataList="data:dlt_BRT_HOLI_MST" ignoreCellClick="false" style="height:100%;" autoFit="lastColumn"
+							visibleRowNum="" id="AL0102G0" class="cm_grid" tooltipPositionY="" focusMode="row">
+							<w2:header style="" id="header1">
+								<w2:row style="" id="row2">
+									<w2:column width="90" style="height:20px;" inputType="text" id="column3" value="날짜" blockSelect="false"
+										displayMode="label" userData1="M" class="req" >
+									</w2:column>
+									<w2:column width="100" style="height:20px;" inputType="text" id="column4" value="공휴일/이벤트명"
+										blockSelect="false" class="req" >
+									</w2:column>
+									<w2:column width="60" style="height:20px;" inputType="text" id="column2" value="구분" blockSelect="false"
+										displayMode="label" userData1="M" class ="req">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column41"
+										value="비고" blockSelect="false" displayMode="label">
+									</w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody width="40" style="" id="gBody4">
+								<w2:row style="" id="row5">
+									<w2:column textAlign="center" width="80" style="height:20px;" inputType="text" id="HOLI_DT"
+										blockSelect="false" displayMode="label" readOnly="true" userData1="M">
+									</w2:column>
+									<w2:column width="159" style="height:20px;" inputType="text" id="HOLI_NM" blockSelect="false"
+										displayMode="label" readOnly="true" userData1="M">
+									</w2:column>
+									<w2:column width="159" style="height:20px;" inputType="select" id="DAY_TYPE" blockSelect="false"
+										displayMode="label" readOnly="true" userData1="M">
+									</w2:column>
+									<w2:column removeBorderStyle="false" width="84" inputType="text" style="height:20px" id="REMARK" value=""
+										blockSelect="false" displayMode="label" autoFitFilterList="" textAlign="left">
+									</w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer style="" id="footer1">
+								<w2:row style="" id="row3">
+									<w2:column removeBorderStyle="false" width="" inputType="expression" style="height:20px; border-right:5px" id="column48" value=""
+										blockSelect="false" displayMode="label" colSpan="13" rowSpan="" expression="&quot;데이터 개수 : &quot; + COUNT('GRG_ID')"
+										textAlign="left">
+									</w2:column>
+								</w2:row>
+							</w2:footer>
+				</w2:gridView>
+					</xf:group>
+				</xf:group><!-- pgm_list -->
+				
+				<xf:group id="" class="vertical_line">
+				</xf:group>
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_187_20_a" style="">
+					<xf:group id="" class="gr_sub_header" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl" id="" label="휴일 정보" style=""></w2:textbox>
+						</xf:group>
+					</xf:group>
+					<xf:group class="" id="" style=""></xf:group>
+					<xf:group class="" id="" style="">
+						<xf:group id="AL0102F0" style="width:100%;" class="w2tb tb" tagname="table">
+							<w2:attributes>
+								<w2:summary></w2:summary>
+							</w2:attributes>
+							<xf:group tagname="colgroup">
+								<xf:group style="width:120px;" tagname="col"></xf:group>
+								<xf:group style="" tagname="col"></xf:group>
+								<xf:group style="width:120px;" tagname="col"></xf:group>
+								<xf:group style="" tagname="col"></xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group style="" class="w2tb_th req" tagname="th">날짜</xf:group>
+								<xf:group style="" class="w2tb_td" tagname="td">
+									<w2:inputCalendar footerDiv="false" id="HOLI_DT_T" style="width: 150px;height: 23px;" renderDiv="true"
+										focusOnDateSelect="false" calendarValueType="yearMonthDate" rightAlign="false" renderType="component"
+										ref="data:dlt_BRT_HOLI_MST.HOLI_DT" ev:onchange="scwin.HOLI_DT_onchange" ev:onviewchange="">
+									</w2:inputCalendar>
+								</xf:group>
+								<xf:group style="" class="w2tb_th req" tagname="th">요일</xf:group>
+								<xf:group style="" class="w2tb_td" tagname="td">
+									<xf:input adjustMaxLength="false" id="DAY_OF_WEEK" style="height:24px;width: 80px;" placeholder=""
+										readOnly="" disabled="">
+									</xf:input>
+								</xf:group>
+							</xf:group>
+							<xf:group style="" tagname="tr">
+								<xf:group style="" class="w2tb_th req" tagname="th">공휴일/이벤트명</xf:group>
+								<xf:group style="" class="w2tb_td" tagname="td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:input adjustMaxLength="false" id="HOLI_NM" style="width:100%;height: 21px;"
+										ref="data:dlt_BRT_HOLI_MST.HOLI_NM" maxlength="30">
+									</xf:input>
+								</xf:group>
+							</xf:group>
+							<xf:group tagname="tr" style="">
+								<xf:group tagname="th" style="" class="w2tb_th req">구분</xf:group>
+								<xf:group tagname="td" style="" class="w2tb_td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:select1 id="DAY_TYPE" chooseOption="true" style="width: 148px;height: 21px;" submenuSize="auto"
+										allOption="" disabled="false" direction="auto" appearance="minimal" disabledClass="w2selectbox_disabled"
+										ref="data:dlt_BRT_HOLI_MST.DAY_TYPE" chooseOptionLabel="-선택-">
+										<xf:choices>
+											<xf:item>
+												<xf:label><![CDATA[평일]]></xf:label>
+												<xf:value><![CDATA[DY001]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[휴일]]></xf:label>
+												<xf:value><![CDATA[DY002]]></xf:value>
+											</xf:item>
+										</xf:choices>
+									</xf:select1>
+								</xf:group>
+							</xf:group>
+							<xf:group tagname="tr" style="">
+								<xf:group tagname="th" class="w2tb_th" style="height: 70px;vertical-align: top" id="" tabIndex="">
+									비고
+									<w2:attributes>
+										<w2:scope>row</w2:scope>
+									</w2:attributes>
+								</xf:group>
+								<xf:group tagname="td" class="w2tb_td">
+									<w2:attributes>
+										<w2:colspan>3</w2:colspan>
+										<w2:rowspan>1</w2:rowspan>
+									</w2:attributes>
+									<xf:textarea id="REMARK" style="width: 100%;height: 100px;" ref="data:dlt_BRT_HOLI_MST.REMARK"
+										maxlength="200">
+									</xf:textarea>
+								</xf:group>
+							</xf:group>
+						</xf:group>
+					</xf:group>
+					<xf:group style="" id="">
+					</xf:group>
+					<xf:group style="position: relative;" id="">
+						<xf:image src="/cm/images/add/bg_brt.png" style="width: 100%;height: 100%; position: absolute; object-fit: contain; cursor:default" id=""></xf:image>
+					</xf:group>
+				</xf:group><!-- pgm_detail -->
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

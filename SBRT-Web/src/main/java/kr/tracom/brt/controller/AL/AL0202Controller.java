@@ -44,6 +44,12 @@ public class AL0202Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/AL/selectCorCnt")
+	public @ResponseBody Map<String, Object> selectCorCnt() throws Exception {
+		result.setData("dlt_COR_CNT", al0202Service.selectCorCnt());
+		return result.getResult();
+	}
+	
 	
 	@RequestMapping("/al/AL0202G1S0")
 	public @ResponseBody Map<String, Object> AL0202G1S0() throws Exception {

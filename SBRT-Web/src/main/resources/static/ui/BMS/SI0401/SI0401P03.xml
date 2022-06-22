@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ev="http://www.w3.org/2001/xml-events"
+    xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+    <head>
+    	<w2:type>DEFAULT</w2:type>
+        <w2:buildDate/>
+        <xf:model>
+        	<xf:instance>
+        		<data xmlns="" />
+        	</xf:instance>
+        	<w2:dataCollection baseNode="map">
+        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_STTN_MST" saveRemovedData="true">
+        			<w2:columnInfo>
+        				<w2:column id="chk" name="선택" dataType="text"></w2:column>
+        				<w2:column id="STTN_ID" name="정류소ID" dataType="text"></w2:column>
+        				<w2:column id="STTN_NM" name="정류소명" dataType="text"></w2:column>
+        				<w2:column id="STTN_ENM" name="정류소영문명" dataType="text"></w2:column>
+        			</w2:columnInfo>
+        		</w2:dataList>
+        		<w2:dataMap baseNode="map" id="dma_STTN_MST">
+        			<w2:keyInfo>
+        				<w2:key id="STTN_ID" name="정류소ID" dataType="text"></w2:key>
+        				<w2:key id="TYPE" name="name2" dataType="text"></w2:key>
+        				<w2:key id="CONTENT" name="name3" dataType="text"></w2:key>
+        			</w2:keyInfo>
+        		</w2:dataMap>
+        	</w2:dataCollection>
+        	<w2:workflowCollection></w2:workflowCollection>
+        	<xf:submission id="sub_SI0401P2R0" ref="data:json,dma_STTN_MST" target="data:json,dlt_BMS_STTN_MST" action="/si/SI0401P2R0"
+        		method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
+        		mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+        	</xf:submission>
+        </xf:model>
+        <script type="text/javascript" lazy="false"><![CDATA[
+        
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		var btnOptions = 
+		[
+			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
+		];
+		com.setMainBtn3(wfm_mainBtn, btnOptions);
+		com.executeSubmission(sub_SI0401P2R0);				
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	
+	scwin.btn_search_onclick = function() {
+		$p.executeSubmission(sub_SI0401P2R0);
+	};
+	
+	scwin.btn_confirm_onclick = function() {
+		var data = SI0401P2.getCheckedJSON("chk");
+		com.closePopup(scwin.closeCallbackFncName, data);		
+	};
+	
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();		
+	};
+
+	scwin.SI0401P2_onrowindexchange = function(row,oldRow) {
+	
+		if(SI0401P2.getCellChecked(row,"chk")){
+			SI0401P2.setCellChecked(row,"chk",false)
+		}
+		else {
+			SI0401P2.setCellChecked(row,"chk",true)
+		}
+	}
+
+	/*scwin.sbx_ChoiceBox_onviewchange = function(info) {		
+		if (info.newValue == "ALL") {
+			search_input.setValue("");
+			search_input.setPlaceholder("정류소ID 또는 정류소명");
+		} else if (info.newValue == "STTN_ID") {
+			search_input.setValue("");
+			search_input.setPlaceholder("정류소ID");
+		} else if (info.newValue == "STTN_NM") {
+			search_input.setValue("");
+			search_input.setPlaceholder("정류소명");
+		}
+	};*/
+	]]></script>
+    </head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+				<xf:group class="gr_search" id="" style="">
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="검색항목"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<!-- <xf:select1 id="" disabledClass="w2selectbox_disabled" ref="data:dma_STTN_MST.TYPE" appearance="minimal"
+							style="" class="search_type" direction="auto" chooseOption="" displayMode="label" allOption=""
+							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" optionOrder="false" submenuSize="auto" disabled="false" textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+	    								<xf:label><![CDATA[정류소ID]]></xf:label>
+	    								<xf:value><![CDATA[STTN_ID]]></xf:value>
+	    							</xf:item>
+	    							<xf:item>
+	    								<xf:label><![CDATA[정류소명]]></xf:label>
+	    								<xf:value><![CDATA[STTN_NM]]></xf:value>
+	    							</xf:item>
+	    						</xf:choices>
+	    					</xf:select1> -->
+						<xf:input id="search_input" class="search_input" ref="data:dma_STTN_MST.CONTENT" placeholder="정류소ID 또는 정류소명"></xf:input>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group>
+			
+			<xf:group style="" id="" class="popup_content">
+				<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BMS_STTN_MST" useShiftKey="false" readOnly="true"
+					style="width:775px" scrollByColumn="false" id="SI0401P2" autoFit="allColumn" class="cm_grid popup"
+					ev:onrowindexchange="scwin.SI0401P2_onrowindexchange">
+					<w2:header style="" id="header1">
+							<w2:row id="row1" style="">
+								<w2:column width="39" inputType="radio" style="height:20px" id="chkHeader" value="선택" blockSelect="false"></w2:column>
+								<w2:column width="70" id="column2" value="정류소ID"></w2:column>
+								<w2:column width="70" id="column3" value="정류소명"></w2:column>
+							</w2:row>
+						</w2:header>
+						<w2:gBody id="gBody1" style="">
+							<w2:row id="row2" style="">
+								<w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px"
+									inputType="radio" id="chk" blockSelect="false">
+								</w2:column>
+								<w2:column width="70" id="STTN_ID"></w2:column>
+								<w2:column width="70" id="STTN_NM"></w2:column>
+						</w2:row>
+					</w2:gBody>
+				</w2:gridView>
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

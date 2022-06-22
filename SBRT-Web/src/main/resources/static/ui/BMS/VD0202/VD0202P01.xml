@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+	 <head>
+	<w2:type>DEFAULT</w2:type>
+	<w2:buildDate/>
+	<xf:model>
+		<xf:instance>
+			<data xmlns="" />
+		</xf:instance>
+		<w2:dataCollection baseNode="map">
+			<w2:dataMap baseNode="map" id="dma_search">
+				<w2:keyInfo>
+					<w2:key id="VHC_ID" name="차량아이디" dataType="text"></w2:key>
+					<w2:key id="MSG_CONTS" name="메시지내용" dataType="text"></w2:key>
+				</w2:keyInfo>
+			</w2:dataMap>
+		</w2:dataCollection>
+		<w2:workflowCollection></w2:workflowCollection>
+		<xf:submission id="sub_VD0202SCK1" ref="data:json,dma_search" target="" action="/mo/VD0202SCK1" method="post"
+			mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+			ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+		</xf:submission>
+	</xf:model>
+	<script type="text/javascript" lazy="false"><![CDATA[
+
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	scwin.btn_confirm_onclick = function() {
+		var controlValue = controlSelect.getValue();
+		
+		if (messageText.getDisabled() == true) {
+			sendMessage = messageSelect.getValue();
+		}
+		//직접 입력
+		else if (messageText.getDisabled() == false) {
+			sendMessage = messageText.getValue();
+		}
+		dma_search.set("MSG_CONTS", sendMessage);
+		
+		com.executeSubmission(sub_VD0202SCK1);
+		com.closePopup();
+	};
+	
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();		
+	};
+	
+]]></script>
+	</head>
+	 <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+	 	<xf:group class="popup_container grdr_a_40" id="popup_container" style="">
+	 		<xf:group style="" id="" class="popup_content">
+	 			<xf:select1 id="controlSelect" chooseOption="true" style="width: 100%;height: 21px;" submenuSize="auto" allOption=""
+	 				disabled="false" direction="auto" appearance="minimal" disabledClass="w2selectbox_disabled" chooseOptionLabel="제어선택" ref=""
+	 				ev:onchange="">
+	 				<xf:choices>
+	 					<xf:item>
+	 						<xf:label><![CDATA[재부팅]]></xf:label>
+	 						<xf:value><![CDATA[RESET]]></xf:value>
+	 					</xf:item>
+	 				</xf:choices>
+	 			</xf:select1>
+	 		</xf:group>
+	 		<xf:group id="" style="" class="popup_bottom">
+	 			<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_com">
+	 				<xf:label><![CDATA[선택]]></xf:label>
+	 			</w2:anchor>
+	 			<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_com" outerDiv="">
+	 				<xf:label><![CDATA[취소]]></xf:label>
+	 			</w2:anchor>
+	 		</xf:group>
+	 	</xf:group>
+
+	 	
+	 </body>
+</html>

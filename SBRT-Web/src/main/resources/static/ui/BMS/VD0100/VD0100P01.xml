@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataMap baseNode="map" id="dma_searchitem">
+					<w2:keyInfo>
+						<w2:key id="DVC_ID" name="시설물ID" dataType="text"></w2:key>
+						<w2:key id="DVC_KIND" name="시설물유형" dataType="text"></w2:key>
+						<w2:key id="DVC_COORDS" name="좌표" dataType="text"></w2:key>
+						<w2:key id="VHC_KIND" name="차량유형" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+        
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		dma_searchitem.set("DVC_ID", scwin.param.DVC_ID);   
+		dma_searchitem.set("DVC_KIND", scwin.param.DVC_KIND); 
+		dma_searchitem.set("VHC_KIND", scwin.param.VHC_KIND); 
+		dma_searchitem.set("DVC_COORDS", scwin.param.DVC_COORDS); 
+		
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		
+		var backGroundid = "#mf_tac_layout_contents_MN00040101_body_FM0100P01_wframe_busImg";
+        vhc_kind = dma_searchitem.get("VHC_KIND");
+		if(vhc_kind == 'VK001'){
+			$(backGroundid).attr("class", "brt_bus_img");
+		}
+		else if (vhc_kind == "VK002"){
+			$(backGroundid).attr("class", "woojin_bus_img");
+		}
+		else if (vhc_kind == "VK003"){
+			$(backGroundid).attr("class", "normal_bus_img");
+		} else {
+			$(backGroundid).attr("class", "normal_bus_img");
+		}
+        
+         var coord = dma_searchitem.get("DVC_COORDS").split(',');
+         var top = coord[0];
+         var left = coord[1];
+         var dvc_kind = dma_searchitem.get("DVC_KIND");
+         var dvcId = dma_searchitem.get("DVC_ID") + '_popup';
+         var str = "";
+         var imgSrc = "";
+         
+		switch (dvc_kind){
+			case "DK001":
+				imgSrc = "/cm/images/bms/OBE_normal.png";
+				break;
+			case "DK002":
+				imgSrc = "/cm/images/bms/drvTerminal_normal.png";
+				break;
+			case "DK003":
+				imgSrc = "/cm/images/bms/psgGuide_normal.png";
+				break;
+			case "DK004":
+				imgSrc = "/cm/images/bms/routMap_normal.png";
+				break;
+			case "DK005":
+				imgSrc = "/cm/images/bms/keyPad_normal.png";
+				break;
+			
+			//행선지 정면
+			case "DK006":
+			case "DK007":
+				imgSrc = "/cm/images/bms/desGuide_normal.png";
+				break;
+			//행선지 측면	
+			case "DK008":
+			case "DK009":
+			case "DK012":
+				imgSrc = "/cm/images/bms/desGuide_normal.png";
+				break;
+			//행선지 후면	
+			case "DK013":
+				imgSrc = "/cm/images/bms/desGuide_normal.png";
+				break;
+			//태그리스	
+			case "DK011":
+				imgSrc = "/cm/images/bms/tag_normal.png";
+				break;				
+		}		
+         
+         
+         str += '<div id="'+dvcId+'"style="position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group " onmousedown="startDrag(event, this)">';
+         str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'">';
+         str += '</div>'
+         
+      	if(dma_searchitem.get("DVC_COORDS") != "")
+			$(backGroundid).html(str);
+      
+	     $("#"+dvcId).on("click", function(e) {
+	         e.stopPropagation();
+	     });       
+        
+        
+	};
+	
+	function clickImg(){
+		var str = ''
+		var imgPath = ''
+		var left = event.offsetX;
+		var top = event.offsetY;
+		var dvcId = dma_searchitem.get("DVC_ID") + '_popup';
+		var imgId = dvcId + 'img';
+		var dvc_kind = dma_searchitem.get("DVC_KIND");
+		var param = com.getParameter();
+
+		switch (dvc_kind){
+			case "DK001":
+				imgSrc = "/cm/images/bms/OBE_normal.png";
+				break;
+			case "DK002":
+				imgSrc = "/cm/images/bms/drvTerminal_normal.png";
+				break;
+			case "DK003":
+				imgSrc = "/cm/images/bms/psgGuide_normal.png";
+				break;
+			case "DK004":
+				imgSrc = "/cm/images/bms/routMap_normal.png";
+				break;
+			case "DK005":
+				imgSrc = "/cm/images/bms/keyPad_normal.png";
+				break;
+			
+			//행선지 정면
+			case "DK006":
+			case "DK007":
+				imgSrc = "/cm/images/bms/desGuide_normal.png";
+				break;
+			//행선지 측면	
+			case "DK008":
+			case "DK009":
+			case "DK012":
+				imgSrc = "/cm/images/bms/desGuide_normal.png";
+				break;
+			//행선지 후면	
+			case "DK013":
+				imgSrc = "/cm/images/bms/desGuide_normal.png";
+				break;
+			//태그리스	
+			case "DK011":
+				imgSrc = "/cm/images/bms/tag_normal.png";
+				break;				
+		}		
+		
+		str += '<div id="'+dvcId+'" style="position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group " onmousedown="startDrag(event, this)">';
+		str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+imgId+'"  >';
+		str += '</div>'
+		
+		var backGroundid = "#mf_tac_layout_contents_MN00040101_body_FM0100P01_wframe_busImg";
+		$(backGroundid).html(str);
+ 		
+ 		$("#"+dvcId).on("click", function(e) {
+ 			e.stopPropagation();
+ 		});
+	}
+	
+	function moveDrag(e){ 
+		var e_obj = window.event? window.event : e;
+		var dmvx = parseInt(e_obj.clientX + img_L); 
+		var dmvy = parseInt(e_obj.clientY + img_T); 
+		targetObj.style.left = dmvx +"px";
+		targetObj.style.top = dmvy +"px"; 
+		return false; 
+	}
+	
+	function startDrag(e, obj){ 
+		targetObj = obj; 
+		var e_obj = window.event? window.event : e; 
+		img_L = getLeft(obj) - e_obj.clientX; 
+		img_T = getTop(obj) - e_obj.clientY; 
+		document.onmousemove = moveDrag; 
+		document.onmouseup = stopDrag; 
+		if(e_obj.preventDefault)e_obj.preventDefault(); 
+	}
+	
+	function stopDrag(){ 
+		document.onmousemove = null; 
+		document.onmouseup = null; 
+	}
+	
+	function getLeft(o){ return parseInt(o.style.left.replace('px', '')); } 
+	function getTop(o){ return parseInt(o.style.top.replace('px', '')); }
+
+
+	scwin.onpageunload = function() {
+		
+	};
+	
+	scwin.btn_search_onclick = function() {
+		com.executeSubmission(sub_SI0200P0R0);
+	};
+	
+	//확인버튼
+	scwin.btn_confirm_onclick = function() {
+		var dvcId = dma_searchitem.get("DVC_ID") + '_popup';
+		var top = $('#'+dvcId).css('top');
+		var left = $('#'+dvcId).css('left');
+		top = top.split('p');
+		left = left.split('p');
+		
+		var data = top[0] + ',' + left[0]
+		
+		com.closePopup(scwin.closeCallbackFncName, data);
+	};
+	
+	//취소버튼
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();
+	};
+	
+	
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
+		var str = ""
+		var imgSrc = ""
+		var imgId = ""
+		var backGroundid = "#mf_tac_layout_contents_MN00040101_body_FM0100P01_wframe_busImg";
+		
+		if(info.newValue == 'VK001'){
+			$(backGroundid).attr("class", "brt_bus_img");
+		}
+		else if (info.newValue == "VK002"){
+			$(backGroundid).attr("class", "woojin_bus_img");
+		}
+		else if (info.newValue == "VK003"){
+			$(backGroundid).attr("class", "normal_bus_img");
+		}
+		
+	};
+	
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+				<!-- <xf:group class="gr_search" id="" style="">
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="차량 타입"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<xf:select1 id="" disabledClass="w2selectbox_disabled" ref="data:dma_search.TYPE" appearance="minimal" style=""
+							class="search_type" direction="auto" chooseOption="" displayMode="label" allOption=""
+							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" optionOrder="false" submenuSize="auto" disabled="false" textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[우진굴절]]></xf:label>
+									<xf:value><![CDATA[VK002]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[현대굴절]]></xf:label>
+									<xf:value><![CDATA[VK001]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[일반버스]]></xf:label>
+									<xf:value><![CDATA[VK003]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						 <xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="운수사ID 또는 운수사명"></xf:input>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group> -->
+			</xf:group>
+			<xf:group style="cursor:crosshair" id="busImg" class="woojin_bus_img" ev:onclick="clickImg()">
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+
+	</body>
+</html>

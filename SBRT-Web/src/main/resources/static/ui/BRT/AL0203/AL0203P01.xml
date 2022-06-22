@@ -159,7 +159,12 @@
 		dma_relDt.set("relDt", relDt);
 		
 		if(dma_relDt.get("relDt").length != 0){
-			com.executeSubmission(sub_AL0203P0S0);
+			com.confirm("배포하시겠습니까?", function(rtn) {
+			 	if (rtn) { 
+			 		//배포 동의.
+			 		com.executeSubmission(sub_AL0203P0S0);
+			 	}
+			});
 		}else{
 			com.alert("배포일을 선택해주세요.");
 		}
