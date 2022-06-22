@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+			</w2:dataCollection>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+	scwin.onpageload = function() {
+
+	};
+	
+	scwin.onpageunload = function() {
+	
+	};
+		
+	scwin.wfTitle_alertPageInfo = function() {
+		
+		var pageUrl = $p.parent().$p.getFrame().getSrc();
+		com.alert("[" + $p.parent().wfm_title.getWindow().wfTitle_txt_H1.getValue() + "] 페이지의 파일 경로는 다음과 같습니다.<br/>" + pageUrl);
+	};
+	
+	/**
+	 * 화면을 갱신한다.
+	 */
+	scwin.wfTitle_reload = function() {
+		if (com.getFrameMode() === "wframe") {
+			var data = $p.parent().com.getParameter();
+			var pageUrl = $p.parent().$p.getFrame().getSrc();
+			var options = {
+				dataObject : { 
+					type : "json", 
+					name : "param", 
+					data : data
+				}
+			}
+			
+			$p.parent().$p.getFrame().setSrc(pageUrl, options);
+		} 
+		else if (com.getFrameMode() === "wframePreload") {
+			var data = $p.parent().com.getParameter();
+			var pageUrl = $p.parent().$p.getFrame().getSrc();
+			var options = {
+				dataObject : { 
+					type : "json", 
+					name : "param", 
+					data : data
+				}
+			}
+			
+			$p.parent().$p.getFrame().setSrc(pageUrl, options);
+		} 		
+		else {
+			var data = JSON.stringify($p.parent().com.getParameter());
+			var pageUrl = $p.getParameter("w2xPath");
+
+			$p.url(pageUrl, { "spa" : true, "forceReload" : true, "param" : { param : data } });
+		}
+	};
+	
+]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<w2:generator id="btn_main_generator" class="btn_main_generator">
+			<w2:anchor id="btn_main" class="btn_sh" outerDiv="true"></w2:anchor>
+		</w2:generator>
+	</body>
+</html>

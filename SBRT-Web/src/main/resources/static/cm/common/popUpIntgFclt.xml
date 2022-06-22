@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_INTG_AIRCON_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="chk" name="선택" dataType="text"></w2:column>
+						<w2:column id="INTG_FCLT_ID" name="연계시설물아이디" dataType="text"></w2:column>
+						<w2:column id="FCLT_NM" name="시설물이름" dataType="text"></w2:column>
+						<w2:column id="FCLT_LABEL" name="시설물라벨명" dataType="text"></w2:column>
+						<w2:column id="MAKER" name="제조사" dataType="text"></w2:column>
+						<w2:column id="PRES_ID" name="" dataType="text"></w2:column>
+						<w2:column id="MAKER_CODE" name="제조사코드" dataType="text"></w2:column>
+						<w2:column id="LOC_ID" name="지역아이디" dataType="text"></w2:column>
+						<w2:column id="OWNR_ID" name="" dataType="text"></w2:column>
+						<w2:column id="ROOM_ID" name="" dataType="text"></w2:column>
+						<w2:column id="FCLT_TYPE_NM" name="" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+						<w2:key id="REP_ROUT_ID" name="name3" dataType="text"></w2:key>
+						<w2:key id="VHC_ID" name="제외차량ID" dataType="text"></w2:key>
+						<w2:key id="INTG_TYPE" name="연계유형" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_intgIdList" ref='data:json,dma_search' target="data:json,dlt_BMS_INTG_AIRCON_INFO" action="/intg/selectIntgList" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="scwin.sub_intgIdList_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+        
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		var btnOptions = 
+		[
+			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
+		];
+		com.setMainBtn3(wfm_mainBtn, btnOptions);
+		
+		dma_search.set("INTG_TYPE", "AR");
+		com.executeSubmission(sub_intgIdList);
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	scwin.btn_search_onclick = function() {
+		com.executeSubmission(sub_intgIdList);
+	};
+	
+	scwin.btn_confirm_onclick = function() {
+		var data = intgListGrid.getCheckedJSON("chk");
+		com.closePopup(scwin.closeCallbackFncName, data);
+	};
+		
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();
+	};
+	
+	scwin.intgListGrid_onrowindexchange = function(row,oldRow) {
+		intgListGrid.setCellChecked(row,"chk",true);
+	};
+	
+	scwin.sbx_ChoiceBox_onviewchange = function(info) {		
+		if (info.newValue == "ALL") {
+			search_input.setPlaceholder("연계ID 또는 시설물명");
+		} else if (info.newValue == "INTG_FCLT_ID") {
+			search_input.setPlaceholder("연계ID");
+		} else if (info.newValue == "FCLT_NM") {
+			search_input.setPlaceholder("시설물명");
+		}
+	};
+	
+	scwin.sub_intgIdList_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+		
+		}
+		var vhcId = dma_search.get("VHC_ID");
+		for(var x = 0; x < vhcId.length; x++){
+			var rowIndex = dlt_BMS_INTG_AIRCON_INFO.getMatchedIndex("VHC_ID", vhcId[x]);
+			intgListGrid.setRowColor(rowIndex, "blue");
+		};
+	};
+	
+	scwin.NullData_onviewchange = function(info) {
+	
+		if(info.checked == true){
+			com.executeSubmission(sub_intgIdList);
+			intgListGrid.setDisabled("grid", true);
+			intgListGrid.setDisabled("column","chk",true);
+		}
+		else{
+			intgListGrid.setDisabled("grid", false);
+			intgListGrid.setDisabled("column","chk",false);
+		}
+		
+	};
+	
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+				<xf:group class="gr_search" id="" style="">
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="검색항목"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<xf:select1 id="" disabledClass="w2selectbox_disabled" ref="data:dma_search.TYPE" appearance="minimal"
+							style="width: 100px;" class="search_type" direction="auto" chooseOption="" displayMode="label" allOption=""
+							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" optionOrder="false" submenuSize="auto" disabled="false" textAlign="left">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[전체]]></xf:label>
+									<xf:value><![CDATA[ALL]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[연계ID]]></xf:label>
+									<xf:value><![CDATA[INTG_FCLT_ID]]></xf:value>
+								</xf:item>
+								<xf:item>
+									<xf:label><![CDATA[시설물명]]></xf:label>
+									<xf:value><![CDATA[FCLT_NM]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="연계ID 또는 시설물명"
+							style="width: 150px;">
+						</xf:input>
+						<xf:select id="NullData" selectedIndex="-1" appearance="full" style="margin-left: 10px;float: left;margin-top: 2px;"
+							ev:onviewchange="scwin.NullData_onviewchange" cols="" rows="" ref="">
+							<xf:choices>
+								<xf:item>
+									<xf:label><![CDATA[데이터없음]]></xf:label>
+									<xf:value><![CDATA[Y]]></xf:value>
+								</xf:item>
+							</xf:choices>
+						</xf:select>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_popUpBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group>
+			<xf:group style="" id="" class="popup_content">
+				<w2:gridView fixedColumnWithHidden="true" dataList="data:dlt_BMS_INTG_AIRCON_INFO" useShiftKey="false" readOnly="true"
+					style="" scrollByColumn="false" id="intgListGrid" autoFit="lastColumn" class="cm_grid popup"
+					ev:onrowindexchange="scwin.intgListGrid_onrowindexchange">
+					<w2:header style="" id="header1">
+						<w2:row style="" id="row1">
+							<w2:column width="39" inputType="radio" style="height:20px" id="chkHeader" value="선택" blockSelect="true">
+							</w2:column>
+							<w2:column width="250" id="column4" value="연계시설물아이디"></w2:column>
+							<w2:column width="150" id="column7" value="시설물이름"></w2:column>
+							<w2:column width="150" id="column9" value="시설물라벨명"></w2:column>
+							<w2:column width="250" id="column13" value="지역아이디"></w2:column>
+							<w2:column width="250" id="column16" value="룸아이디"></w2:column>
+						</w2:row>
+					</w2:header>
+					<w2:gBody id="gBody1" style="">
+						<w2:row id="row2" style="">
+							<w2:column falseValue="0" typeGetter="" defaultValue="" trueValue="1" width="39" viewType="" inputType="radio"
+								readOnly="false" style="height:20px" id="chk" blockSelect="false">
+							</w2:column>
+							<w2:column width="70" id="INTG_FCLT_ID"></w2:column>
+							<w2:column width="70" id="FCLT_NM"></w2:column>
+							<w2:column width="70" id="FCLT_LABEL"></w2:column>
+							<w2:column width="70" id="LOC_ID"></w2:column>
+							<w2:column width="70" id="ROOM_ID"></w2:column>
+						</w2:row>
+					</w2:gBody>
+				</w2:gridView>
+				<w2:footer id="footer1" style="">
+						<w2:row id="row3" style="">
+							<w2:column blockSelect="false" colSpan="14" displayMode="label"
+								expression="&quot;데이터 개수 : &quot; + COUNT('COMP_ID')" id="column42" inputType="expression" removeBorderStyle="false"
+								style="height:20px;" textAlign="left" width="2386">
+							</w2:column>
+						</w2:row>
+					</w2:footer>
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

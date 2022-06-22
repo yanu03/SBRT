@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+	 <head>
+	<w2:type>DEFAULT</w2:type>
+	<w2:buildDate/>
+	<xf:model>
+		<xf:instance>
+			<data xmlns="" />
+		</xf:instance>
+		<w2:dataCollection baseNode="map">
+			<w2:dataList baseNode="list" repeatNode="map" id="dlt_OPER_ALLOC_PL_ROUT_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:column>
+						<w2:column id="DAY_DIV" name="요일구분" dataType="text"></w2:column>
+						<w2:column id="WAY_DIV" name="상하행구분" dataType="text"></w2:column>
+						<w2:column id="ALLOC_NO" name="배차번호" dataType="text"></w2:column>
+						<w2:column id="OPER_SN" name="운행순번" dataType="text"></w2:column>
+						<w2:column id="ROUT_ST_TM" name="노선시작시간" dataType="text"></w2:column>
+						<w2:column id="ROUT_ED_TM" name="노선종료시간" dataType="text"></w2:column>
+						<w2:column id="REST_TM" name="휴게시간" dataType="text"></w2:column>
+						<w2:column id="ROUT_ID" name="노선ID" dataType="text"></w2:column>
+						<w2:column id="REP_ROUT_NM" name="대표노선명" dataType="text"></w2:column>
+						<w2:column id="ROUT_NM" name="노선명" dataType="text"></w2:column>
+						<w2:column id="COR_ID" name="코스ID" dataType="text"></w2:column>
+						<w2:column id="COR_NM" name="코스명" dataType="text"></w2:column>
+						<w2:column id="COR_COLOR" name="코스ID" dataType="text"></w2:column>
+						<w2:column id="WAY_ASC_NM" name="상행명" dataType="text"></w2:column>
+						<w2:column id="WAY_DESC_NM" name="하행명" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+			<w2:dataMap baseNode="map" id="dma_sub_search">
+				<w2:keyInfo>
+					<w2:key id="DAY_DIV" name="요일구분" dataType="text"></w2:key>
+					<w2:key id="ROUT_ID" name="노선ID" dataType="text"></w2:key>
+					<w2:key id="ROUT_NM" name="노선명" dataType="text"></w2:key>
+					<w2:key id="OPER_SN" name="운행순번" dataType="text"></w2:key>
+					<w2:key id="OPER_DT" name="운행일" dataType="text"></w2:key>
+					<w2:key id="VHC_NO" name="차량번호" dataType="text"></w2:key>
+					<w2:key id="ALLOC_NO" name="배차번호" dataType="text"></w2:key>
+				</w2:keyInfo>
+			</w2:dataMap>
+			<w2:dataList baseNode="list" repeatNode="map" id="dlt_CHG_CNT" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="CHG_CNT" name="변경운행횟수" dataType="number" defaultValue="0"></w2:column>
+						<w2:column id="OPER_SN" name="운행순번" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+		</w2:dataCollection>
+		<w2:workflowCollection></w2:workflowCollection>
+	</xf:model>
+	<script src="https://code.highcharts.com/gantt/highcharts-gantt.js"></script>
+	<script src="https://code.highcharts.com/gantt/modules/exporting.js"></script>
+	<script type="text/javascript" lazy="false"><![CDATA[
+	
+	
+	scwin.onpageload = function() {
+		
+		scwin.param = com.getParameter();
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		
+		dlt_OPER_ALLOC_PL_ROUT_INFO.setJSON(scwin.param.jsonData, true);
+		
+		
+		
+		scwin.DrawChart();		
+		
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	
+	
+	scwin.sub_AL0203G0P0_submitdone = function(e) {
+	
+	};
+	
+	scwin.sub_OPER_ALL_REAL_NODE_submitdone = function(e) {
+	
+	};
+	
+	
+	
+	function date_ascending(a, b) {
+       return a - b;
+    };
+    
+    scwin.getRandomColor = function(_isAlpha) {
+		  var r = getRand(0, 255),
+		  g = getRand(0, 255),
+		  b = getRand(0, 255),
+		  a = 0.8;
+		
+		  var rgb = _isAlpha ? 'rgba' : 'rgb';
+		  rgb += '(' + r + ',' + g + ',' + b + ',' + a + ')';
+		
+		  return rgb;
+		
+		  // Return random number from in to max
+		  function getRand(min, max) {
+		    if (min >= max) return false;
+		    return ~~(Math.random() * (max - min + 1)) + min;
+		  };
+	};
+
+	var CharData = function(){
+		this.seriesname = {};
+		this.fill = 'false'; 
+		this.backgroundColor = {};
+		this.borderColor = {};
+		this.data = [];
+		this.borderWidth = {}; //선 width
+		this.pointBorderWidth = {}; //포인터 width
+		this.tension = {};	//곡선 or 직선
+		this.pointRadius = {};	//포인트 반지름 0일 경우 포인트 안그려짐
+		this.pointHitRadius = {};	//호버 했을때 영역
+	}
+	
+	var color = ["rgb(226,85,81)","rgb(226,137,85)","rgb(226,207,83)","rgb(174,226,85)","rgb(104,226,85)","rgb(85,85,137)"
+					,"rgb(85,226,207)","rgb(85,174,226)","rgb(85,104,226)","rgb(137,85,226)","rgb(207,85,226)","rgb(226,85,151)"
+		];
+
+	scwin.DrawChart = function(){
+		// Set to 00:00:00:000 today
+		var today = new Date(),
+		  day = 1000 * 60 * 60 * 24,
+		  map = Highcharts.map,
+		  dateFormat = Highcharts.dateFormat,
+		  series,
+		  cars;
+		
+		// Set to 00:00:00:000 today
+		today.setUTCHours(0);
+		today.setUTCMinutes(0);
+		today.setUTCSeconds(0);
+		today.setUTCMilliseconds(0);
+		today = today.getTime();
+		
+		console.log(today);
+		console.log(today - 1 * day);
+		console.log(today + 2 * day);
+		
+		//데이터 생성
+		cars = [{
+		  model: '1',
+		  current: 0,
+		  deals: [{
+		    rentedTo: '청사방향',
+		    vhcNo: '1501',
+		    drvNm: '홍길동',
+		    from: Date.UTC(2022, 3, 15, 5, 48),
+		    to: Date.UTC(2022, 3, 15, 6, 20)
+		
+		    //from: today - 1 * day,
+		    //to: today + 2 * day
+		
+		  }, {
+		    rentedTo: '1501',
+		    from: Date.UTC(2022, 3, 15, 7, 48),
+		    to: Date.UTC(2022, 3, 15, 8, 20)
+		    //from: today - 3 * day,
+		    //to: today - 2 * day
+		  }, {
+		    rentedTo: '홍길동',
+		    from: Date.UTC(2022, 3, 15, 10, 48),
+		    to: Date.UTC(2022, 3, 15, 13, 20)
+		    //from: today + 5 * day,
+		    //to: today + 6 * day
+		  }]
+		}, {
+		  model: '2',
+		  vhcNo: '1502',
+		  current: 0,
+		  deals: [{
+		    rentedTo: '청사방향',
+		    vhcNo: '1502',
+		    drvNm: '강길동',
+		    from: Date.UTC(2022, 3, 15, 5, 18),
+		    to: Date.UTC(2022, 3, 15, 6, 10)
+		    //from: today - 2 * day,
+		    // to: today + 1 * day
+		  }, {
+		    rentedTo: '1502',
+		    from: Date.UTC(2022, 3, 15, 8, 18),
+		    to: Date.UTC(2022, 3, 15, 9, 10)
+		    //from: today - 2 * day,
+		    //to: today + 1 * day
+		  }, {
+		    rentedTo: '김길동',
+		    from: Date.UTC(2022, 3, 15, 10, 18),
+		    to: Date.UTC(2022, 3, 15, 11, 10)
+		    //from: today + 2 * day,
+		    //to: today + 6 * day
+		  }]
+		}, {
+		  model: '3',
+		  vhcNo: '1503',
+		  current: 0,
+		  deals: [{
+		    rentedTo: '청사방향',
+		    vhcNo: '1503',
+		    drvNm: '윤길동',
+		    from: Date.UTC(2022, 3, 15, 5, 28),
+		    to: Date.UTC(2022, 3, 15, 6, 20)
+		    //from: today + 0 * day,
+		    //to: today + 3 * day
+		  }, {
+		    rentedTo: '1503',
+		    from: Date.UTC(2022, 3, 15, 9, 28),
+		    to: Date.UTC(2022, 3, 15, 10, 20)
+		    //from: today + 3 * day,
+		    //to: today + 4 * day
+		  }, {
+		    rentedTo: '장길동',
+		    from: Date.UTC(2022, 3, 15, 15, 28),
+		    to: Date.UTC(2022, 3, 15, 16, 20)
+		    //from: today + 6 * day,
+		    //to: today + 8 * day
+		  }]
+		}, {
+		  model: '4',
+		  vhcNo: '1504',
+		  current: 0,
+		  deals: [{
+		    rentedTo: '청사방향',
+		    vhcNo: '1504',
+		    drvNm: '민길동',
+		    from: Date.UTC(2022, 3, 15, 5, 38),
+		    to: Date.UTC(2022, 3, 15, 6, 30)
+		    //from: today - 1 * day,
+		    //to: today + 1 * day
+		  }, {
+		    rentedTo: '1504',
+		    from: Date.UTC(2022, 3, 15, 7, 38),
+		    to: Date.UTC(2022, 3, 15, 8, 30)
+		    //from: today - 3 * day,
+		    //to: today - 2 * day
+		  }, {
+		    rentedTo: '고길동',
+		    from: Date.UTC(2022, 3, 15, 15, 38),
+		    to: Date.UTC(2022, 3, 15, 16, 30)
+		    //from: today + 2 * day,
+		    //to: today + 3 * day
+		  }]
+		}, {
+		  model: '5',
+		  vhcNo: '1505',
+		  current: 0,
+		  deals: [{
+		    rentedTo: '청사방향',
+		    vhcNo: '1505',
+		    drvNm: '황길동',
+		    from: Date.UTC(2022, 3, 15, 5, 58),
+		    to: Date.UTC(2022, 3, 15, 6, 50)
+		    //from: today,
+		    //to: today + 2 * day
+		  }, {
+		    rentedTo: '1505',
+		    from: Date.UTC(2022, 3, 15, 8, 58),
+		    to: Date.UTC(2022, 3, 15, 9, 50)
+		    //from: today + 3 * day,
+		    //to: today + 4 * day
+		  }, {
+		    rentedTo: '윤길동',
+		    from: Date.UTC(2022, 3, 15, 13, 58),
+		    to: Date.UTC(2022, 3, 15, 15, 50)
+		    //from: today + 5 * day,
+		    //to: today + 6 * day
+		  }]
+		}, {
+		  model: '6',
+		  vhcNo: '1506',
+		  current: 0,
+		  deals: [{
+		    rentedTo: '시청방향',
+		    vhcNo: '1507',
+		    drvNm: '새길동',
+		    from: Date.UTC(2022, 3, 15, 6, 10),
+		    to: Date.UTC(2022, 3, 15, 7, 20)
+		    //from: today,
+		    //to: today + 2 * day
+		  }, {
+		    rentedTo: '1505',
+		    from: Date.UTC(2022, 3, 15, 7, 10),
+		    to: Date.UTC(2022, 3, 15, 8, 20)
+		    //from: today - 3 * day,
+		    //to: today - 1 * day
+		  }, {
+		    rentedTo: '윤길동',
+		    from: Date.UTC(2022, 3, 15, 9, 10),
+		    to: Date.UTC(2022, 3, 15, 10, 20)
+		    //from: today + 5 * day,
+		    //to: today + 6 * day
+		  }]
+		}, {
+		  model: '7',
+		  vhcNo: '1506',
+		  current: 0,
+		  deals: [{
+		    rentedTo: '시청방향',
+		    vhcNo: '1508',
+		    drvNm: '개길동',
+		    from: Date.UTC(2022, 3, 15, 5, 16),
+		    to: Date.UTC(2022, 3, 15, 5, 26)
+		    //from: today,
+		    //to: today + 2 * day
+		  }, {
+		    rentedTo: '1505',
+		    from: Date.UTC(2022, 3, 15, 6, 16),
+		    to: Date.UTC(2022, 3, 15, 7, 26)
+		    //from: today + 3 * day,
+		    //to: today + 4 * day
+		  }, {
+		    rentedTo: '윤길동',
+		    from: Date.UTC(2022, 3, 15, 8, 16),
+		    to: Date.UTC(2022, 3, 15, 9, 26)
+		    //from: today + 5 * day,
+		    //to: today + 7 * day
+		  }]
+		}, {
+		  model: '8',
+		  vhcNo: '1506',
+		  current: 0,
+		  deals: [{
+		    rentedTo: '시청방향',
+		    vhcNo: '1509',
+		    drvNm: '나길동',
+		    from: Date.UTC(2022, 3, 15, 5, 26),
+		    to: Date.UTC(2022, 3, 15, 6, 36)
+		    //from: today + 1 * day,
+		    //to: today + 2 * day
+		  }, {
+		    rentedTo: '1505',
+		    from: Date.UTC(2022, 3, 15, 7, 26),
+		    to: Date.UTC(2022, 3, 15, 8, 36)
+		    //from: today + 3 * day,
+		    //to: today + 4 * day
+		  }, {
+		    rentedTo: '윤길동',
+		    from: Date.UTC(2022, 3, 15, 8, 26),
+		    to: Date.UTC(2022, 3, 15, 9, 36)
+		    //from: today + 5 * day,
+		    //to: today + 6 * day
+		  }]
+		}, {
+		  model: '9',
+		  vhcNo: '1506',
+		  current: 0,
+		  deals: [{
+		    rentedTo: '시청방향',
+		    vhcNo: '1510',
+		    drvNm: '라길동',
+		    from: Date.UTC(2022, 3, 15, 5, 36),
+		    to: Date.UTC(2022, 3, 15, 6, 46)
+		    //from: today - 2 * day,
+		    //to: today + 2 * day
+		  }, {
+		    rentedTo: '1505',
+		    from: Date.UTC(2022, 3, 15, 7, 36),
+		    to: Date.UTC(2022, 3, 15, 8, 46)
+		    //from: today + 3 * day,
+		    //to: today + 4 * day
+		  }, {
+		    rentedTo: '윤길동',
+		    from: Date.UTC(2022, 3, 15, 12, 36),
+		    to: Date.UTC(2022, 3, 15, 13, 46)
+		    //from: today + 5 * day,
+		    //to: today + 6 * day
+		  }]
+		}, {
+		  model: '10',
+		  vhcNo: '1506',
+		  current: 0,
+		  deals: [{
+		    rentedTo: '시청방향',
+		    vhcNo: '1506',
+		    drvNm: '마길동',
+		    from: Date.UTC(2022, 3, 15, 5, 46),
+		    to: Date.UTC(2022, 3, 15, 6, 56)
+		    //from: today + 3 * day,
+		    //to: today + 2 * day
+		  }, {
+		    rentedTo: '1505',
+		    from: Date.UTC(2022, 3, 15, 9, 46),
+		    to: Date.UTC(2022, 3, 15, 10, 56)
+		    //from: today + 3 * day,
+		    //to: today + 4 * day
+		  }, {
+		    rentedTo: '윤길동',
+		    from: Date.UTC(2022, 3, 15, 14, 46),
+		    to: Date.UTC(2022, 3, 15, 15, 56)
+		    //from: today + 5 * day,
+		    //to: today + 6 * day
+		  }]
+		}];
+		
+		// Parse car data into series.
+		series = cars.map(function(car, i) {
+		  var data = car.deals.map(function(deal) {
+		    return {
+		      id: 'deal-' + i,
+		      vhcNo: deal.vhcNo,
+		      drvNm: deal.drvNm,
+		      rentedTo: deal.rentedTo,
+		      start: deal.from,
+		      end: deal.to,
+		      y: i
+		    };
+		  });
+		  return {
+		    name: car.model,
+		    data: data,
+		    current: car.deals[car.current]
+		  };
+		});
+		
+		
+		//차트 그리는 부분
+		var param = com.getParameter();
+		//var ctx = document.getElementById('mf_tac_layout_contents_'+param.menuCode+'_body_high_chart');
+		var ctx = document.getElementById('mf_tac_layout_contents_MN00020202_body_allocChart_wframe_high_chart'); //메뉴코드 바꿔야함
+		var highChart = new Highcharts.ganttChart(ctx, {
+		  series: series,
+		  chart: {
+		    height: 400
+		    ,width: 1750
+		  },
+		  title: {
+		    text: 'OO번 배차시각화'
+		  },
+		 /* tooltip: {
+		    pointFormat: '<span>Rented To: {point.rentedTo}</span><br/><span>From: {point.start:%e. %b}</span><br/><span>To: {point.end:%e. %b}</span>'
+		  },*/
+		  xAxis: [{
+		      grid: {
+		        cellHeight: 40
+		      },
+		      currentDateIndicator: true,
+		      dateTimeLabelFormats: {
+		        hour: {
+		          list: ['%H'+'시']
+		        }
+		      },
+		      min: Date.UTC(2022, 3, 15, 05, 00),
+		      max: Date.UTC(2022, 3, 15, 25, 00)
+		    },
+		    {
+		      grid: {
+		        cellHeight: 50
+		      }
+		    }
+		  ],
+		  yAxis: {
+		    type: 'category',
+		    grid: {
+		      //cellHeight:100,
+		      borderWidth: 1,
+		      columns: [{
+		        title: {
+		          text: '배차번호'
+		        },
+		        categories: map(series, function(s) {
+		          return s.name;
+		        })
+		      }, {
+		        title: {
+		          text: '방향구분'
+		        },
+		        categories: map(series, function(s) {
+		          return s.current.rentedTo;
+		        })
+		      }, {
+		        title: {
+		          text: '차량번호'
+		        },
+		        categories: map(series, function(s) {
+		          return s.current.vhcNo;
+		        })
+		      }, {
+		        title: {
+		          text: '운전자명'
+		        },
+		        categories: map(series, function(s) {
+		          return s.current.drvNm;
+		        })
+		      }]
+		    }
+		  }
+		});
+	}
+	
+	
+	]]></script>
+	</head>
+	 <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+	 	<xf:group class="popup_container grdr_20_a" id="popup_container" style="">
+	 		<xf:group id="popup_header" style="" class="popup_header">
+	 			<xf:group class="gr_search" id="" style="">
+	 				<xf:group class="label" id="" style="">
+	 					<w2:span class="" id="" label="운행일 : " ref=""></w2:span>
+	 					<w2:span class="" id="" label="" ref="data:dma_sub_search.OPER_DT"></w2:span>
+	 				</xf:group>
+	 				<xf:group class="label" id="" style="">
+	 					<w2:span class="" id="" label="노선명 : " ref=""></w2:span>
+	 					<w2:span class="" id="" label="" ref="data:dma_sub_search.ROUT_NM"></w2:span>
+	 				</xf:group>
+	 				<xf:group class="label" id="" style="">
+	 					<w2:span class="" id="" label="차량번호 : " ref=""></w2:span>
+	 					<w2:span class="" id="" label="" ref="data:dma_sub_search.VHC_NO"></w2:span>
+	 				</xf:group>
+	 				<xf:group class="label" id="" style="">
+	 					<w2:span class="" id="" label="배처번호 : " ref=""></w2:span>
+	 					<w2:span class="" id="" label="" ref="data:dma_sub_search.ALLOC_NO"></w2:span>
+	 					<w2:span class="" id="" label="번" ref=""></w2:span>
+	 				</xf:group>
+	 				<xf:group class="label" id="" style="">
+	 					<w2:span class="" id="" label="운행순번 : " ref=""></w2:span>
+	 					<w2:span class="" id="" label="" ref="data:dma_sub_search.OPER_SN"></w2:span>
+	 					<w2:span class="" id="" label="회차" ref=""></w2:span>
+	 				</xf:group>
+	 				
+	 			</xf:group>
+	 		</xf:group>
+	 		<xf:group style="" id="" class="popup_content">
+	 			<!-- 하이차트 -->
+					<xf:group style="" id="" class="scrolling-container">
+						<xf:group id="high_chart"></xf:group>
+					</xf:group>
+	 		</xf:group>
+	 	</xf:group>
+	 </body>
+</html>
