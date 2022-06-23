@@ -45,13 +45,18 @@
 						,A.USE_YN						
 						,A.REMARK
 						,B.ORG_NM
-						,C.DVC_COND
+						<!-- ,C.DVC_COND -->
+						,C.DATA_VAL
 						
 		FROM			BMS_DVC_INFO A	
 			LEFT JOIN	  	BMS_ORG_MST	B
 			ON				A.ORG_ID = B.ORG_ID
-			LEFT JOIN	  	BMS_DVC_COND_INFO C
+			<!-- LEFT JOIN	  	BMS_DVC_COND_INFO C
+			ON				A.MNG_ID = C.MNG_ID -->	
+			LEFT JOIN	  	BMS_DVC_COND_PARAM_INFO C
 			ON				A.MNG_ID = C.MNG_ID	
+			AND 			C.PARAM_DIV = 'PD003'
+			AND				C.PARAM_KIND = 'PK030'
 		
 		WHERE			A.VHC_ID = #{VHC_ID}
 	</select>

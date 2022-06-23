@@ -44,12 +44,14 @@
 					,   a.VHC_NO
 					,	b.DVC_ID
 					,	b.DVC_KIND
-					, 	c.DVC_COND
+					, 	c.DATA_VAL
 		FROM		 	BMS_VHC_MST a
 		LEFT JOIN	  BMS_DVC_INFO b
 			ON 		  a.VHC_ID = b.VHC_ID
-		LEFT JOIN		BMS_DVC_COND_INFO c
+		LEFT JOIN		BMS_DVC_COND_PARAM_INFO c
 			ON			b.MNG_ID = c.MNG_ID
+			AND 		c.PARAM_DIV = 'PD003'
+			AND			c.PARAM_KIND = 'PK030'
 	<where>
 		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
 			 a.VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || a.VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
