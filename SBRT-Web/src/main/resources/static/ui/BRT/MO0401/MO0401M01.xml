@@ -77,10 +77,17 @@
 		
 		var autoOptions = {
 			Main : { grid : MO0401G0, frm : MO0401F0, srchSbm : sub_MO0401G0R0, savSbm : sub_MO0401G0S0,  keySbm : sub_MO0401G0K0,
-								srchGrp : pgm_header, keyColumn : "MSG_ID", focusColumn : "MSG_ID", name :  "운행 지시 메시지 관리"}
+								srchGrp : pgm_search, keyColumn : "MSG_ID", focusColumn : "MSG_ID", name :  "운행 지시 메시지 관리"}
 		};
 		
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions);
+		
+		var mainOptions = {
+			SEARCH : {}
+		}
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions, mainOptions);
+		var mainSrhOptions = {
+		};	
+		com.setMainSrhBtn(wfm_mainSearchBtn, gcm.DISP_TYPE.SINGLE_GRID_FORM, autoOptions, mainSrhOptions);
 		
 		$p.executeSubmission(sub_MO0401SHI0);
 	};
@@ -131,65 +138,78 @@
 ]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
-		<xf:group class="pgm_container grdr_41_36_a" id="pgm_container" style="">
-			<xf:group id="pgm_navi" class="pgm_navi" style="">
-				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
-			</xf:group>
-			<xf:group id="pgm_header" style="" class="pgm_header">
-				<xf:group class="gr_search" id="" style="">
-					<xf:group class="label" id="" style="">
-						<w2:span class="" id="" label="검색 항목"></w2:span>
-					</xf:group>
-					<xf:group class="search" id="" style="">
-						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
-							ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE"
-							optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" submenuSize="auto"
-							textAlign="left">
-							<xf:choices>
-								<xf:item>
-									<xf:label><![CDATA[-전체-]]></xf:label>
-									<xf:value><![CDATA[ALL]]></xf:value>
-								</xf:item>
-								<xf:item>
-									<xf:label><![CDATA[메시지ID]]></xf:label>
-									<xf:value><![CDATA[MSG_ID]]></xf:value>
-								</xf:item>
-								<xf:item>
-									<xf:label><![CDATA[메시지명]]></xf:label>
-									<xf:value><![CDATA[MSG_NM]]></xf:value>
-								</xf:item>
-							</xf:choices>
-						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="메시지ID 또는 메시지명"
-							style="margin-right: 20px;">
-						</xf:input>
-						<xf:group id=""></xf:group>
-						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
-							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
-							ev:onviewchange="" id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
-							selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
-							<w2:choices>
-								<w2:itemset nodeset="data:dlt_grgSearchItem">
-									<w2:label ref="MSG_ID"></w2:label>
-									<w2:value ref="MSG_ID"></w2:value>
-								</w2:itemset>
-							</w2:choices>
-						</w2:autoComplete>
-					</xf:group>
-					<w2:wframe id="wfm_mainBtn" class="main_Btn" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+		<xf:group id="pgm_container" class="pgm_container grdr_60_a" style="">
+		
+			<xf:group id="" class="grdc_2f_8f title-wrap" style="">
+				<xf:group id="pgm_header_left" class="pgm_header_left" style="">
+					<w2:wframe id="wfm_title" style="" src="/cm/common/wf_title.xml" scope="true"></w2:wframe>
 				</xf:group>
-			</xf:group><!-- pgm_header -->
-			<xf:group id="pgm_content" class="pgm_content grdc_5f_20_5f" style="">
-				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
+				<xf:group id="pgm_header_right" class="pgm_header_right" style="">
+					<xf:group id="pgm_rightNavi" class="pgm_rightNavi" style="">
+						<w2:wframe id="rightNavi" class="" style="" src="/cm/common/wf_rightNavi.xml" scope="true"></w2:wframe>
+					</xf:group>
+					<xf:group id="pgm_header" class="pgm_header" style="">
+						<w2:wframe id="wfm_mainBtn" class="main_Btn" style="float:right" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+					</xf:group>
+				</xf:group>
+			</xf:group>
+		
+			<xf:group id="pgm_content" class="pgm_content grdc_5f_0_5f" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_50_a bms_box_wrap" style="">
 					<xf:group id="" class="" style="">
 						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox id="" style="" class="df_tt fl" label="메시지 목록"></w2:textbox>
+							<w2:textbox class="df_tt fl list ico-list" id="" label="메시지 목록" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
-					<xf:group></xf:group>
+					
+					<xf:group id="" class="" style="">
+						<xf:group id="" style="" class="gr_search">
+							<xf:group id="" style="" class="label">
+									<w2:span id="" class="" label="검색 항목"></w2:span>
+							</xf:group>
+							<xf:group id="pgm_search" style="" class="search">
+								<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+									ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" disabledClass="w2selectbox_disabled" displayMode="label" id="TYPE"
+									optionOrder="false" ref="data:dma_search.TYPE" class="search_type_100" submenuSize="auto"
+									textAlign="left">
+									<xf:choices>
+										<xf:item>
+											<xf:label><![CDATA[-전체-]]></xf:label>
+											<xf:value><![CDATA[ALL]]></xf:value>
+										</xf:item>
+										<xf:item>
+											<xf:label><![CDATA[메시지ID]]></xf:label>
+											<xf:value><![CDATA[MSG_ID]]></xf:value>
+										</xf:item>
+										<xf:item>
+											<xf:label><![CDATA[메시지명]]></xf:label>
+											<xf:value><![CDATA[MSG_NM]]></xf:value>
+										</xf:item>
+									</xf:choices>
+								</xf:select1>
+								<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="메시지ID 또는 메시지명"
+									style="margin-right: 20px;">
+								</xf:input>
+								<xf:group id=""></xf:group>
+								<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+									chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
+									ev:onviewchange="" id="acb_autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
+									selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+									<w2:choices>
+										<w2:itemset nodeset="data:dlt_grgSearchItem">
+											<w2:label ref="MSG_ID"></w2:label>
+											<w2:value ref="MSG_ID"></w2:value>
+										</w2:itemset>
+									</w2:choices>
+								</w2:autoComplete>
+							</xf:group>
+							<w2:wframe id="wfm_mainSearchBtn" class="wfm_mainSearchBtn" style="" src="/cm/common/wf_mainSrhBtn.xml" scope="true"></w2:wframe>							
+						</xf:group>
+					</xf:group>
+				
 					<xf:group id="" class="" style="">
 						<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.MO0401G0_onrowindexchange" ev:oncellclick=""
-							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="순서" sortable="true"
+							showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="" scrollByColumn="false" rowNumHeaderValue="No." sortable="true"
 							rowStatusHeaderValue="상태" overflowX="auto" overflowY="scroll" rowStatusVisible="false"
 							fixedColumnWithHidden="true" dataList="data:dlt_BRT_OPER_INST_MSG_MST" ignoreCellClick="false" style="height:100%;" autoFit="lastColumn"
 							visibleRowNum="" id="MO0401G0" class="cm_grid" tooltipPositionY="" focusMode="row">
@@ -255,12 +275,11 @@
 					</xf:group>
 				</xf:group><!-- pgm_list -->
 				
-				<xf:group id="" class="vertical_line">
-				</xf:group>
-				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_a" style="">
+				<xf:group id="" class=""></xf:group>
+				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_320_20_a bms_box_wrap" style="">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="메시지 정보" style=""></w2:textbox>
+							<w2:textbox class="df_tt fl view" id="" label="메시지 정보" style=""></w2:textbox>
 						</xf:group>
 					</xf:group>
 					<xf:group class="" id="" style=""></xf:group>
@@ -347,8 +366,8 @@
 								</xf:group>
 							</xf:group>
 						</xf:group>
-					</xf:group><!-- table end -->
-					
+					</xf:group>
+					<xf:group style="" id=""></xf:group>
 					<xf:group style="position: relative;" id="">
 						<xf:image src="/cm/images/add/bg_brt.png" style="width: 100%;height: 100%; position: absolute; object-fit: contain; cursor:default" id=""></xf:image>
 					</xf:group>

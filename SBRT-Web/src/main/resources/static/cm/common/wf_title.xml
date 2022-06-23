@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+			</w2:dataCollection>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+	scwin.onpageload = function() {
+		scwin.wfTitleInit();
+	};
+	
+	scwin.onpageunload = function() {
+	
+	};
+	
+	scwin.wfTitleInit = function() {
+		var param = $p.parent().com.getParameter();
+		var menuInfoArr = [];
+		try {
+			scwin.wfTitle_setMenuNavi(param.menuCode, param.menuNm, param.menuType);
+		} catch (ex) {
+			wfTitle_grp_main.hide();
+		}
+	};
+	
+	scwin.wfTitle_setMenuNavi = function(menuCode, menuName, menuType) {
+		var naviArr, naviArrLen, naviStr, menuNm;  
+		try {
+			if ((typeof menuType !== "undefined") && (menuType === "SP")) {
+				naviStr = "샘플화면 > " + menuName;
+				menuNm = menuName;
+			} else {
+				naviArr = ($p.top().wfm_header.getWindow().scwin.getMenuNavigation(menuCode)).split("%|%");
+				menuNm = naviArr[0];
+			}
+		} catch (ex) {
+			naviStr = "";
+			menuNm = menuName;
+		} finally {
+			wfTitle_txt_H1.setValue(menuNm);
+		}
+	};
+	
+		
+	scwin.wfTitle_alertPageInfo = function() {
+		var pageUrl = $p.parent().$p.getFrame().getSrc();
+		com.alert("[" + wfTitle_txt_H1.getValue() + "] 페이지의 파일 경로는 다음과 같습니다.<br/>" + pageUrl);
+	};
+	
+	/**
+	 * 화면을 갱신한다.
+	 */
+	scwin.wfTitle_reload = function() {
+		if (com.getFrameMode() === "wframe") {
+			var data = $p.parent().com.getParameter();
+			var pageUrl = $p.parent().$p.getFrame().getSrc();
+			var options = {
+				dataObject : { 
+					type : "json", 
+					name : "param", 
+					data : data
+				}
+			}
+			
+			$p.parent().$p.getFrame().setSrc(pageUrl, options);
+		} 
+		else if (com.getFrameMode() === "wframePreload") {
+			var data = $p.parent().com.getParameter();
+			var pageUrl = $p.parent().$p.getFrame().getSrc();
+			var options = {
+				dataObject : { 
+					type : "json", 
+					name : "param", 
+					data : data
+				}
+			}
+			
+			$p.parent().$p.getFrame().setSrc(pageUrl, options);
+		} 		
+		else {
+			var data = JSON.stringify($p.parent().com.getParameter());
+			var pageUrl = $p.getParameter("w2xPath");
+
+			$p.url(pageUrl, { "spa" : true, "forceReload" : true, "param" : { param : data } });
+		}
+	};
+	
+]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group id="" style="" class="pgtitlebox">
+			<xf:group id="wfTitle_grp_main" style="" class="wf_contHeader">
+				<w2:textbox id="wfTitle_txt_H1" style="" class="pg_tt mr5" label="" tagname="h1"></w2:textbox>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

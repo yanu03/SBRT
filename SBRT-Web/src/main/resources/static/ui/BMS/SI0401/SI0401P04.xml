@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ev="http://www.w3.org/2001/xml-events"
+    xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+    <head>
+    	<w2:type>DEFAULT</w2:type>
+        <w2:buildDate/>
+        <xf:model>
+        	<xf:instance>
+        		<data xmlns="" />
+        	</xf:instance>
+        	<w2:dataCollection baseNode="map">
+        		<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_TRANSCOMP_MST" saveRemovedData="true">
+        			<w2:columnInfo>
+        				<w2:column id="chk" name="선택" dataType="text"></w2:column>
+        				<w2:column id="COMP_ID" name="운수사ID" dataType="text"></w2:column>
+        				<w2:column id="COMP_NM" name="운수사명" dataType="text"></w2:column>
+        			</w2:columnInfo>
+        		</w2:dataList>
+        		<w2:dataMap baseNode="map" id="dma_TRANSCOMP_MST">
+        			<w2:keyInfo>
+        				<w2:key id="COMP_ID" name="운수사ID" dataType="text"></w2:key>
+        				<w2:key id="TYPE" name="name2" dataType="text"></w2:key>
+        				<w2:key id="CONTENT" name="name3" dataType="text"></w2:key>
+        			</w2:keyInfo>
+        		</w2:dataMap>
+        	</w2:dataCollection>
+        	<w2:workflowCollection></w2:workflowCollection>
+        	<xf:submission id="sub_SI0401P0R0" ref="data:json,dma_TRANSCOMP_MST" target="data:json,dlt_BMS_TRANSCOMP_MST" action="/si/SI0401P0R0"
+        		method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler=""
+        		mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+        	</xf:submission>
+        </xf:model>
+        <script type="text/javascript" lazy="false"><![CDATA[
+        
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(tbl_search, scwin.btn_search_onclick);
+		var btnOptions = 
+		[
+			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick},
+		];
+		com.setMainBtn(btnOptions, btn_main_generator);
+		$p.executeSubmission(sub_SI0401P0R0);				
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	
+	scwin.btn_search_onclick = function() {
+		$p.executeSubmission(sub_SI0401P0R0);
+	};
+	
+	scwin.btn_confirm_onclick = function() {
+		var data = SI0401P0.getCheckedJSON("chk");
+		com.closePopup(scwin.closeCallbackFncName, data);		
+	};
+	
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();		
+	};
+	]]></script>
+    </head>
+    <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+    	<xf:group class="tbl_search mb10" id="tbl_search" style="">
+    		<xf:group   class="w2tb tbl_sc" id="" style="" tagname="table">
+    			<w2:attributes>
+    				<w2:summary></w2:summary>
+    			</w2:attributes>
+    			<xf:group tagname="colgroup">
+    				<xf:group style="width:80.00px;" tagname="col"></xf:group>
+    				<xf:group style="" tagname="col"></xf:group>
+    				<xf:group style="width:80.00px;" tagname="col"></xf:group>
+    			</xf:group>
+    			<xf:group style="" tagname="tr">
+    				<xf:group class="w2tb_th" style="" tagname="th">검색항목</xf:group>
+    				<xf:group class="w2tb_td" style="" tagname="td">
+    					<xf:select1 allOption="" appearance="minimal" chooseOption="true" direction="auto" disabled="false"
+    						disabledClass="w2selectbox_disabled" displayMode="label" id="" optionOrder="false" ref="data:dma_TRANSCOMP_MST.TYPE"
+    						style="height:20px;width:80px;margin-right: 10px;" submenuSize="auto" textAlign="left" chooseOptionLabel="-전체-">
+    						<xf:choices>
+    							<xf:item>
+    								<xf:label><![CDATA[운수사ID]]></xf:label>
+    								<xf:value><![CDATA[COMP_ID]]></xf:value>
+    							</xf:item>
+    							<xf:item>
+    								<xf:label><![CDATA[운수사명]]></xf:label>
+    								<xf:value><![CDATA[COMP_NM]]></xf:value>
+    							</xf:item>
+    						</xf:choices>
+    					</xf:select1>
+    					<xf:input class="calc100" id="" ref="data:dma_GRG_MST.CONTENT" style=""></xf:input>
+    				</xf:group>
+    				<xf:group class="w2tb_td" style="" tagname="td">
+    					<w2:generator class="btn_main_generator" id="btn_main_generator" style="">
+							<w2:anchor class="btn_sh" id="btn_main" outerDiv="true" style="left:0px;top:0px;margin-right: 5px;"></w2:anchor>
+						</w2:generator>
+    				</xf:group>
+    			</xf:group>
+    		</xf:group>
+    	</xf:group>
+    	<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BMS_TRANSCOMP_MST" useShiftKey="false"
+    		readOnly="true" style="height:240px;" scrollByColumn="false" id="SI0401P0" autoFit="allColumn" class="cm_grid">
+    		<w2:header id="header1" style="">
+    			<w2:row id="row1" style="">
+    				<w2:column width="39" inputType="checkbox" style="height:20px" id="chkHeader" value="선택" blockSelect="false"></w2:column>
+    				<w2:column width="101" inputType="text" style="height:20px" id="column7" value="운수사ID" blockSelect="false"></w2:column>
+    				<w2:column width="90" inputType="text" style="height:20px" id="column5" value="운수사명" blockSelect="false"></w2:column>
+    			</w2:row>
+    		</w2:header>
+    		<w2:gBody id="gBody1" style="">
+    			<w2:row id="row2" style="">
+    				<w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px"
+    					inputType="checkbox" id="chk" blockSelect="false">
+    				</w2:column>
+    				<w2:column width="101" inputType="text" style="height:20px" id="COMP_ID" blockSelect="false"></w2:column>
+    				<w2:column width="90" inputType="text" style="height:20px" id="COMP_NM" blockSelect="false"></w2:column>
+    			</w2:row>
+    		</w2:gBody>
+    	</w2:gridView>
+    	<xf:group class="section" id="group10" style="text-align:center;">
+    		<w2:anchor class="btn_cm" ev:onclick="scwin.btn_confirm_onclick" id="anchor2" style="">
+    			<xf:label><![CDATA[확인]]></xf:label>
+    		</w2:anchor>
+    		<w2:anchor class="btn_cm" ev:onclick="scwin.btn_cancel_onclick" id="btn_cancel" outerDiv="" style="">
+    			<xf:label><![CDATA[취소]]></xf:label>
+    		</w2:anchor>
+    	</xf:group>
+    </body>
+</html>

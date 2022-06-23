@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataMap baseNode="map" id="dma_result">
+					<w2:keyInfo>
+						<w2:key id="STATUS" name="STATUS" dataType="text"></w2:key>
+						<w2:key id="ICNT" name="입력건수" dataType="text"></w2:key>
+						<w2:key id="UCNT" name="수정건수" dataType="text"></w2:key>
+						<w2:key id="DCNT" name="삭제건수" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
+					</w2:keyInfo>
+					<w2:data></w2:data>
+				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_INTG_MST" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="INTG_ID" name="연계아이디" dataType="text"></w2:column>
+						<w2:column id="INTG_NM" name="연계명" dataType="text"></w2:column>
+						<w2:column id="INTG_ENM" name="연계영문명" dataType="text"></w2:column>
+						<w2:column id="INTG_TYPE" name="연계유형" dataType="text"></w2:column>
+						<w2:column id="INTG_URL" name="연계URL" dataType="text"></w2:column>
+						<w2:column id="INTG_API_KEY" name="연계API키" dataType="text"></w2:column>
+						<w2:column id="ID" name="아이디" dataType="text"></w2:column>
+						<w2:column id="PWD" name="패스워드" dataType="text"></w2:column>
+						<w2:column id="REMARK" name="비고" dataType="text"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="date"></w2:column>
+						<w2:column id="UPD_ID" name="갱신아이디" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+						<w2:key id="REP_ROUT_ID" name="name3" dataType="text"></w2:key>
+						<w2:key id="VHC_ID" name="제외차량ID" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_selectIntgInfo" ref='' target="data:json,dlt_BMS_INTG_MST" action="/pi/selectIntgInfo" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="조회중입니다..."
+				ev:submit="" ev:submitdone="scwin.sub_selectIntgInfo_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_saveIntgInfo" ref='data:json,dlt_BMS_INTG_MST' target="data:json,dma_result" action="/pi/selectIntgInfo" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="저장중입니다..."
+				ev:submit="" ev:submitdone="scwin.sub_saveIntgInfo_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+        
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		
+		com.executeSubmission(sub_selectIntgInfo);
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	scwin.sub_selectIntgInfo_submitdone = function(e) {
+		var weatJson = dlt_BMS_INTG_MST.getMatchedJSON("INTG_ID", "IT00000001") //기상
+		var atomJson = dlt_BMS_INTG_MST.getMatchedJSON("INTG_ID", "IT00000002") //대기
+		
+		UPDATE_CYC.setValue("60분");
+		UPDATE_TM.setValue("5시 ~ 24시");
+		
+		WEATINFO_URL.setValue(weatJson[0].INTG_URL);
+		WEATINFO_API.setValue(weatJson[0].INTG_API_KEY);
+		
+		ATOMINFO_URL.setValue(atomJson[0].INTG_URL);
+		ATOMINFO_API.setValue(atomJson[0].INTG_API_KEY);
+	};
+	
+	//확인 버튼 onclick 이벤트
+	scwin.btn_confirm_onclick = function() {
+		var oldWeatIntgUrl = dlt_BMS_INTG_MST.getMatchedJSON("INTG_ID", "IT00000001")[0].INTG_URL 
+		var oldWeatIntgApi = dlt_BMS_INTG_MST.getMatchedJSON("INTG_ID", "IT00000001")[0].INTG_API_KEY 
+		var oldAtomIntgUrl = dlt_BMS_INTG_MST.getMatchedJSON("INTG_ID", "IT00000002")[0].INTG_URL 
+		var oldAtomIntgApi = dlt_BMS_INTG_MST.getMatchedJSON("INTG_ID", "IT00000002")[0].INTG_API_KEY 
+		
+		if(oldWeatIntgUrl != WEATINFO_URL.getValue() || oldWeatIntgApi != WEATINFO_API.getValue() ||
+			oldAtomIntgUrl != ATOMINFO_URL.getValue() || oldAtomIntgApi != ATOMINFO_API.getValue()){
+		
+			var str = "저장하시겠습니까?";
+			com.confirm(str, function(rtn) {
+			if (rtn) {
+					//com.executeSubmission(sub_saveIntgInfo); //나중에 저장 할 때 적용
+					com.closePopup(scwin.closeCallbackFncName);
+				}
+			});
+		}else{
+			com.alert("저장할 데이터가 없습니다.");
+		}
+		
+	};
+	
+	//취소 버튼 onclick 이벤트
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();
+	};
+	
+	scwin.sub_saveIntgInfo_submitdone = function(e) {
+		//com.closePopup(scwin.closeCallbackFncName); //나중에 저장 할 때 적용
+	};
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_25_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header2">
+				<xf:group class="defaultbox" id="" style="">
+					<w2:textbox class="df_tt fl" id="" label="기상/대기 연계설정 " style=""></w2:textbox>
+				</xf:group>
+				<xf:group class="label" id="" style="float:right">
+					<w2:span class="" id="" label="(API키만 입력 가능합니다.)"></w2:span>
+				</xf:group>
+			</xf:group>
+			<xf:group style="" id="" class="popup_content">
+				<xf:group class="w2tb tb" id="PI0400F0" style="width:100%;" tagname="table">
+					<w2:attributes>
+						<w2:summary></w2:summary>
+					</w2:attributes>
+					<xf:group tagname="colgroup">
+						<xf:group style="width:200px;" tagname="col"></xf:group>
+						<xf:group style="width:100px;" tagname="col"></xf:group>
+					</xf:group>
+					<xf:group style="" tagname="tr">
+						<xf:group class="w2tb_th" style="" tagname="th">기상/대기 업데이트주기</xf:group>
+						<xf:group class="w2tb_td" style="" tagname="td">
+							<w2:attributes>
+								<w2:colspan>3</w2:colspan>
+								<w2:rowspan>1</w2:rowspan>
+							</w2:attributes>
+							<xf:input adjustMaxLength="false" id="UPDATE_CYC" style="width: 100%;height: 25px;" readOnly=""
+								ref="" disabled="true">
+							</xf:input>
+						</xf:group>
+					</xf:group>
+					<xf:group style="" tagname="tr">
+						<xf:group class="w2tb_th" style="" tagname="th">업데이트 시간 설정</xf:group>
+						<xf:group class="w2tb_td" style="" tagname="td">
+							<w2:attributes>
+								<w2:colspan>3</w2:colspan>
+								<w2:rowspan>1</w2:rowspan>
+							</w2:attributes>
+							<xf:group id="" style="">
+								<xf:input id="UPDATE_TM" maxlength="" ref=""
+									style="width:100%;height: 25px;" validator="" dataType="text" readOnly="" disabled="true">
+								</xf:input>
+							</xf:group>
+						</xf:group>
+					</xf:group>
+					<xf:group tagname="tr" style="">
+						<xf:group class="w2tb_th" tagname="th">
+							기상정보 REST API URL
+							<w2:attributes>
+								<w2:scope>row</w2:scope>
+							</w2:attributes>
+						</xf:group>
+						<xf:group class="w2tb_td" tagname="td">
+							<w2:attributes>
+								<w2:colspan>3</w2:colspan>
+								<w2:rowspan>1</w2:rowspan>
+							</w2:attributes>
+							<xf:input adjustMaxLength="" class="" id="WEATINFO_URL" mandatory=""
+								ref="" style="width:100%;height:21px;" readOnly="" disabled="true">
+							</xf:input>
+						</xf:group>
+					</xf:group>
+					<xf:group tagname="tr" style="">
+						<xf:group class="w2tb_th" tagname="th">
+							기상정보 API키
+							<w2:attributes>
+								<w2:scope>row</w2:scope>
+							</w2:attributes>
+						</xf:group>
+						<xf:group class="w2tb_td" tagname="td">
+							<w2:attributes>
+								<w2:colspan>3</w2:colspan>
+								<w2:rowspan>1</w2:rowspan>
+							</w2:attributes>
+							<xf:input adjustMaxLength="false" id="WEATINFO_API" style="width:100%;height: 25px;"
+								ref="data:dma_CUR_BMS_WEAT_ATMO_INFO.TEMP_MINI">
+							</xf:input>
+						</xf:group>
+					</xf:group>
+					<xf:group tagname="tr" style="">
+						<xf:group class="w2tb_th" tagname="th">
+							대기정보 REST API URL
+							<w2:attributes>
+								<w2:scope>row</w2:scope>
+							</w2:attributes>
+						</xf:group>
+						<xf:group class="w2tb_td" tagname="td">
+							<w2:attributes>
+								<w2:colspan>3</w2:colspan>
+								<w2:rowspan>1</w2:rowspan>
+							</w2:attributes>
+							<xf:input adjustMaxLength="false" id="ATOMINFO_URL" style="width:100%;height: 25px;" readOnly=""
+								ref="data:dma_CUR_BMS_WEAT_ATMO_INFO.HUMI" disabled="true">
+							</xf:input>
+						</xf:group>
+					</xf:group>
+					<xf:group tagname="tr" style="">
+						<xf:group tagname="th" class="w2tb_th">
+							대기정보 API키
+							<w2:attributes>
+								<w2:scope>row</w2:scope>
+							</w2:attributes>
+						</xf:group>
+						<xf:group tagname="td" class="w2tb_td">
+							<w2:attributes>
+								<w2:colspan>3</w2:colspan>
+								<w2:rowspan>1</w2:rowspan>
+							</w2:attributes>
+							<xf:input adjustMaxLength="false" id="ATOMINFO_API" style="width:100%;height: 25px;"
+								readOnly="" ref="data:dma_CUR_BMS_WEAT_ATMO_INFO.RAIN_PRO">
+							</xf:input>
+						</xf:group>
+					</xf:group>
+				</xf:group>
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

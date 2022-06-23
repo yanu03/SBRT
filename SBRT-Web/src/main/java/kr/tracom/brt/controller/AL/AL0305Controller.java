@@ -63,6 +63,13 @@ public class AL0305Controller extends ControllerSupport {
 		result.setData("dma_result", map);
 		return result.getResultSave();
 	}
+
+	@RequestMapping("/al/AL0305G0SEND")
+	public @ResponseBody Map<String, Object> AL0305G0SEND() throws Exception {
+		Map map = AL0305Service.AL0305G0SEND();
+		result.setData("dma_result", map);
+		return result.getResultSave();
+	}
 	
 	/*@RequestMapping("/al/AL0302P0R0")
 	public @ResponseBody Map<String, Object> AL0302P0R0() throws Exception {

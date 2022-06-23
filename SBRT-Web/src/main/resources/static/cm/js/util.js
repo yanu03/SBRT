@@ -258,3 +258,14 @@ util.getExlDateToMinSec = function(exlDate) {
 	}
 	else return exlDate;
 }
+
+/**
+ * 일시 변경 (년-월-일 시:분:초)
+ * 
+ * @param dateTime : 년월일시분초
+ */
+util.getDateTime = function(dateTime){
+	var output = dateTime.substring(0, 4) + "-" + dateTime.substring(4, 6) + "-" + dateTime.substring(6, 8) + " " + dateTime.substring(8, 10) + ":" + 
+					dateTime.substring(10, 12) + ":" + dateTime.substring(12);
+	return output;
+}

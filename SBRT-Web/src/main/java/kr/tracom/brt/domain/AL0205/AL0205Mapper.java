@@ -12,13 +12,15 @@ public interface AL0205Mapper {
 	
 	public List AL0205G0R1(Map param);
 	
-	public List AL0205SHI0();
+	public List sttnItem();
 	
-	public List AL0205SHI1(Map param);
+	public List crsItem();
 	
 	public List AL0205G1R0(Map param);
 	
 	public List AL0205G1CNT(Map param);
+	
+	public List AL0205G1RM(Map param);
 	
 
 }

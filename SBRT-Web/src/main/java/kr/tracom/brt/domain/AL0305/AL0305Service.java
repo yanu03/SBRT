@@ -1,5 +1,6 @@
 package kr.tracom.brt.domain.AL0305;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -10,11 +11,24 @@ import org.springframework.stereotype.Service;
 
 import kr.tracom.cm.support.ServiceSupport;
 import kr.tracom.cm.support.exception.MessageException;
+import kr.tracom.platform.attribute.common.AtBrtAction;
+import kr.tracom.platform.attribute.common.AtTimeStamp;
+import kr.tracom.platform.net.config.TimsConfig;
+import kr.tracom.platform.net.protocol.TimsMessage;
+import kr.tracom.platform.net.protocol.TimsMessageBuilder;
+import kr.tracom.platform.service.TService;
+import kr.tracom.platform.service.config.KafkaTopics;
+import kr.tracom.tims.kafka.KafkaProducer;
+import kr.tracom.util.CommonUtil;
+import kr.tracom.util.DateUtil;
 import kr.tracom.util.Result;
 
 @Service
 public class AL0305Service extends ServiceSupport {
 
+	@Autowired
+	KafkaProducer kafkaProducer;
+	
 	@Autowired
 	private AL0305Mapper al0305Mapper;
 	
@@ -160,7 +174,48 @@ public class AL0305Service extends ServiceSupport {
 		int uCnt = 0;
 		int dCnt = 0;		
 		
+		List<Map<String, Object>> sendList = new ArrayList<Map<String, Object>>();
+		
 		List<Map<String, Object>> param = getSimpleList("dlt_BRT_OPER_DT_ALLOC_PL_MST");
+		try {
+			for (int i = 0; i < param.size(); i++) {
+				Map data = (Map) param.get(i);
+				String rowStatus = (String) data.get("rowStatus");
+				if (rowStatus.equals("U")) {
+					uCnt += al0305Mapper.AL0305G0U0(data);
+					uCnt += al0305Mapper.AL0305G0U1(data);
+					
+					/*if(data.get("OPER_DT").equals(CommonUtil.getOperDt())) {
+						sendList.add(data);
+					}*/
+				} 
+			}			
+		} catch(Exception e) {
+			if (e instanceof DuplicateKeyException)
+			{
+				throw new MessageException(Result.ERR_KEY, "중복된 키값의 데이터가 존재합니다.");
+			}
+			else
+			{
+				throw e;
+			}		
+		}
+		
+		//send_T_BRT(sendList);
+		
+		Map result = saveResult(iCnt, uCnt, dCnt);
+		
+		return result;	
+	}
+	
+	public Map AL0305G0SEND() throws Exception {
+		int iCnt = 0;
+		int uCnt = 0;
+		int dCnt = 0;
+		
+	
+		List<Map<String, Object>> param = getSimpleList("dlt_BRT_OPER_DT_ALLOC_PL_MST");
+		List<Map<String, Object>> sendList = new ArrayList<Map<String, Object>>();
 		try {
 			for (int i = 0; i < param.size(); i++) {
 				Map data = (Map) param.get(i);
@@ -180,11 +235,49 @@ public class AL0305Service extends ServiceSupport {
 				throw e;
 			}		
 		}
+		al0305Mapper.makeCurAllocPlInfo();
+		
+		TimsConfig timsConfig = TService.getInstance().getTimsConfig();
+		TimsMessageBuilder builder = new TimsMessageBuilder(timsConfig);
 
+		AtBrtAction brtRequest = new AtBrtAction();
+
+		brtRequest.setTimeStamp(new AtTimeStamp(DateUtil.now("yyyyMMddHHmmssSSS")));
+		brtRequest.setActionCode(AtBrtAction.allocChangeRequest);
+		brtRequest.setData("");
+		TimsMessage timsMessage = builder.actionRequest(brtRequest);
+		kafkaProducer.sendKafka(KafkaTopics.T_BRT, timsMessage, "");
 		
 		Map result = saveResult(iCnt, uCnt, dCnt);
 		
 		return result;	
 	}
 	
+	/*public int send_T_BRT(List<Map<String, Object>> sendList) throws Exception {
+
+		TimsConfig timsConfig = TService.getInstance().getTimsConfig();
+		TimsMessageBuilder builder = new TimsMessageBuilder(timsConfig);
+
+		AtBrtAction brtRequest = new AtBrtAction();
+		List<Map<String, Object>> param = getSimpleList("dlt_BRT_OPER_DT_ALLOC_PL_MST");
+
+		int count = 0;
+		for (int i = 0; i < sendList.size(); i++) {
+			Map<String, Object> data = param.get(i);
+			if (data.get("OPER_DT").equals(CommonUtil.getOperDt())) {
+				String actionData = CommonUtil.mapToJson(data);
+
+				brtRequest.setTimeStamp(new AtTimeStamp(DateUtil.now("yyyyMMddHHmmssSSS")));
+				brtRequest.setActionCode(AtBrtAction.allocChangeRequest);
+				brtRequest.setData("");
+
+				brtRequest.setReserved(actionData);
+
+				TimsMessage timsMessage = builder.actionRequest(brtRequest);
+				kafkaProducer.sendKafka(KafkaTopics.T_BRT, timsMessage, "");
+				count++;
+			}
+		}
+		return count;
+	}*/
 }

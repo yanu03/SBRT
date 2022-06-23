@@ -347,6 +347,7 @@
 						<w2:key id="WAY_DIV" name="상하행구분" dataType="text"></w2:key>
 						<w2:key id="OPER_SN_LIST" name="운행순번목록" dataType="text"></w2:key>
 						<w2:key id="BRT_TARGET_COR_LIST" name="코스목록" dataType="text"></w2:key>
+						<w2:key id="COR_ID" name="코스ID" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_save">
@@ -354,6 +355,12 @@
 						<w2:key id="TYPE" name="유형" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
+				<w2:dataList id="dlt_COR_CNT" baseNode="list" saveRemovedData="true" repeatNode="map" ev:oncelldatachange="">
+					<w2:columnInfo>
+						<w2:column id="COR_ID" name="코스아이디" dataType="text"></w2:column>
+						<w2:column id="CNT" name="노선카운트" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_AL0202G0R0" ref="data:json,dma_search" target="data:json,dlt_BRT_OPER_PL_MST"
@@ -388,6 +395,10 @@
 			</xf:submission>
 			
 			<xf:submission id="sub_operPlanList" ref='data:json,dma_sub_search' target='data:json,[{"id":"dlt_BRT_OPER_PL_ROUT_INFO_ASC"},{"id":"dlt_BRT_OPER_PL_ROUT_INFO_DESC"}]' action="/operPlan/selectOperPlanRout2" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
+				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_selectCorCnt" ref='' target='data:json,dlt_COR_CNT' action="/AL/selectCorCnt" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -455,19 +466,21 @@
 		var mainOptions = {
 			ADD: {disp:"hide"}, DEL:{disp:"hide"}, SAVE : scwin.btn_save_onclick
 		};
-		
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions, mainOptions);
-
 		var codeOptions = [{code : "DAY_DIV",compID : "AL0202G0:DAY_DIV"},{code : "WAY_DIV",compID : "AL0202G1:WAY_DIV"}];
-
-		var subOptions = {
 		
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions, mainOptions, codeOptions);
+		var mainSrhOptions = {
+		};		
+		com.setMainSrhBtn(wfm_mainSearchBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions, mainSrhOptions, codeOptions);
+		var subOptions = {
+			
 			SAVE:[{cbFnc:scwin.btn_init,nm:"초기화",class:"autoApply"},
 				{cbFnc:scwin.btn_sub_sel_mult_course,nm:"배차 코스 선택",class:"search"},
 				{cbFnc:scwin.btn_reInstall,nm:"재구성",class:"autoApply"},
 				{cbFnc:scwin.btn_add_cell,nm:"추가",class:"add"},
 				{cbFnc:scwin.btn_del_cell,nm:"셀 삭제",class:"del"}
 			]
+			//SETTING:{cbFnc:scwin.popUp_chart,nm:"배차 시각화",class:"setting"}
 		};
 		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
 
@@ -475,11 +488,26 @@
 			com.searchGrid(AL0202G0, sub_AL0202G0R0);
 		});
 		com.executeSubmission(sub_AL0202SHI0);
+		com.executeSubmission(sub_selectCorCnt);
 	};
 
 	scwin.onpageunload = function() {
 
 	};
+	
+	//팝업 차트
+	/*scwin.popUp_chart = function(){
+		var jsonData = dlt_OPER_ALLOC_PL_ROUT_INFO.getAllJSON();
+		
+		var data = { jsonData: jsonData,callbackFn : "" };
+		 var options = { id : "allocChart",
+         				width : "1800px",
+         				height : "900px",
+                         popupName : "배차 시각화", 
+                         modal : true};
+		
+		com.openPopup("/cm/common/popUpAllocChart.xml", options, data);
+	}*/
 
 	scwin.btn_save_onclick = function(){
 		var idx = dlt_OPER_ALLOC_PL_ROUT_INFO.getModifiedData().length;
@@ -1953,21 +1981,48 @@
 		
 		rowIndex = 0;
 		rowCnt = 0;
+		var param = com.getParameter();
+		var rowNum = 0;
 		for(var i = 0; i < rowCntArr.length; i++) {
 			rowIndex += rowCnt;
 			rowCnt =  rowCntArr[i].CNT;
+			var underLineCnt = 1;
+			var oldUnderLineCnt = 1;
+			var num = 2;
 			for(var j = 0; j < rowCnt; j++) {
 				var index = rowIndex+j;
 				for(var x = 4; x < columnNmArr2.length; x++) {
 					var color = dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(index, "COR_COLOR");
-
 					AL0202G1.setCellColor(i*2, columnNmArr2[x]+'_'+j, color);
 					AL0202G1.setCellColor(i*2+1, columnNmArr2[x]+'_'+j, color);
 				}
+				
+				var corId = dlt_OPER_ALLOC_PL_ROUT_INFO.getCellData(index, "COR_ID");
+				var corCnt = dlt_COR_CNT.getMatchedJSON("COR_ID", corId)[0].CNT;
+				if(underLineCnt == 1){
+					$("#mf_tac_layout_contents_"+param.menuCode+"_body_AL0202G1_cell_"+rowNum+"_"+num+"").children().css({'text-decoration':'underline', 'text-underline-position':'under'});
+					//AL0202G1.setCellColor(i*2, columnNmArr2[4]+'_'+j, 'red');
+					//AL0202G1.setCellDataType(i*2, columnNmArr2[4]+'_'+j, "link");
+					//AL0202G1.setCellCustomFormatter(i*2, columnNmArr2[4]+'_'+j, scwin.underline);
+					num+=6;
+					underLineCnt = corCnt;
+					if(corCnt != 1){
+						oldUnderLineCnt++;
+					}
+				}else if(underLineCnt == oldUnderLineCnt){
+					num+=6;
+					underLineCnt = 1;
+					oldUnderLineCnt = 1;
+				}else if(underLineCnt != oldUnderLineCnt){
+					num+=6;
+					oldUnderLineCnt++;
+				}
 			}
+			rowNum += 2;
 
 		}
 	}
+	
 	
 	scwin.setGridExcelInfo = function() {
 
@@ -2258,64 +2313,77 @@
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
-		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
-			<xf:group id="pgm_navi" class="pgm_navi" style="">
-				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
-			</xf:group>
-
-			<xf:group class="pgm_header" id="pgm_header" style="">
-				<xf:group class="gr_search" id="" style="">
-					<xf:group class="label" id="" style="">
-						<w2:span class="" id="" label="검색 항목"></w2:span>
+		<xf:group id="pgm_container" class="pgm_container grdr_60_a" style="">
+		
+			<xf:group id="" class="grdc_2f_8f title-wrap" style="">
+				<xf:group id="pgm_header_left" class="pgm_header_left" style="">
+					<w2:wframe id="wfm_title" style="" src="/cm/common/wf_title.xml" scope="true"></w2:wframe>
+				</xf:group>
+				<xf:group id="pgm_header_right" class="pgm_header_right" style="">
+					<xf:group id="pgm_rightNavi" class="pgm_rightNavi" style="">
+						<w2:wframe id="rightNavi" class="" style="" src="/cm/common/wf_rightNavi.xml" scope="true"></w2:wframe>
 					</xf:group>
-					<xf:group class="search" id="" style="">
-						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
-							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
-							optionOrder="false" ref="data:dma_search.TYPE" style="width:100px;margin-right: 10px;float:left;" submenuSize="auto"
-							textAlign="left">
-
-							<xf:choices>
-								<xf:item>
-									<xf:label><![CDATA[전체]]></xf:label>
-									<xf:value><![CDATA[ALL]]></xf:value>
-								</xf:item>
-								<xf:item>
-									<xf:label><![CDATA[대표노선ID]]></xf:label>
-									<xf:value><![CDATA[REP_ROUT_ID]]></xf:value>
-								</xf:item>
-								<xf:item>
-									<xf:label><![CDATA[대표노선명]]></xf:label>
-									<xf:value><![CDATA[REP_ROUT_NM]]></xf:value>
-								</xf:item>
-							</xf:choices>
-						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="대표노선 ID 또는 대표노선명"></xf:input>
-						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
-							chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
-							id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
-							class="search_auto" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
-							<w2:choices>
-								<w2:itemset nodeset="data:dlt_repRoutItem">
-									<w2:label ref="REP_ROUT_NM"></w2:label>
-									<w2:value ref="REP_ROUT_ID"></w2:value>
-								</w2:itemset>
-							</w2:choices>
-						</w2:autoComplete>
+					<xf:group id="pgm_header" class="pgm_header" style="">
+						<w2:wframe id="wfm_mainBtn" class="main_Btn" style="float:right" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 					</xf:group>
-					<w2:wframe class="" id="wfm_mainBtn" scope="true" src="/cm/common/wf_mainBtn.xml" style=""></w2:wframe>
 				</xf:group>
 			</xf:group>
-
-			<xf:group id="pgm_content" class="pgm_content grdc_3f_20_7f" style="">
-				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
-					<xf:group class="defaultbox" id="" style="">
-						<w2:textbox class="df_tt fl" id="" label="배차편성 목록" style=""></w2:textbox>
+		
+			<xf:group id="pgm_content" class="pgm_content grdc_3f_0_7f" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_50_a bms_box_wrap" style="">
+					<xf:group id="" class="" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl list ico-list" id="" label="배차편성 목록" style=""></w2:textbox>
+						</xf:group>
 					</xf:group>
-					<xf:group></xf:group>
+					
+					<xf:group id="" class="" style="">
+						<xf:group id="" style="" class="gr_search">
+							<xf:group id="" style="" class="label">
+									<w2:span id="" class="" label="검색 항목"></w2:span>
+							</xf:group>
+							<xf:group class="search" id="pgm_search" style="">
+								<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+									disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="TYPE10"
+									optionOrder="false" ref="data:dma_search.TYPE" style="width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+									textAlign="left">
+
+									<xf:choices>
+										<xf:item>
+											<xf:label><![CDATA[전체]]></xf:label>
+											<xf:value><![CDATA[ALL]]></xf:value>
+										</xf:item>
+										<xf:item>
+											<xf:label><![CDATA[대표노선ID]]></xf:label>
+											<xf:value><![CDATA[REP_ROUT_ID]]></xf:value>
+										</xf:item>
+										<xf:item>
+											<xf:label><![CDATA[대표노선명]]></xf:label>
+											<xf:value><![CDATA[REP_ROUT_NM]]></xf:value>
+										</xf:item>
+									</xf:choices>
+								</xf:select1>
+								<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="대표노선 ID 또는 대표노선명"></xf:input>
+								<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+									chooseOptionValue="" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange="" ev:onviewchange=""
+									id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start" selectedData=""
+									class="search_auto" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="">
+									<w2:choices>
+										<w2:itemset nodeset="data:dlt_repRoutItem">
+											<w2:label ref="REP_ROUT_NM"></w2:label>
+											<w2:value ref="REP_ROUT_ID"></w2:value>
+										</w2:itemset>
+									</w2:choices>
+								</w2:autoComplete>
+							</xf:group>
+							<w2:wframe id="wfm_mainSearchBtn" class="wfm_mainSearchBtn" style="" src="/cm/common/wf_mainSrhBtn.xml" scope="true"></w2:wframe>							
+						</xf:group>
+					</xf:group>
+				
 					<xf:group id="" class="" style="">
 						<w2:gridView alwaysTriggerScrollStart="" captionTitle="" id="AL0202G0" class="cm_grid left AL0202G0" sortable="false" 
 							dataList="data:dlt_BRT_OPER_PL_MST" ev:onrowindexchange="scwin.AL0202G0_onrowindexchange" fixedColumnWithHidden="true"
-							autoFit="lastColumn" ignoreCellClick="false" rowNumHeaderValue="순번" rowNumVisible="true" mergeCells="byrestriccol"
+							autoFit="lastColumn" ignoreCellClick="false" rowNumHeaderValue="No." rowNumVisible="true" mergeCells="byrestriccol"
 							rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="true" style="" useShiftKey="true"
 							autoFitMinWidth="0" focusMode="row" readOnly="true" tooltipDisplay="true" tooltipPositionX="0" tooltipPositionY="5">
 							<w2:header style="" id="header1">
@@ -2386,9 +2454,9 @@
 							</w2:footer>
 						</w2:gridView>
 					</xf:group>
-				</xf:group><!-- end list -->
-				<xf:group id="" class="vertical_line"></xf:group>
-				<xf:group id="pgm_detail" class="pgm_detail grdr_20_2_a" style="">
+				</xf:group>
+				<xf:group id="" class=""></xf:group>
+				<xf:group class="pgm_detail grdr_20_2_1f bms_box_wrap">
 					<xf:group id="" class="gr_sub_header" style="">
 						<xf:group class="defaultbox" id="" style="">
 							<w2:textbox class="df_tt fl" id="" label="배차편성 상세" style=""></w2:textbox>
@@ -2416,7 +2484,7 @@
 					</xf:group>
 					<xf:group class="" id="" style="">
 						<w2:gridView id="AL0202G1" autoFit="" captionTitle="" class="cm_grid right AL0202G1" dataList="data:dlt_VIEW_OPER_PL_ROUT_INFO" sortable="false" 
-							ev:onrowindexchange="scwin.AL0202G1_onrowindexchange" fixedColumnWithHidden="true" ignoreCellClick="false" rowNumHeaderValue="순번"
+							ev:onrowindexchange="scwin.AL0202G1_onrowindexchange" fixedColumnWithHidden="true" ignoreCellClick="false" rowNumHeaderValue="No."
 							rowNumVisible="false" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="true" style="" useShiftKey="true" ev:oneditkeyup="scwin.AL0202G1_oneditkeyup"
 							autoFitMinWidth="0" focusMode="cell" ev:oncelldblclick="scwin.AL0202G1_oncelldblclick" mergeCells="byrestriccol" mergeCol="ALLOC_NO,WAY_DIV" ev:onrightbuttonclick="scwin.AL0202G1_onrightkeyup" ev:oncustomcopy="scwin.AL0202G1_oncustomcopy" ev:oncustompaste="scwin.AL0202G1_oncustompaste">
 							<w2:header style="" id="header1">
@@ -2464,7 +2532,7 @@
 							</w2:gBody>
 						</w2:gridView>
 						<w2:gridView id="AL0202G2" autoFit="" captionTitle="" class="" dataList="data:dlt_EXL_OPER_PL_ROUT_INFO"
-							ev:onrowindexchange="" fixedColumnWithHidden="true" ignoreCellClick="false" rowNumHeaderValue="순번"
+							ev:onrowindexchange="" fixedColumnWithHidden="true" ignoreCellClick="false" rowNumHeaderValue="No."
 							rowNumVisible="false" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="true" style="height:0px" useShiftKey="true"
 							autoFitMinWidth="0" focusMode="cell" mergeCells="byrestriccol" mergeCol="ALLOC_NO,WAY_DIV">
 							<w2:header style="" id="header1">
@@ -2505,7 +2573,7 @@
 							</w2:gBody>
 						</w2:gridView>
 						<w2:gridView id="AL0202G3" autoFit="" captionTitle="" class="" dataList="data:dlt_OPER_ALLOC_PL_ROUT_INFO"
-							ev:onrowindexchange="" fixedColumnWithHidden="true" ignoreCellClick="false" rowNumHeaderValue="순번"
+							ev:onrowindexchange="" fixedColumnWithHidden="true" ignoreCellClick="false" rowNumHeaderValue="No."
 							rowNumVisible="false" rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="true" style="height:0px" useShiftKey="true"
 							autoFitMinWidth="0" focusMode="cell" mergeCells="" mergeCol="">
 							<w2:header style="" id="header1">

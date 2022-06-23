@@ -39,6 +39,9 @@
 				<w2:dataMap baseNode="map" id="dma_sub_search">
 					<w2:keyInfo>
 						<w2:key id="REP_ROUT_ID" name="대표노선ID" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="CONTENT2" name="name3" dataType="text"></w2:key>
+						<w2:key id="VHC_ID" name="name4" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_REP_ROUT_MST" saveRemovedData="true">
@@ -99,7 +102,7 @@
         
 	scwin.onpageload = function() {
 		var autoOptions = {
-			Main : { grid : AL0104G0, srchSbm : sub_AL0104G0R0, srchGrp : pgm_header, keyColumn : "REP_ROUT_ID", 
+			Main : { grid : AL0104G0, srchSbm : sub_AL0104G0R0, srchGrp : pgm_search, keyColumn : "REP_ROUT_ID", 
 					 focusColumn : "REP_ROUT_NM", name :  "대표노선 목록"},
 			/*Sub1 : { grid : AL0104G1, srchSbm : sub_AL0104G1R0, name :  "배정 안된 차량 목록"},*/
 			Sub1 : { grid : AL0104G2, srchSbm : sub_AL0104G2R0, savSbm : sub_AL0104G2S0, name :  "배정 된 차량 목록"}
@@ -107,12 +110,27 @@
 		 
 		var mainOptions = {
 			ADD : {},
-			DEL : {}
+			DEL : {},
+			SEARCH : {}
 		}; 
-		 
-		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID2, autoOptions, mainOptions);		 
+		var codeOptions = [ {code : "VHC_FUEL", compID : "AL0104G1:VHC_FUEL, AL0104G2:VHC_FUEL" } ];			 
+		com.setMainBtn2(wfm_mainBtn, gcm.DISP_TYPE.DUAL_GRID3, autoOptions, mainOptions, codeOptions);
 
-		var codeOptions = [ {code : "VHC_FUEL", compID : "AL0104G1:VHC_FUEL, AL0104G2:VHC_FUEL" } ];	
+		var mainSrhOptions = {
+		};	
+		com.setMainSrhBtn(wfm_mainSearchBtn, gcm.DISP_TYPE.DUAL_GRID3, autoOptions, mainSrhOptions, codeOptions);		 
+
+		var subOptions = {
+			//DEL:scwin.btn_sub_del,
+			SEARCH: scwin.btn_sub_move
+		};
+		
+		var subOptions2 = {
+			SEARCH: scwin.btn_sub_move2
+		};
+		
+		com.setSubBtn2(wfm_subBtn, autoOptions, subOptions);
+		com.setSubBtn2(wfm_subBtn2, autoOptions, subOptions2);
 			 
 		com.setCommonDtl(codeOptions, function() {
 			com.searchGrid(AL0104G0, sub_AL0104G0R0);
@@ -164,6 +182,7 @@
 	
 	// <- 버튼
 	scwin.btn_grid_del_onclick = function() {
+		
 		var focusIdxs = AL0104G2.getAllFocusedRowIndex();
 		var count = focusIdxs.length;
 		if (count > 0) {
@@ -175,7 +194,9 @@
 				dlt_BMS_VHC_MST.setCellData(insertIndex, "REP_ROUT_ID", dma_sub_search.get("REP_ROUT_ID"));
 			}
 		}
+		//dlt_BRT_REP_ROUT_VHC_CMPSTN.removeRows(focusIdxs);
 		com.delGrid2(AL0104G2);
+		AL0104G2.removeFocusedCell();
 	};
 
 	scwin.sub_AL0104G2S0_submitdone = function(e) {
@@ -205,69 +226,98 @@
 	};
 	
 	scwin.sub_AL0104G2R0_submitdone = function(e) {
-		com.executeSubmission(sub_AL0104G1R0);		
+		com.executeSubmission(sub_AL0104G1R0);
+		AL0104G2.setFocusedCell(0, "VHC_ID");		
 	};
+	
+	scwin.btn_sub_move = function() {
+		if(com.isEmpty(dma_sub_search.get("CONTENT"))==false){
+			com.gridMove(AL0104G1, "VHC_ID,VHC_NO", dma_sub_search.get("CONTENT"), AL0104G1.getFocusedRowIndex());
+		}
+	};
+	
+	scwin.btn_sub_move2 = function() {
+		
+		if(com.isEmpty(dma_sub_search.get("CONTENT2"))==false){
+			com.gridMove(AL0104G2, "VHC_ID,VHC_NO", dma_sub_search.get("CONTENT2"), AL0104G2.getFocusedRowIndex());
+		}
+	};	
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
-		<xf:group id="pgm_container" class="pgm_container grdr_41_36_a" style="">
-			<xf:group id="pgm_navi" class="pgm_navi" style="">
-				<w2:wframe id="wfm_navi" style="" src="/cm/common/wf_navi.xml" scope="true"></w2:wframe>
-			</xf:group>
-			<xf:group class="pgm_header" id="pgm_header" style="">
-				<xf:group class="gr_search" id="" style="">
-					<xf:group class="label" id="" style="">
-						<w2:span class="" id="" label="검색 항목"></w2:span>
+		<xf:group id="pgm_container" class="pgm_container grdr_60_a" style="">
+		
+			<xf:group id="" class="grdc_2f_8f title-wrap" style="">
+				<xf:group id="pgm_header_left" class="pgm_header_left" style="">
+					<w2:wframe id="wfm_title" style="" src="/cm/common/wf_title.xml" scope="true"></w2:wframe>
+				</xf:group>
+				<xf:group id="pgm_header_right" class="pgm_header_right" style="">
+					<xf:group id="pgm_rightNavi" class="pgm_rightNavi" style="">
+						<w2:wframe id="rightNavi" class="" style="" src="/cm/common/wf_rightNavi.xml" scope="true"></w2:wframe>
 					</xf:group>
-					<xf:group class="search" id="" style="">
-						<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
-							disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
-							optionOrder="false" ref="data:dma_search.TYPE" style="width:100px;margin-right: 10px;float:left;" submenuSize="auto"
-							textAlign="left">
-							<xf:choices>
-								<xf:item>
-									<xf:label><![CDATA[전체]]></xf:label>
-									<xf:value><![CDATA[ALL]]></xf:value>
-								</xf:item>
-								<xf:item>
-									<xf:label><![CDATA[대표노선ID]]></xf:label>
-									<xf:value><![CDATA[REP_ROUT_ID]]></xf:value>
-								</xf:item>
-								<xf:item>
-									<xf:label><![CDATA[대표노선명]]></xf:label>
-									<xf:value><![CDATA[REP_ROUT_NM]]></xf:value>
-								</xf:item>
-							</xf:choices>
-						</xf:select1>
-						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="대표노선ID 또는 대표노선명"></xf:input>						
-						<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
-							chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
-							ev:onviewchange="" id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
-							selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="" nextTabByEnter=""
-							disableEdit="">
-							<w2:choices>
-								<w2:itemset nodeset="data:dlt_repRoutItem">
-									<w2:label ref="REP_ROUT_NM"></w2:label>
-									<w2:value ref="REP_ROUT_ID"></w2:value>
-								</w2:itemset>
-							</w2:choices>
-						</w2:autoComplete>	
+					<xf:group id="pgm_header" class="pgm_header" style="">
+						<w2:wframe id="wfm_mainBtn" class="main_Btn" style="float:right" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
 					</xf:group>
-					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>					
 				</xf:group>
 			</xf:group>
-
-			<xf:group id="pgm_content" class="pgm_content grdc_a_20_600_60_600" style="">
-				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
-					<xf:group class="defaultbox" id="" style="">
-						<w2:textbox class="df_tt fl" id="" label="대표노선 목록" style=""></w2:textbox>
+		
+			<xf:group id="pgm_content" class="pgm_content grdc_a_0_1220" style="">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_50_a bms_box_wrap" style=""> <!-- auto 영역 -->
+					<xf:group id="" class="" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl list ico-list" id="" label="대표노선 목록" style=""></w2:textbox>
+						</xf:group>
 					</xf:group>
-					<xf:group></xf:group>
+					
+					<xf:group id="" class="" style="">
+						<xf:group id="" style="" class="gr_search">
+							<xf:group id="" style="" class="label">
+									<w2:span id="" class="" label="검색 항목"></w2:span>
+							</xf:group>
+							<xf:group class="search" id="pgm_search" style="">
+								<xf:select1 allOption="" appearance="minimal" chooseOption="" direction="auto" disabled="false"
+									disabledClass="w2selectbox_disabled" displayMode="label" ev:onviewchange="scwin.sbx_ChoiceBox_onviewchange" id="sbx_ChoiceBox"
+									optionOrder="false" ref="data:dma_search.TYPE" style="width:100px;margin-right: 10px;float:left;" submenuSize="auto"
+									textAlign="left">
+									<xf:choices>
+										<xf:item>
+											<xf:label><![CDATA[전체]]></xf:label>
+											<xf:value><![CDATA[ALL]]></xf:value>
+										</xf:item>
+										<xf:item>
+											<xf:label><![CDATA[대표노선ID]]></xf:label>
+											<xf:value><![CDATA[REP_ROUT_ID]]></xf:value>
+										</xf:item>
+										<xf:item>
+											<xf:label><![CDATA[대표노선명]]></xf:label>
+											<xf:value><![CDATA[REP_ROUT_NM]]></xf:value>
+										</xf:item>
+									</xf:choices>
+								</xf:select1>
+								<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="대표노선ID 또는 대표노선명"></xf:input>						
+								<w2:autoComplete allOption="" caseSensitive="false" chooseOption="true" chooseOptionLabel="-전체-"
+									chooseOptionValue="" class="search_auto" displayMode="label" editType="select" emptyItem="" emptyValue="" ev:onchange=""
+									ev:onviewchange="" id="autoChoiceBox" interactionMode="" noResult="useData" ref="data:dma_search.CONTENT" search="start"
+									selectedData="" style="display:none" submenuSize="auto" textAlign="left" useKeywordHighlight="false" visibleRowNum="" nextTabByEnter=""
+									disableEdit="">
+									<w2:choices>
+										<w2:itemset nodeset="data:dlt_repRoutItem">
+											<w2:label ref="REP_ROUT_NM"></w2:label>
+											<w2:value ref="REP_ROUT_ID"></w2:value>
+										</w2:itemset>
+									</w2:choices>
+								</w2:autoComplete>	
+							</xf:group>
+							<w2:wframe id="wfm_mainSearchBtn" class="wfm_mainSearchBtn" style="" src="/cm/common/wf_mainSrhBtn.xml" scope="true"></w2:wframe>							
+						</xf:group>
+					</xf:group>
+				
+
 					<xf:group id="" class="" style="">
 						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" captionTitle="" class="cm_grid left"
 							dataList="data:dlt_BMS_REP_ROUT_MST" enterKeyMove="" ev:onafteredit="" ev:oncellclick="" ev:oneditkeyup="" ev:onkeyup=""
 							ev:onrowindexchange="scwin.AL0104G0_onrowindexchange" ev:ontextimageclick="" ev:onviewchange="" fixedColumnWithHidden="true"
-							id="AL0104G0" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="순번" rowNumVisible="true" rowStatusHeaderValue=""
+							id="AL0104G0" ignoreCellClick="false" nextTabID="" rowNumHeaderValue="No." rowNumVisible="true" rowStatusHeaderValue=""
 							rowStatusVisible="false" rowStatusWidth="40" scrollByColumn="false" style="" useShiftKey="true" visibleRowNum="" wheelRows=""
 							autoFitMinWidth="0" disabledScrollHidden="" editModeEvent="" editModeEventIcon="" checkEditableInputClass="" keyMoveEditMode=""
 							moveKeyEditMode="" moveKeyEditModeAll="" ignoreNonEditableCellTabEnter="" readOnly="true" keepDefaultColumnWidth=""
@@ -319,160 +369,197 @@
 					</xf:group>
 				</xf:group> <!-- end pgm_list -->
 				<xf:group id="" class="vertical_line"></xf:group>
-				<xf:group class="pgm_detail grdr_20_2_a">
-					<xf:group id="" class="gr_sub_header" style="">
+				<xf:group id="" class="pgm_detail grdc_560_60_560 bms_box_wrap" style=""> <!-- grdc_560_60_560 영역 -->
+					<xf:group class="pgm_sublist grdr_20_36_a">
 						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="배정 안된 차량 목록" style=""></w2:textbox>
+							<w2:textbox class="df_tt fl view ico-view" id="" label="배정 안된 차량 목록" style=""></w2:textbox>
+						</xf:group>
+						
+						<xf:group id="" class="gr_sub_header" style="">
+							<xf:group class="gr_sub_search" id="pgm_sub_search" style="">
+								<xf:group class="label" id="" style="">
+									<w2:span class="" id="" label="찾기"></w2:span>
+								</xf:group>
+								<xf:group class="search" id="" style="">
+									<xf:input id="search_sub_input" class="search_input" style="width:210px;" ref="data:dma_sub_search.CONTENT" placeholder="차량ID 또는 차량번호"></xf:input>
+								</xf:group>
+								<w2:wframe id="wfm_subBtn" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
+							</xf:group>
+						</xf:group>
+						
+						<xf:group id="" class="pgm_detail2" style="">
+							<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" autoFitMinWidth="0" captionTitle=""
+								checkEditableInputClass="" class="cm_grid right" dataList="data:dlt_BMS_VHC_MST" disabledScrollHidden="" editModeEvent=""
+								editModeEventIcon="" enterKeyMove="" ev:onafteredit="" ev:onbeforecolumnmove="" ev:oncellclick="" ev:oneditkeyup="" ev:onkeyup=""
+								ev:onrowindexchange="" ev:ontextimageclick="" ev:onviewchange="" excludeDeletedRows="" fixedColumnWithHidden="true" focusMode="row"
+								id="AL0104G1" ignoreCellClick="false" ignoreNonEditableCellTabEnter="" keepDefaultColumnWidth="" keyMoveEditMode=""
+								moveKeyEditMode="" moveKeyEditModeAll="" nextTabID="" oddEvenColorDisplay="" readOnly="true" rowNumHeaderValue="No."
+								rowNumStatusResize="" rowNumStatusUniqueId="" rowNumVisible="true" rowNumWidth="" rowStatusHeaderValue="" rowStatusVisible="false"
+								rowStatusWidth="40" scrollByColumn="false" showSortableUseFilter="" sortOrderReverse="" sortable="" sortedIconPosition="" style=""
+								summaryAuto="" useCtrlOnMultisort="" useFilterList="" useFilterListSync="" useShiftKey="true" visibleRowNum="" wheelRows="">
+								<w2:caption style="" id="caption2" value="this is a grid caption."></w2:caption>
+								<w2:header style="" id="header2">
+									<w2:row style="" id="row3">
+										<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column7"
+											value="차량ID" blockSelect="false" displayMode="label">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column6"
+											value="차량번호" blockSelect="false" displayMode="label">
+										</w2:column>
+										<!-- <w2:column removeBorderStyle="false" width="134" inputType="text" style="height:20px" id="column5"
+											value="운수사" blockSelect="false" displayMode="label">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="89" inputType="text" style="height:20px" id="column4"
+											value="제조사" blockSelect="false" displayMode="label">
+										</w2:column> -->
+										<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column3"
+											value="차량모델명" blockSelect="false" displayMode="label">
+										</w2:column>
+										<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column2"
+											value="연료" blockSelect="false" displayMode="label">
+										</w2:column> -->
+										<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column2"
+											value="" blockSelect="false" displayMode="label">
+										</w2:column>
+									</w2:row>
+								</w2:header>
+								<w2:gBody style="" id="gBody2">
+									<w2:row style="" id="row4">
+										<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="VHC_ID"
+											value="" blockSelect="false" displayMode="label">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="VHC_NO"
+											value="" blockSelect="false" displayMode="label">
+										</w2:column>
+										<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="COMP_NM"
+											value="" blockSelect="false" displayMode="label" textAlign="left">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="MAKER" value=""
+											blockSelect="false" displayMode="label" textAlign="left">
+										</w2:column> -->
+										<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="MODEL_NM"
+											value="" blockSelect="false" displayMode="label" textAlign="left">
+										</w2:column>
+										<!-- <w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="VHC_FUEL"
+											value="" blockSelect="false" displayMode="label">
+										</w2:column> -->
+										<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id=""
+											value="" blockSelect="false" displayMode="label">
+										</w2:column>
+									</w2:row>
+								</w2:gBody>
+								<w2:footer style="" id="footer1">
+									<w2:row style="" id="row3">
+										<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;"
+											id="column42" value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan=""
+											expression="&quot;데이터 개수 : &quot; + COUNT(&apos;COMP_ID&apos;)" textAlign="left">
+										</w2:column>
+									</w2:row>
+								</w2:footer>							
+							</w2:gridView>
+						</xf:group>
+					</xf:group> <!-- end pgm_detail -->
+					<xf:group style="position: relative; text-align: center;">
+						<xf:group style="position: absolute; top: 50%; transform: translate(0px, -30px);">
+							<w2:anchor class="btn_com right" id="btn_grid_add" outerDiv="" style="" ev:onclick="scwin.btn_grid_add_onclick">
+								<xf:label><![CDATA[→]]></xf:label>
+							</w2:anchor>
+							<w2:anchor class="btn_com left" id="btn_grid_del" outerDiv="" style="margin-top:5px" ev:onclick="scwin.btn_grid_del_onclick">
+								<xf:label><![CDATA[←]]></xf:label>
+							</w2:anchor>
 						</xf:group>
 					</xf:group>
-					<xf:group></xf:group>
-					<xf:group id="" class="pgm_detail2" style="">
-						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" autoFitMinWidth="0" captionTitle=""
-							checkEditableInputClass="" class="cm_grid right" dataList="data:dlt_BMS_VHC_MST" disabledScrollHidden="" editModeEvent=""
-							editModeEventIcon="" enterKeyMove="" ev:onafteredit="" ev:onbeforecolumnmove="" ev:oncellclick="" ev:oneditkeyup="" ev:onkeyup=""
-							ev:onrowindexchange="" ev:ontextimageclick="" ev:onviewchange="" excludeDeletedRows="" fixedColumnWithHidden="true" focusMode="row"
-							id="AL0104G1" ignoreCellClick="false" ignoreNonEditableCellTabEnter="" keepDefaultColumnWidth="" keyMoveEditMode=""
-							moveKeyEditMode="" moveKeyEditModeAll="" nextTabID="" oddEvenColorDisplay="" readOnly="true" rowNumHeaderValue="순번"
-							rowNumStatusResize="" rowNumStatusUniqueId="" rowNumVisible="true" rowNumWidth="" rowStatusHeaderValue="" rowStatusVisible="false"
-							rowStatusWidth="40" scrollByColumn="false" showSortableUseFilter="" sortOrderReverse="" sortable="" sortedIconPosition="" style=""
-							summaryAuto="" useCtrlOnMultisort="" useFilterList="" useFilterListSync="" useShiftKey="true" visibleRowNum="" wheelRows="">
-							<w2:caption style="" id="caption2" value="this is a grid caption."></w2:caption>
-							<w2:header style="" id="header2">
-								<w2:row style="" id="row3">
-									<w2:column removeBorderStyle="false" width="97" inputType="text" style="height:20px" id="column7"
-										value="차량 ID" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column6"
-										value="차량번호" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="134" inputType="text" style="height:20px" id="column5"
-										value="운수사" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="89" inputType="text" style="height:20px" id="column4"
-										value="제조사" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="96" inputType="text" style="height:20px" id="column3"
-										value="차량모델명" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column2"
-										value="연료" blockSelect="false" displayMode="label">
-									</w2:column>
-								</w2:row>
-							</w2:header>
-							<w2:gBody style="" id="gBody2">
-								<w2:row style="" id="row4">
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="VHC_ID"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="VHC_NO"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="COMP_NM"
-										value="" blockSelect="false" displayMode="label" textAlign="left">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="MAKER" value=""
-										blockSelect="false" displayMode="label" textAlign="left">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="MODEL_NM"
-										value="" blockSelect="false" displayMode="label" textAlign="left">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="VHC_FUEL"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-								</w2:row>
-							</w2:gBody>
-							<w2:footer style="" id="footer1">
-								<w2:row style="" id="row3">
-									<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;"
-										id="column42" value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan=""
-										expression="&quot;데이터 개수 : &quot; + COUNT(&apos;COMP_ID&apos;)" textAlign="left">
-									</w2:column>
-								</w2:row>
-							</w2:footer>							
-						</w2:gridView>
-					</xf:group>
-				</xf:group> <!-- end pgm_detail -->
-				<xf:group style="position: relative; text-align: center;">
-					<xf:group style="position: absolute; top: 50%; transform: translate(0px, -30px);">
-						<w2:anchor class="btn_com right" id="btn_grid_add" outerDiv="" style="" ev:onclick="scwin.btn_grid_add_onclick">
-							<xf:label><![CDATA[→]]></xf:label>
-						</w2:anchor>
-						<w2:anchor class="btn_com left" id="btn_grid_del" outerDiv="" style="margin-top:5px" ev:onclick="scwin.btn_grid_del_onclick">
-							<xf:label><![CDATA[←]]></xf:label>
-						</w2:anchor>
-					</xf:group>
-				</xf:group>
-				<xf:group class="pgm_detail grdr_20_2_a">					
-					<xf:group id="" class="gr_sub_header" style="">
-						<xf:group class="defaultbox" id="" style="">
-							<w2:textbox class="df_tt fl" id="" label="배정 된 차량 목록" style=""></w2:textbox>
+					<xf:group class="pgm_detail grdr_20_36_a">		
+								
+						<xf:group id="" class="gr_sub_header" style="">
+							<xf:group class="defaultbox" id="" style="">
+								<w2:textbox class="df_tt fl view ico-view" id="" label="배정 된 차량 목록" style=""></w2:textbox>
+							</xf:group>
+						</xf:group>	
+							
+						<xf:group id="" class="gr_sub_header" style="">
+							<xf:group class="gr_sub_search" id="" style="">
+								<xf:group class="label" id="" style="">
+									<w2:span class="" id="" label="찾기"></w2:span>
+								</xf:group>
+								<xf:group class="search" id="" style="">
+									<xf:input id="search_sub_input2" class="search_input" ref="data:dma_sub_search.CONTENT2" placeholder="차량ID 또는 차량번호"></xf:input>
+								</xf:group>
+								<w2:wframe id="wfm_subBtn2" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe>
+							</xf:group>
 						</xf:group>
-					</xf:group>		
-					<xf:group></xf:group>				
-					<xf:group>
-						<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" autoFitMinWidth="0" captionTitle=""
-							checkEditableInputClass="" class="cm_grid right" dataList="data:dlt_BRT_REP_ROUT_VHC_CMPSTN" disabledScrollHidden="" editModeEvent=""
-							editModeEventIcon="" enterKeyMove="" ev:onafteredit="" ev:onbeforecolumnmove="" ev:oncellclick="" ev:oneditkeyup="" ev:onkeyup=""
-							ev:onrowindexchange="" ev:ontextimageclick="" ev:onviewchange="" excludeDeletedRows="" fixedColumnWithHidden="true" focusMode="row"
-							id="AL0104G2" ignoreCellClick="false" ignoreNonEditableCellTabEnter="" keepDefaultColumnWidth="" keyMoveEditMode=""
-							moveKeyEditMode="" moveKeyEditModeAll="" nextTabID="" oddEvenColorDisplay="" readOnly="true" rowNumHeaderValue="순번"
-							rowNumStatusResize="" rowNumStatusUniqueId="" rowNumVisible="true" rowNumWidth="" rowStatusHeaderValue="" rowStatusVisible="false"
-							rowStatusWidth="40" scrollByColumn="false" showSortableUseFilter="" sortOrderReverse="" sortable="" sortedIconPosition="" style=""
-							summaryAuto="" useCtrlOnMultisort="" useFilterList="" useFilterListSync="" useShiftKey="true" visibleRowNum="" wheelRows="">
-							<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
-							<w2:header style="" id="header1">
-								<w2:row style="" id="row1">
-									<w2:column removeBorderStyle="false" width="97" inputType="text" style="height:20px" id="column7"
-										value="차량 ID" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column6"
-										value="차량번호" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="134" inputType="text" style="height:20px" id="column5"
-										value="운수사" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="89" inputType="text" style="height:20px" id="column4"
-										value="제조사" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="96" inputType="text" style="height:20px" id="column3"
-										value="차량모델명" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column2"
-										value="연료" blockSelect="false" displayMode="label">
-									</w2:column>
-								</w2:row>
-							</w2:header>
-							<w2:gBody style="" id="gBody1">
-								<w2:row style="" id="row2">
-									<w2:column removeBorderStyle="false" width="97" inputType="text" style="height:20px" id="VHC_ID"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="VHC_NO"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="134" inputType="text" style="height:20px" id="COMP_NM"
-										value="" blockSelect="false" displayMode="label" textAlign="left">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="89" inputType="text" style="height:20px" id="MAKER" value=""
-										blockSelect="false" displayMode="label" textAlign="left">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="96" inputType="text" style="height:20px" id="MODEL_NM"
-										value="" blockSelect="false" displayMode="label" textAlign="left">
-									</w2:column>
-									<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="VHC_FUEL"
-										value="" blockSelect="false" displayMode="label">
-									</w2:column>
-								</w2:row>
-							</w2:gBody>
-							<w2:footer style="" id="footer1">
-								<w2:row style="" id="row3">
-									<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;"
-										id="column42" value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan=""
-										expression="&quot;데이터 개수 : &quot; + COUNT(&apos;COMP_ID&apos;)" textAlign="left">
-									</w2:column>
-								</w2:row>
-							</w2:footer>							
-						</w2:gridView>
+									
+						<xf:group>
+							<w2:gridView alwaysTriggerScrollStart="" autoFit="lastColumn" autoFitMinWidth="0" captionTitle=""
+								checkEditableInputClass="" class="cm_grid right" dataList="data:dlt_BRT_REP_ROUT_VHC_CMPSTN" disabledScrollHidden="" editModeEvent=""
+								editModeEventIcon="" enterKeyMove="" ev:onafteredit="" ev:onbeforecolumnmove="" ev:oncellclick="" ev:oneditkeyup="" ev:onkeyup=""
+								ev:onrowindexchange="" ev:ontextimageclick="" ev:onviewchange="" excludeDeletedRows="" fixedColumnWithHidden="true" focusMode="row"
+								id="AL0104G2" ignoreCellClick="false" ignoreNonEditableCellTabEnter="" keepDefaultColumnWidth="" keyMoveEditMode=""
+								moveKeyEditMode="" moveKeyEditModeAll="" nextTabID="" oddEvenColorDisplay="" readOnly="true" rowNumHeaderValue="No."
+								rowNumStatusResize="" rowNumStatusUniqueId="" rowNumVisible="true" rowNumWidth="" rowStatusHeaderValue="" rowStatusVisible="false"
+								rowStatusWidth="40" scrollByColumn="false" showSortableUseFilter="" sortOrderReverse="" sortable="" sortedIconPosition="" style=""
+								summaryAuto="" useCtrlOnMultisort="" useFilterList="" useFilterListSync="" useShiftKey="true" visibleRowNum="" wheelRows="">
+								<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
+								<w2:header style="" id="header1">
+									<w2:row style="" id="row1">
+										<w2:column removeBorderStyle="false" width="97" inputType="text" style="height:20px" id="column7"
+											value="차량ID" blockSelect="false" displayMode="label">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column6"
+											value="차량번호" blockSelect="false" displayMode="label">
+										</w2:column>
+										<!-- <w2:column removeBorderStyle="false" width="134" inputType="text" style="height:20px" id="column5"
+											value="운수사" blockSelect="false" displayMode="label">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="89" inputType="text" style="height:20px" id="column4"
+											value="제조사" blockSelect="false" displayMode="label">
+										</w2:column> -->
+										<w2:column removeBorderStyle="false" width="150" inputType="text" style="height:20px" id="column3"
+											value="차량모델명" blockSelect="false" displayMode="label">
+										</w2:column>
+										<!-- <w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column2"
+											value="연료" blockSelect="false" displayMode="label">
+										</w2:column> -->
+										<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column0"
+											value="" blockSelect="false" displayMode="label">
+										</w2:column>
+									</w2:row>
+								</w2:header>
+								<w2:gBody style="" id="gBody1">
+									<w2:row style="" id="row2">
+										<w2:column removeBorderStyle="false" width="97" inputType="text" style="height:20px" id="VHC_ID"
+											value="" blockSelect="false" displayMode="label">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="VHC_NO"
+											value="" blockSelect="false" displayMode="label">
+										</w2:column>
+										<!-- <w2:column removeBorderStyle="false" width="134" inputType="text" style="height:20px" id="COMP_NM"
+											value="" blockSelect="false" displayMode="label" textAlign="left">
+										</w2:column>
+										<w2:column removeBorderStyle="false" width="89" inputType="text" style="height:20px" id="MAKER" value=""
+											blockSelect="false" displayMode="label" textAlign="left">
+										</w2:column> -->
+										<w2:column removeBorderStyle="false" width="96" inputType="text" style="height:20px" id="MODEL_NM"
+											value="" blockSelect="false" displayMode="label" textAlign="left">
+										</w2:column>
+										<!-- <w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id="VHC_FUEL"
+											value="" blockSelect="false" displayMode="label">
+										</w2:column> -->
+										<w2:column removeBorderStyle="false" width="70" inputType="select" style="height:20px" id=""
+											value="" blockSelect="false" displayMode="label">
+										</w2:column>
+									</w2:row>
+								</w2:gBody>
+								<w2:footer style="" id="footer1">
+									<w2:row style="" id="row3">
+										<w2:column removeBorderStyle="false" width="NaN" inputType="expression" style="height:20px;"
+											id="column42" value="" blockSelect="false" displayMode="label" colSpan="15" rowSpan=""
+											expression="&quot;데이터 개수 : &quot; + COUNT(&apos;COMP_ID&apos;)" textAlign="left">
+										</w2:column>
+									</w2:row>
+								</w2:footer>							
+							</w2:gridView>
+						</xf:group>
 					</xf:group>
 				</xf:group>
 			</xf:group> <!-- end content --> 

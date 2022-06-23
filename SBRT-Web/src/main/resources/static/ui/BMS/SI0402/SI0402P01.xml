@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ev="http://www.w3.org/2001/xml-events"
+	xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+	 <head>
+	<w2:type>DEFAULT</w2:type>
+	<w2:buildDate/>
+	<xf:model>
+		<xf:instance>
+			<data xmlns="" />
+		</xf:instance>
+		<w2:dataCollection baseNode="map">
+			<w2:dataMap baseNode="map" id="dma_search">
+				<w2:keyInfo>
+					<w2:key id="NODE_ECPT_ID" name="노드제외ID" dataType="text"></w2:key>
+					<w2:key id="NODE_TYPE" name="name2" dataType="text"></w2:key>
+					<w2:key id="CONTENT" name="name3" dataType="text"></w2:key>
+				</w2:keyInfo>
+			</w2:dataMap>
+			<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_NODE_MST" saveRemovedData="true">
+				<w2:columnInfo>
+					<w2:column id="chk" name="선택" dataType="text"></w2:column>
+					<w2:column id="NODE_ID" name="노드ID" dataType="text"></w2:column>
+					<w2:column id="MOCK_NODE_ID" name="표준노드ID" dataType="text"></w2:column>
+					<w2:column id="NODE_NM" name="노드명" dataType="text"></w2:column>
+					<w2:column id="NODE_TYPE" name="노드유형" dataType="text"></w2:column>
+					<w2:column id="STTN_ID" name="정류소ID" dataType="text"></w2:column>
+					<w2:column id="STTN_NO" name="정류소번호" dataType="text"></w2:column>
+					<w2:column id="CRS_ID" name="교차로ID" dataType="text"></w2:column>
+					<w2:column id="GPS_X" name="경도" dataType="text"></w2:column>
+					<w2:column id="GPS_Y" name="위도" dataType="text"></w2:column>
+				</w2:columnInfo>
+			</w2:dataList>
+		</w2:dataCollection>
+		<w2:workflowCollection></w2:workflowCollection>
+		<xf:submission id="sub_SI0402P0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_NODE_MST" action="/si/SI0402P0R0"
+			method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+			processMsg="" ev:submit="" ev:submitdone="scwin.sub_SI0402P0R0_submitdone" ev:submiterror="" abortTrigger="">
+		</xf:submission>
+	</xf:model>
+	<script type="text/javascript" lazy="false"><![CDATA[
+
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		dma_search.set("NODE_ECPT_ID" , scwin.param.data.NODE_IDS);
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		var btnOptions = 
+		[
+			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
+		];
+		com.setMainBtn3(wfm_mainBtn, btnOptions);
+		
+		var codeOptions = [{ code : "NODE_TYPE", compID : "sbx_NodeType, SI0402P0:NODE_TYPE"}];
+		com.setCommonDtl(codeOptions, function() {
+			com.executeSubmission(sub_SI0402P0R0);
+		});
+						
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	
+	scwin.btn_search_onclick = function() {
+		com.executeSubmission(sub_SI0402P0R0);
+	};
+	
+	scwin.btn_confirm_onclick = function() {
+		var data = SI0402P0.getCheckedJSON("chk");
+		com.closePopup(scwin.closeCallbackFncName, data);		
+	};
+	
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();		
+	};
+	scwin.SI0402P0_oncellclick = function(row,col) {
+		if(col==0)return;
+		if(SI0402P0.getCellChecked(row,"chk")){
+			SI0402P0.setCellChecked(row,"chk",false)
+		}
+		else {
+			SI0402P0.setCellChecked(row,"chk",true)
+		}
+	};
+	
+	scwin.sub_SI0402P0R0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+		
+			var ids=dma_search.get("NODE_ECPT_ID");
+			com.excludeItemsByGrid(SI0402P0, ids, "NODE_ID");
+		}
+	};
+	
+	scwin.sbx_NodeType_onchange = function(row,oldRow) {
+		scwin.btn_search_onclick();
+	};
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+				<xf:group class="gr_search" id="" style="">
+					<xf:group class="label" id="" style="">
+						<w2:span class="" id="" label="노드유형"></w2:span>
+					</xf:group>
+					<xf:group class="search" id="" style="">
+						<xf:select1 id="sbx_NodeType" disabledClass="w2selectbox_disabled" ref="data:dma_search.NODE_TYPE" appearance="minimal"
+							style="" class="search_type" direction="auto" chooseOption="true" chooseOptionLabel="-전체-" displayMode="label" allOption="" 
+							optionOrder="false" submenuSize="auto" disabled="false" textAlign="left" ev:onchange="scwin.sbx_NodeType_onchange">
+							<xf:choices></xf:choices>
+						</xf:select1>
+						<xf:input id="search_input" class="search_input" ref="data:dma_search.CONTENT" placeholder="노드ID 또는 노드명"></xf:input>
+					</xf:group>
+					<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_mainBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
+			</xf:group>
+			
+			<xf:group style="" id="" class="popup_content">
+				<w2:gridView  fixedColumnWithHidden="true" dataList="data:dlt_BMS_NODE_MST" useShiftKey="false" readOnly="true"
+					style="width:775px" scrollByColumn="false" id="SI0402P0" autoFit="allColumn" class="cm_grid popup"
+					ev:oncellclick="scwin.SI0402P0_oncellclick">
+					<w2:header style="" id="header1">
+						<w2:row style="" id="row1">
+							<w2:column width="39" inputType="checkbox" style="height:20px" id="chkHeader" value="선택" blockSelect="false"></w2:column>
+							<w2:column width="101" inputType="text" style="height:20px" id="column7" value="노드ID" blockSelect="false"></w2:column>
+							<w2:column width="101" inputType="text" style="height:20px" id="column7" value="표준노드ID" blockSelect="false"></w2:column>
+							<w2:column width="90" inputType="text" style="height:20px" id="column5" value="노드명" blockSelect="false"></w2:column>
+							<w2:column width="90" inputType="text" style="height:20px" id="column5" value="노드유형" blockSelect="false"></w2:column>
+							<w2:column width="101" inputType="text" style="height:20px" id="column7" value="정류소ID" blockSelect="false"></w2:column>
+							<w2:column width="101" inputType="text" style="height:20px" id="column7" value="정류소번호" blockSelect="false"></w2:column>
+							<w2:column width="101" inputType="text" style="height:20px" id="column7" value="교차로ID" blockSelect="false"></w2:column>
+							<w2:column width="90" inputType="text" style="height:20px" id="column5" value="경도" blockSelect="false"></w2:column>
+							<w2:column width="90" inputType="text" style="height:20px" id="column5" value="위도" blockSelect="false"></w2:column>
+						</w2:row>
+						</w2:header>
+						<w2:gBody id="gBody1" style="">
+							<w2:row id="row2" style="">
+								<w2:column falseValue="0" defaultValue="" trueValue="1" width="39" readOnly="false" style="height:20px"
+									inputType="checkbox" id="chk" blockSelect="false">
+								</w2:column>
+								<w2:column width="" inputType="text" style="height:20px" id="NODE_ID" blockSelect="false"></w2:column>
+								<w2:column width="" inputType="text" style="height:20px" id="MOCK_NODE_ID" blockSelect="false"></w2:column>
+								<w2:column width="" inputType="text" style="height:20px" id="NODE_NM" blockSelect="false"></w2:column>
+								<w2:column blockSelect="false" displayMode="label" eventPriority="oneditend" id="NODE_TYPE"
+									inputType="select" removeBorderStyle="false" style="height:20px" width="">
+								</w2:column>
+								<w2:column width="" inputType="text" style="height:20px" id="STTN_ID" blockSelect="false"></w2:column>
+								<w2:column width="" inputType="text" style="height:20px" id="STTN_NO" blockSelect="false"></w2:column>
+								<w2:column width="" inputType="text" style="height:20px" id="CRS_ID" blockSelect="false"></w2:column>
+								<w2:column width="" inputType="text" style="height:20px" id="GPS_X" blockSelect="false"></w2:column>
+								<w2:column width="" inputType="text" style="height:20px" id="GPS_Y" blockSelect="false"></w2:column>
+						</w2:row>
+					</w2:gBody>
+				</w2:gridView>
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

@@ -15,6 +15,8 @@
 						,	A.DRV_ID
 						,	A.GPS_X
 						,	A.GPS_Y
+						,	A.GPS_X_RAW
+						,	A.GPS_Y_RAW
 						,	A.TM_X
 						,	A.TM_Y
 						,	A.OPER_STS
@@ -50,6 +52,11 @@
 						,	A.PRV_PLCE_NM
 						, 	F.NODE_TYPE
 						
+						,	H.GPS_X AS ST_GPS_X
+						,	H.GPS_Y AS ST_GPS_Y
+						,	I.GPS_X AS ED_GPS_X
+						,	I.GPS_Y AS ED_GPS_Y
+						
 		FROM  			BRT_CUR_OPER_INFO A
 		LEFT JOIN   	BMS_ROUT_MST	B
 			ON				A.ROUT_ID = B.ROUT_ID
@@ -60,7 +67,14 @@
 		LEFT JOIN	  	BMS_TRANSCOMP_MST E
 			ON				C.COMP_ID = E.COMP_ID
 		LEFT JOIN		BMS_NODE_MST F
-			ON				A.NEXT_NODE_ID = F.NODE_TYPE	
+			ON				A.NEXT_NODE_ID = F.NODE_TYPE
+			
+		LEFT JOIN 		BMS_LINK_MST G
+			ON				A.LINK_ID = G.LINK_ID
+		LEFT JOIN 		BMS_NODE_MST H
+			ON				G.ST_NODE_ID = H.NODE_ID
+		LEFT JOIN		BMS_NODE_MST I
+			ON				G.ED_NODE_ID = I.NODE_ID				
 			
 		WHERE			A.OPER_DT = FN_DATE_TO_OPER_DT(NOW()) <!-- DATE_FORMAT(NOW(), '%Y/%m/%d') -->
 		AND				A.OPER_STS != 'OS002'
@@ -358,7 +372,7 @@
 					,	C.ORGA_NM
 					,	D.ROUT_NM
 					
-		FROM			BRT_MOVE_OPER_EVENT_HIS A
+		FROM			BRT_OPER_EVENT_HIS A
 		LEFT JOIN	  	BMS_NODE_MST B
 			ON			A.EVT_DATA = B.NODE_ID
 		LEFT JOIN	  	BMS_VOC_ORGA_INFO C
@@ -377,7 +391,11 @@
 		</if>
 		<if test="CONTENT3 != null and CONTENT3 != ''">
 			AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
-		</if>			
+		</if>	
+		<if test="VHC_ID != ''">
+			AND A.VHC_ID = #{VHC_ID}
+		</if>
+				
 		ORDER BY		UPD_DTM DESC
 		LIMIT			100;			
 		
@@ -429,6 +447,9 @@
 		</if>
 		<if test="CONTENT3 != null and CONTENT3 != ''">
 			AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
+		</if>
+		<if test="VHC_ID != ''">
+			AND A.VHC_ID = #{VHC_ID}
 		</if>					
 		ORDER BY		SEND_DATE DESC
 		LIMIT			100;			

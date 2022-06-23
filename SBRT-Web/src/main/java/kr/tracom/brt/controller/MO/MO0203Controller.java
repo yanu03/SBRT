@@ -55,4 +55,16 @@ public class MO0203Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/mo/MO0203P0R0")
+	public @ResponseBody Map<String, Object> MO0203P0R0() throws Exception {
+		result.setData("dlt_BMS_FCLT_INFO", mo0203Service.MO0203P0R0());
+		return result.getResult();
+	}
+	
+	@RequestMapping("/mo/MO0203P0R1")
+	public @ResponseBody Map<String, Object> FM0202G0R1() throws Exception {
+		result.setData("dlt_PARAM_KIND", mo0203Service.MO0203P0R1());
+		return result.getResult();
+	}	
+	
 }
