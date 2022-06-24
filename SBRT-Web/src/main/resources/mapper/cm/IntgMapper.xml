@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.cm.domain.Intg.IntgMapper">
+
+<select id="selectIntgList" resultType="Map">
+	SELECT
+		A.INTG_FCLT_ID
+		,A.FCLT_NM
+		,A.FCLT_LABEL
+		,A.MAKER
+		,A.PRES_ID
+		,A.MAKER_CODE
+		,A.LOC_ID
+		,A.LOC_NM
+		,A.OWNR_ID
+		,A.ROOM_ID
+		,A.FCLT_TYPE_NM
+		,B.FCLT_ID
+	FROM
+		BMS_INTG_AIRCON_INFO A
+		LEFT JOIN BMS_FCLT_INFO B
+		ON A.INTG_FCLT_ID = B.INTG_FCLT_ID
+	<where>	
+		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+			AND A.INTG_FCLT_ID LIKE CONCAT('%',#{CONTENT},'%') || A.FCLT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+		<if test="TYPE == 'INTG_FCLT_ID'">
+			AND A.INTG_FCLT_ID LIKE CONCAT('%',#{CONTENT},'%')
+		</if>
+		<if test="TYPE == 'FCLT_NM'">
+			AND A.FCLT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+		</if>
+	</where>			
+</select>
+
+<select id="selectIntgMstList" resultType="Map">
+	SELECT
+		INTG_URL
+		,INTG_API_KEY
+	FROM
+		BMS_INTG_MST
+	WHERE
+		<if test="INTG_TYPE == 'AR'">
+			INTG_ID = 'IT00000026'
+		</if>
+		<if test="INTG_TYPE == 'PC'">
+			INTG_ID = 'IT00000027'
+		</if>
+		<if test="INTG_TYPE == 'DC'">
+			INTG_ID = 'IT00000028'
+		</if>
+		<if test="INTG_TYPE == 'SL'">
+			INTG_ID = 'IT00000037'
+		</if>
+		<if test="INTG_TYPE == 'SR'">
+			INTG_ID = 'IT00000038'
+		</if>
+		
+</select>
+
+<select id="selectIntg" resultType="Map">
+	SELECT			INTG_ID
+				,	INTG_NM
+				,	INTG_ENM
+				,	INTG_TYPE
+				,	INTG_URL
+				,	INTG_API_KEY
+				,	ID
+				,	PWD
+				,	REMARK
+				,	UPD_DTM
+				,	UPD_ID
+	FROM			BMS_INTG_MST
+	
+	WHERE			INTG_ID = #{INTG_ID}			
+				
+</select>
+
+<insert id="insertAirconInfo" parameterType="Map">
+	INSERT INTO 
+		BMS_INTG_AIRCON_INFO(
+			INTG_FCLT_ID
+			,FCLT_NM
+			,FCLT_LABEL
+			,MAKER
+			,PRES_ID
+			,MAKER_CODE
+			,LOC_ID
+			,LOC_NM
+			,OWNR_ID
+			,ROOM_ID
+			,FCLT_TYPE_NM
+		)VALUES(
+			#{INTG_FCLT_ID}
+			,#{FCLT_NM}
+			,#{FCLT_LABEL}
+			,#{MAKER}
+			,#{PRES_ID}
+			,#{MAKER_CODE}
+			,#{LOC_ID}
+			,#{LOC_NM}
+			,#{OWNR_ID}
+			,#{ROOM_ID}
+			,#{FCLT_TYPE_NM}
+		)
+		ON DUPLICATE KEY UPDATE
+		INTG_FCLT_ID	= VALUES(INTG_FCLT_ID)
+		,LOC_NM	= VALUES(LOC_NM)
+</insert>
+
+
+</mapper>

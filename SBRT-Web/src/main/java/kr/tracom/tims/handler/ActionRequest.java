@@ -1,5 +1,7 @@
 package kr.tracom.tims.handler;
 
+import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import kr.tracom.cm.domain.OperPlan.OperPlanService;
 import kr.tracom.platform.attribute.AtCode;
@@ -23,6 +28,7 @@ import kr.tracom.platform.service.config.KafkaTopics;
 import kr.tracom.tims.kafka.KafkaProducer;
 import kr.tracom.tims.manager.ThreadManager;
 import kr.tracom.util.DateUtil;
+import kr.tracom.ws.WsClient;
 
 @Component
 public class ActionRequest {
@@ -34,13 +40,12 @@ public class ActionRequest {
     
     @Autowired
     KafkaProducer kafkaProducer;
-
     
     @Autowired
     ThreadManager threadManager;
     
-
-
+    @Autowired
+	WsClient webSocketClient;
 
     public Map<String, Object> handle(TimsMessage timsMessage, String sessionId){
     	
@@ -138,6 +143,16 @@ public class ActionRequest {
             	if(actionCode == AtBrtAction.facilityParam) {
             		String actionData = brtAction.getReserved();        		
             		//String dataArr[] = actionData.split(",");
+            		
+            		Gson gson = new Gson();
+					Type resultType = new TypeToken<List<Map<String, Object>>>(){}.getType();
+					List<Map<String, Object>> jsonList = gson.fromJson(actionData, resultType);
+            		
+					//웹소켓 전송이 필요한 경우
+					if(jsonList != null) {
+						webSocketClient.sendMessageList(jsonList);
+					}
+					
             		
             		logger.info("======== 시설물 매개변수: {}", actionData);
             	}

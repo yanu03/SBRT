@@ -48,6 +48,10 @@ public class SetRequest {
 	             case BisAtCode.BLUEMOBILE_STATUS_INFO:
 	            	 facilityParam.handle(attrId,  atMessage.getAttrData(), sessionId);
 	                 break;
+	                 
+	             case BisAtCode.FACILITY_STATUS_INFO:
+	            	 facilityParam.handle(attrId,  atMessage.getAttrData(), sessionId);
+	                 break;
 	         }
              
          }    	

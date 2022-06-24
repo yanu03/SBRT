@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.tims.domain.BisMapper">
+	
+	<!--ParamKind코드값 select-->
+	<select id="selectDlCdParamKindInfo" resultType="Map">
+		SELECT
+			DL_CD
+		FROM
+			BMS_DL_CD_INFO
+		WHERE
+			CO_CD = "PARAM_KIND"
+		  AND NUM_VAL4 = #{PARAM_KIND}
+	</select>
+
+	<!--ParamDiv코드값 select-->
+	<select id="selectDlCdParamDivInfo" resultType="Map">
+		SELECT
+			DL_CD
+		FROM
+			BMS_DL_CD_INFO
+		WHERE
+			CO_CD = "PARAM_DIV"
+		  AND NUM_VAL4 = #{PARAM_DIV}
+	</select>
+
+	<!--스크린도어 현정보 insert-->
+	<update id="insertFacilityParam" parameterType="Map">
+		UPDATE
+			BMS_FCLT_COND_PARAM_INFO
+		SET
+			DATA_VAL = #{DATA_VAL}
+		  ,SEND_DTM = #{OCR_DTM}
+		  ,UPD_DTM = NOW(3)
+		WHERE
+			MNG_ID = #{MNG_ID}
+		  AND PARAM_DIV = #{PARAM_DIV}
+		  AND PARAM_KIND = #{PARAM_KIND}
+	</update>
+</mapper>
