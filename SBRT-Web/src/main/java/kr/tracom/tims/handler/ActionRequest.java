@@ -134,7 +134,14 @@ public class ActionRequest {
                     kafkaProducer.sendKafka(KafkaTopics.T_BRT, tMessage, "");	
             		
 
-            	} else {
+            	}
+            	if(actionCode == AtBrtAction.facilityParam) {
+            		String actionData = brtAction.getReserved();        		
+            		//String dataArr[] = actionData.split(",");
+            		
+            		logger.info("======== 시설물 매개변수: {}", actionData);
+            	}
+            	else {
             		
             	}
 
