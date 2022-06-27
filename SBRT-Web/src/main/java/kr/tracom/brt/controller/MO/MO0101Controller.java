@@ -128,4 +128,10 @@ public class MO0101Controller extends ControllerSupport {
 		return result.getResult();
 	}	
 	
+	@RequestMapping("/mo/selectSigPhaseInfo")
+	public @ResponseBody Map<String, Object> selectSigPhaseInfo() throws Exception {
+		result.setData("dlt_BMS_CRS_SIGOPER_PHASE_INFO_HIS", mo0101Service.selectSigPhaseInfo());
+		return result.getResult();
+	}
+	
 }

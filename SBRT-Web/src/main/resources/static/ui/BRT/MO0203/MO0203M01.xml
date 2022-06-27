@@ -267,7 +267,7 @@
 				ev:submit="" ev:submitdone="scwin.sub_MO0203SHI1_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_selectVhcBit" ref="data:json,dma_search" target="data:json,dlt_vhcBit" action="/vhc/selectVhcBit" method="post" mediatype="application/json"
-				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
+				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_selectVhcBit_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_MO0203P0R0" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_FCLT_INFO" action="/mo/MO0203P0R0"
@@ -351,18 +351,23 @@
 		var param = com.getParameter();
 		dlt_BMS_ETA_INFO.removeAll();
 		dlt_BMS_SOONETA_INFO.removeAll();
+		
+		//B0제외한 BIT조회
+		com.executeSubmission(sub_selectVhcBit);
+		
+		
 		var tableStr = '';
 		var tableBody = '';
 		var talbeId = '';
 		var vhcImgSrc = '';
 		
 		//테이블 소스 시작
-		tableStr = '<table id="mf_tac_layout_contents_MN00070202_body_MO0203T0" style="" class="w2group w2tb bit_tb">'
-					+'<caption id="mf_tac_layout_contents_MN00070202_body_wq_uuid_505" class="w2group "></caption>'
-					+'<colgroup id="mf_tac_layout_contents_MN00070202_body_wq_uuid_506" class="w2group ">'
-					+'<col id="mf_tac_layout_contents_MN00070202_body_wq_uuid_507" style="width:25.00%;" class="w2group ">'
-					+'<col id="mf_tac_layout_contents_MN00070202_body_wq_uuid_508" style="width:37.50%" class="w2group ">'
-					+'<col id="mf_tac_layout_contents_MN00070202_body_wq_uuid_508" style="width:37.50%" class="w2group ">'
+		tableStr = '<table id="mf_tac_layout_contents_MN00070102_body_MO0203T0" style="" class="w2group w2tb bit_tb">'
+					+'<caption id="mf_tac_layout_contents_MN00070102_body_wq_uuid_505" class="w2group "></caption>'
+					+'<colgroup id="mf_tac_layout_contents_MN00070102_body_wq_uuid_506" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00070102_body_wq_uuid_507" style="width:25.00%;" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00070102_body_wq_uuid_508" style="width:37.50%" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00070102_body_wq_uuid_508" style="width:37.50%" class="w2group ">'
 					+'</colgroup>'
 					+'<tbody>';
 		
@@ -390,68 +395,69 @@
 			}
 			
 			//보내는게 1개
-			if(dataList.length == 1){
-				tableBody += '<tr id="mf_tac_layout_contents_MN00070202_body_wq_uuid_511" class="w2group">'
-					+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 12px;" class="w2span ">'
+			if(dlt_BMS_ETA_INFO.getDataLength() == 1 || dlt_BMS_SOONETA_INFO.getDataLength() == 1){
+				tableBody += '<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_511" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 12px;" class="w2span ">'
 					+dlt_BMS_ETA_INFO.getCellData(0, "ROUT_NM")
 					+'</span>'
 					+'</td>'
-					+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px; color: yellow;" class="w2span ">'
+					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px; color: yellow;" class="w2span ">'
 					+dlt_BMS_ETA_INFO.getCellData(0, "REMAIN_STTN")
 					+'</span>'
 					+'</td>'
-					+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_518" style="border-color: black;  text-align: right;" class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 2px;text-align: right;color: green;" class="w2span ">'
+					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_518" style="border-color: black;  text-align: right;" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 2px;text-align: right;color: green;" class="w2span ">'
 					+dlt_BMS_ETA_INFO.getCellData(0, "REMAIN_TM")
 					+'</span>'
 					+'</td>'
 					+'</tr>'
 					
-					+'<tr id="mf_tac_layout_contents_MN00070202_body_wq_uuid_512" class="w2group">'
-					+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_513" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_516" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
+					+'<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_512" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_513" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_516" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
 
 					+'</span>'
 					+'</td>'
-					+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_513" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_516" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
+					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_513" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_516" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
 
 					+'</span>'
 					+'</td>'
-					+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_518" style="border-color: black; border-bottom-color:yellow; text-align: right;" class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 2px;text-align: right;color: green;" class="w2span ">'
+					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_518" style="border-color: black; border-bottom-color:yellow; text-align: right;" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 2px;text-align: right;color: green;" class="w2span ">'
 
 					+'</span>'
 					+'</td>'
 					+'</tr>'
 			
-				tableBody +='<tr id="mf_tac_layout_contents_MN00070202_body_wq_uuid_511" class="w2group">'
-							+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow;" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="3" rowspan="1">'
-							+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 10px;" class="w2span ">'
+				tableBody +='<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_511" class="w2group">'
+							+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow;" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="3" rowspan="1">'
+							+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 10px;" class="w2span ">'
 							+"곧도착 : " + dlt_BMS_SOONETA_INFO.getCellData(0, "ROUT_NM");
 							+'</span>'
 							+'</td>'
 							+'</tr>';
 			}
 			//보내는게 2개 이상이면 동적으로 그리기
-			else if(dataList.length > 1){
-				for(var i = 0; i < dataList.length; i++){
+			else if(dlt_BMS_ETA_INFO.getDataLength() > 1 || dlt_BMS_SOONETA_INFO.getDataLength() > 1){
+			
+				for(var i = 0; i < dlt_BMS_ETA_INFO.getDataLength(); i++){
 					if(dlt_BMS_ETA_INFO.getCellData(i, "REMAIN_TM") != '0분'){
-						tableBody += '<tr id="mf_tac_layout_contents_MN00070202_body_wq_uuid_511" class="w2group">'
-									+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
-									+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
+						tableBody += '<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_511" class="w2group">'
+									+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
+									+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
 									+dlt_BMS_ETA_INFO.getCellData(i, "ROUT_NM")
 									+'</span>'
 									+'</td>'
-									+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
-									+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px; color: yellow;" class="w2span ">'
+									+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
+									+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px; color: yellow;" class="w2span ">'
 									+dlt_BMS_ETA_INFO.getCellData(i, "REMAIN_STTN")
 									+'</span>'
 									+'</td>'
-									+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_518" style="border-color: black;  text-align: right;" class="w2group w2tb_td w2tb_noTH">'
-									+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 2px;text-align: right;color: green;" class="w2span ">'
+									+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_518" style="border-color: black;  text-align: right;" class="w2group w2tb_td w2tb_noTH">'
+									+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 2px;text-align: right;color: green;" class="w2span ">'
 									+dlt_BMS_ETA_INFO.getCellData(i, "REMAIN_TM")
 									+'</span>'
 									+'</td>'
@@ -460,9 +466,9 @@
 				
 				}
 				//곧도착 2개 이상..
-				tableBody +='<tr id="mf_tac_layout_contents_MN00070202_body_wq_uuid_511" class="w2group">'
-							+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow; border-top-style:double;" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="3" rowspan="1">'
-							+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
+				tableBody +='<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_511" class="w2group">'
+							+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow; border-top-style:double;" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="3" rowspan="1">'
+							+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
 							+"곧도착 : " + dlt_BMS_SOONETA_INFO.getCellData(0, "ROUT_NM");
 							+'</span>'
 							+'</td>'
@@ -471,37 +477,37 @@
 			
 		}
 		//데이터가 없다면 빈 테이블 그리기
-		else if(dataList.length == 0){
-			tableBody += '<tr id="mf_tac_layout_contents_MN00070202_body_wq_uuid_511" class="w2group">'
-					+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
+		else if(dlt_BMS_ETA_INFO.getDataLength() == 0 || dlt_BMS_SOONETA_INFO.getDataLength() == 0){
+			tableBody += '<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_511" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
 					+'</span>'
 					+'</td>'
-					+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px; color: yellow;" class="w2span ">'
+					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px; color: yellow;" class="w2span ">'
 					+'</span>'
 					+'</td>'
-					+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_518" style="border-color: black;  text-align: right;" class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 2px;text-align: right;color: green;" class="w2span ">'
-					+'</span>'
-					+'</td>'
-					+'</tr>'
-					
-					+'<tr id="mf_tac_layout_contents_MN00070202_body_wq_uuid_511" class="w2group">'
-					+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_514" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
-					+'</span>'
-					+'</td>'
-					
-					+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_518" style="border-color: black; border-bottom-color:yellow; text-align: right;" class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 2px;text-align: right;color: green;" class="w2span ">'
+					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_518" style="border-color: black;  text-align: right;" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 2px;text-align: right;color: green;" class="w2span ">'
 					+'</span>'
 					+'</td>'
 					+'</tr>'
 					
-			tableBody +='<tr id="mf_tac_layout_contents_MN00070202_body_wq_uuid_511" class="w2group">'
-					+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow;" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="3" rowspan="1">'
-					+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
+					+'<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_511" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_514" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
+					+'</span>'
+					+'</td>'
+					
+					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_518" style="border-color: black; border-bottom-color:yellow; text-align: right;" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 2px;text-align: right;color: green;" class="w2span ">'
+					+'</span>'
+					+'</td>'
+					+'</tr>'
+					
+			tableBody +='<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_511" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow;" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="3" rowspan="1">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
 					+"곧도착 : "
 					+'</span>'
 					+'</td>'
@@ -520,40 +526,40 @@
 		var tableBody = '';
 		
 		//테이블 소스 시작
-		tableStr = '<table id="mf_tac_layout_contents_MN00070202_body_MO0203T0" style="" class="w2group w2tb bit_tb">'
-					+'<caption id="mf_tac_layout_contents_MN00070202_body_wq_uuid_505" class="w2group "></caption>'
-					+'<colgroup id="mf_tac_layout_contents_MN00070202_body_wq_uuid_506" class="w2group ">'
-					+'<col id="mf_tac_layout_contents_MN00070202_body_wq_uuid_507" style="width:25.00%;" class="w2group ">'
-					+'<col id="mf_tac_layout_contents_MN00070202_body_wq_uuid_508" style="width:37.5%" class="w2group ">'
-					+'<col id="mf_tac_layout_contents_MN00070202_body_wq_uuid_508" style="width:37.5%" class="w2group ">'
+		tableStr = '<table id="mf_tac_layout_contents_MN00070102_body_MO0203T0" style="" class="w2group w2tb bit_tb">'
+					+'<caption id="mf_tac_layout_contents_MN00070102_body_wq_uuid_505" class="w2group "></caption>'
+					+'<colgroup id="mf_tac_layout_contents_MN00070102_body_wq_uuid_506" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00070102_body_wq_uuid_507" style="width:25.00%;" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00070102_body_wq_uuid_508" style="width:37.5%" class="w2group ">'
+					+'<col id="mf_tac_layout_contents_MN00070102_body_wq_uuid_508" style="width:37.5%" class="w2group ">'
 					+'</colgroup>'
 					+'<tbody>';
 					
-			tableBody += '<tr id="mf_tac_layout_contents_MN00070202_body_wq_uuid_511" class="w2group">'
-					+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_514" style="border-color: black;" class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
+			tableBody += '<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_511" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_514" style="border-color: black;" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
 					+'</span>'
 					+'</td>'
-					+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_518" style="border-color: black;text-align: right;" class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 2px;text-align: right;color: green;" class="w2span ">'
-					+'</span>'
-					+'</td>'
-					+'</tr>'
-					
-					+'<tr id="mf_tac_layout_contents_MN00070202_body_wq_uuid_511" class="w2group">'
-					+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_514" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
-					+'</span>'
-					+'</td>'
-					+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_518" style="border-color: black; border-bottom-color:yellow; text-align: right;" class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 2px;text-align: right;color: green;" class="w2span ">'
+					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_518" style="border-color: black;text-align: right;" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 2px;text-align: right;color: green;" class="w2span ">'
 					+'</span>'
 					+'</td>'
 					+'</tr>'
 					
-			tableBody +='<tr id="mf_tac_layout_contents_MN00070202_body_wq_uuid_511" class="w2group">'
-					+'<td id="mf_tac_layout_contents_MN00070202_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow; border-top-style:double;" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="3" rowspan="1">'
-					+'<span id="mf_tac_layout_contents_MN00070202_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
+					+'<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_511" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_514" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
+					+'</span>'
+					+'</td>'
+					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_518" style="border-color: black; border-bottom-color:yellow; text-align: right;" class="w2group w2tb_td w2tb_noTH">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_519" style="width: 100%;height: 23px;font-size: 2px;text-align: right;color: green;" class="w2span ">'
+					+'</span>'
+					+'</td>'
+					+'</tr>'
+					
+			tableBody +='<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_511" class="w2group">'
+					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_514" style="border-color: yellow; border-right-color:yellow; border-top-style:double;" class="w2group w2tb_td w2tb_noTH" scope="row" colspan="3" rowspan="1">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
 					+"곧도착 : " + dlt_BMS_SOONETA_INFO.getCellData(0, "ROUT_NM");
 					+'</span>'
 					+'</td>'
@@ -561,7 +567,7 @@
 					
 		tableStr += tableBody + '</tbody></table>';
 		
-		$("#mf_tac_layout_contents_MN00070202_body_MO0203T0").html(tableStr);
+		$("#mf_tac_layout_contents_MN00070102_body_MO0203T0").html(tableStr);
 	}
 	
 	
@@ -607,6 +613,47 @@
 			
 		}
 		
+		//B0 제외한 BIT정보
+		else if(attrId == "버스정보" || busList[0].ATTR_ID == "버스정보") {
+			if(typeof attrId != "undefined") {
+				dataList.push({"REMAIN_TM": jsonObj.REMAIN_TM});
+				dataList.push({"ROUT_NM": jsonObj.ROUT_NM});
+				dataList.push({"REMAIN_STTN": jsonObj.REMAIN_STTN});
+			}
+		
+			else {
+				dataList[i].REMAIN_TM = parseInt((dataList[i].REMAIN_TM%3600)/60) + '분';
+				if(dataList[i].REMAIN_TM != '0'){
+					dlt_BMS_ETA_INFO.insertRow();
+					dlt_BMS_ETA_INFO.setCellData(j, "ROUT_NM", dataList[i].ROUT_NM);
+					dlt_BMS_ETA_INFO.setCellData(j, "REMAIN_TM", dataList[i].REMAIN_TM);
+					dlt_BMS_ETA_INFO.setCellData(j, "REMAIN_STTN", dataList[i].REMAIN_STTN  + '전');
+					j++;
+				}else if(dataList[i].REMAIN_TM == '0'){
+					dlt_BMS_SOONETA_INFO.insertRow();
+					dlt_BMS_SOONETA_INFO.setCellData(i, "ROUT_NM", dataList[i].ROUT_NM);
+				}
+			}
+			
+			for(var i = 0; i < dataList.length; i++){
+				//초 -> 분으로 변경. 0분 이하면 잠시후 도착
+				dataList[i].REMAIN_TM = parseInt((dataList[i].REMAIN_TM%3600)/60) + '분';
+				
+				if(dataList[i].REMAIN_TM != '0분'){
+					dlt_BMS_ETA_INFO.insertRow();
+					dlt_BMS_ETA_INFO.setCellData(j, "ROUT_NM", dataList[i].ROUT_NM);
+					dlt_BMS_ETA_INFO.setCellData(j, "REMAIN_TM", dataList[i].REMAIN_TM);
+					dlt_BMS_ETA_INFO.setCellData(j, "REMAIN_STTN", dataList[i].REMAIN_STTN  + '전');
+					j++;
+				}else if(dataList[i].REMAIN_TM == '0분'){
+					dlt_BMS_SOONETA_INFO.insertRow();
+					dlt_BMS_SOONETA_INFO.setCellData(i, "ROUT_NM", dataList[i].ROUT_NM);
+				}
+			}			
+			
+		}
+		
+		
 	}	
 	
 	scwin.sub_MO0203SCK_submitdone = function(e) {
@@ -626,9 +673,7 @@
 		dma_search.set("PUB_STTN_ID", dlt_BMS_NODE_MST.getCellData(row, "PUB_STTN_ID"));
 		dma_search.set("AREA", dlt_BMS_NODE_MST.getCellData(row, "AREA"));
 		
-		//한차장님 완료하면 주석 풀어야됨
 		//com.executeSubmission(sub_selectVhcBit);
-		
 		
 		var allDataList = dlt_BMS_NODE_MST.getAllJSON();
 		var focusIdx = MO0203G0.getFocusedRowIndex();
@@ -693,7 +738,11 @@
 		//카테고리 뿌리기
 		routMap.showCategory("map_MO0203", allDataList, focusIdx, MO0203G0);
 		
-		com.setFocusedCell(MO0203G0, "NODE_NM");
+		//폐쇄형정류장 임의 하드코딩
+		var rowIndexArr = dlt_BMS_NODE_MST.getMatchedIndex("NODE_ID", "293064211");
+		if(rowIndexArr.length > 0) {
+			MO0203G0.setFocusedCell(rowIndexArr[0], "NODE_NM");	
+		}
 		
 	};
 	
@@ -716,7 +765,7 @@
 		//$p.executeSubmission(sub_MO0203SHI0);
 		$p.executeSubmission(sub_MO0203G2R0);
 		com.searchGrid(MO0203G0, sub_MO0203G0R0);
-	}	
+	}		
 	
 	
 	scwin.sub_MO0203SHI1_submitdone = function(e) {
@@ -799,12 +848,12 @@
 	}		
 	
 	scwin.sub_MO0203P0R0_submitdone = function(e) {
-		//폐쇄형정류장 임의 하드코딩
-		var rowIndexArr = dlt_BMS_NODE_MST.getMatchedIndex("NODE_ID", "293064211");
-		if(rowIndexArr.length > 0) {
-			MO0203G0.setFocusedCell(rowIndexArr[0], "NODE_NM");	
-		}
+
 		scwin.makeImage();
+		
+	};
+	
+	scwin.sub_selectVhcBit_submitdone = function(e) {
 		
 	};
 	]]></script>
@@ -826,7 +875,7 @@
 				</xf:group>
 			</xf:group>
 		
-			<xf:group id="pgm_content" class="pgm_content grdc_470_0_a" style="">
+			<xf:group id="pgm_content" class="pgm_content grdc_380_0_a" style="">
 				<xf:group id="pgm_list" class="pgm_list grdr_20_50_a bms_box_wrap" style="">
 					<xf:group id="" class="" style="">
 						<xf:group class="defaultbox" id="" style="">
@@ -903,8 +952,8 @@
 									<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column56"
 										value="정류소명" blockSelect="false" displayMode="label">
 									</w2:column>
-									<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column1"
-										value="정류소형태" blockSelect="false" displayMode="label">
+									<w2:column removeBorderStyle="false" width="72" inputType="text" style="height:20px" id="column1"
+										value="형태" blockSelect="false" displayMode="label">
 									</w2:column>
 								</w2:row>
 							</w2:header>
@@ -938,7 +987,7 @@
 				
 							<div id="map_MO0203" style="padding:0 !important"  class="bms_box_wrap">
 								<ul id="category_map_MO0203" class="category"></ul>
-								<xf:group id="brt_div" class="pgm_detail" style="z-index: 10000;position: absolute;right: 52px;margin-top: 8px;margin-right: -49px;width: 140px;height: 399px;">
+								<xf:group id="brt_div" class="pgm_detail" style="z-index: 10000;position: absolute;right: 52px;margin-top: 296px;margin-right: -49px;width: 140px;height: 399px;">
 									<xf:group style="width: 100%; height:100%" id="bit_img">
 										<xf:group id="" class="brt_bit" style="background-size: cover; height: 393px; position: relative;"></xf:group>
 									</xf:group>
@@ -963,7 +1012,7 @@
 									</xf:group> -->
 									<xf:group style="" id=""></xf:group>
 								</xf:group>
-								<xf:group id="routeMap" style="z-index: 10000; position: absolute;background: white;bottom: 0px;left: 20px;">
+								<xf:group id="routeMap" style="z-index: 10000; position: absolute;background: white;bottom: 0px;">
 									<xf:group id="imgDiv" style="background: white;width: 1370px;height: 280px;">
 										<xf:group style="" id="STTN_IMG" class="ST003_station"></xf:group>
 									</xf:group>

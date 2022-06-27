@@ -13,7 +13,7 @@ var routMap = {
 	},
 	MAX_NODE_CNT : 800,
 	LIMIT_SPEED : 50,
-	MIN_LEVEL : 2,
+	MIN_LEVEL : 1,
 	MAX_LEVEL : 7
 }
 
@@ -367,7 +367,7 @@ routMap.drawLine = function(mapId, first, last, color, eventKinds, clickEvent, r
 		strokeWeight: 4, // 라인 두께
 		strokeStyle:'solid',
 		strokeOpacity: 0.8, //선의 불투명도 1~0사이값
-		endArrow : true //화살표 여부
+		//endArrow : true //화살표 여부
 	});
 
 	if(typeof eventKinds != "undefined") {
