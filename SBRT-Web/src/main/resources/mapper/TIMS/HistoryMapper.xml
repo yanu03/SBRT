@@ -165,6 +165,41 @@
 			
 	</update>	 -->
 	
+	<update id="updateFcltCondParamInfo" parameterType="Map">
+		
+		<!-- 에어컨 전원 -->
+		UPDATE 
+			BMS_FCLT_COND_PARAM_INFO
+		SET
+			DATA_VAL = #{SWITCH}
+		WHERE
+			FCLT_ID = #{FCLT_ID}
+			AND PARAM_DIV = 'PD003'
+			AND PARAM_KIND = 'PK002';
+		
+		<!-- 에어컨 현재 온도 -->	
+		UPDATE 
+			BMS_FCLT_COND_PARAM_INFO
+		SET
+			DATA_VAL = #{TEMP}
+		WHERE
+			FCLT_ID = #{FCLT_ID}
+			AND PARAM_DIV = 'PD003'
+			AND PARAM_KIND = 'PK022';
+		
+		<!-- 에어컨 희망 온도 -->	
+		UPDATE 
+			BMS_FCLT_COND_PARAM_INFO
+		SET
+			DATA_VAL = #{COOL_SET}
+		WHERE
+			FCLT_ID = #{FCLT_ID}
+			AND PARAM_DIV = 'PD003'
+			AND PARAM_KIND = 'PK047';
+	
+	
+	</update>
+	
 	<update id="updateSigFcltCondParamInfo" parameterType="Map">
 			
 		UPDATE 

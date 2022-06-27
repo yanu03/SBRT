@@ -5,28 +5,31 @@
 
 <select id="selectIntgList" resultType="Map">
 	SELECT
-		INTG_FCLT_ID
-		,FCLT_NM
-		,FCLT_LABEL
-		,MAKER
-		,PRES_ID
-		,MAKER_CODE
-		,LOC_ID
-		,LOC_NM
-		,OWNR_ID
-		,ROOM_ID
-		,FCLT_TYPE_NM
+		A.INTG_FCLT_ID
+		,A.FCLT_NM
+		,A.FCLT_LABEL
+		,A.MAKER
+		,A.PRES_ID
+		,A.MAKER_CODE
+		,A.LOC_ID
+		,A.LOC_NM
+		,A.OWNR_ID
+		,A.ROOM_ID
+		,A.FCLT_TYPE_NM
+		,B.FCLT_ID
 	FROM
-		BMS_INTG_AIRCON_INFO
+		BMS_INTG_AIRCON_INFO A
+		LEFT JOIN BMS_FCLT_INFO B
+		ON A.INTG_FCLT_ID = B.INTG_FCLT_ID
 	<where>	
 		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
-			AND INTG_FCLT_ID LIKE CONCAT('%',#{CONTENT},'%') || FCLT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			AND A.INTG_FCLT_ID LIKE CONCAT('%',#{CONTENT},'%') || A.FCLT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
 		<if test="TYPE == 'INTG_FCLT_ID'">
-			AND INTG_FCLT_ID LIKE CONCAT('%',#{CONTENT},'%')
+			AND A.INTG_FCLT_ID LIKE CONCAT('%',#{CONTENT},'%')
 		</if>
 		<if test="TYPE == 'FCLT_NM'">
-			AND FCLT_NM LIKE CONCAT('%',#{CONTENT},'%') 
+			AND A.FCLT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
 	</where>			
 </select>
