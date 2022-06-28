@@ -18,6 +18,8 @@ public class MO0205Controller extends ControllerSupport {
 	@Autowired
 	private MO0205Service MO0205Service;
 	
+	
+	
 	@RequestMapping("/mo/MO0205G0R0")
 	public @ResponseBody Map<String, Object> MO0205G0R0() throws Exception {
 		result.setData("dlt_BMS_NODE_MST", MO0205Service.MO0205G0R0());
@@ -65,5 +67,17 @@ public class MO0205Controller extends ControllerSupport {
 		result.setData("dlt_searchitem4", MO0205Service.MO0205SHI3());
 		return result.getResult();
 	}	
+	
+	@RequestMapping("/mo/MO0205P0R0")
+	public @ResponseBody Map<String, Object> MO0205P0R0() throws Exception {
+		result.setData("dlt_airconControl", MO0205Service.MO0205P0R0());
+		return result.getResult();
+	}	
+	
+	@RequestMapping("/mo/airconControl")
+	public @ResponseBody Map<String, Object> airconControl() throws Exception {
+		MO0205Service.airconControl();
+		return result.getResult();
+	}
 	
 }

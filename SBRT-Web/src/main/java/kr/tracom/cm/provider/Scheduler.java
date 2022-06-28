@@ -85,15 +85,17 @@ public class Scheduler {
 							
 							Gson gson = new Gson();
 							Type resultType = new TypeToken<List<Map<String, Object>>>(){}.getType();
+							//Type resultType = new TypeToken<Map<String, Object>>(){}.getType();
 							List<Map<String, Object>> jsonList = gson.fromJson(result, resultType);
+							//Map<String, Object> jsonList = gson.fromJson(result, resultType);
 							
 							for (int j = 0; j < jsonList.size(); j++) {
 								Map<String, Object> data2 = (Map) jsonList.get(j);
 								
 								data2.put("COOL_SET", data2.get("coolingSetpoint"));
 								data2.put("TEMP", data2.get("temperature"));
-								/*data2.put("SWITCH", data.get("switch"));*/
 								data2.put("FCLT_ID", data.get("FCLT_ID"));
+								data2.put("ATTR_ID", "5050"); //에어컨 attr_id 5050
 								
 								if(data2.get("switch").equals("on")) {
 									data2.put("SWITCH", "1");
@@ -103,7 +105,7 @@ public class Scheduler {
 								
 								historyMapper.updateFcltCondParamInfo(data2);
 								
-							}	
+							}
 							
 							//웹소켓 전송이 필요한 경우
 							if(jsonList != null) {

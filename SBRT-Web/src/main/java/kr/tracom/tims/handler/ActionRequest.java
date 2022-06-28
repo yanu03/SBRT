@@ -141,16 +141,23 @@ public class ActionRequest {
 
             	}
             	if(actionCode == AtBrtAction.facilityParam) {
-            		String actionData = brtAction.getReserved();        		
+            		String actionData = brtAction.getReserved();
             		//String dataArr[] = actionData.split(",");
             		
             		Gson gson = new Gson();
 					Type resultType = new TypeToken<List<Map<String, Object>>>(){}.getType();
 					List<Map<String, Object>> jsonList = gson.fromJson(actionData, resultType);
             		
-					//웹소켓 전송이 필요한 경우
-					if(jsonList != null) {
-						webSocketClient.sendMessageList(jsonList);
+					Map<String, Object> map = new HashMap<String, Object>();
+					map.put("ATTR_ID", "5051"); //스크린도어 attr_id 5051
+					
+					for(int x = 0; x < jsonList.size(); x++) {
+						jsonList.add(map);
+						
+						//웹소켓 전송이 필요한 경우
+						if(jsonList != null) {
+							webSocketClient.sendMessageList(jsonList);
+						}
 					}
 					
             		
