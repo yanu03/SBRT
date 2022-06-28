@@ -53,7 +53,7 @@ public class MO0203Service extends ServiceSupport{
 		
 		String sttnId = String.valueOf(param.get("NODE_ID"));
 		
-		//정류장정보 요청 데이터 생성
+		//정류소정보 요청 데이터 생성
 		AtBrtAction brtRequest = new AtBrtAction();
 
 		brtRequest.setActionCode((byte)AtBrtAction.bitInfoRequest);
