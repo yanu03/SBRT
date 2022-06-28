@@ -259,7 +259,6 @@ public class MO0101Service extends ServiceSupport{
 				}
 			}
 			
-			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -267,4 +266,8 @@ public class MO0101Service extends ServiceSupport{
 		
 		return null;
 	}		
+	public List selectSigPhaseInfo() throws Exception{
+		Map param = getSimpleDataMap("dma_sub_search");
+		return mo0101Mapper.selectSigPhaseInfo(param);
+	}
 }

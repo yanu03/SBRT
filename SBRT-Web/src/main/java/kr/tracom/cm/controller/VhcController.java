@@ -48,4 +48,20 @@ public class VhcController extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/vhc/selectB0Bit")
+	public @ResponseBody Map<String, Object> selectB0Bit() throws Exception {		
+		
+		result.setData("", vhcService.selectB0Bit());
+		return result.getResult();
+	}		
+	
+	//B0제외한 BIT정보
+	@RequestMapping("/vhc/selectVhcBit")
+	public @ResponseBody Map<String, Object> selectVhcBit() throws Exception {
+		result.setData("dlt_vhcBit", vhcService.selectVhcBit());
+		return result.getResult();
+	}
+	
+	
+	
 }

@@ -13,6 +13,8 @@ public class Constants {
 	public static final String NODE_TYPE_SOUND = "NT006"; //음성노드
 	public static final String NODE_TYPE_ENTRY = "NT007"; //교통진출입점
 	public static final String NODE_TYPE_SIGNAL = "NT008"; //신호
+	public static final String NODE_TYPE_DP = "NT009"; //DP(화면 표출용)
+	public static final String NODE_TYPE_BOARD = "NT010"; //횡당보도
 	
 	public static final String MOCK_NODE_TYPE_CROSS = "101"; //교차로
 	public static final String MOCK_NODE_TYPE_END = "102"; //시종점
@@ -72,6 +74,9 @@ public class Constants {
 	
 	//공공데이터포털 도시코드 연계
 	public static String OPENAPI_CITY_CODE_ID = "IT00000021";
+	
+	//국토교통부_(TAGO)_버스도착정보
+	public static String OPENAPI_BIT_ID = "IT00000035";
 	
 	//===================테이블 사용 이전 함수========================
 	//세종 노선검색 URL
@@ -167,7 +172,6 @@ public class Constants {
     	public static final int DISPATCH_TYPE_1 = 1; //일반메시지
     	public static final int DISPATCH_TYPE_2 = 2; //운행중 메시지
     	public static final int DISPATCH_TYPE_3 = 3; //정차중 메시지
-    	public static final int DISPATCH_TYPE_4 = 4; //공지사항
     	
     	public static final int DISPATCH_LV_1 = 1;
     	public static final int DISPATCH_LV_2 = 2;
@@ -185,4 +189,7 @@ public class Constants {
 
     public static String Separator = "TRACOM";
     public static String SsoCookieName = "TracomSSO";
+    
+    public static double AVG_ERAD =6376.5;//(6378.137)   //Average Earth Radius
+    public static double PIE = 3.1415926535898;
 }

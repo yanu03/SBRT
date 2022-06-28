@@ -548,6 +548,28 @@
 	<!--교차로 현시정보 가져오기 -->
 	<select id="selectCurPhaseNo" resultType="int">
 		SELECT FN_GET_CUR_PHASE_NO(#{CRS_ID}, #{UPD_DTM});
+	</select>
+		
+	<select id="selectSigPhaseInfo" resultType="Map">
+		SELECT 			DATE_FORMAT(UPD_DTM, '%H:%i:%s')UPD_DTM
+						<!-- UPD_DTM -->
+					,	CRS_ID
+					,	CTR_STS
+					,	CTR_MODE
+					,	A_PHASE_NO
+					,	A_PHASE_TM
+					,	B_PHASE_NO
+					,	B_PHASE_TM
+					
+		FROM			BMS_CRS_SIGOPER_PHASE_INFO_HIS
+		WHERE			UPD_DTM = FN_DATE_TO_OPER_DT(NOW())
+		
+		<if test="CRS_ID != ''">
+			AND CRS_ID = #{CRS_ID}
+		</if>		
+			
+		
+		ORDER BY		UPD_DTM DESC			
 	</select>	
 	
 </mapper>
