@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.tracom.brt.domain.MO0204.MO0204Mapper">
+
+	<select id="MO0204G0R0" resultType="Map" parameterType="Map">
+		SELECT
+			DATE_FORMAT(A.OPER_DT, '%Y-%m-%d') AS OPER_DT
+			,A.REP_ROUT_ID
+			,C.VHC_ID
+			,A.ROUT_ID
+			,C.VHC_NO
+			,A.GPS_X
+			,A.GPS_Y
+			,IFNULL(A.OPER_STS, "OS002") AS OPER_STS
+			,B.REP_ROUT_NM
+			,B.ROUT_NM
+			,C.VHC_KIND
+			,B.DEL_YN
+		FROM
+			BMS_VHC_MST C
+			<if test="@kr.tracom.util.CommonUtil@empty(OPER_DT)">
+			LEFT JOIN BRT_CUR_OPER_INFO A
+			ON C.VHC_ID = A.VHC_ID
+			</if>
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_DT)">
+			LEFT JOIN BRT_MOVE_CUR_OPER_HIS A
+			ON C.VHC_ID = A.VHC_ID
+			</if>
+			LEFT JOIN BMS_ROUT_MST B
+			ON A.ROUT_ID = B.ROUT_ID
+	<where>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT1) and CONTENT1 != 'all'">
+			AND A.REP_ROUT_ID = #{CONTENT1}
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT2)">
+			AND C.VHC_KIND = #{CONTENT2}
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT3)">
+			AND (C.VHC_ID LIKE CONCAT('%', #{CONTENT3}, '%') OR C.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%'))
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_DT)">
+			AND A.OPER_DT = #{OPER_DT}
+		</if>
+	</where>
+	<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_DT)">
+		GROUP BY
+			A.REP_ROUT_ID, A.VHC_ID
+	</if>
+		ORDER BY
+			A.OPER_STS DESC, <!-- A.REP_ROUT_ID, A.ROUT_ID,  -->C.VHC_ID
+
+		<!-- 
+		*현재 운행 차량만
+		SELECT 
+			A.REP_ROUT_ID
+			,A.VHC_ID
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_DT)">
+			,B.VHC_KIND
+			,B.VHC_NO
+			</if>
+			<if test="@kr.tracom.util.CommonUtil@empty(OPER_DT)">
+			,E.VHC_KIND
+			,B.VHC_NO
+			</if>
+			,DATE_FORMAT( C.OPER_DT, '%Y-%m-%d') AS OPER_DT
+			,C.ROUT_ID
+			,C.OPER_STS
+			,D.REP_ROUT_NM
+		FROM  			BRT_REP_ROUT_VHC_CMPSTN A
+		<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_DT)">
+		LEFT JOIN		BMS_VHC_MST B
+		ON				A.VHC_ID = B.VHC_ID
+		</if>
+		<if test="@kr.tracom.util.CommonUtil@empty(OPER_DT)">
+		LEFT JOIN		BRT_CUR_OPER_INFO B
+		ON				A.VHC_ID = B.VHC_ID
+						AND A.REP_ROUT_ID = B.REP_ROUT_ID
+		LEFT JOIN		BMS_VHC_MST E
+		ON				A.VHC_ID = E.VHC_ID
+		</if>
+		LEFT JOIN		BRT_CUR_OPER_HIS C
+		ON				A.REP_ROUT_ID = C.REP_ROUT_ID
+						AND A.VHC_ID = C.VHC_ID
+						<if test="@kr.tracom.util.CommonUtil@empty(OPER_DT)">
+							AND	C.OPER_DT = DATE_FORMAT(NOW(), '%Y/%m/%d')
+						</if>
+		LEFT JOIN		BMS_REP_ROUT_MST D
+		ON				A.REP_ROUT_ID = D.REP_ROUT_ID AND D.DEL_YN != 'Y'
+		<where>
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT1) and CONTENT1 != 'all'">
+				AND A.REP_ROUT_ID = #{CONTENT1}
+			</if>
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT2)">
+				AND B.VHC_KIND = #{CONTENT2}
+			</if>
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(CONTENT3)">
+				AND	(B.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%') OR B.VHC_ID LIKE CONCAT('%', #{CONTENT3}, '%'))
+			</if>	
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(OPER_DT)">
+				AND	DATE_FORMAT(C.OPER_DT, '%Y%m%d') = #{OPER_DT}
+			</if>
+			<if test="@kr.tracom.util.CommonUtil@empty(OPER_DT)">
+				AND	B.OPER_DT = DATE_FORMAT(NOW(), '%Y%m%d')
+			</if>
+		</where>
+		GROUP BY
+			A.REP_ROUT_ID,A.VHC_ID
+		ORDER BY
+			A.REP_ROUT_ID,A.VHC_ID -->
+	</select>
+	
+<!-- 수정전 차내장치 목록 	
+<select id="MO0204G1R0" resultType="Map" parameterType="Map">
+		SELECT 			A.VHC_ID
+						,A.DVC_ID
+						,A.ORG_ID
+						,A.DVC_KIND
+						,A.DVC_COORDS
+						,A.INST_LOC
+						,A.DVC_IP
+						,A.MNG_ID	
+						,A.DVC_TYPE
+						,A.DEV_SERIAL_NO
+						,A.MODEL_NM
+						,A.USE_YN
+						,A.CTR_YN						
+						,A.REMARK
+						,B.ORG_NM
+						,C.DVC_COND
+						,DATE_FORMAT(C.SEND_DATE, '%Y-%m-%d %H:%i:%s') AS SEND_DATE
+						
+		FROM			BMS_DVC_INFO A	
+		LEFT JOIN	  	BMS_ORG_MST	B
+			ON			A.ORG_ID = B.ORG_ID
+		LEFT JOIN	  	BMS_DVC_COND_INFO C
+			ON			A.MNG_ID = C.MNG_ID	
+		
+		WHERE			A.VHC_ID = #{VHC_ID}
+		AND				A.USE_YN = 'Y'
+		
+		ORDER BY		A.DVC_KIND
+	</select> -->
+	
+	<select id="MO0204G1R0" resultType="Map" parameterType="Map">
+		CALL	PROC_DVC_MONITOR2(#{VHC_ID})
+	</select>
+	
+	<!-- 차내장치 파라미터종류 조회-->
+	<select id="MO0204G1R1" resultType="Map">
+		SELECT 
+			A.PARAM_KIND
+		FROM 
+			BMS_DVC_PARAM_INFO A
+		WHERE 
+			A.PARAM_DIV = 'PD003'
+			AND A.VHC_ID = #{VHC_ID}
+		GROUP BY
+			PARAM_KIND
+	</select>
+	
+	<select id="MO0204SHI1" resultType="Map">
+<!-- 		SELECT			ROUT_ID, ROUT_NM
+		FROM			BMS_ROUT_MST	
+		<where>
+			<if test="CONTENT1 != null and CONTENT1 != ''">
+				REP_ROUT_ID = #{CONTENT1}	
+			</if>
+		</where> -->
+		
+		SELECT			VHC_KIND
+		FROM			BMS_VHC_MST
+
+	</select>		
+	
+	<select id="MO0204G2R0" resultType="Map">
+	 	SELECT a.ROUT_ID, a.LINK_ID, a.LINK_SN, a.MORN_STD, b.LINK_NM, b.ST_NODE_ID AS NODE_ID, b.ED_NODE_ID, 
+	 		c.NODE_TYPE, c.NODE_NM, c.GPS_X, c.GPS_Y, d.GPS_X AS ED_GPS_X, d.GPS_Y AS ED_GPS_Y, d.NODE_TYPE AS ED_NODE_TYPE, d.NODE_NM AS ED_NODE_NM
+		FROM BMS_ROUT_LINK_CMPSTN a 
+			LEFT OUTER JOIN BMS_LINK_MST b ON a.LINK_ID=b.LINK_ID
+			LEFT OUTER JOIN BMS_NODE_MST c ON b.ST_NODE_ID = c.NODE_ID
+			LEFT OUTER JOIN BMS_NODE_MST d ON b.ED_NODE_ID = d.NODE_ID
+		WHERE a.ROUT_ID = #{ROUT_ID}
+		ORDER BY a.LINK_SN
+	</select>	
+	
+</mapper>

@@ -104,6 +104,7 @@ public class Scheduler {
 								historyMapper.updateFcltCondParamInfo(data2);
 								
 							}	
+							
 							//웹소켓 전송이 필요한 경우
 							if(jsonList != null) {
 								webSocketClient.sendMessageList(jsonList);
