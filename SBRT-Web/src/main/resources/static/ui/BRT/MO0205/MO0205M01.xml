@@ -655,6 +655,7 @@
 		MO0205G0.mergeCells("byrestriccol");
 		com.executeSubmission(sub_MO0205SHI0);	
 		
+		//웹소켓 연결
 		connect();
 	};	
 	
@@ -664,7 +665,7 @@
 		
 		stompClient.connect({}, onConnected, onError);
 	
-	}	
+	}
 	
 	function onConnected(frame) {
 		//setConnected(true);
@@ -692,7 +693,7 @@
 		var fcltId = jsonObj.FCLT_ID;
 		
 		//에어컨 상태 정보
-		if(attrId == '5050'){
+		if(attrId == '5050'){ //util.ATTR_ID.AIRCON
 			var index = dlt_BMS_AIRCON_FCLT_INFO.getMatchedIndex("FCLT_ID", fcltId);
 			dlt_BMS_AIRCON_FCLT_INFO.setCellData(index[0], "PK002", jsonObj.SWITCH);
 			dlt_BMS_AIRCON_FCLT_INFO.setCellData(index[0], "PK022", jsonObj.TEMP);
@@ -700,7 +701,7 @@
 			//MO0205G2.refreshRow(index);
 		}
 		//스크린도어 상태 정보
-		else if(attrId == '5051'){
+		else if(attrId == '5051'){ //util.ATTR_ID.SCREENDOOR
 			var index = dlt_BMS_SCRDOOR_FCLT_INFO.getMatchedIndex("MNG_ID", jsonObj.fcltMngID);
 			var fcltID = dlt_BMS_SCRDOOR_FCLT_INFO.getCellData(index[0], "FCLT_ID");
 			var oldPk025 = dlt_BMS_SCRDOOR_FCLT_INFO.getCellData(index[0], "PK025");
@@ -1046,8 +1047,13 @@
 			
 			//시설물 이미지
 			str += '<div id="'+fcltId+'" style="z-index: 1; position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group fclt_img" onclick="imgOnclick(this.id);">';
-			str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			if(fcltKind == 'FK004'){
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:16px" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			}else{
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			}
 			str += '</div>'
+			
 			
 		}
 		
@@ -1067,7 +1073,7 @@
 		var fclt_ctrindex = MO0205G2.getColumnIndex("FCLT_CTR");
 		//var param = com.getParameter();
 		
-		for(var i=0; i<dlt_BMS_FCLT_INFO.getDataLength(); i++){
+		/*for(var i=0; i<dlt_BMS_FCLT_INFO.getDataLength(); i++){
 			var ctr_yn = dlt_BMS_FCLT_INFO.getCellData(i, "CTR_YN");
 			if(ctr_yn == 'N'){
 				
@@ -1075,7 +1081,7 @@
 	            //제어 버튼 안보이게 처리
 	            MO0205G2.setCellClass(i, "FCLT_CTR", "hideData");
 			}
-		}
+		}*/
 		
 	}
 	
@@ -1164,8 +1170,14 @@
 				imgSrc = "/cm/images/bms/PEOPLECOUNT_normal.png";
 			}
 			
+			
+			
 			str += '<div id="'+fcltId+'"style="z-index: 1;position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group fclt_img" onclick="imgOnclick(this.id);">';
-			str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			if(fcltKind == 'FK004'){
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:16px" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			}else{
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			}
 			str += '</div>'
 			
 		}
@@ -1233,7 +1245,11 @@
 			}
 			
 			str += '<div id="'+fcltId+'"style="z-index: 1;position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group fclt_img" onclick="imgOnclick(this.id);">';
-			str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			if(fcltKind == 'FK004'){
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:16px" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			}else{
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			}
 			str += '</div>'
 			
 		}
@@ -1299,7 +1315,11 @@
 			}
 			
 			str += '<div id="'+fcltId+'"style="z-index: 1;position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group fclt_img" onclick="imgOnclick(this.id);">';
-			str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			if(fcltKind == 'FK004'){
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:16px" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			}else{
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			}
 			str += '</div>'
 			
 		}
@@ -1324,8 +1344,10 @@
 		//이미지 변경
 		if(fcltKind == 'FK004' && (fcltCond == '1' || fcltCond == '')){
 			$('#'+fcltID).children('img').attr("src", '/cm/images/bms/AIRTUBE_normal_selected.png');
+			$('#'+fcltID).children('img').css("width", '24px');
 		}else if(fcltKind == 'FK004' && (fcltCond == '0' || fcltCond == '')){
 			$('#'+fcltID).children('img').attr("src", '/cm/images/bms/AIRTUBE_abnormal_selected.png');
+			$('#'+fcltID).children('img').css("width", '24px');
 		}
 		
 		oriBgWidth = document.getElementById(STTN_IMG.getID()).offsetWidth;
@@ -1367,7 +1389,11 @@
 			}
 			
 			str += '<div id="'+fcltId+'"style="z-index: 1;position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group fclt_img" onclick="imgOnclick(this.id);">';
-			str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			if(fcltKind == 'FK004'){
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:16px" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			}else{
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			}
 			str += '</div>'
 			
 		}
