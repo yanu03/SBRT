@@ -570,6 +570,27 @@
 			
 		
 		ORDER BY		UPD_DTM DESC			
+	</select>
+	
+	<select id="selectGrgRdsInfo" resultType="Map">
+		SELECT  		A.GRG_ID
+					,	B.SN
+					,	B.GPS_X
+					,	B.GPS_Y
+					,	B.TM_X
+					,	B.TM_Y
+				
+		FROM			BMS_REP_ROUT_GRG_CMPSTN A
+		LEFT JOIN		BMS_GRG_RDS_INFO	B	
+			ON			A.GRG_ID = B.GRG_ID
+			
+		<where>
+			<if test="CONTENT1 != null">
+				AND A.REP_ROUT_ID = #{CONTENT1}
+			</if>
+		</where>	
+		
+		ORDER BY		SN
 	</select>	
 	
 </mapper>

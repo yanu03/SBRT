@@ -292,6 +292,16 @@
 
 					</w2:columnInfo>
 				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_GRG_RDS_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="GRG_ID" name="name1" dataType="text"></w2:column>
+						<w2:column id="SN" name="name2" dataType="text"></w2:column>
+						<w2:column id="GPS_X" name="name3" dataType="text"></w2:column>
+						<w2:column id="GPS_Y" name="name4" dataType="text"></w2:column>
+						<w2:column id="TM_X" name="name5" dataType="text"></w2:column>
+						<w2:column id="TM_Y" name="name6" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_MO0101G0R0" ref="data:json,dma_search" target="data:json,dlt_BRT_CUR_OPER_INFO" action="/mo/MO0101G0R0"
@@ -372,6 +382,10 @@
 			<xf:submission id="sub_selectSigPhaseInfo" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_CRS_SIGOPER_PHASE_INFO_HIS"
 				action="/mo/selectSigPhaseInfo" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_selectGrgRdsInfo" ref="" target="data:json,dlt_BMS_GRG_RDS_INFO" action="/mo/selectGrgRdsInfo"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_selectGrgRdsInfo_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
@@ -592,6 +606,7 @@
 		
 		com.executeSubmission(sub_selectCommuMap);
 		com.executeSubmission(sub_selectSigPeriod);
+		//com.executeSubmission(sub_selectGrgRdsInfo);
 	};	//end onpageload
 	
 	var startMarker = 1;
@@ -1098,6 +1113,7 @@
 	
 	scwin.sub_selectNodeListByRepRout_submitdone = function(e) {
 		
+		com.executeSubmission(sub_selectGrgRdsInfo);
 		com.executeSubmission(sub_selectCategory);
 		routMap.showRoute("map_MO0101", dlt_BMS_ROUT_NODE_DISP_VW.getAllJSON(), null, "ONLYLINE");			
 		if ($("#MO0101_TAB").find("#li_sttnimg").hasClass("on") || startMarker == 1) {
@@ -1797,6 +1813,10 @@
 		}, dlt_SIG_PERIOD.getCellData(0, "SIG_PERIOD"));
 		//}, 1000);
 	};*/
+	
+	scwin.sub_selectGrgRdsInfo_submitdone = function(e) {
+		routMap.drawPolygon("map_MO0101", dlt_BMS_GRG_RDS_INFO);	
+	};
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">

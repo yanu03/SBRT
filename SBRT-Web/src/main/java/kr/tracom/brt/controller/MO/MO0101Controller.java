@@ -134,4 +134,10 @@ public class MO0101Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/mo/selectGrgRdsInfo")
+	public @ResponseBody Map<String, Object> selectGrgRdsInfo() throws Exception {		
+		result.setData("dlt_BMS_GRG_RDS_INFO", mo0101Service.selectGrgRdsInfo());
+		return result.getResult();
+	}	
+	
 }

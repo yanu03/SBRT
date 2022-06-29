@@ -40,6 +40,7 @@ public interface MO0101Mapper {
 	
 	public List selectSigPhaseInfo(Map param);
 	
+	public List selectGrgRdsInfo();
 	//교차로의 현시번호 가져오기
 	public int selectCurPhaseNo(Map param);
 }
