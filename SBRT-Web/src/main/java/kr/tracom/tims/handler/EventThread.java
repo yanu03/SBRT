@@ -483,6 +483,13 @@ public class EventThread extends Thread {
 		                if(curAllocPlInfo!=null) {
 		                    allocOperVhcId = (String) curAllocPlInfo.get("OPER_VHC_ID");
 		                    allocVhcId = (String) curAllocPlInfo.get("VHC_ID");
+		                    
+		                    if(CommonUtil.empty(busEventMap.get("REP_ROUT_ID"))&&curAllocPlInfo.get("REP_ROUT_ID")!=null) {
+								busEventMap.put("REP_ROUT_ID", curAllocPlInfo.get("REP_ROUT_ID"));
+							}
+							else {
+								busEventMap.put("REP_ROUT_ID", "RR00000002"); //임시로
+							}
 		                }
 						
 						if (curAllocPlInfo == null || CommonUtil.empty(allocOperVhcId)
@@ -494,7 +501,7 @@ public class EventThread extends Thread {
 				            else{
 				                busEventMap.put("ALLOC_NO", curAllocPlInfo.get("ALLOC_NO"));
 				                busEventMap.put("OPER_VHC_ID", busEventMap.get("BUS_ID"));
-								if(busEventMap.get("REP_ROUT_ID")==null&&curAllocPlInfo.get("REP_ROUT_ID")!=null) {
+								if(CommonUtil.empty(busEventMap.get("REP_ROUT_ID"))&&curAllocPlInfo.get("REP_ROUT_ID")!=null) {
 									busEventMap.put("REP_ROUT_ID", curAllocPlInfo.get("REP_ROUT_ID"));
 								}
 								else {
