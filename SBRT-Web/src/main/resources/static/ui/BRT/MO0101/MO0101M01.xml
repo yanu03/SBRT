@@ -639,6 +639,7 @@
 	
 
 	scwin.onMessageReceived = function(payload) {
+		debugger;
 		var jsonObj = JSON.parse(payload.body);
 		
 		var attrId = jsonObj.ATTR_ID;
@@ -744,6 +745,12 @@
 						
 					//	if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
 						if(curIndexArr.length != 0) {
+							
+							//focus가 된 차량이 아니면 return
+							if(dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID") == jsonObj.VHC_ID){
+								return;	
+							}
+							
 							dlt_BRT_OPER_EVENT_HIS.insertRow(0);
 							var today = new Date();   
 							var hours = leadingZeros(today.getHours(), 2);
@@ -905,6 +912,11 @@
 						
 						curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);			
 						
+						//focus가 된 차량이 아니면 return
+						if(dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID") == jsonObj.VHC_ID){
+							return;	
+						}
+						
 						if(curIndexArr.length != 0) {
 							dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
 							
@@ -938,6 +950,13 @@
 						var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 						
 						if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
+							
+							//포커스된 차량이 아니면 return
+							if(dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID") != jsonObj.VHC_ID) {
+								return;	
+							}
+							
+							
 							dlt_BRT_DSPTCH_LOG.insertRow(0);
 							
 							var today = new Date();   
@@ -1177,7 +1196,7 @@
 		}
 		routMap.removeAllOverlay("map_MO0101_crs");
 		dma_sub_search.set("NODE_ID", dlt_BMS_ROUT_NODE_CMPSTN2.getCellData(row, "NODE_ID"));
-		
+		debugger;
 		setTimeout(function() {
 			com.executeSubmission(sub_MO0101SCK);	
 		},100);	

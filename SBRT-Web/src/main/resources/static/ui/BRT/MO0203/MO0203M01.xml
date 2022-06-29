@@ -296,6 +296,8 @@
 		</style>
 
 		<script type="text/javascript" lazy="false"><![CDATA[
+	var sigTime = null;
+	
 	scwin.onpageload = function() {
 		 scwin.connect();
 		 var autoOptions = {
@@ -343,6 +345,11 @@
 			//routMap.removeRightClickOverlay("map_MO0203_vehicle");
 			routMap.removeRightClickOverlay("map_MO0203");
 		});				
+		
+		sigTime = setInterval(function() {
+			com.executeSubmission(sub_selectB0Bit);
+		}, 5000);
+		
 	};	
 	
 	scwin.btn_sub_move = function(){
@@ -612,7 +619,6 @@
 	}	
 	
 	scwin.onMessageReceived = function(payload) {
-		debugger;
 		
 		var jsonObj = JSON.parse(payload.body);
 		if(typeof(jsonObj.length) != "undefined" && jsonObj.length == 1) {
@@ -679,12 +685,24 @@
 		else if(attrId == util.ATTR_ID.AIRCON_INFO) {
 			//COOL_SET :  희망온도
 			//FCLT_ID : 시설물ID
-			//switch : on/off
+			//SWITCH : on/off
 			//TEMP : 현재온도	
 			var fcltId = jsonObj.FCLT_ID;
 			
-			$("#airconInfo_"+fcltId).find(".cool_set").text(jsonObj.COOL_SET);
-			$("#airconInfo_"+fcltId).find(".temp").text(jsonObj.TEMP);
+			//전원 on
+			if(jsonObj.SWITCH == "1") {
+				$("#airconInfo_"+fcltId).find(".powerOnSpan").show();
+				$("#airconInfo_"+fcltId).find(".powerOnSpan").css("display", "inline");
+				$("#airconInfo_"+fcltId).find(".powerOffSpan").hide();
+				$("#airconInfo_"+fcltId).find(".cool_set").text(jsonObj.COOL_SET);
+				$("#airconInfo_"+fcltId).find(".temp").text(jsonObj.TEMP);
+				
+			}
+			else if (jsonObj.SWITCH == "0") {
+				$("#airconInfo_"+fcltId).find(".powerOnSpan").hide();
+				$("#airconInfo_"+fcltId).find(".powerOffSpan").show();
+			}
+			
 			
 		
 		}
@@ -867,6 +885,7 @@
 			var fcltId = dlt_BMS_FCLT_INFO.getCellData(i, "FCLT_ID");
 			var fcltCond = dlt_BMS_FCLT_INFO.getCellData(i, "FCLT_COND");
 			var doorStatus = dlt_BMS_FCLT_INFO.getCellData(i, "PK025");
+			var powerOnOff = dlt_BMS_FCLT_INFO.getCellData(i, "PK002"); //Off : 0, On : 1
 			
 			if(fcltKind == 'FK001' && (fcltCond == 'FC020'|| fcltCond == '')){
 				imgSrc = "/cm/images/bms/BIT_RED_normal.png";
@@ -894,25 +913,43 @@
 			
 			//시설물 이미지
 			str += '<div id="'+fcltId+'" style="z-index: 1; position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group fclt_img" onclick="imgOnclick(this.id);">';
-			str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			if(fcltKind == 'FK004'){
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:16px" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			}else{
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+			}
 			str += '</div>'
 			
 			//에어컨이면 에어컨정보창 추가
 			if(fcltKind == 'FK005') {
+				str +=	'<div id="airconInfo_'+fcltId+'" class="station_display" style="width:120px; position: absolute; z-index: 10001; top:'+(parseInt(top)+8)+'px; left:'+(parseInt(left)+121)+'px">';
+				str +=	' 	<div class="mesage_wrap">';
+				str +=  ' 		<p class="display_mesage">';
 				
-			str +=	'<div id="airconInfo_'+fcltId+'" class="station_display" style="width:120px; position: absolute; z-index: 10001; top:'+(parseInt(top)+8)+'px; left:'+(parseInt(left)+121)+'px">';
-			str +=	' <div class="mesage_wrap">';
-			str +=  ' <p class="display_mesage">';
-			str +=  ' 		      <span class="" style="display:inline; font-size:12px;">희망온도</span>';
-			str +=  ' 		      <span class="tx_red cool_set" style="display:inline; margin:7px;font-size:14px;">'+dlt_BMS_FCLT_INFO.getCellData(i, "PK047") +'</span>';
-			str +=  ' 		      <span class="" style="display:inline; font-size:12px;">°C</span>';
-			str +=  ' 		      <span></span>';
-			str +=  ' 		      <span class="" style="display:inline; font-size:12px;">내부온도</span>';
-			str +=  ' 		      <span class="tx_red temp" style="display:inline; margin:7px;font-size:14px">'+dlt_BMS_FCLT_INFO.getCellData(i, "PK022") +'</span>';
-			str +=  ' 		      <span class="" style="display:inline; font-size:12px;">°C</span>';
-			str +=  ' 		   </p>';
-			str +=  ' 		 </div>';
-			str +=  ' 	</div>';				
+				if(powerOnOff == "1") {
+					
+					str +=  ' 		      <span class="powerOnSpan" style="display:inline; font-size:12px; margin-left: 3px;">희망온도</span>';
+					str +=  ' 		      <span class="powerOnSpan tx_red cool_set" style="display:inline; margin:7px;font-size:14px;">'+dlt_BMS_FCLT_INFO.getCellData(i, "PK047") +'</span>';
+					str +=  ' 		      <span class="powerOnSpan" style="display:inline; font-size:12px;">°C</span>';
+					str +=  ' 		      <span class="powerOnSpan" style="display:inline; font-size:12px; margin-left: 3px;">내부온도</span>';
+					str +=  ' 		      <span class="powerOnSpan tx_red temp" style="display:inline; margin:7px;font-size:14px">'+dlt_BMS_FCLT_INFO.getCellData(i, "PK022") +'</span>';
+					str +=  ' 		      <span class="powerOnSpan" style="display:inline; font-size:12px;">°C</span>';
+					str +=  ' 		      <span class="powerOffSpan tx_red" style="display:none">전원 꺼짐</span>'
+				}
+				
+				else if (powerOnOff == "0") {
+					str +=  ' 		      <span class="powerOnSpan" style="display:none; font-size:12px; margin-left: 3px;">희망온도</span>';
+					str +=  ' 		      <span class="powerOnSpan tx_red cool_set" style="display:none; margin:7px;font-size:14px;">'+dlt_BMS_FCLT_INFO.getCellData(i, "PK047") +'</span>';
+					str +=  ' 		      <span class="powerOnSpan" style="display:none; font-size:12px;">°C</span>';
+					str +=  ' 		      <span class="powerOnSpan" style="display:none; font-size:12px; margin-left: 3px;">내부온도</span>';
+					str +=  ' 		      <span class="powerOnSpan tx_red temp" style="display:none; margin:7px;font-size:14px">'+dlt_BMS_FCLT_INFO.getCellData(i, "PK022") +'</span>';
+					str +=  ' 		      <span class="powerOnSpan" style="display:none; font-size:12px;">°C</span>';
+					str +=  ' 		      <span class="powerOffSpan tx_red" style="">전원 꺼짐</span>';
+				}
+
+			str +=  ' 		 </p>';
+			str +=  ' 	</div>';
+			str +=  '</div>';				
 				
 				
 					
