@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare"
+	xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<w2:type>DEFAULT</w2:type>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataMap baseNode="map" id="dma_result">
+					<w2:keyInfo>
+						<w2:key id="STATUS" name="STATUS" dataType="text"></w2:key>
+						<w2:key id="ICNT" name="입력건수" dataType="text"></w2:key>
+						<w2:key id="UCNT" name="수정건수" dataType="text"></w2:key>
+						<w2:key id="DCNT" name="삭제건수" dataType="text"></w2:key>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
+					</w2:keyInfo>
+					<w2:data></w2:data>
+				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_airconControl" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="FCLT_ID" name="" dataType="text"></w2:column>
+						<w2:column id="INTG_FCLT_ID" name="" dataType="text"></w2:column>
+						<w2:column id="PK002" name="" dataType="text"></w2:column>
+						<w2:column id="PK022" name="" dataType="text"></w2:column>
+						<w2:column id="PK047" name="" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="TYPE" name="name1" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="name2" dataType="text"></w2:key>
+						<w2:key id="USE_YN" name="name3" dataType="text"></w2:key>
+						<w2:key id="FCLT_ID" name="name3" dataType="text"></w2:key>
+						<w2:key id="PK002" name="name3" dataType="text"></w2:key>
+						<w2:key id="PK022" name="name3" dataType="text"></w2:key>
+						<w2:key id="PK047" name="name3" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_selectIntgInfo" ref='data:json,dma_search' target="data:json,dlt_airconControl" action="/mo/MO0205P0R0" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="조회중입니다..."
+				ev:submit="" ev:submitdone="scwin.sub_selectIntgInfo_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_saveIntgInfo" ref='data:json,dlt_airconControl' target="data:json,dma_result" action="/mo/airconControl" method="post"
+				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="전송중입니다..."
+				ev:submit="" ev:submitdone="scwin.sub_saveIntgInfo_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+        
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		dma_search.set("FCLT_ID", scwin.param.fcltId);
+		
+		
+		dma_search.set("PK002", scwin.param.power);
+		dma_search.set("PK022", scwin.param.curDegree);
+		dma_search.set("PK047", scwin.param.setDegree);
+		
+		com.executeSubmission(sub_selectIntgInfo);
+	};
+	
+	scwin.onpageunload = function() {
+		
+	};
+	
+	scwin.sub_selectIntgInfo_submitdone = function(e) {
+		scwin.param = com.getParameter();
+		dlt_airconControl.setCellData(0, "FCLT_ID", scwin.param.fcltId);
+		dlt_airconControl.setCellData(0, "PK002", scwin.param.power);
+		dlt_airconControl.setCellData(0, "PK022", scwin.param.curDegree);
+		dlt_airconControl.setCellData(0, "PK047", scwin.param.setDegree);
+		dlt_airconControl.modifyAllStatus("R");
+	};
+	
+	//확인 버튼 onclick 이벤트
+	scwin.btn_confirm_onclick = function() {
+		com.executeSubmission(sub_saveIntgInfo);
+	};
+	
+	//취소 버튼 onclick 이벤트
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();
+	};
+	
+	scwin.sub_saveIntgInfo_submitdone = function(e) {
+		com.closePopup();
+	};
+	
+	scwin.T0_PK002_onviewchange = function(info) {
+		dlt_airconControl.setCellData(0, "PK002", info.newValue);
+	};
+	
+	scwin.T0_PK047_onviewchange = function(info) {
+		dlt_airconControl.setCellData(0, "PK047", info.newValue);
+	};
+	
+	scwin.T0_PK022_onviewchange = function(info) {
+		dlt_airconControl.setCellData(0, "PK022", info.newValue);
+	};
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_25_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header2">
+				<xf:group class="defaultbox" id="" style="">
+					<w2:textbox class="df_tt fl" id="" label="에어컨 제어" style=""></w2:textbox>
+				</xf:group>
+				<!-- <xf:group class="label" id="" style="float:right">
+					<w2:span class="" id="" label="(API키만 입력 가능합니다.)"></w2:span>
+				</xf:group> -->
+			</xf:group>
+			<xf:group style="" id="" class="popup_content">
+				<xf:group tagname="table" style="width:100%; position:absolute" id="FM0204F0" class="w2tb tb">
+					<w2:attributes>
+						<w2:summary></w2:summary>
+					</w2:attributes>
+					<xf:group tagname="colgroup">
+						<xf:group style="width:100px;" tagname="col"></xf:group>
+						<xf:group style="width:100px;" tagname="col"></xf:group>
+						<xf:group style="width:100px;" tagname="col"></xf:group>
+						<xf:group style="width:100px;" tagname="col"></xf:group>
+					</xf:group>
+					<xf:group tagname="tr" style="height:5px;">
+						<xf:group tagname="th" style="height: 10px;" class="w2tb_th">
+							전원(ON/OFF)
+							<w2:attributes>
+								<w2:scope>row</w2:scope>
+							</w2:attributes>
+						</xf:group>
+						<xf:group tagname="td" style="" class="w2tb_td" id="">
+							<xf:select selectedindex="-1" id="T0_PK002_AUTO" appearance="full" style="margin-left: 10px;width: 50px;"
+								cols="" rows="" ref="">
+								<xf:choices>
+									<xf:item>
+										<xf:label><![CDATA[자동]]></xf:label>
+										<xf:value><![CDATA[1]]></xf:value>
+									</xf:item>
+								</xf:choices>
+							</xf:select>
+						</xf:group>
+						<xf:group tagname="td" style="" class="w2tb_td" id="">
+							<xf:select1 allOption="" appearance="minimal" chooseOption="true" chooseOptionLabel="" direction="auto"
+								disabled="false" disabledClass="w2selectbox_disabled" id='T0_PK002' ref="data:dma_search.PK002" style=""
+								submenuSize="auto" ev:onviewchange="scwin.T0_PK002_onviewchange">
+								<xf:choices>
+									<xf:item>
+										<xf:label><![CDATA[ON]]></xf:label>
+										<xf:value><![CDATA[1]]></xf:value>
+									</xf:item>
+									<xf:item>
+										<xf:label><![CDATA[OFF]]></xf:label>
+										<xf:value><![CDATA[0]]></xf:value>
+									</xf:item>
+								</xf:choices>
+							</xf:select1>
+						</xf:group>
+						<xf:group tagname="th" style="height: 10px;" class="w2tb_th">
+							희망 온도(℃)
+							<w2:attributes>
+								<w2:scope>row</w2:scope>
+							</w2:attributes>
+						</xf:group>
+						<xf:group tagname="td" style="" class="w2tb_td" id="">
+							<xf:select selectedindex="-1" id="T0_PK047_AUTO" appearance="full" style="margin-left: 10px;" cols="" rows=""
+								ref="">
+								<xf:choices>
+									<xf:item>
+										<xf:label><![CDATA[자동]]></xf:label>
+										<xf:value><![CDATA[1]]></xf:value>
+									</xf:item>
+								</xf:choices>
+							</xf:select>
+						</xf:group>
+						<xf:group tagname="td" style="" class="w2tb_td" id="">
+							<xf:input adjustMaxLength="false" id="T0_PK047" style="text-align: right" type="number" allowChar="0-9."
+								maxlength="4" ref="data:dma_search.PK047" ev:onviewchange="scwin.T0_PK047_onviewchange">
+							</xf:input>
+						</xf:group>
+					</xf:group>
+					<xf:group tagname="tr" style="height:5px;">
+						<xf:group tagname="th" style="height: 10px;" class="w2tb_th">
+							온도(℃)
+							<w2:attributes>
+								<w2:scope>row</w2:scope>
+							</w2:attributes>
+						</xf:group>
+						<xf:group tagname="td" style="" class="w2tb_td" id="">
+							<xf:select selectedindex="-1" id="T0_PK022_AUTO" appearance="full" style="margin-left: 10px;" cols="" rows=""
+								ref="">
+								<xf:choices>
+									<xf:item>
+										<xf:label><![CDATA[자동]]></xf:label>
+										<xf:value><![CDATA[1]]></xf:value>
+									</xf:item>
+								</xf:choices>
+							</xf:select>
+						</xf:group>
+						<xf:group tagname="td" style="" class="w2tb_td" id="">
+							<xf:input adjustMaxLength="false" id="T0_PK022" style="text-align: right;" type="number" allowChar="0-9."
+								maxlength="4" ref="data:dma_search.PK022" ev:onviewchange="scwin.T0_PK022_onviewchange" disabled="true">
+							</xf:input>
+						</xf:group>
+						<xf:group tagname="th" style="height: 10px;" class="w2tb_th">
+
+							<w2:attributes>
+								<w2:scope>row</w2:scope>
+							</w2:attributes>
+						</xf:group>
+						<xf:group tagname="td" style="" class="w2tb_td" id="">
+
+						</xf:group>
+						<xf:group tagname="td" style="" class="w2tb_td" id="">
+
+						</xf:group>
+					</xf:group>
+				</xf:group>
+			</xf:group>
+			<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>
