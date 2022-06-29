@@ -95,7 +95,32 @@
 	};
 	
 	scwin.T0_PK002_onviewchange = function(info) {
-		dlt_airconControl.setCellData(0, "PK002", info.newValue);
+		if(info.newValue == '1'){
+			T0_PK047.setDisabled(false);
+			
+			/*var index = dlt_BMS_FCLT_COND_PARAM_INFO.getMatchedIndex("chk", "1");
+			for(var x = 0; x < index.length; x++){
+				dlt_BMS_FCLT_COND_PARAM_INFO.setCellData(index[x], "PK002", "1");
+			}*/
+		}else{
+			T0_PK047.setDisabled(true);
+			T0_PK047.setValue("");
+			
+			/*var index = dlt_BMS_FCLT_COND_PARAM_INFO.getMatchedIndex("chk", "1");
+			for(var x = 0; x < index.length; x++){
+				dlt_BMS_FCLT_COND_PARAM_INFO.setCellData(index[x], "PK002", "0");
+				dlt_BMS_FCLT_COND_PARAM_INFO.setCellData(index[x], "PK047", "");
+			}*/
+		}
+		
+		var power = info.newValue;
+		if(power == "0"){
+			power = "off";
+		}else if(power == "1"){
+			power = "on";
+		}
+	
+		dlt_airconControl.setCellData(0, "PK002", power);
 	};
 	
 	scwin.T0_PK047_onviewchange = function(info) {
@@ -105,6 +130,7 @@
 	scwin.T0_PK022_onviewchange = function(info) {
 		dlt_airconControl.setCellData(0, "PK022", info.newValue);
 	};
+	
 	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
