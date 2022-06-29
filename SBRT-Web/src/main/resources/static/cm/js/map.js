@@ -5594,9 +5594,7 @@ routMap.addPolygonByClick = function(mapId, data, grgId, grgNm, e){
  * @param name : 차고지 명
  */
 routMap.drawPolygon = function(mapId, data, name) {
-	
-
-	routMap.initDisplay(mapId);
+	//routMap.initDisplay(mapId);
 	
 	var list = 	com.getGridDispJsonData2(data);
 	var path = [];

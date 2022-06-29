@@ -270,4 +270,9 @@ public class MO0101Service extends ServiceSupport{
 		Map param = getSimpleDataMap("dma_sub_search");
 		return mo0101Mapper.selectSigPhaseInfo(param);
 	}
+	
+	public List selectGrgRdsInfo() throws Exception{
+		return mo0101Mapper.selectGrgRdsInfo();
+	}
+	
 }
