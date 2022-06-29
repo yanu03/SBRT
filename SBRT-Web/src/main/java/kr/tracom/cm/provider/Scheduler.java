@@ -95,6 +95,9 @@ public class Scheduler {
 								data2.put("COOL_SET", data2.get("coolingSetpoint"));
 								data2.put("TEMP", data2.get("temperature"));
 								data2.put("FCLT_ID", data.get("FCLT_ID"));
+								data2.put("FCLT_KIND", data.get("FCLT_KIND"));
+								data2.put("NODE_ID", data.get("NODE_ID"));
+								data2.put("MNG_ID", data.get("MNG_ID"));
 								data2.put("ATTR_ID", "5050"); //에어컨 attr_id 5050
 								
 								if(data2.get("switch").equals("on")) {

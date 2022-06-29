@@ -166,32 +166,118 @@
 	</update>	 -->
 	
 	<update id="updateFcltCondParamInfo" parameterType="Map">
-		
 		<!-- 에어컨 전원 -->
+		<!-- INSERT INTO
+			BMS_FCLT_COND_PARAM_INFO(
+				NODE_ID
+				,FCLT_ID
+				,FCLT_KIND
+				,PARAM_DIV
+				,PARAM_KIND 
+				,MNG_ID
+				,DATA_VAL
+				,SEND_DTM
+				,UPD_DTM
+			)VALUES(
+				#{NODE_ID}
+				,#{FCLT_ID}
+				,#{FCLT_KIND}
+				,'PD003'
+				,'PK002'
+				,#{MNG_ID}
+				,#{SWITCH}
+				,NOW()
+				,#{UPD_DTM}
+			)
+		ON DUPLICATE KEY UPDATE
+			DATA_VAL = #{SWITCH}
+			,SEND_DTM = NOW()
+			,UPD_DTM = #{UPD_DTM}; -->
+		
 		UPDATE 
 			BMS_FCLT_COND_PARAM_INFO
 		SET
 			DATA_VAL = #{SWITCH}
+			,SEND_DTM = NOW()
+			,UPD_DTM = #{UPD_DTM}
 		WHERE
 			FCLT_ID = #{FCLT_ID}
 			AND PARAM_DIV = 'PD003'
 			AND PARAM_KIND = 'PK002';
 		
 		<!-- 에어컨 현재 온도 -->	
+		<!-- INSERT INTO
+			BMS_FCLT_COND_PARAM_INFO(
+				NODE_ID
+				,FCLT_ID
+				,FCLT_KIND
+				,PARAM_DIV
+				,PARAM_KIND 
+				,MNG_ID
+				,DATA_VAL
+				,SEND_DTM
+				,UPD_DTM
+			)VALUES(
+				#{NODE_ID}
+				,#{FCLT_ID}
+				,#{FCLT_KIND}
+				,'PD003'
+				,'PK022'
+				,#{MNG_ID}
+				,#{SWITCH}
+				,NOW()
+				,#{UPD_DTM}
+			)
+		ON DUPLICATE KEY UPDATE
+			DATA_VAL = #{TEMP}
+			,SEND_DTM = NOW()
+			,UPD_DTM = #{UPD_DTM}; -->
+		
 		UPDATE 
 			BMS_FCLT_COND_PARAM_INFO
 		SET
 			DATA_VAL = #{TEMP}
+			,SEND_DTM = NOW()
+			,UPD_DTM = #{UPD_DTM}
 		WHERE
 			FCLT_ID = #{FCLT_ID}
 			AND PARAM_DIV = 'PD003'
 			AND PARAM_KIND = 'PK022';
 		
 		<!-- 에어컨 희망 온도 -->	
+		<!-- INSERT INTO
+			BMS_FCLT_COND_PARAM_INFO(
+				NODE_ID
+				,FCLT_ID
+				,FCLT_KIND
+				,PARAM_DIV
+				,PARAM_KIND 
+				,MNG_ID
+				,DATA_VAL
+				,SEND_DTM
+				,UPD_DTM
+			)VALUES(
+				#{NODE_ID}
+				,#{FCLT_ID}
+				,#{FCLT_KIND}
+				,'PD003'
+				,'PK047'
+				,#{MNG_ID}
+				,#{SWITCH}
+				,NOW()
+				,#{UPD_DTM}
+			)
+		ON DUPLICATE KEY UPDATE
+			DATA_VAL = #{COOL_SET}
+			,SEND_DTM = NOW()
+			,UPD_DTM = #{UPD_DTM}; -->
+		
 		UPDATE 
 			BMS_FCLT_COND_PARAM_INFO
 		SET
 			DATA_VAL = #{COOL_SET}
+			,SEND_DTM = NOW()
+			,UPD_DTM = #{UPD_DTM}
 		WHERE
 			FCLT_ID = #{FCLT_ID}
 			AND PARAM_DIV = 'PD003'
@@ -206,6 +292,8 @@
 			BMS_FCLT_COND_PARAM_INFO
 		SET
 			DATA_VAL = #{CONT_ST}
+			,SEND_DTM = NOW()
+			,UPD_DTM = #{UPD_DTM}
 		WHERE
 			NODE_ID = #{CRS_ID}
 			AND PARAM_DIV = 'PD003'
@@ -215,6 +303,8 @@
 			BMS_FCLT_COND_PARAM_INFO
 		SET
 			DATA_VAL = #{CONT_MODE}
+			,SEND_DTM = NOW()
+			,UPD_DTM = #{UPD_DTM}
 		WHERE
 			NODE_ID = #{CRS_ID}
 			AND PARAM_DIV = 'PD003'
@@ -224,6 +314,8 @@
 			BMS_FCLT_COND_PARAM_INFO
 		SET
 			DATA_VAL = #{PHASE_NO}
+			,SEND_DTM = NOW()
+			,UPD_DTM = #{UPD_DTM}
 		WHERE
 			NODE_ID = #{CRS_ID}
 			AND PARAM_DIV = 'PD003'
@@ -233,6 +325,8 @@
 			BMS_FCLT_COND_PARAM_INFO
 		SET
 			DATA_VAL = #{PHASE_TM_A}
+			,SEND_DTM = NOW()
+			,UPD_DTM = #{UPD_DTM}
 		WHERE
 			NODE_ID = #{CRS_ID}
 			AND PARAM_DIV = 'PD003'
@@ -242,6 +336,8 @@
 			BMS_FCLT_COND_PARAM_INFO
 		SET
 			DATA_VAL = #{PHASE_NO_B}
+			,SEND_DTM = NOW()
+			,UPD_DTM = #{UPD_DTM}
 		WHERE
 			NODE_ID = #{CRS_ID}
 			AND PARAM_DIV = 'PD003'
@@ -251,6 +347,8 @@
 			BMS_FCLT_COND_PARAM_INFO
 		SET
 			DATA_VAL = #{PHASE_TM_B}
+			,SEND_DTM = NOW()
+			,UPD_DTM = #{UPD_DTM}
 		WHERE
 			NODE_ID = #{CRS_ID}
 			AND PARAM_DIV = 'PD003'
