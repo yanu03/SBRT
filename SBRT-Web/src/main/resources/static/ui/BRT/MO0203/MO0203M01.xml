@@ -237,6 +237,17 @@
 						<w2:column id="PK036" name="" dataType="text"></w2:column>
 						<w2:column id="PK037" name="" dataType="text"></w2:column>
 						<w2:column id="PK038" name="" dataType="text"></w2:column>
+						<w2:column id="PK039" name="" dataType="text"></w2:column>
+						<w2:column id="PK040" name="" dataType="text"></w2:column>
+						<w2:column id="PK041" name="" dataType="text"></w2:column>
+						<w2:column id="PK042" name="" dataType="text"></w2:column>
+						<w2:column id="PK043" name="" dataType="text"></w2:column>
+						<w2:column id="PK044" name="" dataType="text"></w2:column>
+						<w2:column id="PK045" name="" dataType="text"></w2:column>
+						<w2:column id="PK046" name="" dataType="text"></w2:column>
+						<w2:column id="PK047" name="" dataType="text"></w2:column>
+						<w2:column id="PK048" name="" dataType="text"></w2:column>
+						<w2:column id="PK049" name="" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 			</w2:dataCollection>
@@ -603,6 +614,9 @@
 	scwin.onMessageReceived = function(payload) {
 		debugger;
 		var jsonObj = JSON.parse(payload.body);
+		if(typeof(jsonObj.length) != "undefined" && jsonObj.length == 1) {
+        	jsonObj = jsonObj[0];
+      	}
 		
 		var attrId = jsonObj.ATTR_ID;
 		var dataList = jsonObj.LIST;
@@ -660,15 +674,22 @@
 		
 		
 		//에어컨
-		else if(attrId == "에어컨정보") {
+		else if(attrId == "5050") {
 			//COOL_SET :  희망온도
 			//FCLT_ID : 시설물ID
 			//switch : on/off
 			//TEMP : 현재온도	
+			var fcltId = jsonObj.FCLT_ID;
+			
+			$("#airconInfo_"+fcltId).find(".cool_set").text(jsonObj.COOL_SET);
+			$("#airconInfo_"+fcltId).find(".temp").text(jsonObj.COOL_SET);
+			
+			
+		
 		}
 		
 		//스크린도어 
-		else if(attrId == "스크린도어정보") {
+		else if(attrId == "5051") {
 			//상태에 따라 gif바꾸기
 		}
 		
@@ -846,6 +867,27 @@
 			str += '<div id="'+fcltId+'" style="z-index: 1; position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group fclt_img" onclick="imgOnclick(this.id);">';
 			str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
 			str += '</div>'
+			
+			//에어컨이면 에어컨정보창 추가
+			if(fcltKind == 'FK005') {
+				
+			str +=	'<div id="airconInfo_'+fcltId+'" class="station_display" style="width:120px; position: absolute; z-index: 10001; top:'+(parseInt(top)+8)+'px; left:'+(parseInt(left)+121)+'px">';
+			str +=	' <div class="mesage_wrap">';
+			str +=  ' <p class="display_mesage">';
+			str +=  ' 		      <span class="" style="display:inline; font-size:12px;">희망온도</span>';
+			str +=  ' 		      <span class="tx_red cool_set" style="display:inline; margin:7px;font-size:14px;">'+dlt_BMS_FCLT_INFO.getCellData(i, "PK047") +'</span>';
+			str +=  ' 		      <span class="" style="display:inline; font-size:12px;">°C</span>';
+			str +=  ' 		      <span></span>';
+			str +=  ' 		      <span class="" style="display:inline; font-size:12px;">내부온도</span>';
+			str +=  ' 		      <span class="tx_red temp" style="display:inline; margin:7px;font-size:14px">'+dlt_BMS_FCLT_INFO.getCellData(i, "PK022") +'</span>';
+			str +=  ' 		      <span class="" style="display:inline; font-size:12px;">°C</span>';
+			str +=  ' 		   </p>';
+			str +=  ' 		 </div>';
+			str +=  ' 	</div>';				
+				
+				
+					
+			}
 			
 		}
 		
@@ -1033,9 +1075,30 @@
 								<xf:group id="routeMap" style="z-index: 10000; position: absolute;background: white;bottom: 0px;">
 									<xf:group id="imgDiv" style="background: white;width: 1370px;height: 280px;">
 										<xf:group style="" id="STTN_IMG" class="ST003_station"></xf:group>
+										
+										<!-- <div id="" class="station_display" style="position: absolute; z-index: 10001; top:28px; left:415px">
+										 <div class="mesage_wrap">
+										   <p class="display_mesage">
+										      <span class="" style="display:inline; font-size:12px;">희망온도</span>
+										      <span class="tx_red cool_set" style="display:inline; margin:7px;font-size:14px;">24</span>
+										      <span class="" style="display:inline; font-size:12px;">°C</span>
+										      <span></span>
+										      <span class="" style="display:inline; font-size:12px;">내부온도</span>
+										      <span class="tx_red temp" style="display:inline; margin:7px;font-size:14px">30</span>
+										      <span class="" style="display:inline; font-size:12px;">°C</span>   
+										   </p>
+										 </div>
+										</div> -->
+										
+										
 									</xf:group>
-									<!-- <canvas id="canvas" width="1270" height="150"></canvas> -->					
-								</xf:group>									
+								
+									<!-- <canvas id="canvas" width="1270" height="150"></canvas> -->
+														
+								</xf:group>	
+								
+								
+															
 							</div>
 
 			</xf:group><!-- end content -->
