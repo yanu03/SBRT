@@ -1865,14 +1865,15 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 		}	
 		var dsptchMsg = "";
 		//if(routMap.mapInfo[mapId].eventOverArr.length != 0) {
-		if(routMap.mapInfo[mapId].eventOverArr[0] != null) {
+		
+		/*if(routMap.mapInfo[mapId].eventOverArr[0] != null) {
 			dsptchMsg += '<div class="dsptchMessagePopup clickoverlay" id="busInfo-closer" style="position: absolute; bottom:210px;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
 		}	
 		else {
 			dsptchMsg += '<div class="dsptchMessagePopup clickoverlay" id="busInfo-closer" style="position: absolute;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'	
-		}		
+		}		*/
 		//dsptchMsg += '<div class="dsptchMessagePopup clickoverlay" id="busInfoPopup" style="position: absolute;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
-		dsptchMsg += '<a href="javascript:void(0)" id="busInfo-closer" class="close"><span class="blind">닫기</span></a>'
+		/*dsptchMsg += '<a href="javascript:void(0)" id="busInfo-closer" class="close"><span class="blind">닫기</span></a>'
 		dsptchMsg += '<div id="popup-content">'
 		dsptchMsg += '<div class="tit"><span style="margin-right: 40px; word-wrap:break-word; white-space: normal;"><strong>'+data.VHC_NO+'</strong></span></div>' 
 		dsptchMsg += '<div class="content">' 
@@ -1895,7 +1896,18 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 		dsptchMsg += '</tbody>' 
 		dsptchMsg += '</table>' 
 		dsptchMsg += '</div> </div>'
-		dsptchMsg += '</div></div>'	
+		dsptchMsg += '</div></div>'	*/
+		
+		if(routMap.mapInfo[mapId].eventOverArr[0] != null) {
+			dsptchMsg += '<h3 class="blind dsptchMessagePopup style="position: absolute; bottom:210px;">디스패치 메시지</h3>'
+		}	
+		else {
+			dsptchMsg += '<h3 class="blind dsptchMessagePopup" style="position: absolute;">디스패치 메시지</h3>'	
+		}				
+		//dsptchMsg += '  <h3 class="blind dsptchMessagePopup">디스패치 메시지</h3>'
+		dsptchMsg += '   <span>'+showMessage+'</span>'
+		dsptchMsg += '   <button class="close_mesage ir_pm" id="busInfo-closer">닫기</button> '
+		dsptchMsg += '</div>'			
 		
 		dsptchOverlay = new kakao.maps.CustomOverlay({
 			content: dsptchMsg,
@@ -1989,14 +2001,16 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 	
 	if (routMap.mapInfo[mapId].divEvent == "ET001" || routMap.mapInfo[mapId].divEvent == "ET019") {
 		//if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
-		if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
+		
+		/*if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
 			eventMsg += '<div class="busInfoPopup clickoverlay" id="busInfoPopup" style="position: absolute; bottom:154px;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
 		}	
 		else {
 			eventMsg += '<div class="busInfoPopup clickoverlay" id="busInfoPopup" style="position: absolute;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'	
-		}
+		}*/
 		//eventMsg += '<div class="busInfoPopup clickoverlay" id="busInfoPopup" style="position: absolute;"><div class="map_layer bustraffic" style="left: 0px;top: 10px;z-index:10000000;">'
-		eventMsg += '<a href="javascript:void(0)" id="busInfo-closer" class="close"><span class="blind">닫기</span></a>'
+		
+		/*eventMsg += '<a href="javascript:void(0)" id="busInfo-closer" class="close"><span class="blind">닫기</span></a>'
 		eventMsg += '<div id="popup-content">'
 		eventMsg += '<div class="tit"><span id="event_type" style="margin-right: 40px; word-wrap:break-word; white-space: normal;"><strong>'+data.EVT_TYPE+'</strong></span></div>' 
 		eventMsg += '<div class="content">' 
@@ -2036,7 +2050,39 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 		eventMsg += '</tbody>' 
 		eventMsg += '</table>' 
 		eventMsg += '</div> </div>'
-		eventMsg += '</div></div>'
+		eventMsg += '</div></div>'*/
+			
+		if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
+			eventMsg += '<div class="event map_info busInfoPopup" id="busInfoPopup" style="position: absolute; bottom:154px;">';
+		}	
+		else {
+			eventMsg += '<div class="event map_info busInfoPopup" id="busInfoPopup" style="position: absolute;">';	
+		}			
+			
+		//eventMsg += '<div class="event map_info busInfoPopup" id="busInfoPopup">';
+		eventMsg += '   <h3 class="blind">이벤트 안내</h3>';
+		eventMsg += '   <p class="action">'+data.EVT_TYPE+'</p>';
+		eventMsg += '   <p class="stay_sec">(현재정차시간 : <span id="cur_stop_tm">'+0+'</span>초))</p>';
+		eventMsg += '   <table class="station_info">';
+		eventMsg += '      <colgroup>';
+		eventMsg += '         <col style="width: 90px;">';
+		eventMsg += '         <col style="width: auto;">';
+		eventMsg += '      </colgroup>';
+		eventMsg += '      <tbody><tr>';
+		eventMsg += '         <th>현재'+ nodeType+'</th>';
+		eventMsg += '         <td>'+data.NODE_NM+'</td>';
+		eventMsg += '      </tr>';
+		eventMsg += '      <tr>';
+		eventMsg += '         <th>다음'+ nextNodeType+'</th>';
+		eventMsg += '         <td>'+data.NEXT_NODE_NM+'</td>';
+		eventMsg += '      </tr>';
+		eventMsg += '   </tbody></table>';
+		eventMsg += '   <dl class="event_mesage">';
+		eventMsg += '     <dt class="blind">정차 메시지</dt>';
+		eventMsg += '      <dd id="stopMessage"></dd>';
+		eventMsg += '   </dl>';
+		eventMsg += '   <button class="close_mesage ir_pm" id="busInfo-closer">닫기</button>';
+		eventMsg += '</div>';			
 			
 		addStopTime = setInterval(function() {
 			stopTime++;
