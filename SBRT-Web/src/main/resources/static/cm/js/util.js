@@ -26,6 +26,8 @@ var util = {
 	,	BUS_INFO : 4014 //실시간 차량 위치 정보
 	,	DISPATCH : 4020 //디스패치
 	,	DISPATCH_LIST : 4021
+	,	AIRCON_INFO : 5050
+	,	SCREENDOOR_INFO : 5051	
 	}
 }
 
