@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,13 +107,13 @@ public class Scheduler {
 									data2.put("SWITCH", "0");
 								}
 								
-								historyMapper.updateFcltCondParamInfo(data2);
+								//historyMapper.updateFcltCondParamInfo(data2);
 								
 							}
 							
 							//웹소켓 전송이 필요한 경우
 							if(jsonList != null) {
-								webSocketClient.sendMessageList(jsonList);
+								//webSocketClient.sendMessageList(jsonList);
 							}
 							
 							
@@ -140,6 +141,72 @@ public class Scheduler {
 
 		} catch (Exception e) {
 			logger.error("schedule_1sec Exception!!! {}", e);
+		}
+	}
+	
+	/*스크린도어 문 열림/닫힘 테스트*/
+	@Scheduled(fixedDelay = 15000)
+	public void schedule_15sec() {
+		//logger.info("schedule_1sec");
+		try {
+			//String actionData = "[{'MNG_ID' : 'IMP0090000SD0004', 'DATA_VAL' : '1', 'ATTR_ID' : '5051' },{'MNG_ID' : 'IMP0090000SD0005', 'DATA_VAL' : '1', 'ATTR_ID' : '5051'},"
+			//		+ "{'MNG_ID' : 'IMP0090000SD0006', 'DATA_VAL' : '1', 'ATTR_ID' : '5051'}]";
+			
+			String actionData = "{'MNG_ID' : 'IMP0090000SD0004', 'DATA_VAL' : '1', 'ATTR_ID' : '5051' }";
+			String actionData2 = "{'MNG_ID' : 'IMP0090000SD0005', 'DATA_VAL' : '1', 'ATTR_ID' : '5051' }";
+			
+    		Gson gson = new Gson();
+			Type resultType = new TypeToken<Map<String, Object>>(){}.getType();
+			Map<String, Object> map= gson.fromJson(actionData, resultType);
+			Map<String, Object> map2= gson.fromJson(actionData2, resultType);
+			map.put("ATTR_ID", "5051");
+			map2.put("ATTR_ID", "5051");
+    		
+			//Map<String, Object> map = new HashMap<String, Object>();
+			ArrayList jsonList = new ArrayList<Map<String, Object>>();
+			ArrayList jsonList2 = new ArrayList<Map<String, Object>>();
+			jsonList.add(map);
+			jsonList2.add(map2);
+			webSocketClient.sendMessageList(jsonList);
+			webSocketClient.sendMessageList(jsonList2);
+    		
+    		logger.info("======== 시설물 매개변수: {}", actionData);
+    		logger.info("======== 시설물 매개변수2: {}", actionData2);
+		} catch (Exception e) {
+			logger.error("schedule_30sec Exception!!! {}", e);
+		}
+	}
+	
+	/*스크린도어 문 열림/닫힘 테스트*/
+	@Scheduled(fixedDelay = 22000)
+	public void schedule_22sec() {
+		//logger.info("schedule_1sec");
+		try {
+			//String actionData = "[{'MNG_ID' : 'IMP0090000SD0004', 'DATA_VAL' : '0', 'ATTR_ID' : '5051' },{'MNG_ID' : 'IMP0090000SD0005', 'DATA_VAL' : '0', 'ATTR_ID' : '5051'},"
+			//		+ "{'MNG_ID' : 'IMP0090000SD0006', 'DATA_VAL' : '0', 'ATTR_ID' : '5051'}]";
+			
+			String actionData = "{'MNG_ID' : 'IMP0090000SD0004', 'DATA_VAL' : '0', 'ATTR_ID' : '5051' }";
+			String actionData2 = "{'MNG_ID' : 'IMP0090000SD0005', 'DATA_VAL' : '0', 'ATTR_ID' : '5051' }";
+			
+    		Gson gson = new Gson();
+			Type resultType = new TypeToken<Map<String, Object>>(){}.getType();
+			Map<String, Object> map= gson.fromJson(actionData, resultType);
+			Map<String, Object> map2= gson.fromJson(actionData2, resultType);
+			map.put("ATTR_ID", "5051");
+			map2.put("ATTR_ID", "5051");
+    		
+			//Map<String, Object> map = new HashMap<String, Object>();
+			ArrayList jsonList = new ArrayList<Map<String, Object>>();
+			ArrayList jsonList2 = new ArrayList<Map<String, Object>>();
+			jsonList.add(map);
+			jsonList2.add(map2);
+			webSocketClient.sendMessageList(jsonList);
+			webSocketClient.sendMessageList(jsonList2);
+    		
+    		logger.info("======== 시설물 매개변수: {}", actionData);
+    		logger.info("======== 시설물 매개변수2: {}", actionData2);
+		} catch (Exception e) {
+			logger.error("schedule_35sec Exception!!! {}", e);
 		}
 	}
 }

@@ -721,8 +721,33 @@
 		//스크린도어 
 		else if(attrId == util.ATTR_ID.SCREENDOOR_INFO) {
 			//상태에 따라 gif바꾸기
+			var scrndoorNum = ''; 
+			var index = dlt_BMS_FCLT_INFO.getMatchedIndex("MNG_ID", jsonObj.MNG_ID);
+			var fcltID = dlt_BMS_FCLT_INFO.getCellData(index[0], "FCLT_ID");
+			var mngId = dlt_BMS_FCLT_INFO.getCellData(index[0], "MNG_ID");
+			var oldPk025 = dlt_BMS_FCLT_INFO.getCellData(index[0], "PK025");
+			dlt_BMS_FCLT_INFO.setCellData(index[0], "PK025", jsonObj.DATA_VAL);
 			
-			var fcltId = jsonObj.MNG_ID;
+			if(oldPk025 == '1'){
+				if(jsonObj.DATA_VAL == '0'){
+					if(jsonObj.MNG_ID.slice(-1) == mngId.slice(-1)){
+						scrndoorNum = jsonObj.MNG_ID.slice(-1);
+						$('#'+fcltID+'img').attr("src", '/cm/images/bms/OpenedDoor'+scrndoorNum+'.PNG');
+						$('#'+fcltID+'img').attr("src", '/cm/images/bms/ClosingDoor_SD'+scrndoorNum+'.gif');
+					}
+				}
+			}else if(oldPk025 == '0'){
+				if(jsonObj.DATA_VAL == '1'){
+					if(jsonObj.MNG_ID.slice(-1) == mngId.slice(-1)){
+						scrndoorNum = jsonObj.MNG_ID.slice(-1);
+						$('#'+fcltID+'img').attr("src", '/cm/images/bms/OpeningDoor_SD'+scrndoorNum+'.gif');
+					}
+				}
+			}
+			
+			
+			
+			/*var fcltId = jsonObj.MNG_ID;
 			var imgUrl = null;
 			
 			if(jsonObj.PARAM_KIND == "25"){
@@ -738,7 +763,7 @@
 				}
 				
 				$("#"+fcltId+"img").attr("src", imgUrl);
-			}	
+			}*/	
 			
 		}
 		
