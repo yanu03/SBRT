@@ -2062,7 +2062,7 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 		//eventMsg += '<div class="event map_info busInfoPopup" id="busInfoPopup">';
 		eventMsg += '   <h3 class="blind">이벤트 안내</h3>';
 		eventMsg += '   <p class="action">'+data.EVT_TYPE+'</p>';
-		eventMsg += '   <p class="stay_sec">(현재정차시간 : <span id="cur_stop_tm">'+0+'</span>초))</p>';
+		eventMsg += '   <p class="stay_sec">(현재정차시간 : <span id="cur_stop_tm">'+0+'</span>))</p>';
 		eventMsg += '   <table class="station_info">';
 		eventMsg += '      <colgroup>';
 		eventMsg += '         <col style="width: 90px;">';
