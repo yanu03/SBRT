@@ -1,6 +1,7 @@
 package kr.tracom.tims.handler;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,21 +146,16 @@ public class ActionRequest {
             		//String dataArr[] = actionData.split(",");
             		
             		Gson gson = new Gson();
-					Type resultType = new TypeToken<List<Map<String, Object>>>(){}.getType();
-					List<Map<String, Object>> jsonList = gson.fromJson(actionData, resultType);
+					Type resultType = new TypeToken<Map<String, Object>>(){}.getType();
+					Map<String, Object> map= gson.fromJson(actionData, resultType);
+					map.put("ATTR_ID", "5051");
             		
-					Map<String, Object> map = new HashMap<String, Object>();
-					map.put("ATTR_ID", "5051"); //스크린도어 attr_id 5051
+					//Map<String, Object> map = new HashMap<String, Object>();
+					ArrayList jsonList = new ArrayList<Map<String, Object>>();
+					jsonList.add(map);
+					webSocketClient.sendMessageList(jsonList);
 					
-					for(int x = 0; x < jsonList.size(); x++) {
-						jsonList.add(map);
-						
-						//웹소켓 전송이 필요한 경우
-						if(jsonList != null) {
-							webSocketClient.sendMessageList(jsonList);
-						}
-					}
-					
+
             		
             		logger.info("======== 시설물 매개변수: {}", actionData);
             	}

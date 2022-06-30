@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,8 @@ public class MO0205Service extends ServiceSupport{
 	
 	@Autowired
 	private IntgMapper intgMapper;
+	
+	Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Value("${api.gateway.url}")
 	private String apiGatewayUrl;
@@ -88,6 +92,7 @@ public class MO0205Service extends ServiceSupport{
 				String intgUrl = (String) token.get(0).get("INTG_URL");
 				
 				String api = apiGatewayUrl + intgUrl + key + "&deviceId=" + intgFcltId + "&value=" + power;
+				logger.debug("airconControl() api = "+ api);
 				
 				BufferedReader in = null;
 				
@@ -118,6 +123,8 @@ public class MO0205Service extends ServiceSupport{
 				String intgUrl = (String) token.get(0).get("INTG_URL");
 				
 				String api = apiGatewayUrl + intgUrl + key + "&deviceId=" + intgFcltId + "&value=" + degree;
+				logger.debug("airconControl() api = "+ api);
+				
 				
 				BufferedReader in = null;
 				
