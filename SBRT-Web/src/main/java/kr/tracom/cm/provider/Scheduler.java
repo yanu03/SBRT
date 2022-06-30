@@ -107,13 +107,13 @@ public class Scheduler {
 									data2.put("SWITCH", "0");
 								}
 								
-								//historyMapper.updateFcltCondParamInfo(data2);
+								historyMapper.updateFcltCondParamInfo(data2);
 								
 							}
 							
 							//웹소켓 전송이 필요한 경우
 							if(jsonList != null) {
-								//webSocketClient.sendMessageList(jsonList);
+								webSocketClient.sendMessageList(jsonList);
 							}
 							
 							
@@ -144,8 +144,7 @@ public class Scheduler {
 		}
 	}
 	
-	/*스크린도어 문 열림/닫힘 테스트*/
-	@Scheduled(fixedDelay = 15000)
+	/*@Scheduled(fixedDelay = 15000)
 	public void schedule_15sec() {
 		//logger.info("schedule_1sec");
 		try {
@@ -177,7 +176,6 @@ public class Scheduler {
 		}
 	}
 	
-	/*스크린도어 문 열림/닫힘 테스트*/
 	@Scheduled(fixedDelay = 22000)
 	public void schedule_22sec() {
 		//logger.info("schedule_1sec");
@@ -208,5 +206,5 @@ public class Scheduler {
 		} catch (Exception e) {
 			logger.error("schedule_35sec Exception!!! {}", e);
 		}
-	}
+	}*/
 }
