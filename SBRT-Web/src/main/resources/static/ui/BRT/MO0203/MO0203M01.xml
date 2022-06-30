@@ -422,9 +422,9 @@
 			
 			//보내는게 1개
 			if(dlt_BMS_ETA_INFO.getDataLength() == 1 || dlt_BMS_SOONETA_INFO.getDataLength() == 1){
-				tableBody += '<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_511" class="w2group">'
+				tableBody += '<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_511" class="w2group" style="text-align: center;">'
 					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_514" style="border-color: black; " class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 12px;" class="w2span ">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 10px;" class="w2span ">'
 					+dlt_BMS_ETA_INFO.getCellData(0, "ROUT_NM")
 					+'</span>'
 					+'</td>'
@@ -440,7 +440,7 @@
 					+'</td>'
 					+'</tr>'
 					
-					+'<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_512" class="w2group">'
+					+'<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_512" class="w2group" style="height: 124px;">'
 					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_513" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
 					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_516" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
 
@@ -563,7 +563,7 @@
 					
 			tableBody += '<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_511" class="w2group">'
 					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_514" style="border-color: black;" class="w2group w2tb_td w2tb_noTH">'
-					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
+					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 10px;" class="w2span ">'
 					+'</span>'
 					+'</td>'
 					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_518" style="border-color: black;text-align: right;" class="w2group w2tb_td w2tb_noTH">'
@@ -572,7 +572,7 @@
 					+'</td>'
 					+'</tr>'
 					
-					+'<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_511" class="w2group">'
+					+'<tr id="mf_tac_layout_contents_MN00070102_body_wq_uuid_511" class="w2group" style="height: 124px;">'
 					+'<td id="mf_tac_layout_contents_MN00070102_body_wq_uuid_514" style="border-color: black; border-bottom-color:yellow" class="w2group w2tb_td w2tb_noTH">'
 					+'<span id="mf_tac_layout_contents_MN00070102_body_wq_uuid_515" style="width: 100px;height: 23px;font-size: 2px;" class="w2span ">'
 					+'</span>'
@@ -635,24 +635,47 @@
 		
 		//attrId = 2022 : 정류장별 차량 도착 정보
 		if(attrId == util.ATTR_ID.BUS_ARRIVAL_INFO && dlt_BMS_NODE_MST.getCellData(MO0203G0.getFocusedRowIndex(), "NODE_ID") == jsonObj.STTN_ID){
-			MO0203T0_setTable(dataList);
+			try {
+				MO0203T0_setTable(dataList);
+			} catch (e) {
+				console.log("[scwin.onMessageReceived] Exception :: " + e.message);	
+			}
 		}
 		
 		//attrId = 4014 : 실시간 차량 위치 정보
 		else if(attrId == util.ATTR_ID.BUS_INFO){
+			try{
+				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+				if(curIndexArr.length != 0) {
+					dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
+					dataRowJson = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndexArr[0]);
+					routMap.moveVehicle("map_MO0203_vehicle", dataRowJson, curIndexArr[0], -1);	
+				}
+			} catch (e) {
+				console.log("[scwin.onMessageReceived] Exception :: " + e.message);	
+			}
+			
+		}
 		
-			var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
-			if(curIndexArr.length != 0) {
-				dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
-				dataRowJson = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndexArr[0]);
-				routMap.moveVehicle("map_MO0203_vehicle", dataRowJson, curIndexArr[0], -1);	
+		else if(attrId == util.ATTR_ID.BUS_OPER_EVENT) {
+			try {
+				
+				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+				if(curIndexArr.length != 0) {
+					dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
+					//확인못함
+					//routMap.showVehicleClickOverlay("map_MO0203_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON());	
+				}
+				
+			} catch (e) {
+				console.log("[scwin.onMessageReceived] Exception :: " + e.message);	
 			}
 			
 		}
 		
 		//B0 제외한 BIT정보
-		//else if(attrId == "버스정보" || busList[0].ATTR_ID == "버스정보") {
-		else if(attrId == "버스정보") {
+		else if(attrId == "버스정보" || busList[0].ATTR_ID == "버스정보") {
+		//else if(attrId == "버스정보") {
 			if(typeof attrId != "undefined") {
 				dataList.push({"REMAIN_TM": jsonObj.REMAIN_TM});
 				dataList.push({"ROUT_NM": jsonObj.ROUT_NM});
@@ -1165,7 +1188,7 @@
 				
 							<div id="map_MO0203" style="padding:0 !important"  class="bms_box_wrap">
 								<ul id="category_map_MO0203" class="category"></ul>
-								<xf:group id="brt_div" class="pgm_detail" style="z-index: 10000;position: absolute;right: 52px;margin-top: 296px;margin-right: -49px;width: 140px;height: 399px;">
+								<xf:group id="brt_div" class="pgm_detail" style="z-index: 10000;position: absolute;right: 52px;margin-top: 332px;margin-right: -49px;width: 140px;height: 399px;">
 									<xf:group style="width: 100%; height:100%" id="bit_img">
 										<xf:group id="" class="brt_bit" style="background-size: cover; height: 393px; position: relative;"></xf:group>
 									</xf:group>
@@ -1180,7 +1203,7 @@
 												 id="" ref="data:dlt_BMS_NODE_MST.NODE_ID">
 										</w2:span>
 									</xf:group>
-									<xf:group style="position: absolute; top: 47%; left: 7%;" id="MO0203T0" class="w2tb bit_tb">
+									<xf:group style="position: absolute; top: 47%; left: 7%; height:200px;" id="MO0203T0" class="w2tb bit_tb">
 									
 									</xf:group>
 									<!-- <xf:group>

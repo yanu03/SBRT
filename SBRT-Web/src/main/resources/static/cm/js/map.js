@@ -1987,9 +1987,9 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 	var min = "";
 	var sec = "";
 	
-	if(data.NODE_TYPE == "NT001") {
+	if(data.CUR_NODE_TYPE == "NT001") {
 		nodeType = "교차로";
-	} else if(data.NODE_TYPE == "NT002"){
+	} else if(data.CUR_NODE_TYPE == "NT002"){
 		nodeType = "정류소";
 	}
 	
@@ -2103,7 +2103,7 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 	//출발이벤트 or 차량 속력이 20km/h 이상일 때 이벤트 오버레이 삭제
 	else if (routMap.mapInfo[mapId].divEvent == "ET002" || data.CUR_SPD > 20 || routMap.mapInfo[mapId].divEvent == "ET020") {
 		if (routMap.mapInfo[mapId].eventOverArr != null) {
-			
+			if(routMap.mapInfo[mapId].eventOverArr[0] != null) {
 		/*	if(routMap.mapInfo[mapId].divEvent == "ET001"){
 				$("#event_type").text(data.EVT_TYPE);
 			}*/
@@ -2128,6 +2128,7 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 			},1500);
 			
 		}		
+		}
 	}
 	
 /*	else if (routMap.mapInfo[mapId].divEvent == "ET002") {
@@ -5502,17 +5503,20 @@ routMap.moveVehicle = function(mapId, json, index, focusIdx) {
 		routMap.mapInfo[mapId].busOverArr[index].setPosition(latLng);
 	}	
 	
-	if(routMap.mapInfo[mapId].dsptchOverArr != null) {
-		if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
-			routMap.mapInfo[mapId].dsptchOverArr[0].setPosition(latLng);
+	if(focusIdx == index) {
+		if(routMap.mapInfo[mapId].dsptchOverArr != null) {
+			if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
+				routMap.mapInfo[mapId].dsptchOverArr[0].setPosition(latLng);
+			}
+		}
+		
+		if(routMap.mapInfo[mapId].eventOverArr != null) {
+			if(routMap.mapInfo[mapId].eventOverArr[0] != null) {
+				routMap.mapInfo[mapId].eventOverArr[0].setPosition(latLng);
+			}
 		}
 	}
-	
-	if(routMap.mapInfo[mapId].eventOverArr != null) {
-		if(routMap.mapInfo[mapId].eventOverArr[0] != null) {
-			routMap.mapInfo[mapId].eventOverArr[0].setPosition(latLng);
-		}
-	}
+
 	
 	if(json != null){
 		if(focusIdx!=-1 && focusIdx == index){
