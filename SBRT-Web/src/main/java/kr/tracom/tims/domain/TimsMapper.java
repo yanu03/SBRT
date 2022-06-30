@@ -23,4 +23,9 @@ public interface TimsMapper {
 	//링크순번으로 노드정보 가져오기
 	Map<String, Object> selectNodeByLinkSn(Map<String, Object> paramMap);
 	
+	
+	Map<String, Object> selectCurSttnInfo(Map<String, Object> paramMap);
+	
+	Map<String, Object> selectNextSttnInfo (Map<String, Object> paramMap);	
+	
 }

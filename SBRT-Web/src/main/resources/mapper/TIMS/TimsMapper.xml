@@ -44,6 +44,45 @@
 		LIMIT 1
 	</select>
 	
+	<select id="selectCurSttnInfo" resultType="Map" parameterType="Map">
+		SELECT 
+			NODE_ID AS CUR_NODE_ID
+			,NODE_NM AS CUR_NODE_NM
+			,NODE_SN AS CUR_NODE_SN
+			,NODE_TYPE AS CUR_NODE_TYPE
+			,(
+			  SELECT PRV_PLCE_NM 
+			  FROM BRT_CUR_OPER_INFO 
+			  WHERE OPER_DT = #{OPER_DT} AND ROUT_ID = #{ROUT_ID} AND VHC_NO = #{BUS_NO}
+			) AS PREV_NODE_NM	
+		FROM BMS_ROUT_NODE_CMPSTN
+		WHERE ROUT_ID = #{ROUT_ID} 
+			AND NODE_SN >= #{NODE_SN}
+			AND NODE_TYPE ='NT002'
+		ORDER BY NODE_SN ASC
+		LIMIT 1
+	</select>
+	
+	<select id="selectNextSttnInfo" resultType="Map" parameterType="Map">
+		SELECT 
+			NODE_ID AS NEXT_NODE_ID
+			,NODE_NM AS NEXT_NODE_NM
+			,NODE_SN AS NEXT_NODE_SN
+			,NODE_TYPE AS NEXT_NODE_TYPE
+			,(
+			  SELECT PRV_PLCE_NM 
+			  FROM BRT_CUR_OPER_INFO 
+			  WHERE OPER_DT = #{OPER_DT} AND ROUT_ID = #{ROUT_ID} AND VHC_NO = #{BUS_NO}
+			) AS PREV_NODE_NM	
+		FROM BMS_ROUT_NODE_CMPSTN
+		WHERE ROUT_ID = #{ROUT_ID} 
+			AND NODE_SN > #{NODE_SN}
+			AND NODE_TYPE ='NT002'
+		ORDER BY NODE_SN ASC
+		LIMIT 1
+	</select>
+	
+	
 	
 	<!-- 노드정보 가져오기 -->
 	<select id="selectNodeInfo" resultType="Map" parameterType="Map">
