@@ -38,7 +38,7 @@ public class VhcController extends ControllerSupport {
 	
 	@RequestMapping("/vhc/selectCurOperVhcList")
 	public @ResponseBody Map<String, Object> selectCurOperVhcList() throws Exception {
-		result.setData("dlt_BMS_VHC_MST", vhcService.selectCurOperVhcList());
+		result.setData("dlt_BRT_CUR_OPER_INFO", vhcService.selectCurOperVhcList());
 		return result.getResult();
 	}
 	

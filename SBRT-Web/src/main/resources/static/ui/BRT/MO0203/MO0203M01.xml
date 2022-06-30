@@ -151,6 +151,8 @@
 						<w2:column id="NODE_NM" name="이전노드명" dataType="text"></w2:column>
 						<w2:column id="DSPTCH_KIND" name="디스패치종류" dataType="text"></w2:column>
 						<w2:column id="DSPTCH_DIV" name="디스패치구분" dataType="text"></w2:column>
+						<w2:column id="NODE_SN" name="name29" dataType="text"></w2:column>
+						<w2:column id="VHC_KIND" name="name30" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_repRoutItem" saveRemovedData="true">
@@ -260,18 +262,18 @@
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0203SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0203G2R0" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_NODE_DISP_VW"
+			<xf:submission id="sub_selectNodeListByRepRout" ref="data:json,dma_search" target="data:json,dlt_BMS_ROUT_NODE_DISP_VW"
 				action="/rout/selectNodeDispListByRepRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
-				errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_MO0203G2R0_submitdone"
+				errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit="" ev:submitdone="scwin.sub_selectNodeListByRepRout_submitdone"
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_MO0203SCK" ref="data:json,dma_sub_search" target="data:json,dlt_BMS_ETA_INFO" action="/mo/MO0203SCK"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0203SCK_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0203G1R0" ref="data:json,dma_search" target="data:json,dlt_BRT_CUR_OPER_INFO" action="/mo/MO0101G0R0"
+			<xf:submission id="sub_selectCurOperVhcList" ref="data:json,dma_search" target="data:json,dlt_BRT_CUR_OPER_INFO" action="/mo/MO0101G0R0"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+				processMsg="" ev:submit="" ev:submitdone="scwin.sub_selectCurOperVhcList_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_MO0203SHI1" ref="" target="data:json,dlt_repRoutItem" action="/repRout/selectRepRoutItem" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
@@ -323,10 +325,12 @@
 		};	
 		com.setMainSrhBtn(wfm_mainSearchBtn, gcm.DISP_TYPE.SINGLE_GRID, autoOptions, mainSrhOptions, codeOptions);
 				
-		routMap.initMap2("map_MO0203", {width:"100%"
+		var map = routMap.initMap2("map_MO0203", {width:"100%"
 				, height:"100%"
 		});
-		
+		routMap.cronMap("map_MO0203_vehicle", {
+				onMarkerClick: scwin.onClickMapSttn				
+		},map);
 		
 		 
 		com.setCommonDtl(codeOptions//, function(){
@@ -347,7 +351,7 @@
 		});				
 		
 		sigTime = setInterval(function() {
-			com.executeSubmission(sub_selectB0Bit);
+			$p.executeSubmission(sub_selectB0Bit);
 		}, 5000);
 		
 	};	
@@ -636,6 +640,13 @@
 		
 		//attrId = 4014 : 실시간 차량 위치 정보
 		else if(attrId == util.ATTR_ID.BUS_INFO){
+		
+			var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+			if(curIndexArr.length != 0) {
+				dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
+				dataRowJson = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndexArr[0]);
+				routMap.moveVehicle("map_MO0203_vehicle", dataRowJson, curIndexArr[0], -1);	
+			}
 			
 		}
 		
@@ -755,8 +766,6 @@
 		var allDataList = dlt_BMS_NODE_MST.getAllJSON();
 		var focusIdx = MO0203G0.getFocusedRowIndex();
 		
-		//노선만 뿌리기
-		routMap.showRoute("map_MO0203", dlt_BMS_ROUT_NODE_DISP_VW.getAllJSON(), null, "ONLYLINE");
 		//마커 뿌리기
 		routMap.showMarkerList("map_MO0203", allDataList, focusIdx, MO0203G0); 	
 		//카테고리 뿌리기
@@ -827,27 +836,27 @@
 //		TYPE.setValue("RT00000049");
 //		
 //		dma_sub_search.set("ROUT_ID",TYPE.getValue());
-//		$p.executeSubmission(sub_MO0203G2R0);
+//		$p.executeSubmission(sub_selectNodeListByRepRout);
 //		com.searchGrid(MO0203G0, sub_MO0203G0R0);
 //	};
 	
 //	scwin.TYPE_onviewchange = function(info) {
 //		dma_sub_search.set("ROUT_ID",TYPE.getValue());		
-//		$p.executeSubmission(sub_MO0203G2R0);
+//		$p.executeSubmission(sub_selectNodeListByRepRout);
 //		com.searchGrid(MO0203G0, sub_MO0203G0R0);
 //	};
 
 
 	scwin.TYPE1_onviewchange = function(info) {
 		//$p.executeSubmission(sub_MO0203SHI0);
-		$p.executeSubmission(sub_MO0203G2R0);
+		com.executeSubmission(sub_selectNodeListByRepRout);
 		com.searchGrid(MO0203G0, sub_MO0203G0R0);
 	}		
 	
 	
 	scwin.sub_MO0203SHI1_submitdone = function(e) {
 		TYPE1.setValue("RR00000002");
-		$p.executeSubmission(sub_MO0203G2R0);
+		$p.executeSubmission(sub_selectNodeListByRepRout);
 		com.searchGrid(MO0203G0, sub_MO0203G0R0);
 		//$p.executeSubmission(sub_MO0203SHI0);
 	};
@@ -980,7 +989,25 @@
 	};
 	
 	scwin.sub_selectVhcBit_submitdone = function(e) {
+		//routMap.showVehicle("map_MO0203_vehicle", dlt_BRT_CUR_OPER_INFO);
+	};
+	
+	scwin.sub_selectNodeListByRepRout_submitdone = function(e) {
+		//노선만 뿌리기
+		routMap.showRoute("map_MO0203", dlt_BMS_ROUT_NODE_DISP_VW.getAllJSON(), null, "ONLYLINE");
 		
+		var allDataList = dlt_BMS_NODE_MST.getAllJSON();
+		var focusIdx = MO0203G0.getFocusedRowIndex();
+		//마커 뿌리기
+		routMap.showMarkerList("map_MO0203", allDataList, focusIdx, MO0203G0); 	
+		//카테고리 뿌리기
+		routMap.showCategory("map_MO0203", allDataList, focusIdx, MO0203G0);		
+		
+		com.executeSubmission(sub_selectCurOperVhcList);
+	};
+	
+	scwin.sub_selectCurOperVhcList_submitdone = function(e) {
+		routMap.showVehicleClickOverlay("map_MO0203_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON());		
 	};
 	]]></script>
 	</head>
