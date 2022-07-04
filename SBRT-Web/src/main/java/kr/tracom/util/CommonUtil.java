@@ -577,7 +577,7 @@ public class CommonUtil {
 		String today = df.format(cal.getTime());
 		String hh = today.substring(10, 12);
 
-		if ("00".equals(hh) || "01".equals(hh) || "02".equals(hh) || "03".equals(hh)) {
+		if ("00".equals(hh) || "01".equals(hh) || "02".equals(hh)) {
 			cal.add(Calendar.DATE, -1);
 			today = df.format(cal.getTime());
 		}

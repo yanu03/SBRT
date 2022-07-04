@@ -747,103 +747,114 @@
 					//	if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
 						if(curIndexArr.length != 0) {
 							
-							//focus가 된 차량이 아니면 return
-							if(dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID") != jsonObj.VHC_ID){
-								return;	
+							//focus가 된 차량이면 이력 insert
+							if(dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID") == jsonObj.VHC_ID){
+								dlt_BRT_OPER_EVENT_HIS.insertRow(0);
+								var today = new Date();   
+								var hours = leadingZeros(today.getHours(), 2);
+								var minutes = leadingZeros(today.getMinutes(), 2); 
+								var seconds = leadingZeros(today.getSeconds(), 2); 
+								var timeResult = hours + ':' + minutes + ':' + seconds
+								
+								dlt_BRT_OPER_EVENT_HIS.setCellData(0, "OCR_DTM", timeResult);
+								dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_TYPE", jsonObj.EVT_CODE);
+								dlt_BRT_OPER_EVENT_HIS.setCellData(0, "ROUT_NM", jsonObj.ROUT_NM);
+								dlt_BRT_OPER_EVENT_HIS.setCellData(0, "VHC_NO", jsonObj.VHC_NO);
+								//dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_CODE", jsonObj.EVT_CODE);
+								//var eventType = dlt_BRT_OPER_EVENT_HIS.getcellData(0, "EVT_CODE");
+								var eventCode = jsonObj.EVT_CODE;
+								var eventMessage = "";
+								
+								switch(eventCode) {
+									case "ET001":
+									eventMessage = jsonObj.NODE_NM + "에 도착";
+									break;
+									
+									case "ET002":
+									eventMessage = jsonObj.NODE_NM + "에서 출발";
+									break;
+									
+									case "ET003":
+									eventMessage = "기점"+"("+jsonObj.NODE_NM+")"+"에 도착";
+									break;
+									
+									case "ET004":
+									eventMessage = "기점"+"("+jsonObj.NODE_NM+")"+"에서 출발";
+									break;
+									
+									case "ET005":
+									eventMessage = "종점"+"("+jsonObj.NODE_NM+")"+"에 도착";
+									break;
+									
+									case "ET006":
+									eventMessage = "종점"+"("+jsonObj.NODE_NM+")"+"에서 출발";
+									break;
+									
+									case "ET007":
+									eventMessage = "현재속도 " + jsonObj.CUR_SPD+ "km/h, 평균 "+ 
+													jsonObj.EVT_DATA + "km/h";						
+									break;
+									
+									case "ET008":
+									eventMessage = "음성 방송 출력";
+									//eventMessage = "음성 방송 출력되었습니다. " + "("+jsonObj.EVT_DATA+")";						
+									break;
+									
+									case "ET009":
+									eventMessage = "버스 문 열림";
+									break;
+									
+									case "ET010":
+									eventMessage = "버스 문 닫힘";
+									break;		
+									
+									case "ET011":
+									eventMessage = jsonObj.PREV_NODE_NM + "에서 무정차 주행";
+									break;
+									
+									case "ET012":
+									eventMessage = "과속 주행 현재속도 " + jsonObj.CUR_SPD + "km/h" ;
+									break;
+									
+									case "ET013":
+									eventMessage = "급가속";
+									break;
+									
+									case "ET014":
+									eventMessage = "급감속";
+									break;
+									
+									case "ET015":
+									eventMessage = "급출발";
+									break;
+									
+									case "ET016":
+									eventMessage = "급정지";
+									break;
+									
+									case "ET017":
+									eventMessage = "개문주행";
+									break;
+									
+									case "ET018":
+									eventMessage = "노선이탈";
+									break;		
+									
+									case "ET019":
+									//eventMessage = "노선이탈하였습니다.";
+									eventMessage = "차고지도착";
+									break;	
+												
+									case "ET020":
+									//eventMessage = "노선이탈하였습니다.";
+									eventMessage = "차고지출발";
+									break;											
+								}
+								dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_DATA", eventMessage);
+								
 							}
 							
-							dlt_BRT_OPER_EVENT_HIS.insertRow(0);
-							var today = new Date();   
-							var hours = leadingZeros(today.getHours(), 2);
-							var minutes = leadingZeros(today.getMinutes(), 2); 
-							var seconds = leadingZeros(today.getSeconds(), 2); 
-							var timeResult = hours + ':' + minutes + ':' + seconds
 							
-							dlt_BRT_OPER_EVENT_HIS.setCellData(0, "OCR_DTM", timeResult);
-							dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_TYPE", jsonObj.EVT_CODE);
-							dlt_BRT_OPER_EVENT_HIS.setCellData(0, "ROUT_NM", jsonObj.ROUT_NM);
-							dlt_BRT_OPER_EVENT_HIS.setCellData(0, "VHC_NO", jsonObj.VHC_NO);
-							//dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_CODE", jsonObj.EVT_CODE);
-							//var eventType = dlt_BRT_OPER_EVENT_HIS.getcellData(0, "EVT_CODE");
-							var eventCode = jsonObj.EVT_CODE;
-							var eventMessage = "";
-							
-							switch(eventCode) {
-								case "ET001":
-								eventMessage = jsonObj.NODE_NM + "에 도착";
-								break;
-								
-								case "ET002":
-								eventMessage = jsonObj.NODE_NM + "에서 출발";
-								break;
-								
-								case "ET003":
-								eventMessage = "기점"+"("+jsonObj.NODE_NM+")"+"에 도착";
-								break;
-								
-								case "ET004":
-								eventMessage = "기점"+"("+jsonObj.NODE_NM+")"+"에서 출발";
-								break;
-								
-								case "ET005":
-								eventMessage = "종점"+"("+jsonObj.NODE_NM+")"+"에 도착";
-								break;
-								
-								case "ET006":
-								eventMessage = "종점"+"("+jsonObj.NODE_NM+")"+"에서 출발";
-								break;
-								
-								case "ET007":
-								eventMessage = "현재속도 " + jsonObj.CUR_SPD+ "km/h, 평균 "+ 
-												jsonObj.EVT_DATA + "km/h";						
-								break;
-								
-								case "ET008":
-								eventMessage = "음성 방송 출력";
-								//eventMessage = "음성 방송 출력되었습니다. " + "("+jsonObj.EVT_DATA+")";						
-								break;
-								
-								case "ET009":
-								eventMessage = "버스 문 열림";
-								break;
-								
-								case "ET010":
-								eventMessage = "버스 문 닫힘";
-								break;		
-								
-								case "ET011":
-								eventMessage = jsonObj.PREV_NODE_NM + "에서 무정차 주행";
-								break;
-								
-								case "ET012":
-								eventMessage = "과속 주행 현재속도 " + jsonObj.CUR_SPD + "km/h" ;
-								break;
-								
-								case "ET013":
-								eventMessage = "급가속";
-								break;
-								
-								case "ET014":
-								eventMessage = "급감속";
-								break;
-								
-								case "ET015":
-								eventMessage = "급출발";
-								break;
-								
-								case "ET016":
-								eventMessage = "급정지";
-								break;
-								
-								case "ET017":
-								eventMessage = "개문주행";
-								break;
-								
-								case "ET018":
-								eventMessage = "노선이탈";
-								break;												
-							}
-							dlt_BRT_OPER_EVENT_HIS.setCellData(0, "EVT_DATA", eventMessage);
 							dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
 							
 							if (curIndexArr[0] == MO0101G0.getFocusedRowIndex()) {
@@ -937,7 +948,6 @@
 				//jsonObj.DSPTCH_DIV => 디스패치 구분코드 : DP001(일반메시지), DP002(운행중디스패치), DP003(정차중디스패치)
 				//jsonObj.DSPTCH_KIND => 디스패치 종류(레벨)코드 : DK001(1단계), DK002(2단계), DK003(3단계)
 				//jsonObj.MESSAGE => 디스패치 메시지
-				
 				try {
 		//			setTimeout(function() {				
 		//				routMap.removeAllBusOverlay("map_MO0101_vehicle");				
@@ -1191,7 +1201,6 @@
 		}
 		routMap.removeAllOverlay("map_MO0101_crs");
 		dma_sub_search.set("NODE_ID", dlt_BMS_ROUT_NODE_CMPSTN2.getCellData(row, "NODE_ID"));
-		debugger;
 		setTimeout(function() {
 			com.executeSubmission(sub_MO0101SCK);	
 		},100);	
@@ -1732,6 +1741,16 @@
 				case "ET018":
 				//eventMessage = "노선이탈하였습니다.";
 				eventMessage = "노선이탈";
+				break;		
+						
+				case "ET019":
+				//eventMessage = "노선이탈하였습니다.";
+				eventMessage = "차고지도착";
+				break;	
+							
+				case "ET020":
+				//eventMessage = "노선이탈하였습니다.";
+				eventMessage = "차고지출발";
 				break;				
 			}//end switch
 			
