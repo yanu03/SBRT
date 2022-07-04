@@ -2103,10 +2103,10 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 		}
 		
 		else if (routMap.mapInfo[mapId].divEvent == "ET020") {
-			eventMsg += '<div class="mesage map_mesage">';
+			eventMsg += '<div class="mesage map_mesage2">';
 			eventMsg += '<h3 class="blind"></h3>';
 			eventMsg += '<span>차고지출발</span>';
-			eventMsg += '<button class=clsoe_mesage ir_pm"></button>';
+			eventMsg += '<button class=close_mesage ir_pm"></button>';
 			
 		}
 		

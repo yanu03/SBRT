@@ -853,7 +853,7 @@ public class OperPlanService extends ServiceSupport {
 
 
 						//현시정보 확인이 가능한 경우 [[
-						if(!StringUtils.isEmpty(sig_ctr_type)){
+						if(!StringUtils.isEmpty(sig_ctr_type)&&nextNodePhaseInfo!=null){
 							try {
 								if(CommonUtil.notEmpty(nextNodePhaseInfo.get("ENT_PHASE_NO_1")))
 									enter_phase_no1 = Integer.parseInt((String)nextNodePhaseInfo.get("ENT_PHASE_NO_1"));
