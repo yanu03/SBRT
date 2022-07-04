@@ -162,6 +162,9 @@ public class VhcService extends ServiceSupport {
             		Object bodyObject = responseJson.get("body");
             		JSONObject bodyJson = (JSONObject)new JSONParser().parse(bodyObject.toString());
             		Object itemsObject = bodyJson.get("items");
+            		if(itemsObject.equals("")) {
+            			return null;
+            		}
             		JSONObject itemsJson = (JSONObject)new JSONParser().parse(itemsObject.toString());
             		Object itemObject = itemsJson.get("item");
             		

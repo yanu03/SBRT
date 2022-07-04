@@ -1300,12 +1300,14 @@ routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid
 		
 	}
 	
-	marker.setMap(routMap.mapInfo[mapId].map); //Marker가 표시될 Map 설정.
-	if(idx<routMap.mapInfo[mapId].busMarkers.length){
-		routMap.mapInfo[mapId].busMarkers[idx] = marker;
-	}
-	else{
-		routMap.mapInfo[mapId].busMarkers.push(marker);
+	if(routMap.mapInfo[mapId].divEvent != "ET001") {
+		marker.setMap(routMap.mapInfo[mapId].map); //Marker가 표시될 Map 설정.
+		if(idx<routMap.mapInfo[mapId].busMarkers.length){
+			routMap.mapInfo[mapId].busMarkers[idx] = marker;
+		}
+		else{
+			routMap.mapInfo[mapId].busMarkers.push(marker);
+		}
 	}
 	
 	
@@ -1999,7 +2001,7 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 		nextNodeType = "정류소";
 	}
 	
-	if (routMap.mapInfo[mapId].divEvent == "ET001" || routMap.mapInfo[mapId].divEvent == "ET019") {
+	if (routMap.mapInfo[mapId].divEvent == "ET001" || routMap.mapInfo[mapId].divEvent == "ET020") {
 		//if(routMap.mapInfo[mapId].dsptchOverArr.length != 0) {
 		
 		/*if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
@@ -2051,57 +2053,70 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 		eventMsg += '</table>' 
 		eventMsg += '</div> </div>'
 		eventMsg += '</div></div>'*/
+		if (routMap.mapInfo[mapId].divEvent == "ET001") {
 			
-		if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
-			eventMsg += '<div class="event map_info busInfoPopup" id="busInfoPopup" style="position: absolute; bottom:154px;">';
-		}	
-		else {
-			eventMsg += '<div class="event map_info busInfoPopup" id="busInfoPopup" style="position: absolute;">';	
-		}			
+			if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
+				eventMsg += '<div class="event map_info busInfoPopup" id="busInfoPopup" style="position: absolute; bottom:154px;">';
+			}	
+			else {
+				eventMsg += '<div class="event map_info busInfoPopup" id="busInfoPopup" style="position: absolute;">';	
+			}			
 			
-		//eventMsg += '<div class="event map_info busInfoPopup" id="busInfoPopup">';
-		eventMsg += '   <h3 class="blind">이벤트 안내</h3>';
-		eventMsg += '   <p class="action">'+data.EVT_TYPE+'</p>';
-		eventMsg += '   <p class="stay_sec">(현재정차시간 : <span id="cur_stop_tm">'+0+'</span>))</p>';
-		eventMsg += '   <table class="station_info">';
-		eventMsg += '      <colgroup>';
-		eventMsg += '         <col style="width: 90px;">';
-		eventMsg += '         <col style="width: auto;">';
-		eventMsg += '      </colgroup>';
-		eventMsg += '      <tbody><tr>';
-		eventMsg += '         <th>현재'+ nodeType+'</th>';
-		eventMsg += '         <td>'+data.NODE_NM+'</td>';
-		eventMsg += '      </tr>';
-		eventMsg += '      <tr>';
-		eventMsg += '         <th>다음'+ nextNodeType+'</th>';
-		eventMsg += '         <td>'+data.NEXT_NODE_NM+'</td>';
-		eventMsg += '      </tr>';
-		eventMsg += '   </tbody></table>';
-		eventMsg += '   <dl class="event_mesage">';
-		eventMsg += '     <dt class="blind">정차 메시지</dt>';
-		eventMsg += '      <dd id="stopMessage"></dd>';
-		eventMsg += '   </dl>';
-		eventMsg += '   <button class="close_mesage ir_pm" id="busInfo-closer">닫기</button>';
-		eventMsg += '</div>';			
+			//eventMsg += '<div class="event map_info busInfoPopup" id="busInfoPopup">';
+			eventMsg += '   <h3 class="blind">이벤트 안내</h3>';
+			eventMsg += '   <p class="action">'+data.EVT_TYPE+'</p>';
+			eventMsg += '   <p class="stay_sec">(현재정차시간 : <span id="cur_stop_tm">'+0+'</span>))</p>';
+			eventMsg += '   <table class="station_info">';
+			eventMsg += '      <colgroup>';
+			eventMsg += '         <col style="width: 90px;">';
+			eventMsg += '         <col style="width: auto;">';
+			eventMsg += '      </colgroup>';
+			eventMsg += '      <tbody><tr>';
+			eventMsg += '         <th>현재'+ nodeType+'</th>';
+			eventMsg += '         <td>'+data.NODE_NM+'</td>';
+			eventMsg += '      </tr>';
+			eventMsg += '      <tr>';
+			eventMsg += '         <th>다음'+ nextNodeType+'</th>';
+			eventMsg += '         <td>'+data.NEXT_NODE_NM+'</td>';
+			eventMsg += '      </tr>';
+			eventMsg += '   </tbody></table>';
+			eventMsg += '   <dl class="event_mesage">';
+			eventMsg += '     <dt class="blind">정차 메시지</dt>';
+			eventMsg += '      <dd id="stopMessage"></dd>';
+			eventMsg += '   </dl>';
+			eventMsg += '   <button class="close_mesage ir_pm" id="busInfo-closer">닫기</button>';
+			eventMsg += '</div>';			
 			
-		addStopTime = setInterval(function() {
-			stopTime++;
+			addStopTime = setInterval(function() {
+				stopTime++;
+				
+				if(stopTime >= 60) {
+					min = parseInt((stopTime/60))+"분 ";
+				}
+				sec = parseInt((stopTime%60))+"초";
+				
+				var total = min+sec;
+				
+				$("#cur_stop_tm").text(total);
+			}, 1000);
+		
+		}
+		
+		else if (routMap.mapInfo[mapId].divEvent == "ET020") {
+			eventMsg += '<div class="mesage map_mesage">';
+			eventMsg += '<h3 class="blind"></h3>';
+			eventMsg += '<span>차고지출발</span>';
+			eventMsg += '<button class=clsoe_mesage ir_pm"></button>';
 			
-			if(stopTime >= 60) {
-				min = parseInt((stopTime/60))+"분 ";
-			}
-			sec = parseInt((stopTime%60))+"초";
-			
-			var total = min+sec;
-			
-			$("#cur_stop_tm").text(total);
-		}, 1000);
+		}
+		
+		
 	}
 	
 	//else  {
 	
 	//출발이벤트 or 차량 속력이 20km/h 이상일 때 이벤트 오버레이 삭제
-	else if (routMap.mapInfo[mapId].divEvent == "ET002" || data.CUR_SPD > 20 || routMap.mapInfo[mapId].divEvent == "ET020") {
+	else if (routMap.mapInfo[mapId].divEvent == "ET002" || data.CUR_SPD > 20) {
 		if (routMap.mapInfo[mapId].eventOverArr != null) {
 			if(routMap.mapInfo[mapId].eventOverArr[0] != null) {
 		/*	if(routMap.mapInfo[mapId].divEvent == "ET001"){
@@ -2154,7 +2169,7 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 	}*/
 	
 	//도착 이벤트
-	if (routMap.mapInfo[mapId].divEvent == "ET001") {
+	if (routMap.mapInfo[mapId].divEvent == "ET001" || routMap.mapInfo[mapId].divEvent == "ET020") {
 	
 		eventOverlay = new kakao.maps.CustomOverlay({
 			content: eventMsg,
@@ -5428,7 +5443,7 @@ routMap.showVehicleClickOverlay2 = function(mapId, json, cur_vhc_id, grid, index
 }
 
 /**
- * 차 이동
+ * 차 이동(정주기)
  * @param mapId : 대상 map id
  * @param json : 전달된 데이터
  * @param index : 차량과 매핑된 index
@@ -5496,13 +5511,17 @@ routMap.moveVehicle = function(mapId, json, index, focusIdx) {
 	
 	var latLng = new kakao.maps.LatLng(json.GPS_Y, json.GPS_X);
 	
-	if(typeof routMap.mapInfo[mapId].busMarkers[index] != "undefined"){
-		routMap.mapInfo[mapId].busMarkers[index].setPosition(latLng);
+	if(routMap.mapInfo[mapId].divEvent != "ET001") {
+		if(typeof routMap.mapInfo[mapId].busMarkers[index] != "undefined"){
+			routMap.mapInfo[mapId].busMarkers[index].setPosition(latLng);
+		}
+		if(typeof routMap.mapInfo[mapId].busOverArr[index] != "undefined"){
+			routMap.mapInfo[mapId].busOverArr[index].setPosition(latLng);
+		}	
 	}
-	if(typeof routMap.mapInfo[mapId].busOverArr[index] != "undefined"){
-		routMap.mapInfo[mapId].busOverArr[index].setPosition(latLng);
-	}	
 	
+	//이벤트, 디스패치 오버레이 떠있는 경우 정주기가 들어오면 오버레이 내림
+	//디스패치는 수정 가능성 있음
 	if(focusIdx == index) {
 		if(routMap.mapInfo[mapId].dsptchOverArr != null) {
 			if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
