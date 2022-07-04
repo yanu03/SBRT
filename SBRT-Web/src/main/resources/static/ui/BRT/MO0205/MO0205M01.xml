@@ -689,7 +689,7 @@
 		var fcltId = jsonObj.FCLT_ID;
 		
 		//에어컨 상태 정보
-		if(attrId == util.ATTR_ID.AIRCON_INFO){ 
+		if(attrId == util.ATTR_ID.AIRCON_INFO){
 			var index = dlt_BMS_AIRCON_FCLT_INFO.getMatchedIndex("FCLT_ID", fcltId);
 			dlt_BMS_AIRCON_FCLT_INFO.setCellData(index[0], "PK002", jsonObj.SWITCH);
 			dlt_BMS_AIRCON_FCLT_INFO.setCellData(index[0], "PK022", jsonObj.TEMP);
@@ -700,7 +700,7 @@
 			//MO0205G2.refreshRow(index);
 		}
 		//스크린도어 상태 정보
-		else if(attrId == util.ATTR_ID.SCREENDOOR_INFO){ 
+		else if(attrId == util.ATTR_ID.SCREENDOOR_INFO){
 			var scrndoorNum = '';
 			var index = dlt_BMS_SCRDOOR_FCLT_INFO.getMatchedIndex("MNG_ID", jsonObj.MNG_ID);
 			var fcltID = dlt_BMS_SCRDOOR_FCLT_INFO.getCellData(index[0], "FCLT_ID");
@@ -1044,6 +1044,7 @@
 			var fcltId = dlt_BMS_FCLT_INFO.getCellData(i, "FCLT_ID");
 			var fcltCond = dlt_BMS_FCLT_INFO.getCellData(i, "FCLT_COND");
 			var doorStatus = dlt_BMS_FCLT_INFO.getCellData(i, "PK025");
+			var powerOnOff = dlt_BMS_FCLT_INFO.getCellData(i, "PK002"); //Off : 0, On : 1
 			
 			if(fcltKind == 'FK001' && (fcltCond == 'FC020'|| fcltCond == '')){
 				imgSrc = "/cm/images/bms/BIT_RED_normal.png";
@@ -1068,31 +1069,48 @@
 			}
 			
 			//시설물 이미지
-			str += '<div id="'+fcltId+'" style="z-index: 1; position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group fclt_img" onclick="imgOnclick(this.id);">';
+			str += '<div id="'+fcltId+'" style="z-index: 1; position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group fclt_img" onclick="imgOnclick_MO0205(this.id);">';
 			if(fcltKind == 'FK004'){
-				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:16px" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:16px" src="'+imgSrc+'" id="'+fcltId+'img_MO0205'+'">';
 			}else{
-				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+fcltId+'img'+'">';
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+fcltId+'img_MO0205'+'">';
 			}
 			str += '</div>'
 			
 			
 			//에어컨이면 에어컨정보창 추가
 			if(fcltKind == 'FK005') {
+				str +=	'<div id="airconInfo_'+fcltId+'_MO0205" class="station_display" style="width:120px; position: absolute; z-index: 10001; top:'+(parseInt(top)+8)+'px; left:'+(parseInt(left)+121)+'px">';
+				str +=	' 	<div class="mesage_wrap">';
+				str +=  ' 		<p class="display_mesage">';
 				
-			str +=	'<div id="airconInfo_'+fcltId+'" class="station_display" style="width:120px; position: absolute; z-index: 10001; top:'+(parseInt(top)+8)+'px; left:'+(parseInt(left)+121)+'px">';
-			str +=	' <div class="mesage_wrap">';
-			str +=  ' <p class="display_mesage">';
-			str +=  ' 		      <span class="" style="display:inline; font-size:12px;">희망온도</span>';
-			str +=  ' 		      <span class="tx_red cool_set" style="display:inline; margin:7px;font-size:14px;">'+dlt_BMS_FCLT_INFO.getCellData(i, "PK047") +'</span>';
-			str +=  ' 		      <span class="" style="display:inline; font-size:12px;">°C</span>';
-			str +=  ' 		      <span></span>';
-			str +=  ' 		      <span class="" style="display:inline; font-size:12px;">내부온도</span>';
-			str +=  ' 		      <span class="tx_red temp" style="display:inline; margin:7px;font-size:14px">'+dlt_BMS_FCLT_INFO.getCellData(i, "PK022") +'</span>';
-			str +=  ' 		      <span class="" style="display:inline; font-size:12px;">°C</span>';
-			str +=  ' 		   </p>';
-			str +=  ' 		 </div>';
+				if(powerOnOff == "1") {
+					
+					str +=  ' 		      <span class="powerOnSpan" style="display:inline; font-size:12px; margin-left: 3px;">희망온도</span>';
+					str +=  ' 		      <span class="powerOnSpan tx_red cool_set" style="display:inline; margin:7px;font-size:14px;">'+dlt_BMS_FCLT_INFO.getCellData(i, "PK047") +'</span>';
+					str +=  ' 		      <span class="powerOnSpan" style="display:inline; font-size:12px;">°C</span>';
+					str +=  ' 		      <span class="powerOnSpan" style="display:inline; font-size:12px; margin-left: 3px;">내부온도</span>';
+					str +=  ' 		      <span class="powerOnSpan tx_red temp" style="display:inline; margin:7px;font-size:14px">'+dlt_BMS_FCLT_INFO.getCellData(i, "PK022") +'</span>';
+					str +=  ' 		      <span class="powerOnSpan" style="display:inline; font-size:12px;">°C</span>';
+					str +=  ' 		      <span class="powerOffSpan tx_red" style="display:none">전원 꺼짐</span>'
+				}
+				
+				else if (powerOnOff == "0") {
+					str +=  ' 		      <span class="powerOnSpan" style="display:none; font-size:12px; margin-left: 3px;">희망온도</span>';
+					str +=  ' 		      <span class="powerOnSpan tx_red cool_set" style="display:none; margin:7px;font-size:14px;">'+dlt_BMS_FCLT_INFO.getCellData(i, "PK047") +'</span>';
+					str +=  ' 		      <span class="powerOnSpan" style="display:none; font-size:12px;">°C</span>';
+					str +=  ' 		      <span class="powerOnSpan" style="display:none; font-size:12px; margin-left: 3px;">내부온도</span>';
+					str +=  ' 		      <span class="powerOnSpan tx_red temp" style="display:none; margin:7px;font-size:14px">'+dlt_BMS_FCLT_INFO.getCellData(i, "PK022") +'</span>';
+					str +=  ' 		      <span class="powerOnSpan" style="display:none; font-size:12px;">°C</span>';
+					str +=  ' 		      <span class="powerOffSpan tx_red" style="">전원 꺼짐</span>';
+				}
+
+			str +=  ' 		 </p>';
 			str +=  ' 	</div>';
+			str +=  '</div>';				
+				
+				
+					
 			}
 			
 		}
@@ -1135,7 +1153,7 @@
 	}
 	
 	//이미지 클릭 이벤트
-	function imgOnclick(id){
+	function imgOnclick_MO0205(id){
 		var rowIndex = dlt_BMS_FCLT_INFO.getMatchedIndex("FCLT_ID", id);
 		var fcltKind = dlt_BMS_FCLT_INFO.getCellData(rowIndex, "FCLT_KIND");
 		var fcltId = dlt_BMS_FCLT_INFO.getCellData(rowIndex, "FCLT_ID");
@@ -1187,22 +1205,22 @@
 		
 		//이미지 변경
 		if(fcltKind == 'FK005' && (fcltCond == '1'|| fcltCond == '')){
-			$('#'+fcltID+'img').attr("src", '/cm/images/bms/AIRCON_normal_selected.png');
+			$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal_selected.png');
 			if(oldFcltId != ''){
 				var oldFcltJson = dlt_BMS_FCLT_INFO.getMatchedJSON("FCLT_ID", oldFcltId);
 				var oldFcltKind = oldFcltJson[0].FCLT_KIND;
 				switch (oldFcltKind) {
 				case 'FK004':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
-					$('#'+oldFcltId+'img').css("width", '16px');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
+					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/AIRCON_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal.png');
 					break;
 					
 				case 'FK006':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
 					break;
 					
 				//case 'FK007':
@@ -1211,22 +1229,22 @@
 				}
 			}
 		}else if(fcltKind == 'FK005' && (fcltCond == '0'|| fcltCond == '')){
-			$('#'+fcltID+'img').attr("src", '/cm/images/bms/AIRCON_abnormal_selected.png');
+			$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_abnormal_selected.png');
 			if(oldFcltId != ''){
 				var oldFcltJson = dlt_BMS_FCLT_INFO.getMatchedJSON("FCLT_ID", oldFcltId);
 				var oldFcltKind = oldFcltJson[0].FCLT_KIND;
 				switch (oldFcltKind) {
 				case 'FK004':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
-					$('#'+oldFcltId+'img').css("width", '16px');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
+					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/AIRCON_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal.png');
 					break;
 					
 				case 'FK006':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
 					break;
 					
 				//case 'FK007':
@@ -1251,22 +1269,22 @@
 		
 		//이미지 변경
 		if(fcltKind == 'FK007' && (fcltCond == '1' || fcltCond == '')){
-			//$('#'+fcltID+'img').attr("src", '/cm/images/bms/ClosedDoor.png');
+			//$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/ClosedDoor.png');
 			if(oldFcltId != ''){
 				var oldFcltJson = dlt_BMS_FCLT_INFO.getMatchedJSON("FCLT_ID", oldFcltId);
 				var oldFcltKind = oldFcltJson[0].FCLT_KIND;
 				switch (oldFcltKind) {
 				case 'FK004':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
-					$('#'+oldFcltId+'img').css("width", '16px');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
+					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/AIRCON_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal.png');
 					break;
 					
 				case 'FK006':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
 					break;
 					
 				//case 'FK007':
@@ -1291,23 +1309,23 @@
 		
 		//이미지 변경
 		if(fcltKind == 'FK004' && (fcltCond == '1' || fcltCond == '')){
-			$('#'+fcltID+'img').attr("src", '/cm/images/bms/AIRTUBE_normal_selected.png');
-			$('#'+fcltID+'img').css("width", '24px');
+			$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal_selected.png');
+			$('#'+fcltID+'img_MO0205').css("width", '24px');
 			if(oldFcltId != ''){
 				var oldFcltJson = dlt_BMS_FCLT_INFO.getMatchedJSON("FCLT_ID", oldFcltId);
 				var oldFcltKind = oldFcltJson[0].FCLT_KIND;
 				switch (oldFcltKind) {
 				case 'FK004':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
-					$('#'+oldFcltId+'img').css("width", '16px');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
+					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/AIRCON_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal.png');
 					break;
 					
 				case 'FK006':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
 					break;
 					
 				//case 'FK007':
@@ -1316,23 +1334,23 @@
 				}
 			}
 		}else if(fcltKind == 'FK004' && (fcltCond == '0' || fcltCond == '')){
-			$('#'+fcltID+'img').attr("src", '/cm/images/bms/AIRTUBE_abnormal_selected.png');
-			$('#'+fcltID+'img').css("width", '24px');
+			$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_abnormal_selected.png');
+			$('#'+fcltID+'img_MO0205').css("width", '24px');
 			if(oldFcltId != ''){
 				var oldFcltJson = dlt_BMS_FCLT_INFO.getMatchedJSON("FCLT_ID", oldFcltId);
 				var oldFcltKind = oldFcltJson[0].FCLT_KIND;
 				switch (oldFcltKind) {
 				case 'FK004':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
-					$('#'+oldFcltId+'img').css("width", '16px');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
+					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/AIRCON_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal.png');
 					break;
 					
 				case 'FK006':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
 					break;
 					
 				//case 'FK007':
@@ -1357,22 +1375,22 @@
 		
 		//이미지 변경
 		if(fcltKind == 'FK006' && (fcltCond == '1' || fcltCond == '')){
-			$('#'+fcltID+'img').attr("src", '/cm/images/bms/PEOPLECOUNT_normal_selected.png');
+			$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_normal_selected.png');
 			if(oldFcltId != ''){
 				var oldFcltJson = dlt_BMS_FCLT_INFO.getMatchedJSON("FCLT_ID", oldFcltId);
 				var oldFcltKind = oldFcltJson[0].FCLT_KIND;
 				switch (oldFcltKind) {
 				case 'FK004':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
-					$('#'+oldFcltId+'img').css("width", '16px');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
+					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/AIRCON_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal.png');
 					break;
 					
 				case 'FK006':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
 					break;
 					
 				//case 'FK007':
@@ -1381,22 +1399,22 @@
 				}
 			}
 		}else if(fcltKind == 'FK006' && (fcltCond == '0' || fcltCond == '')){
-			$('#'+fcltID+'img').attr("src", '/cm/images/bms/PEOPLECOUNT_abnormal_selected.png');
+			$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_abnormal_selected.png');
 			if(oldFcltId != ''){
 				var oldFcltJson = dlt_BMS_FCLT_INFO.getMatchedJSON("FCLT_ID", oldFcltId);
 				var oldFcltKind = oldFcltJson[0].FCLT_KIND;
 				switch (oldFcltKind) {
 				case 'FK004':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
-					$('#'+oldFcltId+'img').css("width", '16px');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
+					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/AIRCON_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal.png');
 					break;
 					
 				case 'FK006':
-					$('#'+oldFcltId+'img').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
 					break;
 					
 				//case 'FK007':
