@@ -378,10 +378,6 @@
 		dlt_BMS_ETA_INFO.removeAll();
 		dlt_BMS_SOONETA_INFO.removeAll();
 		
-		//B0제외한 BIT조회
-		com.executeSubmission(sub_selectVhcBit);
-		
-		
 		var tableStr = '';
 		var tableBody = '';
 		var talbeId = '';
@@ -615,6 +611,8 @@
 	    
 
 	    stompClient.subscribe('/topic/public', scwin.onMessageReceived);
+	    stompClient.subscribe('/topic/aircon', scwin.onMessageAirconReceived);
+	    stompClient.subscribe('/topic/facilityParam', scwin.onMessageFacilityReceived);
 	
 	}
 	
@@ -626,8 +624,8 @@
 		
 		var jsonObj = JSON.parse(payload.body);
 		if(typeof(jsonObj.length) != "undefined" && jsonObj.length == 1) {
-        	jsonObj = jsonObj[0];
-      	}
+	        	jsonObj = jsonObj[0];
+	      	}
 		
 		var attrId = jsonObj.ATTR_ID;
 		var dataList = jsonObj.LIST;
@@ -635,11 +633,13 @@
 		
 		//attrId = 2022 : 정류장별 차량 도착 정보
 		if(attrId == util.ATTR_ID.BUS_ARRIVAL_INFO && dlt_BMS_NODE_MST.getCellData(MO0203G0.getFocusedRowIndex(), "NODE_ID") == jsonObj.STTN_ID){
-			try {
+			//B0제외한 BIT조회
+			com.executeSubmission(sub_selectVhcBit);
+			/*try {
 				MO0203T0_setTable(dataList);
 			} catch (e) {
 				console.log("[scwin.onMessageReceived] Exception :: " + e.message);	
-			}
+			}*/
 		}
 		
 		//attrId = 4014 : 실시간 차량 위치 정보
@@ -674,49 +674,24 @@
 		}
 		
 		//B0 제외한 BIT정보
-		else if(attrId == "버스정보" || busList[0].ATTR_ID == "버스정보") {
-		//else if(attrId == "버스정보") {
-			if(typeof attrId != "undefined") {
-				dataList.push({"REMAIN_TM": jsonObj.REMAIN_TM});
-				dataList.push({"ROUT_NM": jsonObj.ROUT_NM});
-				dataList.push({"REMAIN_STTN": jsonObj.REMAIN_STTN});
-			}
-		
-			else {
-				dataList[i].REMAIN_TM = parseInt((dataList[i].REMAIN_TM%3600)/60) + '분';
-				if(dataList[i].REMAIN_TM != '0'){
-					dlt_BMS_ETA_INFO.insertRow();
-					dlt_BMS_ETA_INFO.setCellData(j, "ROUT_NM", dataList[i].ROUT_NM);
-					dlt_BMS_ETA_INFO.setCellData(j, "REMAIN_TM", dataList[i].REMAIN_TM);
-					dlt_BMS_ETA_INFO.setCellData(j, "REMAIN_STTN", dataList[i].REMAIN_STTN  + '전');
-					j++;
-				}else if(dataList[i].REMAIN_TM == '0'){
-					dlt_BMS_SOONETA_INFO.insertRow();
-					dlt_BMS_SOONETA_INFO.setCellData(i, "ROUT_NM", dataList[i].ROUT_NM);
-				}
-			}
-			
-			for(var i = 0; i < dataList.length; i++){
-				//초 -> 분으로 변경. 0분 이하면 잠시후 도착
-				dataList[i].REMAIN_TM = parseInt((dataList[i].REMAIN_TM%3600)/60) + '분';
-				
-				if(dataList[i].REMAIN_TM != '0분'){
-					dlt_BMS_ETA_INFO.insertRow();
-					dlt_BMS_ETA_INFO.setCellData(j, "ROUT_NM", dataList[i].ROUT_NM);
-					dlt_BMS_ETA_INFO.setCellData(j, "REMAIN_TM", dataList[i].REMAIN_TM);
-					dlt_BMS_ETA_INFO.setCellData(j, "REMAIN_STTN", dataList[i].REMAIN_STTN  + '전');
-					j++;
-				}else if(dataList[i].REMAIN_TM == '0분'){
-					dlt_BMS_SOONETA_INFO.insertRow();
-					dlt_BMS_SOONETA_INFO.setCellData(i, "ROUT_NM", dataList[i].ROUT_NM);
-				}
-			}			
-			
+		else if(attrId == "BIT0000001" /*|| busList[0].ATTR_ID == "버스정보"*/) {		
+			MO0203T0_setTable(dataList);
 		}
+	}	
+	
+	scwin.onMessageAirconReceived = function(payload) {
 		
+		var jsonObj = JSON.parse(payload.body);
+			if(typeof(jsonObj.length) != "undefined" && jsonObj.length == 1) {
+	        	jsonObj = jsonObj[0];
+	      	}
+		
+		var attrId = jsonObj.ATTR_ID;
+		var dataList = jsonObj.LIST;
+		//var nodeId = dlt_BMS_NODE_MST.getCellData(MO0203G0.getFocusedRowIndex(), "NODE_ID");
 		
 		//에어컨
-		else if(attrId == util.ATTR_ID.AIRCON_INFO) {
+		if(attrId == util.ATTR_ID.AIRCON_INFO) {
 			//COOL_SET :  희망온도
 			//FCLT_ID : 시설물ID
 			//SWITCH : on/off
@@ -740,9 +715,20 @@
 			
 		
 		}
+	}	
+	
+	scwin.onMessageFacilityReceived = function(payload) {
 		
-		//스크린도어 
-		else if(attrId == util.ATTR_ID.SCREENDOOR_INFO) {
+		var jsonObj = JSON.parse(payload.body);
+			if(typeof(jsonObj.length) != "undefined" && jsonObj.length == 1) {
+	        	jsonObj = jsonObj[0];
+	      	}
+		
+		var attrId = jsonObj.ATTR_ID;
+		var dataList = jsonObj.LIST;
+		//var nodeId = dlt_BMS_NODE_MST.getCellData(MO0203G0.getFocusedRowIndex(), "NODE_ID");
+		
+		if(attrId == util.ATTR_ID.SCREENDOOR_INFO) {
 			//상태에 따라 gif바꾸기
 			var scrndoorNum = ''; 
 			var index = dlt_BMS_FCLT_INFO.getMatchedIndex("MNG_ID", jsonObj.MNG_ID);

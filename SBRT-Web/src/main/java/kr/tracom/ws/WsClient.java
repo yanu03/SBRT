@@ -31,13 +31,26 @@ public class WsClient {
 		
 	}
 	
-	public void sendMessageList(List<Map<String, Object>> wsMap) {
+	public void sendMessageList(String topic,List<Map<String, Object>> wsMap) {
 		
 
 		//logger.info("################# sendMessage : " + message);
 		
 		try {
-			messagingTemplate.convertAndSend("/topic/public", wsMap);
+			messagingTemplate.convertAndSend(topic, wsMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void sendMessage2(String topic, Map<String, Object> wsMap) {
+		
+
+		//logger.info("################# sendMessage : " + message);
+		
+		try {
+			messagingTemplate.convertAndSend(topic, wsMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
