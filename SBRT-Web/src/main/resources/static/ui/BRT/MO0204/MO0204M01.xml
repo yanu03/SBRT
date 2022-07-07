@@ -239,7 +239,7 @@
 		
 		com.executeSubmission(sub_MO0204SHI0);	
 		
-		//connect();	
+		connect();	
 	};	
 	
 	
@@ -270,11 +270,47 @@
 	
 	scwin.onMessageReceived = function(payload) {
 		var jsonObj = JSON.parse(payload.body);
+		if(typeof(jsonObj.length) != "undefined" && jsonObj.length == 1) {
+        	jsonObj = jsonObj[0];
+      	}
 		
 		var attrId = jsonObj.ATTR_ID;
-		//var attrId = jsonObj.getData("ATTR_ID");
+		var dataList = jsonObj.LIST;
 		
-		if(attrId == 1000){
+		//attrId = 4014 : 실시간 차량 위치 정보
+		if(attrId == util.ATTR_ID.BUS_INFO){
+			try{
+				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+				if(curIndexArr.length != 0) {
+					dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
+					//dataRowJson = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndexArr[0]);
+					//routMap.moveVehicle("map_MO0203_vehicle", dataRowJson, curIndexArr[0], -1);	
+				}
+			} catch (e) {
+				console.log("[scwin.onMessageReceived] Exception :: " + e.message);	
+			}
+			
+		}
+		
+		else if(attrId == util.ATTR_ID.BUS_OPER_EVENT) {
+			try {
+				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+				if(curIndexArr.length != 0) {
+					dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
+					//확인못함
+					//routMap.showVehicleClickOverlay("map_MO0203_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON());	
+				}
+				
+			} catch (e) {
+				console.log("[scwin.onMessageReceived] Exception :: " + e.message);	
+			}
+			
+		}
+		
+		
+		
+		
+		/*if(attrId == 1000){
 			try{
 				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 				
@@ -296,7 +332,7 @@
 			
 			dlt_BMS_DVC_INFO.setRowJSON(index, jsonObj, true);
 			
-		}
+		}*/
 		
 		//showMessage(jsonObj);
 	}
