@@ -153,8 +153,7 @@ public class ActionRequest {
 					//Map<String, Object> map = new HashMap<String, Object>();
 					ArrayList jsonList = new ArrayList<Map<String, Object>>();
 					jsonList.add(map);
-					webSocketClient.sendMessageList(jsonList);
-					
+					webSocketClient.sendMessageList("/topic/facilityParam",jsonList);
 
             		
             		logger.info("======== 시설물 매개변수: {}", actionData);

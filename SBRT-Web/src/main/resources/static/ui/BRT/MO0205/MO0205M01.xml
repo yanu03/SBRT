@@ -671,7 +671,9 @@
 	    // Subscribe to the Public Topic
 	    
 
-	    stompClient.subscribe('/topic/public', scwin.onMessageReceived);
+	    //stompClient.subscribe('/topic/public', scwin.onMessageReceived);
+	    stompClient.subscribe('/topic/aircon', scwin.onMessageAirconReceived);
+	    stompClient.subscribe('/topic/facilityParam', scwin.onMessageFacilityReceived);
 	
 	}
 	
@@ -679,7 +681,7 @@
 		showMessage('Could not connect to WebSocket server. ' + error);
 	}	
 	
-	scwin.onMessageReceived = function(payload) {
+	scwin.onMessageAirconReceived = function(payload) {
 		var jsonObj = JSON.parse(payload.body);
 		if(typeof(jsonObj.length) != "undefined" &&jsonObj.length == 1) {
 			jsonObj = jsonObj[0];
@@ -699,8 +701,19 @@
 			$("#airconInfo_"+fcltId).find(".temp").text(jsonObj.TEMP);
 			//MO0205G2.refreshRow(index);
 		}
-		//스크린도어 상태 정보
-		else if(attrId == util.ATTR_ID.SCREENDOOR_INFO){
+		//showMessage(content);
+	}
+	
+	scwin.onMessageFacilityReceived = function(payload) {
+		var jsonObj = JSON.parse(payload.body);
+		if(typeof(jsonObj.length) != "undefined" &&jsonObj.length == 1) {
+			jsonObj = jsonObj[0];
+		}
+		
+		var attrId = jsonObj.ATTR_ID;
+		var fcltId = jsonObj.FCLT_ID;
+		
+		if(attrId == util.ATTR_ID.SCREENDOOR_INFO){
 			var scrndoorNum = '';
 			var index = dlt_BMS_SCRDOOR_FCLT_INFO.getMatchedIndex("MNG_ID", jsonObj.MNG_ID);
 			var fcltID = dlt_BMS_SCRDOOR_FCLT_INFO.getCellData(index[0], "FCLT_ID");
@@ -739,7 +752,7 @@
 		}
 		
 		//showMessage(content);
-	}
+	}	
 	
 	function showMessage(message) {
 		//$("#mf_tac_layout_contents_MN00050202_body_message").append("<tr><td>" + message + "</td></tr>");

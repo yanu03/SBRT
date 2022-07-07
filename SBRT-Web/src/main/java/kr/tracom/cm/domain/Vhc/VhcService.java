@@ -14,6 +14,8 @@ import java.util.Map;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,8 @@ import kr.tracom.ws.WsClient;
 
 @Service
 public class VhcService extends ServiceSupport {
+	
+	Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Value("${api.gateway.url}")
 	private String apiGatewayUrl;
@@ -161,6 +165,7 @@ public class VhcService extends ServiceSupport {
             		JSONObject responseJson = (JSONObject)objData.get("response");  
             		Object bodyObject = responseJson.get("body");
             		JSONObject bodyJson = (JSONObject)new JSONParser().parse(bodyObject.toString());
+            		logger.info("selectVhcBit() in " +bodyObject.toString());
             		Object itemsObject = bodyJson.get("items");
             		if(itemsObject.equals("")) {
             			return null;
@@ -169,10 +174,11 @@ public class VhcService extends ServiceSupport {
             		Object itemObject = itemsJson.get("item");
             		
             		if(new JSONParser().parse(itemObject.toString()) instanceof JSONObject) {
+            			
             			JSONObject itemJson = (JSONObject)new JSONParser().parse(itemObject.toString());
             			Map<String, Object> data = new HashMap<>();
                 		
-            			data.put("ATTR_ID",(Object)"버스정보");
+            			data.put("ATTR_ID",(Object)"BIT0000001");
                 		data.put("NODE_NM",itemJson.get("nodenm"));
                 		data.put("ROUTE_TP",itemJson.get("routetp"));
                 		data.put("REMAIN_STTN",itemJson.get("arrprevstationcnt").toString()); //남은정류소
@@ -181,29 +187,41 @@ public class VhcService extends ServiceSupport {
                 		data.put("NODE_ID",itemJson.get("nodeid")) ;
                 		data.put("ROUT_NM",itemJson.get("routeno"));
                 		data.put("REMAIN_TM",itemJson.get("arrtime").toString()); //남은시간
-                		
+                		logger.info("sendMessage() before {}",data);
                 		webSocketClient.sendMessage(data);
             		}
             		
-            		else if(new JSONParser().parse(itemObject.toString()) instanceof JSONArray) {
-            			JSONArray jsonArray = (JSONArray)new JSONParser().parse(itemObject.toString());
+            		else if(new JSONParser().parse(itemObject.toString()) instanceof ArrayList) {
+            			//JSONArray jsonArray = (JSONArray)new JSONParser().parse(itemObject.toString());
             			
-            			for(int i=0; i<jsonArray.size(); i++) {
-                			JSONObject itemJson = (JSONObject)jsonArray.get(i);
+            			List<JSONObject> bitList = (ArrayList)new JSONParser().parse(itemObject.toString());
+            			
+    					/* 모니터링용 데이터 생성 */
+            			Map<String, Object> wsDataMap = new HashMap<>();
+    					wsDataMap.put("ATTR_ID", "BIT0000001");
+    					List<HashMap<String, Object>> arrivalInfoMapList = new ArrayList<>();
+    					
+            			for(int i=0; i<bitList.size(); i++) {
+            				
+            				JSONObject itemJson = (JSONObject) bitList.get(i);
                     		Map<String, Object> data = new HashMap<>();
-                    		
-                    		data.put("ATTR_ID",(Object)"버스정보");
+                    		wsDataMap.put("STTN_ID", itemJson.get("nodeid"));
                     		data.put("NODE_NM",itemJson.get("nodenm"));
                     		data.put("ROUTE_TP",itemJson.get("routetp"));
-                    		data.put("STATION_CNT",itemJson.get("arrprevstationcnt").toString()); //남은정류소
+                    		data.put("REMAIN_STTN",itemJson.get("arrprevstationcnt").toString()); //남은정류소
                     		data.put("ROUT_ID", itemJson.get("routeid"));
                     		data.put("VEHICLE_TP",itemJson.get("vehicletp")); //버스종류
                     		data.put("NODE_ID",itemJson.get("nodeid")) ;
                     		data.put("ROUT_NM",itemJson.get("routeno"));
-                    		data.put("ARR_TM",itemJson.get("arrtime").toString()); //남은시간
+                    		data.put("REMAIN_TM",itemJson.get("arrtime").toString()); //남은시간
                     		
-                    		webSocketClient.sendMessage(data);
+                    		arrivalInfoMapList.add((HashMap<String, Object>) data);
+                    		
+                    		logger.info("sendMessage() before {}",data);
+                    		
                 		}
+            			wsDataMap.put("LIST", arrivalInfoMapList);
+                		webSocketClient.sendMessage(wsDataMap);
             		}
             		
                  } catch (Exception e) {

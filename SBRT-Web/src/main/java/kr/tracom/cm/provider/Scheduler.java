@@ -113,7 +113,7 @@ public class Scheduler {
 							
 							//웹소켓 전송이 필요한 경우
 							if(jsonList != null) {
-								webSocketClient.sendMessageList(jsonList);
+								webSocketClient.sendMessageList("/topic/aircon",jsonList);
 							}
 							
 							

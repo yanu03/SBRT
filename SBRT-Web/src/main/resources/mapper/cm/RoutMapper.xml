@@ -128,13 +128,24 @@
 			UPD_ID = #{SSN_USER_ID}
 			</if>
 		</trim>
+		<if test="TYPE == 'CRS_ID'">
+		WHERE ROUT_ID IN
+		(
+			SELECT X.ROUT_ID FROM BMS_ROUT_MST X INNER JOIN
+			(SELECT ROUT_ID, WAY_DIV FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID}) Y
+			ON X.ROUT_ID != Y.ROUT_ID AND X.WAY_DIV = Y.WAY_DIV
+		)
+		<!-- WHERE ROUT_ID != #{ROUT_ID} -->
+		AND NODE_TYPE = 'NT001' AND NODE_ID = #{CRS_ID}
+		</if>
+		<if test="TYPE == 'STTN_ID'">
 		WHERE ROUT_ID != #{ROUT_ID}
-			<if test="TYPE == 'CRS_ID'">
-			AND NODE_TYPE = 'NT001' AND NODE_ID = #{CRS_ID}
-			</if>
-			<if test="TYPE == 'STTN_ID'">
-			AND NODE_TYPE = 'NT002' AND NODE_ID = #{STTN_ID}
-			</if>
+		AND NODE_TYPE = 'NT002' AND NODE_ID = #{STTN_ID}
+		</if>
+		<if test="TYPE == 'NODE_ID'">
+		WHERE ROUT_ID != #{ROUT_ID}
+		AND NODE_ID = #{NODE_ID}
+		</if>
 	</update>
 	
 	<update id="updateMainRoutNodeToAnotherRoute" parameterType="Map">	
@@ -159,6 +170,9 @@
 			</if>
 			<if test="TYPE == 'STTN_ID'">
 			AND NODE_TYPE = 'NT002' AND NODE_ID = #{STTN_ID}
+			</if>
+			<if test="TYPE == 'NODE_ID'">
+			AND NODE_ID = #{NODE_ID}
 			</if>
 	</update>
 	
@@ -503,6 +517,7 @@
 		<foreach collection="ROUT_IDS" item="item" index="index"  open="(" close=")" separator=",">
 			#{item}
 		</foreach>
+			AND A.NODE_TYPE != 'NT001'
 			<choose>
 				<when test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">
 					AND A.NODE_TYPE = #{NODE_TYPE}
@@ -533,6 +548,7 @@
 			LEFT OUTER JOIN BMS_ROUT_LINK_CMPSTN B
 				ON A.ROUT_ID = B.ROUT_ID AND A.LINK_ID = B.LINK_ID
 			WHERE A.ROUT_ID  = #{ROUT_ID}
+			AND A.NODE_TYPE != 'NT001'
 			<choose>
 				<when test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">
 					AND A.NODE_TYPE = #{NODE_TYPE}
@@ -619,6 +635,7 @@
 		<foreach collection="REP_ROUT_IDS" item="item" index="index"  open="(" close=")" separator=",">
 			#{item}
 		</foreach>
+			AND A.NODE_TYPE != 'NT001'
 			<choose>
 				<when test="@kr.tracom.util.CommonUtil@notEmpty(NODE_TYPE)">
 					AND A.NODE_TYPE = #{NODE_TYPE}
