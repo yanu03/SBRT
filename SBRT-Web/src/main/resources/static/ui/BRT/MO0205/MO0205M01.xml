@@ -609,7 +609,7 @@
 	var oldFcltId = ''; //과거 시설물 아이디
 	scwin.onpageload = function() {
 		 var autoOptions = {
-			Main : { grid : MO0205G0, srchSbm : sub_MO0205G0R0, keyColumn : "NODE_ID", srchGrp : pgm_header, name : "정류장 목록", focusColumn : "NODE_ID"}
+			Main : { grid : MO0205G0, srchSbm : sub_MO0205G0R0, keyColumn : "NODE_ID", srchGrp : pgm_search, name : "정류장 목록", focusColumn : "NODE_ID"}
 			,Sub1 : { grid : MO0205G2, srchSbm : sub_MO0205G2R0, name : "시설물 상태 및 제어"}
 		 };
 		var codeOptions = [ 
@@ -736,7 +736,7 @@
 		if(attrId == util.ATTR_ID.SCREENDOOR_INFO){
 			var scrndoorNum = '';
 			var index = dlt_BMS_SCRDOOR_FCLT_INFO.getMatchedIndex("MNG_ID", jsonObj.MNG_ID);
-			var fcltID = dlt_BMS_SCRDOOR_FCLT_INFO.getCellData(index[0], "FCLT_ID");
+			var fcltID = dlt_BMS_SCRDOOR_FCLT_INFO.getCellData(index[0], "FCLT_ID");;
 			var mngId = dlt_BMS_SCRDOOR_FCLT_INFO.getCellData(index[0], "MNG_ID");
 			var oldPk025 = dlt_BMS_SCRDOOR_FCLT_INFO.getCellData(index[0], "PK025");
 			
@@ -747,15 +747,15 @@
 				if(jsonObj.DATA_VAL == '0'){
 					if(jsonObj.MNG_ID.slice(-1) == mngId.slice(-1)){
 						scrndoorNum = jsonObj.MNG_ID.slice(-1);
-						$('#'+fcltID+'img').attr("src", '/cm/images/bms/OpenedDoor'+scrndoorNum+'.PNG');
-						$('#'+fcltID+'img').attr("src", '/cm/images/bms/ClosingDoor_SD'+scrndoorNum+'.gif');
+						$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/OpenedDoor'+scrndoorNum+'.PNG');
+						$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/ClosingDoor_SD'+scrndoorNum+'.gif');
 					}
 				}
 			}else if(oldPk025 == '0'){
 				if(jsonObj.DATA_VAL == '1'){
 					if(jsonObj.MNG_ID.slice(-1) == mngId.slice(-1)){
 						scrndoorNum = jsonObj.MNG_ID.slice(-1);
-						$('#'+fcltID+'img').attr("src", '/cm/images/bms/OpeningDoor_SD'+scrndoorNum+'.gif');
+						$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/OpeningDoor_SD'+scrndoorNum+'.gif');
 					}
 				}
 			}
