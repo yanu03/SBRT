@@ -463,6 +463,7 @@
 						<w2:key id="CONTENT2" name="name2" dataType="text"></w2:key>
 						<w2:key id="CONTENT3" name="name3" dataType="text"></w2:key>
 						<w2:key id="CONTENT4" name="name3" dataType="text"></w2:key>
+						<w2:key id="CO_CD" name="name3" dataType="text"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataMap baseNode="map" id="dma_sub_search">
@@ -490,6 +491,7 @@
 						<w2:column id="LINK_ID" name="링크ID" dataType="text"></w2:column>
 						<w2:column id="STTN_ID" name="정류소ID" dataType="text"></w2:column>
 						<w2:column id="STTN_NO" name="정류소번호" dataType="text"></w2:column>
+						<w2:column id="CONGESTION" name="혼잡도" dataType="text"></w2:column>
 						<w2:column id="CRS_ID" name="교차로ID" dataType="text"></w2:column>
 						<w2:column id="GPS_X" name="경도" dataType="text"></w2:column>
 						<w2:column id="GPS_Y" name="위도" dataType="text"></w2:column>
@@ -542,6 +544,18 @@
 					</w2:columnInfo>
 					<w2:data use="false"></w2:data>
 				</w2:dataList>
+				<!-- 이미지 데이터리스트 -->
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_DL_CD_IMG_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="CO_CD" name="공통코드" dataType="text"></w2:column>
+						<w2:column id="DL_CD" name="상세코드" dataType="text"></w2:column>
+						<w2:column id="IMG_PATH" name="이미지경로" dataType="text"></w2:column>
+						<w2:column id="IMG_PATH_ORI" name="이미지경로원본" dataType="text"></w2:column>
+						<w2:column id="IMG_NM" name="이미지이름" dataType="text"></w2:column>
+						<w2:column id="FOCUS" name="포커스" dataType="text"></w2:column>
+						<w2:column id="STATUS" name="상태" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_MO0205G0R0" ref="data:json,dma_search" target="data:json,dlt_BMS_NODE_MST" action="/mo/MO0205G0R0"
@@ -577,6 +591,11 @@
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_selectAirconInfo" ref="" target="" action="" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
+				ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_MO0205IMG" ref="data:json,dma_search" target="data:json,dlt_BMS_DL_CD_IMG_INFO" action="/common/selectCommonDtlImg" method="post" 
+				mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
 				ev:submiterror="" abortTrigger="">
 			</xf:submission>
@@ -646,9 +665,10 @@
 			
 		});
 		 
-
+		dma_search.set("CO_CD", "FCLT_KIND");
 		MO0205G0.mergeCol(3,false);
 		MO0205G0.mergeCells("byrestriccol");
+		com.executeSubmission(sub_MO0205IMG);	
 		com.executeSubmission(sub_MO0205SHI0);	
 		
 		//웹소켓 연결
@@ -893,6 +913,27 @@
 
 			}
 		}
+		
+		//정류소 혼잡도
+		var con = dlt_BMS_NODE_MST.getCellData(MO0205G0.getFocusedRowIndex(), "CONGESTION");
+		
+		switch (con) {
+		case "R":
+			$("#peopleCount").find("#MO0205_GREEN").show();
+			$("#peopleCount").find("#MO0205_YELLOW").hide();
+			$("#peopleCount").find("#MO0205_RED").hide();
+			break;
+		case "N":
+			$("#peopleCount").find("#MO0205_GREEN").hide();
+			$("#peopleCount").find("#MO0205_YELLOW").show();
+			$("#peopleCount").find("#MO0205_RED").hide();
+			break;
+		case "C":
+			$("#peopleCount").find("#MO0205_GREEN").hide();
+			$("#peopleCount").find("#MO0205_YELLOW").hide();
+			$("#peopleCount").find("#MO0205_RED").show();
+			break;
+		}
 	};
 	
 	//동적 그리드 함수
@@ -1059,7 +1100,7 @@
 			var doorStatus = dlt_BMS_FCLT_INFO.getCellData(i, "PK025");
 			var powerOnOff = dlt_BMS_FCLT_INFO.getCellData(i, "PK002"); //Off : 0, On : 1
 			
-			if(fcltKind == 'FK001' && (fcltCond == 'FC020'|| fcltCond == '')){
+			/*if(fcltKind == 'FK001' && (fcltCond == 'FC020'|| fcltCond == '')){
 				imgSrc = "/cm/images/bms/BIT_RED_normal.png";
 			}else if(fcltKind == 'FK001' && (fcltCond == 'FC021' || fcltCond == '')){
 				imgSrc = "/cm/images/bms/BIT_RED_abnormal.png";
@@ -1079,6 +1120,82 @@
 				imgSrc = "/cm/images/bms/PEOPLECOUNT_normal.png";
 			}else if(fcltKind == 'FK006' && (fcltCond == 'FC021' || fcltCond == '')){
 				imgSrc = "/cm/images/bms/PEOPLECOUNT_abnormal.png";
+			}*/
+			
+			
+			//DB저장한 이미지 불러오기  dlt_BMS_DL_CD_IMG_INFO
+			if(fcltKind == 'FK004' && (fcltCond == '0' || fcltCond == '1' || fcltCond =='')){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC020"){
+						//imgSrc = "/cm/images/bms/AIRTUBE_normal.png"; 
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK004' && (fcltCond == '255' || fcltCond == '')){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC021"){
+						//imgSrc = "/cm/images/bms/AIRTUBE_abnormal.png"; 
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK005' && (powerOnOff == '1')){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC020"){
+						//imgSrc = "/cm/images/bms/AIRCON_normal.png"; 
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK005' && (powerOnOff == '0')){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC021"){
+						//imgSrc = "/cm/images/bms/AIRCON_abnormal.png";
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK007' && doorStatus == '0'){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC025"){
+						//imgSrc = "/cm/images/bms/ClosedDoor.gif";
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK007' && doorStatus == '1'){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC023"){
+						//imgSrc = "/cm/images/bms/OpeningDoor.gif";
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK006' && (fcltCond == '0' || fcltCond == '')){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC020"){
+						//imgSrc = "/cm/images/bms/PEOPLECOUNT_normal.png";
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK006' && (fcltCond == '1' || fcltCond == '')){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC021"){
+						//imgSrc = "/cm/images/bms/PEOPLECOUNT_normal.png";
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
 			}
 			
 			//시설물 이미지
@@ -1093,7 +1210,7 @@
 			
 			//에어컨이면 에어컨정보창 추가
 			if(fcltKind == 'FK005') {
-				str +=	'<div id="airconInfo_'+fcltId+'_MO0205" class="station_display" style="width:120px; position: absolute; z-index: 10001; top:'+(parseInt(top)+8)+'px; left:'+(parseInt(left)+121)+'px">';
+				str +=	'<div id="airconInfo_'+fcltId+'_MO0205" class="station_display" style="width:120px; position: absolute; z-index: 1; top:'+(parseInt(top)+8)+'px; left:'+(parseInt(left)+121)+'px">';
 				str +=	' 	<div class="mesage_wrap">';
 				str +=  ' 		<p class="display_mesage">';
 				
@@ -1131,6 +1248,23 @@
 		//정류소 이미지
 		if(dlt_BMS_NODE_MST.getCellData(MO0205G0.getFocusedRowIndex(), "STTN_FCLT_TYPE") == 'ST003'){
 			var imgSrc = "/cm/images/bms/ST003_1.png"
+			
+			var psgNum = 0;
+			for(var i = 0; i < dlt_BMS_PLECNT_FCLT_INFO.getRowCount(); i++){
+				psgNum += dlt_BMS_PLECNT_FCLT_INFO.getCellData(i, "PK029");
+			}
+			
+			//피플카운트 vms
+			str += '<div id="peopleCount" class="station_display" style="position: absolute; z-index: 1; top:80px;">'
+			str += 	'<div class="mesage_wrap">'
+			str += 		' <p class="display_mesage">'
+			str += 			 '<span class="tx_green" id="MO0205_GREEN">원활('+psgNum+'명)</span>'
+			str += 			 '<span class="tx_yellow" id="MO0205_YELLOW" style="display: none;">보통('+psgNum+'명)</span>'
+			str += 			 '<span class="tx_red" id="MO0205_RED" style="display: none;">혼잡('+psgNum+'명)</span>'
+			str += 		 '</p>'
+			str += 	'</div>'
+			str += '</div>'
+			
 		}else{
 			var imgSrc = "/cm/images/bms/ST002_2.jpg"
 		}
@@ -1207,6 +1341,7 @@
 		}
 	}
 	
+	//에어컨
 	scwin.MO0205G2_onrowindexchange = function(row,oldRow) {
 		MO0205G3.removeFocusedCell();
 		MO0205G4.removeFocusedCell();
@@ -1218,22 +1353,44 @@
 		
 		//이미지 변경
 		if(fcltKind == 'FK005' && (fcltCond == '1'|| fcltCond == '')){
-			$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal_selected.png');
+			var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+			var imgSrc = '';
+			for(var x = 0; x < imgJson.length; x++){
+				if(imgJson[x].FOCUS == "Y" && imgJson[x].STATUS == "FC020"){
+					imgSrc = imgJson[x].IMG_PATH;
+					break;
+				}
+			}
+			//$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal_selected.png');
+			$('#'+fcltID+'img_MO0205').attr("src", imgSrc); //해당 시설물 이미지 변경
+			
+			//전 시설물 이미지 복구
 			if(oldFcltId != ''){
 				var oldFcltJson = dlt_BMS_FCLT_INFO.getMatchedJSON("FCLT_ID", oldFcltId);
 				var oldFcltKind = oldFcltJson[0].FCLT_KIND;
+				
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", oldFcltKind);
+				var imgSrc = '';
+				
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC020"){
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+				
 				switch (oldFcltKind) {
 				case 'FK004':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					break;
 					
 				case 'FK006':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					break;
 					
 				//case 'FK007':
@@ -1242,22 +1399,46 @@
 				}
 			}
 		}else if(fcltKind == 'FK005' && (fcltCond == '0'|| fcltCond == '')){
-			$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_abnormal_selected.png');
+			var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+			var imgSrc = '';
+			for(var x = 0; x < imgJson.length; x++){
+				if(imgJson[x].FOCUS == "Y" && imgJson[x].STATUS == "FC021"){
+					imgSrc = imgJson[x].IMG_PATH;
+					break;
+				}
+			}
+			//$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_abnormal_selected.png');
+			$('#'+fcltID+'img_MO0205').attr("src", imgSrc); //해당 시설물 이미지 변경
+			
 			if(oldFcltId != ''){
 				var oldFcltJson = dlt_BMS_FCLT_INFO.getMatchedJSON("FCLT_ID", oldFcltId);
 				var oldFcltKind = oldFcltJson[0].FCLT_KIND;
+				
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", oldFcltKind);
+				var imgSrc = '';
+				
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC020"){
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+				
 				switch (oldFcltKind) {
 				case 'FK004':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
+					//$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal.png');
+					//$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					break;
 					
 				case 'FK006':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
+					//$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					break;
 					
 				//case 'FK007':
@@ -1268,9 +1449,9 @@
 		}
 		
 		oldFcltId = fcltID;
-		
 	};
 	
+	//스크린도어
 	scwin.MO0205G3_onrowindexchange = function(row,oldRow) {
 		MO0205G2.removeFocusedCell();
 		MO0205G4.removeFocusedCell();
@@ -1286,18 +1467,29 @@
 			if(oldFcltId != ''){
 				var oldFcltJson = dlt_BMS_FCLT_INFO.getMatchedJSON("FCLT_ID", oldFcltId);
 				var oldFcltKind = oldFcltJson[0].FCLT_KIND;
+				
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", oldFcltKind);
+				var imgSrc = '';
+				
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC020"){
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+				
 				switch (oldFcltKind) {
 				case 'FK004':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					break;
 					
 				case 'FK006':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					break;
 					
 				//case 'FK007':
@@ -1308,9 +1500,9 @@
 		}
 		
 		oldFcltId = fcltID;
-		
 	};
 	
+	//에어튜브
 	scwin.MO0205G4_onrowindexchange = function(row,oldRow) {
 		MO0205G2.removeFocusedCell();
 		MO0205G3.removeFocusedCell();
@@ -1322,23 +1514,43 @@
 		
 		//이미지 변경
 		if(fcltKind == 'FK004' && (fcltCond == '1' || fcltCond == '')){
-			$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal_selected.png');
+			var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+			var imgSrc = '';
+			for(var x = 0; x < imgJson.length; x++){
+				if(imgJson[x].FOCUS == "Y" && imgJson[x].STATUS == "FC020"){
+					imgSrc = imgJson[x].IMG_PATH;
+					break;
+				}
+			}
+		
+			$('#'+fcltID+'img_MO0205').attr("src", imgSrc);
 			$('#'+fcltID+'img_MO0205').css("width", '24px');
 			if(oldFcltId != ''){
 				var oldFcltJson = dlt_BMS_FCLT_INFO.getMatchedJSON("FCLT_ID", oldFcltId);
 				var oldFcltKind = oldFcltJson[0].FCLT_KIND;
+				
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", oldFcltKind);
+				var imgSrc = '';
+				
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC020"){
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+				
 				switch (oldFcltKind) {
 				case 'FK004':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					break;
 					
 				case 'FK006':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					break;
 					
 				//case 'FK007':
@@ -1347,23 +1559,42 @@
 				}
 			}
 		}else if(fcltKind == 'FK004' && (fcltCond == '0' || fcltCond == '')){
-			$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_abnormal_selected.png');
+			var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+			var imgSrc = '';
+			for(var x = 0; x < imgJson.length; x++){
+				if(imgJson[x].FOCUS == "Y" && imgJson[x].STATUS == "FC021"){
+					imgSrc = imgJson[x].IMG_PATH;
+					break;
+				}
+			}
+			$('#'+fcltID+'img_MO0205').attr("src", imgSrc);
 			$('#'+fcltID+'img_MO0205').css("width", '24px');
 			if(oldFcltId != ''){
 				var oldFcltJson = dlt_BMS_FCLT_INFO.getMatchedJSON("FCLT_ID", oldFcltId);
 				var oldFcltKind = oldFcltJson[0].FCLT_KIND;
+				
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", oldFcltKind);
+				var imgSrc = '';
+				
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC020"){
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+				
 				switch (oldFcltKind) {
 				case 'FK004':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					break;
 					
 				case 'FK006':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					break;
 					
 				//case 'FK007':
@@ -1374,9 +1605,9 @@
 		}
 		
 		oldFcltId = fcltID;
-		
 	};
 	
+	//승객감지장치
 	scwin.MO0205G5_onrowindexchange = function(row,oldRow) {
 		MO0205G2.removeFocusedCell();
 		MO0205G3.removeFocusedCell();
@@ -1388,22 +1619,41 @@
 		
 		//이미지 변경
 		if(fcltKind == 'FK006' && (fcltCond == '1' || fcltCond == '')){
-			$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_normal_selected.png');
+			var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+			var imgSrc = '';
+			for(var x = 0; x < imgJson.length; x++){
+				if(imgJson[x].FOCUS == "Y" && imgJson[x].STATUS == "FC020"){
+					imgSrc = imgJson[x].IMG_PATH;
+					break;
+				}
+			}
+			$('#'+fcltID+'img_MO0205').attr("src", imgSrc);
 			if(oldFcltId != ''){
 				var oldFcltJson = dlt_BMS_FCLT_INFO.getMatchedJSON("FCLT_ID", oldFcltId);
 				var oldFcltKind = oldFcltJson[0].FCLT_KIND;
+				
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", oldFcltKind);
+				var imgSrc = '';
+				
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC020"){
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+				
 				switch (oldFcltKind) {
 				case 'FK004':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					break;
 					
 				case 'FK006':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					break;
 					
 				//case 'FK007':
@@ -1412,22 +1662,41 @@
 				}
 			}
 		}else if(fcltKind == 'FK006' && (fcltCond == '0' || fcltCond == '')){
-			$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_abnormal_selected.png');
+			var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+			var imgSrc = '';
+			for(var x = 0; x < imgJson.length; x++){
+				if(imgJson[x].FOCUS == "Y" && imgJson[x].STATUS == "FC021"){
+					imgSrc = imgJson[x].IMG_PATH;
+					break;
+				}
+			}
+			$('#'+fcltID+'img_MO0205').attr("src", imgSrc);
 			if(oldFcltId != ''){
 				var oldFcltJson = dlt_BMS_FCLT_INFO.getMatchedJSON("FCLT_ID", oldFcltId);
 				var oldFcltKind = oldFcltJson[0].FCLT_KIND;
+				
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", oldFcltKind);
+				var imgSrc = '';
+				
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC020"){
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+				
 				switch (oldFcltKind) {
 				case 'FK004':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRCON_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					break;
 					
 				case 'FK006':
-					$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/PEOPLECOUNT_normal.png');
+					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
 					break;
 					
 				//case 'FK007':
@@ -1438,7 +1707,6 @@
 		}
 		
 		oldFcltId = fcltID;
-		
 	};
 	
 	
@@ -1464,6 +1732,26 @@
 				
 				//컨트롤러 api추가 필요.
 			}		*/
+	};
+	
+	//MO0205G5그리드 cell 클릭 이벤트 - 보행자 감지기
+	scwin.MO0205G5_oncellclick = function(row,col,colId) {
+		var gridColumn = MO0205G5.getColumnID(col);
+		
+		if (gridColumn == "PK046") { 
+			var fcltId = dlt_BMS_PLECNT_FCLT_INFO.getCellData(row, "FCLT_ID");
+			var mngId = dlt_BMS_PLECNT_FCLT_INFO.getCellData(row, "MNG_ID");
+			
+			var data = {fcltId : fcltId, mngId : mngId, callbackFn : "scwin.MO0205P01_callbackFn"};
+			if(fcltId != '' && fcltId != null){
+				var options = { id : "MO0205P01",
+								popupName : "스냅샷",
+								width : "1300px",
+								height : "650px",
+								modal : true};
+				com.openPopup("/ui/BRT/MO0205/MO0205P02.xml", options, data);
+			}
+		}
 	};
 	
 	scwin.TYPE1_onviewchange = function(info) {

@@ -80,4 +80,10 @@ public class MO0205Controller extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping("/mo/MO0205P1R0")
+	public @ResponseBody Map<String, Object> MO0205P1R0() throws Exception {
+		result.setData("dlt_BMS_FCLT_COND_PARAM_INFO_HIS", MO0205Service.MO0205P1R0());
+		return result.getResult();
+	}
+	
 }

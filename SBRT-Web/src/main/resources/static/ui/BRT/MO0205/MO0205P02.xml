@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="/cm/css/all.css" type="text/css"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:w2="http://www.inswave.com/websquare" xmlns:xf="http://www.w3.org/2002/xforms">
+	<head>
+		<w2:buildDate />
+		<xf:model>
+			<xf:instance>
+				<data xmlns="" />
+			</xf:instance>
+			<w2:dataCollection baseNode="map">
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_FCLT_COND_PARAM_INFO_HIS" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="NODE_ID" name="노드아이디" dataType="text"></w2:column>
+						<w2:column id="FCLT_ID" name="시설물아이디" dataType="text"></w2:column>
+						<w2:column id="FCLT_KIND" name="시설물종류" dataType="text"></w2:column>
+						<w2:column id="PARAM_DIV" name="매개변수구분" dataType="text"></w2:column>
+						<w2:column id="PARAM_KIND" name="매개변수종류" dataType="text"></w2:column>
+						<w2:column id="MNG_ID" name="관리아이디" dataType="text"></w2:column>
+						<w2:column id="DATA_VAL" name="데이터값" dataType="text"></w2:column>
+						<w2:column id="SEND_DTM" name="전송일시" dataType="date"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="date"></w2:column>
+						<w2:column id="PK045" name="보행자수" dataType="date"></w2:column>
+						<w2:column id="PK046" name="스냅샷경로" dataType="date"></w2:column>
+					</w2:columnInfo>
+					<w2:data use="false"></w2:data>
+				</w2:dataList>
+				<w2:dataMap baseNode="map" id="dma_search">
+					<w2:keyInfo>
+						<w2:key id="TYPE" name="TYPE" dataType="text"></w2:key>
+						<w2:key id="CONTENT" name="CONTENT" dataType="text"></w2:key>
+						<w2:key id="FCLT_ID" name="시설물아이디" dataType="text"></w2:key>
+						<w2:key id="MNG_ID" name="관리아이디" dataType="text"></w2:key>
+					</w2:keyInfo>
+				</w2:dataMap>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="DVC_KIND" name="장치종류" dataType="text"></w2:column>
+						<w2:column id="PARAM_DIV" name="매개변수구분" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
+			</w2:dataCollection>
+			<w2:workflowCollection></w2:workflowCollection>
+			<xf:submission id="sub_MO0205P1R0" ref='data:json,dma_search' target='data:json,dlt_BMS_FCLT_COND_PARAM_INFO_HIS'
+				action="/mo/MO0205P1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
+				errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0205P1R0_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+		</xf:model>
+		<script type="text/javascript" lazy="false"><![CDATA[
+	scwin.onpageload = function() {
+		scwin.param = com.getParameter();
+		
+		dma_search.set("FCLT_ID" , scwin.param.fcltId);
+		dma_search.set("MNG_ID" , scwin.param.mngId);
+		
+		scwin.closeCallbackFncName = scwin.param.callbackFn;
+		com.setEnterKeyEvent(popup_header, scwin.btn_search_onclick);
+		
+		var btnOptions = 
+		[
+			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
+		];
+		//com.setMainBtn3(wfm_mainBtn, btnOptions);
+		
+
+		com.executeSubmission(sub_MO0205P1R0);
+		
+	};
+					
+	scwin.btn_search_onclick = function() {
+		com.executeSubmission(sub_MO0205P1R0);
+	};
+		
+	scwin.btn_confirm_onclick = function() {
+		//var data = MO0205P1.getCheckedJSON( "chk" );
+		//com.closePopup(scwin.closeCallbackFncName, data);
+		com.closePopup();
+	};
+		
+	scwin.btn_cancel_onclick = function() {
+		com.closePopup();
+	};
+	
+	scwin.MO0205P1_onrowindexchange = function(row,oldRow) {
+		var url = dlt_BMS_FCLT_COND_PARAM_INFO_HIS.getCellData(row, "PK046");
+		MO0205_SNAPSHOT.setSrc(url);
+	};
+	
+	scwin.sub_MO0205P1R0_submitdone = function(e) {
+		var sCode = com.getResultCode(e);
+		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
+			com.setFocusedCell(MO0205P1, "FCLT_ID");
+		}
+	};
+	
+	scwin.useYnDisFormatter = function(data){
+		if(data == ""){
+			return "";
+		}else if(data == 'Y'){
+			return "사용";
+		}else if(data == 'N'){
+			return "사용안함";
+		}
+	}
+	
+	scwin.autoYnDisFormatter = function(data){
+		if(data == ""){
+			return "";
+		}else if(data == 'Y'){
+			return "사용";
+		}else if(data == 'N'){
+			return "사용안함";
+		}
+	}
+	
+	scwin.schYnDisFormatter = function(data){
+		if(data == ""){
+			return "";
+		}else if(data == 'Y'){
+			return "사용";
+		}else if(data == 'N'){
+			return "사용안함";
+		}
+	}
+	
+	]]></script>
+	</head>
+	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
+		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
+			<xf:group id="popup_header" style="" class="popup_header">
+				<xf:group class="gr_search" id="" style=""></xf:group>
+			</xf:group>
+			<xf:group style="" id="" class="popup_content grdc_5f_20_5f">
+				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
+					<xf:group id="" class="gr_sub_header" style="">
+						<xf:group class="defaultbox" id="" style="">
+							<w2:textbox class="df_tt fl list" id="" label="스냅샷 목록" style=""></w2:textbox>
+						</xf:group>
+						<!-- <w2:wframe id="wfm_subBtn3" class="" style="" src="/cm/common/wf_subBtn.xml" scope="true"></w2:wframe> -->
+					</xf:group>
+					<xf:group style="" id=""></xf:group>
+					<xf:group style="" id="" class="popup_content bms_box_wrap">
+						<w2:gridView sortEvent="onclick" ev:oncellclick="" showSortableImage="" rowNumVisible="true" useShiftKey="true"
+							readOnly="true" scrollByColumn="false" rowNumHeaderValue="No." sortable="true" rowStatusHeaderValue="상태" overflowX="auto"
+							overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true" dataList="data:dlt_BMS_FCLT_COND_PARAM_INFO_HIS"
+							ignoreCellClick="false" style="" autoFit="lastColumn" visibleRowNum="10" id="MO0205P1" class="cm_grid right" tooltipPositionY=""
+							checkReadOnlyOnPasteEnable="" focusFlow="" focusMove="" keyMoveEditMode="" focusDefaultColumn="" focusMode="row" userData1=""
+							ev:onrowindexchange="scwin.MO0205P1_onrowindexchange">
+							<w2:header style="" id="header1">
+								<w2:row style="" id="row2">
+									<w2:column width="130" inputType="text" style="height:20px" id="column5" value="갱신 일시"
+										blockSelect="false" sortable="false">
+									</w2:column>
+									<w2:column width="100" style="height:20px;" inputType="text" id="column1" value="시설물ID"
+										blockSelect="false" displayMode="label" userData1="" userData2="" class="">
+									</w2:column>
+									<w2:column width="80" style="height:20px;" inputType="text" id="column2" value="보행자 수"
+										blockSelect="false" displayMode="label" userData1="" userData2="" class="">
+									</w2:column>
+									<w2:column width="150" style="height:20px;" inputType="text" id="column3" value="이벤트 종류"
+										blockSelect="false" userData1="" userData2="" class="">
+									</w2:column>
+									<w2:column width="150" inputType="text" style="height:20px" id="column4" value="스냅샷 경로"
+										blockSelect="false" sortable="false">
+									</w2:column>
+								</w2:row>
+							</w2:header>
+							<w2:gBody width="" style="" id="gBody4">
+								<w2:row style="" id="row5">
+									<w2:column width="" inputType="text" style="height:20px" id="UPD_DTM" value="" blockSelect="false"
+										displayMode="label" readOnly="true" valueType="other" removeBorderStyle="false">
+									</w2:column>
+									<w2:column width="134" style="height:20px;" inputType="text" id="FCLT_ID" blockSelect="false"
+										displayMode="label" readOnly="true" userData1="M">
+									</w2:column>
+									<w2:column width="159" style="height:20px;" inputType="text" id="PK045" blockSelect="false"
+										displayMode="label" readOnly="true" textAlign="right">
+									</w2:column>
+									<w2:column width="126" style="height:20px;" inputType="text" id="" blockSelect="false" displayFormat=""
+										readOnly="true">
+									</w2:column>
+									<w2:column width="" inputType="text" style="height:20px" id="PK046" value="" blockSelect="false"
+										displayMode="label" readOnly="true" valueType="other" removeBorderStyle="false">
+									</w2:column>
+								</w2:row>
+							</w2:gBody>
+							<w2:footer style="" id="footer1">
+								<w2:row style="" id="row3">
+									<w2:column removeBorderStyle="false" width="" inputType="expression"
+										style="height:20px; border-right:5px" id="column48" value="" blockSelect="false" displayMode="label" colSpan="13" rowSpan=""
+										expression="&quot;데이터 개수 : &quot; + COUNT('GRG_ID')" textAlign="left">
+									</w2:column>
+								</w2:row>
+							</w2:footer>
+						</w2:gridView>
+					</xf:group>
+					</xf:group>
+					
+					<xf:group style="" id=""></xf:group>
+					
+					<xf:group id="pgm_list2" class="pgm_list grdr_20_2_a" style="">
+						<xf:group id="" class="gr_sub_header" style="">
+							<xf:group class="defaultbox" id="" style="">
+								<w2:textbox class="df_tt fl view" id="" label="이미지 (작업중)" style=""></w2:textbox>
+							</xf:group>
+						</xf:group>
+						<xf:group style="" id=""></xf:group>
+						<xf:group style="" id="" class="popup_content bms_box_wrap">
+							<xf:image src="" style="width: 100%;height: 98%;" id="MO0205_SNAPSHOT"></xf:image>
+						</xf:group>
+					</xf:group>
+				</xf:group>
+				<xf:group id="" style="" class="popup_bottom">
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
+					<xf:label><![CDATA[확인]]></xf:label>
+				</w2:anchor>
+				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+					<xf:label><![CDATA[취소]]></xf:label>
+				</w2:anchor>
+			</xf:group>
+		</xf:group>
+	</body>
+</html>

@@ -18,6 +18,7 @@
 					,	E.NODE_SN
 					,	H.STTN_FCLT_TYPE
 					,	H.STTN_NO
+					,	H.CONGESTION
 					,	G.REP_ROUT_NM
 					,	G.ROUT_NM
 		FROM	BMS_ROUT_NODE_CMPSTN E
@@ -189,6 +190,25 @@
 			ON A.INTG_FCLT_ID = B.INTG_FCLT_ID
 		WHERE
 			B.FCLT_ID = #{FCLT_ID}
+	</select>
+	
+	<!-- 스냅샷 조회 -->
+	<select id="MO0205P1R0" resultType="Map">
+		SELECT 
+			DATE_FORMAT(UPD_DTM, '%Y-%m-%d %H:%i:%s') UPD_DTM
+			,DATE_FORMAT(SEND_DTM, '%Y-%m-%d %H:%i:%s') SEND_DTM
+			,FCLT_ID
+			,MAX(CASE WHEN PARAM_KIND = 'PK045' THEN DATA_VAL END) AS 'PK045'
+			,MAX(CASE WHEN PARAM_KIND = 'PK046' THEN DATA_VAL END) AS 'PK046'
+		FROM 
+			BMS_FCLT_COND_PARAM_INFO_HIS
+		WHERE 
+			FCLT_ID = #{FCLT_ID}
+			AND PARAM_DIV = 'PD003'
+		GROUP BY
+			UPD_DTM
+		ORDER BY
+			UPD_DTM DESC
 	</select>
 	
 	<!--  <select id="MO0205G2R0" resultType="Map">

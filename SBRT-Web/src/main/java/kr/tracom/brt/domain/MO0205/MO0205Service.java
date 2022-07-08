@@ -147,9 +147,11 @@ public class MO0205Service extends ServiceSupport{
 			}
 			
 		}
-		
-		
-		
 		return null;
+	}
+	
+	public List MO0205P1R0() throws Exception {
+		Map param = getSimpleDataMap("dma_search");
+		return MO0205Mapper.MO0205P1R0(param);
 	}
 }

@@ -252,6 +252,18 @@
 						<w2:column id="PK049" name="" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				<!-- 이미지 데이터리스트 -->
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_DL_CD_IMG_INFO" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="CO_CD" name="공통코드" dataType="text"></w2:column>
+						<w2:column id="DL_CD" name="상세코드" dataType="text"></w2:column>
+						<w2:column id="IMG_PATH" name="이미지경로" dataType="text"></w2:column>
+						<w2:column id="IMG_PATH_ORI" name="이미지경로원본" dataType="text"></w2:column>
+						<w2:column id="IMG_NM" name="이미지이름" dataType="text"></w2:column>
+						<w2:column id="FOCUS" name="포커스" dataType="text"></w2:column>
+						<w2:column id="STATUS" name="상태" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_MO0203G0R0" ref='data:json,dma_search' target='data:json,dlt_BMS_NODE_MST' action="/mo/MO0203G0R0"
@@ -290,6 +302,11 @@
 			<xf:submission id="sub_selectB0Bit" ref="data:json,dma_sub_search" target="" action="/vhc/selectB0Bit" method="post"
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_MO0203IMG" ref="data:json,dma_search" target="data:json,dlt_BMS_DL_CD_IMG_INFO" action="/common/selectCommonDtlImg" method="post" 
+				mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
+				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
@@ -339,7 +356,8 @@
 		);	
 		
 		MO0203G0.mergeCells("byrestriccol");
-		//$p.executeSubmission(sub_MO0203SHI0);	
+		//$p.executeSubmission(sub_MO0203SHI0);
+		com.executeSubmission(sub_MO0203IMG);	//이미지 서브미션
 		$p.executeSubmission(sub_MO0203SHI1);
 		
 		//버스 상세정보
@@ -930,7 +948,7 @@
 			var doorStatus = dlt_BMS_FCLT_INFO.getCellData(i, "PK025");
 			var powerOnOff = dlt_BMS_FCLT_INFO.getCellData(i, "PK002"); //Off : 0, On : 1
 			
-			if(fcltKind == 'FK001' && (fcltCond == 'FC020'|| fcltCond == '')){
+			/*if(fcltKind == 'FK001' && (fcltCond == 'FC020'|| fcltCond == '')){
 				imgSrc = "/cm/images/bms/BIT_RED_normal.png";
 			}else if(fcltKind == 'FK001' && (fcltCond == 'FC021' || fcltCond == '')){
 				imgSrc = "/cm/images/bms/BIT_RED_abnormal.png";
@@ -952,7 +970,84 @@
 				imgSrc = "/cm/images/bms/OpeningDoor.gif";
 			}else if(fcltKind == 'FK006' && (fcltCond == 'FC020' || fcltCond == '')){
 				imgSrc = "/cm/images/bms/PEOPLECOUNT_normal.png";
+			}*/
+			
+			
+			//DB저장한 이미지 불러오기  dlt_BMS_DL_CD_IMG_INFO - kbs
+			if(fcltKind == 'FK004' && (fcltCond == '0' || fcltCond == '1' || fcltCond =='')){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC020"){
+						//imgSrc = "/cm/images/bms/AIRTUBE_normal.png"; 
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK004' && (fcltCond == '255' || fcltCond == '')){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC021"){
+						//imgSrc = "/cm/images/bms/AIRTUBE_abnormal.png"; 
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK005' && (powerOnOff == '1')){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC020"){
+						//imgSrc = "/cm/images/bms/AIRCON_normal.png"; 
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK005' && (powerOnOff == '0')){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC021"){
+						//imgSrc = "/cm/images/bms/AIRCON_abnormal.png";
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK007' && doorStatus == '0'){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC025"){
+						//imgSrc = "/cm/images/bms/ClosedDoor.gif";
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK007' && doorStatus == '1'){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC023"){
+						//imgSrc = "/cm/images/bms/OpeningDoor.gif";
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK006' && (fcltCond == '0' || fcltCond == '')){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC020"){
+						//imgSrc = "/cm/images/bms/PEOPLECOUNT_normal.png";
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK006' && (fcltCond == '1' || fcltCond == '')){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC021"){
+						//imgSrc = "/cm/images/bms/PEOPLECOUNT_normal.png";
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
 			}
+			
 			
 			//시설물 이미지
 			str += '<div id="'+fcltId+'" style="z-index: 1; position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group fclt_img" onclick="imgOnclick(this.id);">';

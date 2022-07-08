@@ -71,7 +71,10 @@
 	<select id="selectCommonDtlImg" resultType="Map">
 		SELECT CO_CD, DL_CD, IMG_PATH, IMG_NM, FOCUS, STATUS, IMG_PATH AS IMG_PATH_ORI
 		  FROM BMS_DL_CD_IMG_INFO 
-		 WHERE CO_CD = #{CO_CD}
+	<where>
+	  	<if test="CO_CD != '' and CO_CD != null">
+			CO_CD = #{CO_CD}
+		</if>
 		<if test="DL_CD != '' and DL_CD != null">
 			AND DL_CD = #{DL_CD}
 		</if>
@@ -81,6 +84,7 @@
 		<if test="FOCUS != '' and FOCUS != null">
 			AND FOCUS = #{FOCUS}
 		</if>
+	</where>
 	</select>	
 	
 	<select id="selectCommonSearchItem" resultType="Map">
