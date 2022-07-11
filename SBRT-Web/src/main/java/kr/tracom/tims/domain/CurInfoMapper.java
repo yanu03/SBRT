@@ -19,6 +19,7 @@ public interface CurInfoMapper {
 	
 	String getBusId(Map<String, Object> paramMap);
     Map<String, Object> getRoutMst(Map<String, Object> paramMap);
+    String getSttnLinkId(Map<String, Object> paramMap);
     
     Map<String, Object> selectCurAllocPlInfo(Map<String, Object> paramMap);
     Map<String, Object> selectCurAllocPlInfoByVhcId(Map<String, Object> paramMap);
