@@ -198,13 +198,22 @@
 			DATE_FORMAT(UPD_DTM, '%Y-%m-%d %H:%i:%s') UPD_DTM
 			,DATE_FORMAT(SEND_DTM, '%Y-%m-%d %H:%i:%s') SEND_DTM
 			,FCLT_ID
-			,MAX(CASE WHEN PARAM_KIND = 'PK045' THEN DATA_VAL END) AS 'PK045'
+			,MAX(CASE WHEN PARAM_KIND = 'PK029' THEN DATA_VAL END) AS 'PK029'
 			,MAX(CASE WHEN PARAM_KIND = 'PK046' THEN DATA_VAL END) AS 'PK046'
 		FROM 
 			BMS_FCLT_COND_PARAM_INFO_HIS
 		WHERE 
 			FCLT_ID = #{FCLT_ID}
 			AND PARAM_DIV = 'PD003'
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(F_DATE) and @kr.tracom.util.CommonUtil@empty(L_DATE)">
+				<![CDATA[AND DATE_FORMAT(SEND_DTM, '%Y%m%d') >= #{F_DATE}]]>
+			</if>
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(L_DATE) and @kr.tracom.util.CommonUtil@empty(F_DATE)">
+				<![CDATA[AND DATE_FORMAT(SEND_DTM, '%Y%m%d') <= #{L_DATE}]]>
+			</if>
+			<if test="@kr.tracom.util.CommonUtil@notEmpty(F_DATE) and @kr.tracom.util.CommonUtil@notEmpty(L_DATE)">
+				AND DATE_FORMAT(SEND_DTM, '%Y%m%d') between #{F_DATE} and #{L_DATE}
+			</if>
 		GROUP BY
 			UPD_DTM
 		ORDER BY

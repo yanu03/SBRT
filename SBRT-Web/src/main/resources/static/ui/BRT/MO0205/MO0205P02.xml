@@ -20,7 +20,7 @@
 						<w2:column id="DATA_VAL" name="데이터값" dataType="text"></w2:column>
 						<w2:column id="SEND_DTM" name="전송일시" dataType="date"></w2:column>
 						<w2:column id="UPD_DTM" name="갱신일시" dataType="date"></w2:column>
-						<w2:column id="PK045" name="보행자수" dataType="date"></w2:column>
+						<w2:column id="PK029" name="보행자수" dataType="date"></w2:column>
 						<w2:column id="PK046" name="스냅샷경로" dataType="date"></w2:column>
 					</w2:columnInfo>
 					<w2:data use="false"></w2:data>
@@ -31,6 +31,8 @@
 						<w2:key id="CONTENT" name="CONTENT" dataType="text"></w2:key>
 						<w2:key id="FCLT_ID" name="시설물아이디" dataType="text"></w2:key>
 						<w2:key id="MNG_ID" name="관리아이디" dataType="text"></w2:key>
+						<w2:key id="F_DATE" name="name4" dataType="date"></w2:key>
+						<w2:key id="L_DATE" name="name5" dataType="date"></w2:key>
 					</w2:keyInfo>
 				</w2:dataMap>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_searchitem" saveRemovedData="true">
@@ -43,7 +45,7 @@
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_MO0205P1R0" ref='data:json,dma_search' target='data:json,dlt_BMS_FCLT_COND_PARAM_INFO_HIS'
 				action="/mo/MO0205P1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
-				errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0205P1R0_submitdone" ev:submiterror="" abortTrigger="">
+				errorHandler="" customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit="" ev:submitdone="scwin.sub_MO0205P1R0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
@@ -60,8 +62,33 @@
 		[
 			{userStr:"조회", auth: gcm.BTN.SEARCH, cbFnc: scwin.btn_search_onclick}
 		];
-		//com.setMainBtn3(wfm_mainBtn, btnOptions);
+		com.setMainBtn3(wfm_mainBtn, btnOptions);
 		
+		var date = new Date();
+		var year = date.getFullYear().toString();
+		var month = (date.getMonth()+1).toString();
+		var day = date.getDate().toString();
+		var zero = 0;
+		
+		//글자수 맞추기
+		if(day.length == 1){
+			day = zero + day;
+		}
+		
+		if(month.length == 1){
+			month = zero + month;
+		}
+		
+		var weekAgoDay = parseInt(day) - 7;
+		var todaysDate = year+month+day;
+		var weekAgoDate = year+month+weekAgoDay;
+		var firstday = year+month+"01";	
+
+		//F_DATE.setValue(weekAgoDate);
+		F_DATE.setValue(todaysDate);
+		L_DATE.setValue(todaysDate);
+		dma_search.set("F_DATE", todaysDate);
+		dma_search.set("L_DATE", todaysDate);
 
 		com.executeSubmission(sub_MO0205P1R0);
 		
@@ -89,7 +116,7 @@
 	scwin.sub_MO0205P1R0_submitdone = function(e) {
 		var sCode = com.getResultCode(e);
 		if (sCode == gcm.MESSAGE_CODE.STATUS_SUCCESS) {
-			com.setFocusedCell(MO0205P1, "FCLT_ID");
+			com.setFocusedCell(MO0205P1, "SEND_DTM");
 		}
 	};
 	
@@ -128,7 +155,23 @@
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group class="popup_container grdr_36_a_40" id="popup_container" style="">
 			<xf:group id="popup_header" style="" class="popup_header">
-				<xf:group class="gr_search" id="" style=""></xf:group>
+				<xf:group class="gr_search" id="" style="">
+					<xf:group class="label" id="" style="">
+							<w2:span label="전송일시" style="margin-right: 3px; margin-left: 15px;" id=""></w2:span>
+						</xf:group>
+						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
+							style="width:120px; margin-right: 10px; float:left;" id="F_DATE" renderType="component" renderDiv="true"
+							calendarValueType="yearMonthDate" ref="data:dma_search.F_DATE" ev:onviewchange="scwin.F_DATE_onviewchange" minYear="2000"
+							maxYear="2025">
+						</w2:inputCalendar>
+						<w2:span label="~" style="margin-right: 10px; float:left;" id=""></w2:span>
+						<w2:inputCalendar footerDiv="false" rightAlign="false" focusOnDateSelect="false"
+							style="width: 120px; float:left;" id="L_DATE" renderType="component" renderDiv="true" calendarValueType="yearMonthDate"
+							ref="data:dma_search.L_DATE" ev:onviewchange="scwin.L_DATE_onviewchange" minYear="2000"
+							maxYear="2025">
+						</w2:inputCalendar>
+						<w2:wframe id="wfm_mainBtn" class="" style="" src="/cm/common/wf_popUpBtn.xml" scope="true"></w2:wframe>
+				</xf:group>
 			</xf:group>
 			<xf:group style="" id="" class="popup_content grdc_5f_20_5f">
 				<xf:group id="pgm_list" class="pgm_list grdr_20_2_a" style="">
@@ -143,44 +186,44 @@
 						<w2:gridView sortEvent="onclick" ev:oncellclick="" showSortableImage="" rowNumVisible="true" useShiftKey="true"
 							readOnly="true" scrollByColumn="false" rowNumHeaderValue="No." sortable="true" rowStatusHeaderValue="상태" overflowX="auto"
 							overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true" dataList="data:dlt_BMS_FCLT_COND_PARAM_INFO_HIS"
-							ignoreCellClick="false" style="" autoFit="lastColumn" visibleRowNum="10" id="MO0205P1" class="cm_grid right" tooltipPositionY=""
+							ignoreCellClick="false" style="" autoFit="lastColumn" visibleRowNum="" id="MO0205P1" class="cm_grid right" tooltipPositionY=""
 							checkReadOnlyOnPasteEnable="" focusFlow="" focusMove="" keyMoveEditMode="" focusDefaultColumn="" focusMode="row" userData1=""
 							ev:onrowindexchange="scwin.MO0205P1_onrowindexchange">
 							<w2:header style="" id="header1">
 								<w2:row style="" id="row2">
-									<w2:column width="130" inputType="text" style="height:20px" id="column5" value="갱신 일시"
+									<w2:column width="130" inputType="text" style="height:20px" id="column5" value="전송일시"
 										blockSelect="false" sortable="false">
 									</w2:column>
-									<w2:column width="100" style="height:20px;" inputType="text" id="column1" value="시설물ID"
+									<!-- <w2:column width="100" style="height:20px;" inputType="text" id="column1" value="시설물ID"
 										blockSelect="false" displayMode="label" userData1="" userData2="" class="">
-									</w2:column>
+									</w2:column> -->
 									<w2:column width="80" style="height:20px;" inputType="text" id="column2" value="보행자 수"
 										blockSelect="false" displayMode="label" userData1="" userData2="" class="">
 									</w2:column>
-									<w2:column width="150" style="height:20px;" inputType="text" id="column3" value="이벤트 종류"
+									<!-- <w2:column width="150" style="height:20px;" inputType="text" id="column3" value="이벤트 종류"
 										blockSelect="false" userData1="" userData2="" class="">
-									</w2:column>
-									<w2:column width="150" inputType="text" style="height:20px" id="column4" value="스냅샷 경로"
+									</w2:column> -->
+									<w2:column width="300" inputType="text" style="height:20px" id="column4" value="스냅샷 경로"
 										blockSelect="false" sortable="false">
 									</w2:column>
 								</w2:row>
 							</w2:header>
 							<w2:gBody width="" style="" id="gBody4">
 								<w2:row style="" id="row5">
-									<w2:column width="" inputType="text" style="height:20px" id="UPD_DTM" value="" blockSelect="false"
+									<w2:column width="" inputType="text" style="height:20px" id="SEND_DTM" value="" blockSelect="false"
 										displayMode="label" readOnly="true" valueType="other" removeBorderStyle="false">
 									</w2:column>
-									<w2:column width="134" style="height:20px;" inputType="text" id="FCLT_ID" blockSelect="false"
+									<!-- <w2:column width="134" style="height:20px;" inputType="text" id="FCLT_ID" blockSelect="false"
 										displayMode="label" readOnly="true" userData1="M">
-									</w2:column>
-									<w2:column width="159" style="height:20px;" inputType="text" id="PK045" blockSelect="false"
+									</w2:column> -->
+									<w2:column width="159" style="height:20px;" inputType="text" id="PK029" blockSelect="false"
 										displayMode="label" readOnly="true" textAlign="right">
 									</w2:column>
-									<w2:column width="126" style="height:20px;" inputType="text" id="" blockSelect="false" displayFormat=""
+									<!-- <w2:column width="126" style="height:20px;" inputType="text" id="" blockSelect="false" displayFormat=""
 										readOnly="true">
-									</w2:column>
+									</w2:column> -->
 									<w2:column width="" inputType="text" style="height:20px" id="PK046" value="" blockSelect="false"
-										displayMode="label" readOnly="true" valueType="other" removeBorderStyle="false">
+										displayMode="label" readOnly="true" valueType="other" removeBorderStyle="false" textAlign="left">
 									</w2:column>
 								</w2:row>
 							</w2:gBody>
@@ -201,22 +244,22 @@
 					<xf:group id="pgm_list2" class="pgm_list grdr_20_2_a" style="">
 						<xf:group id="" class="gr_sub_header" style="">
 							<xf:group class="defaultbox" id="" style="">
-								<w2:textbox class="df_tt fl view" id="" label="이미지 (작업중)" style=""></w2:textbox>
+								<w2:textbox class="df_tt fl view" id="" label="이미지" style=""></w2:textbox>
 							</xf:group>
 						</xf:group>
 						<xf:group style="" id=""></xf:group>
-						<xf:group style="" id="" class="popup_content bms_box_wrap">
-							<xf:image src="" style="width: 100%;height: 98%;" id="MO0205_SNAPSHOT"></xf:image>
+						<xf:group style="text-align:center" id="" class="popup_content bms_box_wrap">
+							<xf:image src="" style="height:100%" id="MO0205_SNAPSHOT"></xf:image>
 						</xf:group>
 					</xf:group>
 				</xf:group>
 				<xf:group id="" style="" class="popup_bottom">
-				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_confirm_onclick" class="btn_cm">
-					<xf:label><![CDATA[확인]]></xf:label>
+				<w2:anchor id="btn_confirm" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm">
+					<xf:label><![CDATA[닫기]]></xf:label>
 				</w2:anchor>
-				<w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
+				<!-- <w2:anchor id="btn_cancel" style="" ev:onclick="scwin.btn_cancel_onclick" class="btn_cm" outerDiv="">
 					<xf:label><![CDATA[취소]]></xf:label>
-				</w2:anchor>
+				</w2:anchor> -->
 			</xf:group>
 		</xf:group>
 	</body>
