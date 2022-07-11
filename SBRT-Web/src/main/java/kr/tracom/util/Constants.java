@@ -24,6 +24,10 @@ public class Constants {
 	public static final String MOCK_NODE_TYPE_CONNECTION = "106"; //접속부
 	public static final String MOCK_NODE_TYPE_IC = "107"; //IC 및 JC
 	
+	
+	public static final String OPER_EVENT_ARRIVAL= "ET001"; //운행이벤트도착 코드
+	public static final String OPER_EVENT_DEPART= "ET002"; //운행이벤트출발 코드
+	
 	/**
 	 *
 	 */
