@@ -1046,13 +1046,51 @@
 						break;
 					}
 				}
+			}else if(fcltKind == 'FK010' && (fcltCond == '0' || fcltCond == '')){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC020"){
+						//imgSrc = "/cm/images/bms/PEOPLECOUNT_normal.png";
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK010' && (fcltCond == '1' || fcltCond == '')){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC021"){
+						//imgSrc = "/cm/images/bms/PEOPLECOUNT_normal.png";
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK011' && (fcltCond == '0' || fcltCond == '')){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC020"){
+						//imgSrc = "/cm/images/bms/PEOPLECOUNT_normal.png";
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK011' && (fcltCond == '1' || fcltCond == '')){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC021"){
+						//imgSrc = "/cm/images/bms/PEOPLECOUNT_normal.png";
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
 			}
 			
 			
 			//시설물 이미지
 			str += '<div id="'+fcltId+'" style="z-index: 1; position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group fclt_img" onclick="imgOnclick(this.id);">';
 			if(fcltKind == 'FK004'){
-				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:16px" src="'+imgSrc+'" id="'+fcltId+'img_MO0203'+'">';
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:11px" src="'+imgSrc+'" id="'+fcltId+'img_MO0203'+'">';
+			}else if(fcltKind == 'FK010'){
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:35px" src="'+imgSrc+'" id="'+fcltId+'img_FM0202'+'">';
 			}else{
 				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+fcltId+'img_MO0203'+'">';
 			}
@@ -1088,8 +1126,23 @@
 			str +=  ' 		 </p>';
 			str +=  ' 	</div>';
 			str +=  '</div>';				
-				
-				
+					
+			}
+			
+			//바이러스체크장치면 세균맨 이미지 추가
+			if(fcltKind == 'FK011') {
+				str +=	'<div id="virus_'+fcltId+'_FM0202" class="" style="position: absolute; z-index: 1; top:'+(parseInt(top)-30)+'px; left:'+(parseInt(left)+18)+'px">';
+				if(fcltCond == "1") {
+					str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:35px" src="/cm/images/bms/goodAir_normal.png" id="'+fcltId+'img_FM0202'+'">';
+				}
+				else if (fcltCond == "0") {
+					str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:35px" src="/cm/images/bms/badAir_normal.png" id="'+fcltId+'img_FM0202'+'">';
+				}
+				else if (fcltCond == "") {
+					str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:35px" src="/cm/images/bms/goodAir_normal.png" id="'+fcltId+'img_FM0202'+'">';
+				}
+
+			str +=  '</div>';				
 					
 			}
 			
