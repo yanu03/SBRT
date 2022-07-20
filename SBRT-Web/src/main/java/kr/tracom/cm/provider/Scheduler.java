@@ -208,4 +208,27 @@ public class Scheduler {
 			logger.error("schedule_35sec Exception!!! {}", e);
 		}
 	}*/
+	
+	/*@Scheduled(fixedDelay = 30000)
+	public void schedule_30sec() {
+		try {
+			Map<String, Object> wsDataMap = null;
+			wsDataMap = new HashMap<>();
+			
+			wsDataMap.put("ATTR_ID", "4020");
+			wsDataMap.put("VHC_ID", "VH00000091");
+			wsDataMap.put("VHC_NO", "우진43자5876");
+			wsDataMap.put("ROUT_ID", "RT00000166");
+			wsDataMap.put("ROUT_NM", "W0(상행)");
+			wsDataMap.put("DSPTCH_DIV", "DP002");
+			wsDataMap.put("DSPTCH_KIND", "DK003");
+			wsDataMap.put("MESSAGE", "24");		
+			
+			webSocketClient.sendMessage(wsDataMap);
+			
+		} catch (Exception e) {
+			logger.error("schedule_35sec Exception!!! {}", e);
+		}
+	}	*/
+	
 }
