@@ -460,7 +460,7 @@ public class CommonUtil {
 	public static double decimalToDouble(Object object) {
 		double result = 0;
 		try {
-			result = (object==null)?0:Double.parseDouble(String.valueOf(object));
+			result = (object==null||((String)object).isEmpty())?0:Double.parseDouble(String.valueOf(object));
 		}catch (Exception e) {
 			result = 0;
 		}
@@ -470,7 +470,7 @@ public class CommonUtil {
 	public static int decimalToInt(Object object) {
 		int result = 0;
 		try {
-			result = (object==null)?0:Integer.parseInt(String.valueOf(object));
+			result = (object==null||((String)object).isEmpty())?0:Integer.parseInt(String.valueOf(object));
 		}catch (Exception e) {
 			result = 0;
 		}
@@ -481,7 +481,7 @@ public class CommonUtil {
 	public static int bigDecimalToInt(Object object) {
 		int result = 0;
 		try {
-			result = (object==null)?0:Integer.parseInt(String.valueOf(object));
+			result = (object==null||((String)object).isEmpty())?0:Integer.parseInt(String.valueOf(object));
 		}catch (Exception e) {
 			try {
 				result = (int) object;
