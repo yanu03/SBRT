@@ -2000,7 +2000,6 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 	
 	var zIndex = 100000;
 	var eventMsg = "";
-	var stopTime = 0;
 	var nodeType = "";
 	var nextNodeType = "";
 	var min = "";
@@ -2110,7 +2109,8 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 					addStopTime = setInterval(function() {
 						//var matchedStopTime = carStopTimeArr.find(data.VHC_ID);
 						
-						stopTime = (routMap.vhcInfo[vhcId].stopTime)++;
+						var stopTime = 0;
+						stopTime = (routMap.getVhcInfo(data.VHC_ID).stopTime)++;
 						
 						if(stopTime >= 60) {
 							min = parseInt((stopTime/60))+"분 ";
@@ -2137,11 +2137,11 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 	
 	//else  {
 	
-	//출발이벤트 or 차량 속력이 20km/h 이상일 때 이벤트 오버레이 삭제
-	else if (routMap.mapInfo[mapId].divEvent == "ET002" || data.CUR_SPD > 20) {
+	//출발이벤트 or 차량 속력이 30km/h 이상일 때 이벤트 오버레이 삭제
+	else if (routMap.mapInfo[mapId].divEvent == "ET002" || data.CUR_SPD > 30) {
 		if (routMap.mapInfo[mapId].eventOverArr != null) {
 			if(routMap.mapInfo[mapId].eventOverArr[0] != null) {
-				routMap.vhcInfo[data.VHC_ID].stopTime = 0;
+				routMap.getVhcInfo(data.VHC_ID).stopTime = 0;
 		/*	if(routMap.mapInfo[mapId].divEvent == "ET001"){
 				$("#event_type").text(data.EVT_TYPE);
 			}*/
@@ -2156,7 +2156,7 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 						//$(".dsptchMessagePopup").hide();
 					}						
 				}
-				
+				stopTime = 0;
 				clearInterval(addStopTime);
 				if (routMap.mapInfo[mapId].eventOverArr[0] != null) {
 					routMap.mapInfo[mapId].eventOverArr[0].setMap(null);
