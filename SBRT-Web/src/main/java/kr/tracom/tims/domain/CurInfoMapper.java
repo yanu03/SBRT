@@ -1,5 +1,6 @@
 package kr.tracom.tims.domain;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -35,5 +36,7 @@ public interface CurInfoMapper {
     
     Map<String, Object> getEventCode(Map<String, Object> paramMap);
     String selectCurNearAllocPl3(Map<String, Object> params);
+    
+    public List selectCorDtlInfo(String repRoutId);
 
 }

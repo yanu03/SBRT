@@ -105,6 +105,56 @@ public class EventThread extends Thread {
 		return false;
 	}*/
 	
+	
+	private static Map<String, Object> g_operCorInfoMap  = new HashMap<>();
+	
+	
+	private Map<String, Object> getCorInfo(Map<String, Object> eventInfo) {
+		String repRoutId = (String) eventInfo.get("REP_ROUT_ID");
+		if(CommonUtil.empty(eventInfo.get("ROUT_ID"))||CommonUtil.empty(eventInfo.get("COR_ID")))
+			return null;
+		if ((repRoutId != null) && (repRoutId.isEmpty() == false)) {
+			List<Map<String, Object>> operCorInfoList = null;
+			
+			if(g_operCorInfoMap==null) {
+				g_operCorInfoMap = new HashMap<>();
+				operCorInfoList = curInfoMapper.selectCorDtlInfo(repRoutId);
+				g_operCorInfoMap.put(repRoutId, operCorInfoList);
+			}
+			operCorInfoList =  (List<Map<String, Object>>)g_operCorInfoMap.get(repRoutId);
+			if(operCorInfoList==null || operCorInfoList.size()==0) {
+				operCorInfoList = curInfoMapper.selectCorDtlInfo(repRoutId);
+				g_operCorInfoMap.put(repRoutId, operCorInfoList);
+			}
+				
+			for(Map<String, Object> corInfo : operCorInfoList) {
+				if( eventInfo.get("ROUT_ID").equals(corInfo.get("ROUT_ID")) 
+					&& eventInfo.get("COR_ID").equals(corInfo.get("COR_ID"))){
+					return corInfo;
+				}
+			}
+			
+			return null;
+		}
+		return null;
+	}
+	
+	//코스가 마지막인지 체크함
+	private boolean checkLastCourse(Map<String, Object> eventInfo) {
+		Map<String, Object> corInfo = getCorInfo(eventInfo);
+		if(corInfo!=null) {
+			
+			String routSn = corInfo.get("ROUT_SN") +"";
+			String corCnt = corInfo.get("COR_CNT") +"";
+			logger.debug("checkLastCourse() corInfo= {}",corInfo+",routSn="+routSn+",corCnt="+corCnt);
+			if(routSn.equals(corCnt)) {
+				logger.debug("checkLastCourse() course info is last");
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private boolean checkChangeBusOperInfo(Map<String, Object> busInfo) {
 		String impId = (String) busInfo.get("IMP_ID");
 		if ((impId != null) && (impId.isEmpty() == false)) {
@@ -137,8 +187,6 @@ public class EventThread extends Thread {
 		String impId = (String) busInfo.get("IMP_ID");
 		if ((impId != null) && (impId.isEmpty() == false)) {
 
-			
-			
 			if (g_busOperInfoMap != null) {
 				g_busOperInfoMap.put(impId, CommonUtil.deepCopy(busInfo));
 			} else {
@@ -735,8 +783,9 @@ public class EventThread extends Thread {
 						
 						if(curAllocPlInfo==null) {
 							
-							if (eventCode == (byte) 0x03 || eventCode == (byte) 0x04
-									||(eventCode==(byte)0x01||eventCode==(byte)0x02) && routMap2.get("ED_STTN_ID").equals(eventData)) //기점, 종점을 잡지 못했을때
+							if (checkLastCourse(busEventMap)==false&&
+									(eventCode == (byte)0x03 || eventCode == (byte)0x04
+									||(eventCode==(byte)0x01||eventCode==(byte)0x02) && routMap2.get("ED_STTN_ID").equals(eventData))) //기점, 종점을 잡지 못했을때
 							{
 								
 								String curNearStr = curInfoMapper.getCurNearAllocPlInfo(busEventMap);
@@ -773,9 +822,10 @@ public class EventThread extends Thread {
 							}
 						} else {
 							
-							if (eventCode == (byte) 0x03 || eventCode == (byte) 0x04
+							if (checkLastCourse(busEventMap)==false&& //해당 노선이 코스의 마지막이 아닐때
+								(eventCode == (byte) 0x03 || eventCode == (byte) 0x04
 									||(eventCode==(byte)0x01||eventCode==(byte)0x02) && routMap2.get("ED_STTN_ID").equals(eventData) //기점, 종점을 잡지 못했을때
-									|| checkRoutChangeBusOperEvent(busEventMap)) {
+									|| checkRoutChangeBusOperEvent(busEventMap))) {
 								// 현재운행정보도 업데이트
 								String curNearStr = "";
 								
@@ -797,14 +847,14 @@ public class EventThread extends Thread {
 											TService.getInstance().getTimsConfig());
 									TimsMessage setRequest = builder.setRequest(sbrtRouteInfo);
 
-		                            try{
+		                            /*try{
 		                                sbrtRouteInfo.setReserved( busEventMap.get("ALLOC_NO")+"");
 		                                if(CommonUtil.empty(curNearArr[2])==false) {
 		                                     sbrtRouteInfo.setOperCount(Byte.parseByte(curNearArr[2]));
 		                                }
 		                            }catch(Exception e){
 		                                logger.error("SbrtRouteInfo Exception!!! {}", e);
-		                            }
+		                            }*/
 		                            
 									// 노선,코스 정보를 차량에 전달
 									kafkaProducer.sendKafka(setRequest, sessionId);
@@ -1049,6 +1099,7 @@ public class EventThread extends Thread {
 
 				AtDispatch dispatch = (AtDispatch) atMessage.getAttrData();
 				Map<String, Object> curInfo = null;
+				String repRoutId = "";
 				String routId = "";
 				String routNm = "";
 				String vhcId = "";
@@ -1116,6 +1167,7 @@ public class EventThread extends Thread {
 					}
 					
 					HashMap<String, Object> dispatchLog = new HashMap<String, Object>(curInfo);
+					dispatchLog.put("VHC_NO", vhcNo);
 					dispatchLog.put("OPER_DT", operDt);
 					dispatchLog.put("SEND_DATE", udpDtm);
 					dispatchLog.put("DSPTCH_DIV", dpDiv);
@@ -1176,6 +1228,8 @@ public class EventThread extends Thread {
 			// 운행일 생성. 시간에 따라 0시(24시) ~ 02시까지는 이전 날짜로 운행일 설정
 			operEventMap.put("OPER_DT", OperDtUtil.convertTimeToOperDt(operEventMap.get("UPD_DTM").toString(), "yyyy-MM-dd HH:mm:ss"));
 
+			operEventMap.put("LINK_SN", operEventMap.get("NODE_SN")); //통합 플랫폼의 노드 순번은 링크 순번임
+			
 			// 다음노드(교차로 or 정류소)
 			Map<String, Object> realNodeInfo = timsMapper.selectNodeByLinkSn(operEventMap); // 통플에서 넘어온 노드순번(실제로는 링크순번)
 																							// 으로 실제 노드순번 구하기
