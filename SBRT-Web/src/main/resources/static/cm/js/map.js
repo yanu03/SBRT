@@ -1313,8 +1313,8 @@ routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid
 		
 	}
 	
-	if(routMap.mapInfo[mapId].divEvent != "ET001") {
-		routMap.mapInfo[mapId].divEvent = ""; 
+//	if(routMap.mapInfo[mapId].divEvent != "ET001") {
+//		routMap.mapInfo[mapId].divEvent = ""; 
 		marker.setMap(routMap.mapInfo[mapId].map); //Marker가 표시될 Map 설정.
 		if(idx<routMap.mapInfo[mapId].busMarkers.length){
 			routMap.mapInfo[mapId].busMarkers[idx] = marker;
@@ -1322,7 +1322,7 @@ routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid
 		else{
 			routMap.mapInfo[mapId].busMarkers.push(marker);
 		}
-	}
+//	}
 	
 	
 	// 마커에 click 이벤트를 등록합니다
@@ -2221,7 +2221,7 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 		
 	}
 	routMap.mapInfo[mapId].isEvent = "off";
-	//routMap.mapInfo[mapId].divEvent = ""; 	
+	routMap.mapInfo[mapId].divEvent = ""; 	
 }
 
 /**

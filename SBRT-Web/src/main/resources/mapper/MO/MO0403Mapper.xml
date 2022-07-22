@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.tracom.brt.domain.MO0403.MO0403Mapper">
+	<select id="MO0403G0R0" resultType="Map">
+		SELECT 			A.VHC_ID,
+						B.COMP_NM,
+						A.COMP_ID,
+						A.AREA,
+						A.VHC_NO,
+						A.CHAS_NO,
+						A.MAKER,
+						DATE_FORMAT(RELS_DT,'%Y%m%d') RELS_DT,
+						A.MODEL_NM,
+						A.VHC_KIND,
+						A.ROUT_TYPE,
+						A.VHC_TYPE,
+						A.VHC_FUEL,
+						A.VHC_STS,
+						A.PSG_CNT,
+						A.SPARE_YN,
+						A.SCRAP_YN,
+						DATE_FORMAT(APPL_ST_DT, '%Y%m%d') APPL_ST_DT,
+						DATE_FORMAT(APPL_ED_DT, '%Y%m%d') APPL_ED_DT,
+						A.USE_YN,
+						A.REMARK
+		FROM			BMS_VHC_MST A
+		
+		LEFT JOIN		BMS_TRANSCOMP_MST B
+			ON A.COMP_ID = B.COMP_ID
+			<where>
+				<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
+					VHC_ID LIKE CONCAT('%',#{CONTENT},'%') || VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+				</if>
+				<if test="TYPE == 'VHC_ID'">
+					VHC_ID LIKE CONCAT('%',#{CONTENT},'%')
+				</if>
+				<if test="TYPE == 'VHC_NO'">
+					VHC_NO LIKE CONCAT('%',#{CONTENT},'%') 
+				</if>			
+			</where>
+		
+	</select>	
+
+	<select id="MO0403SHI0" resultType="Map">
+		select  VHC_ID, VHC_NO
+		from BMS_VHC_MST
+	</select>
+
+	<select id="MO0403SHI1" resultType="Map">
+		SELECT			ORG_ID
+						,ORG_NM
+		FROM	  		BMS_ORG_MST
+		WHERE			ORG_DIV = 'OD008'
+	</select>
+
+
+</mapper>
