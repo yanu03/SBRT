@@ -788,7 +788,7 @@ public class EventThread extends Thread {
 									||(eventCode==(byte)0x01||eventCode==(byte)0x02) && routMap2.get("ED_STTN_ID").equals(eventData))) //기점, 종점을 잡지 못했을때
 							{
 								
-								String curNearStr = curInfoMapper.getCurNearAllocPlInfo(busEventMap);
+								String curNearStr = curInfoMapper.selectCurNearAllocPlInfo(busEventMap);
 								String curNearArr[] = curNearStr.split(",");
 								busEventMap.put("ROUT_ID", curNearArr[0]);
 								busEventMap.put("COR_ID", curNearArr[1]);
@@ -830,7 +830,7 @@ public class EventThread extends Thread {
 								String curNearStr = "";
 								
 								if(CommonUtil.empty(curNearStr)) {
-									curNearStr = curInfoMapper.getCurNearAllocPlInfo2(busEventMap);
+									curNearStr = curInfoMapper.selectCurNearAllocPlInfo2(busEventMap);
 								}
 								
 								if(CommonUtil.notEmpty(curNearStr)) {

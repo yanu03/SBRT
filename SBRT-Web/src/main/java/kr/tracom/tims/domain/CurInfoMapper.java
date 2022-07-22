@@ -11,6 +11,8 @@ public interface CurInfoMapper {
 	int insertCurOperInfo(Map<String, Object> paramMap); //현재운행정보 insert	
 	Map<String, Object> selectCurOperInfo(Map<String, Object> paramMap); //현재운행정보 가져오기
 	
+	Map<String, Object> selectCurOperInfoByVhcNo(Map<String, Object> paramMap);
+	
 	//돌발정보 insert
 	int insertIncidentInfo(Map<String, Object> paramMap);
 	
@@ -27,15 +29,15 @@ public interface CurInfoMapper {
     Map<String, Object> selectCurAllocPlInfoByOperVhcId(Map<String, Object> paramMap);
     int minAllocNoCurAllocPlInfo(Map<String, Object> params);
 
-	String getCurNearAllocPlInfo(Map<String, Object> paramMap);
-	String getCurNearAllocPlInfo2(Map<String, Object> paramMap);
+	String selectCurNearAllocPlInfo(Map<String, Object> paramMap);
+	String selectCurNearAllocPlInfo2(Map<String, Object> paramMap);
     int insertCurAllocPlInfo(Map<String, Object> paramMap);
     int updateOperVhcIdCurAllocPlInfo(Map<String, Object> paramMap);
     
     Map<String, Object> selectCurOperAllocPlRouteInfo(Map<String, Object> paramMap);
     
     Map<String, Object> getEventCode(Map<String, Object> paramMap);
-    String selectCurNearAllocPl3(Map<String, Object> params);
+    String selectCurNearAllocPlInfo3(Map<String, Object> params);
     
     public List selectCorDtlInfo(String repRoutId);
 

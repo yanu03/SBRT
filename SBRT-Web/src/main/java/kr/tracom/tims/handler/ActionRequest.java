@@ -158,9 +158,23 @@ public class ActionRequest {
             		
             		logger.info("======== 시설물 매개변수: {}", actionData);
             	}
-            	else {
+            	/*else if(actionCode == AtBrtAction.milsstatusinfo){
+            		String actionData = brtAction.getReserved();
             		
-            	}
+            		Gson gson = new Gson();
+					Type resultType = new TypeToken<Map<String, Object>>(){}.getType();
+					Map<String, Object> map= gson.fromJson(actionData, resultType);
+					map.put("ATTR_ID", "5052");
+            		
+					//Map<String, Object> map = new HashMap<String, Object>();
+					ArrayList jsonList = new ArrayList<Map<String, Object>>();
+					jsonList.add(map);
+					webSocketClient.sendMessageList("/topic/facilityParam",jsonList);
+
+            		
+            		logger.info("======== 승객감지장치 시설물 매개변수: {}", actionData);
+
+            	}*/
 
             	
             	
