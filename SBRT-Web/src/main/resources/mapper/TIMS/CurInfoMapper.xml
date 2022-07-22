@@ -194,7 +194,7 @@
 			LIMIT 0, 1
 	</select>
 
-	<select id="getCurNearAllocPlInfo" resultType="String" parameterType="Map">
+	<select id="selectCurNearAllocPlInfo" resultType="String" parameterType="Map">
 		SELECT FN_GET_CUR_NEAR_ALLOC_PL_INFO(#{UPD_DTM},#{REP_ROUT_ID},#{WAY_DIV});
 		<!-- SELECT A.OPER_DT, A.REP_ROUT_ID, A.ALLOC_NO, A.ROUT_ID, A.COR_ID, B.VHC_ID, B.OPER_VHC_ID, 
 		ABS(TIME_TO_SEC(TIMEDIFF(TIME_FORMAT(#{UPD_DTM},'%H:%i:%S'), TIME_FORMAT(ROUT_ST_TM, '%H:%i:%S')))) AS DIFF
@@ -206,7 +206,7 @@
 		LIMIT 0, 1; -->
 	</select>
 
-	<select id="getCurNearAllocPlInfo2" resultType="String" parameterType="Map">
+	<select id="selectCurNearAllocPlInfo2" resultType="String" parameterType="Map">
 		SELECT FN_GET_CUR_NEAR_ALLOC_PL_INFO2(#{UPD_DTM},#{REP_ROUT_ID},#{WAY_DIV},#{ALLOC_NO});
 	</select>
 
@@ -255,6 +255,17 @@
 		LIMIT 1
 	</select>
 	
+		<select id="selectCurOperInfoByVhcNo" resultType="Map" parameterType="Map">
+		SELECT
+			B.*
+		FROM
+			BMS_VHC_MST A
+			BRT_CUR_OPER_INFO B
+		ON A.VHC_ID = B.VHC_ID
+		WHERE B.OPER_DT = #{OPER_DT}
+		  AND A.VHC_ID = #{VHC_NO}
+			LIMIT 0, 1
+	</select>
 	
 	
 	<!--돌발 정보-->
@@ -357,10 +368,10 @@
 		WHERE NODE_ID = #{NODE_ID}
 	</select>
 	
-	<select id="selectCurNearAllocPl3" parameterType="HashMap" resultType="String">
+	<select id="selectCurNearAllocPlInfo3" parameterType="HashMap" resultType="String">
 		SELECT FN_GET_CUR_NEAR_ALLOC_PL_INFO3(
-					NOW(), #{REP_ROUT_ID}, #{ALLOC_NO}, #{NODE_ID}
-				);
+			#{UPD_DTM}, #{REP_ROUT_ID}, #{ALLOC_NO}, #{NODE_ID}
+		);
 	</select>
 	
 	<select id="selectCorDtlInfo" parameterType="String" resultType="Map">
