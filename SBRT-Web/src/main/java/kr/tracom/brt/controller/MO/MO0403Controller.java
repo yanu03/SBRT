@@ -53,5 +53,12 @@ public class MO0403Controller extends ControllerSupport{
 		
 		result.setData("", mo0403Service.MO0403SCK0());
 		return result.getResult();
-	}	
+	}
+	
+	@RequestMapping("/mo/MO0403G1R0")
+	public @ResponseBody Map<String, Object> MO0403G1R0() throws Exception {
+		result.setData("dlt_BRT_OPER_INST_MSG_MST", mo0403Service.MO0403G1R0());
+		return result.getResult();
+	}
+	
 }

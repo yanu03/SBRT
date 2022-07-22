@@ -14,4 +14,5 @@ public interface MO0403Mapper {
 	
 	public List MO0403SHI1();
 	
+	public List MO0403G1R0();
 }

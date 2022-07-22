@@ -49,34 +49,38 @@ public class MO0403Service extends ServiceSupport {
 	}
 	
 	//메시지 전송 소켓
-		public List<Map> MO0403SCK0() throws Exception{
-			
-			Map param = getSimpleDataMap("dma_search");
-			
-			String vhcId = String.valueOf(param.get("VHC_ID")); //차량 아이디
-			String message = String.valueOf(param.get("MSG_CONTS")); //메시지 내용
-			
-	        //디스패치 전송
-	        Map<String, Object> vhcDvcInfo = vhcMapper.selectVhcDvcInfo(param);
-			
-	        if(vhcDvcInfo != null) {
-	        	String impId = vhcDvcInfo.get("MNG_ID").toString();
-	        	
-	        	AtDispatch dispatchReq = new AtDispatch();
-	    		
-	    		dispatchReq.setUpdateTm(new AtTimeStamp(DateUtil.now("yyyyMMddHHmmss")));
-	    		dispatchReq.setMessageType((byte)Constants.DispatchType.DISPATCH_TYPE_1); 
-	    		dispatchReq.setMessageLevel((byte)Constants.DispatchType.DISPATCH_LV_1);
-	    		dispatchReq.setMessage(message);
-	    		
-	    		TimsConfig timsConfig = TService.getInstance().getTimsConfig();
-	            TimsMessageBuilder builder = new TimsMessageBuilder(TService.getInstance().getTimsConfig(), new TimsAddress(), new TimsAddress(TimsAddress.APP_ID_DRIVER_TERMINAL));
-	            TimsMessage timsMessage = builder.eventRequest(dispatchReq);
-	        	
-	        	kafkaProducer.sendKafka(KafkaTopics.T_COMMUNICATION, timsMessage, impId);
-	        }
-			
-			
-			return null;
-		}	
+	public List<Map> MO0403SCK0() throws Exception{
+		
+		Map param = getSimpleDataMap("dma_search");
+		
+		String vhcId = String.valueOf(param.get("VHC_ID")); //차량 아이디
+		String message = String.valueOf(param.get("MSG_CONTS")); //메시지 내용
+		
+        //디스패치 전송
+        Map<String, Object> vhcDvcInfo = vhcMapper.selectVhcDvcInfo(param);
+		
+        if(vhcDvcInfo != null) {
+        	String impId = vhcDvcInfo.get("MNG_ID").toString();
+        	
+        	AtDispatch dispatchReq = new AtDispatch();
+    		
+    		dispatchReq.setUpdateTm(new AtTimeStamp(DateUtil.now("yyyyMMddHHmmss")));
+    		dispatchReq.setMessageType((byte)Constants.DispatchType.DISPATCH_TYPE_1); 
+    		dispatchReq.setMessageLevel((byte)Constants.DispatchType.DISPATCH_LV_1);
+    		dispatchReq.setMessage(message);
+    		
+    		TimsConfig timsConfig = TService.getInstance().getTimsConfig();
+            TimsMessageBuilder builder = new TimsMessageBuilder(TService.getInstance().getTimsConfig(), new TimsAddress(), new TimsAddress(TimsAddress.APP_ID_DRIVER_TERMINAL));
+            TimsMessage timsMessage = builder.eventRequest(dispatchReq);
+        	
+        	kafkaProducer.sendKafka(KafkaTopics.T_COMMUNICATION, timsMessage, impId);
+        }
+		
+		
+		return null;
+	}
+		
+	public List MO0403G1R0() throws Exception{
+		return mo0403Mapper.MO0403G1R0();
+	}	
 }
