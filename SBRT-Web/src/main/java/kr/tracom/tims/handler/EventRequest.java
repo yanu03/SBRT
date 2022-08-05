@@ -50,6 +50,8 @@ public class EventRequest {
 		//sessionId 에 따라
 		EventThread eventThread = threadManager.getEventThread(sessionId);
 		eventThread.addKafkaMessage(kafkaMessage);
+		MorEventThread morEventThread = threadManager.getMorEventThread(sessionId);
+		morEventThread.addKafkaMessage(kafkaMessage);
 		
 	}
 	

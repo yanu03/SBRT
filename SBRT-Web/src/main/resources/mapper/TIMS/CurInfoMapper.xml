@@ -388,4 +388,46 @@
 		WHERE REP_ROUT_ID = #{REP_ROUT_ID}
 		ORDER BY COR_ID, ROUT_SN
 	</select>
+	
+	<select id="selectIntgNodeList" parameterType="String" resultType="Map">
+        SELECT  A.ROUT_ID
+		        , A.NODE_ID
+		        , A.NODE_NM
+		        , A.NODE_TYPE
+		        , A.NODE_SN
+				, D.LINK_SN		        
+        		, B.ROUT_NM
+        		, B.REP_ROUT_ID
+		        , E.ED_NODE_ID AS CUR_STTN_ID
+		        , G.NODE_NM AS CUR_STTN_NM
+		        , F.ED_NODE_ID AS NEXT_STTN_ID
+		        , H.NODE_NM AS NEXT_STTN_NM
+        FROM     BMS_ROUT_NODE_CMPSTN A
+        INNER JOIN BMS_ROUT_MST B  
+        	ON B.DEL_YN != 'Y' AND B.USE_YN = 'Y'        
+        LEFT OUTER JOIN BMS_LINK_MST C 
+        	ON A.LINK_ID = C.LINK_ID        
+        LEFT OUTER JOIN BMS_ROUT_LINK_CMPSTN D 
+        	ON A.ROUT_ID = D.ROUT_ID 
+        	AND A.LINK_ID = D.LINK_ID
+        LEFT OUTER JOIN 
+        (SELECT X.ROUT_ID, X.LINK_ID, X.LINK_SN, Y.ST_NODE_ID, Y.ED_NODE_ID FROM BMS_ROUT_STTN_LINK_CMPSTN 
+           X INNER JOIN BMS_STTN_LINK Y ON X.LINK_ID = Y.LINK_ID) E 
+           ON D.ROUT_ID = E.ROUT_ID 
+           AND D.ROUT_STTN_LINK_ID = E.LINK_ID
+        LEFT OUTER JOIN 
+        (SELECT X.ROUT_ID, X.LINK_ID, X.LINK_SN, Y.ST_NODE_ID, Y.ED_NODE_ID FROM BMS_ROUT_STTN_LINK_CMPSTN 
+           X INNER JOIN BMS_STTN_LINK Y ON X.LINK_ID = Y.LINK_ID) F 
+           ON D.ROUT_ID = F.ROUT_ID 
+           AND E.ED_NODE_ID = F.ST_NODE_ID 
+           <![CDATA[AND E.LINK_SN < F.LINK_SN]]>            
+        LEFT OUTER JOIN BMS_NODE_MST G 
+        	ON E.ED_NODE_ID = G.NODE_ID
+        LEFT OUTER JOIN BMS_NODE_MST H 
+        	ON F.ED_NODE_ID = H.NODE_ID
+        WHERE A.ROUT_ID = #{ROUT_ID}
+        	AND A.NODE_TYPE NOT IN ('NT004','NT005','NT006','NT008','NT009','NT010')
+        GROUP BY A.ROUT_ID, A.NODE_SN
+        ORDER BY A.ROUT_ID, A.NODE_SN		
+	</select>
 </mapper>

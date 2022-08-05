@@ -676,7 +676,8 @@
 			
 		}
 		*/
-
+		
+		
 		//GPS값 튈 경우 아무 동작도 안되게 처리
 		if(typeof(jsonObj.GPS_X) != "undefined" && typeof(jsonObj.GPS_Y) != "undefined"){
 			if (jsonObj.GPS_X<120 || jsonObj.GPS_Y>130) {
@@ -808,8 +809,7 @@
 									break;		
 									
 									case "ET011":
-									//eventMessage = jsonObj.PREV_NODE_NM + "에서 무정차 주행";
-									eventMessage = "무정차 주행";
+									eventMessage = jsonObj.PREV_NODE_NM + "에서 무정차 주행";
 									break;
 									
 									case "ET012":
@@ -896,7 +896,7 @@
 					
 			} 
 			
-			//attrId = 4014 : 실시간 차량 위치 정보
+
 			else if(attrId == util.ATTR_ID.BUS_INFO){
 					//payload.body >>>> {"GPS_Y":36.484005,"ATTR_ID":4014,"DVC_ID":"DV00000002","GPS_X":127.25973,"VHC_ID":"VH00000002"}		
 			
@@ -941,10 +941,10 @@
 					console.log("[scwin.onMessageReceived] Exception :: " + e.message);			
 				}	
 			}
-		}	
+		}			
 			else if(attrId == util.ATTR_ID.DISPATCH) { //4020: 디스패치
 				//payload.body >>>> {MESSAGE=천천히가세요, DSPTCH_DIV=DP001, ATTR_ID=4020, DSPTCH_KIND=DK002, VHC_ID=VH00000002}
-
+				
 				//jsonObj.DSPTCH_DIV => 디스패치 구분코드 : DP001(일반메시지), DP002(운행중디스패치), DP003(정차중디스패치)
 				//jsonObj.DSPTCH_KIND => 디스패치 종류(레벨)코드 : DK001(1단계), DK002(2단계), DK003(3단계)
 				//jsonObj.MESSAGE => 디스패치 메시지
@@ -955,7 +955,8 @@
 						routMap.removeAllOverlay("map_MO0101_crs");					
 						var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 						
-						if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {						
+						if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {
+							
 							//포커스된 차량이 아니면 return
 							if(dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID") != jsonObj.VHC_ID) {
 								return;	
@@ -1087,6 +1088,36 @@
 	
 			dlt_BMS_ROUT_NODE_CMPSTN3.setCellData(gridIndexArr[0], "CUR_PHASE_NO", phase_no);
 			var abc = dlt_BMS_ROUT_NODE_CMPSTN3.getCellData(gridIndexArr[0], "CUR_PHASE_NO");
+		}
+		
+		//모듈2 수신
+		else if (attrId == util.ATTR_ID.TRAFFIC_MODULE_TWO) {
+			try{
+				//var curIndexArr = dlt_BMS_ROUT_NODE_CMPSTN4.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+				
+				
+				
+				for(var i=0; i<dataList.length; i++) {
+						
+				}
+				
+				
+			} catch(e) {
+				
+			}
+			
+		
+		}
+		
+		//모듈3 수신
+		else if (attrId == util.ATTR_ID.TRAFFIC_MODULE_THREE) {
+			try{
+				
+				
+			} catch(e) {
+				
+			}
+		
 		}
 		
 	};
@@ -1703,8 +1734,7 @@
 
 				case "ET011":
 				//eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "NODE_NM") + "에서 무정차 주행하였습니다.";
-				//eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "NODE_NM") + "에서 무정차 주행";
-				eventMessage = "무정차 주행";
+				eventMessage = dlt_BRT_OPER_EVENT_HIS.getCellData(i, "NODE_NM") + "에서 무정차 주행";
 				break;
 				
 				case "ET012":
@@ -2130,7 +2160,7 @@
 												value="경도" blockSelect="false" displayMode="label">
 											</w2:column>
 											<w2:column removeBorderStyle="false" width="80" inputType="text" style="height:20px" id="column1"
-												value="정류소상태" blockSelect="false" displayMode="label">
+												value="정류소상태" blockSelect="false" displayMode="label" applyFormat="">
 											</w2:column>
 										</w2:row>
 									</w2:header>

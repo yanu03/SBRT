@@ -40,5 +40,7 @@ public interface CurInfoMapper {
     String selectCurNearAllocPlInfo3(Map<String, Object> params);
     
     public List selectCorDtlInfo(String repRoutId);
+    
+    public List selectIntgNodeList(String routId);
 
 }
