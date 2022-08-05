@@ -134,98 +134,100 @@ public class EventThread extends Thread {
         }
     }
 	
-   private void initNodeList() {
-	   	Map<String, Object> param = new HashMap<String, Object>();
-		
-	   	param.put("TYPE", "REP_ROUT_NM");
-	   	param.put("CONTENT", "RR00000002");
-	   	
-	   	List<Map<String, Object>> routList = routMapper.selectRoutList(param);
-	   	if(g_routNodeMap==null) {
-	   		g_routNodeMap  = new HashMap<>();
-	   	}
-	   	//전체 노드 리스트를 가져옵니다.
-	   	for(Map<String, Object> rout : routList) {
-	   		List<Map<String, Object>> nodeList  = new ArrayList<>();
-	   		nodeList = curInfoMapper.selectIntgNodeList((String)rout.get("ROUT_ID"));
-	   	
-	   		g_routNodeMap.put((String)rout.get("ROUT_ID"), nodeList);
-	   	}
-      
-   }
-   
-   private List<Map<String, Object>> getNodeList(Map<String, Object> eventInfo) {
-	   String routId = (String)eventInfo.get("ROUT_ID");
-	   if(CommonUtil.empty(routId))return null;
-			   
-	   if(g_routNodeMap==null) {
-		   initNodeList();
+	   private void initNodeList() {
+		   	Map<String, Object> param = new HashMap<String, Object>();
+			
+		   	param.put("TYPE", "REP_ROUT_NM");
+		   	param.put("CONTENT", "RR00000002");
+		   	
+		   	List<Map<String, Object>> routList = routMapper.selectRoutList(param);
+		   	if(g_routNodeMap==null) {
+		   		g_routNodeMap  = new HashMap<>();
+		   	}
+		   	//전체 노드 리스트를 가져옵니다.
+		   	for(Map<String, Object> rout : routList) {
+		   		List<Map<String, Object>> nodeList  = new ArrayList<>();
+		   		nodeList = curInfoMapper.selectIntgNodeList((String)rout.get("ROUT_ID"));
+		   	
+		   		g_routNodeMap.put((String)rout.get("ROUT_ID"), nodeList);
+		   	}
 	   }
 	   
-	   if((List<Map<String, Object>>)g_routNodeMap.get(routId)==null) {
-		   List<Map<String, Object>> nodeList  = new ArrayList<>();
-		   nodeList = curInfoMapper.selectIntgNodeList(routId);
-		   g_routNodeMap.put(routId, nodeList);
-	   }
-	   
-	   return (List<Map<String, Object>>)g_routNodeMap.get(routId);
-   }
-   
-   
-   private Map<String, Object> getCurNodeByLinkSn(Map<String, Object> eventInfo) {
-	   String routId = (String)eventInfo.get("ROUT_ID");
-	   List<Map<String, Object>> nodeList = getNodeList(eventInfo);
-	   
-	   for(Map<String, Object> node : nodeList) {
-		   if(node.get("LINK_SN").equals(eventInfo.get("LINK_SN"))) {
-			   return node;
+	   private List<Map<String, Object>> getNodeList(Map<String, Object> eventInfo) {
+		   String routId = (String)eventInfo.get("ROUT_ID");
+		   if(CommonUtil.empty(routId))return null;
+				   
+		   if(g_routNodeMap==null) {
+			   initNodeList();
 		   }
+		   
+		   if((List<Map<String, Object>>)g_routNodeMap.get(routId)==null) {
+			   List<Map<String, Object>> nodeList  = new ArrayList<>();
+			   nodeList = curInfoMapper.selectIntgNodeList(routId);
+			   g_routNodeMap.put(routId, nodeList);
+		   }
+		   
+		   return (List<Map<String, Object>>)g_routNodeMap.get(routId);
 	   }
-	   return null;
-   }
-   
-   private Map<String, Object> getCurSttnNode(Map<String, Object> eventInfo) {
-	   String routId = (String)eventInfo.get("ROUT_ID");
-	   List<Map<String, Object>> nodeList = getNodeList(eventInfo);
 	   
-	   for(Map<String, Object> node : nodeList) {
-		   if((int)node.get("NODE_SN")>=(int)eventInfo.get("NODE_SN")
-				   &&node.get("NODE_TYPE").equals(Constants.NODE_TYPE_BUSSTOP)) {
+	   
+	   private Map<String, Object> getCurNodeByLinkSn(Map<String, Object> eventInfo) {
+		   String routId = (String)eventInfo.get("ROUT_ID");
+		   List<Map<String, Object>> nodeList = getNodeList(eventInfo);
+		   
+		   for(Map<String, Object> node : nodeList) {
+			   if(String.valueOf(node.get("LINK_SN")).equals(String.valueOf(eventInfo.get("LINK_SN")))) {
+				   return node;
+			   }
+		   }
+		   return null;
+	   }
+	   
+	   private Map<String, Object> getCurSttnNode(Map<String, Object> eventInfo) {
+		   String routId = (String)eventInfo.get("ROUT_ID");
+		   List<Map<String, Object>> nodeList = getNodeList(eventInfo);
+		   
+		   for(int i = nodeList.size()-1;i>=0;i--) {
+			   Map<String, Object> node = nodeList.get(i);
+			   int test1 = Integer.parseInt(String.valueOf(node.get("NODE_SN")));
+			   int test2 = Integer.parseInt(String.valueOf(eventInfo.get("NODE_SN")));
+			   if(Integer.parseInt(String.valueOf(node.get("NODE_SN")))<=Integer.parseInt(String.valueOf(eventInfo.get("NODE_SN")))
+					   &&node.get("NODE_TYPE").equals(Constants.NODE_TYPE_BUSSTOP)) {
 
-			   return node;
+				   return node;
+			   }
 		   }
+		   return null;
 	   }
-	   return null;
-   }
-   
-   private Map<String, Object> getNextSttnNode(Map<String, Object> eventInfo) {
-	   String routId = (String)eventInfo.get("ROUT_ID");
-	   List<Map<String, Object>> nodeList = getNodeList(eventInfo);
 	   
-	   for(Map<String, Object> node : nodeList) {
-		   if((int)node.get("NODE_SN")>(int)eventInfo.get("NODE_SN")
-				   &&node.get("NODE_TYPE").equals(Constants.NODE_TYPE_BUSSTOP)) {
-			   
-			   return node;
+	   private Map<String, Object> getNextSttnNode(Map<String, Object> eventInfo) {
+		   String routId = (String)eventInfo.get("ROUT_ID");
+		   List<Map<String, Object>> nodeList = getNodeList(eventInfo);
+		   
+		   for(Map<String, Object> node : nodeList) {
+			   if(Integer.parseInt(String.valueOf(node.get("NODE_SN")))>Integer.parseInt(String.valueOf(eventInfo.get("NODE_SN")))
+					   &&node.get("NODE_TYPE").equals(Constants.NODE_TYPE_BUSSTOP)) {
+				   
+				   return node;
+			   }
 		   }
+		   return null;
 	   }
-	   return null;
-   }
-   
-   private Map<String, Object> getCurSttnCrsNode(Map<String, Object> eventInfo) {
-	   String routId = (String)eventInfo.get("ROUT_ID");
-	   List<Map<String, Object>> nodeList = getNodeList(eventInfo);
 	   
-	   for(Map<String, Object> node : nodeList) {
-		   if((int)node.get("LINK_SN")>=(int)eventInfo.get("LINK_SN")
-				   &&(node.get("NODE_TYPE").equals(Constants.NODE_TYPE_BUSSTOP))
-					||(node.get("NODE_TYPE").equals(Constants.NODE_TYPE_CROSS))) {
+	   private Map<String, Object> getCurSttnCrsNode(Map<String, Object> eventInfo) {
+		   String routId = (String)eventInfo.get("ROUT_ID");
+		   List<Map<String, Object>> nodeList = getNodeList(eventInfo);
+		   
+		   for(Map<String, Object> node : nodeList) {
+			   if((int)node.get("LINK_SN")>=(int)eventInfo.get("LINK_SN")
+					   &&(node.get("NODE_TYPE").equals(Constants.NODE_TYPE_BUSSTOP))
+						||(node.get("NODE_TYPE").equals(Constants.NODE_TYPE_CROSS))) {
 
-			   return node;
+				   return node;
+			   }
 		   }
-	   }
-	   return null;
-   }
+		   return null;
+	   }	
 	
 	private Map<String, Object> getVhcInfo(Map<String, Object> paramMap) {
 		String  impID = (String)paramMap.get("MNG_ID");
@@ -1367,30 +1369,33 @@ public class EventThread extends Thread {
 			
 			Map<String, Object> realNodeInfo = getCurNodeByLinkSn(operEventMap);
 			if (realNodeInfo != null) {
-				operEventMap.put("ROUT_NM", realNodeInfo.get("ROUT_NM"));
-				operEventMap.put("NODE_TYPE", realNodeInfo.get("NODE_TYPE"));
-				operEventMap.put("NODE_NM", realNodeInfo.get("NODE_NM"));
+				//operEventMap.put("ROUT_NM", realNodeInfo.get("ROUT_NM"));
+				//operEventMap.put("NODE_TYPE", realNodeInfo.get("NODE_TYPE"));
+				//operEventMap.put("NODE_NM", realNodeInfo.get("NODE_NM"));
 				operEventMap.put("NODE_SN", realNodeInfo.get("NODE_SN"));
 			}
 			
 			//Map<String, Object> curSttnInfo = timsMapper.selectCurSttnInfo(operEventMap); 
 			Map<String, Object> curSttnInfo = getCurSttnNode(operEventMap);
-			if (realNodeInfo != null) {
+			if (curSttnInfo != null) {
 				operEventMap.put("CUR_NODE_TYPE", curSttnInfo.get("NODE_TYPE"));
-				operEventMap.put("CUR_NODE_ID", curSttnInfo.get("NODE_ID"));
-				operEventMap.put("CUR_NODE_NM", curSttnInfo.get("NODE_NM"));
+				operEventMap.put("CUR_NODE_ID", curSttnInfo.get("CUR_STTN_ID"));
+				operEventMap.put("CUR_NODE_NM", curSttnInfo.get("CUR_STTN_NM"));
 				operEventMap.put("CUR_NODE_SN", curSttnInfo.get("NODE_SN"));
+//				operEventMap.put("NEXT_NODE_ID", curSttnInfo.get("NEXT_STTN_ID"));
+//				operEventMap.put("NEXT_NODE_NM", curSttnInfo.get("NEXT_STTN_NM"));
+//				operEventMap.put("NEXT_NODE_TYPE", curSttnInfo.get("NODE_TYPE"));
 			}
 			
 			//Map<String, Object> nextNodeInfo = timsMapper.selectNextSttnCrsInfo(operEventMap);
-			
 			Map<String, Object> param = new HashMap<String, Object>();
 			param.put("OPER_DT", operEventMap.get("OPER_DT"));
 			param.put("BUS_NO", operEventMap.get("BUS_NO"));
 			param.put("ROUT_ID", operEventMap.get("ROUT_ID"));
 			param.put("NODE_SN", operEventMap.get("CUR_NODE_SN"));
 			operEventMap.put("PRV_PLCE_NM", operEventMap.get("CUR_NODE_NM"));
-			operEventMap.put("PREV_NODE_NM", operEventMap.get("CUR_NODE_NM"));
+			operEventMap.put("PREV_NODE_NM", operEventMap.get("NODE_NM"));
+			
 			//Map<String, Object> nextSttnInfo = timsMapper.selectNextSttnInfo(param);
 			Map<String, Object> nextSttnInfo = getNextSttnNode(param);
 			if (nextSttnInfo != null) {
