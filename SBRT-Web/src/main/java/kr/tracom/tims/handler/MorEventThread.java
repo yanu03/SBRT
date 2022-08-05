@@ -149,8 +149,6 @@ public class MorEventThread extends Thread {
 	   List<Map<String, Object>> nodeList = getNodeList(eventInfo);
 	   
 	   for(Map<String, Object> node : nodeList) {
-		   Object test = node.get("LINK_SN");
-		   Object test2 = eventInfo.get("LINK_SN");
 		   if(String.valueOf(node.get("LINK_SN")).equals(String.valueOf(eventInfo.get("LINK_SN")))) {
 			   return node;
 		   }
@@ -515,7 +513,7 @@ public class MorEventThread extends Thread {
 			switch (attrId) {
 			case BrtAtCode.BUS_INFO: // 정주기 버스 정보
 
-				logger.info("BUS_INFO >> {}", atMessage);
+				logger.debug("BUS_INFO >> {}", atMessage);
 				try {
 					AtBusInfo busInfo = (AtBusInfo) atMessage.getAttrData();
 	
@@ -587,7 +585,7 @@ public class MorEventThread extends Thread {
 
 			case BrtAtCode.BUS_ARRIVAL_INFO: // 차량 도착정보
 
-				logger.info("BUS_ARRIVAL_INFO >> {}", atMessage);
+				logger.debug("BUS_ARRIVAL_INFO >> {}", atMessage);
 				try {
 					AtBusArrivalInfo busArrivalInfo = (AtBusArrivalInfo) atMessage.getAttrData();
 	
@@ -629,7 +627,7 @@ public class MorEventThread extends Thread {
 
 			case BrtAtCode.BUS_OPER_EVENT: // 운행 이벤트 정보
 
-				logger.info(".BUS_OPER_EVENT >> {}", atMessage);
+				logger.debug(".BUS_OPER_EVENT >> {}", atMessage);
 
 				// 이벤트 이력정보에 insert
 
@@ -803,7 +801,7 @@ public class MorEventThread extends Thread {
 						{
 							logger.debug("[" + busEventMap.get("ALLOC_NO") + "," + busEventMap.get("REP_ROUT_ID") + ","
 									+ busEventMap.get("WAY_DIV") + "] In BusOperEvent alloc no");	
-							
+							/*
 							if (eventCode == 0x01 || eventCode == 0x02 // 정류장 출/도착 인 경우
 									|| eventCode == 0x03 || eventCode == 0x04 // 기점 출/도착 인 경우
 									|| eventCode == 0x05 || eventCode == 0x06) // 종점점 출/도착 인 경우
@@ -827,9 +825,9 @@ public class MorEventThread extends Thread {
 								busEventMap.put("CUR_NODE_SN", sttnEventMap.get("CUR_NODE_SN"));
 			
 							}
-							else {
+							else {*/
 								setOperEventData(busEventMap);
-							}
+							//}
 						}
 						
 					} catch (Exception e) {
@@ -877,7 +875,7 @@ public class MorEventThread extends Thread {
 					case 0x26: // 급정지
 					case 0x27: // 개문주행
 					case 0x28: // 노선이탈
-						logger.info("운행위반 발생!! [IMP ID : " + busEvent.getImpId() + "]");
+						logger.debug("운행위반 발생!! [IMP ID : " + busEvent.getImpId() + "]");
 	
 						try {
 							Map<String, Object> violtMap = getCommonCode("VIOLT_TYPE","NUM_VAL4",eventCode+"");
@@ -898,7 +896,7 @@ public class MorEventThread extends Thread {
 					case 0x33: // 고장
 					case 0x34: // 기타
 						// case 0x35: //테러
-						logger.info("돌발 발생!! [IMP ID : " + busEvent.getImpId() + "]");
+						logger.debug("돌발 발생!! [IMP ID : " + busEvent.getImpId() + "]");
 	
 						try {
 							/*paramMap = new HashMap<>();
@@ -987,7 +985,7 @@ public class MorEventThread extends Thread {
 				String dpLv = "";
 				String drvId = "";
 
-				logger.info("디스패치 수신. {}", dispatch);
+				logger.debug("디스패치 수신. {}", dispatch);
 
 				try {
 					String udpDtm = dispatch.getUpdateTm().toString();
