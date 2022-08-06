@@ -970,6 +970,8 @@ public class EventThread extends Thread {
 									minAllocNo = minAllocNo - 1;
 									logger.debug("minus ?? minAllocNo = "+minAllocNo); //임시로그
 								}
+								busEventMap.put("ALLOC_NO", Integer.valueOf(minAllocNo));
+								busEventMap.put("OPER_VHC_ID", busEventMap.get("VHC_ID"));
 							}
 						} else {
 							
@@ -1009,6 +1011,9 @@ public class EventThread extends Thread {
 		                            
 									// 노선,코스 정보를 차량에 전달
 									//kafkaProducer.sendKafka(setRequest, sessionId);
+						               if (("IMP0010001".equals(sessionId)==false) && ("IMP0010010".equals(sessionId)==false)) {
+						                  kafkaProducer.sendKafka(setRequest, sessionId);
+						                }
 
 									if (eventCode != (byte) 0x03 && eventCode != (byte) 0x01) {
 										busEventMap.put("ROUT_ID", curNearArr[0]);

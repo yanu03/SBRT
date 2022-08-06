@@ -148,6 +148,7 @@ public class GetResponse {
         	    	wsModuleTwoDataMap.put("LIST", trafficModule2MapList);
                 	
             		webSocketClient.sendMessage(wsModuleTwoDataMap);
+            		curInfoMapper.insertOrUpdateSigOperEventInfo(moduleTwoMap);
             		
             		break;
             	case BrtAtCode.TRAFFIC_MODULE_THREE:
@@ -175,6 +176,7 @@ public class GetResponse {
         	    	wsModuleThreeDataMap.put("LIST", trafficModule3MapList);
                 	
             		webSocketClient.sendMessage(wsModuleThreeDataMap);
+            		curInfoMapper.insertOrUpdateSigOperEventInfo(moduleThreeMap);
             		break;
             		
             

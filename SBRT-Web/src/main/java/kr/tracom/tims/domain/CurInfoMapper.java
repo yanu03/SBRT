@@ -16,6 +16,9 @@ public interface CurInfoMapper {
 	//돌발정보 insert
 	int insertIncidentInfo(Map<String, Object> paramMap);
 	
+	
+	int insertOrUpdateSigOperEventInfo(Map<String, Object> paramMap);
+	
 	//현재운행계획정보 갱신
 	void refreshCurOperAllocPLRoutInfo();
 	void refreshCurOperAllocPLNodeInfo();

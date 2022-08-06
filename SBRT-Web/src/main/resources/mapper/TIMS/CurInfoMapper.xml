@@ -389,6 +389,42 @@
 		ORDER BY COR_ID, ROUT_SN
 	</select>
 	
+	<insert id="insertOrUpdateSigOperEventInfo" parameterType="HashMap">
+		INSERT INTO BMS_CRS_SIGOPER_EVENT_HIS (
+			 UPD_DTM
+		   , NODE_ID
+		   , REP_ROUT_ID
+		   , ROUT_ID
+		   , VHC_NO
+		   , CTRL_LV
+		   , STOP_SEC
+		   , CTRL_TYPE
+		   , CTRL_PHASE_NO
+		   , OCR_DTM
+		)
+		VALUES (
+			  NOW(3)
+			   , #{NODE_ID}
+			   , #{REP_ROUT_ID}
+			   , #{ROUT_ID}
+			   , #{VHC_NO}
+			   , #{CTRL_LV}
+			   , #{STOP_SEC}
+			   , #{CTRL_TYPE}
+			   , #{CTRL_PHASE_NO}
+			   , #{OCR_DTM}
+			   )
+			ON DUPLICATE KEY UPDATE
+			   REP_ROUT_ID = VALUES(REP_ROUT_ID)
+			   , ROUT_ID = VALUES(ROUT_ID)
+			   , VHC_NO = VALUES(VHC_NO)
+			   , CTRL_LV = VALUES(CTRL_LV)
+			   , STOP_SEC = VALUES(STOP_SEC)
+			   , CTRL_TYPE = VALUES(CTRL_TYPE)
+			   , CTRL_PHASE_NO = VALUES(CTRL_PHASE_NO)
+			   , OCR_DTM = VALUES(OCR_DTM)
+	</insert>
+	
 	<select id="selectIntgNodeList" parameterType="String" resultType="Map">
         SELECT  A.ROUT_ID
 		        , A.NODE_ID
