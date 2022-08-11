@@ -527,6 +527,11 @@
 		var operIntv = "";
 		isEditKeySkip = true;
 		dlt_BRT_OPER_PL_ROUT_INFO.setCellData(rowIndex, "OPER_TM", value);
+		
+		var routStTm = dlt_BRT_OPER_PL_ROUT_INFO.getCellData(rowIndex, "ROUT_ST_TM");
+		var routEdTm = util.secondToTime(util.datePlus(routStTm + ":00",  value + ":00")).substring(0,5);
+		dlt_BRT_OPER_PL_ROUT_INFO.setCellData(rowIndex, "ROUT_ED_TM", routEdTm);
+		
 		isEditKeySkip = false;
 	}
 	
@@ -599,6 +604,7 @@
 		}
 		
 		if (columnId == "OPER_TM") {
+
 			if(value.length == 4){
 				value = com.transTime2(value);
 			}
@@ -643,7 +649,7 @@
 				</xf:group>
 			</xf:group>
 		
-			<xf:group id="pgm_content" class="pgm_content grdc_5f_0_5f" style="">
+			<xf:group id="pgm_content" class="pgm_content grdc_a_0_600" style="">
 				<xf:group id="pgm_list" class="pgm_list grdr_20_50_a bms_box_wrap" style="">
 					<xf:group id="" class="" style="">
 						<xf:group class="defaultbox" id="" style="">

@@ -70,12 +70,15 @@ public class ActionRequest {
                     
                     
                     threadManager.getEventThread(sessionId);
+                    
+                    threadManager.getMorEventThread(sessionId);
 
                 }
                 else if(inOut == (byte)1){
                     logger.info("logout");
                     
                     threadManager.removeEventThread(sessionId);
+                    threadManager.removeMorEventThread(sessionId);
                 }
 
                 break;

@@ -1,7 +1,7 @@
 //노선 맵용 전역변수
 var routMap = {
 	mapInfo : [],
-  vhcInfo : [],
+	vhcInfo : [],
 	NODE_TYPE : {
 		CROSS : "NT001",
 		BUSSTOP : "NT002",
@@ -18,8 +18,8 @@ var routMap = {
 	MAX_LEVEL : 7
 }
 
-var VhcMapInfo = function() {
-  this.stopTime = 0;
+var VhcMapInfo =  function(){
+	this.stopTime = 0
 }
 
 
@@ -132,13 +132,14 @@ routMap.initMap = function(mapId,options) {
 }
 
 routMap.getVhcInfo = function(vhcId){
-  if(typeof routMap.vhcInfo[vhcId] !== "undefined" || routMap.vhcInfo[vhcId] != null) {
-    return routMap.vhcInfo[vhcId];
-  }
-  else {
-    routMap.vhcInfo[vhcId] = new VhcMapInfo();
-  }
+	 if(typeof routMap.vhcInfo[vhcId] !== "undefined" || routMap.vhcInfo[vhcId] != null){
+		 return routMap.vhcInfo[vhcId];
+	 }
+	 else {
+		 routMap.vhcInfo[vhcId] = new VhcMapInfo();
+	 }
 }
+
 
 /**
  * 노선 맵 복제
@@ -1296,7 +1297,7 @@ routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid
 	}
 	
 	if(routMap.mapInfo[mapId].isEvent == "on") {
-  
+		
 		if(typeof(gridChk) != "undefined" && gridChk == "Y") {
 			if (typeof(data.EVT_YN) != "undefined") {
 				if (data.EVT_YN = "1" && socketVhcId == data.VHC_ID)
@@ -1312,8 +1313,8 @@ routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid
 		
 	}
 	
-//	if(routMap.mapInfo[mapId].divEvent != "ET001") {
-//    routMap.mapInfo[mapId].divEvent = "";
+	if(routMap.mapInfo[mapId].divEvent != "ET001") {
+		routMap.mapInfo[mapId].divEvent = ""; 
 		marker.setMap(routMap.mapInfo[mapId].map); //Marker가 표시될 Map 설정.
 		if(idx<routMap.mapInfo[mapId].busMarkers.length){
 			routMap.mapInfo[mapId].busMarkers[idx] = marker;
@@ -1321,7 +1322,7 @@ routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid
 		else{
 			routMap.mapInfo[mapId].busMarkers.push(marker);
 		}
-//	}
+	}
 	
 	
 	// 마커에 click 이벤트를 등록합니다
@@ -1915,17 +1916,17 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 		
 		if(routMap.mapInfo[mapId].eventOverArr[0] != null) {
 			//dsptchMsg += '<h3 class="blind dsptchMessagePopup style="position: absolute; bottom:210px;">디스패치 메시지</h3>'
-      dsptchMsg += '<div class="dispatch map_mesage" style="position: absolute; bottom:210px;"></h3>'
+			dsptchMsg += '<div class="dispatch map_mesage style="position: absolute; bottom:210px;"></h3>'
 		}	
 		else {
-			//dsptchMsg += '<h3 class="blind dsptchMessagePopup" style="position: absolute;">디스패치 메시지</h3>'	
-      dsptchMsg += '<div class="dispatch map_mesage" style="position: absolute;"></h3>'
+			//dsptchMsg += '<h3 class="blind dsptchMessagePopup" style="position: absolute;">디스패치 메시지</h3>'
+			dsptchMsg += '<div class="dispatch map_mesage" style="position: absolute;"></h3>'	
 		}				
 		//dsptchMsg += '  <h3 class="blind dsptchMessagePopup">디스패치 메시지</h3>'
-    dsptchMsg += '<h3 class="blind"></h3>'
+		dsptchMsg += '<h3 class="blind"></h3>'
 		dsptchMsg += '   <span>'+showMessage+'</span>'
 		dsptchMsg += '   <button class="close_mesage ir_pm" id="busInfo-closer">닫기</button> '
-		dsptchMsg += '</div>'			
+		dsptchMsg += '</div>'		
 		
 		dsptchOverlay = new kakao.maps.CustomOverlay({
 			content: dsptchMsg,
@@ -1992,7 +1993,6 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
  * @param focusIdx : 포커스 index
  * @param marker : 대상마커
  */
-// 	var stopTime = 0;
 routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 	if(idx != focusIdx) {
 		return;
@@ -2000,7 +2000,6 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 	
 	var zIndex = 100000;
 	var eventMsg = "";
-	
 	var nodeType = "";
 	var nextNodeType = "";
 	var min = "";
@@ -2071,63 +2070,68 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 		eventMsg += '</div> </div>'
 		eventMsg += '</div></div>'*/
 		if (routMap.mapInfo[mapId].divEvent == "ET001") {
-            if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
-        			eventMsg += '<div class="event map_info busInfoPopup" id="busInfoPopup" style="position: absolute; bottom:154px;">';
-        		}	
-        		else {
-        			eventMsg += '<div class="event map_info busInfoPopup" id="busInfoPopup" style="position: absolute;">';	
-        		}			
-			
-        		//eventMsg += '<div class="event map_info busInfoPopup" id="busInfoPopup">';
-        		eventMsg += '   <h3 class="blind">이벤트 안내</h3>';
-        		eventMsg += '   <p class="action">'+data.EVT_TYPE+'</p>';
-        		eventMsg += '   <p class="stay_sec">(현재정차시간 : <span id="cur_stop_tm">'+0+'</span>)</p>';
-        		eventMsg += '   <table class="station_info">';
-        		eventMsg += '      <colgroup>';
-        		eventMsg += '         <col style="width: 90px;">';
-        		eventMsg += '         <col style="width: auto;">';
-        		eventMsg += '      </colgroup>';
-        		eventMsg += '      <tbody><tr>';
-        		eventMsg += '         <th>현재'+ nodeType+'</th>';
-        		eventMsg += '         <td>'+data.NODE_NM+'</td>';
-        		eventMsg += '      </tr>';
-        		eventMsg += '      <tr>';
-        		eventMsg += '         <th>다음'+ nextNodeType+'</th>';
-        		eventMsg += '         <td>'+data.NEXT_NODE_NM+'</td>';
-        		eventMsg += '      </tr>';
-        		eventMsg += '   </tbody></table>';
-        		eventMsg += '   <dl class="event_mesage">';
-        		eventMsg += '     <dt class="blind">정차 메시지</dt>';
-        		eventMsg += '      <dd id="stopMessage"></dd>';
-        		eventMsg += '   </dl>';
-        		eventMsg += '   <button class="close_mesage ir_pm" id="busInfo-closer">닫기</button>';
-        		eventMsg += '</div>';			
-        
-			
-        		addStopTime = setInterval(function() {
-              //var matchedStopTime = carStopTimeArr.find(data.VHC_ID);
-          
-         			//stopTime++;
-              var stopTime = 0;
-              stopTime = (routMap.getVhcInfo(data.VHC_ID).stopTime)++;
-			
-        			if(stopTime >= 60) {
-        				min = parseInt((stopTime/60))+"분 ";
-        			}
-        			sec = parseInt((stopTime%60))+"초";
-			
-        			var total = min+sec;
-			
-        			$("#cur_stop_tm").text(total);
-        		}, 1000);
-    }	
-    
-    else if (routMap.mapInfo[mapId].divEvent == "ET020") {
-       eventMsg += '<div class="mesage map_mesage2">';
-       eventMsg += '<h3 class="blind"></h3>';       
-       eventMsg += '<span>차고지출발</span>';              
-       eventMsg += '<button class=close_mesage ir_pm"></button>';       
-    }
+			if (routMap.mapInfo[mapId].eventOverArr != null){
+				if(routMap.mapInfo[mapId].eventOverArr[0] == null) {
+					if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
+						eventMsg += '<div class="event map_info busInfoPopup" id="busInfoPopup" style="position: absolute; bottom:154px;">';
+					}	
+					else {
+						eventMsg += '<div class="event map_info busInfoPopup" id="busInfoPopup" style="position: absolute;">';	
+					}			
+					
+					//eventMsg += '<div class="event map_info busInfoPopup" id="busInfoPopup">';
+					eventMsg += '   <h3 class="blind">이벤트 안내</h3>';
+					eventMsg += '   <p class="action">'+data.EVT_TYPE+'</p>';
+					eventMsg += '   <p class="stay_sec">(현재정차시간 : <span id="cur_stop_tm">'+0+'</span>))</p>';
+					eventMsg += '   <table class="station_info">';
+					eventMsg += '      <colgroup>';
+					eventMsg += '         <col style="width: 90px;">';
+					eventMsg += '         <col style="width: auto;">';
+					eventMsg += '      </colgroup>';
+					eventMsg += '      <tbody><tr>';
+					eventMsg += '         <th>현재'+ nodeType+'</th>';
+					eventMsg += '         <td>'+data.NODE_NM+'</td>';
+					eventMsg += '      </tr>';
+					eventMsg += '      <tr>';
+					eventMsg += '         <th>다음'+ nextNodeType+'</th>';
+					eventMsg += '         <td>'+data.NEXT_NODE_NM+'</td>';
+					eventMsg += '      </tr>';
+					eventMsg += '   </tbody></table>';
+					eventMsg += '   <dl class="event_mesage">';
+					eventMsg += '     <dt class="blind">정차 메시지</dt>';
+					eventMsg += '      <dd id="stopMessage"></dd>';
+					eventMsg += '   </dl>';
+					eventMsg += '   <button class="close_mesage ir_pm" id="busInfo-closer">닫기</button>';
+					eventMsg += '</div>';			
+					
+					routMap.getVhcInfo(data.VHC_ID);
+					
+					addStopTime = setInterval(function() {
+						//var matchedStopTime = carStopTimeArr.find(data.VHC_ID);
+						
+						var stopTime = 0;
+						stopTime = (routMap.getVhcInfo(data.VHC_ID).stopTime)++;
+						
+						if(stopTime >= 60) {
+							min = parseInt((stopTime/60))+"분 ";
+						}
+						sec = parseInt((stopTime%60))+"초";
+						
+						var total = min+sec;
+						
+						$("#cur_stop_tm").text(total);
+					}, 1000);
+				}	
+			}
+		}	
+			else if (routMap.mapInfo[mapId].divEvent == "ET020") {
+				eventMsg += '<div class="mesage map_mesage2">';
+				eventMsg += '<h3 class="blind"></h3>';
+				eventMsg += '<span>차고지출발</span>';
+				eventMsg += '<button class=close_mesage ir_pm"></button>';
+				
+			}
+		
 		
 	}
 	
@@ -2137,8 +2141,7 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 	else if (routMap.mapInfo[mapId].divEvent == "ET002" || data.CUR_SPD > 30) {
 		if (routMap.mapInfo[mapId].eventOverArr != null) {
 			if(routMap.mapInfo[mapId].eventOverArr[0] != null) {
-        //routMap.vhcInfo[data.VHC_ID].stopTime = 0;
-        routMap.getVhcInfo(data.VHC_ID).stopTime = 0;
+				routMap.getVhcInfo(data.VHC_ID).stopTime = 0;
 		/*	if(routMap.mapInfo[mapId].divEvent == "ET001"){
 				$("#event_type").text(data.EVT_TYPE);
 			}*/
@@ -2148,7 +2151,7 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 				if(routMap.mapInfo[mapId].dsptchOverArr != null) {
 					if(routMap.mapInfo[mapId].dsptchOverArr[0] != 0) {
 						//$("#busInfo-closer").css("bottom", "42px");
-						$(".dsptchMessagePopup").css("bottom", "42px");
+						$(".dispatch").css("bottom", "42px");
 						//출발할 때 운행중 디스패치가 발생하여 주석처리하였음
 						//$(".dsptchMessagePopup").hide();
 					}						
@@ -2190,38 +2193,35 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 	
 	//도착 이벤트
 	if (routMap.mapInfo[mapId].divEvent == "ET001" || routMap.mapInfo[mapId].divEvent == "ET020") {
-	  if(routMap.mapInfo[mapId].eventOverArr != null) {
-        if(routMap.mapInfo[mapId].eventOverArr[0] == null) {
-    		eventOverlay = new kakao.maps.CustomOverlay({
-    			content: eventMsg,
-    			position: marker.getPosition(),
-    			zIndex : zIndex
-    		});
+	
+		eventOverlay = new kakao.maps.CustomOverlay({
+			content: eventMsg,
+			position: marker.getPosition(),
+			zIndex : zIndex
+		});
 		
-    		routMap.mapInfo[mapId].eventOverlay = eventOverlay;
-    		/*if(idx<routMap.mapInfo[mapId].eventOverArr.length){
-    			routMap.mapInfo[mapId].eventOverArr[idx] = routMap.mapInfo[mapId].eventOverlay;
-    		}
-    		else{
-    			routMap.mapInfo[mapId].eventOverArr.push(routMap.mapInfo[mapId].eventOverlay);
-    		}*/
-    		//routMap.mapInfo[mapId].eventOverArr.push(routMap.mapInfo[mapId].eventOverlay);
-    		routMap.mapInfo[mapId].eventOverArr[0] = routMap.mapInfo[mapId].eventOverlay;
-    		eventOverlay.setMap(routMap.mapInfo[mapId].map);
+		routMap.mapInfo[mapId].eventOverlay = eventOverlay;
+		/*if(idx<routMap.mapInfo[mapId].eventOverArr.length){
+			routMap.mapInfo[mapId].eventOverArr[idx] = routMap.mapInfo[mapId].eventOverlay;
+		}
+		else{
+			routMap.mapInfo[mapId].eventOverArr.push(routMap.mapInfo[mapId].eventOverlay);
+		}*/
+		//routMap.mapInfo[mapId].eventOverArr.push(routMap.mapInfo[mapId].eventOverlay);
+		routMap.mapInfo[mapId].eventOverArr[0] = routMap.mapInfo[mapId].eventOverlay;
+		eventOverlay.setMap(routMap.mapInfo[mapId].map);
 		
-    		//routMap.mapInfo[mapId].isEvent = "off";
-    		//routMap.mapInfo[mapId].divEvent = "";
+		//routMap.mapInfo[mapId].isEvent = "off";
+		//routMap.mapInfo[mapId].divEvent = "";
 		
-    		/*setTimeout(function() {
-    			routMap.mapInfo[mapId].eventOverArr[0].setMap(null);
-    			routMap.mapInfo[mapId].eventOverArr[0] = null;
-    		},5000);*/
+		/*setTimeout(function() {
+			routMap.mapInfo[mapId].eventOverArr[0].setMap(null);
+			routMap.mapInfo[mapId].eventOverArr[0] = null;
+		},5000);*/
 		
-    	}
-    	routMap.mapInfo[mapId].isEvent = "off";
-    	routMap.mapInfo[mapId].divEvent = ""; 	
-    }
-  }
+	}
+	routMap.mapInfo[mapId].isEvent = "off";
+	//routMap.mapInfo[mapId].divEvent = ""; 	
 }
 
 /**
@@ -5141,7 +5141,7 @@ routMap.showRoute = function(mapId, list, id, type) {
 				routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
 			}
 			else {
-				//routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
+				routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
 			}
 		}
 	}
@@ -5562,7 +5562,7 @@ routMap.moveVehicle = function(mapId, json, index, focusIdx) {
 	
 	if(json != null){
 		if(focusIdx!=-1 && focusIdx == index){
-			//routMap.moveMap(mapId, json.GPS_Y, json.GPS_X);
+			routMap.moveMap(mapId, json.GPS_Y, json.GPS_X);
 		}
 	}	
 }
@@ -5616,7 +5616,6 @@ routMap.showVehicle3 = function(mapId, json, grid) {
  * @param grid : 대상 그리드
  */
 routMap.showVehicleClickOverlay = function(mapId, list, vhc_id, grid, gridChk, socketVhcId) {
-
 	var focusIdx = -1;
 	
 	routMap.initBus(mapId);
@@ -5634,15 +5633,14 @@ routMap.showVehicleClickOverlay = function(mapId, list, vhc_id, grid, gridChk, s
 				routMap.showBusMarkerClickOverlay(mapId, list[i], i, focusIdx, grid, gridChk, socketVhcId);
 			}
 			else {
-       //주석치니 focus 아닌 마커들 안뜸
-				routMap.showBusMarkerClickOverlay(mapId, list[i], i, focusIdx, grid, gridChk, socketVhcId);
+				//routMap.showBusMarkerClickOverlay(mapId, list[i], i, focusIdx, grid, gridChk, socketVhcId);
 			}
 			
 		}
 
 		if(list.length>0){
 			if(focusIdx!=-1){
-				//routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
 			}
 			else {
 				//routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);

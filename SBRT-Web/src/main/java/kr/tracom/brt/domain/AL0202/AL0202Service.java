@@ -136,9 +136,11 @@ public class AL0202Service extends ServiceSupport {
 		}
 		
 		try {
-			if(param2.size()>0&&"ALL".equals(type.get("TYPE"))){
+			/*if(param2.size()>0&&"ALL".equals(type.get("TYPE"))){
 				al0202Mapper.AL0202G1DA1(param2.get(0));
-			}
+			}*/
+			
+			al0202Mapper.AL0202G1DA1(param2.get(0));
 			for (int i = 0; i < param2.size(); i++) {
 				Map data = (Map) param2.get(i);
 				if(CommonUtil.empty(data.get("ROUT_ID")) || CommonUtil.empty(data.get("REP_ROUT_ID")) || CommonUtil.empty(data.get("ALLOC_NO")))break;

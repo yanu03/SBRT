@@ -46,11 +46,11 @@ public class ThreadManager {
 	
 	public void removeEventThread(String sessionId) {
 		
-		if(morEventThreadMap.containsKey(sessionId)) {
-			EventThread worker = (EventThread)morEventThreadMap.get(sessionId);
+		if(eventThreadMap.containsKey(sessionId)) {
+			EventThread worker = (EventThread)eventThreadMap.get(sessionId);
 			worker.stop(true);			
 			
-			morEventThreadMap.remove(sessionId);
+			eventThreadMap.remove(sessionId);
 			
 			logger.info("Remove EventThread >> sessionId:{}, thread count:{}", sessionId, eventThreadMap.size());
 		}
@@ -83,13 +83,13 @@ public class ThreadManager {
 	
 	public void removeMorEventThread(String sessionId) {
 		
-		if(eventThreadMap.containsKey(sessionId)) {
-			MorEventThread worker = (MorEventThread)eventThreadMap.get(sessionId);
+		if(morEventThreadMap.containsKey(sessionId)) {
+			MorEventThread worker = (MorEventThread)morEventThreadMap.get(sessionId);
 			worker.stop(true);			
 			
-			eventThreadMap.remove(sessionId);
+			morEventThreadMap.remove(sessionId);
 			
-			logger.info("Remove MorEventThread >> sessionId:{}, thread count:{}", sessionId, eventThreadMap.size());
+			logger.info("Remove MorEventThread >> sessionId:{}, thread count:{}", sessionId, morEventThreadMap.size());
 		}
 		
 	}	

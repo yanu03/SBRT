@@ -144,50 +144,68 @@ public class MorEventThread extends Thread {
    }
    
    
-   private Map<String, Object> getCurNodeByLinkSn(Map<String, Object> eventInfo) {
-	   String routId = (String)eventInfo.get("ROUT_ID");
-	   List<Map<String, Object>> nodeList = getNodeList(eventInfo);
-	   
-	   for(Map<String, Object> node : nodeList) {
-		   if(String.valueOf(node.get("LINK_SN")).equals(String.valueOf(eventInfo.get("LINK_SN")))) {
-			   return node;
-		   }
-	   }
-	   return null;
-   }
-   
-   private Map<String, Object> getCurSttnNode(Map<String, Object> eventInfo) {
-	   String routId = (String)eventInfo.get("ROUT_ID");
-	   List<Map<String, Object>> nodeList = getNodeList(eventInfo);
-	   
-	   for(int i = nodeList.size()-1;i>=0;i--) {
-		   Map<String, Object> node = nodeList.get(i);
-		   int test1 = Integer.parseInt(String.valueOf(node.get("NODE_SN")));
-		   int test2 = Integer.parseInt(String.valueOf(eventInfo.get("NODE_SN")));
-		   if(Integer.parseInt(String.valueOf(node.get("NODE_SN")))<=Integer.parseInt(String.valueOf(eventInfo.get("NODE_SN")))
-				   &&node.get("NODE_TYPE").equals(Constants.NODE_TYPE_BUSSTOP)) {
+	private Map<String, Object> getCurNodeByLinkSn(Map<String, Object> eventInfo) {
+		try {
+			String routId = (String) eventInfo.get("ROUT_ID");
+			List<Map<String, Object>> nodeList = getNodeList(eventInfo);
 
-			   return node;
-		   }
-	   }
-	   return null;
-   }
+			for (Map<String, Object> node : nodeList) {
+				int nodeSn = Integer.parseInt(node.getOrDefault("NODE_SN", 0).toString());
+				int eventLinkSn = Integer.parseInt(eventInfo.getOrDefault("LINK_SN", 0).toString());
+				if ((nodeSn >= eventLinkSn) && node.get("NODE_ID").equals(eventInfo.get("NODE_ID"))) {
+					//logger.debug("getCurNodeByLinkSn node={} ", node);
+					//logger.debug("getCurNodeByLinkSn nodeSn= " + nodeSn + eventLinkSn);
+					return node;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Exception {}", e);
+		}
+		return null;
+	}
    
-   private Map<String, Object> getNextSttnNode(Map<String, Object> eventInfo) {
-	   String routId = (String)eventInfo.get("ROUT_ID");
-	   List<Map<String, Object>> nodeList = getNodeList(eventInfo);
-	   
-	   for(Map<String, Object> node : nodeList) {
-		   if(Integer.parseInt(String.valueOf(node.get("NODE_SN")))>Integer.parseInt(String.valueOf(eventInfo.get("NODE_SN")))
-				   &&node.get("NODE_TYPE").equals(Constants.NODE_TYPE_BUSSTOP)) {
-			   
-			   return node;
-		   }
-	   }
-	   return null;
-   }
+	private Map<String, Object> getCurSttnNode(Map<String, Object> eventInfo) {
+		try {
+			String routId = (String) eventInfo.get("ROUT_ID");
+			List<Map<String, Object>> nodeList = getNodeList(eventInfo);
+
+			for (int i = nodeList.size() - 1; i >= 0; i--) {
+				Map<String, Object> node = nodeList.get(i);
+				int nodeSn = Integer.parseInt(node.getOrDefault("NODE_SN", 0).toString());
+				int eventNodeSn = Integer.parseInt(eventInfo.getOrDefault("NODE_SN", 0).toString());
+				if ((nodeSn <= eventNodeSn) && node.get("NODE_TYPE").equals(Constants.NODE_TYPE_BUSSTOP)) {
+					//logger.debug("getCurSttnNode node={} ", node);
+					//logger.debug("getCurSttnNode nodeSn= " + nodeSn + eventNodeSn);
+					return node;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Exception {}", e);
+		}
+		return null;
+	}
    
-   private Map<String, Object> getCurSttnCrsNode(Map<String, Object> eventInfo) {
+	private Map<String, Object> getNextSttnNode(Map<String, Object> eventInfo) {
+		try {
+			String routId = (String) eventInfo.get("ROUT_ID");
+			List<Map<String, Object>> nodeList = getNodeList(eventInfo);
+
+			for (Map<String, Object> node : nodeList) {
+				int nodeSn = Integer.parseInt(node.getOrDefault("NODE_SN", 0).toString());
+				int eventNodeSn = Integer.parseInt(eventInfo.getOrDefault("NODE_SN", 0).toString());
+				if ((nodeSn > eventNodeSn) && node.get("NODE_TYPE").equals(Constants.NODE_TYPE_BUSSTOP)) {
+					//logger.debug("getCurSttnNode node={} ", node);
+					//logger.debug("getCurSttnNode nodeSn= " + nodeSn + eventNodeSn);
+					return node;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Exception {}", e);
+		}
+		return null;
+	}
+   
+   /*private Map<String, Object> getCurSttnCrsNode(Map<String, Object> eventInfo) {
 	   String routId = (String)eventInfo.get("ROUT_ID");
 	   List<Map<String, Object>> nodeList = getNodeList(eventInfo);
 	   
@@ -200,7 +218,7 @@ public class MorEventThread extends Thread {
 		   }
 	   }
 	   return null;
-   }	
+   }	*/
    
 	private Map<String, Object> getVhcInfo(Map<String, Object> paramMap) {
 		String  impID = (String)paramMap.get("MNG_ID");
@@ -519,7 +537,7 @@ public class MorEventThread extends Thread {
 	
 					// insert to BRT_CUR_OPER_INFO
 					Map<String, Object> busInfoMap = busInfo.toMap();
-	
+					busInfoMap.put("MNG_ID", sessionId);
 					busInfoMap.put("VHC_ID", getBusId(busInfoMap));
 					if (CommonUtil.empty(busInfoMap.get("VHC_ID")))
 						break;
@@ -638,6 +656,7 @@ public class MorEventThread extends Thread {
 					AtBusOperEvent busEvent = (AtBusOperEvent) atMessage.getAttrData();
 					String eventData = busEvent.getEventData();
 					Map<String, Object> busEventMap = busEvent.toMap();
+					busEventMap.put("MNG_ID", sessionId);
 					byte eventCode = busEvent.getEventCode();
 					
 					Map<String, Object> eventCodeMap = getCommonCode("OPER_EVT_TYPE","NUM_VAL4",eventCode+"");
@@ -801,7 +820,7 @@ public class MorEventThread extends Thread {
 						{
 							logger.debug("[" + busEventMap.get("ALLOC_NO") + "," + busEventMap.get("REP_ROUT_ID") + ","
 									+ busEventMap.get("WAY_DIV") + "] In BusOperEvent alloc no");	
-							/*
+							
 							if (eventCode == 0x01 || eventCode == 0x02 // 정류장 출/도착 인 경우
 									|| eventCode == 0x03 || eventCode == 0x04 // 기점 출/도착 인 경우
 									|| eventCode == 0x05 || eventCode == 0x06) // 종점점 출/도착 인 경우
@@ -823,11 +842,11 @@ public class MorEventThread extends Thread {
 								busEventMap.put("CUR_NODE_ID", sttnEventMap.get("CUR_NODE_ID"));
 								busEventMap.put("CUR_NODE_NM", sttnEventMap.get("CUR_NODE_NM"));
 								busEventMap.put("CUR_NODE_SN", sttnEventMap.get("CUR_NODE_SN"));
-			
+								logger.debug("busEventMap = {}",busEventMap);
 							}
-							else {*/
+							else {
 								setOperEventData(busEventMap);
-							//}
+							}
 						}
 						
 					} catch (Exception e) {
@@ -1108,8 +1127,10 @@ public class MorEventThread extends Thread {
 			Map<String, Object> curSttnInfo = getCurSttnNode(operEventMap);
 			if (curSttnInfo != null) {
 				operEventMap.put("CUR_NODE_TYPE", curSttnInfo.get("NODE_TYPE"));
-				operEventMap.put("CUR_NODE_ID", curSttnInfo.get("CUR_STTN_ID"));
-				operEventMap.put("CUR_NODE_NM", curSttnInfo.get("CUR_STTN_NM"));
+				//operEventMap.put("CUR_NODE_ID", curSttnInfo.get("CUR_STTN_ID"));
+				//operEventMap.put("CUR_NODE_NM", curSttnInfo.get("CUR_STTN_NM"));
+				operEventMap.put("CUR_NODE_ID", curSttnInfo.get("NODE_ID"));
+				operEventMap.put("CUR_NODE_NM", curSttnInfo.get("NODE_NM"));
 				operEventMap.put("CUR_NODE_SN", curSttnInfo.get("NODE_SN"));
 //				operEventMap.put("NEXT_NODE_ID", curSttnInfo.get("NEXT_STTN_ID"));
 //				operEventMap.put("NEXT_NODE_NM", curSttnInfo.get("NEXT_STTN_NM"));
@@ -1128,8 +1149,10 @@ public class MorEventThread extends Thread {
 			//Map<String, Object> nextSttnInfo = timsMapper.selectNextSttnInfo(param);
 			Map<String, Object> nextSttnInfo = getNextSttnNode(param);
 			if (nextSttnInfo != null) {
-				operEventMap.put("NEXT_NODE_ID", nextSttnInfo.get("CUR_STTN_ID"));
-				operEventMap.put("NEXT_NODE_NM", nextSttnInfo.get("CUR_STTN_NM"));
+				//operEventMap.put("NEXT_NODE_ID", nextSttnInfo.get("CUR_STTN_ID"));
+				//operEventMap.put("NEXT_NODE_NM", nextSttnInfo.get("CUR_STTN_NM"));
+				operEventMap.put("NEXT_NODE_ID", nextSttnInfo.get("NODE_ID"));
+				operEventMap.put("NEXT_NODE_NM", nextSttnInfo.get("NODE_NM"));
 				operEventMap.put("NEXT_NODE_TYPE", nextSttnInfo.get("NODE_TYPE"));
 			}
 
