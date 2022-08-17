@@ -413,10 +413,15 @@
 			SEARCH:{},
 			CNL:{}
 		}; 
+		
+		MAX_LEVEL.setValue(5);
 		 
 		var map = routMap.initMap("map_MO0101", {width:"100%"
 				, height:"100%"
-				, onClick: scwin.onClickMap				
+				, onClick: scwin.onClickMap
+				
+				, level : LEVEL.getValue()
+				, maxLevel : MAX_LEVEL.getValue()				
 		});
 		
 		gbMap = map;
@@ -734,7 +739,7 @@
 							dlt_BRT_CUR_OPER_INFO.setRowJSON(0, jsonObj, true);
 							
 							/*
-							//정렬시에 focus가 바뀔수도 있기 때문에 주석처리함. 테스트 필요함
+							//정렬시에 focus가 바뀔수도 있기 때문에 주석처리함.
 														
 							var sortOptions = {};
 							//정렬 컬럼 ID
@@ -920,7 +925,7 @@
 							dlt_BRT_CUR_OPER_INFO.setRowJSON(0, jsonObj, true);
 							
 							/*
-							//정렬시에 focus가 바뀔수도 있기 때문에 주석처리함. 테스트 필요함
+							//정렬시에 focus가 바뀔수도 있기 때문에 주석처리함.
 							var sortOptions = {};
 							//정렬 컬럼 ID
 							sortOptions.sortIndex = "REP_ROUT_ID ROUT_ID VHC_ID";
@@ -1101,6 +1106,9 @@
 	};
 			
 	scwin.MO0101G0_onrowindexchange = function(row,oldRow) {
+		//initOverlay 테스트 필요(정류소 도착 오버레이 떴을 때 onrow) 
+		routMap.initOverlay("map_MO0101_vehicle");
+		
 		dma_search.set("VHC_ID", dlt_BRT_CUR_OPER_INFO.getCellData(row, "VHC_ID"));
 		com.executeSubmission(sub_MO0101G3R0);
 		
@@ -1143,7 +1151,7 @@
 	};
 	
 	scwin.sub_selectNodeListByRepRout_submitdone = function(e) {
-		
+			
 		com.executeSubmission(sub_selectGrgRdsInfo);
 		com.executeSubmission(sub_selectCategory);
 		routMap.showRoute("map_MO0101", dlt_BMS_ROUT_NODE_DISP_VW.getAllJSON(), null, "ONLYLINE");			
@@ -1858,7 +1866,17 @@
 	scwin.sub_selectGrgRdsInfo_submitdone = function(e) {
 		routMap.drawPolygon("map_MO0101", dlt_BMS_GRG_RDS_INFO);	
 	};
-	]]></script>
+	
+	
+	///////////////////////맵 옵션 변경 이벤트//////////////////////////
+	
+	scwin.LEVEL_onviewchange = function(info) {
+		gbMap.setLevel(info.newValue);
+	};
+
+
+
+	///////////////////////맵 옵션 변경 이벤트//////////////////////////	]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_60_a" style="">
@@ -2116,6 +2134,83 @@
 										</w2:gridView>
 									</xf:group>
 								</xf:group>
+								
+<!-- 								<xf:group id="mapOption" class="" style="">
+									<xf:select1 appearance="full" cols="" id="" ref="" rows="1" selectedIndex="0"
+										style="width: 100%;height: 21px;margin-left: 20px;">
+										<xf:choices>
+											<xf:item>
+												<xf:label><![CDATA[예]]></xf:label>
+												<xf:value><![CDATA[Y]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[아니오]]></xf:label>
+												<xf:value><![CDATA[N]]></xf:value>
+											</xf:item>
+										</xf:choices>
+									</xf:select1>
+									<xf:select1 allOption="" appearance="minimal" chooseOption="" chooseOptionLabel="전체" direction="auto"
+										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="LEVEL" labelWidthAuto="" mandatory="true"
+										optionOrder="" ref="" renderType="component" style="height:24px;width: 60%;" submenuSize="auto" class="" title="" ev:onviewchange="scwin.LEVEL_onviewchange">
+										<xf:choices>
+											<xf:item>
+												<xf:label><![CDATA[1]]></xf:label>
+												<xf:value><![CDATA[1]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[2]]></xf:label>
+												<xf:value><![CDATA[2]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[3]]></xf:label>
+												<xf:value><![CDATA[3]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[4]]></xf:label>
+												<xf:value><![CDATA[4]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[5]]></xf:label>
+												<xf:value><![CDATA[5]]></xf:value>
+											</xf:item>
+										</xf:choices>
+									</xf:select1>
+									<xf:select1 allOption="" appearance="minimal" chooseOption="" chooseOptionLabel="전체" direction="auto"
+										disabled="false" disabledClass="w2selectbox_disabled" displayMode="label" id="MAX_LEVEL" labelWidthAuto="" mandatory="true"
+										optionOrder="" ref="" renderType="component" style="height:24px;width: 60%;" submenuSize="auto" class="" title="">
+										<xf:choices>
+											<xf:item>
+												<xf:label><![CDATA[1]]></xf:label>
+												<xf:value><![CDATA[1]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[2]]></xf:label>
+												<xf:value><![CDATA[2]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[3]]></xf:label>
+												<xf:value><![CDATA[3]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[4]]></xf:label>
+												<xf:value><![CDATA[4]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[5]]></xf:label>
+												<xf:value><![CDATA[5]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[6]]></xf:label>
+												<xf:value><![CDATA[6]]></xf:value>
+											</xf:item>
+											<xf:item>
+												<xf:label><![CDATA[7]]></xf:label>
+												<xf:value><![CDATA[7]]></xf:value>
+											</xf:item>
+										</xf:choices>
+									</xf:select1>
+								</xf:group>
+								 -->
 							</xf:group> <!-- MO0101T0 -->
 							<xf:group id="MO0101T1" style="display: none;visibility:hidden; ">
 								<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.MO0101G1_onrowindexchange" ev:oncellclick=""
@@ -2544,7 +2639,6 @@
 							   	 </div>	 											
 							</div>
 						</xf:group>
-					
 				</xf:group><!-- pgm_detail end -->
 			</xf:group> <!-- end content --> 
 		</xf:group> <!-- end container -->

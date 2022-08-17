@@ -87,17 +87,17 @@ var RoutMAP = function(){
  * @param options : 맵의 옵션
  */
 routMap.initMap = function(mapId,options) {
-	
+	debugger;
 	var mapContainer = document.getElementById(mapId);
 	var mapOptions = {
 		center : new kakao.maps.LatLng(36.502212, 127.256300),
 		disableDoubleClickZoom: true,
-		level : 5,
+		level : parseInt(options.level) || 5,
 		minLevel : routMap.MIN_LEVEL,
-		maxLevel : routMap.MAX_LEVEL
+		maxLevel : parseInt(options.maxLevel) || routMap.MAX_LEVEL
 	};
 	
-	if(typeof options.level !== "undefined") mapOptions.level = options.level;
+	//if(typeof options.level !== "undefined") mapOptions.level = options.level;
 	
     mapContainer.style.width = options.width;
     mapContainer.style.height = options.height; 
