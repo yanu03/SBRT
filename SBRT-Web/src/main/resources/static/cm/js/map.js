@@ -87,14 +87,15 @@ var RoutMAP = function(){
  * @param options : 맵의 옵션
  */
 routMap.initMap = function(mapId,options) {
-	debugger;
 	var mapContainer = document.getElementById(mapId);
 	var mapOptions = {
 		center : new kakao.maps.LatLng(36.502212, 127.256300),
 		disableDoubleClickZoom: true,
 		level : parseInt(options.level) || 5,
+		//level : 5,
 		minLevel : routMap.MIN_LEVEL,
 		maxLevel : parseInt(options.maxLevel) || routMap.MAX_LEVEL
+		//maxLevel : routMap.MAX_LEVEL
 	};
 	
 	//if(typeof options.level !== "undefined") mapOptions.level = options.level;
@@ -5633,7 +5634,7 @@ routMap.showVehicleClickOverlay = function(mapId, list, vhc_id, grid, gridChk, s
 				routMap.showBusMarkerClickOverlay(mapId, list[i], i, focusIdx, grid, gridChk, socketVhcId);
 			}
 			else {
-				//routMap.showBusMarkerClickOverlay(mapId, list[i], i, focusIdx, grid, gridChk, socketVhcId);
+				routMap.showBusMarkerClickOverlay(mapId, list[i], i, focusIdx, grid, gridChk, socketVhcId);
 			}
 			
 		}
