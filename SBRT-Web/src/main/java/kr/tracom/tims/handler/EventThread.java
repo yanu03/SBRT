@@ -966,21 +966,23 @@ public class EventThread extends Thread {
 								busEventMap.put("PRDT_ALLOC_NO", curNearArr[2]); //예측한 배차 번호
 								busEventMap.put("OPER_SN", curNearArr[3]);					
 								int minAllocNo = curInfoMapper.minAllocNoCurAllocPlInfo(busEventMap);
-								logger.debug("minAllocNo = "+minAllocNo); //임시로그	
+								//logger.debug("minAllocNo = "+minAllocNo); //임시로그	
 								if(minAllocNo>0) {
 									minAllocNo=0;
-									logger.debug("0 ?? minAllocNo = "+minAllocNo); //임시로그
+									//logger.debug("0 ?? minAllocNo = "+minAllocNo); //임시로그
 								}
 								else {
 									minAllocNo = minAllocNo - 1;
-									logger.debug("minus ?? minAllocNo = "+minAllocNo); //임시로그
+									//logger.debug("minus ?? minAllocNo = "+minAllocNo); //임시로그
 								}
 								busEventMap.put("ALLOC_NO", minAllocNo);
 								busEventMap.put("OPER_VHC_ID", busEventMap.get("VHC_ID"));
 								insertCurAllocPlInfo(busEventMap); //배차가 없는 경우 0보다 작은수로 배차함
 							}
 							else {
-								int minAllocNo = curInfoMapper.minAllocNoCurAllocPlInfo(busEventMap);
+								int minAllocNo = 0;
+									minAllocNo = curInfoMapper.minAllocNoCurAllocPlInfo(busEventMap);
+								
 								logger.debug("minAllocNo = "+minAllocNo); //임시로그	
 								if(minAllocNo > 0) {
 									minAllocNo = 0;
@@ -1032,7 +1034,7 @@ public class EventThread extends Thread {
 									// 노선,코스 정보를 차량에 전달
 									//kafkaProducer.sendKafka(setRequest, sessionId);
 						               if (("IMP0010001".equals(sessionId)==false) && ("IMP0010002".equals(sessionId)==false)
-						            		   && ("IMP0010010".equals(sessionId)==false)) {
+						            		   && ("IMP0010010".equals(sessionId)==false)&& ("IMP0010011".equals(sessionId)==false)&& ("IMP0010012".equals(sessionId)==false)) {
 						                  kafkaProducer.sendKafka(setRequest, sessionId);
 						                }
 
