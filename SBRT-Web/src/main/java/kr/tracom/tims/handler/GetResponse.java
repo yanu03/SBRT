@@ -125,58 +125,69 @@ public class GetResponse {
             		
             		break;
             	case BrtAtCode.TRAFFIC_MODULE_TWO:
-            		AtTrafficModule2 trafficModule2 = (AtTrafficModule2)atMessage.getAttrData();
-            		logger.info("TRAFFIC_MODULE_TWO : {}", trafficModule2);
-            		List<HashMap <String, Object>> trafficModule2MapList = new ArrayList<>();
-            		
-            		HashMap<String, Object> moduleTwoMap = new HashMap<>();
-                    Map<String, Object> result1 = curInfoMapper.selectCurOperInfoByVhcNo(moduleTwoMap);
-                    moduleTwoMap.put("VHC_NO",trafficModule2.getBusNum());
-                    moduleTwoMap.put("OPER_DT", CommonUtil.getOperDt());
-                    moduleTwoMap.put("NODE_ID",trafficModule2.getStationNodeId());
-                    moduleTwoMap.put("REP_ROUT_ID",result1.get("REP_ROUT_ID"));
-                    moduleTwoMap.put("ROUT_ID",result1.get("ROUT_ID"));
-                    moduleTwoMap.put("CTRL_LV",2);
-                    moduleTwoMap.put("STOP_SEC",trafficModule2.getWaitTm());
-                    moduleTwoMap.put("OCR_DTM",trafficModule2.getUpdateTm().toString());
-    				
-                    trafficModule2MapList.add(moduleTwoMap);
-            		
-        			//웹소켓 데이터 세팅
-        	    	Map<String, Object> wsModuleTwoDataMap = new HashMap<>();
-        	    	wsModuleTwoDataMap.put("ATTR_ID", BrtAtCode.TRAFFIC_MODULE_TWO);
-        	    	wsModuleTwoDataMap.put("LIST", trafficModule2MapList);
-                	
-            		webSocketClient.sendMessage(wsModuleTwoDataMap);
-            		curInfoMapper.insertOrUpdateSigOperEventInfo(moduleTwoMap);
-            		
+            		try {
+	            		AtTrafficModule2 trafficModule2 = (AtTrafficModule2)atMessage.getAttrData();
+	            		logger.info("TRAFFIC_MODULE_TWO : {}", trafficModule2);
+	            		List<HashMap <String, Object>> trafficModule2MapList = new ArrayList<>();
+	            		
+	            		HashMap<String, Object> moduleTwoMap = new HashMap<>();
+	                    moduleTwoMap.put("VHC_NO",trafficModule2.getBusNum());
+	                    moduleTwoMap.put("OPER_DT", CommonUtil.getOperDt());
+	                    moduleTwoMap.put("NODE_ID",trafficModule2.getStationNodeId());
+	                    Map<String, Object> result1 = curInfoMapper.selectCurOperInfoByVhcNo(moduleTwoMap);
+	                    if(result1!=null) {
+		                    moduleTwoMap.put("REP_ROUT_ID",result1.get("REP_ROUT_ID"));
+		                    moduleTwoMap.put("ROUT_ID",result1.get("ROUT_ID"));
+	                    }
+	                    moduleTwoMap.put("CTRL_LV",2);
+	                    moduleTwoMap.put("STOP_SEC",trafficModule2.getWaitTm());
+	                    moduleTwoMap.put("OCR_DTM",trafficModule2.getUpdateTm().toString());
+	    				
+	                    trafficModule2MapList.add(moduleTwoMap);
+	            		
+	        			//웹소켓 데이터 세팅
+	        	    	Map<String, Object> wsModuleTwoDataMap = new HashMap<>();
+	        	    	wsModuleTwoDataMap.put("ATTR_ID", BrtAtCode.TRAFFIC_MODULE_TWO);
+	        	    	wsModuleTwoDataMap.put("LIST", trafficModule2MapList);
+	                	
+	            		webSocketClient.sendMessage(wsModuleTwoDataMap);
+	            		curInfoMapper.insertOrUpdateSigOperEventInfo(moduleTwoMap);
+            		} catch (Exception e) {
+            			logger.error("Exception {}", e);
+            		}
             		break;
             	case BrtAtCode.TRAFFIC_MODULE_THREE:
-            		AtTrafficModule3 trafficModule3 = (AtTrafficModule3)atMessage.getAttrData();
-            		logger.info("TRAFFIC_MODULE_THREE : {}", trafficModule3);
-            		List<HashMap <String, Object>> trafficModule3MapList = new ArrayList<>();
-            		
-            		HashMap<String, Object> moduleThreeMap = new HashMap<>();
-                    Map<String, Object> result2 = curInfoMapper.selectCurOperInfoByVhcNo(moduleThreeMap);
-                    moduleThreeMap.put("VHC_NO",trafficModule3.getBusNum());
-                    moduleThreeMap.put("OPER_DT", CommonUtil.getOperDt());
-                    moduleThreeMap.put("NODE_ID",trafficModule3.getCrossNodeId());
-                    moduleThreeMap.put("REP_ROUT_ID",result2.get("REP_ROUT_ID"));
-                    moduleThreeMap.put("ROUT_ID",result2.get("ROUT_ID"));
-                    moduleThreeMap.put("CTRL_LV",3);
-                    moduleThreeMap.put("CTRL_TYPE",trafficModule3.getControlType());
-                    moduleThreeMap.put("CTRL_PHASE_NO",trafficModule3.getControlPhaseNum());
-                    moduleThreeMap.put("OCR_DTM",trafficModule3.getUpdateTm().toString());
-    				
-                    trafficModule3MapList.add(moduleThreeMap);
-            		
-        			//웹소켓 데이터 세팅
-        	    	Map<String, Object> wsModuleThreeDataMap = new HashMap<>();
-        	    	wsModuleThreeDataMap.put("ATTR_ID", BrtAtCode.TRAFFIC_MODULE_TWO);
-        	    	wsModuleThreeDataMap.put("LIST", trafficModule3MapList);
-                	
-            		webSocketClient.sendMessage(wsModuleThreeDataMap);
-            		curInfoMapper.insertOrUpdateSigOperEventInfo(moduleThreeMap);
+            		try {
+	            		AtTrafficModule3 trafficModule3 = (AtTrafficModule3)atMessage.getAttrData();
+	            		logger.info("TRAFFIC_MODULE_THREE : {}", trafficModule3);
+	            		List<HashMap <String, Object>> trafficModule3MapList = new ArrayList<>();
+	            		
+	            		HashMap<String, Object> moduleThreeMap = new HashMap<>();
+	                    moduleThreeMap.put("VHC_NO",trafficModule3.getBusNum());
+	                    moduleThreeMap.put("OPER_DT", CommonUtil.getOperDt());
+	                    moduleThreeMap.put("NODE_ID",trafficModule3.getCrossNodeId());
+	                    Map<String, Object> result2 = curInfoMapper.selectCurOperInfoByVhcNo(moduleThreeMap);
+	                    if(result2!=null) {
+		                    moduleThreeMap.put("REP_ROUT_ID",result2.get("REP_ROUT_ID"));
+		                    moduleThreeMap.put("ROUT_ID",result2.get("ROUT_ID"));
+	                    }
+	                    moduleThreeMap.put("CTRL_LV",3);
+	                    moduleThreeMap.put("CTRL_TYPE",trafficModule3.getControlType());
+	                    moduleThreeMap.put("CTRL_PHASE_NO",trafficModule3.getControlPhaseNum());
+	                    moduleThreeMap.put("OCR_DTM",trafficModule3.getUpdateTm().toString());
+	    				
+	                    trafficModule3MapList.add(moduleThreeMap);
+	            		
+	        			//웹소켓 데이터 세팅
+	        	    	Map<String, Object> wsModuleThreeDataMap = new HashMap<>();
+	        	    	wsModuleThreeDataMap.put("ATTR_ID", BrtAtCode.TRAFFIC_MODULE_TWO);
+	        	    	wsModuleThreeDataMap.put("LIST", trafficModule3MapList);
+	                	
+	            		webSocketClient.sendMessage(wsModuleThreeDataMap);
+	            		curInfoMapper.insertOrUpdateSigOperEventInfo(moduleThreeMap);
+		    		} catch (Exception e) {
+		    			logger.error("Exception {}", e);
+		    		}            		
             		break;
             		
             
