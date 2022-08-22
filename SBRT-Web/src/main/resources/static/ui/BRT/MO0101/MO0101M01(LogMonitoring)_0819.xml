@@ -52,7 +52,6 @@
 						<w2:column id="ED_GPS_Y" name="링크끝GPS_Y" dataType="text"></w2:column>
 						<w2:column id="CUR_NODE_TYPE" name="name38" dataType="text"></w2:column>
 						<w2:column id="CUR_NODE_NM" name="name39" dataType="text"></w2:column>
-						<w2:column id="OCR_DTM" name="실시간데이터발생시간" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search">
@@ -455,9 +454,8 @@
 		};	
 		com.setMainSrhBtn(wfm_mainSearchBtn, gcm.DISP_TYPE.DUAL_GRID, autoOptions, mainSrhOptions, codeOptions);	
 
-		//새로 들어오는 데이터들 때문에 merge가 안맞아 주석처리
-		//MO0101G0.mergeCol(2,false);
-		//MO0101G0.mergeCells("byrestriccol");
+		MO0101G0.mergeCol(2,false);
+		MO0101G0.mergeCells("byrestriccol");
 		
 		com.executeSubmission(sub_MO0101SHI0);	
 		
@@ -488,7 +486,7 @@
 				scwin.MO0101G0_onrowindexchange();			
 			}
 			else if(li_id == "li_sttnimg") {
-				search_input.setPlaceholder("정류소ID 또는 정류소명")
+				search_input.setPlaceholder("정류장ID 또는 정류장명")
 				busActive = 0;
 				sttnActive = 1;
 				crossActive = 0;
@@ -739,12 +737,6 @@
 							dlt_BRT_CUR_OPER_INFO.insertRow(0);	
 							dlt_BRT_CUR_OPER_INFO.setRowJSON(0, jsonObj, true);
 							
-							var today = new Date();   
-							var hours = leadingZeros(today.getHours(), 2);
-							var minutes = leadingZeros(today.getMinutes(), 2); 
-							var seconds = leadingZeros(today.getSeconds(), 2); 
-							var timeResult = hours + ':' + minutes + ':' + seconds
-							dlt_BRT_CUR_OPER_INFO.setCellData(0, "OCR_DTM", timeResult);
 							/*
 							//정렬시에 focus가 바뀔수도 있기 때문에 주석처리함.
 														
@@ -873,12 +865,6 @@
 							
 							
 							dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
-							var today = new Date();   
-							var hours = leadingZeros(today.getHours(), 2);
-							var minutes = leadingZeros(today.getMinutes(), 2); 
-							var seconds = leadingZeros(today.getSeconds(), 2); 
-							var timeResult = hours + ':' + minutes + ':' + seconds
-							dlt_BRT_CUR_OPER_INFO.setCellData(curIndexArr[0], "OCR_DTM", timeResult);
 							
 							if (curIndexArr[0] == MO0101G0.getFocusedRowIndex()) {
 								routMap.mapInfo["map_MO0101_vehicle"].isEvent = "on";
@@ -936,12 +922,6 @@
 						if(curIndexArr.length == 0) {
 							dlt_BRT_CUR_OPER_INFO.insertRow(0);	
 							dlt_BRT_CUR_OPER_INFO.setRowJSON(0, jsonObj, true);
-							var today = new Date();   
-							var hours = leadingZeros(today.getHours(), 2);
-							var minutes = leadingZeros(today.getMinutes(), 2); 
-							var seconds = leadingZeros(today.getSeconds(), 2); 
-							var timeResult = hours + ':' + minutes + ':' + seconds
-							dlt_BRT_CUR_OPER_INFO.setCellData(0, "OCR_DTM", timeResult);
 							
 							/*
 							//정렬시에 focus가 바뀔수도 있기 때문에 주석처리함.
@@ -959,12 +939,7 @@
 						
 						if(curIndexArr.length != 0) {
 							dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
-							var today = new Date();   
-							var hours = leadingZeros(today.getHours(), 2);
-							var minutes = leadingZeros(today.getMinutes(), 2); 
-							var seconds = leadingZeros(today.getSeconds(), 2); 
-							var timeResult = hours + ':' + minutes + ':' + seconds
-							dlt_BRT_CUR_OPER_INFO.setCellData(0, "OCR_DTM", timeResult);
+							
 							dataRowJson = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndexArr[0]);
 							//var rowData = dlt_BRT_CUR_OPER_INFO.getMatchedColumnData("VHC_ID", dataRowJson.VHC_ID, "VHC_ID");
 							//var rowData = dlt_BRT_CUR_OPER_INFO.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID");
@@ -1134,8 +1109,8 @@
 		routMap.initOverlay("map_MO0101_vehicle");
 		
 		dma_search.set("VHC_ID", dlt_BRT_CUR_OPER_INFO.getCellData(row, "VHC_ID"));
-		//com.executeSubmission(sub_MO0101G3R0);
-		//com.executeSubmission(sub_MO0101G4R0);
+		com.executeSubmission(sub_MO0101G3R0);
+		com.executeSubmission(sub_MO0101G4R0);
 		
 		gbMap.setLevel(4);
 		busFocus = row;		 
@@ -1166,7 +1141,7 @@
 	scwin.sub_MO0101SHI0_submitdone = function(e) {
 		TYPE1.setValue("RR00000002");		
 		$p.executeSubmission(sub_MO0101SHI1);
-		//com.searchGrid(MO0101G0, sub_MO0101G0R0);
+		com.searchGrid(MO0101G0, sub_MO0101G0R0);
 		
 	};
 		
@@ -1209,14 +1184,11 @@
 	};
 	
 	scwin.sub_MO0101SHI1_submitdone = function(e) {
-		//com.searchGrid(MO0101G0, sub_MO0101G0R0);
-		dlt_BRT_CUR_OPER_INFO.removeAll();
-		dlt_BRT_OPER_EVENT_HIS.removeAll();
-		dlt_BRT_DSPTCH_LOG.removeAll();
+		com.searchGrid(MO0101G0, sub_MO0101G0R0);
 		com.searchGrid(MO0101G1, sub_MO0101G1R0);
 		com.searchGrid(MO0101G2, sub_MO0101G2R0);
-		//com.searchGrid(MO0101G3, sub_MO0101G3R0);
-		//com.searchGrid(MO0101G4, sub_MO0101G4R0);
+		com.searchGrid(MO0101G3, sub_MO0101G3R0);
+		com.searchGrid(MO0101G4, sub_MO0101G4R0);
 		com.searchGrid(MO0101G5, sub_MO0101G5R0);
 		com.searchGrid(MO0101G7, sub_MO0101G7R0);
 		com.executeSubmission(sub_selectNodeListByRepRout);			
@@ -1224,14 +1196,11 @@
 	
 	scwin.TYPE2_onviewchange = function(info) {
 		startMarker = 1;
-		dlt_BRT_CUR_OPER_INFO.removeAll();
-		dlt_BRT_OPER_EVENT_HIS.removeAll();
-		dlt_BRT_DSPTCH_LOG.removeAll();
-		//com.searchGrid(MO0101G0, sub_MO0101G0R0);
+		com.searchGrid(MO0101G0, sub_MO0101G0R0);
 		com.searchGrid(MO0101G1, sub_MO0101G1R0);
 		com.searchGrid(MO0101G2, sub_MO0101G2R0);
-		//com.searchGrid(MO0101G3, sub_MO0101G3R0);
-		//com.searchGrid(MO0101G4, sub_MO0101G4R0);		
+		com.searchGrid(MO0101G3, sub_MO0101G3R0);
+		com.searchGrid(MO0101G4, sub_MO0101G4R0);		
 		com.searchGrid(MO0101G5, sub_MO0101G5R0);		
 		com.searchGrid(MO0101G7, sub_MO0101G7R0);		
 		com.executeSubmission(sub_selectNodeListByRepRout);		
@@ -1915,9 +1884,7 @@
 		}
 		
 		else if (info.newValue == "N") {
-			if(info.newVal == 'Y') {
-				
-			}  
+			
 		}
 		
 	};
@@ -2014,7 +1981,7 @@
 									showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="No."
 									sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 									fixedColumnWithHidden="true" dataList="data:dlt_BRT_CUR_OPER_INFO" ignoreCellClick="false" style="height:212px;"
-									autoFit="lastColumn" visibleRowNum="" id="MO0101G0" class="cm_grid left" tooltipPositionY="" focusMode="row" noResultMessage="실시간 데이터 수신중">
+									autoFit="lastColumn" visibleRowNum="" id="MO0101G0" class="cm_grid left" tooltipPositionY="" focusMode="row">
 									<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 									<w2:header style="" id="header1">
 										<w2:row style="" id="row1">
@@ -2035,9 +2002,6 @@
 											</w2:column>
 											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column8"
 												value="경도" blockSelect="false" displayMode="label">
-											</w2:column>
-											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column12"
-												value="발생시간" blockSelect="false" displayMode="label">
 											</w2:column>
 											<w2:column removeBorderStyle="false" width="65" inputType="text" style="height:20px" id="column0"
 												value="" blockSelect="false" displayMode="label">
@@ -2067,9 +2031,6 @@
 											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="GPS_X"
 												value="" blockSelect="false" displayMode="label">
 											</w2:column>
-											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="OCR_DTM"
-												value="" blockSelect="false" displayMode="label">
-											</w2:column>
 											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id=""
 												value="" blockSelect="false" displayMode="label">
 											</w2:column>
@@ -2089,7 +2050,7 @@
 											ev:oncellclick="" showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false"
 											rowNumHeaderValue="No." sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 											fixedColumnWithHidden="true" dataList="data:dlt_BRT_OPER_EVENT_HIS" ignoreCellClick="false" style="height:130px;"
-											autoFit="lastColumn" visibleRowNum="" id="MO0101G3" class="cm_grid left" tooltipPositionY="" focusMode="row" noResultMessage="실시간 데이터 수신중">
+											autoFit="lastColumn" visibleRowNum="" id="MO0101G3" class="cm_grid left" tooltipPositionY="" focusMode="row">
 											<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 											<w2:header style="" id="header1">
 												<w2:row style="" id="row1">
@@ -2142,7 +2103,7 @@
 											ev:oncellclick="" showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false"
 											rowNumHeaderValue="No." sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 											fixedColumnWithHidden="true" dataList="data:dlt_BRT_DSPTCH_LOG" ignoreCellClick="false" style="height:130px;"
-											autoFit="lastColumn" visibleRowNum="" id="MO0101G4" class="cm_grid left" tooltipPositionY="" focusMode="row" noResultMessage="실시간 데이터 수신중">
+											autoFit="lastColumn" visibleRowNum="" id="MO0101G4" class="cm_grid left" tooltipPositionY="" focusMode="row">
 											<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 											<w2:header style="" id="header1">
 												<w2:row style="" id="row1">
@@ -2273,7 +2234,7 @@
 									<w2:header style="" id="header1">
 										<w2:row style="" id="row1">
 											<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px" id="column7"
-												value="정류소ID" blockSelect="false" displayMode="label">
+												value="정류장ID" blockSelect="false" displayMode="label">
 											</w2:column>
 											<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px" id="column6"
 												value="정류소명" blockSelect="false" displayMode="label">
