@@ -176,6 +176,12 @@ public class InitController {
 		return "/ClipReport/report";
 	}
 	
+	@RequestMapping(value = "/dashboard", method = RequestMethod.GET)
+	public String dashboard(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+		model.addAttribute("movePage", getLoginPage(request.getParameter("w2xPath")));
+		return "/dashboard/dashboard";
+	}
+	
 	/**
 	 * 로그인 페이지 Url을 반환한다.
 	 * 
