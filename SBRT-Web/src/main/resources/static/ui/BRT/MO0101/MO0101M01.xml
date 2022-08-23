@@ -681,10 +681,6 @@
 		*/
 
 		//GPS값 튈 경우 아무 동작도 안되게 처리
-		if(typeof(jsonObj.GPS_X) != "undefined" && typeof(jsonObj.GPS_Y) != "undefined"){
-			if (jsonObj.GPS_X<120 || jsonObj.GPS_Y>130) {
-				return;	
-			}
 			
 			if (repRoutItem != "") {
 				//소켓 데이터에 대표노선이 없어 대표노선에 포함된 노선 ID들과 비교			
@@ -726,6 +722,9 @@
 			
 			//4012: 운행이벤트
 			else if(attrId == util.ATTR_ID.BUS_OPER_EVENT) {
+				if (typeof(jsonObj.GPS_X) == "undefined" || typeof(jsonObj.GPS_Y) == "undefined" || jsonObj.GPS_X<120 || jsonObj.GPS_Y>130) {
+					return;	
+				}
 			//console.log(payload.body);
 				try {
 			//		setTimeout(function() {	
@@ -918,6 +917,9 @@
 			
 			//attrId = 4014 : 실시간 차량 위치 정보
 			else if(attrId == util.ATTR_ID.BUS_INFO){
+				if (typeof(jsonObj.GPS_X) == "undefined" || typeof(jsonObj.GPS_Y) == "undefined" || jsonObj.GPS_X<120 || jsonObj.GPS_Y>130) {
+					return;	
+				}
 					//payload.body >>>> {"GPS_Y":36.484005,"ATTR_ID":4014,"DVC_ID":"DV00000002","GPS_X":127.25973,"VHC_ID":"VH00000002"}		
 			
 			//jsonObj.VHC_ID => 차량아이디
@@ -976,7 +978,6 @@
 					console.log("[scwin.onMessageReceived] Exception :: " + e.message);			
 				}	
 			}
-		}	
 			else if(attrId == util.ATTR_ID.DISPATCH) { //4020: 디스패치
 				//payload.body >>>> {MESSAGE=천천히가세요, DSPTCH_DIV=DP001, ATTR_ID=4020, DSPTCH_KIND=DK002, VHC_ID=VH00000002}
 

@@ -53,6 +53,38 @@ public class Scheduler {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+	private static Map<String, Object> g_operCodeMap  = new HashMap<>();
+
+	private Map<String, Object> getCommonCode( String coCd,String ValType, String value) {
+		//String eventCd = paramMap.get("EVENT_CD")+"";
+		logger.debug("getEventCode() coCd="+coCd +", eventCd="+value);
+		Map<String, Object> param = new HashMap<>();
+		String key = coCd+value;
+		param.put("CO_CD", coCd);
+		param.put("VAL_TYPE", ValType);
+		param.put("VAL", value);
+		
+		Map<String, Object> eventCodeMap = null;
+		if(g_operCodeMap==null) {
+			g_operCodeMap = new HashMap<>();
+			eventCodeMap = curInfoMapper.getEventCode(param);
+			if(eventCodeMap!=null) {
+				g_operCodeMap.put(key, eventCodeMap);
+				return eventCodeMap;
+			}
+		}
+		
+		eventCodeMap = (Map<String, Object>)g_operCodeMap.get(key); 
+		if ((eventCodeMap != null)) {
+			return eventCodeMap;
+		}
+		else {
+			eventCodeMap = curInfoMapper.getEventCode(param);
+			g_operCodeMap.put(key, eventCodeMap);
+			return eventCodeMap;
+		}
+	}
+	
 	@Scheduled(fixedDelay = 10000)
 	public void schedule_10sec() {
 		//logger.info("schedule_10sec");
@@ -300,10 +332,11 @@ public class Scheduler {
 	        Map<String, Object> result2 = curInfoMapper.selectCurOperInfoByVhcNo(moduleThreeMap);
 	        if(result2!=null) {
 		        moduleThreeMap.put("REP_ROUT_ID",result2.get("REP_ROUT_ID"));
-		        moduleThreeMap.put("ROUT_ID",result2.get("ROUT_ID"));
+	        moduleThreeMap.put("ROUT_ID",result2.get("ROUT_ID"));
 	        }
 	        moduleThreeMap.put("CTRL_LV",3);
-	        moduleThreeMap.put("CTRL_TYPE",trafficModule3.getControlType());
+	        //moduleThreeMap.put("CTRL_TYPE",trafficModule3.getControlType());
+	        moduleThreeMap.put("CTRL_TYPE",getCommonCode( "SIG_CTL_TYPE", "TXT_VAL1",trafficModule3.getControlType()+"").get("DL_CD"));
 	        moduleThreeMap.put("CTRL_PHASE_NO",trafficModule3.getControlPhaseNum());
 	        moduleThreeMap.put("OCR_DTM",trafficModule3.getUpdateTm().toString());
 			

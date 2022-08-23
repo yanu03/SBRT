@@ -28,6 +28,15 @@ var util = {
 	,	DISPATCH_LIST : 4021
 	,	AIRCON_INFO : 5050
 	,	SCREENDOOR_INFO : 5051	
+	},
+	
+	MSG : {
+		DISPATCH_MSG_NORMAL : "안전운행 감사합니다."
+	,	DISPATCH_MSG_DELAY : "초 지연운행 중입니다. 조금만 빨리 이동 부탁드립니다."
+	,	DISPATCH_MSG_SPEED : "초 과속운행 중입니다. 조금만 천천히 이동 부탁드립니다."
+	,	DISPATCH_MSG_STOP : "초 정차 예정입니다."
+	,	DISPATCH_MSG_SIGNAL_2 :  "정차제어 %d초 정차 예정입니다."
+	,	DISPATCH_MSG_SIGNAL_3 :   "우선신호제어(%s)"
 	}
 }
 
