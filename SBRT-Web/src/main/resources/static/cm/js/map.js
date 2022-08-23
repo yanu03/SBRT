@@ -13,9 +13,47 @@ var routMap = {
 		DISP : "NT009"
 	},
 	MAX_NODE_CNT : 800,
-	LIMIT_SPEED : 50,
-	MIN_LEVEL : 1,
-	MAX_LEVEL : 7
+	LIMIT_SPEED : 50, 
+	
+	LEVEL : 5, // 맵 확대 레벨(1~ 14)
+	MIN_LEVEL : 1, //맵 최소 확대 레벨(1~ 14)
+	MAX_LEVEL : 7, //맵 최대 확대 레벨(1~ 14)
+	
+	//마커를 보이지 않게 할 경우 오버레이(팝업)는  같이 보이지 않습니다.
+	SHOW_BUS_MARKER : "Y", //버스마커 여부(Y, N)
+	SHOW_BUS_OVERLAY : "Y", //버스 오버레이 여부(Y, N)
+	SHOW_STTN_MARKER : "Y", //정류소 마커 여부(Y, N)
+	SHOW_STTN_OVERLAY : "Y", //정류소 오버레이 여부(Y, N)
+	STTN_OVERLAY_OPTION : "ALWAYS", //정류소 오버레이가 Y일때, 항상 띄우게 또는 마커 마우스 오버이벤트로 설정 설정 (ALWAYS, MOUSEOVER)
+	SHOW_CRS_MARKER : "Y", //교차로 마커 여부(Y, N)
+	SHOW_CRS_OVERLAY : "Y", //교차로 오버레이 여부(Y, N)
+	CRS_OVERLAY_OPTION : "MOUSEOVER", //교차로 오버레이가 Y일때, 항상 띄우게 또는 마커 마우스 오버이벤트로 설정 설정 (ALWAYS, MOUSEOVER)
+	SHOW_DISPATCH : "Y",
+	SHOW_EVENT : "Y",
+	FOCUS_MODE : "N", //차량이 움직일때마다 지도의 중심이 해당 버스를 따라갈지 여부(Y, N)
+	ONROW_MOVE : "Y", //차량 그리드 행을 바꿀때마다 지도의 중심이 해당 버스를 따라갈지 여부(Y, N)
+	
+	
+	ROUT_COLOR : "#FF005E", //노선 기본 HEX color값
+	ROUT_WEIGHT : 4, //노선 두께
+	ROUT_STYLE : "solid", //노선 모양 (	solid, shortdash, shortdot, shortdashdot, shortdashdotdot, dot, dash, dashdot, longdash, longdashdot, longdashdotdot)
+	ROUT_OPACITY : 0.8, //선의 불투명도 (0~1 사이값)
+	MORN_STD_01_COLOR : "#0bbe39", // 집중모니터링 1단계 HEX color값
+	MORN_STD_02_COLOR : "#ffc700", // 집중모니터링 2단계 HEX color값
+	MORN_STD_03_COLOR : "#DE2121", // 집중모니터링 3단계 HEX color값
+	POLYGON_WEIGHT : 3, //다각형 선의 두께
+	POLYGON_COLOR : "#39DE2A", //다각형 선 HEX color값
+	POLYGON_OPACITY : 0.8, //다각형 선의 불투명도(0~1)
+	POLYGON_STYLE : "solid", //다각형 선 스타일, 노선모양과 종류같음
+	POLYGON_FILL_COLOR : '#A2FF99', //다각형 내부 HEX color값
+	POLYGON_FILL_OPACITY : 0.7, //다각형 내부 불투명도
+	POLYGON_MOUSE_OVER_COLOR : "#EFFFED", //마우스 오버시 내부 HEX color값
+	POLYGON_MOUSE_OVER_OPACITY : 0.8, //마우스 오버시 내부 불투명도
+	POLYGON_MOUSE_OUT_COLOR : "#A2FF99", //마우스 오버시 내부 HEX color값
+	POLYGON_MOUSE_OUT_OPACITY : 0.7 //마우스 오버시 내부 HEX color값
+	
+	
+		
 }
 
 var VhcMapInfo = function() {
@@ -87,17 +125,16 @@ var RoutMAP = function(){
  * @param options : 맵의 옵션
  */
 routMap.initMap = function(mapId,options) {
-	
 	var mapContainer = document.getElementById(mapId);
 	var mapOptions = {
 		center : new kakao.maps.LatLng(36.502212, 127.256300),
 		disableDoubleClickZoom: true,
-		level : 5,
-		minLevel : routMap.MIN_LEVEL,
-		maxLevel : routMap.MAX_LEVEL
+		level : options.level || routMap.LEVEL,
+		minLevel : options.minLevel || routMap.MIN_LEVEL,
+		maxLevel : options.maxLevel || routMap.MAX_LEVEL
 	};
 	
-	if(typeof options.level !== "undefined") mapOptions.level = options.level;
+	//if(typeof options.level !== "undefined") mapOptions.level = options.level;
 	
     mapContainer.style.width = options.width;
     mapContainer.style.height = options.height; 
@@ -343,9 +380,9 @@ routMap.drawLineArr = function(mapId, lat_arr, lng_arr, color){
 	var polyline = new kakao.maps.Polyline({
 		path: path,
 		strokeColor: color, // 라인 색상
-		strokeWeight: 7, // 라인 두게
-		strokeStyle:'solid',
-		strokeOpacity: 0.8
+		strokeWeight: routMap.ROUT_WEIGHT, // 라인 두게
+		strokeStyle: routMap.ROUT_STYLE,
+		strokeOpacity: routMap.ROUT_OPACITY
 	});
 	
 	polyline.setMap(routMap.mapInfo[mapId].map);
@@ -369,16 +406,16 @@ routMap.drawLine = function(mapId, first, last, color, eventKinds, clickEvent, r
 	if(typeof dataCheckFunc != "undefined") {
 		dataCheck = dataCheckFunc(dataCheck, rowIndex);
 		if(dataCheck && color != "#1e90ff") {
-			color = "#FF005E";
+			color = routMap.ROUT_COLOR;
 		}
 	}
 	
 	var polyline = new kakao.maps.Polyline({
 		path: path,
 		strokeColor: color, // 라인 색상
-		strokeWeight: 4, // 라인 두께
-		strokeStyle:'solid',
-		strokeOpacity: 0.8, //선의 불투명도 1~0사이값
+		strokeWeight: routMap.ROUT_WEIGHT, // 라인 두께
+		strokeStyle: routMap.ROUT_STYLE,
+		strokeOpacity: routMap.ROUT_OPACITY //선의 불투명도 1~0사이값
 		//endArrow : true //화살표 여부
 	});
 
@@ -387,7 +424,7 @@ routMap.drawLine = function(mapId, first, last, color, eventKinds, clickEvent, r
 		kakao.maps.event.addListener(polyline, 'mouseover', function(mouseEvent) {
 			if(eventKinds == "addSubGrid") {
 				polyline.setOptions({
-					strokeColor : "#cd6c15"
+					strokeColor : routMap.MORN_STD_02_COLOR
 				});
 			}			
 		});
@@ -1163,6 +1200,13 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx, busGrid) {
  * @param busGrid : 버스 그리드
  */
 routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid, gridChk, socketVhcId) {
+	
+	//버스마커 N일때 초기화시키고 리턴
+	if(routMap.SHOW_BUS_MARKER == "N") {
+		routMap.removeMarkers(mapId);
+		return;
+	}
+	
 	//완전 하드코딩 06/22 양현우
 	switch(data.ROUT_ID){
 		case "RT00000003": //B0상(출착)
@@ -1273,7 +1317,11 @@ routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid
 	//오버레이 관련
 	//디스패치 오버레이가 아니면
 
-	routMap.showBubbleOverlay(mapId, data, marker, idx, focusIdx);
+	//버스 오버레이 유무가 Y일 경우만 오버레이 표시
+	if(routMap.SHOW_BUS_OVERLAY == "Y") {
+		routMap.showBubbleOverlay(mapId, data, marker, idx, focusIdx);
+	}
+	
 		//routMap.showClickBusOverlay(mapId, data, idx, focusIdx, marker);
 	
 	if(routMap.mapInfo[mapId].isDsptch == "on") {
@@ -1506,6 +1554,14 @@ routMap.showBusMarkerNotEvent = function(mapId, data, idx, focusIdx, busGrid) {
  * @param focusIdx : 포커스 index
  */
 routMap.showBubbleOverlay = function(mapId, data, marker, idx, focusIdx) {
+	if(data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP && routMap.SHOW_STTN_OVERLAY == "N") {
+		return;
+	} 
+	
+	if(data.NODE_TYPE == routMap.NODE_TYPE.CROSS && routMap.SHOW_CRS_OVERLAY == "N") {
+		return;
+	} 
+	
 	var zIndex= 2;
 	var overlayName = null;
 	var overlay = null;
@@ -1565,11 +1621,35 @@ routMap.showBubbleOverlay = function(mapId, data, marker, idx, focusIdx) {
 		position: marker.getPosition(),
 		zIndex : zIndex
 	});
-	if (typeof data.VHC_ID == "undefined" && data.NODE_TYPE =="NT002") {
+	
+	/*if (typeof data.VHC_ID == "undefined" && data.NODE_TYPE =="NT002") {
 		overlay.setMap(routMap.mapInfo[mapId].map);
+	}*/
+
+	if(data.NODE_TYPE == "NT002") {
+		if(routMap.STTN_OVERLAY_OPTION == "ALWAYS") {
+			overlay.setMap(routMap.mapInfo[mapId].map);
+		}
+		
+		else if (routMap.STTN_OVERLAY_OPTION == "MOUSEOVER") {
+			kakao.maps.event.addListener(marker, 'mouseover', routMap.makeOverListener(routMap.mapInfo[mapId].map, null, overlay));
+			kakao.maps.event.addListener(marker, 'mouseout', routMap.makeOutListener(routMap.mapInfo[mapId],null,overlay,null));
+		}
+	}
+	
+	else if(data.NODE_TYPE == "NT003") {
+		if(routMap.CRS_OVERLAY_OPTION == "ALWAYS") {
+			overlay.setMap(routMap.mapInfo[mapId].map);
+		}
+		
+		else if (routMap.CRS_OVERLAY_OPTION == "MOUSEOVER") {
+			kakao.maps.event.addListener(marker, 'mouseover', routMap.makeOverListener(routMap.mapInfo[mapId].map, null, overlay));
+			kakao.maps.event.addListener(marker, 'mouseout', routMap.makeOutListener(routMap.mapInfo[mapId],null,overlay,null));
+		}
 	}
 	
 	else {
+		//버스 마커일때
 		if(idx==focusIdx) {
 			//overlay.setZIndex(10000);
 			//routMap.mapInfo[mapId].overArr[focusIdx].setMap(routMap.mapInfo[mapId].map);
@@ -1581,7 +1661,6 @@ routMap.showBubbleOverlay = function(mapId, data, marker, idx, focusIdx) {
 			kakao.maps.event.addListener(marker, 'mouseout', routMap.makeOutListener(routMap.mapInfo[mapId],null,overlay,null));
 		}		
 	}
-
 	
 	if (typeof data.VHC_ID == "undefined") {
 		routMap.mapInfo[mapId].overlay = overlay;
@@ -3309,6 +3388,18 @@ routMap.showMarker2 = function(mapId, data, idx) {
  * @param etcOnOff : 'on'시 일반노드, 음성노드 show
  */
 routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid) {
+	
+	//버스마커 N일때 초기화시키고 리턴
+	if(data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP && routMap.SHOW_STTN_MARKER == "N") {
+		routMap.removeMarkers(mapId);
+		return;
+	}	
+	
+	else if (data.NODE_TYPE == routMap.NODE_TYPE.CROSS && routMap.SHOW_CRS_MARKER == "N") {
+		routMap.removeMarkers(mapId);
+		return;
+	}
+	
 	// 마커 이미지의 이미지 크기 입니다
 	var imageSize = new kakao.maps.Size(24, 35); 
 	var markerImage = null;
@@ -3364,6 +3455,7 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid) {
 	}
 
 	marker.normalImage = markerImage;
+	
 	routMap.showBubbleOverlay(mapId, data, marker, idx, focusIdx);
 	//routMap.showClickOverlay(mapId, data, idx, focusIdx, marker, markerImage);
 	
@@ -4786,7 +4878,9 @@ routMap.drawRoute = function(mapId, grid, focusIdx) {
 		
 		if(list.length>0){
 			if(focusIdx!=-1){
-				routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				if(routMap.FOCUS_MODE == "Y") {
+					routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				}
 			}
 			else {
 				routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
@@ -4861,12 +4955,12 @@ routMap.drawRoute2 = function(mapId, list, focusIdx) {
 					oldMornStd = list[i].MORN_STD;
 				}
 				
-				var color = "#3396ff";
+				var color = routMap.MORN_STD_01_COLOR;
 				if(mornStd=='MS002'){
-					color = "#cd6c15";
+					color = routMap.MORN_STD_02_COLOR;
 				}
 				else if(mornStd=='MS003'){
-					color = "#FF005E";
+					color = routMap.MORN_STD_03_COLOR;
 				}
 				
 				routMap.drawLine(mapId, list[i], list[i+1], color);
@@ -4876,7 +4970,9 @@ routMap.drawRoute2 = function(mapId, list, focusIdx) {
 		
 		if(list.length>0){
 			if(focusIdx!=-1){
-				routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				if(routMap.FOCUS_MODE == "Y") {
+					routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				}
 			}
 			else {
 				routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
@@ -5048,12 +5144,15 @@ routMap.drawSound = function(mapId, grid, focusIdx) {
 					oldMornStd = list[i].MORN_STD;
 				}
 				
-				var color = "#3396ff";
+				//var color = "#3396f";
+				var color = routMap.MORN_STD_01_COLOR
 				if(mornStd=='MS002'){
-					color = "#cd6c15";
+					//color = "#cd6c15";
+					color = routMap.MORN_STD_02_COLOR
 				}
 				else if(mornStd=='MS003'){
-					color = "#FF005E";
+					//color = "#FF005E";
+					color = routMap.MORN_STD_03_COLOR
 				}
 
 				routMap.drawLine(mapId, list[i], list[i+1], color);
@@ -5064,7 +5163,9 @@ routMap.drawSound = function(mapId, grid, focusIdx) {
 		
 		if(list.length>0){
 			if(focusIdx!=-1){
-				routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				if(routMap.FOCUS_MODE == "Y") {
+					routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				}
 			}
 			else {
 				routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
@@ -5121,14 +5222,17 @@ routMap.showRoute = function(mapId, list, id, type) {
 				}
 				
 				//var color = "#3396ff";
-				var color = "#0bbe39";
+				//var color = "#0bbe39";
+				var color = routMap.MORN_STD_01_COLOR;
 				if(mornStd=='MS002'){
 					//color = "#cd6c15";
-					color = "#ffc700";
+					//color = "#ffc700";
+					color = routMap.MORN_STD_02_COLOR;
 				}
 				else if(mornStd=='MS003'){
 					//color = "#FF005E";
-					color = "#DE2121";
+					//color = "#DE2121";
+					color = routMap.MORN_STD_03_COLOR;
 				}
 				
 				if(list[i].ROUT_ID == list[i+1].ROUT_ID) //동일 노선끼리만 선 연결 되도록 함
@@ -5138,7 +5242,9 @@ routMap.showRoute = function(mapId, list, id, type) {
 
 		if(list.length>0){
 			if(focusIdx!=-1){
-				routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				if(routMap.FOCUS_MODE == "Y") {
+					routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				}
 			}
 			else {
 				//routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
@@ -5180,12 +5286,13 @@ routMap.showRoute2 = function(mapId, list, focusIdx, grid) {
 					oldMornStd = list[i].MORN_STD;
 				}
 				
-				var color = "#3396ff";
+				var color = routMap.MORN_STD_01_COLOR;
+				
 				if(mornStd=='MS002'){
-					color = "#cd6c15";
+					color = routMap.MORN_STD_02_COLOR;
 				}
 				else if(mornStd=='MS003'){
-					color = "#FF005E";
+					color = routMap.MORN_STD_03_COLOR;
 				}
 				
 				if(list[i].ROUT_ID == list[i+1].ROUT_ID) //동일 노선끼리만 선 연결 되도록 함
@@ -5195,7 +5302,9 @@ routMap.showRoute2 = function(mapId, list, focusIdx, grid) {
 
 		if(list.length>0){
 			if(focusIdx!=-1){
-				routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				if(routMap.FOCUS_MODE == "Y") {
+					routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				}
 			}
 			else {
 				routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
@@ -5226,7 +5335,9 @@ routMap.showNode = function(mapId, list, focusIdx, grid) {
 
 		if(list.length>0){
 			if(focusIdx!=-1){
-				routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				if(routMap.FOCUS_MODE == "Y") {
+					routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				}
 			}
 			else {
 				routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
@@ -5253,7 +5364,9 @@ routMap.showMarkerList = function(mapId, list, focusIdx, grid) {
 		
 		if(list.length>0){
 			if(focusIdx!=-1){
-				routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				if(routMap.FOCUS_MODE == "Y") {
+					routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				}
 			}
 			else {
 				routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
@@ -5307,7 +5420,9 @@ routMap.showMarkerListTab = function(mapId, list, focusIdx, grid) {
 		
 		if(list.length>0){
 			if(focusIdx!=-1){
-				routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				//if(routMap.FOCUS_MODE == "Y") {
+					routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				//}
 			}
 			else {
 				routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
@@ -5348,7 +5463,9 @@ routMap.showVehicle = function(mapId, list, vhc_id, grid) {
 
 		if(list.length>0){
 			if(focusIdx!=-1){
-				routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				if(routMap.FOCUS_MODE == "Y") {
+					routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				}
 			}
 			else {
 				routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
@@ -5386,7 +5503,9 @@ routMap.showVehicle2 = function(mapId, json, cur_vhc_id, grid, index, focusIdx) 
 	}
 	if(json != null){
 		if(focusIdx!=-1 && focusIdx == index){
-			routMap.moveMap(mapId, json.GPS_Y, json.GPS_X);
+			if(routMap.FOCUS_MODE == "Y") {
+				routMap.moveMap(mapId, json.GPS_Y, json.GPS_X);
+			}
 		}
 	}
 }
@@ -5423,7 +5542,9 @@ routMap.showVehicleNotEvent = function(mapId, list, vhc_id, grid) {
 
 		if(list.length>0){
 			if(focusIdx!=-1){
-				routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				if(routMap.FOCUS_MODE == "Y"){
+					routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				}
 			}
 			else {
 				routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
@@ -5460,7 +5581,9 @@ routMap.showVehicleClickOverlay2 = function(mapId, json, cur_vhc_id, grid, index
 	}
 	if(json != null){
 		if(focusIdx!=-1 && focusIdx == index){
-			routMap.moveMap(mapId, json.GPS_Y, json.GPS_X);
+			if(routMap.FOCUS_MODE == "Y") {
+				routMap.moveMap(mapId, json.GPS_Y, json.GPS_X);
+			}
 		}
 	}
 }
@@ -5562,7 +5685,9 @@ routMap.moveVehicle = function(mapId, json, index, focusIdx) {
 	
 	if(json != null){
 		if(focusIdx!=-1 && focusIdx == index){
-			//routMap.moveMap(mapId, json.GPS_Y, json.GPS_X);
+			if(routMap.FOCUS_MODE == "Y") {
+				routMap.moveMap(mapId, json.GPS_Y, json.GPS_X);
+			}
 		}
 	}	
 }
@@ -5603,7 +5728,9 @@ routMap.showVehicle3 = function(mapId, json, grid) {
 	routMap.showBusMarker(mapId, json, 0, 0, grid);
 
 	if(json != null){
-		routMap.moveMap(mapId, json.GPS_Y, json.GPS_X);
+		if(routMap.FOCUS_MODE == "Y") {
+			routMap.moveMap(mapId, json.GPS_Y, json.GPS_X);
+		}
 	}
 }
 
@@ -5642,7 +5769,9 @@ routMap.showVehicleClickOverlay = function(mapId, list, vhc_id, grid, gridChk, s
 
 		if(list.length>0){
 			if(focusIdx!=-1){
-				//routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				if(routMap.FOCUS_MODE == "Y") {
+					routMap.moveMap(mapId, list[focusIdx].GPS_Y, list[focusIdx].GPS_X);
+				}
 			}
 			else {
 				//routMap.moveMap(mapId, list[parseInt(list.length/2)].GPS_Y, list[parseInt(list.length/2)].GPS_X);
@@ -5711,12 +5840,12 @@ routMap.drawPolygon = function(mapId, data, name) {
 		// 지도에 표시할 다각형을 생성합니다
 		var polygon = new kakao.maps.Polygon({
 			path:path, // 그려질 다각형의 좌표 배열입니다
-			strokeWeight: 3, // 선의 두께입니다
-			strokeColor: '#39DE2A', // 선의 색깔입니다
-			strokeOpacity: 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
-			strokeStyle: 'solid', // 선의 스타일입니다
-			fillColor: '#A2FF99', // 채우기 색깔입니다
-			fillOpacity: 0.7 // 채우기 불투명도 입니다
+			strokeWeight: routMap.POLYGON_WEIGHT, // 선의 두께입니다
+			strokeColor: routMap.POLYGON_COLOR, // 선의 색깔입니다
+			strokeOpacity: routMap.POLYGON_OPACITY, // 선의 불투명도 입니다 1에서 0 사이의d 값이며 0에 가까울수록 투명합니다
+			strokeStyle: routMap.POLYGON_STYLE, // 선의 스타일입니다
+			fillColor: routMap.FILL_COLOR, // 채우기 색깔입니다
+			fillOpacity: routMap.FILL_OPACITY // 채우기 불투명도 입니다
 		});
 		
 		// 지도에 다각형을 표시합니다
@@ -5738,14 +5867,14 @@ routMap.drawPolygon = function(mapId, data, name) {
 		
 		// 다각형에 마우스오버 이벤트가 발생했을 때 변경할 채우기 옵션입니다
 		var mouseoverOption = { 
-			fillColor: '#EFFFED', // 채우기 색깔입니다
-			fillOpacity: 0.8 // 채우기 불투명도 입니다        
+			fillColor: routMap.POLYGON_MOUSE_OVER_COLOR, // 채우기 색깔입니다
+			fillOpacity: routMap.POLYGON_MOUSE_OVER_OPACITY // 채우기 불투명도 입니다        
 		};
 
 		// 다각형에 마우스아웃 이벤트가 발생했을 때 변경할 채우기 옵션입니다
 		var mouseoutOption = {
-			fillColor: '#A2FF99', // 채우기 색깔입니다 
-			fillOpacity: 0.7 // 채우기 불투명도 입니다        
+			fillColor: routMap.POLYGON_MOUSE_OUT_COLOR , // 채우기 색깔입니다 
+			fillOpacity: routMap.POLYGON_MOUSE_OUT_OPACITY // 채우기 불투명도 입니다        
 		};
 
 		// 다각형에 마우스오버 이벤트를 등록합니다

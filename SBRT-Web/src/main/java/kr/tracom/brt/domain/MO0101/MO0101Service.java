@@ -47,12 +47,12 @@ public class MO0101Service extends ServiceSupport{
 	KafkaProducer kafkaProducer;	
 	
 	public List MO0101G0R0() throws Exception{
-		Map param = getSimpleDataMap("dma_search");
+		Map param = getSimpleDataMap("dma_search_MO0101");
 		return mo0101Mapper.MO0101G0R0(param);
 	}
 	
 	public List MO0101G1R0() throws Exception{
-		Map param = getSimpleDataMap("dma_search");
+		Map param = getSimpleDataMap("dma_search_MO0101");
 		return mo0101Mapper.MO0101G1R0(param);
 	}
 	
@@ -61,25 +61,25 @@ public class MO0101Service extends ServiceSupport{
 	}
 	
 	public List MO0101SHI1() throws Exception{
-		Map param = getSimpleDataMap("dma_search");		
+		Map param = getSimpleDataMap("dma_search_MO0101");		
 		return mo0101Mapper.MO0101SHI1(param);
 	}
 	
 	public List MO0101G2R0() throws Exception {
 		// TODO Auto-generated method stub
-		Map param = getSimpleDataMap("dma_search");
+		Map param = getSimpleDataMap("dma_search_MO0101");
 		return mo0101Mapper.MO0101G2R0(param);
 	}
 	
 	public List selectCategory() throws Exception {
 		// TODO Auto-generated method stub
-		Map param = getSimpleDataMap("dma_search");
+		Map param = getSimpleDataMap("dma_search_MO0101");
 		return mo0101Mapper.selectCategory(param);
 	}
 	
 	public List selectSigOper() throws Exception {
 		// TODO Auto-generated method stub
-		Map param = getSimpleDataMap("dma_search");
+		Map param = getSimpleDataMap("dma_search_MO0101");
 		return mo0101Mapper.selectSigOper(param);
 	}
 	
@@ -90,7 +90,7 @@ public class MO0101Service extends ServiceSupport{
 
 	public List<Map> MO0101SCK() throws Exception{
 		
-		Map param = getSimpleDataMap("dma_sub_search");
+		Map param = getSimpleDataMap("dma_sub_search_MO0101");
 		
 		String sttnId = String.valueOf(param.get("NODE_ID"));
 		
@@ -118,7 +118,7 @@ public class MO0101Service extends ServiceSupport{
 	//메시지 전송 소켓
 	public List<Map> MO0101SCK1() throws Exception{
 		
-		Map param = getSimpleDataMap("dma_search");
+		Map param = getSimpleDataMap("dma_search_MO0101");
 		
 		String vhcId = String.valueOf(param.get("VHC_ID")); //차량 아이디
 		String message = String.valueOf(param.get("MSG_CONTS")); //메시지 내용
@@ -148,27 +148,27 @@ public class MO0101Service extends ServiceSupport{
 	}	
 	
 	public List MO0101G3R0() throws Exception{
-		Map param = getSimpleDataMap("dma_search");
+		Map param = getSimpleDataMap("dma_search_MO0101");
 		return mo0101Mapper.MO0101G3R0(param);
 	}
 	
 	public List MO0101G4R0() throws Exception{
-		Map param = getSimpleDataMap("dma_search");
+		Map param = getSimpleDataMap("dma_search_MO0101");
 		return mo0101Mapper.MO0101G4R0(param);
 	}
 	
 	public List MO0101G5R0() throws Exception{
-		Map param = getSimpleDataMap("dma_search");
+		Map param = getSimpleDataMap("dma_search_MO0101");
 		return mo0101Mapper.MO0101G5R0(param);
 	}
 	
 	public List MO0101G6R0() throws Exception{
-		Map param = getSimpleDataMap("dma_search");
+		Map param = getSimpleDataMap("dma_search_MO0101");
 		return mo0101Mapper.MO0101G6R0(param);
 	}
 	
 	public List MO0101G7R0() throws Exception{
-		Map param = getSimpleDataMap("dma_search");
+		Map param = getSimpleDataMap("dma_search_MO0101");
 		return mo0101Mapper.MO0101G7R0(param);
 	}
 	
@@ -179,7 +179,7 @@ public class MO0101Service extends ServiceSupport{
 	//신호등 현시 요청 소켓
 	public List<Map> MO0101SCK2() throws Exception{
 		
-		List<Map<String, Object>> param = getSimpleList("dlt_BMS_ROUT_NODE_CMPSTN4");
+		List<Map<String, Object>> param = getSimpleList("dlt_BMS_ROUT_NODE_CMPSTN4_MO0101");
 		List<String> crsList = new ArrayList<>(); //교차로 리스트
 		
 		try {
@@ -267,7 +267,7 @@ public class MO0101Service extends ServiceSupport{
 		return null;
 	}		
 	public List selectSigPhaseInfo() throws Exception{
-		Map param = getSimpleDataMap("dma_sub_search");
+		Map param = getSimpleDataMap("dma_sub_search_MO0101");
 		return mo0101Mapper.selectSigPhaseInfo(param);
 	}
 	
@@ -275,4 +275,13 @@ public class MO0101Service extends ServiceSupport{
 		return mo0101Mapper.selectGrgRdsInfo();
 	}
 	
+	//모니터링 파라미터 분리를 위해 공통코드에서 빼오고 따로 사용
+	public List<Map<String, Object>> selectNodeDispListByRepRout() throws Exception {
+		Map<String, Object> map = getSimpleDataMap("dma_search_MO0101");
+		return mo0101Mapper.selectNodeDispListByRepRout(map);
+	}
+	
+	public List<Map<String, Object>> selectRepRoutItem() throws Exception {
+		return mo0101Mapper.selectRepRoutItem();
+	}
 }
