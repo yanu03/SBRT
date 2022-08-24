@@ -65,6 +65,12 @@ public class MO0203Controller extends ControllerSupport {
 	public @ResponseBody Map<String, Object> FM0202G0R1() throws Exception {
 		result.setData("dlt_PARAM_KIND", mo0203Service.MO0203P0R1());
 		return result.getResult();
+	}
+	
+	@RequestMapping("/mo/selectCurOperVhcList")
+	public @ResponseBody Map<String, Object> selectCurOperVhcList() throws Exception {
+		result.setData("dlt_BRT_CUR_OPER_INFO", mo0203Service.selectCurOperVhcList());
+		return result.getResult();
 	}	
 	
 }

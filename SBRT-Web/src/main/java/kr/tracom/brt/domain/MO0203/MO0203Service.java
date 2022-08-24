@@ -81,4 +81,9 @@ public class MO0203Service extends ServiceSupport{
 		return mo0203Mapper.MO0203P0R1();
 	}
 	
+	public List selectCurOperVhcList() throws Exception{
+		Map param = getSimpleDataMap("dma_search");
+		return mo0203Mapper.selectCurOperVhcList(param);
+	}
+	
 }

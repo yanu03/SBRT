@@ -113,4 +113,94 @@
 			PARAM_KIND
 	</select>	
 	
+	<select id="selectCurOperVhcList" resultType="Map" parameterType="Map">
+		SELECT 				A.OPER_DT
+						,	A.REP_ROUT_ID
+						,	A.VHC_ID
+						,	A.ROUT_ID
+						,	A.ALLOC_NO
+						,	A.OPER_SN
+						,	A.NODE_ID
+						,	A.COR_ID
+						,	A.VHC_NO
+						,	A.DRV_ID
+						,	A.GPS_X
+						,	A.GPS_Y
+						,	A.GPS_X_RAW
+						,	A.GPS_Y_RAW
+						,	A.TM_X
+						,	A.TM_Y
+						,	A.OPER_STS
+						,	A.BUS_STS
+						,	A.OBE_STS
+						,	A.SNSTVTY
+						,	A.DRV_ANGLE
+						,	A.CUR_SPD
+						,	A.ACLRTN_YN
+						,	A.DCLRTN_YN
+						,	A.CUR_STOP_TM
+						,	A.OPER_LEN
+						,	A.REP_ROUT_NM
+						,	A.NODE_SN
+						,	A.NODE_TYPE
+						,	A.ARRV_TM
+						,	A.DPRT_TM
+						,	A.LINK_ID
+						,	A.LINK_SN
+						,	A.LINK_SPD
+						,	A.GET_OFF_CNT
+						,	A.PSG_CNT
+						,	A.NEXT_NODE_ID
+						,	A.NEXT_NODE_ARRV_TM
+						,	A.DOOR_CD
+						,	A.DOOR_TM					
+						,	B.REP_ROUT_NM
+						,   B.ROUT_NM
+						,   C.CHAS_NO
+						,   C.MAKER
+						,   D.DRV_NM
+						,   E.COMP_NM
+						,	A.PRV_PLCE_NM
+						, 	F.NODE_TYPE
+						
+						,	H.GPS_X AS ST_GPS_X
+						,	H.GPS_Y AS ST_GPS_Y
+						,	I.GPS_X AS ED_GPS_X
+						,	I.GPS_Y AS ED_GPS_Y
+						
+		FROM  			BRT_CUR_OPER_INFO A
+		LEFT JOIN   	BMS_ROUT_MST	B
+			ON				A.ROUT_ID = B.ROUT_ID
+		LEFT JOIN	  	BMS_VHC_MST C
+			ON				A.VHC_ID = C.VHC_ID
+		LEFT JOIN	  	BMS_DRV_MST D
+			ON				A.DRV_ID = D.DRV_ID		
+		LEFT JOIN	  	BMS_TRANSCOMP_MST E
+			ON				C.COMP_ID = E.COMP_ID
+		LEFT JOIN		BMS_NODE_MST F
+			ON				A.NEXT_NODE_ID = F.NODE_TYPE
+			
+		LEFT JOIN 		BMS_LINK_MST G
+			ON				A.LINK_ID = G.LINK_ID
+		LEFT JOIN 		BMS_NODE_MST H
+			ON				G.ST_NODE_ID = H.NODE_ID
+		LEFT JOIN		BMS_NODE_MST I
+			ON				G.ED_NODE_ID = I.NODE_ID				
+			
+		WHERE			A.OPER_DT = FN_DATE_TO_OPER_DT(NOW()) <!-- DATE_FORMAT(NOW(), '%Y/%m/%d') -->
+		AND				A.OPER_STS != 'OS002'
+		AND 			A.OPER_STS != 'OS009'
+		AND				B.DEL_YN != 'Y'
+			<if test="CONTENT1 != null">
+				AND A.REP_ROUT_ID = #{CONTENT1}
+			</if>
+			<if test="CONTENT2 != ''">
+				AND A.ROUT_ID = #{CONTENT2}
+			</if>
+			<!-- <if test="CONTENT3 != null and CONTENT3 != ''">
+				AND	A.VHC_NO LIKE CONCAT('%', #{CONTENT3}, '%')
+			</if> -->
+		ORDER BY		A.REP_ROUT_ID, A.ROUT_ID, VHC_ID	
+	</select>	
+	
 </mapper>

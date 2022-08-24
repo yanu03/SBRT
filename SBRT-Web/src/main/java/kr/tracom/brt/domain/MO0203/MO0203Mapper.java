@@ -21,4 +21,6 @@ public interface MO0203Mapper {
 	public List MO0203P0R0(Map param);
 	
 	public List MO0203P0R1();
+	
+	public List selectCurOperVhcList(Map param);
 }

@@ -761,6 +761,7 @@
 							
 							//focus가 된 차량이면 이력 insert
 							if(dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID") == jsonObj.VHC_ID){
+								debugger;
 								dlt_BRT_OPER_EVENT_HIS_MO0101.insertRow(0);
 								var today = new Date();   
 								var hours = leadingZeros(today.getHours(), 2);
@@ -957,6 +958,7 @@
 						curIndexArr = dlt_BRT_CUR_OPER_INFO_MO0101.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);			
 						
 						if(curIndexArr.length != 0) {
+							debugger;
 							dlt_BRT_CUR_OPER_INFO_MO0101.setRowJSON(curIndexArr[0], jsonObj, true);
 							var today = new Date();   
 							var hours = leadingZeros(today.getHours(), 2);
@@ -988,7 +990,7 @@
 		//			setTimeout(function() {				
 		//				routMap.removeAllBusOverlay("map_MO0101_vehicle");				
 		//				routMap.removeAllOverlay("map_MO0101_sttn");
-						routMap.removeAllOverlay("map_MO0101_crs");					
+		//				routMap.removeAllOverlay("map_MO0101_crs");					
 						var curIndexArr = dlt_BRT_CUR_OPER_INFO_MO0101.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 						
 						if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {						
@@ -1239,6 +1241,9 @@
 	
 	
 	scwin.MO0101G1_onrowindexchange = function(row,oldRow) {
+		dlt_BRT_OPER_EVENT_HIS_MO0101.removeAll();
+		dlt_BRT_DSPTCH_LOG_MO0101.removeAll();		
+		
 		gbMap.setLevel(1);
 		for(var i=0; i<routMap.mapInfo["map_MO0101_crs"].markers.length; i++){
 			routMap.mapInfo["map_MO0101_crs"].markers[i].setZIndex(1);
@@ -2010,7 +2015,7 @@
 							<xf:group id="MO0101T0">
 								<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.MO0101G0_onrowindexchange" ev:oncellclick=""
 									showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="No."
-									sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
+									sortable="true" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 									fixedColumnWithHidden="true" dataList="data:dlt_BRT_CUR_OPER_INFO_MO0101" ignoreCellClick="false" style="height:212px;"
 									autoFit="lastColumn" visibleRowNum="" id="MO0101G0" class="cm_grid left" tooltipPositionY="" focusMode="row" noResultMessage="데이터 수신중">
 									<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
@@ -2029,10 +2034,10 @@
 												value="속도(km/h)" blockSelect="false" displayMode="label">
 											</w2:column>
 											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column5"
-												value="위도" blockSelect="false" displayMode="label">
+												value="위도" blockSelect="false" displayMode="label" sortable="false">
 											</w2:column>
 											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column8"
-												value="경도" blockSelect="false" displayMode="label">
+												value="경도" blockSelect="false" displayMode="label" sortable="false">
 											</w2:column>
 											<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px" id="column12"
 												value="발생시간" blockSelect="false" displayMode="label">
@@ -2085,7 +2090,7 @@
 									<xf:group adaptive="layout" class="w2tb" id="MO0101F4" style="">
 										<w2:gridView sortEvent="onclick" ev:onrowindexchange="scwin.MO0101G3_onrowindexchange"
 											ev:oncellclick="" showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false"
-											rowNumHeaderValue="No." sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
+											rowNumHeaderValue="No." sortable="true" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 											fixedColumnWithHidden="true" dataList="data:dlt_BRT_OPER_EVENT_HIS_MO0101" ignoreCellClick="false" style="height:130px;"
 											autoFit="lastColumn" visibleRowNum="" id="MO0101G3" class="cm_grid left" tooltipPositionY="" focusMode="row" noResultMessage="데이터 수신중">
 											<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
@@ -2138,7 +2143,7 @@
 									<xf:group adaptive="layout" class="w2tb" id="MO0101F0" style="">
 										<w2:gridView sortEvent="onclick" ev:onrowindexchange=""
 											ev:oncellclick="" showSortableImage="" rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false"
-											rowNumHeaderValue="No." sortable="false" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
+											rowNumHeaderValue="No." sortable="true" rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false"
 											fixedColumnWithHidden="true" dataList="data:dlt_BRT_DSPTCH_LOG_MO0101" ignoreCellClick="false" style="height:130px;"
 											autoFit="lastColumn" visibleRowNum="" id="MO0101G4" class="cm_grid left" tooltipPositionY="" focusMode="row" noResultMessage="데이터 수신중">
 											<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
