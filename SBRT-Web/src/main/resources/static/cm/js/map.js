@@ -3597,51 +3597,6 @@ routMap.showSigMarker = function(mapId, baseData, socketData) {
 }
 
 /**
- *  신호마커변경 (해당 신호 마커만 이미지 변경)
-
- * @param mapId : 대상 map id
- * @param baseData : db 데이터
- * @param socketData : 소켓으로 전송받은 데이터
- */
-routMap.changeSigMarker = function(mapId, baseData, socketData) {
-	var imageSize = new kakao.maps.Size(32, 15); 
-	var markerImage = null;	
-	var Zindex = -1;
-	
-	if(routMap.mapInfo[mapId].isShowCrs == "on"){
-		
-		zIndex = routMap.ZINDEX_SIG_MARKER;
-		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/light_red.png", imageSize);
-		if(socketData != null && typeof socketData != "undefined"){
-			var phaseNoArr = baseData.PHASE_NO.split(',');
-			
-			for(i in phaseNoArr) {
-				if(socketData.CRS_ID == baseData.CRS_ID && socketData.PHASE_NO == phaseNoArr[i]){
-					markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/light_green.png", imageSize);
-				}
-			}
-		}
-		
-		
-		
-		//if(data.NODE_TYPE == routMap.NODE_TYPE.VERTEX) {
-		//}
-	}	
-	
-	var marker = null;
-	marker = new kakao.maps.Marker({
-		position : new kakao.maps.LatLng(baseData.GPS_Y, baseData.GPS_X), // Marker의 중심좌표 // 설정.
-		image : markerImage,
-		zIndex: routMap.ZINDEX_SIG_MARKER
-	});	
-	
-	if(markerImage != null)
-		marker.setMap(routMap.mapInfo[mapId].map); //Marker가 표시될 Map 설정.
-	
-	routMap.mapInfo[mapId].markers.push(marker)	
-}
-
-/**
  *  마커 만 보이기 : 이벤트 없음.. 해당 함수에 click이나 이벤트 처리하면 안됨
  * @param mapId : 대상 map id
  * @param data : 그리드의 data
