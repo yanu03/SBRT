@@ -21,16 +21,34 @@ var routMap = {
 	SHOW_BUS_OVERLAY : "Y", //버스 오버레이 여부(Y, N)
 	SHOW_STTN_MARKER : "Y", //정류소 마커 여부(Y, N)
 	SHOW_STTN_OVERLAY : "Y", //정류소 오버레이 여부(Y, N)
-	STTN_OVERLAY_OPTION : "ALWAYS", //정류소 오버레이가 Y일때, 항상 띄우게 또는 마커 마우스 오버이벤트로 설정 설정 (ALWAYS, MOUSEOVER)
+	STTN_OVERLAY_OPTION : "MOUSEOVER", //정류소 오버레이가 Y일때, 항상 띄우게 또는 마커 마우스 오버이벤트로 설정 설정 (ALWAYS, MOUSEOVER)
 	SHOW_CRS_MARKER : "Y", //교차로 마커 여부(Y, N)
 	SHOW_CRS_OVERLAY : "Y", //교차로 오버레이 여부(Y, N)
 	CRS_OVERLAY_OPTION : "MOUSEOVER", //교차로 오버레이가 Y일때, 항상 띄우게 또는 마커 마우스 오버이벤트로 설정 설정 (ALWAYS, MOUSEOVER)
 	
 	SHOW_DISPATCH_OVERLAY : "Y", //디스패치 오버레이 여부(Y, N) 디스패치 오버레이 N 설정시 정차중 디스패치도 오지 않습니다.
 	SHOW_EVENT_OVERLAY : "Y", //이벤트 오버레이 여부(Y, N)
-	
+	//================================마커, 오버레이(팝업) 관련=====================================
 
-	//================================마커, 오버레이(팝업) 관련======================================
+	
+	//================================지도 확대 관련 ==============================================
+	LEVEL : 5, // 맵 확대 레벨(1~ 14)
+	MIN_LEVEL : 1, //맵 최소 확대 레벨(1~ 14)
+	MAX_LEVEL : 7, //맵 최대 확대 레벨(1~ 14)
+	//================================지도 확대 관련 ==============================================
+	
+	
+	//================================지도 이동 관련===============================================
+	FOCUS_MODE : "N", //차량이 움직일때마다 지도의 중심이 해당 버스를 따라갈지 여부(Y, N)
+	//================================지도 이동 관련===============================================
+	
+	
+	//================================시간값 관련=================================================
+	RECEIVE_WAIT_TIME : 60, //websocket 데이터를 받을 때 기존 수신 시간에서 RECEIVE_WAIT_TIME만큼 초과할 경우 해당 row를 삭제합니다. (단위 : sec)
+	DISPATCH_OVERLAY_TIME : 2500, //디스패치 오버레이 보여줄 시간(단위 : ms)
+	
+	//================================시간값 관련=================================================
+
 	
 	
 	//================================Z-Index 관련==============================================
@@ -47,20 +65,6 @@ var routMap = {
 	ZINDEX_DISPATCH_OVERLAY : 100000, //디스패치 오버레이 z-index
 	ZINDEX_EVENT_OVERLAY : 100000, //이벤트 오버레이 z-index
 	//================================Z-Index 관련==============================================
-	
-	
-	//================================지도 확대 관련 ===============================================
-	LEVEL : 5, // 맵 확대 레벨(1~ 14)
-	MIN_LEVEL : 1, //맵 최소 확대 레벨(1~ 14)
-	MAX_LEVEL : 7, //맵 최대 확대 레벨(1~ 14)
-	//================================지도 확대 관련 ===============================================
-	
-	
-	//================================지도 이동 관련===============================================
-	FOCUS_MODE : "N", //차량이 움직일때마다 지도의 중심이 해당 버스를 따라갈지 여부(Y, N)
-	ONROW_MOVE : "Y", //차량 그리드 행을 바꿀때마다 지도의 중심이 해당 버스를 따라갈지 여부(Y, N)
-	//================================지도 이동 관련===============================================
-	
 	
 	//================================색깔, 크기 관련===============================================
 	ROUT_COLOR : "#FF005E", //노선 기본 HEX color값
@@ -1649,7 +1653,7 @@ routMap.showBubbleOverlay = function(mapId, data, marker, idx, focusIdx) {
 	}*/
 
 	//정류소, 교차로 마커일때
-	if(typeof data.VHC_Id == "undefined") {
+	if(typeof data.VHC_ID == "undefined") {
 		if(routMap.SHOW_STTN_OVERLAY == "Y" && data.NODE_TYPE == routMap.NODE_TYPE.BUSSTOP) {
 			if(routMap.STTN_OVERLAY_OPTION == "ALWAYS") {
 				overlay.setMap(routMap.mapInfo[mapId].map);
@@ -1960,7 +1964,8 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 		if(Math.abs(parseInt(dsptchMessage) >= 60)) {
 			min = Math.abs(parseInt(dsptchMessage/60)) + "분 ";
 		}
-			sec = Math.abs(parseInt(dsptchMessage%60)) + "초 ";		
+			//sec = Math.abs(parseInt(dsptchMessage%60)) + "초 ";		
+			sec = Math.abs(parseInt(dsptchMessage%60));		
 	}
 	
 
@@ -1980,13 +1985,16 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 			}*/
 			var dsptchKind = data.DSPTCH_KIND;
 			if(dsptchKind == "DK001") {
-				showMessage = "정상 운행중입니다.";
+				//showMessage = "정상 운행중입니다.";
+				showMessage = util.MSG.DISPATCH_MSG_NORMAL;
 			}
 			else if(dsptchKind == "DK002") {
-				showMessage = min + sec + "느립니다."; 
+				//showMessage = min + sec + "느립니다."; 
+				showMessage = min + sec + util.MSG.DISPATCH_MSG_DELAY; 
 			}
 			else if(dsptchKind == "DK003") {
-				showMessage = min + sec + "빠릅니다."; 
+				//showMessage = min + sec + "빠릅니다."; 
+				showMessage = min + sec + util.MSG.DISPATCH_MSG_SPEED; 
 			}
 		}	
 		var dsptchMsg = "";
@@ -2057,7 +2065,8 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 	}		
 		
 	else if (routMap.mapInfo[mapId].divDsptch == "DP003") {
-		showMessage = min+ sec +"정차하세요.";
+		//showMessage = min+ sec +"정차하세요.";
+		showMessage = min+ sec + util.MSG.DISPATCH_MSG_STOP;
 		$("#stopMessage").text(showMessage);
 	}
 	
@@ -2072,7 +2081,7 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 					routMap.mapInfo[mapId].dsptchOverArr[0] = null;
 					//routMap.mapInfo[mapId].dsptchOverArr = null;
 				}
-			},2500);
+			},routMap.DISPATCH_OVERLAY_TIME);
 		} 
 	//	else if(routMap.mapInfo[mapId].dsptchOverArr.length != 0 && routMap.mapInfo[mapId].eventOverArr.length != 0) {	
 		else if(routMap.mapInfo[mapId].dsptchOverArr[0] != null && routMap.mapInfo[mapId].eventOverArr[0] != null) {	
@@ -2088,7 +2097,7 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 					routMap.mapInfo[mapId].dsptchOverArr[0] = null;
 					//routMap.mapInfo[mapId].dsptchOverArr = null;
 				}			
-			},2500);		
+			},routMap.DISPATCH_OVERLAY_TIME);		
 		}		
 	}
 	
@@ -3503,6 +3512,7 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid) {
 	
 	// 마커에 click 이벤트를 등록합니다
 	kakao.maps.event.addListener(marker, 'click', function() {
+		debugger;
 		//일단 하드코딩 문제 생길시 수정 필요
 //		routMap.removeRightClickOverlay("map_MO0101_vehicle");
 //		routMap.removeAllOverlay("map_MO0101_sttn");		
@@ -3550,6 +3560,51 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid) {
 routMap.showSigMarker = function(mapId, baseData, socketData) {
 	var imageSize = new kakao.maps.Size(32, 15); 
 	//var imageSize = new kakao.maps.Size(30, 20); 
+	var markerImage = null;	
+	var Zindex = -1;
+	
+	if(routMap.mapInfo[mapId].isShowCrs == "on"){
+		
+		zIndex = routMap.ZINDEX_SIG_MARKER;
+		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/light_red.png", imageSize);
+		if(socketData != null && typeof socketData != "undefined"){
+			var phaseNoArr = baseData.PHASE_NO.split(',');
+			
+			for(i in phaseNoArr) {
+				if(socketData.CRS_ID == baseData.CRS_ID && socketData.PHASE_NO == phaseNoArr[i]){
+					markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/light_green.png", imageSize);
+				}
+			}
+		}
+		
+		
+		
+		//if(data.NODE_TYPE == routMap.NODE_TYPE.VERTEX) {
+		//}
+	}	
+	
+	var marker = null;
+	marker = new kakao.maps.Marker({
+		position : new kakao.maps.LatLng(baseData.GPS_Y, baseData.GPS_X), // Marker의 중심좌표 // 설정.
+		image : markerImage,
+		zIndex: routMap.ZINDEX_SIG_MARKER
+	});	
+	
+	if(markerImage != null)
+		marker.setMap(routMap.mapInfo[mapId].map); //Marker가 표시될 Map 설정.
+	
+	routMap.mapInfo[mapId].markers.push(marker)	
+}
+
+/**
+ *  신호마커변경 (해당 신호 마커만 이미지 변경)
+
+ * @param mapId : 대상 map id
+ * @param baseData : db 데이터
+ * @param socketData : 소켓으로 전송받은 데이터
+ */
+routMap.changeSigMarker = function(mapId, baseData, socketData) {
+	var imageSize = new kakao.maps.Size(32, 15); 
 	var markerImage = null;	
 	var Zindex = -1;
 	
@@ -5635,7 +5690,6 @@ routMap.showVehicleClickOverlay2 = function(mapId, json, cur_vhc_id, grid, index
  * @param focusIdx : 포커스된 index
  */
 routMap.moveVehicle = function(mapId, json, index, focusIdx) {
-	debugger;
 	/*if(typeof routMap.mapInfo[mapId].busMarkers[index] == "undefined" || typeof routMap.mapInfo[mapId].busOverArr[index] == "undefined"){
 		
 	}*/
@@ -5696,7 +5750,7 @@ routMap.moveVehicle = function(mapId, json, index, focusIdx) {
 	
 	var latLng = new kakao.maps.LatLng(json.GPS_Y, json.GPS_X);
 	
-	//if(routMap.mapInfo[mapId].divEvent != "ET001") {
+	//if(routMap.mapInfo[mapId].divEvent != "ET001") {d
 		if(typeof routMap.mapInfo[mapId].busMarkers[index] != "undefined"){
 			routMap.mapInfo[mapId].busMarkers[index].setPosition(latLng);
 		}
@@ -5796,7 +5850,6 @@ routMap.showVehicleClickOverlay = function(mapId, list, vhc_id, grid, gridChk, s
 			
 			
 			if(list[i].VHC_ID == vhc_id){
-				debugger;
 				focusIdx = i;
 				routMap.showBusMarkerClickOverlay(mapId, list[i], i, focusIdx, grid, gridChk, socketVhcId);
 			}
