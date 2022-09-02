@@ -1354,8 +1354,8 @@ public class EventThread extends Thread {
 					dispatchLog.put("DSPTCH_KIND", dpLv);
 					dispatchLog.put("DRV_ID", drvId);
 					dispatchLog.put("DSPTCH_CONTS", dispatch.getMessage());
-					dispatchLog.put("GPS_X", curInfo.get("LONGITUDE"));
-					dispatchLog.put("GPS_Y", curInfo.get("LATITUDE"));
+					dispatchLog.put("GPS_X", curInfo.get("GPS_X"));
+					dispatchLog.put("GPS_Y", curInfo.get("GPS_Y"));
 					dispatchLog.put("REP_ROUT_NM", curInfo.get("REP_ROUT_NM"));
 					dispatchLog.put("ROUT_NM", curInfo.get("ROUT_NM"));
 
