@@ -305,9 +305,6 @@
 						<w2:column id="TM_Y" name="name6" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
-				<w2:dataList baseNode="list" repeatNode="map" id="dataList1" saveRemovedData="true">
-					<w2:columnInfo></w2:columnInfo>
-				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
 			<xf:submission id="sub_MO0101G0R0" ref="data:json,dma_search_MO0101" target="data:json,dlt_BRT_CUR_OPER_INFO_MO0101" action="/mo/MO0101G0R0"
@@ -735,15 +732,15 @@
 						
 						//order No. A.REP_ROUT_ID, A.ROUT_ID, VHC_ID
 						if(curIndexArr.length == 0) {
-							dlt_BRT_CUR_OPER_INFO_MO0101.insertRow(0);	
-							dlt_BRT_CUR_OPER_INFO_MO0101.setRowJSON(0, jsonObj, false);
+							var insertRow = dlt_BRT_CUR_OPER_INFO_MO0101.insertRow();	
+							dlt_BRT_CUR_OPER_INFO_MO0101.setRowJSON(insertRow, jsonObj, true);
 							
 							var today = new Date();   
 							var hours = leadingZeros(today.getHours(), 2);
 							var minutes = leadingZeros(today.getMinutes(), 2); 
 							var seconds = leadingZeros(today.getSeconds(), 2); 
 							var timeResult = hours + ':' + minutes + ':' + seconds
-							dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(0, "OCR_DTM", timeResult);
+							dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(insertRow, "OCR_DTM", timeResult);
 							/*
 							//정렬시에 focus가 바뀔수도 있기 때문에 주석처리함.
 														
@@ -764,17 +761,18 @@
 							
 							//focus가 된 차량이면 이력 insert
 							if(dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID") == jsonObj.VHC_ID){
-								dlt_BRT_OPER_EVENT_HIS_MO0101.insertRow(0);
+								var insertRow = dlt_BRT_OPER_EVENT_HIS_MO0101.insertRow();
+								
 								var today = new Date();   
 								var hours = leadingZeros(today.getHours(), 2);
 								var minutes = leadingZeros(today.getMinutes(), 2); 
 								var seconds = leadingZeros(today.getSeconds(), 2); 
 								var timeResult = hours + ':' + minutes + ':' + seconds
 								
-								dlt_BRT_OPER_EVENT_HIS_MO0101.setCellData(0, "OCR_DTM", timeResult);
-								dlt_BRT_OPER_EVENT_HIS_MO0101.setCellData(0, "EVT_TYPE", jsonObj.EVT_CODE);
-								dlt_BRT_OPER_EVENT_HIS_MO0101.setCellData(0, "ROUT_NM", jsonObj.ROUT_NM);
-								dlt_BRT_OPER_EVENT_HIS_MO0101.setCellData(0, "VHC_NO", jsonObj.VHC_NO);
+								dlt_BRT_OPER_EVENT_HIS_MO0101.setCellData(insertRow, "OCR_DTM", timeResult);
+								dlt_BRT_OPER_EVENT_HIS_MO0101.setCellData(insertRow, "EVT_TYPE", jsonObj.EVT_CODE);
+								dlt_BRT_OPER_EVENT_HIS_MO0101.setCellData(insertRow, "ROUT_NM", jsonObj.ROUT_NM);
+								dlt_BRT_OPER_EVENT_HIS_MO0101.setCellData(insertRow, "VHC_NO", jsonObj.VHC_NO);
 								//dlt_BRT_OPER_EVENT_HIS_MO0101.setCellData(0, "EVT_CODE", jsonObj.EVT_CODE);
 								//var eventType = dlt_BRT_OPER_EVENT_HIS_MO0101.getcellData(0, "EVT_CODE");
 								var eventCode = jsonObj.EVT_CODE;
@@ -866,12 +864,12 @@
 									eventMessage = "차고지출발";
 									break;											
 								}
-								dlt_BRT_OPER_EVENT_HIS_MO0101.setCellData(0, "EVT_DATA", eventMessage);
+								dlt_BRT_OPER_EVENT_HIS_MO0101.setCellData(insertRow, "EVT_DATA", eventMessage);
 								
 							}
 							
 							
-							dlt_BRT_CUR_OPER_INFO_MO0101.setRowJSON(curIndexArr[0], jsonObj, false);
+							dlt_BRT_CUR_OPER_INFO_MO0101.setRowJSON(curIndexArr[0], jsonObj, true);
 							var today = new Date();   
 							var hours = leadingZeros(today.getHours(), 2);
 							var minutes = leadingZeros(today.getMinutes(), 2); 
@@ -960,10 +958,10 @@
 						
 			
 						if(curIndexArr.length == 0) {
-							dlt_BRT_CUR_OPER_INFO_MO0101.insertRow(0);	
-							dlt_BRT_CUR_OPER_INFO_MO0101.setRowJSON(0, jsonObj, false);
+							var insertRow = dlt_BRT_CUR_OPER_INFO_MO0101.insertRow();	
+							dlt_BRT_CUR_OPER_INFO_MO0101.setRowJSON(insertRow, jsonObj, true);
 							
-							dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(0, "OCR_DTM", timeResult);
+							dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(insertRow, "OCR_DTM", timeResult);
 							
 							//order No. A.REP_ROUT_ID, A.ROUT_ID, VHC_ID
 							/*
@@ -1001,8 +999,8 @@
 						if(curIndexArr.length != 0) {
 						
 						
-							dlt_BRT_CUR_OPER_INFO_MO0101.setRowJSON(curIndexArr[0], jsonObj, false);
-							dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(0, "OCR_DTM", timeResult);
+							dlt_BRT_CUR_OPER_INFO_MO0101.setRowJSON(curIndexArr[0], jsonObj, true);
+							dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "OCR_DTM", timeResult);
 							dataRowJson = dlt_BRT_CUR_OPER_INFO_MO0101.getDataRow(curIndexArr[0]);
 							routMap.moveVehicle("map_MO0101_vehicle", dataRowJson, curIndexArr[0], MO0101G0.getFocusedRowIndex());									
 							
@@ -1032,18 +1030,18 @@
 							}
 							
 							
-							dlt_BRT_DSPTCH_LOG_MO0101.insertRow(0);
+							var insertRow = dlt_BRT_DSPTCH_LOG_MO0101.insertRow();
 							
 							var today = new Date();   
 							var hours = leadingZeros(today.getHours(), 2);
 							var minutes = leadingZeros(today.getMinutes(), 2); 
 							var seconds = leadingZeros(today.getSeconds(), 2); 
 							var timeResult = hours + ':' + minutes + ':' + seconds
-							dlt_BRT_DSPTCH_LOG_MO0101.setCellData(0, "SEND_DATE", timeResult);
-							dlt_BRT_DSPTCH_LOG_MO0101.setCellData(0, "ROUT_NM", jsonObj.ROUT_NM);
-							dlt_BRT_DSPTCH_LOG_MO0101.setCellData(0, "VHC_NO", jsonObj.VHC_NO);
+							dlt_BRT_DSPTCH_LOG_MO0101.setCellData(insertRow, "SEND_DATE", timeResult);
+							dlt_BRT_DSPTCH_LOG_MO0101.setCellData(insertRow, "ROUT_NM", jsonObj.ROUT_NM);
+							dlt_BRT_DSPTCH_LOG_MO0101.setCellData(insertRow, "VHC_NO", jsonObj.VHC_NO);
 							
-							dlt_BRT_DSPTCH_LOG_MO0101.setCellData(0, "DSPTCH_DIV", jsonObj.DSPTCH_DIV);
+							dlt_BRT_DSPTCH_LOG_MO0101.setCellData(insertRow, "DSPTCH_DIV", jsonObj.DSPTCH_DIV);
 							
 							var dsptchDiv = jsonObj.DSPTCH_DIV;
 							var dsptchConts = jsonObj.MESSAGE;
@@ -1098,13 +1096,13 @@
 								
 								//정차중 디스패치일 경우
 								else if(dsptchDiv == "DP003") {
-									contsResult = min + sec + "정차하세요.";	
-								}
-								dlt_BRT_DSPTCH_LOG_MO0101.setCellData(0, "DSPTCH_CONTS", contsResult);			
+							//		contsResult = min + sec + "정차하세요.";
+									contsResult = min + sec + util.MSG.DISPATCH_MSG_STOP;								}
+								dlt_BRT_DSPTCH_LOG_MO0101.setCellData(insertRow, "DSPTCH_CONTS", contsResult);			
 							} 
 							//디스패치 메시지가 일반메시지일 경우
 							else if(parseInt(dsptchConts) == "undefined" || dsptchDiv == "DP001") {
-								dlt_BRT_DSPTCH_LOG_MO0101.setCellData(0, "DSPTCH_CONTS", jsonObj.MESSAGE);	
+								dlt_BRT_DSPTCH_LOG_MO0101.setCellData(insertRow, "DSPTCH_CONTS", jsonObj.MESSAGE);	
 							}
 							
 							routMap.mapInfo["map_MO0101_vehicle"].isDsptch = "on";
@@ -1118,7 +1116,7 @@
 								routMap.mapInfo["map_MO0101_vehicle"].divDsptch = "DP003";
 							}
 	
-							dlt_BRT_CUR_OPER_INFO_MO0101.setRowJSON(curIndexArr[0], jsonObj, false);								
+							dlt_BRT_CUR_OPER_INFO_MO0101.setRowJSON(curIndexArr[0], jsonObj, true);								
 							routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO_MO0101.getAllJSON(),
 							dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0, jsonObj);				
 							
@@ -1132,6 +1130,7 @@
 			
 			//신호등 현시 수신
 			//dataList로 다 들어왔다가 dataList로 하나씩 들어오게 수정됨
+			//정차제어 메시지 예) util.format(util.MSG.DISPATCH_MSG_SIGNAL_2,"123")
 		else if (attrId == util.ATTR_ID.TRAFFIC_LIGHT_STATUS_RESPONSE) {
 			var crsId = null;
 			var phaseNo = null;

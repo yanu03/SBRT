@@ -1949,8 +1949,8 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 	var sec = "";
 	var dsptchMessage = "";
 
-	if(data.MESSAGE.split(',').length>0){
-		dsptchMessage = data.MESSAGE.split(',')[0];
+	if(data.MESSAGE.split('｜').length>0){
+		dsptchMessage = data.MESSAGE.split('｜')[0];
 	}
 	else{
 		dsptchMessage = data.MESSAGE;
@@ -3568,7 +3568,7 @@ routMap.showSigMarker = function(mapId, baseData, socketData) {
 		zIndex = routMap.ZINDEX_SIG_MARKER;
 		markerImage = new kakao.maps.MarkerImage("/cm/images/tmap/light_red.png", imageSize);
 		if(socketData != null && typeof socketData != "undefined"){
-			var phaseNoArr = baseData.PHASE_NO.split(',');
+			var phaseNoArr = baseData.PHASE_NO.split('｜');
 			
 			for(i in phaseNoArr) {
 				if(socketData.CRS_ID == baseData.CRS_ID && socketData.PHASE_NO == phaseNoArr[i]){

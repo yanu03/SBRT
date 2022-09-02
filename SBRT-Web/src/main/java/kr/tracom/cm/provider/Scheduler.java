@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import kr.tracom.cm.domain.Common.CommonMapper;
 import kr.tracom.cm.domain.Intg.IntgMapper;
 import kr.tracom.platform.attribute.BrtAtCode;
 import kr.tracom.platform.attribute.brt.AtTrafficModule2;
@@ -50,10 +51,13 @@ public class Scheduler {
 	
 	@Autowired
     CurInfoMapper curInfoMapper;
+	
+	@Autowired
+	CommonMapper commonMapper;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	/*private static Map<String, Object> g_operCodeMap  = new HashMap<>();
+	private static Map<String, Object> g_operCodeMap  = new HashMap<>();
 
 	private Map<String, Object> getCommonCode( String coCd,String ValType, String value) {
 		//String eventCd = paramMap.get("EVENT_CD")+"";
@@ -87,8 +91,19 @@ public class Scheduler {
 	
 	@Scheduled(fixedDelay = 10000)
 	public void schedule_10sec() {
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("COL", "TXT_VAL1");
+		paramMap.put("CO_CD", "SCHEDULE_TEST");
+		paramMap.put("COL3", "DL_CD_NM");
+		paramMap.put("COL_VAL3", "10sec");
+		String scheduleOnOff = commonMapper.selectDlCdCol(paramMap);
+		
 		//logger.info("schedule_10sec");
 		try {
+			
+			if (scheduleOnOff.equals("off") == true) {
+				return;
+			}
 			//List<Map<String, Object>> param = getSimpleList("dlt_airconItem");
 			
 			List<Map<String, Object>> param = intgMapper.selectIntgList(null);
@@ -175,6 +190,7 @@ public class Scheduler {
 		}
 	}
 	
+	/*
 	@Scheduled(fixedDelay = 1000)
 	public void schedule_1sec() {
 		//logger.info("schedule_1sec");
@@ -183,9 +199,11 @@ public class Scheduler {
 		} catch (Exception e) {
 			logger.error("schedule_1sec Exception!!! {}", e);
 		}
-	}/*
+	}
+	*/
 	
-	/*@Scheduled(fixedDelay = 15000)
+/*	
+	@Scheduled(fixedDelay = 15000)
 	public void schedule_15sec() {
 		//logger.info("schedule_1sec");
 		try {
@@ -216,8 +234,6 @@ public class Scheduler {
 			logger.error("schedule_30sec Exception!!! {}", e);
 		}
 	}
-	*/
-	/*
 	@Scheduled(fixedDelay = 22000)
 	public void schedule_22sec() {
 		//logger.info("schedule_1sec");
@@ -248,11 +264,22 @@ public class Scheduler {
 		} catch (Exception e) {
 			logger.error("schedule_35sec Exception!!! {}", e);
 		}
-	}*/
-	
-	/*@Scheduled(fixedDelay = 30000)
-	public void schedule_30sec() {
+	}
+	*/
+	@Scheduled(fixedDelay = 30000)
+	public void schedule_Dispatch() {
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("COL", "TXT_VAL1");
+		paramMap.put("CO_CD", "SCHEDULE_TEST");
+		paramMap.put("COL3", "DL_CD_NM");
+		paramMap.put("COL_VAL3", "Dispatch");
+		String scheduleOnOff = commonMapper.selectDlCdCol(paramMap);
+		
+		//logger.info("schedule_10sec");
 		try {
+			if (scheduleOnOff.equals("off") == true) {
+				return;
+			}
 			Map<String, Object> wsDataMap = null;
 			wsDataMap = new HashMap<>();
 			
@@ -274,6 +301,17 @@ public class Scheduler {
 	
 	@Scheduled(fixedDelay = 60000)
 	public void schedule_AtTrafficModule2() {
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("COL", "TXT_VAL1");
+		paramMap.put("CO_CD", "SCHEDULE_TEST");
+		paramMap.put("COL3", "DL_CD_NM");
+		paramMap.put("COL_VAL3", "AtTrafficModule2");
+		String scheduleOnOff = commonMapper.selectDlCdCol(paramMap);
+		
+		if (scheduleOnOff.equals("off") == true) {
+			return;
+		}
+		
 		try {
 			AtTrafficModule2 trafficModule2 = new AtTrafficModule2();
 			trafficModule2.setUpdateTm(new AtTimeStamp("2022-08-18 13:04:24.00"));
@@ -314,7 +352,17 @@ public class Scheduler {
 	
 	@Scheduled(fixedDelay = 60000)
 	public void schedule_AtTrafficModule3() {
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("COL", "TXT_VAL1");
+		paramMap.put("CO_CD", "SCHEDULE_TEST");
+		paramMap.put("COL3", "DL_CD_NM");
+		paramMap.put("COL_VAL3", "AtTrafficModule3");
+		String scheduleOnOff = commonMapper.selectDlCdCol(paramMap);
+		
 		try {
+			if (scheduleOnOff.equals("off") == true) {
+				return;
+			}
 
 			AtTrafficModule3 trafficModule3 = new AtTrafficModule3();
 			trafficModule3.setUpdateTm(new AtTimeStamp("2022-08-18 13:04:24.00"));
@@ -353,5 +401,5 @@ public class Scheduler {
 		} catch (Exception e) {
 			logger.error("Exception {}", e);
 		}
-	}*/
+	}
 }
