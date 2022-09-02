@@ -35,8 +35,8 @@ var util = {
 	,	DISPATCH_MSG_DELAY : "초 지연운행 중입니다. 조금만 빨리 이동 부탁드립니다."
 	,	DISPATCH_MSG_SPEED : "초 과속운행 중입니다. 조금만 천천히 이동 부탁드립니다."
 	,	DISPATCH_MSG_STOP : "초 정차 예정입니다."
-	,	DISPATCH_MSG_SIGNAL_2 :  "정차제어 %d초 정차 예정입니다."
-	,	DISPATCH_MSG_SIGNAL_3 :   "우선신호제어(%s)"
+	,	DISPATCH_MSG_SIGNAL_2 :  "정차제어 {0}초 정차 예정입니다."
+	,	DISPATCH_MSG_SIGNAL_3 :   "우선신호제어({0})"
 	}
 }
 
@@ -148,7 +148,12 @@ util.secondToTime = function(second){
 	var minute = second%3600/60;
 	var second = second%3600%60;
 
-	return util.lpad(hour,2,"0") + ":" + util.lpad(minute,2,"0") + ":" +  util.lpad(second,2,"0");;
+	return util.lpad(hour,2,"0") + ":" + util.lpad(minute,2,"0") + ":" +  util.lpad(second,2,"0");
+}
+
+util.getToday = function(){
+	var today = new Date(); 
+	return util.lpad(today.getHours(),2,"0") + ":" + util.lpad(today.getMinutes(),2,"0") + ":" +  util.lpad(today.getSeconds(),2,"0");
 }
 
 /**
@@ -279,4 +284,12 @@ util.getDateTime = function(dateTime){
 	var output = dateTime.substring(0, 4) + "-" + dateTime.substring(4, 6) + "-" + dateTime.substring(6, 8) + " " + dateTime.substring(8, 10) + ":" + 
 					dateTime.substring(10, 12) + ":" + dateTime.substring(12);
 	return output;
+}
+
+
+util.format = function() {
+	var args = Array.prototype.slice.call(arguments, 1);
+	return arguments[0].replace(/\{(\d+)\}/g, function(match, index) {
+		return args[index];
+	});
 }

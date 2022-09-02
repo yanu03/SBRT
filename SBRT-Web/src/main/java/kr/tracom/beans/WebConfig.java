@@ -42,7 +42,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/websquare/**").addResourceLocations("/websquare/");
+		//registry.addResourceHandler("/websquare/**").addResourceLocations("/websquare/");
 		if(SystemUtils.IS_OS_WINDOWS) {
 			registry.addResourceHandler("/fileUpload/**").addResourceLocations(windowsFileuploadLocation);
 			registry.addResourceHandler("/cm/**").addResourceLocations(windowsStaticResouceLocation+"/static/cm/");

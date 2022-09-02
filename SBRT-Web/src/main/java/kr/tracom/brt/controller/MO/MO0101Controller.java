@@ -140,14 +140,13 @@ public class MO0101Controller extends ControllerSupport {
 		return result.getResult();
 	}	
 	
-	//모니터링 파라미터 분리를 위해 공통코드에서 빼오고 따로 사용
+
 	@RequestMapping("/mo/selectNodeDispListByRepRout")
 	public @ResponseBody Map<String, Object> selectNodeDispListByRepRout() throws Exception {
 		result.setData("dlt_BMS_ROUT_NODE_DISP_VW_MO0101", mo0101Service.selectNodeDispListByRepRout());
 		return result.getResult();
 	}
 	
-	//모니터링 파라미터 분리를 위해 공통코드에서 빼오고 따로 사용
 	@RequestMapping("/mo/selectRepRoutItem")
 	public @ResponseBody Map<String, Object> selectRepRoutItem() throws Exception {
 		result.setData("dlt_repRoutItem_MO0101", mo0101Service.selectRepRoutItem());

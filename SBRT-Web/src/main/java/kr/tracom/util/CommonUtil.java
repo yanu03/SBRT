@@ -597,6 +597,18 @@ public class CommonUtil {
 		return date;
 	}
 	
+	public static Date stringToDate2(String str) {  
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+		Date date = null;
+		try {
+			date = formatter.parse(str);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return date;
+	}
+	
 	
 	public static Map<String, Object> deepCopy(Map<String, Object> input) {
 		Map<String, Object> output  = new HashMap<>();

@@ -53,7 +53,7 @@ public class Scheduler {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private static Map<String, Object> g_operCodeMap  = new HashMap<>();
+	/*private static Map<String, Object> g_operCodeMap  = new HashMap<>();
 
 	private Map<String, Object> getCommonCode( String coCd,String ValType, String value) {
 		//String eventCd = paramMap.get("EVENT_CD")+"";
@@ -183,7 +183,7 @@ public class Scheduler {
 		} catch (Exception e) {
 			logger.error("schedule_1sec Exception!!! {}", e);
 		}
-	}
+	}/*
 	
 	/*@Scheduled(fixedDelay = 15000)
 	public void schedule_15sec() {
@@ -270,7 +270,7 @@ public class Scheduler {
 		} catch (Exception e) {
 			logger.error("schedule_35sec Exception!!! {}", e);
 		}
-	}	*/
+	}	
 	
 	@Scheduled(fixedDelay = 60000)
 	public void schedule_AtTrafficModule2() {
@@ -311,6 +311,7 @@ public class Scheduler {
 		}
 	}
 	
+	
 	@Scheduled(fixedDelay = 60000)
 	public void schedule_AtTrafficModule3() {
 		try {
@@ -331,7 +332,7 @@ public class Scheduler {
 	        moduleThreeMap.put("NODE_ID",trafficModule3.getCrossNodeId());
 	        Map<String, Object> result2 = curInfoMapper.selectCurOperInfoByVhcNo(moduleThreeMap);
 	        if(result2!=null) {
-		        moduleThreeMap.put("REP_ROUT_ID",result2.get("REP_ROUT_ID"));
+	        moduleThreeMap.put("REP_ROUT_ID",result2.get("REP_ROUT_ID"));
 	        moduleThreeMap.put("ROUT_ID",result2.get("ROUT_ID"));
 	        }
 	        moduleThreeMap.put("CTRL_LV",3);
@@ -344,7 +345,7 @@ public class Scheduler {
 			
 			//웹소켓 데이터 세팅
 	    	Map<String, Object> wsModuleThreeDataMap = new HashMap<>();
-	    	wsModuleThreeDataMap.put("ATTR_ID", BrtAtCode.TRAFFIC_MODULE_TWO);
+	    	wsModuleThreeDataMap.put("ATTR_ID", BrtAtCode.TRAFFIC_MODULE_THREE);
 	    	wsModuleThreeDataMap.put("LIST", trafficModule3MapList);
 	    	
 			webSocketClient.sendMessage(wsModuleThreeDataMap);
@@ -352,5 +353,5 @@ public class Scheduler {
 		} catch (Exception e) {
 			logger.error("Exception {}", e);
 		}
-	}	
+	}*/
 }

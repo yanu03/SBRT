@@ -91,6 +91,13 @@ public class SessionCheckInterceptor extends HandlerInterceptorAdapter {
 				break;
 			}
 		}
+		String[] skipUrl2 = {"/webjars"};
+		for (int i = 0; i < skipUrl2.length; i++) {
+			if (uri.contains(skipUrl2[i])) {
+				result = true;
+				break;
+			}
+		}
 		return result;
 	}
 }

@@ -88,7 +88,7 @@ public class ActionRequest {
         		byte actionCode = brtAction.getActionCode();
         		
 
-            	if(actionCode == AtBrtAction.changeOperRequest) { //변경운행 요청 수신
+            	/*if(actionCode == AtBrtAction.changeOperRequest) { //변경운행 요청 수신
             		//변경운행 생성
             		String actionData = brtAction.getReserved();        		
             		String dataArr[] = actionData.split(",");
@@ -143,7 +143,7 @@ public class ActionRequest {
                     kafkaProducer.sendKafka(KafkaTopics.T_BRT, tMessage, "");	
             		
 
-            	}
+            	}*/
             	if(actionCode == AtBrtAction.facilityParam) {
             		String actionData = brtAction.getReserved();
             		//String dataArr[] = actionData.split(",");

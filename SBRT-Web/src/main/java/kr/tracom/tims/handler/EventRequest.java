@@ -38,7 +38,7 @@ public class EventRequest {
     ThreadManager threadManager;
 
 
-	public void receiveKafka(KafkaMessage kafkaMessage) {		
+	public void receiveKafka(KafkaMessage kafkaMessage, byte opCode) {		
 		//this.addKafkaMessage(kafkaMessage);
 		
 		//thread 로 하나씩 돌리기

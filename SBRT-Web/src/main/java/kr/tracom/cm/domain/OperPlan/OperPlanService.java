@@ -245,6 +245,9 @@ public class OperPlanService extends ServiceSupport {
 										,int chgType //변경타입 //0:없음, 1:변경운행, 2:단순 수정
 	) throws Exception {
 
+		
+		logger.info("makeOperAllocPlNodeInfo() in");
+		
 		final String TIME_PATTERN = "HH:mm:ss";
 		
 		
@@ -1029,7 +1032,7 @@ public class OperPlanService extends ServiceSupport {
 				
 				
 			} else {
-				logger.info("도착시각:{}, 기준도착시각:{}, 차이:{}초", arrv_tm, route_ed_tm, diffSec);
+				logger.info("도착시각:{}, 기준도착시각:{}, 차이:{}초, chgType:{}, LIMIT_DIFF_SEC:{}, bSuccess:{}, tryCount:{}, max_speed:{}", arrv_tm, route_ed_tm, diffSec,chgType,LIMIT_DIFF_SEC,bSuccess,tryCount,max_speed);
 			}
 			
 

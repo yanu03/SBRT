@@ -3,6 +3,7 @@ package kr.tracom.tims.handler;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,9 @@ import kr.tracom.platform.attribute.brt.AtBusArrivalInfoItem;
 import kr.tracom.platform.attribute.brt.AtBusInfo;
 import kr.tracom.platform.attribute.brt.AtBusOperEvent;
 import kr.tracom.platform.attribute.brt.AtDispatch;
+import kr.tracom.platform.attribute.brt.AtTrafficLightStatusResponse;
+import kr.tracom.platform.attribute.brt.AtTrafficModule2;
+import kr.tracom.platform.attribute.brt.AtTrafficModule3;
 import kr.tracom.platform.attribute.common.AtTimeStamp;
 import kr.tracom.platform.net.protocol.TimsMessage;
 import kr.tracom.platform.net.protocol.TimsMessageBuilder;
@@ -39,6 +43,8 @@ import kr.tracom.tims.domain.HistoryMapper;
 import kr.tracom.tims.domain.TimsMapper;
 import kr.tracom.util.CommonUtil;
 import kr.tracom.util.Constants;
+import kr.tracom.util.DataInterface;
+import kr.tracom.util.domain.LocationVO;
 import kr.tracom.ws.WsClient;
 
 public class MorEventThread extends Thread {
@@ -77,6 +83,8 @@ public class MorEventThread extends Thread {
 	
 	private static Map<String, Object> g_busIdMap = new HashMap<>();
 	
+	private static Map<String, Object> g_vhcDrInfoMap = new HashMap<>();
+	
 	private static Map<String, Object> g_vhcInfoMap = new HashMap<>();
 	
 	private static Map<String, Object> g_routMap = new HashMap<>();
@@ -110,7 +118,7 @@ public class MorEventThread extends Thread {
    private void initNodeList() {
 	   	Map<String, Object> param = new HashMap<String, Object>();
 		
-	   	param.put("TYPE", "REP_ROUT_NM");
+	   	param.put("TYPE", "REP_ROUT_ID");
 	   	param.put("CONTENT", "RR00000002");
 	   	
 	   	List<Map<String, Object>> routList = routMapper.selectRoutList(param);
@@ -126,45 +134,202 @@ public class MorEventThread extends Thread {
 	   	}
    }
    
-   private List<Map<String, Object>> getNodeList(Map<String, Object> eventInfo) {
-	   String routId = (String)eventInfo.get("ROUT_ID");
-	   if(CommonUtil.empty(routId))return null;
-			   
-	   if(g_routNodeMap==null) {
-		   initNodeList();
-	   }
-	   
-	   if((List<Map<String, Object>>)g_routNodeMap.get(routId)==null) {
-		   List<Map<String, Object>> nodeList  = new ArrayList<>();
-		   nodeList = curInfoMapper.selectIntgNodeList(routId);
-		   g_routNodeMap.put(routId, nodeList);
-	   }
-	   
-	   return (List<Map<String, Object>>)g_routNodeMap.get(routId);
-   }
-   
-   
-	private Map<String, Object> getCurNodeByLinkSn(Map<String, Object> eventInfo) {
-		try {
-			String routId = (String) eventInfo.get("ROUT_ID");
-			List<Map<String, Object>> nodeList = getNodeList(eventInfo);
+	private List<Map<String, Object>> getNodeList(Map<String, Object> eventInfo) {
+		String routId = (String) eventInfo.get("ROUT_ID");
+		if (CommonUtil.empty(routId))
+			return null;
 
+		if (g_routNodeMap == null) {
+			initNodeList();
+		}
+
+		if ((List<Map<String, Object>>) g_routNodeMap.get(routId) == null) {
+			List<Map<String, Object>> nodeList = new ArrayList<>();
+			nodeList = curInfoMapper.selectIntgNodeList(routId);
+			g_routNodeMap.put(routId, nodeList);
+		}
+
+		return (List<Map<String, Object>>) g_routNodeMap.get(routId);
+	}
+
+	private Map<String, Object> searchNode(String nodeId) {
+		if(CommonUtil.empty(nodeId))return null;
+		for( String key : g_routNodeMap.keySet() )
+		{
+			List<Map<String, Object>> nodeList = (List<Map<String, Object>>)g_routNodeMap.get(key);
 			for (Map<String, Object> node : nodeList) {
-				int nodeSn = Integer.parseInt(node.getOrDefault("NODE_SN", 0).toString());
-				int eventLinkSn = Integer.parseInt(eventInfo.getOrDefault("LINK_SN", 0).toString());
-				if ((nodeSn >= eventLinkSn) && node.get("NODE_ID").equals(eventInfo.get("NODE_ID"))) {
-					//logger.debug("getCurNodeByLinkSn node={} ", node);
-					//logger.debug("getCurNodeByLinkSn nodeSn= " + nodeSn + eventLinkSn);
+				if(nodeId.equals(node.get("NODE_ID"))){
 					return node;
 				}
 			}
-		} catch (Exception e) {
-			logger.error("Exception {}", e);
 		}
 		return null;
 	}
    
-	private Map<String, Object> getCurSttnNode(Map<String, Object> eventInfo) {
+	private int getVhcDrInfo(Map<String, Object> eventInfo, Map<String, Object> nodeInfo) {
+		String routId = (String) eventInfo.get("ROUT_ID");
+		if(CommonUtil.empty(routId))return -1;
+		try {
+			Map<String, Object> oldVhcDrInfo = (Map<String, Object>) g_vhcDrInfoMap.get(routId);
+					
+			byte eventCd = 0;
+			String eventData = null;
+			if(eventInfo.getOrDefault("EVENT_CD", 0x0)!=null) {
+				eventCd = Byte.parseByte(eventInfo.getOrDefault("EVENT_CD", 0x0).toString());
+				eventData = eventInfo.getOrDefault("EVT_DATA", "").toString();
+			}
+			if(eventCd==0x01||eventCd==0x11) { //정류장 도착 //도어 열림
+				
+				
+				if(CommonUtil.empty(eventData)){
+					eventInfo.put("LONGITUDE",nodeInfo.get("STTN_ED_GPS_X"));
+					eventInfo.put("LATITUDE",nodeInfo.get("STTN_ED_GPS_Y"));
+				}
+				else {
+					if(eventData.equals(nodeInfo.get("CUR_STTN_ID"))){
+						eventInfo.put("LONGITUDE",nodeInfo.get("STTN_ST_GPS_X"));
+						eventInfo.put("LATITUDE",nodeInfo.get("STTN_ST_GPS_Y"));
+					}
+					else if(eventData.equals(nodeInfo.get("NEXT_STTN_ID"))){
+						eventInfo.put("LONGITUDE",nodeInfo.get("STTN_ED_GPS_X"));
+						eventInfo.put("LATITUDE",nodeInfo.get("STTN_ED_GPS_Y"));
+					}
+					else {
+						LocationVO location = DataInterface.getPointToLine(CommonUtil.decimalToDouble(eventInfo.get("LONGITUDE_RAW")), CommonUtil.decimalToDouble(eventInfo.get("LATITUDE_RAW"))
+								, CommonUtil.decimalToDouble(nodeInfo.get("ST_GPS_X")), CommonUtil.decimalToDouble(nodeInfo.get("ST_GPS_Y"))
+								, CommonUtil.decimalToDouble(nodeInfo.get("ED_GPS_X")), CommonUtil.decimalToDouble(nodeInfo.get("ED_GPS_Y")));
+						if(location.getX()>0x0) {
+							eventInfo.put("LONGITUDE",location.getX());
+						}
+						if(location.getX()>0x0) {
+							eventInfo.put("LATITUDE",location.getY());
+						}
+					}
+				}
+				logger.debug("NODE_ID="+nodeInfo.get("NODE_ID")+",BEARING="+nodeInfo.get("BEARING"));
+				logger.debug("eventInfo="+eventInfo);
+			}
+			else {
+				LocationVO location = DataInterface.getPointToLine(CommonUtil.decimalToDouble(eventInfo.get("LONGITUDE_RAW")), CommonUtil.decimalToDouble(eventInfo.get("LATITUDE_RAW"))
+						, CommonUtil.decimalToDouble(nodeInfo.get("ST_GPS_X")), CommonUtil.decimalToDouble(nodeInfo.get("ST_GPS_Y"))
+						, CommonUtil.decimalToDouble(nodeInfo.get("ED_GPS_X")), CommonUtil.decimalToDouble(nodeInfo.get("ED_GPS_Y")));
+				if(location.getX()>0x0) {
+					eventInfo.put("LONGITUDE",location.getX());
+				}
+				if(location.getY()>0x0) {
+					eventInfo.put("LATITUDE",location.getY());
+				}
+				
+				logger.debug("eventInfo={}",eventInfo);
+				
+				if(oldVhcDrInfo!=null) {
+					double len = DataInterface.getDistanceBetween(CommonUtil.decimalToDouble(oldVhcDrInfo.get("GPS_X")), CommonUtil.decimalToDouble(oldVhcDrInfo.get("GPS_Y")), 
+							CommonUtil.decimalToDouble(eventInfo.get("GPS_X")), CommonUtil.decimalToDouble(eventInfo.get("GPS_Y")));
+					
+					logger.debug("eventInfo UPD_DTM2="+eventInfo.get("UPD_DTM2")+", oldVhcDrInfo UPD_DTM2="+oldVhcDrInfo.get("UPD_DTM2"));
+					Date eventDate = CommonUtil.stringToDate2((String)eventInfo.get("UPD_DTM2")+"0");
+					Date oldVhcDrInfotDate = CommonUtil.stringToDate2((String)oldVhcDrInfo.get("UPD_DTM2")+"0");
+					
+					long time = 0;
+					if(eventDate!=null&&oldVhcDrInfotDate!=null) {
+						time = eventDate.getTime() - oldVhcDrInfotDate.getTime();
+					}
+					if(time == 0) {
+						Map<String, Object> vhcDrInfo = CommonUtil.deepCopy(nodeInfo);
+						vhcDrInfo.put("UPD_DTM",eventInfo.get("UPD_DTM"));
+						return 0;
+					}
+					
+					short limitSpeed = Short.parseShort((String) getCommonCode("SYS_INFO", null, "SY019").get("TXT_VAL1"));
+					
+					double speed = (len/1000)/time*3600;
+					
+					logger.debug("NODE_ID="+nodeInfo.get("NODE_ID")+"LINK_ID="+nodeInfo.get("LINK_ID")+",BEARING="+nodeInfo.get("BEARING")+",speed="+speed+",len="+len);
+					logger.debug("LATITUDE="+eventInfo.get("LATITUDE")+",LATITUDE="+eventInfo.get("LATITUDE"));
+					if(limitSpeed<speed) {
+						Map<String, Object> vhcDrInfo = CommonUtil.deepCopy(nodeInfo);
+						vhcDrInfo.put("UPD_DTM",eventInfo.get("UPD_DTM"));
+						return -1;
+					}
+				}
+			}
+			
+	
+	
+			Map<String, Object> vhcDrInfo = CommonUtil.deepCopy(nodeInfo);
+			vhcDrInfo.put("UPD_DTM",eventInfo.get("UPD_DTM"));
+			
+			g_vhcDrInfoMap.put(routId, vhcDrInfo);
+		} catch (Exception e) {
+			logger.error("getVhcDrInfo() in  Exception {}", e);
+		}
+		return 0;
+	}
+	private Map<String, Object> getCurNodeByLinkSn(Map<String, Object> eventInfo) {
+		try {
+			//String routId = (String) eventInfo.get("ROUT_ID");
+			List<Map<String, Object>> nodeList = getNodeList(eventInfo);
+			if(nodeList==null)return null;
+			for (Map<String, Object> node : nodeList) {
+				int nodeSn = Integer.parseInt(node.getOrDefault("NODE_SN", 0).toString());
+				int eventLinkSn = Integer.parseInt(eventInfo.getOrDefault("LINK_SN", 0).toString());
+				if ((nodeSn >= eventLinkSn) && node.get("NODE_ID").equals(eventInfo.get("NODE_ID"))) {
+					logger.debug("getCurNodeByLinkSn node={}, eventNodeSn={}, nodeSn={} ", node, eventLinkSn, nodeSn);
+					//logger.debug("getCurNodeByLinkSn nodeSn= " + nodeSn + eventLinkSn);
+					
+					
+					
+					return node;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("getCurNodeByLinkSn() in  Exception {}", e);
+		}
+		return null;
+	}
+   
+	private Map<String, Object> getCurNode(Map<String, Object> eventInfo, String nodeType) {
+		try {
+			//String routId = (String) eventInfo.get("ROUT_ID");
+			List<Map<String, Object>> nodeList = getNodeList(eventInfo);
+			if(nodeList==null)return null;
+			for (int i = nodeList.size() - 1; i >= 0; i--) {
+				Map<String, Object> node = nodeList.get(i);
+				int nodeSn = Integer.parseInt(node.getOrDefault("NODE_SN", 0).toString());
+				int eventNodeSn = Integer.parseInt(eventInfo.getOrDefault("NODE_SN", 0).toString());
+				if ((nodeSn <= eventNodeSn) && node.get("NODE_TYPE").equals(nodeType)) {
+					logger.debug("getCurNode node={}, eventNodeSn={}, nodeSn={} ", node, eventNodeSn, nodeSn);
+					//logger.debug("getCurNode nodeSn= " + nodeSn + eventNodeSn);
+					return node;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("getCurNode() in Exception {}", e);
+		}
+		return null;
+	}
+   
+	private Map<String, Object> getNextNode(Map<String, Object> eventInfo, String nodeType) {
+		try {
+			//String routId = (String) eventInfo.get("ROUT_ID");
+			List<Map<String, Object>> nodeList = getNodeList(eventInfo);
+
+			for (Map<String, Object> node : nodeList) {
+				int nodeSn = Integer.parseInt(node.getOrDefault("NODE_SN", 0).toString());
+				int eventNodeSn = Integer.parseInt(eventInfo.getOrDefault("NODE_SN", 0).toString());
+				if ((nodeSn > eventNodeSn) && node.get("NODE_TYPE").equals(nodeType)) {
+					logger.debug("getNextNode node={}, eventNodeSn={}, nodeSn={} ", node, eventNodeSn, nodeSn);
+					//logger.debug("getNextNode nodeSn= " + nodeSn + eventNodeSn);
+					return node;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("getNextNode() in Exception {}", e);
+		}
+		return null;
+	}
+	
+	private Map<String, Object> getCurSttnCrsNode(Map<String, Object> eventInfo) {
 		try {
 			String routId = (String) eventInfo.get("ROUT_ID");
 			List<Map<String, Object>> nodeList = getNodeList(eventInfo);
@@ -173,19 +338,20 @@ public class MorEventThread extends Thread {
 				Map<String, Object> node = nodeList.get(i);
 				int nodeSn = Integer.parseInt(node.getOrDefault("NODE_SN", 0).toString());
 				int eventNodeSn = Integer.parseInt(eventInfo.getOrDefault("NODE_SN", 0).toString());
-				if ((nodeSn <= eventNodeSn) && node.get("NODE_TYPE").equals(Constants.NODE_TYPE_BUSSTOP)) {
-					//logger.debug("getCurSttnNode node={} ", node);
-					//logger.debug("getCurSttnNode nodeSn= " + nodeSn + eventNodeSn);
+				if ((nodeSn <= eventNodeSn) && (node.get("NODE_TYPE").equals(Constants.NODE_TYPE_BUSSTOP)
+					|| node.get("NODE_TYPE").equals(Constants.NODE_TYPE_CROSS))
+				) {
+					logger.debug("getCurSttnCrsNode node={}, eventNodeSn={}, nodeSn={} ", node, eventNodeSn, nodeSn);
 					return node;
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Exception {}", e);
+			logger.error("getCurSttnCrsNode() in Exception {}", e);
 		}
 		return null;
 	}
    
-	private Map<String, Object> getNextSttnNode(Map<String, Object> eventInfo) {
+	private Map<String, Object> getNextSttnCrsNode(Map<String, Object> eventInfo) {
 		try {
 			String routId = (String) eventInfo.get("ROUT_ID");
 			List<Map<String, Object>> nodeList = getNodeList(eventInfo);
@@ -193,14 +359,45 @@ public class MorEventThread extends Thread {
 			for (Map<String, Object> node : nodeList) {
 				int nodeSn = Integer.parseInt(node.getOrDefault("NODE_SN", 0).toString());
 				int eventNodeSn = Integer.parseInt(eventInfo.getOrDefault("NODE_SN", 0).toString());
-				if ((nodeSn > eventNodeSn) && node.get("NODE_TYPE").equals(Constants.NODE_TYPE_BUSSTOP)) {
-					//logger.debug("getCurSttnNode node={} ", node);
-					//logger.debug("getCurSttnNode nodeSn= " + nodeSn + eventNodeSn);
+				if ((nodeSn > eventNodeSn) && (node.get("NODE_TYPE").equals(Constants.NODE_TYPE_BUSSTOP)
+					|| node.get("NODE_TYPE").equals(Constants.NODE_TYPE_CROSS))
+				) {
+					logger.debug("getNextSttnCrsNode node={}, eventNodeSn={}, nodeSn={} ", node, eventNodeSn, nodeSn);
 					return node;
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Exception {}", e);
+			logger.error("getNextSttnCrsNode() in Exception {}", e);
+		}
+		return null;
+	}
+	
+	private Map<String, Object> getCorInfo(Map<String, Object> eventInfo) {
+		String repRoutId = (String) eventInfo.get("REP_ROUT_ID");
+		if(CommonUtil.empty(eventInfo.get("ROUT_ID"))||CommonUtil.empty(eventInfo.get("COR_ID")))
+			return null;
+		if ((repRoutId != null) && (repRoutId.isEmpty() == false)) {
+			List<Map<String, Object>> operCorInfoList = null;
+			
+			if(g_operCorInfoMap==null) {
+				g_operCorInfoMap = new HashMap<>();
+				operCorInfoList = curInfoMapper.selectCorDtlInfo(repRoutId);
+				g_operCorInfoMap.put(repRoutId, operCorInfoList);
+			}
+			operCorInfoList =  (List<Map<String, Object>>)g_operCorInfoMap.get(repRoutId);
+			if(operCorInfoList==null || operCorInfoList.size()==0) {
+				operCorInfoList = curInfoMapper.selectCorDtlInfo(repRoutId);
+				g_operCorInfoMap.put(repRoutId, operCorInfoList);
+			}
+				
+			for(Map<String, Object> corInfo : operCorInfoList) {
+				if( eventInfo.get("ROUT_ID").equals(corInfo.get("ROUT_ID")) 
+					&& eventInfo.get("COR_ID").equals(corInfo.get("COR_ID"))){
+					return corInfo;
+				}
+			}
+			
+			return null;
 		}
 		return null;
 	}
@@ -247,6 +444,34 @@ public class MorEventThread extends Thread {
 			return null;
 		}
 	}
+	
+	/*private Map<String, Object> getVhcDrInfo(Map<String, Object> paramMap) {
+		String  impID = (String)paramMap.get("MNG_ID");
+		logger.debug("getVhcDrInfo() impID="+impID);
+		Map<String, Object> vhcInfo;
+		if(g_vhcDrInfoMap==null) {
+			g_vhcDrInfoMap = new HashMap<>();
+			vhcInfo = timsMapper.selectVhcInfo(paramMap);
+			g_vhcInfoMap.put(impID, vhcInfo);
+			return vhcInfo;
+		}
+		
+		
+		if ((impID != null) && (impID.isEmpty() == false)) {
+			vhcInfo = (Map<String, Object>)g_vhcInfoMap.get(impID); 
+			if ((vhcInfo != null)) {
+				return vhcInfo;
+			}
+			else {
+				vhcInfo = timsMapper.selectVhcInfo(paramMap);
+				g_vhcInfoMap.put(impID, vhcInfo);
+				return vhcInfo;
+			}
+		}
+		else {
+			return null;
+		}
+	}*/
    
 	private String getBusId(Map<String, Object> paramMap) {
 		String  busNo = (String)paramMap.get("BUS_NO");
@@ -312,7 +537,13 @@ public class MorEventThread extends Thread {
 		Map<String, Object> param = new HashMap<>();
 		String key = coCd+value;
 		param.put("CO_CD", coCd);
-		param.put("VAL_TYPE", ValType);
+
+        if(ValType==null) {
+            param.put("VAL_TYPE", "DL_CD");
+        }
+        else{
+            param.put("VAL_TYPE", ValType);
+        }
 		param.put("VAL", value);
 		
 		Map<String, Object> eventCodeMap = null;
@@ -537,6 +768,7 @@ public class MorEventThread extends Thread {
 	
 					// insert to BRT_CUR_OPER_INFO
 					Map<String, Object> busInfoMap = busInfo.toMap();
+					busInfoMap.put("UPD_DTM2", busInfo.getUpdateTm().toString());
 					busInfoMap.put("MNG_ID", sessionId);
 					busInfoMap.put("VHC_ID", getBusId(busInfoMap));
 					if (CommonUtil.empty(busInfoMap.get("VHC_ID")))
@@ -578,6 +810,8 @@ public class MorEventThread extends Thread {
 					Map<String, Object> vhcInfo = getVhcInfo(paramMap);
 					// Map<String, Object> dataMap =busInfo.toMap();
 	
+					if(setOperEventData(busInfoMap)==-1)return null;
+					
 					wsDataMap = new HashMap<>();
 					wsDataMap.put("ATTR_ID", attrId);
 					wsDataMap.put("ROUT_ID", busInfoMap.get("ROUT_ID"));
@@ -595,7 +829,11 @@ public class MorEventThread extends Thread {
 					wsDataMap.put("OPER_STS", busInfoMap.get("OPER_STS"));
 					wsDataMap.put("LINK_ID", busInfoMap.get("LINK_ID"));
 					wsDataMap.put("NODE_SN", busInfoMap.get("NODE_SN"));
-				}
+					
+					Map<String, Object> corInfo = getCorInfo(busInfoMap);
+					if(corInfo!=null)wsDataMap.put("COR_NM", corInfo.get("COR_NM"));
+					}
+				
 				catch (Exception e) {
 					logger.error("Exception {}", e);
 				}
@@ -656,6 +894,7 @@ public class MorEventThread extends Thread {
 					AtBusOperEvent busEvent = (AtBusOperEvent) atMessage.getAttrData();
 					String eventData = busEvent.getEventData();
 					Map<String, Object> busEventMap = busEvent.toMap();
+					busEventMap.put("UPD_DTM2", busEvent.getUpdateTm().toString());
 					busEventMap.put("MNG_ID", sessionId);
 					byte eventCode = busEvent.getEventCode();
 					
@@ -829,7 +1068,7 @@ public class MorEventThread extends Thread {
 			
 								sttnEventMap.put("NODE_ID", busEvent.getEventData()); // 정류장 출/도착인 경우 EVENT_DATA를 사용
 			
-								setOperEventData(sttnEventMap);
+								if(setOperEventData(sttnEventMap)==-1)return null;
 			
 								busEventMap.put("NODE_NM", sttnEventMap.get("NODE_NM")); // 출/도착 정류소명
 								busEventMap.put("NODE_TYPE", sttnEventMap.get("NODE_TYPE"));
@@ -845,7 +1084,7 @@ public class MorEventThread extends Thread {
 								logger.debug("busEventMap = {}",busEventMap);
 							}
 							else {
-								setOperEventData(busEventMap);
+								if(setOperEventData(busEventMap)==-1)return null;
 							}
 						}
 						
@@ -985,6 +1224,18 @@ public class MorEventThread extends Thread {
 					wsDataMap.put("CUR_SPD", busEventMap.get("SPEED"));
 					wsDataMap.put("EVT_DATA", busEventMap.get("EVENT_DATA"));
 					wsDataMap.put("NODE_SN", busEventMap.get("NODE_SN"));
+					//if ("IMP0000977".equals(sessionId)) 
+					{ //dashboard					
+						wsDataMap.put("WAY_DIV", busEventMap.get("WAY_DIV"));
+						wsDataMap.put("NEXT_CRS_ID", busEventMap.get("NEXT_CRS_ID"));
+						wsDataMap.put("NEXT_CRS_NM", busEventMap.get("NEXT_CRS_NM"));
+						wsDataMap.put("NEXT_CRS_TYPE", busEventMap.get("NEXT_CRS_TYPE"));
+						wsDataMap.put("NEXT_STTN_CRS_ID", busEventMap.get("NEXT_STTN_CRS_ID"));
+						wsDataMap.put("NEXT_STTN_CRS_NM", busEventMap.get("NEXT_STTN_CRS_NM"));
+						wsDataMap.put("NEXT_STTN_CRS_TYPE", busEventMap.get("NEXT_STTN_CRS_TYPE"));
+					}
+					Map<String, Object> corInfo = getCorInfo(busEventMap);
+					if(corInfo!=null)wsDataMap.put("COR_NM", corInfo.get("COR_NM"));
 				}
 				catch (Exception e) {
 					logger.error("Exception {}", e);
@@ -1081,8 +1332,8 @@ public class MorEventThread extends Thread {
 						wsDataMap.put("DSPTCH_DIV", dpDiv);
 						
 						wsDataMap.put("DSPTCH_KIND", dpLv);
-						wsDataMap.put("GPS_X", curInfo.get("GPS_X"));
-						wsDataMap.put("GPS_Y", curInfo.get("GPS_X"));
+						wsDataMap.put("GPS_X", curInfo.get("LONGITUDE"));
+						wsDataMap.put("GPS_Y", curInfo.get("LATITUDE"));
 						wsDataMap.put("MESSAGE", dispatch.getMessage());
 					}
 					//logger.info("디스패치 전송 {}", wsDataMap);
@@ -1091,9 +1342,106 @@ public class MorEventThread extends Thread {
 				} catch (Exception e) {
 					logger.error("Exception {}", e);
 				}
+				break;
+				
+			//신호정보
+			case BrtAtCode.TRAFFIC_LIGHT_STATUS_RESPONSE:
+
+				List<HashMap<String, Object>> phaseInfoMapList = new ArrayList<>();
+				AtTrafficLightStatusResponse lightStatus = (AtTrafficLightStatusResponse) atMessage.getAttrData();
+
+				String crsId = lightStatus.getCrossNodeId(); //교차로id
+				int contSt = lightStatus.getControllerStatus(); //제어기상태
+				int conMode = lightStatus.getControlMode(); //신호제어 모드
+				int phaseNoA = lightStatus.getPhaseNumA(); //현시 A
+				int phaseNoB = lightStatus.getPhaseNumB(); //현지 B
+				short pahseTmA = lightStatus.getPhaseTimeA(); //현시 진행시간 A
+				short pahseTmB = lightStatus.getPhaseTimeB(); //현시 진행시간 B
+				
+				HashMap<String, Object> phaseInfoMap = new HashMap<>();
+				phaseInfoMap.put("CRS_ID", crsId);
+				phaseInfoMap.put("CRS_NM", searchNode(crsId).get("NODE_NM"));
+				phaseInfoMap.put("CONT_ST", contSt);
+				phaseInfoMap.put("CONT_MODE", conMode);
+				phaseInfoMap.put("PHASE_NO", phaseNoA);
+				phaseInfoMap.put("PHASE_NO_B", phaseNoB);
+				phaseInfoMap.put("PHASE_TM_A", pahseTmA);
+				phaseInfoMap.put("PHASE_TM_B", pahseTmB);
+				
+				phaseInfoMapList.add(phaseInfoMap);
+
+				// 웹소켓 데이터 세팅
+				// Map<String, Object> wsDataMap = new HashMap<>();
+				wsDataMap.put("ATTR_ID", BrtAtCode.TRAFFIC_LIGHT_STATUS_RESPONSE);
+				wsDataMap.put("LIST", phaseInfoMapList);
+
+				// logger.info("================ 교차로아이디:{}, 현시번호 : {}", crsId, phaseNo);
 
 				break;
+			case BrtAtCode.TRAFFIC_MODULE_TWO:
+				try {
+					AtTrafficModule2 trafficModule2 = (AtTrafficModule2) atMessage.getAttrData();
+					logger.info("TRAFFIC_MODULE_TWO : {}", trafficModule2);
+					List<HashMap<String, Object>> trafficModule2MapList = new ArrayList<>();
 
+					HashMap<String, Object> moduleTwoMap = new HashMap<>();
+					moduleTwoMap.put("VHC_NO", trafficModule2.getBusNum());
+					moduleTwoMap.put("OPER_DT", CommonUtil.getOperDt());
+					moduleTwoMap.put("NODE_ID", trafficModule2.getStationNodeId());
+					try {
+						String nodeNm = (String) searchNode(trafficModule2.getStationNodeId()).get("NODE_NM");
+						moduleTwoMap.put("NODE_NM", nodeNm);
+					} catch (Exception e) {
+						logger.error("Exception {}", e);
+					}
+					moduleTwoMap.put("CTRL_LV", 2);
+					moduleTwoMap.put("STOP_SEC", trafficModule2.getWaitTm());
+					moduleTwoMap.put("OCR_DTM", trafficModule2.getUpdateTm().toString());
+
+					trafficModule2MapList.add(moduleTwoMap);
+
+					// 웹소켓 데이터 세팅
+					// Map<String, Object> wsModuleTwoDataMap = new HashMap<>();
+					wsDataMap.put("ATTR_ID", BrtAtCode.TRAFFIC_MODULE_TWO);
+					wsDataMap.put("LIST", trafficModule2MapList);
+
+				} catch (Exception e) {
+					logger.error("Exception {}", e);
+				}
+				break;
+			case BrtAtCode.TRAFFIC_MODULE_THREE:
+				try {
+					AtTrafficModule3 trafficModule3 = (AtTrafficModule3) atMessage.getAttrData();
+					logger.info("TRAFFIC_MODULE_THREE : {}", trafficModule3);
+					List<HashMap<String, Object>> trafficModule3MapList = new ArrayList<>();
+
+					HashMap<String, Object> moduleThreeMap = new HashMap<>();
+					moduleThreeMap.put("VHC_NO", trafficModule3.getBusNum());
+					moduleThreeMap.put("OPER_DT", CommonUtil.getOperDt());
+					moduleThreeMap.put("NODE_ID", trafficModule3.getCrossNodeId());
+					try {
+						String nodeNm = (String) searchNode(trafficModule3.getCrossNodeId()).get("NODE_NM");
+						moduleThreeMap.put("NODE_NM", nodeNm);
+					} catch (Exception e) {
+						logger.error("Exception {}", e);
+					}
+					moduleThreeMap.put("CTRL_LV", 3);
+					moduleThreeMap.put("CTRL_TYPE",
+							getCommonCode("SIG_CTL_TYPE", "TXT_VAL1", trafficModule3.getControlType() + "")
+									.get("DL_CD"));
+
+					moduleThreeMap.put("CTRL_PHASE_NO", trafficModule3.getControlPhaseNum());
+					moduleThreeMap.put("OCR_DTM", trafficModule3.getUpdateTm().toString());
+
+					trafficModule3MapList.add(moduleThreeMap);
+
+					// 웹소켓 데이터 세팅
+					wsDataMap.put("ATTR_ID", BrtAtCode.TRAFFIC_MODULE_THREE);
+					wsDataMap.put("LIST", trafficModule3MapList);
+				} catch (Exception e) {
+					logger.error("Exception {}", e);
+				}
+				break;
 			default:
 				break;
 			}
@@ -1102,7 +1450,8 @@ public class MorEventThread extends Thread {
 		return wsDataMap;
 	}
 
-	private void setOperEventData(Map<String, Object> operEventMap) {
+	private int setOperEventData(Map<String, Object> operEventMap) {
+		int returnValue = 0;
 
 		try {
 
@@ -1116,6 +1465,9 @@ public class MorEventThread extends Thread {
 			//																				// 으로 실제 노드순번 구하기
 			
 			Map<String, Object> realNodeInfo = getCurNodeByLinkSn(operEventMap);
+			
+			returnValue = getVhcDrInfo(operEventMap, realNodeInfo);
+			
 			if (realNodeInfo != null) {
 				//operEventMap.put("ROUT_NM", realNodeInfo.get("ROUT_NM"));
 				//operEventMap.put("NODE_TYPE", realNodeInfo.get("NODE_TYPE"));
@@ -1124,7 +1476,7 @@ public class MorEventThread extends Thread {
 			}
 			
 			//Map<String, Object> curSttnInfo = timsMapper.selectCurSttnInfo(operEventMap); 
-			Map<String, Object> curSttnInfo = getCurSttnNode(operEventMap);
+			Map<String, Object> curSttnInfo = getCurNode(operEventMap,Constants.NODE_TYPE_BUSSTOP);
 			if (curSttnInfo != null) {
 				operEventMap.put("CUR_NODE_TYPE", curSttnInfo.get("NODE_TYPE"));
 				//operEventMap.put("CUR_NODE_ID", curSttnInfo.get("CUR_STTN_ID"));
@@ -1132,9 +1484,22 @@ public class MorEventThread extends Thread {
 				operEventMap.put("CUR_NODE_ID", curSttnInfo.get("NODE_ID"));
 				operEventMap.put("CUR_NODE_NM", curSttnInfo.get("NODE_NM"));
 				operEventMap.put("CUR_NODE_SN", curSttnInfo.get("NODE_SN"));
-//				operEventMap.put("NEXT_NODE_ID", curSttnInfo.get("NEXT_STTN_ID"));
-//				operEventMap.put("NEXT_NODE_NM", curSttnInfo.get("NEXT_STTN_NM"));
-//				operEventMap.put("NEXT_NODE_TYPE", curSttnInfo.get("NODE_TYPE"));
+				operEventMap.put("NEXT_NODE_ID", curSttnInfo.get("NEXT_STTN_ID"));
+				operEventMap.put("NEXT_NODE_NM", curSttnInfo.get("NEXT_STTN_NM"));
+				operEventMap.put("NEXT_NODE_TYPE", curSttnInfo.get("NODE_TYPE"));
+			}
+			
+			//if ("IMP0000977".equals(sessionId)) 
+			{ //dashboard
+				Map<String, Object> nextCrsInfo = getNextNode(operEventMap, Constants.NODE_TYPE_CROSS);
+				operEventMap.put("NEXT_CRS_ID", nextCrsInfo.get("NODE_ID"));
+				operEventMap.put("NEXT_CRS_NM", nextCrsInfo.get("NODE_NM"));
+				operEventMap.put("NEXT_CRS_TYPE", nextCrsInfo.get("NODE_TYPE"));
+				
+				Map<String, Object> nextSttnCrsInfo = getNextSttnCrsNode(operEventMap);
+				operEventMap.put("NEXT_STTN_CRS_ID", nextSttnCrsInfo.get("NODE_ID"));
+				operEventMap.put("NEXT_STTN_CRS_NM", nextSttnCrsInfo.get("NODE_NM"));
+				operEventMap.put("NEXT_STTN_CRS_TYPE", nextSttnCrsInfo.get("NODE_TYPE"));
 			}
 			
 			//Map<String, Object> nextNodeInfo = timsMapper.selectNextSttnCrsInfo(operEventMap);
@@ -1147,20 +1512,20 @@ public class MorEventThread extends Thread {
 			operEventMap.put("PREV_NODE_NM", operEventMap.get("NODE_NM"));
 			
 			//Map<String, Object> nextSttnInfo = timsMapper.selectNextSttnInfo(param);
-			Map<String, Object> nextSttnInfo = getNextSttnNode(param);
+			/*Map<String, Object> nextSttnInfo = getNextNode(param);
 			if (nextSttnInfo != null) {
 				//operEventMap.put("NEXT_NODE_ID", nextSttnInfo.get("CUR_STTN_ID"));
 				//operEventMap.put("NEXT_NODE_NM", nextSttnInfo.get("CUR_STTN_NM"));
 				operEventMap.put("NEXT_NODE_ID", nextSttnInfo.get("NODE_ID"));
 				operEventMap.put("NEXT_NODE_NM", nextSttnInfo.get("NODE_NM"));
 				operEventMap.put("NEXT_NODE_TYPE", nextSttnInfo.get("NODE_TYPE"));
-			}
+			}*/
 
 
 		} catch (Exception e) {
-			logger.error("Exception {}", e);
+			logger.error("setOperEventData Exception {}", e);
 		}
-
+		return returnValue;
 	}
 	
 }
