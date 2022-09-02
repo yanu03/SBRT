@@ -1332,8 +1332,8 @@ public class MorEventThread extends Thread {
 						wsDataMap.put("DSPTCH_DIV", dpDiv);
 						
 						wsDataMap.put("DSPTCH_KIND", dpLv);
-						wsDataMap.put("GPS_X", curInfo.get("LONGITUDE"));
-						wsDataMap.put("GPS_Y", curInfo.get("LATITUDE"));
+						wsDataMap.put("GPS_X", curInfo.get("GPS_X"));
+						wsDataMap.put("GPS_Y", curInfo.get("GPS_Y"));
 						wsDataMap.put("MESSAGE", dispatch.getMessage());
 					}
 					//logger.info("디스패치 전송 {}", wsDataMap);
