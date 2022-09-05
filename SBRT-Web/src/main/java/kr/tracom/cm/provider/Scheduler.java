@@ -91,13 +91,15 @@ public class Scheduler {
 	
 	@Scheduled(fixedDelay = 10000)
 	public void schedule_10sec() {
-		Map<String, Object> paramMap = new HashMap<>();
-		paramMap.put("COL", "TXT_VAL1");
-		paramMap.put("CO_CD", "SCHEDULE_TEST");
-		paramMap.put("COL3", "DL_CD_NM");
-		paramMap.put("COL_VAL3", "10sec");
-		String scheduleOnOff = commonMapper.selectDlCdCol(paramMap);
-		
+		//Map<String, Object> paramMap = new HashMap<>();
+		//paramMap.put("COL", "TXT_VAL1");
+		//paramMap.put("CO_CD", "SCHEDULE_TEST");
+		//paramMap.put("COL3", "DL_CD_NM");
+		//paramMap.put("COL_VAL3", "10sec");
+		//String scheduleOnOff = commonMapper.selectDlCdCol(paramMap);
+				
+		Map<String, Object> commonCode = getCommonCode("SCHEDULE_TEST","DL_CD_NM","10sec");
+		String scheduleOnOff = (String)commonCode.get("TXT_VAL1");
 		//logger.info("schedule_10sec");
 		try {
 			
@@ -268,13 +270,14 @@ public class Scheduler {
 	*/
 	@Scheduled(fixedDelay = 30000)
 	public void schedule_Dispatch() {
-		Map<String, Object> paramMap = new HashMap<>();
-		paramMap.put("COL", "TXT_VAL1");
-		paramMap.put("CO_CD", "SCHEDULE_TEST");
-		paramMap.put("COL3", "DL_CD_NM");
-		paramMap.put("COL_VAL3", "Dispatch");
-		String scheduleOnOff = commonMapper.selectDlCdCol(paramMap);
-		
+		//Map<String, Object> paramMap = new HashMap<>();
+		//paramMap.put("COL", "TXT_VAL1");
+		//paramMap.put("CO_CD", "SCHEDULE_TEST");
+		//paramMap.put("COL3", "DL_CD_NM");
+		//paramMap.put("COL_VAL3", "Dispatch");
+		//String scheduleOnOff = commonMapper.selectDlCdCol(paramMap);
+		Map<String, Object> commonCode = getCommonCode("SCHEDULE_TEST","DL_CD_NM","Dispatch");
+		String scheduleOnOff = (String)commonCode.get("TXT_VAL1");
 		//logger.info("schedule_10sec");
 		try {
 			if (scheduleOnOff.equals("off") == true) {
@@ -301,12 +304,14 @@ public class Scheduler {
 	
 	@Scheduled(fixedDelay = 60000)
 	public void schedule_AtTrafficModule2() {
-		Map<String, Object> paramMap = new HashMap<>();
-		paramMap.put("COL", "TXT_VAL1");
-		paramMap.put("CO_CD", "SCHEDULE_TEST");
-		paramMap.put("COL3", "DL_CD_NM");
-		paramMap.put("COL_VAL3", "AtTrafficModule2");
-		String scheduleOnOff = commonMapper.selectDlCdCol(paramMap);
+		//Map<String, Object> paramMap = new HashMap<>();
+		//paramMap.put("COL", "TXT_VAL1");
+		//paramMap.put("CO_CD", "SCHEDULE_TEST");
+		//paramMap.put("COL3", "DL_CD_NM");
+		//paramMap.put("COL_VAL3", "AtTrafficModule2");
+		//String scheduleOnOff = commonMapper.selectDlCdCol(paramMap);
+		Map<String, Object> commonCode = getCommonCode("SCHEDULE_TEST","DL_CD_NM","AtTrafficModule2");
+		String scheduleOnOff = (String)commonCode.get("TXT_VAL1");
 		
 		if (scheduleOnOff.equals("off") == true) {
 			return;
@@ -352,12 +357,14 @@ public class Scheduler {
 	
 	@Scheduled(fixedDelay = 60000)
 	public void schedule_AtTrafficModule3() {
-		Map<String, Object> paramMap = new HashMap<>();
-		paramMap.put("COL", "TXT_VAL1");
-		paramMap.put("CO_CD", "SCHEDULE_TEST");
-		paramMap.put("COL3", "DL_CD_NM");
-		paramMap.put("COL_VAL3", "AtTrafficModule3");
-		String scheduleOnOff = commonMapper.selectDlCdCol(paramMap);
+		//Map<String, Object> paramMap = new HashMap<>();
+		//paramMap.put("COL", "TXT_VAL1");
+		//paramMap.put("CO_CD", "SCHEDULE_TEST");
+		//paramMap.put("COL3", "DL_CD_NM");
+		//paramMap.put("COL_VAL3", "AtTrafficModule3");
+		//String scheduleOnOff = commonMapper.selectDlCdCol(paramMap);
+		Map<String, Object> commonCode = getCommonCode("SCHEDULE_TEST","DL_CD_NM","AtTrafficModule2");
+		String scheduleOnOff = (String)commonCode.get("TXT_VAL1");
 		
 		try {
 			if (scheduleOnOff.equals("off") == true) {

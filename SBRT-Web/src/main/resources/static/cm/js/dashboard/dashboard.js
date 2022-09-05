@@ -110,16 +110,96 @@
 		}
 	};
 	
-	dashboard.dispatchDraw = function(dispatch, dispatchState) {
-		if(dashboard.CUR_DISPATCH_STATE==1){
+	dashboard.dispatchDraw = function(dispatchState, type, value) {
+		if(dispatchState==0){
+			var message = util.MSG.DISPATCH_MSG_NORMAL;				
+			$("#priority_signal").text(message)
+			
+			$(".situation").removeClass("blue");
+			$(".situation").removeClass("orange");
+			$(".situation").addClass("yellow");
+		}
+		else if(dispatchState==1){
+			if(value >= 60) {
+				min = value/60 + "분 ";
+			}
+			sec = value%60 + "초 ";
+
+			var message = "정류장 정차 : " + min + sec;
+			$("#priority_signal").text(message)
+
+			$(".situation").removeClass("yellow");
+			$(".situation").removeClass("orange");
+			$(".situation").addClass("blue");
+		}
+		else if(dispatchState==2){
+			if(value >= 60) {
+				min = value/60 + "분 ";
+			}
+			sec = value%60 + "초 ";
+			var message = "";
+			if(type=='DK002'){
+				message = min + sec + " 늦음";
+			}
+			else if(type=='DK003'){
+				message = min + sec + " 빠름";
+			}
+			
+			$("#priority_signal").text(message)
+
+			$(".situation").removeClass("yellow");
+			$(".situation").removeClass("orange");
+			$(".situation").addClass("blue");
+		}
+		else if(dispatchState==3){
+			var message = "정류장제어 운영 : "+jsonObj.LIST[0].STOP_SEC;				
+			$("#priority_signal").text(message)
+
+			$(".situation").removeClass("yellow");
+			$(".situation").removeClass("blue");
+			$(".situation").addClass("orange");
+		}
+		else if(dispatchState==4){
+			if(type=='ST001'){
+				var message = "교차로제어 운영 : 조기종결";				
+				$("#priority_signal").text(message)
+				$(".situation").removeClass("yellow");
+				$(".situation").removeClass("blue");
+				$(".situation").addClass("orange");
+			}
+			else{
+				var message = "교차로제어 운영 : 현시연장";				
+				$("#priority_signal").text(message)
+				$(".situation").removeClass("yellow");
+				$(".situation").removeClass("blue");
+				$(".situation").addClass("orange");
+			}
+		}
+	};
+	
+	dispatchTimerCb = function(second){
+		if(second==0){
 			
 		}
+		else{
+			second--;
+			setTimeout(function() {
+				dispatchSttnStopDraw(second);	
+			},1000);	
+		}
+	} 
+		
+	
+	dashboard.dispatch = function(dispatchState, type, value) {
+		if(dispatchState < dashboard.CUR_DISPATCH_STATE)return;
+		
+		dashboard.dispatchDraw(dispatchState, type, value);
 		dashboard.CUR_DISPATCH_STATE = dispatchState;
 	};
 	
 	
 
-	dashboard.searchNodeId = function(node_id) {
+	dashboard.searchNode = function(node_id) {
 		for (var i = 0; i < dashboard.ROUT_INFO[dashboard.CUR_WAY].length; i++) {
 			var nodeInfo = dashboard.ROUT_INFO[dashboard.CUR_WAY][i];
 			if (nodeInfo.NODE_ID == node_id) {
@@ -129,7 +209,7 @@
 		return null;
 	};
 
-	dashboard.nextNodeId = function(node_id, nodeType) {
+	dashboard.nextNode = function(node_id, nodeType) {
 		var curIdx = -1;
 		for (var i = 0; i < dashboard.ROUT_INFO[dashboard.CUR_WAY].length; i++) {
 			var nodeInfo = dashboard.ROUT_INFO[dashboard.CUR_WAY][i];
@@ -143,7 +223,7 @@
 		return null;
 	};
 
-	dashboard.searchCrsId = function(node_id) {
+	dashboard.searchCrs = function(node_id) {
 		for (var i = 0; i < dashboard.ROUT_CROSS_INFO[dashboard.CUR_WAY].length; i++) {
 			var nodeInfo = dashboard.ROUT_CROSS_INFO[dashboard.CUR_WAY][i];
 			if (nodeInfo.NODE_ID == node_id) {
@@ -204,16 +284,15 @@
 				dashboard.routDraw();
 			}
 	
-			if (jsonObj.CUR_NODE_ID != null) {
-				dashboard.busDraw(jsonObj.CUR_NODE_ID);
+			if (jsonObj.CUR_STTN_CRS_ID != null) {
+				dashboard.busDraw(jsonObj.CUR_STTN_CRS_ID);
 			}
 	
 			{	
-				var nodeCrsInfo = dashboard
-						.nextNodeId(jsonObj.CUR_NODE_ID, "NT001");
+				var nodeCrsInfo = dashboard.nextNode(jsonObj.CUR_NODE_ID, "NT001");
 	
 				if (nodeCrsInfo != null) {
-					var nodeInfo = dashboard.searchCrsId(nodeCrsInfo.NODE_ID);
+					var nodeInfo = dashboard.searchCrs(nodeCrsInfo.NODE_ID);
 	
 					if (nodeInfo != null) {
 						dashboard.CUR_CRS_NODE = nodeInfo;
@@ -234,7 +313,7 @@
 			}
 	
 			if (jsonObj.CUR_NODE_ID != null) {
-				var nodeInfo = dashboard.searchNodeId(jsonObj.CUR_NODE_ID);
+				var nodeInfo = dashboard.searchNode(jsonObj.CUR_NODE_ID);
 				if (nodeInfo != null) {
 					$("#cur_node").text(nodeInfo.NODE_NM);
 				} else if (jsonObj.CUR_NODE_NM != null) {
@@ -248,7 +327,7 @@
 			}
 			
 			{
-				var nodeInfo = dashboard.nextNodeId(jsonObj.CUR_NODE_ID, "NT002");
+				var nodeInfo = dashboard.nextNode(jsonObj.CUR_NODE_ID, "NT002");
 				if (nodeInfo != null) {
 					$("#next_node").text(nodeInfo.NODE_NM);
 				} else if (jsonObj.NEXT_NODE_NM != null) {
@@ -295,32 +374,24 @@
 				}
 				//디스패치가 일반메시지가 아닐경우	
 				if(parseInt(dsptchMessage) != "undefined" && dsptchDiv != "DP001"&&parseInt(dsptchMessage) != 0) {
-					if(Math.abs(parseInt(dsptchMessage) >= 60)) {
-						 min = Math.abs(parseInt(dsptchMessage/60)) + "분 ";
-					}
-					 sec = Math.abs(parseInt(dsptchMessage%60)) + "초 ";
-					
+
 					//운행중 디스패치일 경우 
 					if(dsptchDiv == "DP002") {
 						if(dsptchKind == "DK001") {
-							contsResult = util.MSG.DISPATCH_MSG_NORMAL;
+							
 						}
 						else if(dsptchKind == "DK002") {
-							contsResult = min + sec + " 늦음"; 
+							dashboard.dispatch(2, dsptchKind, Math.abs(parseInt(dsptchMessage)));
 						}
 						else if(dsptchKind == "DK003") {
-							contsResult = min + sec + " 빠름"; 
+							dashboard.dispatch(2, dsptchKind, Math.abs(parseInt(dsptchMessage))); 
 						}
 					}
 					//정차중 디스패치일 경우
 					else if(dsptchDiv == "DP003") {
-						contsResult = "정류장 정차 : " + min + sec;	
+						dashboard.dispatch(1, null, Math.abs(parseInt(dsptchMessage)));
 					}	
-					if((dsptchDiv == "DP002" && dsptchKind == "DK001")==false) {
-						$("#priority_signal").text(contsResult)	;
-						$(".situation").removeClass("orange");
-						$(".situation").addClass("blue");
-					}
+					
 				} 
 				//디스패치 메시지가 일반메시지일 경우
 				else if(parseInt(dsptchConts) == "undefined" || dsptchDiv == "DP001") {	
@@ -358,14 +429,7 @@
 		}
 		else if (attrId == util.ATTR_ID.TRAFFIC_MODULE_TWO) {
 			try {
- 				
-				var timeResult = util.getToday();
-			
-				var message = "정류장제어 운영 : "+jsonObj.LIST[0].STOP_SEC;				
-				$("#priority_signal").text(message)
-				
-				$(".situation").removeClass("blue");
-				$(".situation").addClass("orange");
+				dashboard.dispatch(3, jsonObj.LIST[0].CTRL_TYPE,jsonObj.LIST[0].STOP_SEC);
 			} catch (e) {
 				console.log("[ATTR_ID.TRAFFIC_MODULE_TWO] Exception :: " + e.message);		
 			}
@@ -373,19 +437,11 @@
 		
 		//신호 모듈3 수신
 		else if (attrId == util.ATTR_ID.TRAFFIC_MODULE_THREE) {
-			if(jsonObj.LIST[0].CTRL_TYPE=='ST001'){
-				var message = "교차로제어 운영 : 조기종결";				
-				$("#priority_signal").text(message)
-				$(".situation").removeClass("blue");
-				$(".situation").addClass("orange");
+			try {
+				dashboard.dispatch(4, jsonObj.LIST[0].CTRL_TYPE,null);
+			} catch (e) {
+				console.log("[ATTR_ID.TRAFFIC_MODULE_TWO] Exception :: " + e.message);		
 			}
-			else{
-				var message = "교차로제어 운영 : 현시연장";				
-				$("#priority_signal").text(message)
-				$(".situation").removeClass("blue");
-				$(".situation").addClass("orange");
-			}
-			
 		}
 		
 	};

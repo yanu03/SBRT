@@ -89,14 +89,19 @@
 				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="조회중입니다..." ev:submit=""
 				ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
+			<xf:submission id="sub_PI0302GSEND" ref='data:json,{"action":"modified","id":"dlt_BMS_NEWS_INFO"}'
+				target="data:json,dma_result" action="/pi/PI0302GSEND" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
+				errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_PI0302GSEND_submitdone"
+				ev:submiterror="" abortTrigger="">
+			</xf:submission>
 		</xf:model>
 		<script type="text/javascript" lazy="false"><![CDATA[
 	scwin.onpageload = function() {
 		$p.executeSubmission(sub_PI0302G0R0);
 		
 		var autoOptions = {
-			Main : { grid : PI0302G0, srchSbm : sub_PI0302G0R0, savSbm : sub_PI0302G0S0,
-			focusColumn : "PROV_NM", name : "전송 뉴스 목록" }
+			Main : { grid : PI0302G0, srchSbm : sub_PI0302G0R0, savSbm : sub_PI0302G0S0, focusColumn : "PROV_NM", name : "전송 뉴스 목록" }
+			//,SETTING:{cbFnc:scwin.direct_reflec_onclick, nm:"즉시반영", class : "setting"}
 		 };
 		
 		var mainOptions = {
@@ -108,6 +113,15 @@
 		$p.executeSubmission(sub_PI0302SHI0);
 	};
 	
+	//즉시반영 클릭 이벤트
+	scwin.direct_reflec_onclick = function(){
+		com.confirm("운영에 즉시 반영 하시겠습니까?", function(rtn) {
+			if (rtn) {
+				com.executeSubmission(sub_AL0305G0SEND);
+			}
+		});
+	};
+	
 	scwin.dateDisFormatter = function(data){
 		if (data == "") return "";
 		return data.substring(0,4) + "-" + data.substring(4,6) + "-" + data.substring(6,8) + " " + data.substring(8,10) + ":" + data.substring(10,12);
@@ -116,6 +130,9 @@
 	scwin.sub_PI0302G0R0_submitdone = function(e) {
 		com.setFocusedCell(PI0302G0, "CATEGORY");
 		$p.executeSubmission(sub_PI0302G1R0);
+	};
+	
+	scwin.sub_PI0302GSEND_submitdone = function(e) {
 	};
 	
 	scwin.sbx_ChoiceBox_onviewchange = function(info) {
