@@ -1190,6 +1190,13 @@
 						
 						dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "OCR_DTM", timeResult);
 						dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "STOP_SEC", dataList[0].STOP_SEC);
+						
+						//우선신호 발생이력, 우선신호 발생이력은 버스 변경시 초기화
+						var insertRow = dlt_BMS_CRS_SIGOPER_EVENT_HIS_MO0101.insertRow(0);
+						dlt_BMS_CRS_SIGOPER_EVENT_HIS_MO0101.setCellData(insertRow, "TRF_MODULE", "2");
+						dlt_BMS_CRS_SIGOPER_EVENT_HIS_MO0101.setCellData(insertRow, "OCR_DTM", timeResult);
+						dlt_BMS_CRS_SIGOPER_EVENT_HIS_MO0101.setCellData(insertRow, "STOP_SEC", dataList[0].STOP_SEC);
+						
 						//신호모듈 종류
 						routMap.mapInfo["map_MO0101_vehicle"].divTrfModule = "TWO";
 						routMap.mapInfo["map_MO0101_vehicle"].isTrfModule = "on";
@@ -1230,6 +1237,15 @@
 						dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "CTRL_TYPE", dataList[0].CTRL_TYPE);
 						dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "CTRL_PHASE_NO", dataList[0].CTRL_PHASE_NO);
 						
+						//우선신호 발생이력, 우선신호 발생이력은 버스 변경시 초기화
+						var insertRow = dlt_BMS_CRS_SIGOPER_EVENT_HIS_MO0101.insertRow(0);
+						dlt_BMS_CRS_SIGOPER_EVENT_HIS_MO0101.setCellData(insertRow, "TRF_MODULE", "3");
+						dlt_BMS_CRS_SIGOPER_EVENT_HIS_MO0101.setCellData(insertRow, "OCR_DTM", timeResult);
+						dlt_BMS_CRS_SIGOPER_EVENT_HIS_MO0101.setCellData(insertRow, "CTRL_LV", dataList[0].CTRL_LV);
+						dlt_BMS_CRS_SIGOPER_EVENT_HIS_MO0101.setCellData(insertRow, "CTRL_TYPE", dataList[0].CTRL_TYPE);
+						dlt_BMS_CRS_SIGOPER_EVENT_HIS_MO0101.setCellData(insertRow, "CTRL_PHASE_NO", dataList[0].CTRL_PHASE_NO);
+						
+						
 						//신호모듈 종류
 						routMap.mapInfo["map_MO0101_vehicle"].divTrfModule = "THREE";
 						routMap.mapInfo["map_MO0101_vehicle"].isTrfModule = "on";
@@ -1253,6 +1269,7 @@
 		
 		dlt_BRT_OPER_EVENT_HIS_MO0101.removeAll();
 		dlt_BRT_DSPTCH_LOG_MO0101.removeAll();
+		dlt_BMS_CRS_SIGOPER_EVENT_HIS_MO0101.removeAll();
 		
 		gbMap.setLevel(4);
 		busFocus = row;		 
@@ -1336,6 +1353,7 @@
 		dlt_BRT_CUR_OPER_INFO_MO0101.removeAll();
 		dlt_BRT_OPER_EVENT_HIS_MO0101.removeAll();
 		dlt_BRT_DSPTCH_LOG_MO0101.removeAll();
+		dlt_BMS_CRS_SIGOPER_EVENT_HIS_MO0101.removeAll();
 		com.searchGrid(MO0101G1, sub_MO0101G1R0);
 		com.searchGrid(MO0101G2, sub_MO0101G2R0);
 		//com.searchGrid(MO0101G3, sub_MO0101G3R0);
@@ -1358,6 +1376,7 @@
 		dlt_BRT_CUR_OPER_INFO_MO0101.removeAll();
 		dlt_BRT_OPER_EVENT_HIS_MO0101.removeAll();
 		dlt_BRT_DSPTCH_LOG_MO0101.removeAll();
+		dlt_BMS_CRS_SIGOPER_EVENT_HIS_MO0101.removeAll();
 		//com.searchGrid(MO0101G0, sub_MO0101G0R0);
 		com.searchGrid(MO0101G1, sub_MO0101G1R0);
 		com.searchGrid(MO0101G2, sub_MO0101G2R0);
@@ -1373,7 +1392,8 @@
 	
 	scwin.MO0101G1_onrowindexchange = function(row,oldRow) {
 		dlt_BRT_OPER_EVENT_HIS_MO0101.removeAll();
-		dlt_BRT_DSPTCH_LOG_MO0101.removeAll();		
+		dlt_BRT_DSPTCH_LOG_MO0101.removeAll();	
+		dlt_BMS_CRS_SIGOPER_EVENT_HIS_MO0101.removeAll();	
 		
 		gbMap.setLevel(1);
 		for(var i=0; i<routMap.mapInfo["map_MO0101_crs"].markers.length; i++){
@@ -1578,7 +1598,8 @@
 		routMap.removeAllOverlay("map_MO0101_sttn");
 		crossFocus = row;
 		//com.executeSubmission(sub_selectNodeListByRepRout);
-		dlt_BMS_CRS_SIGOPER_EVENT_HIS_MO0101.removeAll();		
+		//dlt_BMS_CRS_SIGOPER_EVENT_HIS_MO0101.removeAll();
+				
 		routMap.moveMap("map_MO0101_crs", dlt_BMS_ROUT_NODE_CMPSTN3_MO0101.getCellData(row, "GPS_Y"), dlt_BMS_ROUT_NODE_CMPSTN3_MO0101.getCellData(row, "GPS_X"));
 	};
 	
@@ -2636,46 +2657,49 @@
 											rowNumVisible="true" useShiftKey="true" readOnly="true" scrollByColumn="false" rowNumHeaderValue="No." sortable="false"
 											rowStatusHeaderValue="상태" overflowX="hidden" overflowY="scroll" rowStatusVisible="false" fixedColumnWithHidden="true"
 											dataList="data:dlt_BMS_CRS_SIGOPER_EVENT_HIS_MO0101" ignoreCellClick="false" style="height:130px;" autoFit="lastColumn" visibleRowNum=""
-											id="MO0101G7" class="cm_grid left" tooltipPositionY="" focusMode="row" noResultMessage="금일 발생이력 없음">
+											id="MO0101G7" class="cm_grid left" tooltipPositionY="" focusMode="row" noResultMessage="데이터 수신중">
 											<w2:caption style="" id="caption1" value="this is a grid caption."></w2:caption>
 											<w2:header style="" id="header1">
 												<w2:row style="" id="row1">
 													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
-														id="column3" value="노선명" blockSelect="false" displayMode="label">
-													</w2:column>
-													<w2:column removeBorderStyle="false" width="200" inputType="text" style="height:20px"
-														id="column6" value="교차로명" blockSelect="false" displayMode="label">
+														id="column3" value="발생시간" blockSelect="false" displayMode="label">
 													</w2:column>
 													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
-														id="column4" value="발생시간" blockSelect="false" displayMode="label">
+														id="column4" value="모듈" blockSelect="false" displayMode="label">
+													</w2:column>
+													<w2:column removeBorderStyle="false" width="100" inputType="text" style="height:20px"
+														id="column7" value="정류소 대기시간" blockSelect="false" displayMode="label">
 													</w2:column>
 													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
 														id="column5" value="제어단계" blockSelect="false" displayMode="label">
 													</w2:column>
-													<w2:column removeBorderStyle="false" width="50" inputType="text" style="height:20px"
-														id="column7" value="정류소 대기시간" blockSelect="false" displayMode="label">
+													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+														id="column8" value="제어방식" blockSelect="false" displayMode="label">
 													</w2:column>
-													<!-- <w2:column removeBorderStyle="false" width="30" inputType="text" style="height:20px"
-														id="column8" value="우선신호 제어현시" blockSelect="false" displayMode="label">
-													</w2:column> -->
+													<w2:column removeBorderStyle="false" width="30" inputType="text" style="height:20px"
+														id="column6" value="우선신호 제어현시" blockSelect="false" displayMode="label">
+													</w2:column>
 												</w2:row>
 											</w2:header>
 											<w2:gBody style="" id="gBody1">
 												<w2:row style="" id="row2">
 													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
-														id="ROUT_NM" value="" blockSelect="false" displayMode="label" textAlign="left">
-													</w2:column>
-													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
-														id="NODE_NM" value="" blockSelect="false" displayMode="label" textAlign="left">
-													</w2:column>
-													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
 														id="OCR_DTM" value="" blockSelect="false" displayMode="label">
+													</w2:column>
+													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+														id="TRF_MODULE" value="" blockSelect="false" displayMode="label">
+													</w2:column>
+													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+														id="STOP_SEC" value="" blockSelect="false" displayMode="label">
 													</w2:column>
 													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
 														id="CTRL_LV" value="" blockSelect="false" displayMode="label">
 													</w2:column>
 													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
-														id="STOP_SEC" value="" blockSelect="false" displayMode="label">
+														id="CTRL_TYPE" value="" blockSelect="false" displayMode="label">
+													</w2:column>
+													<w2:column removeBorderStyle="false" width="70" inputType="text" style="height:20px"
+														id="CTRL_PHASE_NO" value="" blockSelect="false" displayMode="label">
 													</w2:column>
 												</w2:row>
 											</w2:gBody>

@@ -27,7 +27,8 @@ var util = {
 	,	DISPATCH : 4020 //디스패치
 	,	DISPATCH_LIST : 4021
 	,	AIRCON_INFO : 5050
-	,	SCREENDOOR_INFO : 5051	
+	,	SCREENDOOR_INFO : 5051
+  , PPC_INFO : 5052 // 피플카운트, 확인후 수정해야함
 	},
 	
 	MSG : {
