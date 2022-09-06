@@ -28,6 +28,7 @@ var routMap = {
 	
 	SHOW_DISPATCH_OVERLAY : "Y", //디스패치 오버레이 여부(Y, N) 디스패치 오버레이 N 설정시 정차중 디스패치도 오지 않습니다.
 	SHOW_EVENT_OVERLAY : "Y", //이벤트 오버레이 여부(Y, N)
+	SHOW_TRF_OVERLAY : "Y", //신호모듈 오버레이 여부(Y, N)
 	//================================마커, 오버레이(팝업) 관련=====================================
 
 	
@@ -46,6 +47,7 @@ var routMap = {
 	//================================시간값 관련=================================================
 	RECEIVE_WAIT_TIME : 60, //websocket 데이터를 받을 때 기존 수신 시간에서 RECEIVE_WAIT_TIME만큼 초과할 경우 해당 row를 삭제합니다. (단위 : sec)
 	DISPATCH_OVERLAY_TIME : 2500, //디스패치 오버레이 보여줄 시간(단위 : ms)
+	TRF_OVERLAY_TIME : 2500, //신호모듈 오버레이 보여줄 시간(단위 : ms)
 	
 	//================================시간값 관련=================================================
 
@@ -64,6 +66,7 @@ var routMap = {
 	ZINDEX_SIG_MARKER : 4, //신호등 z-index
 	ZINDEX_DISPATCH_OVERLAY : 100000, //디스패치 오버레이 z-index
 	ZINDEX_EVENT_OVERLAY : 100000, //이벤트 오버레이 z-index
+	ZINDEX_TRF_OVERLAY : 100001, //신호모듈 오버레이 z-index
 	//================================Z-Index 관련==============================================
 	
 	//================================색깔, 크기 관련===============================================
@@ -91,6 +94,7 @@ var routMap = {
 
 var VhcMapInfo = function() {
   this.stopTime = 0;
+  this.timerTrfModule = {};
 }
 
 
@@ -143,10 +147,14 @@ var RoutMAP = function(){
 	this.dsptchOverArr = [];
 	this.eventOverlay = null;
 	this.eventOverArr = [];
+	this.trfOverlay = null;
+	this.trfOverArr = [];
 	this.isDsptch = "off";
 	this.divDsptch = "";
 	this.isEvent = "off";
 	this.divEvent = "";
+	this.isTrfModule = "off";
+	this.divTrfModule = "";
 	this.isOverLayHidden = false;
 	this.isFirst = true;
 }
@@ -1393,6 +1401,23 @@ routMap.showBusMarkerClickOverlay = function(mapId, data, idx, focusIdx, busGrid
 		
 	}
 	
+	if(routMap.mapInfo[mapId].isTrfModule == "on") {
+		  
+		if(typeof(gridChk) != "undefined" && gridChk == "Y") {
+			if (typeof(data.TRF_YN) != "undefined") {
+				if (data.TRF_YN = "1" && socketVhcNo == data.VHC_NO)
+					routMap.showTrfOverlay(mapId, data, idx, focusIdx, marker);		
+			}			
+		}
+		
+		else {
+			if(idx == focusIdx) {
+				routMap.showTrfOverlay(mapId, data, idx, focusIdx, marker);
+			}
+		}
+		
+	}
+	
 //	if(routMap.mapInfo[mapId].divEvent != "ET001") {
 //    routMap.mapInfo[mapId].divEvent = "";
 		marker.setMap(routMap.mapInfo[mapId].map); //Marker가 표시될 Map 설정.
@@ -2226,6 +2251,10 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
         		eventMsg += '     <dt class="blind">정차 메시지</dt>';
         		eventMsg += '      <dd id="stopMessage"></dd>';
         		eventMsg += '   </dl>';
+        		eventMsg += '   <dl class="event_mesage trf_message" style="display: none;">';
+        		eventMsg += '     <dt class="blind">정차 제어</dt>';
+        		eventMsg += '      <dd id="trfStopSec"></dd>';
+        		eventMsg += '   </dl>';
         		eventMsg += '   <button class="close_mesage ir_pm" id="busInfo-closer">닫기</button>';
         		eventMsg += '</div>';			
         
@@ -2251,7 +2280,7 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
     else if (routMap.mapInfo[mapId].divEvent == "ET020") {
        eventMsg += '<div class="mesage map_mesage2">';
        eventMsg += '<h3 class="blind"></h3>';       
-       eventMsg += '<span>차고지출발</span>';              
+       eventMsg += '<span>차고지 출발</span>';              
        eventMsg += '<button class=close_mesage ir_pm"></button>';       
     }
 		
@@ -2349,6 +2378,63 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
     	routMap.mapInfo[mapId].divEvent = ""; 	
     }
   }
+}
+
+//신호모듈 오버레이
+routMap.showTrfOverlay = function(mapId, data, idx, focusIdx, marker) {
+	if(routMap.SHOW_TRF_OVERLAY == "N" || idx != focusIdx) {
+		routMap.mapInfo[mapId].isTrfModule = "off";
+		return;
+	}
+	
+	var zIndex = routMap.ZINDEX_TRF_OVERLAY;
+	var showMessage = "";
+	var trfMessage = "";
+
+	//신호모듈2
+	if(routMap.mapInfo[mapId].divTrfModule == "TWO") {
+//		if(Math.abs(parseInt(data.STOP_SEC) >= 60)) {
+//			min = Math.abs(parseInt(data.STOP_SEC/60)) + "분 ";
+//		}
+//			sec = Math.abs(parseInt(data.STOP_SEC%60));	
+			
+			showMessage = util.format(util.MSG.DISPATCH_MSG_SIGNAL_2, data.STOP_SEC);			
+			$(".trf_message").show();	
+			$("#trfStopSec").text(showMessage);	
+	}
+	
+	//신호모듈3
+	else if(routMap.mapInfo[mapId].divTrfModule == "THREE") {
+		showMessage = util.format(util.MSG.DISPATCH_MSG_SIGNAL_3, data.CTRL_LV);
+		trfMessage += '<div class="mesage map_mesage2">';
+	//trfMessage += '<div class="dispatch map_mesage" style="position: absolute; bottom:210px;"></h3>';
+		trfMessage += '<h3 class="blind"></h3>';
+		trfMessage += '   <span>'+showMessage+'</span>';
+		trfMessage += '   <button class="close_mesage ir_pm" id="busInfo-closer">닫기</button> ';
+		trfMessage += '</div>';
+		
+		trfOverlay = new kakao.maps.CustomOverlay({
+			content: trfMessage,
+			position: marker.getPosition(),
+			zIndex : zIndex
+		});
+		
+		routMap.mapInfo[mapId].trfOverlay = trfOverlay;
+		routMap.mapInfo[mapId].trfOverArr[0] = routMap.mapInfo[mapId].trfOverlay;
+		trfOverlay.setMap(routMap.mapInfo[mapId].map);
+	}
+		
+	routMap.mapInfo[mapId].isTrfModule = "off";
+	
+	if(routMap.mapInfo[mapId].trfOverArr != null) {
+		setTimeout(function() {
+			if(routMap.mapInfo[mapId].trfOverArr.length != 0) {
+				routMap.mapInfo[mapId].trfOverArr[0].setMap(null);
+				routMap.mapInfo[mapId].trfOverArr[0] = null;
+			}
+		},routMap.TRF_OVERLAY_TIME);
+	}
+		
 }
 
 /**
@@ -3512,7 +3598,6 @@ routMap.showMarkerTab = function(mapId, data, idx, focusIdx, grid) {
 	
 	// 마커에 click 이벤트를 등록합니다
 	kakao.maps.event.addListener(marker, 'click', function() {
-		debugger;
 		//일단 하드코딩 문제 생길시 수정 필요
 //		routMap.removeRightClickOverlay("map_MO0101_vehicle");
 //		routMap.removeAllOverlay("map_MO0101_sttn");		
@@ -5705,7 +5790,7 @@ routMap.moveVehicle = function(mapId, json, index, focusIdx) {
 	
 	var latLng = new kakao.maps.LatLng(json.GPS_Y, json.GPS_X);
 	
-	//if(routMap.mapInfo[mapId].divEvent != "ET001") {d
+	//if(routMap.mapInfo[mapId].divEvent != "ET001") {
 		if(typeof routMap.mapInfo[mapId].busMarkers[index] != "undefined"){
 			routMap.mapInfo[mapId].busMarkers[index].setPosition(latLng);
 		}

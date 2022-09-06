@@ -53,6 +53,10 @@
 						<w2:column id="CUR_NODE_TYPE" name="name38" dataType="text"></w2:column>
 						<w2:column id="CUR_NODE_NM" name="name39" dataType="text"></w2:column>
 						<w2:column id="OCR_DTM" name="실시간데이터발생시간" dataType="text"></w2:column>
+						<w2:column id="STOP_SEC" name="name41" dataType="text"></w2:column>
+						<w2:column id="CTRL_LV" name="name42" dataType="text"></w2:column>
+						<w2:column id="CTRL_TYPE" name="name43" dataType="text"></w2:column>
+						<w2:column id="CTRL_PHASE_NO" name="name44" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search_MO0101">
@@ -681,30 +685,30 @@
 		*/
 
 		//GPS값 튈 경우 아무 동작도 안되게 처리
-			
-			if (repRoutItem != "") {
-				//소켓 데이터에 대표노선이 없어 대표노선에 포함된 노선 ID들과 비교			
-				for(var i=0; i<dlt_searchitem2_MO0101.getDataLength(); i++) {
-					var routItemOfList = dlt_searchitem2_MO0101.getCellData(i, "ROUT_ID");		
-					if(routItemOfList == jsonObj.ROUT_ID) {
-						checkRepRout = 1;	
-					}	
+			if (typeof (jsonObj.ROUT_ID) != "undefined") {
+				if (repRoutItem != "") {
+					//소켓 데이터에 대표노선이 없어 대표노선에 포함된 노선 ID들과 비교			
+					for(var i=0; i<dlt_searchitem2_MO0101.getDataLength(); i++) {
+						var routItemOfList = dlt_searchitem2_MO0101.getCellData(i, "ROUT_ID");		
+						if(routItemOfList == jsonObj.ROUT_ID) {
+							checkRepRout = 1;	
+						}	
+					}
+					if (checkRepRout == 0){
+						return;
+					}
 				}
-				if (checkRepRout == 0){
-					return;
+				
+				if (routItem != "") {
+					if(routItem != jsonObj.ROUT_ID) {
+						return;
+					}		
+				}
+				
+				if (vhcNoItem != "") {
+						
 				}
 			}
-			
-			if (routItem != "") {
-				if(routItem != jsonObj.ROUT_ID) {
-					return;
-				}		
-			}
-			
-			if (vhcNoItem != "") {
-					
-			}
-			
 			
 			
 			if(attrId == util.ATTR_ID.BUS_ARRIVAL_INFO){
@@ -761,7 +765,7 @@
 							
 							//focus가 된 차량이면 이력 insert
 							if(dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID") == jsonObj.VHC_ID){
-								var insertRow = dlt_BRT_OPER_EVENT_HIS_MO0101.insertRow();
+								var insertRow = dlt_BRT_OPER_EVENT_HIS_MO0101.insertRow(0);
 								
 								var today = new Date();   
 								var hours = leadingZeros(today.getHours(), 2);
@@ -1030,7 +1034,7 @@
 							}
 							
 							
-							var insertRow = dlt_BRT_DSPTCH_LOG_MO0101.insertRow();
+							var insertRow = dlt_BRT_DSPTCH_LOG_MO0101.insertRow(0);
 							
 							var today = new Date();   
 							var hours = leadingZeros(today.getHours(), 2);
@@ -1166,13 +1170,15 @@
 		
 		
 		//신호 모듈2 수신
-		else if (attrId = util.ATTR_ID.TRAFFIC_MODULE_TWO) {
+		else if (attrId == util.ATTR_ID.TRAFFIC_MODULE_TWO) {
 			try {
-					var curIndexArr = dlt_BRT_CUR_OPER_INFO_MO0101.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
-					
+					//VHC_ID가 없어 임시 VHC_NO로 대체
+//					var curIndexArr = dlt_BRT_CUR_OPER_INFO_MO0101.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+					var curIndexArr = dlt_BRT_CUR_OPER_INFO_MO0101.getMatchedIndex("VHC_NO", dataList[0].VHC_NO);					
 					if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {						
 						//포커스된 차량이 아니면 return
-						if(dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID") != jsonObj.VHC_ID) {
+					//	if(dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_NO") != jsonObj.VHC_NO) {
+						if(dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_NO") != dataList[0].VHC_NO) {
 							return;	
 						}
 						
@@ -1182,10 +1188,15 @@
 						var seconds = leadingZeros(today.getSeconds(), 2); 
 						var timeResult = hours + ':' + minutes + ':' + seconds
 						
-						var dsptchDiv = jsonObj.DSPTCH_DIV;
-						var dsptchConts = jsonObj.MESSAGE;
-						var dsptchKind = jsonObj.DSPTCH_KIND;
-							
+						dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "OCR_DTM", timeResult);
+						dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "STOP_SEC", dataList[0].STOP_SEC);
+						//신호모듈 종류
+						routMap.mapInfo["map_MO0101_vehicle"].divTrfModule = "TWO";
+						routMap.mapInfo["map_MO0101_vehicle"].isTrfModule = "on";
+						routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO_MO0101.getAllJSON(),
+						dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0, jsonObj);
+						
+						
 					}
 				} catch (e) {
 					console.log("[ATTR_ID.TRAFFIC_MODULE_TWO] Exception :: " + e.message);		
@@ -1195,7 +1206,39 @@
 		
 		//신호 모듈3 수신
 		else if (attrId = util.ATTR_ID.TRAFFIC_MODULE_THREE) {
-			
+		
+		
+			try {
+//					var curIndexArr = dlt_BRT_CUR_OPER_INFO_MO0101.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+					var curIndexArr = dlt_BRT_CUR_OPER_INFO_MO0101.getMatchedIndex("VHC_NO", dataList[0].VHC_NO);					
+					if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {						
+						//포커스된 차량이 아니면 return
+					//	if(dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_NO") != jsonObj.VHC_NO) {
+						if(dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_NO") != dataList[0].VHC_NO) {
+							return;	
+						}
+						
+						var today = new Date();   
+						var hours = leadingZeros(today.getHours(), 2);
+						var minutes = leadingZeros(today.getMinutes(), 2); 
+						var seconds = leadingZeros(today.getSeconds(), 2); 
+						var timeResult = hours + ':' + minutes + ':' + seconds
+						dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "OCR_DTM", timeResult);
+						
+						//CTRL_LV, CTRL_TYPE, CTRL_PHASE_NO, OCR_DTM
+						dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "CTRL_LV", dataList[0].CTRL_LV);
+						dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "CTRL_TYPE", dataList[0].CTRL_TYPE);
+						dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "CTRL_PHASE_NO", dataList[0].CTRL_PHASE_NO);
+						
+						//신호모듈 종류
+						routMap.mapInfo["map_MO0101_vehicle"].divTrfModule = "THREE";
+						routMap.mapInfo["map_MO0101_vehicle"].isTrfModule = "on";
+						routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO_MO0101.getAllJSON(),
+						dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0, jsonObj);
+					}
+				} catch (e) {
+					console.log("[ATTR_ID.TRAFFIC_MODULE_THREE] Exception :: " + e.message);		
+				}
 		}
 		
 	};
@@ -1238,6 +1281,12 @@
 	};
 	
 	scwin.sub_MO0101SHI0_submitdone = function(e) {
+//		
+//		var insertRow = dlt_repRoutItem_MO0101.insertRow();
+//		dlt_repRoutItem_MO0101.setCellData(insertRow, "REP_ROUT_ID", "RR00000002, RR00000124");
+//		dlt_repRoutItem_MO0101.setCellData(insertRow, "REP_ROUT_NM", "B0, T0");
+//		TYPE1.setValue("RR00000002, RR00000124");
+//		
 		TYPE1.setValue("RR00000002");		
 		$p.executeSubmission(sub_MO0101SHI1);
 		//com.searchGrid(MO0101G0, sub_MO0101G0R0);
@@ -1250,7 +1299,6 @@
 	};
 	
 	scwin.sub_selectNodeListByRepRout_submitdone = function(e) {
-			
 		com.executeSubmission(sub_selectGrgRdsInfo);
 		com.executeSubmission(sub_selectCategory);
 		routMap.showRoute("map_MO0101", dlt_BMS_ROUT_NODE_DISP_VW_MO0101.getAllJSON(), null, "ONLYLINE");			
@@ -1294,7 +1342,15 @@
 		//com.searchGrid(MO0101G4, sub_MO0101G4R0);
 		com.searchGrid(MO0101G5, sub_MO0101G5R0);
 		com.searchGrid(MO0101G7, sub_MO0101G7R0);
-		com.executeSubmission(sub_selectNodeListByRepRout);			
+		com.executeSubmission(sub_selectNodeListByRepRout);		
+		
+		//T0 차량 데이터 받기 위함
+		var insertRow = dlt_searchitem2_MO0101.insertRow();
+		dlt_searchitem2_MO0101.setCellData(insertRow, "ROUT_ID", "RT00000169");	
+		dlt_searchitem2_MO0101.setCellData(insertRow, "ROUT_NM", "T0(상행)");
+		insertRow = dlt_searchitem2_MO0101.insertRow();
+		dlt_searchitem2_MO0101.setCellData(insertRow, "ROUT_ID", "RT00000170");
+		dlt_searchitem2_MO0101.setCellData(insertRow, "ROUT_NM", "T0(하행)");	
 	};
 	
 	scwin.TYPE2_onviewchange = function(info) {

@@ -61,7 +61,13 @@ public class MO0101Service extends ServiceSupport{
 	}
 	
 	public List MO0101SHI1() throws Exception{
-		Map param = getSimpleDataMap("dma_search_MO0101");		
+		Map param = getSimpleDataMap("dma_search_MO0101");
+		
+		/*
+		//B0, T0 같이 나오게 처리위해 추가및변경
+		String temp[] = param.get("CONTENT1").toString().replace(" ","").split(",");
+		param.put("REP_ROUT_IDS", temp);
+		*/
 		return mo0101Mapper.MO0101SHI1(param);
 	}
 	
