@@ -182,6 +182,7 @@ public class GetResponse {
 	        	    	wsModuleTwoDataMap.put("LIST", trafficModule2MapList);
 	                	
 	            		webSocketClient.sendMessage(wsModuleTwoDataMap);
+	            		
 	            		curInfoMapper.insertOrUpdateSigOperEventInfo(moduleTwoMap);
             		} catch (Exception e) {
             			logger.error("Exception {}", e);

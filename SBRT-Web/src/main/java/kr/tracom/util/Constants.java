@@ -15,6 +15,7 @@ public class Constants {
 	public static final String NODE_TYPE_SIGNAL = "NT008"; //신호
 	public static final String NODE_TYPE_DP = "NT009"; //DP(화면 표출용)
 	public static final String NODE_TYPE_BOARD = "NT010"; //횡당보도
+	public static final String NODE_TYPE_CROSS_BUSSTOP = "NT001NT002"; //교차로정류소
 	
 	public static final String MOCK_NODE_TYPE_CROSS = "101"; //교차로
 	public static final String MOCK_NODE_TYPE_END = "102"; //시종점
