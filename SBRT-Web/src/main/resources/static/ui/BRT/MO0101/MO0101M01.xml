@@ -57,6 +57,7 @@
 						<w2:column id="CTRL_LV" name="name42" dataType="text"></w2:column>
 						<w2:column id="CTRL_TYPE" name="name43" dataType="text"></w2:column>
 						<w2:column id="CTRL_PHASE_NO" name="name44" dataType="text"></w2:column>
+						<w2:column id="BEARING" name="방위각" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataMap baseNode="map" id="dma_search_MO0101">
@@ -309,11 +310,37 @@
 						<w2:column id="TM_Y" name="name6" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
+				<w2:dataList baseNode="list" repeatNode="map" id="dlt_BMS_LINK_MST_ALL_MO0101" saveRemovedData="true">
+					<w2:columnInfo>
+						<w2:column id="LINK_ID" name="링크아이디" dataType="text"></w2:column>
+						<w2:column id="LINK_NM" name="링크명" dataType="text"></w2:column>
+						<w2:column id="LINK_ENM" name="링크영문명" dataType="text"></w2:column>
+						<w2:column id="ST_NODE_ID" name="시작노드아이디" dataType="text"></w2:column>
+						<w2:column id="ED_NODE_ID" name="종료노드아이디" dataType="text"></w2:column>
+						<w2:column id="LINK_SECTION_TYPE" name="링크구간유형" dataType="text"></w2:column>
+						<w2:column id="LINK_TYPE" name="링크유형" dataType="text"></w2:column>
+						<w2:column id="DIR" name="방향" dataType="text"></w2:column>
+						<w2:column id="LEN" name="길이" dataType="text"></w2:column>
+						<w2:column id="BEARING" name="방위각" dataType="text"></w2:column>
+						<w2:column id="LINE_CNT" name="차선수" dataType="text"></w2:column>
+						<w2:column id="GATE_N1" name="게이트번호1" dataType="text"></w2:column>
+						<w2:column id="GATE_N2" name="게이트번호2" dataType="text"></w2:column>
+						<w2:column id="ROAD_NM" name="도로명" dataType="text"></w2:column>
+						<w2:column id="CONN_CD" name="연결로코드" dataType="text"></w2:column>
+						<w2:column id="MAX_SPD" name="최대속도" dataType="text"></w2:column>
+						<w2:column id="AVRG_SPD" name="평균속도" dataType="text"></w2:column>
+						<w2:column id="USE_YN" name="사용여부" dataType="text"></w2:column>
+						<w2:column id="SBRT_YN" name="SBRT노선여부" dataType="text"></w2:column>
+						<w2:column id="UPD_DTM" name="갱신일시" dataType="text"></w2:column>
+						<w2:column id="UPD_ID" name="갱신아이디" dataType="text"></w2:column>
+					</w2:columnInfo>
+				</w2:dataList>
 			</w2:dataCollection>
 			<w2:workflowCollection></w2:workflowCollection>
-			<xf:submission id="sub_MO0101G0R0" ref="data:json,dma_search_MO0101" target="data:json,dlt_BRT_CUR_OPER_INFO_MO0101" action="/mo/MO0101G0R0"
-				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0101G0R0_submitdone" ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_MO0101G0R0" ref="data:json,dma_search_MO0101" target="data:json,dlt_BRT_CUR_OPER_INFO_MO0101"
+				action="/mo/MO0101G0R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0101G0R0_submitdone" ev:submiterror=""
+				abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_MO0101G1R0" ref="data:json,dma_search_MO0101" target='data:json,dlt_BMS_ROUT_NODE_CMPSTN2_MO0101'
 				action="/mo/MO0101G1R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
@@ -324,14 +351,15 @@
 				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
 				ev:submit="" ev:submitdone="scwin.sub_MO0101SHI0_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_selectNodeListByRepRout" ref="data:json,dma_search_MO0101" target="data:json,dlt_BMS_ROUT_NODE_DISP_VW_MO0101"
-				action="/mo/selectNodeDispListByRepRout" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace=""
-				errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit=""
+			<xf:submission id="sub_selectNodeListByRepRout" ref="data:json,dma_search_MO0101"
+				target="data:json,dlt_BMS_ROUT_NODE_DISP_VW_MO0101" action="/mo/selectNodeDispListByRepRout" method="post" mediatype="application/json"
+				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="조회 중입니다.." ev:submit=""
 				ev:submitdone="scwin.sub_selectNodeListByRepRout_submitdone" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0101SHI1" ref="data:json,dma_search_MO0101" target="data:json,dlt_searchitem2_MO0101" action="/mo/MO0101SHI1"
-				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0101SHI1_submitdone" ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_MO0101SHI1" ref="data:json,dma_search_MO0101" target="data:json,dlt_searchitem2_MO0101"
+				action="/mo/MO0101SHI1" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0101SHI1_submitdone" ev:submiterror=""
+				abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_selectCategory" ref="data:json,dma_search_MO0101" target="data:json,dlt_BMS_NODE_MST_MO0101"
 				action="/mo/selectCategory" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
@@ -354,17 +382,19 @@
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_selectSigOper_submitdone" ev:submiterror=""
 				abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0101G3R0" ref="data:json,dma_search_MO0101" target="data:json,dlt_BRT_OPER_EVENT_HIS_MO0101" action="/mo/MO0101G3R0"
-				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0101G3R0_submitdone" ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_MO0101G3R0" ref="data:json,dma_search_MO0101" target="data:json,dlt_BRT_OPER_EVENT_HIS_MO0101"
+				action="/mo/MO0101G3R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0101G3R0_submitdone" ev:submiterror=""
+				abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0101G4R0" ref="data:json,dma_search_MO0101" target="data:json,dlt_BRT_DSPTCH_LOG_MO0101" action="/mo/MO0101G4R0"
-				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0101G4R0_submitdone" ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_MO0101G4R0" ref="data:json,dma_search_MO0101" target="data:json,dlt_BRT_DSPTCH_LOG_MO0101"
+				action="/mo/MO0101G4R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="scwin.sub_MO0101G4R0_submitdone" ev:submiterror=""
+				abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0101G5R0" ref="data:json,dma_search_MO0101" target="data:json,dlt_FCLT_COND_LOG_MO0101" action="/mo/MO0101G5R0"
-				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
-				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_MO0101G5R0" ref="data:json,dma_search_MO0101" target="data:json,dlt_FCLT_COND_LOG_MO0101"
+				action="/mo/MO0101G5R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
+				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_MO0101G6R0" ref="" target="" action="" method="post" mediatype="application/json" encoding="UTF-8"
 				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
@@ -374,25 +404,30 @@
 				action="/mo/MO0101G7R0" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
 				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_selectCommuMap" ref="" target="data:json,dlt_BMS_LINK_MST_MO0101" action="/mo/selectCommuMap" method="post"
-				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_selectCommuMap" ref="" target="data:json,dlt_BMS_LINK_MST_MO0101" action="/mo/selectCommuMap"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_MO0101SCK2" ref="data:json,dlt_BMS_ROUT_NODE_CMPSTN4_MO0101" target="" action="/mo/MO0101SCK2" method="post"
-				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_MO0101SCK2" ref="data:json,dlt_BMS_ROUT_NODE_CMPSTN4_MO0101" target="" action="/mo/MO0101SCK2"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_selectSigPeriod" ref="" target="data:json,dlt_SIG_PERIOD_MO0101" action="/mo/selectSigPeriod" method="post"
-				mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg=""
-				ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_selectSigPeriod" ref="" target="data:json,dlt_SIG_PERIOD_MO0101" action="/mo/selectSigPeriod"
+				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
+				processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
 			</xf:submission>
-			<xf:submission id="sub_selectSigPhaseInfo" ref="data:json,dma_sub_search_MO0101" target="data:json,dlt_BMS_CRS_SIGOPER_PHASE_INFO_HIS_MO0101"
-				action="/mo/selectSigPhaseInfo" method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler=""
-				customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone="" ev:submiterror="" abortTrigger="">
+			<xf:submission id="sub_selectSigPhaseInfo" ref="data:json,dma_sub_search_MO0101"
+				target="data:json,dlt_BMS_CRS_SIGOPER_PHASE_INFO_HIS_MO0101" action="/mo/selectSigPhaseInfo" method="post" mediatype="application/json"
+				encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
+				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 			<xf:submission id="sub_selectGrgRdsInfo" ref="" target="data:json,dlt_BMS_GRG_RDS_INFO_MO0101" action="/mo/selectGrgRdsInfo"
 				method="post" mediatype="application/json" encoding="UTF-8" instance="" replace="" errorHandler="" customHandler="" mode="asynchronous"
 				processMsg="" ev:submit="" ev:submitdone="scwin.sub_selectGrgRdsInfo_submitdone" ev:submiterror="" abortTrigger="">
+			</xf:submission>
+			<xf:submission id="sub_selectLinkMst" ref="" target="data:json,dlt_BMS_LINK_MST_ALL_MO0101" action="/mo/selectLinkMst" method="post" mediatype="application/json" encoding="UTF-8"
+				instance="" replace="" errorHandler="" customHandler="" mode="asynchronous" processMsg="" ev:submit="" ev:submitdone=""
+				ev:submiterror="" abortTrigger="">
 			</xf:submission>
 		</xf:model>
 
@@ -459,6 +494,8 @@
 		//MO0101G0.mergeCells("byrestriccol");
 		
 		com.executeSubmission(sub_MO0101SHI0);	
+		
+		//com.executeSubmission(sub_selectLinkMst);
 		
 		//탭 목록 클릭 이벤트
 		$("#MO0101_TAB").find("li").click( function() {
@@ -784,6 +821,7 @@
 								
 								switch(eventCode) {
 									case "ET001":
+									debugger;
 									eventMessage = jsonObj.NODE_NM + "에 도착";
 									break;
 									
@@ -808,6 +846,7 @@
 									break;
 									
 									case "ET007":
+									debugger;
 									eventMessage = "현재속도 " + jsonObj.CUR_SPD+ "km/h, 평균 "+ 
 													jsonObj.EVT_DATA + "km/h";						
 									break;
@@ -866,7 +905,17 @@
 									case "ET020":
 									//eventMessage = "노선이탈하였습니다.";
 									eventMessage = "차고지출발";
-									break;											
+									break;
+																				
+									case "ET021":
+									//eventMessage = "교차로"+"("+jsonObj.NODE_NM+")"+"에 도착";
+									eventMessage = "교차로에 도착";
+									break;
+									
+									case "ET022":
+									//eventMessage = "교차로"+"("+jsonObj.NODE_NM+")"+"에서 출발";									
+									eventMessage = "교차로에서 출발";
+									break;
 								}
 								dlt_BRT_OPER_EVENT_HIS_MO0101.setCellData(insertRow, "EVT_DATA", eventMessage);
 								
@@ -883,7 +932,9 @@
 							
 							curIndexArr = dlt_BRT_CUR_OPER_INFO_MO0101.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);			
 						
-							//기존 수신시간이 현재 수신시간보다 설정값 이상 차이날 경우 해당 row 삭제
+						
+							/*
+							//기존 수신시간이 현재 수신시간보다 설정값 이상 차이날 경우 해당 row 삭제 => 마커 색 변경으로 수정됨(09-08)
 							if(curIndexArr.length != 0) {
 								for(var i=0; i<dlt_BRT_CUR_OPER_INFO_MO0101.getDataLength(); i++) {
 									var ocrDtm = ymd + " " +  dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(i, "OCR_DTM");
@@ -897,6 +948,7 @@
 								
 								}							
 							}
+							*/
 							
 							curIndexArr = dlt_BRT_CUR_OPER_INFO_MO0101.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 							if (curIndexArr[0] == MO0101G0.getFocusedRowIndex()) {
@@ -925,6 +977,8 @@
 								}
 								
 							}
+							
+							//matchedLinkArr = dlt_BMS_LINK_MST_ALL_MO0101.getMatchedData("LINK_ID", jsonObj.LINK_ID);
 							routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO_MO0101.getAllJSON(),
 							dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0);
 								
@@ -982,7 +1036,8 @@
 						
 						curIndexArr = dlt_BRT_CUR_OPER_INFO_MO0101.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);			
 						
-						//기존 수신시간이 현재 수신시간보다 설정값 이상 차이날 경우 해당 row 삭제
+						/*
+						//기존 수신시간이 현재 수신시간보다 설정값 이상 차이날 경우 해당 row 삭제 => 마커 색 변경으로 수정됨(09-08)
 						if(curIndexArr.length != 0) {
 							for(var i=0; i<dlt_BRT_CUR_OPER_INFO_MO0101.getDataLength(); i++) {
 								var ocrDtm = ymd + " " +  dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(i, "OCR_DTM");
@@ -996,6 +1051,7 @@
 							
 							}							
 						}
+						*/
 						
 						
 						curIndexArr = dlt_BRT_CUR_OPER_INFO_MO0101.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);	
@@ -1025,6 +1081,10 @@
 		//				routMap.removeAllBusOverlay("map_MO0101_vehicle");				
 		//				routMap.removeAllOverlay("map_MO0101_sttn");
 		//				routMap.removeAllOverlay("map_MO0101_crs");					
+						if(jsonObj.DSPTCH_DIV != "DP001" && jsonObj.DSPTCH_DIV != "DP002" && jsonObj.DSPTCH_DIV != "DP003") {
+							return;
+						}
+		
 						var curIndexArr = dlt_BRT_CUR_OPER_INFO_MO0101.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
 						
 						if(curIndexArr.length != 0 && (curIndexArr[0] == MO0101G0.getFocusedRowIndex())) {						
@@ -1032,8 +1092,16 @@
 							if(dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID") != jsonObj.VHC_ID) {
 								return;	
 							}
-							
-							
+
+							if(jsonObj.MESSAGE.split('｜').length>0){
+								if(jsonObj.MESSAGE.split('｜')[0] == "0") {
+									debugger;
+									return;	
+								}											
+							}
+
+							//dsptchMessage = data.MESSAGE.split('｜')[0];	
+													
 							var insertRow = dlt_BRT_DSPTCH_LOG_MO0101.insertRow(0);
 							
 							var today = new Date();   
@@ -1120,7 +1188,15 @@
 								routMap.mapInfo["map_MO0101_vehicle"].divDsptch = "DP003";
 							}
 	
-							dlt_BRT_CUR_OPER_INFO_MO0101.setRowJSON(curIndexArr[0], jsonObj, true);								
+							//GPS 변경 안하기 위하여 주석처리
+							//dlt_BRT_CUR_OPER_INFO_MO0101.setRowJSON(curIndexArr[0], jsonObj, true);
+							dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "ROUT_ID", jsonObj.ROUT_ID);
+							dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "ROUT_NM", jsonObj.ROUT_NM);
+							dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "VHC_ID", jsonObj.VHC_ID);
+							dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "VHC_NO", jsonObj.VHC_NO);
+							dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "DSPTCH_DIV", jsonObj.DSPTCH_DIV);
+							dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "DSPTCH_KIND", jsonObj.DSPTCH_KIND);
+							//matchedLinkArr = dlt_BMS_LINK_MST_ALL_MO0101.getMatchedData("LINK_ID", jsonObj.LINK_ID);								
 							routMap.showVehicleClickOverlay("map_MO0101_vehicle", dlt_BRT_CUR_OPER_INFO_MO0101.getAllJSON(),
 							dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0, jsonObj);				
 							
@@ -1136,6 +1212,10 @@
 			//dataList로 다 들어왔다가 dataList로 하나씩 들어오게 수정됨
 			//정차제어 메시지 예) util.format(util.MSG.DISPATCH_MSG_SIGNAL_2,"123")
 		else if (attrId == util.ATTR_ID.TRAFFIC_LIGHT_STATUS_RESPONSE) {
+			if(dataList[0].CRS_ID == "CR00000003" || dataList[0].CRS_ID == "CR00000004") {
+				debugger;
+			}
+		 
 			var crsId = null;
 			var phaseNo = null;
 			
@@ -1369,6 +1449,20 @@
 		insertRow = dlt_searchitem2_MO0101.insertRow();
 		dlt_searchitem2_MO0101.setCellData(insertRow, "ROUT_ID", "RT00000170");
 		dlt_searchitem2_MO0101.setCellData(insertRow, "ROUT_NM", "T0(하행)");	
+		
+		//S0 차량 데이터 받기 위함
+		var insertRow2 = dlt_searchitem2_MO0101.insertRow();
+		dlt_searchitem2_MO0101.setCellData(insertRow2, "ROUT_ID", "RT00000171");	
+		dlt_searchitem2_MO0101.setCellData(insertRow2, "ROUT_NM", "S0상(출)");
+		insertRow2 = dlt_searchitem2_MO0101.insertRow();
+		dlt_searchitem2_MO0101.setCellData(insertRow2, "ROUT_ID", "RT00000172");
+		dlt_searchitem2_MO0101.setCellData(insertRow2, "ROUT_NM", "S0상(착)");
+		insertRow2 = dlt_searchitem2_MO0101.insertRow();
+		dlt_searchitem2_MO0101.setCellData(insertRow2, "ROUT_ID", "RT00000173");	
+		dlt_searchitem2_MO0101.setCellData(insertRow2, "ROUT_NM", "S0하(출)");
+		insertRow2 = dlt_searchitem2_MO0101.insertRow();
+		dlt_searchitem2_MO0101.setCellData(insertRow2, "ROUT_ID", "RT00000174");
+		dlt_searchitem2_MO0101.setCellData(insertRow2, "ROUT_NM", "S0하(착)");			
 	};
 	
 	scwin.TYPE2_onviewchange = function(info) {

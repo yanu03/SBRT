@@ -89,6 +89,16 @@ public class Scheduler {
 		}
 	}
 	
+	@Scheduled(fixedDelay = 60000)
+	public void schedule_60sec() {
+		try {
+				
+		} catch (Exception e) {
+			logger.error("schedule_10sec Exception!!! {}", e);
+		}
+	}
+	
+	
 	@Scheduled(fixedDelay = 10000)
 	public void schedule_10sec() {
 		//Map<String, Object> paramMap = new HashMap<>();
@@ -187,6 +197,54 @@ public class Scheduler {
 				}
 			}			
 				
+		} catch (Exception e) {
+			logger.error("schedule_10sec Exception!!! {}", e);
+		}
+		try {
+			List<Map<String, Object>> list =intgMapper.selectFcltSchedule();
+			for(int x = 0; x < list.size(); x++) {
+				Map data = (Map) list.get(x);
+				String intgFcltId = (String) data.get("INTG_FCLT_ID");
+				String stTime = (String) data.get("ST_TIME");
+				String edTime = (String) data.get("ED_TIME");
+				String power = "";
+				logger.error("CommonUtil.todayHM= {}, {}, {}", CommonUtil.todayHM(), stTime, edTime);
+				if(CommonUtil.todayHM().equals(stTime)) {
+					power = "1";
+				}
+				else if(CommonUtil.todayHM().equals(edTime)) {
+					power = "0";
+				}
+				//전원제어
+				if(power.isEmpty()==false) {
+					data.put("INTG_TYPE", "PC");
+					
+					List<Map<String, Object>> token = intgMapper.selectIntgMstList(data);
+					String key = (String) token.get(0).get("INTG_API_KEY");
+					String intgUrl = (String) token.get(0).get("INTG_URL");
+					
+					String api = apiGatewayUrl + intgUrl + key + "&deviceId=" + intgFcltId + "&value=" + power;
+					logger.debug("airconControl() api = "+ api);
+					
+					BufferedReader in = null;
+					
+					try {
+						URL url = new URL(api);
+						try {
+							HttpURLConnection conn = (HttpURLConnection) url.openConnection(); // 접속 
+							conn.setRequestMethod("GET"); // 전송 방식은 GET
+							
+							in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+							
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
 		} catch (Exception e) {
 			logger.error("schedule_10sec Exception!!! {}", e);
 		}

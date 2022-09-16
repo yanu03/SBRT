@@ -154,6 +154,8 @@
 						<w2:column id="DSPTCH_DIV" name="디스패치구분" dataType="text"></w2:column>
 						<w2:column id="NODE_SN" name="name29" dataType="text"></w2:column>
 						<w2:column id="VHC_KIND" name="name30" dataType="text"></w2:column>
+						<w2:column id="BEARING" name="방위각" dataType="text"></w2:column>
+						<w2:column id="OCR_DTM" name="name31" dataType="text"></w2:column>
 					</w2:columnInfo>
 				</w2:dataList>
 				<w2:dataList baseNode="list" repeatNode="map" id="dlt_repRoutItem" saveRemovedData="true">
@@ -746,8 +748,17 @@
 		else if(attrId == util.ATTR_ID.BUS_INFO){
 			try{
 				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
-				if(curIndexArr.length != 0) {
+				if(curIndexArr.length != 0) {				
+				
 					dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
+					
+					var today = new Date();   
+					var hours = leadingZeros(today.getHours(), 2);
+					var minutes = leadingZeros(today.getMinutes(), 2); 
+					var seconds = leadingZeros(today.getSeconds(), 2); 
+					var timeResult = hours + ':' + minutes + ':' + seconds;
+				
+					dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(curIndexArr[0], "OCR_DTM", timeResult);					
 					dataRowJson = dlt_BRT_CUR_OPER_INFO.getDataRow(curIndexArr[0]);
 					routMap.moveVehicle("map_MO0203_vehicle", dataRowJson, curIndexArr[0], -1);	
 				}
@@ -761,10 +772,19 @@
 			try {
 				
 				var curIndexArr = dlt_BRT_CUR_OPER_INFO.getMatchedIndex("VHC_ID", jsonObj.VHC_ID);
+				
+				var today = new Date();   
+				var hours = leadingZeros(today.getHours(), 2);
+				var minutes = leadingZeros(today.getMinutes(), 2); 
+				var seconds = leadingZeros(today.getSeconds(), 2); 
+				var timeResult = hours + ':' + minutes + ':' + seconds;
+				
+				dlt_BRT_CUR_OPER_INFO.setCellData(curIndexArr[0], "OCR_DTM", timeResult);				
+				
 				if(curIndexArr.length != 0) {
 					dlt_BRT_CUR_OPER_INFO.setRowJSON(curIndexArr[0], jsonObj, true);
 					//확인못함
-					//routMap.showVehicleClickOverlay("map_MO0203_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON());	
+					routMap.showVehicleClickOverlay("map_MO0203_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON());	
 				}
 				
 			} catch (e) {
@@ -792,6 +812,7 @@
 		
 		//에어컨
 		if(attrId == util.ATTR_ID.AIRCON_INFO) {
+
 			//COOL_SET :  희망온도
 			//FCLT_ID : 시설물ID
 			//SWITCH : on/off
@@ -800,16 +821,16 @@
 			
 			//전원 on
 			if(jsonObj.SWITCH == "1") {
-				$("#airconInfo_"+fcltId).find(".powerOnSpan").show();
-				$("#airconInfo_"+fcltId).find(".powerOnSpan").css("display", "inline");
-				$("#airconInfo_"+fcltId).find(".powerOffSpan").hide();
-				$("#airconInfo_"+fcltId).find(".cool_set").text(jsonObj.COOL_SET);
-				$("#airconInfo_"+fcltId).find(".temp").text(jsonObj.TEMP);
+				$("#airconInfo_"+fcltId+"_MO0203").find(".powerOnSpan").show();
+				$("#airconInfo_"+fcltId+"_MO0203").find(".powerOnSpan").css("display", "inline");
+				$("#airconInfo_"+fcltId+"_MO0203").find(".powerOffSpan").hide();
+				$("#airconInfo_"+fcltId+"_MO0203").find(".cool_set").text(jsonObj.COOL_SET);
+				$("#airconInfo_"+fcltId+"_MO0203").find(".temp").text(jsonObj.TEMP);
 				
 			}
 			else if (jsonObj.SWITCH == "0") {
-				$("#airconInfo_"+fcltId).find(".powerOnSpan").hide();
-				$("#airconInfo_"+fcltId).find(".powerOffSpan").show();
+				$("#airconInfo_"+fcltId+"_MO0203").find(".powerOnSpan").hide();
+				$("#airconInfo_"+fcltId+"_MO0203").find(".powerOffSpan").show();
 			}
 			
 			
@@ -818,13 +839,21 @@
 	}	
 	
 	scwin.onMessageFacilityReceived = function(payload) {
-		
+		var attrId = null;
 		var jsonObj = JSON.parse(payload.body);
+			//스크린도어 처리
 			if(typeof(jsonObj.length) != "undefined" && jsonObj.length == 1) {
-	        	jsonObj = jsonObj[0];
-	      	}
+		        	jsonObj = jsonObj[0];
+				attrId = jsonObj.ATTR_ID;
+	      		}
+			//피플count 
+			else if(typeof(jsonObj.length) != "undefined" && jsonObj.length > 1) {
+				if(jsonObj[0].ATTR_ID == util.ATTR_ID.PPC_INFO) {
+					attrId = util.ATTR_ID.PPC_INFO;			
+				}
+			}
+
 		
-		var attrId = jsonObj.ATTR_ID;
 		var dataList = jsonObj.LIST;
 		//var nodeId = dlt_BMS_NODE_MST.getCellData(MO0203G0.getFocusedRowIndex(), "NODE_ID");
 		
@@ -877,11 +906,18 @@
 		}
 		
 		if(attrId == util.ATTR_ID.PPC_INFO){
-			var index = dlt_BMS_PLECNT_FCLT_INFO.getMatchedIndex("MNG_ID", jsonObj.MNG_ID);
-			dlt_BMS_PLECNT_FCLT_INFO.setCellData(index[0], "PK029", jsonObj.DATA_VAL);
 			
-			var nodeIndex = dlt_BMS_NODE_MST.getMatchedIndex("NODE_ID", jsonObj.NODE_ID);
-			dlt_BMS_NODE_MST.setCellData(nodeIndex[0], "CONGESTION", jsonObj.CONGESTION);
+			for(var i=0; i<jsonObj.length; i++) {
+				if(jsonObj[i].PARAM_KIND == 'PK029') {
+					var index = dlt_BMS_PLECNT_FCLT_INFO.getMatchedIndex("MNG_ID", jsonObj[i].MNG_ID);
+					dlt_BMS_PLECNT_FCLT_INFO.setCellData(index[0], "PK029", parseInt(jsonObj[i].DATA_VAL));				
+				}
+			}
+			//dlt_BMS_PLECNT_FCLT_INFO.setCellData(index[0], "PK029", jsonObj.DATA_VAL);	
+
+			//혼잡도 안들어옴				
+			//var nodeIndex = dlt_BMS_NODE_MST.getMatchedIndex("NODE_ID", jsonObj.NODE_ID);
+			//dlt_BMS_NODE_MST.setCellData(nodeIndex[0], "CONGESTION", jsonObj.CONGESTION);
 			
 			scwin.setPeopleCnt();
 		}
@@ -1025,6 +1061,7 @@
 		$p.executeSubmission(sub_selectNodeListByRepRout);
 		com.searchGrid(MO0203G0, sub_MO0203G0R0);
 		//$p.executeSubmission(sub_MO0203SHI0);
+					
 	};
 	
 	scwin.sttninfo_onclick = function() {
@@ -1057,7 +1094,7 @@
 			var top = coord[0];
 			var left = coord[1];
 			var fcltKind = dlt_BMS_FCLT_INFO.getCellData(i, "FCLT_KIND");
-			var fcltId = dlt_BMS_FCLT_INFO.getCellData(i, "FCLT_ID")+"MO0203";
+			var fcltId = dlt_BMS_FCLT_INFO.getCellData(i, "FCLT_ID");
 			var fcltCond = dlt_BMS_FCLT_INFO.getCellData(i, "FCLT_COND");
 			var doorStatus = dlt_BMS_FCLT_INFO.getCellData(i, "PK025");
 			var powerOnOff = dlt_BMS_FCLT_INFO.getCellData(i, "PK002"); //Off : 0, On : 1
@@ -1338,8 +1375,24 @@
 	};
 	
 	scwin.sub_selectCurOperVhcList_submitdone = function(e) {
+		//우진 차량 데이터 받기 위함
+		var insertRow = dlt_BRT_CUR_OPER_INFO.insertRow();
+		dlt_BRT_CUR_OPER_INFO.setCellData(insertRow, "VHC_ID", "VH00000082");
+		dlt_BRT_CUR_OPER_INFO.setCellData(insertRow, "REP_ROUT_ID", "RR00000125");
+	
 		routMap.showVehicleClickOverlay("map_MO0203_vehicle", dlt_BRT_CUR_OPER_INFO.getAllJSON());		
 	};
+	
+	function leadingZeros(n, digits) {
+	  var zero = '';
+	  n = n.toString();
+	
+	  if (n.length < digits) {
+	    for (i = 0; i < digits - n.length; i++)
+	      zero += '0';
+	  }
+	  return zero + n;
+	}
 	
 	//피플카운트 값 세팅
 	scwin.setPeopleCnt = function(e) {

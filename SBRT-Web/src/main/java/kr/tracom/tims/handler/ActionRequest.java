@@ -26,6 +26,7 @@ import kr.tracom.platform.net.protocol.attribute.AtMessage;
 import kr.tracom.platform.net.protocol.payload.PlActionRequest;
 import kr.tracom.platform.service.TService;
 import kr.tracom.platform.service.config.KafkaTopics;
+import kr.tracom.tims.domain.CurInfoMapper;
 import kr.tracom.tims.kafka.KafkaProducer;
 import kr.tracom.tims.manager.ThreadManager;
 import kr.tracom.util.DateUtil;
@@ -47,6 +48,9 @@ public class ActionRequest {
     
     @Autowired
 	WsClient webSocketClient;
+    
+    @Autowired
+	CurInfoMapper curInfoMapper;
 
     public Map<String, Object> handle(TimsMessage timsMessage, String sessionId){
     	
@@ -161,26 +165,35 @@ public class ActionRequest {
             		
             		logger.info("======== 시설물 매개변수: {}", actionData);
             	}
-            	/*else if(actionCode == AtBrtAction.milsstatusinfo){
+            	else if(actionCode == AtBrtAction.milsstatusinfo){
             		String actionData = brtAction.getReserved();
             		
-            		Gson gson = new Gson();
-					Type resultType = new TypeToken<Map<String, Object>>(){}.getType();
-					Map<String, Object> map= gson.fromJson(actionData, resultType);
-					map.put("ATTR_ID", "5052");
+            		String param[] = actionData.toString().replace(" ",  "").replace("[",  "").replace("]",  "").split(","); //차량 아이디
+
+            		
+            		
+            		//쿼리를 위해 따옴표 붙이기
+
+            		for(int i=0; i<param.length; i++) {
+            			String paramStr = "\'" + param[i] + "\'";
+            			param[i] = paramStr;
+            		};
+                    
+            		//Gson gson = new Gson();
+					//Type resultType = new TypeToken<Map<String, Object>>(){}.getType();
+					//Map<String, Object> map= gson.fromJson(actionData, resultType);
+					
+            		Map<String, Object> map = new HashMap<String, Object>();
+            		map.put("SVC_IDS",param);
+            		ArrayList jsonList = (ArrayList)curInfoMapper.selectMilsStatus(map);
+            		//map.put("ATTR_ID", "5052");
             		
 					//Map<String, Object> map = new HashMap<String, Object>();
-					ArrayList jsonList = new ArrayList<Map<String, Object>>();
-					jsonList.add(map);
+
 					webSocketClient.sendMessageList("/topic/facilityParam",jsonList);
 
-            		
-            		logger.info("======== 승객감지장치 시설물 매개변수: {}", actionData);
-
-            	}*/
-
-            	
-            	
+            		logger.info("======== 승객감지장치 시설물 매개변수: {}", jsonList);
+            	}
                 break;                
                 
         }

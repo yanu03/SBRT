@@ -111,7 +111,7 @@
     </select>
 
 	<select id="getEventCode" resultType="Map" parameterType="Map">
-		SELECT TXT_VAL1, DL_CD, DL_CD_NM FROM BMS_DL_CD_INFO WHERE CO_CD = #{CO_CD} AND ${VAL_TYPE} = #{VAL}
+		SELECT TXT_VAL1, TXT_VAL2, DL_CD, DL_CD_NM FROM BMS_DL_CD_INFO WHERE CO_CD = #{CO_CD} AND ${VAL_TYPE} = #{VAL}
 	</select>
 
 <select id="selectCurAllocPlInfo" resultType="Map" parameterType="Map">
@@ -486,5 +486,23 @@
 			AND A.NODE_TYPE NOT IN ('NT004','NT005','NT006','NT008','NT009','NT010')
 		GROUP BY A.ROUT_ID, A.NODE_SN
 		ORDER BY A.ROUT_ID, A.NODE_SN
+	</select>
+	
+	<select id="selectMilsStatus" parameterType="Map" resultType="Map">
+		SELECT NODE_ID ,
+			FCLT_ID ,
+			FCLT_KIND ,
+			PARAM_DIV ,
+			PARAM_KIND ,
+			MNG_ID ,
+			DATA_VAL ,
+			"5052" AS ATTR_ID 
+		FROM BMS_FCLT_COND_PARAM_INFO
+		WHERE PARAM_DIV = 'PD003' AND MNG_ID
+		IN (
+			<foreach collection="SVC_IDS" item="SVC_ID" index="index" separator=",">
+				${SVC_ID}
+			</foreach>
+		)
 	</select>
 </mapper>

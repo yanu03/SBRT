@@ -17,4 +17,6 @@ public interface IntgMapper {
 	
 	public List<Map<String, Object>> selectIntg(Map param);
 	
+	public List<Map<String, Object>> selectFcltSchedule();
+
 }

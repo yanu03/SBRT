@@ -168,39 +168,60 @@ public class MorEventThread extends Thread {
 		return null;
 	}
 	
+	private void setVhcDrInfo(String vhcId, Map<String, Object> eventInfo, Map<String, Object> nodeInfo) {
+		Map<String, Object> vhcDrInfo = CommonUtil.deepCopy(nodeInfo);
+		vhcDrInfo.put("UPD_DTM", eventInfo.get("UPD_DTM"));
+		vhcDrInfo.put("UPD_DTM2", eventInfo.get("UPD_DTM2"));
+		vhcDrInfo.put("LONGITUDE", eventInfo.get("LONGITUDE"));
+		vhcDrInfo.put("LATITUDE", eventInfo.get("LATITUDE"));
+		vhcDrInfo.put("ORG_NODE_ID", eventInfo.get("ORG_NODE_ID"));
+		vhcDrInfo.put("NODE_ID", eventInfo.get("NODE_ID"));
+		vhcDrInfo.put("IS_STATION", eventInfo.get("IS_STATION"));
+		g_vhcDrInfoMap.put(vhcId, vhcDrInfo);
+	}
+	
 	private int getVhcDrInfo(Map<String, Object> eventInfo, Map<String, Object> nodeInfo) {
-		String routId = (String) eventInfo.get("ROUT_ID");
-		if (CommonUtil.empty(routId))
+		String vhcId = (String) eventInfo.get("VHC_ID");
+		if (CommonUtil.empty(vhcId))
 			return -1;
 		try {
-			Map<String, Object> oldVhcDrInfo = (Map<String, Object>) g_vhcDrInfoMap.get(routId);
+			Map<String, Object> oldVhcDrInfo = (Map<String, Object>) g_vhcDrInfoMap.get(vhcId);
 
 			byte eventCd = 0;
 			String eventData = null;
+			String node_id = null;
 			if (eventInfo.getOrDefault("EVENT_CD", 0x0) != null) {
 				eventCd = Byte.parseByte(eventInfo.getOrDefault("EVENT_CD", 0x0).toString());
 				eventData = eventInfo.getOrDefault("EVT_DATA", "").toString();
+				node_id = eventInfo.getOrDefault("NODE_ID", "").toString();
 			}
 			if (eventCd == 0x01 || eventCd == 0x11) { // 정류장 도착 //도어 열림
-
-				if (CommonUtil.empty(eventData)) {
+				String cur_id = "";
+				if (eventCd == 0x11) { //도어 닫힘
+					cur_id = node_id;
+				}
+				else {
+					cur_id = eventData;
+				}
+				
+				if (cur_id.equals(nodeInfo.get("CUR_STTN_ID"))) {
+					eventInfo.put("LONGITUDE", nodeInfo.get("STTN_ST_GPS_X"));
+					eventInfo.put("LATITUDE", nodeInfo.get("STTN_ST_GPS_Y"));
+				} 
+				else if (cur_id.equals(nodeInfo.get("NEXT_STTN_ID"))) {
 					eventInfo.put("LONGITUDE", nodeInfo.get("STTN_ED_GPS_X"));
 					eventInfo.put("LATITUDE", nodeInfo.get("STTN_ED_GPS_Y"));
+					eventInfo.put("ORG_NODE_ID", nodeInfo.get("NODE_ID"));
+					eventInfo.put("NODE_ID", nodeInfo.get("NEXT_STTN_ID"));
 				} else {
-					if (eventData.equals(nodeInfo.get("CUR_STTN_ID"))) {
-						eventInfo.put("LONGITUDE", nodeInfo.get("STTN_ST_GPS_X"));
-						eventInfo.put("LATITUDE", nodeInfo.get("STTN_ST_GPS_Y"));
-					} else if (eventData.equals(nodeInfo.get("NEXT_STTN_ID"))) {
-						eventInfo.put("LONGITUDE", nodeInfo.get("STTN_ED_GPS_X"));
-						eventInfo.put("LATITUDE", nodeInfo.get("STTN_ED_GPS_Y"));
-					} else {
-						LocationVO location = DataInterface.getPointToLine(
-								CommonUtil.decimalToDouble(eventInfo.get("LONGITUDE_RAW")),
-								CommonUtil.decimalToDouble(eventInfo.get("LATITUDE_RAW")),
-								CommonUtil.decimalToDouble(nodeInfo.get("ST_GPS_X")),
-								CommonUtil.decimalToDouble(nodeInfo.get("ST_GPS_Y")),
-								CommonUtil.decimalToDouble(nodeInfo.get("ED_GPS_X")),
-								CommonUtil.decimalToDouble(nodeInfo.get("ED_GPS_Y")));
+					LocationVO location = DataInterface.getPointToLine(
+							CommonUtil.floatToDouble((float)eventInfo.get("LONGITUDE_RAW")),
+							CommonUtil.floatToDouble((float)eventInfo.get("LATITUDE_RAW")),
+							CommonUtil.stringToDouble(nodeInfo.get("ST_GPS_X")+""),
+							CommonUtil.stringToDouble(nodeInfo.get("ST_GPS_Y")+""),
+							CommonUtil.stringToDouble(nodeInfo.get("ED_GPS_X")+""),
+							CommonUtil.stringToDouble(nodeInfo.get("ED_GPS_Y")+""));
+					if(location!=null) {
 						if (location.getX() > 0x0) {
 							eventInfo.put("LONGITUDE", location.getX());
 						}
@@ -209,67 +230,92 @@ public class MorEventThread extends Thread {
 						}
 					}
 				}
+				
+				eventInfo.put("IS_STATION", "TRUE");
 				logger.debug("NODE_ID=" + nodeInfo.get("NODE_ID") + ",BEARING=" + nodeInfo.get("BEARING"));
-				logger.debug("eventInfo=" + eventInfo);
+				logger.debug("eventInfo=" + eventInfo+",nodeInfo=" + nodeInfo);
 			} else {
 				LocationVO location = DataInterface.getPointToLine(
-						CommonUtil.decimalToDouble(eventInfo.get("LONGITUDE_RAW")),
-						CommonUtil.decimalToDouble(eventInfo.get("LATITUDE_RAW")),
-						CommonUtil.decimalToDouble(nodeInfo.get("ST_GPS_X")),
-						CommonUtil.decimalToDouble(nodeInfo.get("ST_GPS_Y")),
-						CommonUtil.decimalToDouble(nodeInfo.get("ED_GPS_X")),
-						CommonUtil.decimalToDouble(nodeInfo.get("ED_GPS_Y")));
-				if (location.getX() > 0x0) {
-					eventInfo.put("LONGITUDE", location.getX());
+						CommonUtil.floatToDouble((float)eventInfo.get("LONGITUDE_RAW")),
+						CommonUtil.floatToDouble((float)eventInfo.get("LATITUDE_RAW")),
+						CommonUtil.stringToDouble(nodeInfo.get("ST_GPS_X")+""),
+						CommonUtil.stringToDouble(nodeInfo.get("ST_GPS_Y")+""),
+						CommonUtil.stringToDouble(nodeInfo.get("ED_GPS_X")+""),
+						CommonUtil.stringToDouble(nodeInfo.get("ED_GPS_Y")+""));
+				logger.debug("rawx={}, rawy={}, nodeInfo={}, stx={}, sty={}, edx={}, ed y={}"
+						,CommonUtil.floatToDouble((float)eventInfo.get("LONGITUDE_RAW")),CommonUtil.floatToDouble((float)eventInfo.get("LATITUDE_RAW")),nodeInfo
+						,CommonUtil.stringToDouble(nodeInfo.get("ST_GPS_X")+""),CommonUtil.stringToDouble(nodeInfo.get("ST_GPS_Y")+"")
+						,CommonUtil.stringToDouble(nodeInfo.get("ED_GPS_X")+""),CommonUtil.stringToDouble(nodeInfo.get("ED_GPS_X")+""));
+				if(location!=null) {
+					if (location.getX() > 0x0) {
+						eventInfo.put("LONGITUDE", location.getX());
+					}
+					if (location.getY() > 0x0) {
+						eventInfo.put("LATITUDE", location.getY());
+					}
 				}
-				if (location.getY() > 0x0) {
-					eventInfo.put("LATITUDE", location.getY());
+				else {
+					setVhcDrInfo(vhcId, eventInfo, nodeInfo);
+					return -1;
 				}
 
-				logger.debug("eventInfo={}", eventInfo);
-
+				if (eventCd == 0x02 || eventCd == 0x12) { //정류소 출발, 문 닫힘일 경우
+					eventInfo.put("IS_STATION", "FALSE");
+				}
 				if (oldVhcDrInfo != null) {
-					double len = DataInterface.getDistanceBetween(CommonUtil.decimalToDouble(oldVhcDrInfo.get("GPS_X")),
-							CommonUtil.decimalToDouble(oldVhcDrInfo.get("GPS_Y")),
-							CommonUtil.decimalToDouble(eventInfo.get("GPS_X")),
-							CommonUtil.decimalToDouble(eventInfo.get("GPS_Y")));
+					Map<String, Object> codeMap =  getCommonCode("SYS_INFO", null, "SY019");
+					short limitSpeed = Short.parseShort((String)codeMap.get("TXT_VAL1"));
+					short stationZone = Short.parseShort((String)codeMap.get("TXT_VAL2"));
+					double len = DataInterface.getDistanceBetween(
+						CommonUtil.stringToDouble(oldVhcDrInfo.get("LONGITUDE")+""),
+						CommonUtil.stringToDouble(oldVhcDrInfo.get("LATITUDE")+""),
+						CommonUtil.stringToDouble(eventInfo.get("LONGITUDE")+""),
+						CommonUtil.stringToDouble(eventInfo.get("LATITUDE")+"")
+					);
 
-					logger.debug("eventInfo UPD_DTM2=" + eventInfo.get("UPD_DTM2") + ", oldVhcDrInfo UPD_DTM2="
-							+ oldVhcDrInfo.get("UPD_DTM2"));
+					logger.debug("eventInfo={}, oldVhcDrInfo={}, len={}, stationZone={}", eventInfo, oldVhcDrInfo, len, stationZone);
+					if("TRUE".equals((String)oldVhcDrInfo.get("IS_STATION"))) {
+						if(len>stationZone) { //정류소 범위를 벗어나면 정류소에서 벗어난걸로 인식함
+							eventInfo.put("IS_STATION", "FALSE");
+						}
+						else {
+							logger.debug("in station zone len="+len);
+							eventInfo.put("LONGITUDE",oldVhcDrInfo.get("LONGITUDE"));
+							eventInfo.put("LATITUDE",oldVhcDrInfo.get("LATITUDE"));
+							eventInfo.put("NODE_ID", oldVhcDrInfo.get("NODE_ID"));
+							setVhcDrInfo(vhcId, eventInfo, nodeInfo);
+							return 0;
+						}
+					}
+					
+					//logger.debug("eventInfo UPD_DTM2=" + eventInfo.get("UPD_DTM2") + ", oldVhcDrInfo UPD_DTM2="
+					//		+ oldVhcDrInfo.get("UPD_DTM2"));
 					Date eventDate = CommonUtil.stringToDate2((String) eventInfo.get("UPD_DTM2") + "0");
 					Date oldVhcDrInfotDate = CommonUtil.stringToDate2((String) oldVhcDrInfo.get("UPD_DTM2") + "0");
 
 					long time = 0;
 					if (eventDate != null && oldVhcDrInfotDate != null) {
-						time = eventDate.getTime() - oldVhcDrInfotDate.getTime();
+						time = (eventDate.getTime() - oldVhcDrInfotDate.getTime())/1000;
 					}
 					if (time == 0) {
-						Map<String, Object> vhcDrInfo = CommonUtil.deepCopy(nodeInfo);
-						vhcDrInfo.put("UPD_DTM", eventInfo.get("UPD_DTM"));
-						g_vhcDrInfoMap.put(routId, vhcDrInfo);
+						setVhcDrInfo(vhcId, eventInfo, nodeInfo);
 						return 0;
 					}
 
-					short limitSpeed = Short.parseShort((String) getCommonCode("SYS_INFO", null, "SY019").get("TXT_VAL1"));
 
-					double speed = (len / 1000) / time * 3600;
+					double speed = len / time * 3600/ 1000;
 
-					logger.debug("NODE_ID=" + nodeInfo.get("NODE_ID") + "LINK_ID=" + nodeInfo.get("LINK_ID")
-							+ ",BEARING=" + nodeInfo.get("BEARING") + ",speed=" + speed + ",len=" + len);
-					logger.debug("LATITUDE=" + eventInfo.get("LATITUDE") + ",LATITUDE=" + eventInfo.get("LATITUDE"));
+					logger.debug("NODE_ID=" + nodeInfo.get("NODE_ID") + ", LINK_ID=" + nodeInfo.get("LINK_ID")
+							+ ",BEARING=" + nodeInfo.get("BEARING") + ",speed=" + speed + ",len=" + len+ ",time=" + time);
+					//logger.debug("LATITUDE=" + eventInfo.get("LATITUDE") + ",LATITUDE=" + eventInfo.get("LATITUDE"));
 					if (limitSpeed < speed) {
-						Map<String, Object> vhcDrInfo = CommonUtil.deepCopy(nodeInfo);
-						vhcDrInfo.put("UPD_DTM", eventInfo.get("UPD_DTM"));
-						g_vhcDrInfoMap.put(routId, vhcDrInfo);
+						setVhcDrInfo(vhcId, eventInfo, nodeInfo);
 						return -1;
 					}
 				}
 			}
 
-			Map<String, Object> vhcDrInfo = CommonUtil.deepCopy(nodeInfo);
-			vhcDrInfo.put("UPD_DTM", eventInfo.get("UPD_DTM"));
-
-			g_vhcDrInfoMap.put(routId, vhcDrInfo);
+			setVhcDrInfo(vhcId, eventInfo, nodeInfo);
 		} catch (Exception e) {
 			logger.error("getVhcDrInfo() in  Exception {}", e);
 		}
@@ -652,8 +698,8 @@ public class MorEventThread extends Thread {
 					|| oldBusOperInfo.get("LATITUDE") != busInfo.get("LATITUDE")
 					|| oldBusOperInfo.get("LONGITUDE") != busInfo.get("LONGITUDE")) {
 				if (busInfo != null && oldBusOperInfo != null) {
-					logger.debug("checkChangeBusOperInfo not equal busInfo: {}, oldBusOperInfo: {}", busInfo,
-							oldBusOperInfo);
+					//logger.debug("checkChangeBusOperInfo not equal busInfo: {}, oldBusOperInfo: {}", busInfo,
+							//oldBusOperInfo);
 				}
 				setBusOperInfo(busInfo);
 				/*
@@ -854,6 +900,7 @@ public class MorEventThread extends Thread {
 						wsDataMap.put("DVC_ID", vhcInfo.get("DVC_ID"));
 						wsDataMap.put("GPS_X", busInfoMap.get("LONGITUDE"));
 						wsDataMap.put("GPS_Y", busInfoMap.get("LATITUDE"));
+						wsDataMap.put("BEARING", busInfoMap.get("BEARING"));
 						wsDataMap.put("PREV_NODE_NM", busInfoMap.get("PREV_NODE_NM")); // 이전 정류소/교차로
 						wsDataMap.put("NEXT_NODE_ID", busInfoMap.get("NEXT_NODE_ID")); // 다음 정류소/교차로
 						wsDataMap.put("NEXT_NODE_NM", busInfoMap.get("NEXT_NODE_NM"));
@@ -862,6 +909,9 @@ public class MorEventThread extends Thread {
 						wsDataMap.put("LINK_ID", busInfoMap.get("LINK_ID"));
 						wsDataMap.put("NODE_ID", busInfoMap.get("NODE_ID"));
 						wsDataMap.put("NODE_SN", busInfoMap.get("NODE_SN"));
+						wsDataMap.put("CUR_STTN_CRS_ID", busInfoMap.get("CUR_STTN_CRS_ID"));
+						wsDataMap.put("CUR_CRS_ID", busInfoMap.get("CUR_CRS_ID"));
+						wsDataMap.put("CUR_NODE_ID", busInfoMap.get("CUR_NODE_ID"));
 
 						Map<String, Object> corInfo = getCorInfo(busInfoMap);
 						if (corInfo != null)
@@ -1081,8 +1131,10 @@ public class MorEventThread extends Thread {
 									busEventMap.put("CUR_NODE_SN", sttnEventMap.get("CUR_NODE_SN"));
 									busEventMap.put("ORG_ID", sttnEventMap.get("NODE_ID"));
 									logger.debug("busEventMap = {}", busEventMap);*/
-									busEventMap.put("NODE_ID", busEvent.getEventData());
-									busEventMap.put("ORG_NODE_ID", busEventMap.get("NODE_ID"));
+									if((CommonUtil.empty(busEvent.getEventData()) == false)) {
+										busEventMap.put("NODE_ID", busEvent.getEventData());
+										busEventMap.put("ORG_NODE_ID", busEventMap.get("NODE_ID"));
+									}
 								}
 								if (setOperEventData(busEventMap) == -1)
 									return null;
@@ -1207,6 +1259,7 @@ public class MorEventThread extends Thread {
 
 						{
 							// wsDataMap.put("NODE_NM", busEventMap.get("NODE_NM")); // 지나온 노드명
+							wsDataMap.put("BEARING", busEventMap.get("BEARING"));
 							wsDataMap.put("NODE_NM", busEventMap.get("CUR_NODE_NM")); // 지나온 노드명
 							wsDataMap.put("NODE_TYPE", busEventMap.get("NODE_TYPE")); // 지나온 노드 타입
 							wsDataMap.put("PREV_NODE_NM", busEventMap.get("PREV_NODE_NM")); // 이전 정류소/교차로
@@ -1229,6 +1282,7 @@ public class MorEventThread extends Thread {
 						{ // dashboard
 							wsDataMap.put("WAY_DIV", busEventMap.get("WAY_DIV"));
 							wsDataMap.put("CUR_STTN_CRS_ID", busEventMap.get("CUR_STTN_CRS_ID"));
+							wsDataMap.put("CUR_CRS_ID", busEventMap.get("CUR_CRS_ID"));
 							/*wsDataMap.put("NEXT_CRS_ID", busEventMap.get("NEXT_CRS_ID"));
 							wsDataMap.put("NEXT_CRS_NM", busEventMap.get("NEXT_CRS_NM"));
 							wsDataMap.put("NEXT_CRS_TYPE", busEventMap.get("NEXT_CRS_TYPE"));
@@ -1262,6 +1316,7 @@ public class MorEventThread extends Thread {
 					try {
 						String udpDtm = dispatch.getUpdateTm().toString();
 						int msgType = (int) dispatch.getMessageType();
+						if(msgType>3)return null;
 						int msgLv = (int) dispatch.getMessageLevel();
 
 						// 차량정보 가져오기
@@ -1495,6 +1550,7 @@ public class MorEventThread extends Thread {
 				// operEventMap.put("NODE_TYPE", realNodeInfo.get("NODE_TYPE"));
 				// operEventMap.put("NODE_NM", realNodeInfo.get("NODE_NM"));
 				operEventMap.put("NODE_SN", realNodeInfo.get("NODE_SN"));
+				operEventMap.put("BEARING", realNodeInfo.get("BEARING"));
 			}
 			else {
 				return -1;
@@ -1514,6 +1570,12 @@ public class MorEventThread extends Thread {
 				operEventMap.put("NEXT_NODE_TYPE", curSttnInfo.get("NODE_TYPE"));
 			}
 
+			Map<String, Object> curCrsInfo = getCurNode(operEventMap, Constants.NODE_TYPE_CROSS);
+			if (curCrsInfo != null) {
+				operEventMap.put("CUR_CRS_ID", curCrsInfo.get("NODE_ID"));
+			}
+			
+			
 			Map<String, Object> curCrsSttnInfo = getCurNode(operEventMap, Constants.NODE_TYPE_CROSS_BUSSTOP);
 			if (curCrsSttnInfo != null) {
 				operEventMap.put("CUR_STTN_CRS_ID", curCrsSttnInfo.get("NODE_ID"));

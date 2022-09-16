@@ -1297,6 +1297,7 @@ public class EventThread extends Thread {
 					try {
 						String udpDtm = dispatch.getUpdateTm().toString();
 						int msgType = (int) dispatch.getMessageType();
+						if(msgType>3)return;
 						int msgLv = (int) dispatch.getMessageLevel();
 
 						// 차량정보 가져오기
@@ -1430,7 +1431,7 @@ public class EventThread extends Thread {
 				phaseInfoMap.put("PHASE_NO_B", phaseNoB);
 				phaseInfoMap.put("PHASE_TM_A", pahseTmA);
 				phaseInfoMap.put("PHASE_TM_B", pahseTmB);
-				historyMapper.updateSigFcltCondParamInfo(phaseInfoMap);
+				//historyMapper.updateSigFcltCondParamInfo(phaseInfoMap);
 
         		break;
         	case BrtAtCode.TRAFFIC_MODULE_TWO:

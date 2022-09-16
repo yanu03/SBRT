@@ -45,5 +45,7 @@ public interface CurInfoMapper {
     public List selectCorDtlInfo(String repRoutId);
     
     public List selectIntgNodeList(String routId);
+    
+    public List selectMilsStatus(Map svcId);
 
 }

@@ -4,7 +4,8 @@
 		ROUT_CROSS_INFO : [],
 		CUR_WAY : 'WD002',
 		CUR_CRS_NODE : [],
-		CUR_DISPATCH_STATE : 1
+		CUR_DISPATCH_STATE : 0,
+    curTimeOut : 0
 	};
 	
 	dashboard.init = function() {
@@ -76,6 +77,7 @@
 		
 		dashboard.connect();
 		dashboard.routDraw();
+   dashboard.dispatchDraw(0, null,null);
 	};
 
 	dashboard.routDraw = function() {
@@ -120,29 +122,35 @@
 			$(".situation").addClass("yellow");
 		}
 		else if(dispatchState==1){
-			if(value >= 60) {
-				min = value/60 + "분 ";
+			/*if(value >= 60) {
+				min = parseInt(value/60) + "분 ";
 			}
 			sec = value%60 + "초 ";
 
 			var message = "정류장 정차 : " + min + sec;
-			$("#priority_signal").text(message)
+			$("#priority_signal").text(message)*/
 
 			$(".situation").removeClass("yellow");
 			$(".situation").removeClass("orange");
 			$(".situation").addClass("blue");
+      dashboard.curTimeOut = value;
+      dashboard.dispatchTimerCb (dispatchState);
 		}
 		else if(dispatchState==2){
+      var min = 0;
+      var sec = 0;
 			if(value >= 60) {
-				min = value/60 + "분 ";
+				min = parseInt(value/60) + "분 ";
 			}
 			sec = value%60 + "초 ";
 			var message = "";
 			if(type=='DK002'){
-				message = min + sec + " 늦음";
+       if(min==0)message = sec + " 늦음";
+       else message = min + sec + " 늦음";
 			}
 			else if(type=='DK003'){
-				message = min + sec + " 빠름";
+        if(min==0)message = sec + " 빠름";
+				else message = min + sec + " 빠름";
 			}
 			
 			$("#priority_signal").text(message)
@@ -150,14 +158,18 @@
 			$(".situation").removeClass("yellow");
 			$(".situation").removeClass("orange");
 			$(".situation").addClass("blue");
+       dashboard.curTimeOut = 5;
+       dashboard.dispatchTimeOutCb (dispatchState);
 		}
 		else if(dispatchState==3){
-			var message = "정류장제어 운영 : "+jsonObj.LIST[0].STOP_SEC;				
-			$("#priority_signal").text(message)
+			/*var message = "정류장제어 운영 : "+jsonObj.LIST[0].STOP_SEC;				
+			$("#priority_signal").text(message)*/
 
 			$(".situation").removeClass("yellow");
 			$(".situation").removeClass("blue");
 			$(".situation").addClass("orange");
+      dashboard.curTimeOut = jsonObj.LIST[0].STOP_SEC;
+      dashboard.dispatchTimerCb (dispatchState);
 		}
 		else if(dispatchState==4){
 			if(type=='ST001'){
@@ -166,6 +178,8 @@
 				$(".situation").removeClass("yellow");
 				$(".situation").removeClass("blue");
 				$(".situation").addClass("orange");
+        dashboard.curTimeOut = 5;
+        dashboard.dispatchTimeOutCb (dispatchState);
 			}
 			else{
 				var message = "교차로제어 운영 : 현시연장";				
@@ -173,33 +187,68 @@
 				$(".situation").removeClass("yellow");
 				$(".situation").removeClass("blue");
 				$(".situation").addClass("orange");
+        dashboard.curTimeOut = 5;
+        dashboard.dispatchTimeOutCb (dispatchState);
 			}
 		}
 	};
 	
-	dispatchTimerCb = function(second){
-		if(second==0){
-			
+  dashboard.dispatchTimerCb = function(dispatchState){
+    if(dashboard.CUR_DISPATCH_STATE =! dispatchState)return;
+		if(dashboard.curTimeOut==0){
+			dashboard.dispatchDraw(0, null,null);
 		}
 		else{
-			second--;
+      if(dispatchState==1){
+           var min = 0;
+           var sec = 0;
+           	var message = "";
+    			if(dashboard.curTimeOut >= 60) {
+    				min = parseInt(dashboard.curTimeOut/60) + "분 ";
+    			}
+    			sec = dashboard.curTimeOut%60 + "초 ";
+          if(min!=0){
+    			  message = "정류장 정차 : " + min + sec;
+          }
+          else{
+            message = "정류장 정차 : " + sec;
+          }
+    			$("#priority_signal").text(message)
+      }
+      else  if(dispatchState==3){
+    	     var message = "정류장제어 운영 : "+dashboard.curTimeOut;				
+			    $("#priority_signal").text(message)
+      }
+			dashboard.curTimeOut--;
 			setTimeout(function() {
-				dispatchSttnStopDraw(second);	
+				dashboard.dispatchTimerCb(dispatchState);	
 			},1000);	
 		}
 	} 
-		
-	
+  
+	dashboard.dispatchTimeOutCb = function(dispatchState){
+    if(dashboard.CUR_DISPATCH_STATE !== dispatchState)return;
+		if(dashboard.curTimeOut==0){
+			dashboard.dispatchDraw(0, null,null);
+		}
+		else{
+			dashboard.curTimeOut--;
+			setTimeout(function() {
+				dashboard.dispatchTimerCb(dispatchState);	
+			},1000);	
+		}
+	} 
+
 	dashboard.dispatch = function(dispatchState, type, value) {
+  //if(dashboard.curTimeOut>0)return;
 		if(dispatchState < dashboard.CUR_DISPATCH_STATE)return;
-		
+				dashboard.CUR_DISPATCH_STATE = dispatchState;
 		dashboard.dispatchDraw(dispatchState, type, value);
-		dashboard.CUR_DISPATCH_STATE = dispatchState;
 	};
 	
 	
 
-	dashboard.searchNode = function(node_id) {
+	dashboard.searchNodeId = function(node_id) {
 		for (var i = 0; i < dashboard.ROUT_INFO[dashboard.CUR_WAY].length; i++) {
 			var nodeInfo = dashboard.ROUT_INFO[dashboard.CUR_WAY][i];
 			if (nodeInfo.NODE_ID == node_id) {
@@ -209,7 +258,7 @@
 		return null;
 	};
 
-	dashboard.nextNode = function(node_id, nodeType) {
+	dashboard.nextNodeId = function(node_id, nodeType) {
 		var curIdx = -1;
 		for (var i = 0; i < dashboard.ROUT_INFO[dashboard.CUR_WAY].length; i++) {
 			var nodeInfo = dashboard.ROUT_INFO[dashboard.CUR_WAY][i];
@@ -223,7 +272,7 @@
 		return null;
 	};
 
-	dashboard.searchCrs = function(node_id) {
+	dashboard.searchCrsId = function(node_id) {
 		for (var i = 0; i < dashboard.ROUT_CROSS_INFO[dashboard.CUR_WAY].length; i++) {
 			var nodeInfo = dashboard.ROUT_CROSS_INFO[dashboard.CUR_WAY][i];
 			if (nodeInfo.NODE_ID == node_id) {
@@ -235,6 +284,7 @@
 
 	dashboard.setCrsId = function(node_id, cur_signal) {
 		for (var i = 0; i < dashboard.ROUT_CROSS_INFO[dashboard.CUR_WAY].length; i++) {
+      var nodeInfo = dashboard.ROUT_CROSS_INFO[dashboard.CUR_WAY][i];
 			if (nodeInfo.NODE_ID == node_id) {
 				dashboard.ROUT_CROSS_INFO[dashboard.CUR_WAY][i].CUR_SIGNAL = cur_signal;
 				return;
@@ -256,7 +306,10 @@
 	};
 	
 	dashboard.onError = function (error) {
-		alert('Could not connect to WebSocket server. ' + error);
+		//alert('Could not connect to WebSocket server. ' + error);
+		setTimeout(function() {
+			dashboard.connect();
+		},1000);
 	};	
 	
 	dashboard.onMessageReceived = function(payload) {
@@ -264,7 +317,7 @@
 		
 		var jsonObj = JSON.parse(payload.body);
 	
-		//if(jsonObj.VHC_ID!=="VH00000021")return;
+		
 		var attrId = jsonObj.ATTR_ID;
 		var dataList = jsonObj.LIST;
 		
@@ -275,6 +328,7 @@
 		}
 		//4012: 운행이벤트
 		else if(attrId == util.ATTR_ID.BUS_OPER_EVENT) {
+       if(jsonObj.VHC_NO!=="세종70자1508")return;
 		//console.log(payload.body);
 			if (typeof(jsonObj.GPS_X) == "undefined" || typeof(jsonObj.GPS_Y) == "undefined" || jsonObj.GPS_X < 120 || jsonObj.GPS_Y > 130 ||jsonObj.CUR_NODE_ID==null) {
 				return;
@@ -289,10 +343,10 @@
 			}
 	
 			{	
-				var nodeCrsInfo = dashboard.nextNode(jsonObj.CUR_NODE_ID, "NT001");
+				var nodeCrsInfo = dashboard.nextNodeId(jsonObj.CUR_NODE_ID, "NT001");
 	
 				if (nodeCrsInfo != null) {
-					var nodeInfo = dashboard.searchCrs(nodeCrsInfo.NODE_ID);
+					var nodeInfo = dashboard.searchCrsId(nodeCrsInfo.NODE_ID);
 	
 					if (nodeInfo != null) {
 						dashboard.CUR_CRS_NODE = nodeInfo;
@@ -313,7 +367,7 @@
 			}
 	
 			if (jsonObj.CUR_NODE_ID != null) {
-				var nodeInfo = dashboard.searchNode(jsonObj.CUR_NODE_ID);
+				var nodeInfo = dashboard.searchNodeId(jsonObj.CUR_NODE_ID);
 				if (nodeInfo != null) {
 					$("#cur_node").text(nodeInfo.NODE_NM);
 				} else if (jsonObj.CUR_NODE_NM != null) {
@@ -327,7 +381,7 @@
 			}
 			
 			{
-				var nodeInfo = dashboard.nextNode(jsonObj.CUR_NODE_ID, "NT002");
+				var nodeInfo = dashboard.nextNodeId(jsonObj.CUR_NODE_ID, "NT002");
 				if (nodeInfo != null) {
 					$("#next_node").text(nodeInfo.NODE_NM);
 				} else if (jsonObj.NEXT_NODE_NM != null) {
@@ -355,6 +409,7 @@
 
 		}
 		else if(attrId == util.ATTR_ID.DISPATCH) { // 4020: 디스패치
+      if(jsonObj.VHC_NO!=="세종70자1504")return;
 			try { 
 				var timeResult = util.getToday();
 				
@@ -405,7 +460,7 @@
 		//신호등 현시 수신
 		else if (attrId == util.ATTR_ID.TRAFFIC_LIGHT_STATUS_RESPONSE) {
 			var phaseNo = dataList[0].PHASE_NO.toString();
- 			var crsId = dataList[0].PHASE_NO.CRS_ID();
+ 			var crsId = dataList[0].CRS_ID;
  			dashboard.setCrsId(crsId, phaseNo);
  			nodeInfo = dashboard.CUR_CRS_NODE;
  			

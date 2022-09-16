@@ -585,6 +585,17 @@ public class CommonUtil {
 		return today.substring(0, 10);
 	}
 	
+	public static String todayHM() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		DateFormat df = new SimpleDateFormat("yyyy-MM-ddHH:mm");
+		String today = df.format(cal.getTime());
+		String hhss = today.substring(10, 15);
+
+		return hhss;
+	}
+	
+	
 	public static Date stringToDate(String str) {  
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = null;
