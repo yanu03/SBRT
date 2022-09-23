@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import kr.tracom.cm.domain.Intg.IntgMapper;
 import kr.tracom.cm.domain.OperPlan.OperPlanService;
 import kr.tracom.platform.attribute.AtCode;
 import kr.tracom.platform.attribute.common.AtBrtAction;
@@ -29,6 +30,7 @@ import kr.tracom.platform.service.config.KafkaTopics;
 import kr.tracom.tims.domain.CurInfoMapper;
 import kr.tracom.tims.kafka.KafkaProducer;
 import kr.tracom.tims.manager.ThreadManager;
+import kr.tracom.util.CommonUtil;
 import kr.tracom.util.DateUtil;
 import kr.tracom.ws.WsClient;
 
@@ -51,6 +53,9 @@ public class ActionRequest {
     
     @Autowired
 	CurInfoMapper curInfoMapper;
+    
+    @Autowired
+	private IntgMapper intgMapper;
 
     public Map<String, Object> handle(TimsMessage timsMessage, String sessionId){
     	
@@ -156,7 +161,36 @@ public class ActionRequest {
 					Type resultType = new TypeToken<Map<String, Object>>(){}.getType();
 					Map<String, Object> map= gson.fromJson(actionData, resultType);
 					map.put("ATTR_ID", "5051");
-            		
+					map.put("LOCK", "FALSE");
+					
+					Map param = new HashMap();
+					param.put("FCLT_KIND", "FK012");
+					param.put("PARAM_DIV ", "PD003");
+					param.put("PARAM_KIND", "PK025");
+					List<Map<String, Object>> list =intgMapper.selectFcltSchedule(param);
+					
+					int todayMinute = CommonUtil.hmToMinute(CommonUtil.todayHM());
+					
+					for(Map<String, Object> data : list) {
+						String stTime = (String) data.get("ST_TIME");
+						String edTime = (String) data.get("ED_TIME");
+						int stMinute = CommonUtil.hmToMinute(stTime);
+						int edMinute = CommonUtil.hmToMinute(edTime);
+						
+						if(map.get("MNG_ID").equals(data.get("MNG_ID"))) {
+							logger.info("data = {}, todayMinute={},stMinute={},edMinute={}", data, stMinute, edMinute);	
+							if((todayMinute-stMinute)>=0 &&(todayMinute-edMinute)<=0) {
+								if("1".equals(map.get("DATA_VAL"))){
+									map.put("LOCK", "WARN");
+								}
+								else {
+									map.put("LOCK", "TRUE");
+								}
+							}
+							break;
+						}
+					}
+					
 					//Map<String, Object> map = new HashMap<String, Object>();
 					ArrayList jsonList = new ArrayList<Map<String, Object>>();
 					jsonList.add(map);

@@ -40,9 +40,9 @@ public class IntgService extends ServiceSupport {
 	private IntgMapper intgMapper;
 	
 	//에어컨 정보 select
-	public List<Map<String, Object>> selectIntgList() throws Exception {
+	public List<Map<String, Object>> selectAirconIntgList() throws Exception {
 		Map<String, Object> map = getSimpleDataMap("dma_search");
-		return intgMapper.selectIntgList(map);
+		return intgMapper.selectAirconIntgList(map);
 		
 	}
 	

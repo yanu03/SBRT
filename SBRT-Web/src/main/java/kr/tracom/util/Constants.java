@@ -29,6 +29,9 @@ public class Constants {
 	public static final String OPER_EVENT_ARRIVAL= "ET001"; //운행이벤트도착 코드
 	public static final String OPER_EVENT_DEPART= "ET002"; //운행이벤트출발 코드
 	
+	public static final String OPER_EVENT_DOOR_OPEN= "ET009"; //운행이벤트 문 열림 코드
+	public static final String OPER_EVENT_DOOR_CLOSE= "ET010"; //운행이벤트 문 닫힘 코드
+	
 	/**
 	 *
 	 */
@@ -59,6 +62,87 @@ public class Constants {
 		public static final String DY001 = "DY001"; //평일
 		public static final String DY002 = "DY002"; //휴일
 	}
+	
+	public static class FcltKinds {
+		public static final String FK001 = "FK001"; //BIT
+		public static final String FK002 = "FK002"; //신호제어기
+		public static final String FK003 = "FK003"; //공조기
+		public static final String FK004 = "FK004"; //미세먼지저감장치
+		public static final String FK005 = "FK005"; //에어컨
+		public static final String FK006 = "FK006"; //승객감지장치
+		public static final String FK007 = "FK007"; //스크린도어
+		public static final String FK008 = "FK008"; //쉘터 컨트롤러
+		public static final String FK009 = "FK009"; //보행자 신호기
+		public static final String FK010 = "FK010"; //스크린도어 끼임방지센서
+		public static final String FK011 = "FK011"; //바이러스체크장치
+	}
+	
+	public static class FcltConds {
+		public static final String FC020 = "FC020"; //정상
+		public static final String FC021 = "FC021"; //비정상
+		public static final String FC022 = "FC022"; //네트워크 오류
+		public static final String FC023 = "FC023"; //문 열림
+		public static final String FC024 = "FC024"; //문 닫힘
+		public static final String FC025 = "FC025"; //문 닫힘상태
+	}
+	
+	public static class ParamDivs {
+		public static final String 	PD001	="PD001"; //설정
+		public static final String 	PD002	="PD002"; //제어
+		public static final String 	PD003	="PD003"; //상태
+	}
+	
+	public static class ParamKinds {
+		public static final String 	PK001	="PK001"; //리셋
+		public static final String 	PK002	="PK002"; //전원
+		public static final String 	PK003	="PK003"; //화면(ON/OFF)
+		public static final String 	PK004	="PK004"; //사운드 음량
+		public static final String 	PK005	="PK005"; //LCD 휘도
+		public static final String 	PK006	="PK006"; //히터(ON/OFF)
+		public static final String 	PK007	="PK007"; //FAN(ON/OFF)
+		public static final String 	PK008	="PK008"; //커맨드
+		public static final String 	PK009	="PK009"; //캡쳐
+		public static final String 	PK010	="PK010"; //영상 녹화
+		public static final String 	PK011	="PK011"; //로그레벨
+		public static final String 	PK012	="PK012"; //IP/PORT
+		public static final String 	PK013	="PK013"; //통신
+		public static final String 	PK014	="PK014"; //AP
+		public static final String 	PK015	="PK015"; //GPS
+		public static final String 	PK016	="PK016"; //집중모니터링 여부
+		public static final String 	PK017	="PK017"; //정주기 주기
+		public static final String 	PK018	="PK018"; //배터리
+		public static final String 	PK019	="PK019"; //외부조명
+		public static final String 	PK020	="PK020"; //충격감지센서
+		public static final String 	PK021	="PK021"; //카메라
+		public static final String 	PK022	="PK022"; //온도
+		public static final String 	PK023	="PK023"; //습도
+		public static final String 	PK024	="PK024"; //LCD 전류감지
+		public static final String 	PK025	="PK025"; //문 열림/닫힘
+		public static final String 	PK026	="PK026"; //LED 휘도
+		public static final String 	PK027	="PK027"; //살균모드
+		public static final String 	PK028	="PK028"; //세척모드
+		public static final String 	PK029	="PK029"; //승객수
+		public static final String 	PK030	="PK030"; //상태
+		public static final String 	PK031	="PK031"; //작동 단계
+		public static final String 	PK032	="PK032"; //미세먼지 외부 측정치
+		public static final String 	PK033	="PK033"; //초미세먼지 외부 측정치
+		public static final String 	PK034	="PK034"; //현재온도
+		public static final String 	PK035	="PK035"; //현재습도
+		public static final String 	PK036	="PK036"; //일산화탄소농도
+		public static final String 	PK037	="PK037"; //이상화질소농도
+		public static final String 	PK038	="PK038"; //DD버전
+		public static final String 	PK039	="PK039"; //신호제어 모드
+		public static final String 	PK040	="PK040"; //RING-A 현시
+		public static final String 	PK041	="PK041"; //RING-A 현시 진행시간(초)
+		public static final String 	PK042	="PK042"; //RING-B 현시
+		public static final String 	PK043	="PK043"; //RING-B 현시 진행시간(초)
+		public static final String 	PK045	="PK045"; //보행자 수
+		public static final String 	PK046	="PK046"; //스냅샷경로
+		public static final String 	PK047	="PK047"; //희망온도(℃)
+		public static final String 	PK048	="PK048"; //이벤트 종류
+		public static final String 	PK049	="PK049"; //배터리잔량
+	}
+	
 	
 	public static String INTG_URL = "INTG_URL";
 	public static String API_KEY = "KEY_API";
@@ -315,4 +399,13 @@ public class Constants {
     
     public static double AVG_ERAD =6376.5;//(6378.137)   //Average Earth Radius
     public static double PIE = 3.1415926535898;
+    
+	// HTTP
+	public final static String AUTH_TOKEN = "Auth-Token";
+	public final static String CON_NAME = "Con-Nm";
+
+	public final static String PARAM_GET = "GET";
+	public final static String PARAM_POST = "POST";
+	public final static String PARAM_PUT = "PUT";
+	public final static String PARAM_DELETE = "DELETE";
 }

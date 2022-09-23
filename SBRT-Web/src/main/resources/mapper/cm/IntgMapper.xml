@@ -3,7 +3,7 @@
 
 <mapper namespace="kr.tracom.cm.domain.Intg.IntgMapper">
 
-<select id="selectIntgList" resultType="Map">
+<select id="selectAirconIntgList" resultType="Map">
 	SELECT
 		A.INTG_FCLT_ID
 		,A.FCLT_NM
@@ -113,8 +113,8 @@
 		,LOC_NM	= VALUES(LOC_NM)
 </insert>
 
-	<select id="selectFcltSchedule" resultType="Map">
-		SELECT C.INTG_FCLT_ID, C.LOC_ID, C.ROOM_ID, A.SN, A.ST_TIME, A.ED_TIME
+	<select id="selectFcltSchedule" resultType="Map" parameterType="Map">
+		SELECT A.NODE_ID, A.FCLT_ID, B.MNG_ID, C.INTG_FCLT_ID, C.LOC_ID, C.ROOM_ID, A.SN, A.ST_TIME, A.ED_TIME
 		FROM BMS_FCLT_SCH_INFO A
 		LEFT OUTER JOIN
 		BMS_FCLT_INFO B
@@ -122,6 +122,6 @@
 		LEFT OUTER JOIN
 		BMS_INTG_AIRCON_INFO C
 		ON B.INTG_FCLT_ID = C.INTG_FCLT_ID
-		WHERE A.FCLT_KIND = 'FK005' AND A.PARAM_DIV = 'PD002' AND A.PARAM_KIND = 'PK002'
+		WHERE A.FCLT_KIND = #{FCLT_KIND} AND A.PARAM_DIV = #{PARAM_DIV} AND A.PARAM_KIND = #{PARAM_KIND}
 	</select>
 </mapper>

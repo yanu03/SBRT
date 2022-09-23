@@ -31,6 +31,7 @@ import kr.tracom.platform.attribute.common.AtTimeStamp;
 import kr.tracom.tims.domain.CurInfoMapper;
 import kr.tracom.tims.domain.HistoryMapper;
 import kr.tracom.util.CommonUtil;
+import kr.tracom.util.Constants;
 import kr.tracom.ws.WsClient;
 
 
@@ -58,6 +59,8 @@ public class Scheduler {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private static Map<String, Object> g_operCodeMap  = new HashMap<>();
+	
+	private static String curToday = "";
 
 	private Map<String, Object> getCommonCode( String coCd,String ValType, String value) {
 		//String eventCd = paramMap.get("EVENT_CD")+"";
@@ -116,9 +119,74 @@ public class Scheduler {
 			if (scheduleOnOff.equals("off") == true) {
 				return;
 			}
-			//List<Map<String, Object>> param = getSimpleList("dlt_airconItem");
+			//
+			try {
+				Map param = new HashMap();
+				param.put("FCLT_KIND", "FK005");
+				param.put("PARAM_DIV ", "PD002");
+				param.put("PARAM_KIND", "PK002");
+				List<Map<String, Object>> list =intgMapper.selectFcltSchedule(param);
+				for(int x = 0; x < list.size(); x++) {
+					Map data = (Map) list.get(x);
+					String intgFcltId = (String) data.get("INTG_FCLT_ID");
+					String stTime = (String) data.get("ST_TIME");
+					String edTime = (String) data.get("ED_TIME");
+					String power = "";
+					logger.error("CommonUtil.todayHM= {}, {}, {}", CommonUtil.todayHM(), stTime, edTime);
+
+					
+					data.put("FCLT_ID", data.get("FCLT_ID"));
+					data.put("FCLT_KIND", Constants.FcltKinds.FK005);
+					data.put("NODE_ID", data.get("NODE_ID"));
+					data.put("MNG_ID", data.get("MNG_ID"));				
+					data.put("PARAM_DIV", Constants.ParamDivs.PD002);
+					data.put("PARAM_KIND", Constants.ParamKinds.PK002);
+					
+					if(CommonUtil.todayHM().equals(stTime)) {
+						power = "1";
+						data.put("DATA_VAL", "1");
+					}
+					else if(CommonUtil.todayHM().equals(edTime)) {
+						power = "0";
+						data.put("DATA_VAL", "0");
+					}
+					
+					//전원제어
+					if(power.isEmpty()==false) {
+						historyMapper.updateFcltCondParamInfo(data);
+						data.put("INTG_TYPE", "PC");
+						
+						List<Map<String, Object>> token = intgMapper.selectIntgMstList(data);
+						String key = (String) token.get(0).get("INTG_API_KEY");
+						String intgUrl = (String) token.get(0).get("INTG_URL");
+						
+						String api = apiGatewayUrl + intgUrl + key + "&deviceId=" + intgFcltId + "&value=" + power;
+						logger.debug("airconControl() api = "+ api);
+						
+						BufferedReader in = null;
+						
+						try {
+							URL url = new URL(api);
+							try {
+								HttpURLConnection conn = (HttpURLConnection) url.openConnection(); // 접속 
+								conn.setRequestMethod("GET"); // 전송 방식은 GET
+								
+								in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+								
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			} catch (Exception e) {
+				logger.error("schedule_10sec Exception!!! {}", e);
+			}
 			
-			List<Map<String, Object>> param = intgMapper.selectIntgList(null);
+			List<Map<String, Object>> param = intgMapper.selectAirconIntgList(null);
 			
 			Map<String, Object> paramSr = new HashMap();
 			paramSr.put("INTG_TYPE", "SR");
@@ -161,20 +229,31 @@ public class Scheduler {
 							for (int j = 0; j < jsonList.size(); j++) {
 								Map<String, Object> data2 = (Map) jsonList.get(j);
 								
-								data2.put("COOL_SET", data2.get("coolingSetpoint"));
-								data2.put("TEMP", data2.get("temperature"));
 								data2.put("FCLT_ID", data.get("FCLT_ID"));
 								data2.put("FCLT_KIND", data.get("FCLT_KIND"));
 								data2.put("NODE_ID", data.get("NODE_ID"));
 								data2.put("MNG_ID", data.get("MNG_ID"));
 								data2.put("ATTR_ID", "5050"); //에어컨 attr_id 5050
 								
-								if(data2.get("switch").equals("on")) {
-									data2.put("SWITCH", "1");
-								}else if(data2.get("switch").equals("off")) {
-									data2.put("SWITCH", "0");
-								}
+								data2.put("PARAM_DIV", Constants.ParamDivs.PD003);
 								
+								data2.put("PARAM_KIND", Constants.ParamKinds.PK002);
+								if(data2.get("switch").equals("on")) {
+									//data2.put("SWITCH", "1");
+									data2.put("DATA_VAL", "1");
+								}else if(data2.get("switch").equals("off")) {
+									//data2.put("SWITCH", "0");
+									data2.put("DATA_VAL", "0");
+								}
+								historyMapper.updateFcltCondParamInfo(data2);
+								
+								
+								data2.put("PARAM_KIND", Constants.ParamKinds.PK022);
+								data2.put("DATA_VAL", data2.get("temperature"));
+								historyMapper.updateFcltCondParamInfo(data2);
+								
+								data2.put("PARAM_KIND", Constants.ParamKinds.PK047);
+								data2.put("DATA_VAL", data2.get("coolingSetpoint"));
 								historyMapper.updateFcltCondParamInfo(data2);
 								
 							}
@@ -197,54 +276,6 @@ public class Scheduler {
 				}
 			}			
 				
-		} catch (Exception e) {
-			logger.error("schedule_10sec Exception!!! {}", e);
-		}
-		try {
-			List<Map<String, Object>> list =intgMapper.selectFcltSchedule();
-			for(int x = 0; x < list.size(); x++) {
-				Map data = (Map) list.get(x);
-				String intgFcltId = (String) data.get("INTG_FCLT_ID");
-				String stTime = (String) data.get("ST_TIME");
-				String edTime = (String) data.get("ED_TIME");
-				String power = "";
-				logger.error("CommonUtil.todayHM= {}, {}, {}", CommonUtil.todayHM(), stTime, edTime);
-				if(CommonUtil.todayHM().equals(stTime)) {
-					power = "1";
-				}
-				else if(CommonUtil.todayHM().equals(edTime)) {
-					power = "0";
-				}
-				//전원제어
-				if(power.isEmpty()==false) {
-					data.put("INTG_TYPE", "PC");
-					
-					List<Map<String, Object>> token = intgMapper.selectIntgMstList(data);
-					String key = (String) token.get(0).get("INTG_API_KEY");
-					String intgUrl = (String) token.get(0).get("INTG_URL");
-					
-					String api = apiGatewayUrl + intgUrl + key + "&deviceId=" + intgFcltId + "&value=" + power;
-					logger.debug("airconControl() api = "+ api);
-					
-					BufferedReader in = null;
-					
-					try {
-						URL url = new URL(api);
-						try {
-							HttpURLConnection conn = (HttpURLConnection) url.openConnection(); // 접속 
-							conn.setRequestMethod("GET"); // 전송 방식은 GET
-							
-							in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-							
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
 		} catch (Exception e) {
 			logger.error("schedule_10sec Exception!!! {}", e);
 		}

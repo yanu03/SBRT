@@ -23,10 +23,10 @@ public class IntgController extends ControllerSupport {
 	@Autowired
 	private IntgService intgService;
 	
-	@RequestMapping("/intg/selectIntgList")
-	public @ResponseBody Map<String, Object> selectIntgList() throws Exception {
+	@RequestMapping("/intg/selectAirconIntgList")
+	public @ResponseBody Map<String, Object> selectAirconIntgList() throws Exception {
 		intgService.insertIntgList();
-		result.setData("dlt_BMS_INTG_AIRCON_INFO", intgService.selectIntgList());
+		result.setData("dlt_BMS_INTG_AIRCON_INFO", intgService.selectAirconIntgList());
 		return result.getResult();
 	}
 	

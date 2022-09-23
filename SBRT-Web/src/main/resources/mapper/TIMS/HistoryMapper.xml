@@ -2,387 +2,390 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
 
 <mapper namespace="kr.tracom.tims.domain.HistoryMapper">
-	
-	<!--디스패치 이력-->
+
+	<!--디스패치 이력 -->
 	<insert id="insertDispatchHistory" parameterType="Map">
 		INSERT INTO BRT_DSPTCH_LOG (
-			SEND_DATE
-			,OPER_DT
-			,REP_ROUT_ID
-			,VHC_ID
-			,ROUT_ID				
-			,ALLOC_NO
-			,OPER_SN		
-			,COR_ID
-			,REP_ROUT_NM
-			,ROUT_NM			
-			,VHC_NO
-			,LINK_ID
-			,NODE_ID
-			,DSPTCH_DIV
-			,DSPTCH_KIND
-			,SEND_GPS_X
-			,SEND_GPS_Y
-			,DSPTCH_CONTS
-		) 
+		SEND_DATE
+		,OPER_DT
+		,REP_ROUT_ID
+		,VHC_ID
+		,ROUT_ID
+		,ALLOC_NO
+		,OPER_SN
+		,COR_ID
+		,REP_ROUT_NM
+		,ROUT_NM
+		,VHC_NO
+		,LINK_ID
+		,NODE_ID
+		,DSPTCH_DIV
+		,DSPTCH_KIND
+		,SEND_GPS_X
+		,SEND_GPS_Y
+		,DSPTCH_CONTS
+		)
 		VALUES (
-			#{SEND_DATE}
-			,#{OPER_DT}
-			,#{REP_ROUT_ID}			
-			,#{VHC_ID}
-			,#{ROUT_ID}											
-			,#{ALLOC_NO}
-			,#{OPER_SN}
-			,#{COR_ID}
-			<!-- ,(SELECT REP_ROUT_NM FROM BMS_REP_ROUT_MST WHERE REP_ROUT_ID = #{REP_ROUT_ID})	
+		#{SEND_DATE}
+		,#{OPER_DT}
+		,#{REP_ROUT_ID}
+		,#{VHC_ID}
+		,#{ROUT_ID}
+		,#{ALLOC_NO}
+		,#{OPER_SN}
+		,#{COR_ID}
+		<!-- ,(SELECT REP_ROUT_NM FROM BMS_REP_ROUT_MST WHERE REP_ROUT_ID = #{REP_ROUT_ID})
 			,(SELECT ROUT_NM FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID}) -->
-			,#{REP_ROUT_NM}
-			,#{ROUT_NM}
-			,#{VHC_NO}
-			,#{LINK_ID}
-			,#{NODE_ID}
-			,#{DSPTCH_DIV}
-			,#{DSPTCH_KIND}			
-			,#{GPS_X}
-			,#{GPS_Y}
-			,#{DSPTCH_CONTS}
-		)	
+		,#{REP_ROUT_NM}
+		,#{ROUT_NM}
+		,#{VHC_NO}
+		,#{LINK_ID}
+		,#{NODE_ID}
+		,#{DSPTCH_DIV}
+		,#{DSPTCH_KIND}
+		,#{GPS_X}
+		,#{GPS_Y}
+		,#{DSPTCH_CONTS}
+		)
 	</insert>
-	
-	
-	<!--운행이벤트 이력-->
+
+
+	<!--운행이벤트 이력 -->
 	<insert id="insertEventHistory" parameterType="Map">
 		INSERT INTO BRT_OPER_EVENT_HIS (
-			OPER_DT
-			,REP_ROUT_ID
-			,VHC_ID
-			,UPD_DTM
-			,VHC_NO
-			,DRV_ID
-			,COR_ID
-			,ROUT_ID
-			,ALLOC_NO
-			,OPER_SN
-			,GPS_X_RAW
-			,GPS_Y_RAW
-			,DRV_ANGLE
-			,GPS_X
-			,GPS_Y
-			,CUR_SPD
-			,LINK_ID
-			,NODE_ID
-			,NODE_SN
-			,OPER_STS
-			,EVT_TYPE
-			,EVT_DATA
-			,STOP_TM
-			,OCR_DTM
-			,ROUT_STTN_LINK_ID
-		) 
+		OPER_DT
+		,REP_ROUT_ID
+		,VHC_ID
+		,UPD_DTM
+		,VHC_NO
+		,DRV_ID
+		,COR_ID
+		,ROUT_ID
+		,ALLOC_NO
+		,OPER_SN
+		,GPS_X_RAW
+		,GPS_Y_RAW
+		,DRV_ANGLE
+		,GPS_X
+		,GPS_Y
+		,CUR_SPD
+		,LINK_ID
+		,NODE_ID
+		,NODE_SN
+		,OPER_STS
+		,EVT_TYPE
+		,EVT_DATA
+		,STOP_TM
+		,OCR_DTM
+		,ROUT_STTN_LINK_ID
+		)
 		VALUES (
-			#{OPER_DT}
-			<!-- ,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})			
+		#{OPER_DT}
+		<!-- ,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})
 			,(SELECT VHC_ID FROM BMS_VHC_MST WHERE VHC_NO = #{BUS_NO}) -->
-			,#{REP_ROUT_ID}
-			,#{VHC_ID}
-			,NOW(3)
-			,#{BUS_NO}
-			,#{DRV_ID}
-			,#{COR_ID}
-			,#{ROUT_ID}
-			<!-- ,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, #{OPER_DT})) -->  <!--alloc no 찾기 -->
-			,#{ALLOC_NO}
-			<!-- ,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, #{UPD_DTM})) --> <!--oper sn 찾기 -->
-			<choose>
-				<when test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">
-					,#{OPER_SN}
-				</when>
-				<otherwise>
-					,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, #{UPD_DTM}))
-				</otherwise>
-			</choose>
-			,#{LONGITUDE_RAW}
-			,#{LATITUDE_RAW}
-			,#{HEADING}
-			,#{LONGITUDE}
-			,#{LATITUDE}
-			,#{SPEED}
-			,#{LINK_ID}
-			,#{NODE_ID}
-			,#{NODE_SN}
-			<!-- ,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'OPER_STS' AND NUM_VAL4 = #{RUN_TYPE}) --> <!-- 운행 유형  -->
-			,#{OPER_STS}
-			<!-- ,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'OPER_EVT_TYPE' AND NUM_VAL4 = #{EVENT_CD})  --><!-- 운행이벤트 유형  -->
-			,#{EVT_TYPE}
-			,#{EVENT_DATA} 
-			,#{STOP_TM}
-			,#{UPD_DTM}
-			,#{ROUT_STTN_LINK_ID}
+		,#{REP_ROUT_ID}
+		,#{VHC_ID}
+		,NOW(3)
+		,#{BUS_NO}
+		,#{DRV_ID}
+		,#{COR_ID}
+		,#{ROUT_ID}
+		<!-- ,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, #{OPER_DT})) -->  <!--alloc no 찾기 -->
+		,#{ALLOC_NO}
+		<!-- ,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, #{UPD_DTM})) --> <!--oper sn 찾기 -->
+		<choose>
+			<when test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">
+				,#{OPER_SN}
+			</when>
+			<otherwise>
+				,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, #{UPD_DTM}))
+			</otherwise>
+		</choose>
+		,#{LONGITUDE_RAW}
+		,#{LATITUDE_RAW}
+		,#{HEADING}
+		,#{LONGITUDE}
+		,#{LATITUDE}
+		,#{SPEED}
+		,#{LINK_ID}
+		,#{NODE_ID}
+		,#{NODE_SN}
+		<!-- ,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'OPER_STS' AND NUM_VAL4 = #{RUN_TYPE}) --> <!-- 운행 유형 -->
+		,#{OPER_STS}
+		<!-- ,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'OPER_EVT_TYPE' AND NUM_VAL4 = #{EVENT_CD}) --><!-- 운행이벤트 유형 -->
+		,#{EVT_TYPE}
+		,#{EVENT_DATA}
+		,#{STOP_TM}
+		,#{UPD_DTM}
+		,#{ROUT_STTN_LINK_ID}
 		)
 	</insert>
-	
-	
-	<!--운행위반 이력-->
+
+
+	<!--운행위반 이력 -->
 	<insert id="insertOperVioltHistory" parameterType="Map">
 		INSERT INTO BRT_OPER_VIOLT_HIS (
-			OPER_DT
-			,REP_ROUT_ID
-			,VHC_ID
-			,UPD_DTM
-			,OCR_DTM
-			,ROUT_ID
-			,ALLOC_NO
-			,OPER_SN
-			,COR_ID
-			,REP_ROUT_NM
-			,ROUT_NM
-			,VHC_NO			
-			,DRV_ID
-			,GPS_X
-			,GPS_Y
-			,LINK_ID
-			,NODE_ID
-			,VIOLT_TYPE
-		) 
+		OPER_DT
+		,REP_ROUT_ID
+		,VHC_ID
+		,UPD_DTM
+		,OCR_DTM
+		,ROUT_ID
+		,ALLOC_NO
+		,OPER_SN
+		,COR_ID
+		,REP_ROUT_NM
+		,ROUT_NM
+		,VHC_NO
+		,DRV_ID
+		,GPS_X
+		,GPS_Y
+		,LINK_ID
+		,NODE_ID
+		,VIOLT_TYPE
+		)
 		VALUES (
-			#{OPER_DT}
-			<!-- ,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})			
+		#{OPER_DT}
+		<!-- ,(SELECT REP_ROUT_ID FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})
 			,(SELECT VHC_ID FROM BMS_VHC_MST WHERE VHC_NO = #{BUS_NO}) -->
-			,#{REP_ROUT_ID}
-			,#{VHC_ID}
-			,NOW()
-			,#{UPD_DTM}
-			,#{ROUT_ID}
-			<!-- ,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, #{OPER_DT})) -->  <!--alloc no 찾기 -->
-			,#{ALLOC_NO}
-			<!-- ,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, #{UPD_DTM}))  --><!--oper sn 찾기 -->
-			<choose>
-				<when test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">
-					,#{OPER_SN}
-				</when>
-				<otherwise>
-					,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, #{UPD_DTM}))
-				</otherwise>
-			</choose>
-			,#{COR_ID}
-			<!-- ,(SELECT REP_ROUT_NM FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})
+		,#{REP_ROUT_ID}
+		,#{VHC_ID}
+		,NOW()
+		,#{UPD_DTM}
+		,#{ROUT_ID}
+		<!-- ,(SELECT FN_GET_CUR_ALLOC_NO(#{ROUT_ID}, VHC_ID, #{OPER_DT})) -->  <!--alloc no 찾기 -->
+		,#{ALLOC_NO}
+		<!-- ,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, #{UPD_DTM})) --><!--oper sn 찾기 -->
+		<choose>
+			<when test="@kr.tracom.util.CommonUtil@notEmpty(OPER_SN)">
+				,#{OPER_SN}
+			</when>
+			<otherwise>
+				,(SELECT FN_GET_OPER_SN(#{ROUT_ID}, #{NODE_ID}, VHC_ID, #{UPD_DTM}))
+			</otherwise>
+		</choose>
+		,#{COR_ID}
+		<!-- ,(SELECT REP_ROUT_NM FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID})
 			,(SELECT ROUT_NM FROM BMS_ROUT_MST WHERE ROUT_ID = #{ROUT_ID}) -->
-			,#{REP_ROUT_NM}
-			,#{ROUT_NM}
-			,#{BUS_NO}
-			,#{DRV_ID}
-			,#{LONGITUDE}
-			,#{LATITUDE}
-			,#{LINK_ID}
-			,#{NODE_ID}
-			<!-- ,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'VIOLT_TYPE' AND NUM_VAL4 = #{EVENT_CD})  --><!-- 운행위반유형  -->
-			,#{VIOLT_TYPE}
+		,#{REP_ROUT_NM}
+		,#{ROUT_NM}
+		,#{BUS_NO}
+		,#{DRV_ID}
+		,#{LONGITUDE}
+		,#{LATITUDE}
+		,#{LINK_ID}
+		,#{NODE_ID}
+		<!-- ,(SELECT DL_CD FROM BMS_DL_CD_INFO WHERE CO_CD = 'VIOLT_TYPE' AND NUM_VAL4 = #{EVENT_CD}) --><!-- 운행위반유형 -->
+		,#{VIOLT_TYPE}
 		)
 	</insert>
-	
-	<!-- <update id="updateFcltCondParamInfo" parameterType="Map">
-		UPDATE 
-			BMS_FCLT_COND_PARAM_INFO
-		SET
-			DATA_VAL = #{DATA_VAL}
-		WHERE
-			NODE_ID = #{CRS_ID}
-			AND PARAM_DIV = #{PARAM_DIV}
-			AND PARAM_KIND = #{PARAM_KIND};
-			
-	</update>	 -->
-	
-	<update id="updateFcltCondParamInfo" parameterType="Map">
-		<!-- 에어컨 전원 -->
-		<!-- INSERT INTO
-			BMS_FCLT_COND_PARAM_INFO(
-				NODE_ID
-				,FCLT_ID
-				,FCLT_KIND
-				,PARAM_DIV
-				,PARAM_KIND 
-				,MNG_ID
-				,DATA_VAL
-				,SEND_DTM
-				,UPD_DTM
-			)VALUES(
-				#{NODE_ID}
-				,#{FCLT_ID}
-				,#{FCLT_KIND}
-				,'PD003'
-				,'PK002'
-				,#{MNG_ID}
-				,#{SWITCH}
-				,NOW()
-				,#{UPD_DTM}
-			)
-		ON DUPLICATE KEY UPDATE
-			DATA_VAL = #{SWITCH}
-			,SEND_DTM = NOW()
-			,UPD_DTM = #{UPD_DTM}; -->
-		
-		UPDATE 
-			BMS_FCLT_COND_PARAM_INFO
-		SET
-			DATA_VAL = #{SWITCH}
-			,SEND_DTM = NOW()
-			,UPD_DTM = #{UPD_DTM}
-		WHERE
-			FCLT_ID = #{FCLT_ID}
-			AND PARAM_DIV = 'PD003'
-			AND PARAM_KIND = 'PK002';
-		
-		<!-- 에어컨 현재 온도 -->	
-		<!-- INSERT INTO
-			BMS_FCLT_COND_PARAM_INFO(
-				NODE_ID
-				,FCLT_ID
-				,FCLT_KIND
-				,PARAM_DIV
-				,PARAM_KIND 
-				,MNG_ID
-				,DATA_VAL
-				,SEND_DTM
-				,UPD_DTM
-			)VALUES(
-				#{NODE_ID}
-				,#{FCLT_ID}
-				,#{FCLT_KIND}
-				,'PD003'
-				,'PK022'
-				,#{MNG_ID}
-				,#{SWITCH}
-				,NOW()
-				,#{UPD_DTM}
-			)
-		ON DUPLICATE KEY UPDATE
-			DATA_VAL = #{TEMP}
-			,SEND_DTM = NOW()
-			,UPD_DTM = #{UPD_DTM}; -->
-		
-		UPDATE 
-			BMS_FCLT_COND_PARAM_INFO
-		SET
-			DATA_VAL = #{TEMP}
-			,SEND_DTM = NOW()
-			,UPD_DTM = #{UPD_DTM}
-		WHERE
-			FCLT_ID = #{FCLT_ID}
-			AND PARAM_DIV = 'PD003'
-			AND PARAM_KIND = 'PK022';
-		
-		<!-- 에어컨 희망 온도 -->	
-		<!-- INSERT INTO
-			BMS_FCLT_COND_PARAM_INFO(
-				NODE_ID
-				,FCLT_ID
-				,FCLT_KIND
-				,PARAM_DIV
-				,PARAM_KIND 
-				,MNG_ID
-				,DATA_VAL
-				,SEND_DTM
-				,UPD_DTM
-			)VALUES(
-				#{NODE_ID}
-				,#{FCLT_ID}
-				,#{FCLT_KIND}
-				,'PD003'
-				,'PK047'
-				,#{MNG_ID}
-				,#{SWITCH}
-				,NOW()
-				,#{UPD_DTM}
-			)
-		ON DUPLICATE KEY UPDATE
-			DATA_VAL = #{COOL_SET}
-			,SEND_DTM = NOW()
-			,UPD_DTM = #{UPD_DTM}; -->
-		
-		UPDATE 
-			BMS_FCLT_COND_PARAM_INFO
-		SET
-			DATA_VAL = #{COOL_SET}
-			,SEND_DTM = NOW()
-			,UPD_DTM = #{UPD_DTM}
-		WHERE
-			FCLT_ID = #{FCLT_ID}
-			AND PARAM_DIV = 'PD003'
-			AND PARAM_KIND = 'PK047';
-	
-	
-	</update>
-	
-	<update id="updateSigFcltCondParamInfo" parameterType="Map">
-			
-		UPDATE 
-			BMS_FCLT_COND_PARAM_INFO
-		SET
-			DATA_VAL = #{CONT_ST}
-			,UPD_DTM = NOW()
-			,SEND_DTM = #{UPD_DTM}
-		WHERE
-			NODE_ID = #{CRS_ID}
-			AND PARAM_DIV = 'PD003'
-			AND PARAM_KIND = 'PK030';
-			
-		UPDATE 
-			BMS_FCLT_COND_PARAM_INFO
-		SET
-			DATA_VAL = #{CONT_MODE}
-			,UPD_DTM = NOW()
-			,SEND_DTM = #{UPD_DTM}
-		WHERE
-			NODE_ID = #{CRS_ID}
-			AND PARAM_DIV = 'PD003'
-			AND PARAM_KIND = 'PK039';
-			
-		UPDATE 
-			BMS_FCLT_COND_PARAM_INFO
-		SET
-			DATA_VAL = #{PHASE_NO}
-			,UPD_DTM = NOW()
-			,SEND_DTM = #{UPD_DTM}
-		WHERE
-			NODE_ID = #{CRS_ID}
-			AND PARAM_DIV = 'PD003'
-			AND PARAM_KIND = 'PK040';
-			
-		UPDATE 
-			BMS_FCLT_COND_PARAM_INFO
-		SET
-			DATA_VAL = #{PHASE_TM_A}
-			,SEND_DTM = NOW()
-			,UPD_DTM = #{UPD_DTM}
-		WHERE
-			NODE_ID = #{CRS_ID}
-			AND PARAM_DIV = 'PD003'
-			AND PARAM_KIND = 'PK041';
-			
-		UPDATE 
-			BMS_FCLT_COND_PARAM_INFO
-		SET
-			DATA_VAL = #{PHASE_NO_B}
-			,UPD_DTM = NOW()
-			,SEND_DTM = #{UPD_DTM}
-		WHERE
-			NODE_ID = #{CRS_ID}
-			AND PARAM_DIV = 'PD003'
-			AND PARAM_KIND = 'PK042';
-			
-		UPDATE 
-			BMS_FCLT_COND_PARAM_INFO
-		SET
-			DATA_VAL = #{PHASE_TM_B}
-			,UPD_DTM = NOW()
-			,SEND_DTM = #{UPD_DTM}
-		WHERE
-			NODE_ID = #{CRS_ID}
-			AND PARAM_DIV = 'PD003'
-			AND PARAM_KIND = 'PK043';
-			
-	</update>
-	
 
-	
+	<update id="updateFcltCondParamInfo" parameterType="Map">
+		UPDATE
+		BMS_FCLT_COND_PARAM_INFO
+		SET
+		DATA_VAL = #{DATA_VAL}
+		,UPD_DTM = NOW()
+		,SEND_DTM = #{UPD_DTM}
+		WHERE
+		NODE_ID = #{NODE_ID}
+		AND FCLT_ID = #{FCLT_ID}
+		AND PARAM_DIV = #{PARAM_DIV}
+		AND PARAM_KIND = #{PARAM_KIND};
+
+	</update>
+
+	<!-- <update id="updateFcltCondParamInfo" parameterType="Map">
+		에어컨 전원
+		INSERT INTO
+		BMS_FCLT_COND_PARAM_INFO(
+		NODE_ID
+		,FCLT_ID
+		,FCLT_KIND
+		,PARAM_DIV
+		,PARAM_KIND
+		,MNG_ID
+		,DATA_VAL
+		,SEND_DTM
+		,UPD_DTM
+		)VALUES(
+		#{NODE_ID}
+		,#{FCLT_ID}
+		,#{FCLT_KIND}
+		,'PD003'
+		,'PK002'
+		,#{MNG_ID}
+		,#{SWITCH}
+		,NOW()
+		,#{UPD_DTM}
+		)
+		ON DUPLICATE KEY UPDATE
+		DATA_VAL = #{SWITCH}
+		,SEND_DTM = NOW()
+		,UPD_DTM = #{UPD_DTM};
+
+		UPDATE
+		BMS_FCLT_COND_PARAM_INFO
+		SET
+		DATA_VAL = #{SWITCH}
+		,SEND_DTM = NOW()
+		,UPD_DTM = #{UPD_DTM}
+		WHERE
+		FCLT_ID = #{FCLT_ID}
+		AND PARAM_DIV = 'PD003'
+		AND PARAM_KIND = 'PK002';
+
+		에어컨 현재 온도
+		INSERT INTO
+		BMS_FCLT_COND_PARAM_INFO(
+		NODE_ID
+		,FCLT_ID
+		,FCLT_KIND
+		,PARAM_DIV
+		,PARAM_KIND
+		,MNG_ID
+		,DATA_VAL
+		,SEND_DTM
+		,UPD_DTM
+		)VALUES(
+		#{NODE_ID}
+		,#{FCLT_ID}
+		,#{FCLT_KIND}
+		,'PD003'
+		,'PK022'
+		,#{MNG_ID}
+		,#{SWITCH}
+		,NOW()
+		,#{UPD_DTM}
+		)
+		ON DUPLICATE KEY UPDATE
+		DATA_VAL = #{TEMP}
+		,SEND_DTM = NOW()
+		,UPD_DTM = #{UPD_DTM};
+
+		UPDATE
+		BMS_FCLT_COND_PARAM_INFO
+		SET
+		DATA_VAL = #{TEMP}
+		,SEND_DTM = NOW()
+		,UPD_DTM = #{UPD_DTM}
+		WHERE
+		FCLT_ID = #{FCLT_ID}
+		AND PARAM_DIV = 'PD003'
+		AND PARAM_KIND = 'PK022';
+
+		에어컨 희망 온도
+		INSERT INTO
+		BMS_FCLT_COND_PARAM_INFO(
+		NODE_ID
+		,FCLT_ID
+		,FCLT_KIND
+		,PARAM_DIV
+		,PARAM_KIND
+		,MNG_ID
+		,DATA_VAL
+		,SEND_DTM
+		,UPD_DTM
+		)VALUES(
+		#{NODE_ID}
+		,#{FCLT_ID}
+		,#{FCLT_KIND}
+		,'PD003'
+		,'PK047'
+		,#{MNG_ID}
+		,#{SWITCH}
+		,NOW()
+		,#{UPD_DTM}
+		)
+		ON DUPLICATE KEY UPDATE
+		DATA_VAL = #{COOL_SET}
+		,SEND_DTM = NOW()
+		,UPD_DTM = #{UPD_DTM};
+
+		UPDATE
+		BMS_FCLT_COND_PARAM_INFO
+		SET
+		DATA_VAL = #{COOL_SET}
+		,SEND_DTM = NOW()
+		,UPD_DTM = #{UPD_DTM}
+		WHERE
+		FCLT_ID = #{FCLT_ID}
+		AND PARAM_DIV = 'PD003'
+		AND PARAM_KIND = 'PK047';
+
+
+		</update> -->
+
+	<update id="updateSigFcltCondParamInfo" parameterType="Map">
+
+		UPDATE
+		BMS_FCLT_COND_PARAM_INFO
+		SET
+		DATA_VAL = #{CONT_ST}
+		,UPD_DTM = NOW()
+		,SEND_DTM = #{UPD_DTM}
+		WHERE
+		NODE_ID = #{CRS_ID}
+		AND PARAM_DIV = 'PD003'
+		AND PARAM_KIND = 'PK030';
+
+		UPDATE
+		BMS_FCLT_COND_PARAM_INFO
+		SET
+		DATA_VAL = #{CONT_MODE}
+		,UPD_DTM = NOW()
+		,SEND_DTM = #{UPD_DTM}
+		WHERE
+		NODE_ID = #{CRS_ID}
+		AND PARAM_DIV = 'PD003'
+		AND PARAM_KIND = 'PK039';
+
+		UPDATE
+		BMS_FCLT_COND_PARAM_INFO
+		SET
+		DATA_VAL = #{PHASE_NO}
+		,UPD_DTM = NOW()
+		,SEND_DTM = #{UPD_DTM}
+		WHERE
+		NODE_ID = #{CRS_ID}
+		AND PARAM_DIV = 'PD003'
+		AND PARAM_KIND = 'PK040';
+
+		UPDATE
+		BMS_FCLT_COND_PARAM_INFO
+		SET
+		DATA_VAL = #{PHASE_TM_A}
+		,SEND_DTM = NOW()
+		,UPD_DTM = #{UPD_DTM}
+		WHERE
+		NODE_ID = #{CRS_ID}
+		AND PARAM_DIV = 'PD003'
+		AND PARAM_KIND = 'PK041';
+
+		UPDATE
+		BMS_FCLT_COND_PARAM_INFO
+		SET
+		DATA_VAL = #{PHASE_NO_B}
+		,UPD_DTM = NOW()
+		,SEND_DTM = #{UPD_DTM}
+		WHERE
+		NODE_ID = #{CRS_ID}
+		AND PARAM_DIV = 'PD003'
+		AND PARAM_KIND = 'PK042';
+
+		UPDATE
+		BMS_FCLT_COND_PARAM_INFO
+		SET
+		DATA_VAL = #{PHASE_TM_B}
+		,UPD_DTM = NOW()
+		,SEND_DTM = #{UPD_DTM}
+		WHERE
+		NODE_ID = #{CRS_ID}
+		AND PARAM_DIV = 'PD003'
+		AND PARAM_KIND = 'PK043';
+
+	</update>
+
+
+
 </mapper>

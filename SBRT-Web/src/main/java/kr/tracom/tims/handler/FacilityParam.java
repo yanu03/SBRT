@@ -2,7 +2,6 @@ package kr.tracom.tims.handler;
 
 import kr.tracom.platform.attribute.BisAtCode;
 import kr.tracom.platform.attribute.bis.AtFacilityParam;
-import kr.tracom.platform.attribute.integration.bluemobile.AtBluemobileStatus;
 import kr.tracom.platform.net.protocol.attribute.AtData;
 import kr.tracom.tims.domain.BisMapper;
 import kr.tracom.ws.WsClient;

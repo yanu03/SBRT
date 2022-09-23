@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import kr.tracom.platform.attribute.BisAtCode;
 import kr.tracom.platform.attribute.bis.AtFacilityParam;
-import kr.tracom.platform.attribute.integration.bluemobile.AtBluemobileStatus;
 import kr.tracom.platform.net.protocol.TimsHeaderTypeA;
 import kr.tracom.platform.net.protocol.TimsMessage;
 import kr.tracom.platform.net.protocol.attribute.AtData;

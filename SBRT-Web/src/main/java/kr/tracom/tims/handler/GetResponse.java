@@ -20,6 +20,7 @@ import kr.tracom.platform.net.protocol.payload.PlGetResponse;
 import kr.tracom.tims.domain.CurInfoMapper;
 import kr.tracom.tims.domain.HistoryMapper;
 import kr.tracom.util.CommonUtil;
+import kr.tracom.util.Constants;
 import kr.tracom.ws.WsClient;
 
 @Component
@@ -108,41 +109,36 @@ public class GetResponse {
     				phaseInfoMap.put("PHASE_NO_B", phaseNoB);
     				phaseInfoMap.put("PHASE_TM_A", pahseTmA);
     				phaseInfoMap.put("PHASE_TM_B", pahseTmB);
-    				historyMapper.updateSigFcltCondParamInfo(phaseInfoMap);
+    				//historyMapper.updateSigFcltCondParamInfo(phaseInfoMap);
     				
-    				/*phaseInfoMap.put("DATA_VAL", contSt);
-    				phaseInfoMap.put("PARAM_DIV", "PD003");
-    				phaseInfoMap.put("PARAM_KIND", "PK030");
+    				/*phaseInfoMap.put("NODE_ID", crsId);
+    				phaseInfoMap.put("PARAM_DIV", Constants.ParamDivs.PD003);
+    				
+    				phaseInfoMap.put("DATA_VAL", contSt);
+    				phaseInfoMap.put("PARAM_KIND",  Constants.ParamKinds.PK030); //상태
     				historyMapper.updateFcltCondParamInfo(phaseInfoMap);
     				
     				phaseInfoMap.put("DATA_VAL", conMode);
-    				phaseInfoMap.put("PARAM_DIV", "PD003");
-    				phaseInfoMap.put("PARAM_KIND", "PK039");
+    				phaseInfoMap.put("PARAM_KIND",  Constants.ParamKinds.PK039); //신호제어 모드
     				historyMapper.updateFcltCondParamInfo(phaseInfoMap);
     				
     				phaseInfoMap.put("DATA_VAL", phaseNoA);
-    				phaseInfoMap.put("PARAM_DIV", "PD003");
-    				phaseInfoMap.put("PARAM_KIND", "PK040");
+    				phaseInfoMap.put("PARAM_KIND",  Constants.ParamKinds.PK040); //RING-A 현시
     				historyMapper.updateFcltCondParamInfo(phaseInfoMap);
     			
-    				phaseInfoMap.put("DATA_VAL", phaseNoB);
-    				phaseInfoMap.put("PARAM_DIV", "PD003");
-    				phaseInfoMap.put("PARAM_KIND", "PK042");
+    				phaseInfoMap.put("DATA_VAL", pahseTmA);
+    				phaseInfoMap.put("PARAM_KIND", Constants.ParamKinds.PK041); //RING-A 현시 진행시간(초)
     				historyMapper.updateFcltCondParamInfo(phaseInfoMap);
     				
-    				phaseInfoMap.put("DATA_VAL", pahseTmA);
-    				phaseInfoMap.put("PARAM_DIV", "PD003");
-    				phaseInfoMap.put("PARAM_KIND", "PK041");
+    				phaseInfoMap.put("DATA_VAL", phaseNoB);
+    				phaseInfoMap.put("PARAM_KIND",  Constants.ParamKinds.PK042); //RING-B 현시
     				historyMapper.updateFcltCondParamInfo(phaseInfoMap);
     				
     				phaseInfoMap.put("DATA_VAL", pahseTmB);
-    				phaseInfoMap.put("PARAM_DIV", "PD003");
-    				phaseInfoMap.put("PARAM_KIND", "PK043");
+    				phaseInfoMap.put("PARAM_KIND",  Constants.ParamKinds.PK043);  //RING-B 현시 진행시간(초)
     				historyMapper.updateFcltCondParamInfo(phaseInfoMap);*/
     				
-    				
     				phaseInfoMapList.add(phaseInfoMap);
-            		
             		
         			//웹소켓 데이터 세팅
         	    	Map<String, Object> wsDataMap = new HashMap<>();

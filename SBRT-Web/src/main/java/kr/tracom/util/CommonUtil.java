@@ -585,16 +585,34 @@ public class CommonUtil {
 		return today.substring(0, 10);
 	}
 	
+	public static String getToday() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		String today = df.format(cal.getTime());
+		return today;
+	}
+	
 	public static String todayHM() {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(new Date());
 		DateFormat df = new SimpleDateFormat("yyyy-MM-ddHH:mm");
 		String today = df.format(cal.getTime());
-		String hhss = today.substring(10, 15);
+		String hhmm = today.substring(10, 15);
 
-		return hhss;
+		return hhmm;
 	}
 	
+	//시분을 분으로 변환
+	public static int hmToMinute(String hhmm) {
+		int minute = 0;
+		if(hhmm.length()==5) {
+			String hh = hhmm.substring(0, 2);
+			String mm = hhmm.substring(3, 2);
+			minute = Integer.parseInt(hh)*60 + Integer.parseInt(mm);
+		}
+		return minute;
+	}
 	
 	public static Date stringToDate(String str) {  
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
