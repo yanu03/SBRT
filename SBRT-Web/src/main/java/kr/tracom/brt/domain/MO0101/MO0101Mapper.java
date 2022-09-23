@@ -47,4 +47,6 @@ public interface MO0101Mapper {
 	public List<Map<String, Object>> selectNodeDispListByRepRout(Map param);
 	
 	public List<Map<String, Object>> selectRepRoutItem();
+	
+	public List selectLinkMst();
 }

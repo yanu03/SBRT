@@ -225,6 +225,7 @@ public class ActionRequest {
 					//Map<String, Object> map = new HashMap<String, Object>();
 
 					webSocketClient.sendMessageList("/topic/facilityParam",jsonList);
+            	
 
             		logger.info("======== 승객감지장치 시설물 매개변수: {}", jsonList);
             	}

@@ -290,4 +290,8 @@ public class MO0101Service extends ServiceSupport{
 	public List<Map<String, Object>> selectRepRoutItem() throws Exception {
 		return mo0101Mapper.selectRepRoutItem();
 	}
+	
+	public List<Map<String, Object>> selectLinkMst() throws Exception {
+		return mo0101Mapper.selectLinkMst();
+	}
 }

@@ -45,7 +45,7 @@ var routMap = {
 	
 	
 	//================================시간값 관련=================================================
-	RECEIVE_WAIT_TIME : 60, //websocket 데이터를 받을 때 기존 수신 시간에서 RECEIVE_WAIT_TIME만큼 초과할 경우 해당 row를 삭제합니다. (단위 : sec)
+	RECEIVE_WAIT_TIME : 60, //websocket 데이터를 받을 때 기존 수신 시간에서 RECEIVE_WAIT_TIME만큼 초과할 경우 해당 마커의 색을 변경합니다. (단위 : sec)
 	DISPATCH_OVERLAY_TIME : 2500, //디스패치 오버레이 보여줄 시간(단위 : ms)
 	TRF_OVERLAY_TIME : 2500, //신호모듈 오버레이 보여줄 시간(단위 : ms)
 	
@@ -424,6 +424,7 @@ routMap.mapMarker = function(mapId, lat, lng){
  * @param color : 선 색
  */
 routMap.drawLineArr = function(mapId, lat_arr, lng_arr, color){
+	debugger;
 	var path = [];
 	for(var i=0; i < lat_arr.length; i++){
 		path.push(new kakao.maps.LatLng(lat_arr[i], lng_arr[i]));
@@ -432,13 +433,23 @@ routMap.drawLineArr = function(mapId, lat_arr, lng_arr, color){
 	var polyline = new kakao.maps.Polyline({
 		path: path,
 		strokeColor: color, // 라인 색상
-		strokeWeight: routMap.ROUT_WEIGHT, // 라인 두게
-		strokeStyle: routMap.ROUT_STYLE,
+		strokeWeight: routMap.ROUT_WEIGHT-2, // 라인 두게
+		strokeStyle: "dash",
 		strokeOpacity: routMap.ROUT_OPACITY
 	});
 	
-	polyline.setMap(routMap.mapInfo[mapId].map);
-	routMap.mapInfo[mapId].polylines.push(polyline);
+	var polyline2 = new kakao.maps.Polyline({
+		path: path,
+		strokeColor: color, // 라인 색상
+		strokeWeight: routMap.ROUT_WEIGHT+4, // 라인 두게
+		strokeStyle: routMap.ROUT_STYLE,
+		strokeOpacity: routMap.ROUT_OPACITY-0.6
+	});
+	
+	//polyline.setMap(routMap.mapInfo[mapId].map);
+	polyline2.setMap(routMap.mapInfo[mapId].map);
+	//routMap.mapInfo[mapId].polylines.push(polyline);
+	routMap.mapInfo[mapId].polylines.push(polyline2);
 }
 
 /**
@@ -462,6 +473,7 @@ routMap.drawLine = function(mapId, first, last, color, eventKinds, clickEvent, r
 		}
 	}
 	
+	/*
 	var polyline = new kakao.maps.Polyline({
 		path: path,
 		strokeColor: color, // 라인 색상
@@ -470,6 +482,28 @@ routMap.drawLine = function(mapId, first, last, color, eventKinds, clickEvent, r
 		strokeOpacity: routMap.ROUT_OPACITY //선의 불투명도 1~0사이값
 		//endArrow : true //화살표 여부
 	});
+	*/
+	//다시작업
+	var polyline = new kakao.maps.Polyline({
+		path: path,
+		strokeColor: color, // 라인 색상
+		strokeWeight: routMap.ROUT_WEIGHT-2, // 라인 두게
+		strokeStyle: "dash",
+		strokeOpacity: routMap.ROUT_OPACITY
+	});
+	
+	var polyline2 = new kakao.maps.Polyline({
+		path: path,
+		strokeColor: '#f7b1b1', // 라인 색상
+		strokeWeight: routMap.ROUT_WEIGHT+20, // 라인 두게
+		strokeStyle: routMap.ROUT_STYLE,
+		strokeOpacity: routMap.ROUT_OPACITY-0.6
+	});
+	
+	//polyline.setMap(routMap.mapInfo[mapId].map);
+	
+	//routMap.mapInfo[mapId].polylines.push(polyline);
+		
 
 	if(typeof eventKinds != "undefined") {
 		
@@ -507,8 +541,10 @@ routMap.drawLine = function(mapId, first, last, color, eventKinds, clickEvent, r
 		
 	}
 	polyline.setMap(routMap.mapInfo[mapId].map);
+	polyline2.setMap(routMap.mapInfo[mapId].map);
 	
 	routMap.mapInfo[mapId].polylines.push(polyline);
+	//routMap.mapInfo[mapId].polylines.push(polyline2);
 }
 
 /**
@@ -1172,7 +1208,7 @@ routMap.showBusMarker = function(mapId, data, idx, focusIdx, busGrid) {
 	//방위각 적용
 	if(typeof(data.BEARING) !="undefined" && data.BEARING != "") {
 		$(marker.fa).css('transform', '');
-		$(marker.fa).css('transform', 'rotate('+data.BEARING+'deg)');
+		$(marker.fa).css('transform', 'rotate(-'+data.BEARING+'deg)');
 	}
 	
 	var overlayName = null;
@@ -2023,7 +2059,7 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 		return;
 	}
   
-  //디스패치 overlay가 있으면 리턴되게, test 필요
+  //디스패치 오버레이가 있으면 리턴되게
   if(routMap.mapInfo[mapId].dsptchOverArr != null) {
     if(routMap.mapInfo[mapId].dsptchOverArr[0] != null) {
       return;
@@ -2485,7 +2521,15 @@ routMap.showTrfOverlay = function(mapId, data, idx, focusIdx, marker) {
 	
 	//신호모듈3
 	else if(routMap.mapInfo[mapId].divTrfModule == "THREE") {
-		showMessage = util.format(util.MSG.DISPATCH_MSG_SIGNAL_3, data.CTRL_LV);
+		if(data.CTRL_TYPE == "ST001") {
+			showMessage = "교차로제어 운영 : 조기종결";
+		}
+		else {
+			showMessage = "교차로제어 운영 : 현시연장"
+		}
+		
+		//멘트 맞추기 위해 수정
+		//showMessage = util.format(util.MSG.DISPATCH_MSG_SIGNAL_3, data.CTRL_LV);
 		trfMessage += '<div class="mesage map_mesage2">';
 	//trfMessage += '<div class="dispatch map_mesage" style="position: absolute; bottom:210px;"></h3>';
 		trfMessage += '<h3 class="blind"></h3>';

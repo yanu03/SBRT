@@ -870,15 +870,25 @@
 				if(jsonObj.DATA_VAL == '0'){
 					if(jsonObj.MNG_ID.slice(-1) == mngId.slice(-1)){
 						scrndoorNum = jsonObj.MNG_ID.slice(-1);
-						$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/OpenedDoor'+scrndoorNum+'.PNG');
-						$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/ClosingDoor_SD'+scrndoorNum+'.gif');
+						if(scrndoorNum == '7' || scrndoorNum == '8') {
+							$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/lock_close'+scrndoorNum+'.PNG');				
+						}
+						else{
+							$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/OpenedDoor'+scrndoorNum+'.PNG');
+							$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/ClosingDoor_SD'+scrndoorNum+'.gif');
+						}
 					}
 				}
 			}else if(oldPk025 == '0'){
 				if(jsonObj.DATA_VAL == '1'){
 					if(jsonObj.MNG_ID.slice(-1) == mngId.slice(-1)){
 						scrndoorNum = jsonObj.MNG_ID.slice(-1);
-						$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/OpeningDoor_SD'+scrndoorNum+'.gif');
+						if(scrndoorNum == '7' || scrndoorNum == '8') {
+							$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/lock_open'+scrndoorNum+'.PNG');				
+						}
+						else {
+							$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/OpeningDoor_SD'+scrndoorNum+'.gif');
+						}
 					}
 				}
 			}
@@ -1234,12 +1244,29 @@
 					}
 				}
 			}
+			else if(fcltKind == 'FK012' && doorStatus == '0'){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC024"){
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}else if(fcltKind == 'FK012' && doorStatus == '1'){
+				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
+				for(var x = 0; x < imgJson.length; x++){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC023"){
+						imgSrc = imgJson[x].IMG_PATH;
+						break;
+					}
+				}
+			}			
 			
 			
 			//시설물 이미지
 			str += '<div id="'+fcltId+'" style="z-index: 1; position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group fclt_img" onclick="imgOnclick(this.id);">';
 			if(fcltKind == 'FK004'){
-				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:11px" src="'+imgSrc+'" id="'+fcltId+'img_MO0203'+'">';
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:16px" src="'+imgSrc+'" id="'+fcltId+'img_MO0203'+'">';
 			}else if(fcltKind == 'FK010'){
 				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:35px" src="'+imgSrc+'" id="'+fcltId+'img_FM0202'+'">';
 			}else{
@@ -1249,7 +1276,7 @@
 			
 			//에어컨이면 에어컨정보창 추가
 			if(fcltKind == 'FK005') {
-				str +=	'<div id="airconInfo_'+fcltId+'_MO0203" class="station_display" style="width:120px; position: absolute; z-index: 10001; top:'+(parseInt(top)+8)+'px; left:'+(parseInt(left)+121)+'px">';
+				str +=	'<div id="airconInfo_'+fcltId+'_MO0203" class="station_display" style="width:120px; position: absolute; z-index: 10001; top:'+(parseInt(top)+52)+'px; left:'+(parseInt(left)-10)+'px">';
 				str +=	' 	<div class="mesage_wrap">';
 				str +=  ' 		<p class="display_mesage">';
 				
@@ -1296,6 +1323,23 @@
 			str +=  '</div>';				
 					
 			}
+			/*
+			//시건장치
+			if(fcltKind == 'FK012') {
+			
+				str += '<div id="'+fcltId+'" style="z-index: 1; position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group fclt_img" onclick="imgOnclick(this.id);">';
+				if(fcltKind == 'FK004'){
+					str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:16px" src="'+imgSrc+'" id="'+fcltId+'img_MO0203'+'">';
+				}else if(fcltKind == 'FK010'){
+					str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:35px" src="'+imgSrc+'" id="'+fcltId+'img_FM0202'+'">';
+				}else{
+					str += '<img xmlns="http://www.w3.org/1999/xhtml" style="" src="'+imgSrc+'" id="'+fcltId+'img_MO0203'+'">';
+				}
+				str += '</div>'	
+				
+			
+			}
+			*/
 			
 		}
 		
@@ -1317,7 +1361,7 @@
 		
 		
 		//피플카운트 vms
-		str += '<div id="peopleCount" class="station_display" style="position: absolute; z-index: 1; top:80px;">'
+		str += '<div id="peopleCount" class="station_display" style="position: absolute; z-index: 1; top:69px; left:49px;">'
 		str += 	'<div class="mesage_wrap">'
 		str += 		' <p class="display_mesage">'
 		str += 			 '<span class="tx_green" id="MO0203_GREEN">원활('+psgNum+'명)</span>'
@@ -1594,10 +1638,10 @@
 									<xf:group style="" id=""></xf:group>
 								</xf:group>
 								<xf:group id="routeMap" style="z-index: 10000; position: absolute;background: white;bottom: 0px;">
-									<xf:group id="imgDiv" style="background: white;width: 1370px;height: 280px;">
+									<xf:group id="imgDiv" style="background: white;width: 1370px;height: 275px;">
 										<xf:group style="" id="STTN_IMG" class="ST003_station"></xf:group>
 										
-											<div id="peopleCount" class="station_display" style="position: absolute; z-index: 1; top:80px;">
+											<div id="peopleCount" class="station_display" style="position: absolute; z-index: 1; top:69px; left:49px;">
 												<div class="mesage_wrap">
 													 <p class="display_mesage">
 														 <span class="tx_green" id="MO0203_GREEN">원활</span>

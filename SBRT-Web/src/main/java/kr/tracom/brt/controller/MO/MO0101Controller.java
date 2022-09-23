@@ -152,4 +152,10 @@ public class MO0101Controller extends ControllerSupport {
 		result.setData("dlt_repRoutItem_MO0101", mo0101Service.selectRepRoutItem());
 		return result.getResult();
 	}
+	
+	@RequestMapping("/mo/selectLinkMst")
+	public @ResponseBody Map<String, Object> selectLinkMst() throws Exception {
+		result.setData("dlt_BMS_LINK_MST_ALL_MO0101", mo0101Service.selectLinkMst());
+		return result.getResult();
+	}
 }
