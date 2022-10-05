@@ -606,10 +606,14 @@ public class CommonUtil {
 	//시분을 분으로 변환
 	public static int hmToMinute(String hhmm) {
 		int minute = 0;
-		if(hhmm.length()==5) {
-			String hh = hhmm.substring(0, 2);
-			String mm = hhmm.substring(3, 2);
-			minute = Integer.parseInt(hh)*60 + Integer.parseInt(mm);
+		if((hhmm!=null)&&(hhmm.length()==5)) {
+			
+			String array[] = hhmm.split(":");
+			if(array.length==2) {
+				String hh = array[0];
+				String mm =  array[1];
+				minute = Integer.parseInt(hh)*60 + Integer.parseInt(mm);
+			}
 		}
 		return minute;
 	}

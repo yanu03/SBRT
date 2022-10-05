@@ -169,7 +169,11 @@ public class ActionRequest {
 					param.put("PARAM_KIND", "PK025");
 					List<Map<String, Object>> list =intgMapper.selectFcltSchedule(param);
 					
-					int todayMinute = CommonUtil.hmToMinute(CommonUtil.todayHM());
+					String todayHm = CommonUtil.todayHM();
+					//logger.info("todayHM = {}", CommonUtil.todayHM());	
+					//logger.info("todayMinute={}", todayHm.substring(0, 2));
+					//logger.info("todayMinute={}", todayHm.su(3, 2));
+					int todayMinute = CommonUtil.hmToMinute(todayHm);
 					
 					for(Map<String, Object> data : list) {
 						String stTime = (String) data.get("ST_TIME");
@@ -225,7 +229,6 @@ public class ActionRequest {
 					//Map<String, Object> map = new HashMap<String, Object>();
 
 					webSocketClient.sendMessageList("/topic/facilityParam",jsonList);
-            	
 
             		logger.info("======== 승객감지장치 시설물 매개변수: {}", jsonList);
             	}

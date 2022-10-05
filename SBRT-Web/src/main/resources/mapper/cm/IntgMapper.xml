@@ -4,6 +4,7 @@
 <mapper namespace="kr.tracom.cm.domain.Intg.IntgMapper">
 
 <select id="selectAirconIntgList" resultType="Map">
+
 	SELECT
 		A.INTG_FCLT_ID
 		,A.FCLT_NM
@@ -20,10 +21,19 @@
 		,B.FCLT_KIND
 		,B.MNG_ID
 		,B.NODE_ID
+		,C.PARAM_DIV
+        ,C.PARAM_KIND		
+		,D.SN
+		,D.ST_TIME
+		,D.ED_TIME
 	FROM
 		BMS_INTG_AIRCON_INFO A
 		LEFT JOIN BMS_FCLT_INFO B
 		ON A.INTG_FCLT_ID = B.INTG_FCLT_ID
+		LEFT JOIN BMS_FCLT_PARAM_INFO C
+		ON B.FCLT_ID = C.FCLT_ID
+		LEFT JOIN BMS_FCLT_SCH_INFO D
+		ON C.FCLT_ID = D.FCLT_ID AND C.PARAM_DIV = D.PARAM_DIV AND C.PARAM_KIND = D.PARAM_KIND
 	<where>
 		B.FCLT_ID IS NOT NULL
 		<if test="TYPE == 'ALL' and CONTENT != null and CONTENT != ''">
@@ -35,7 +45,8 @@
 		<if test="TYPE == 'FCLT_NM'">
 			AND A.FCLT_NM LIKE CONCAT('%',#{CONTENT},'%') 
 		</if>
-	</where>			
+	</where>
+	ORDER BY B.FCLT_ID
 </select>
 
 <select id="selectIntgMstList" resultType="Map">
