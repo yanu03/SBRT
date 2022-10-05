@@ -32,8 +32,15 @@
 		</script>
 		<!-- <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&amp;appkey=l7xx6099b61644bf40d78594611b250c9694"></script> -->
 		<script type="text/javascript" src="/cm/js/Chart.js/3.6.0/chart.js"></script>
-	    <script type="text/javascript" src="/cm/js/Chart.js/3.6.0/Chart.min.js"></script>
+	    <script type="text/javascript" src="/cm/js/Chart.js/3.6.0/chart.min.js"></script>
 	    <!-- <script type="text/javascript" src="/cm/js/moment.js/2.27.0/moment.min.js" integrity="sha512-rmZcZsyhe0/MAjquhTgiUcb4d9knaFc7b5xAfju483gbEXTkeJRUMIPk6s3ySZMYUHEcjKbjLjyddGWMrNEvZg==" crossorigin="anonymous"></script> -->
+		
+	    <!-- Highchart -->
+	    <!-- <script type="text/javascript" src="/cm/js/Highcharts-Gantt-10.2.0/code/highcharts.js"></script> -->
+	    
+	    <!-- Highchart gantt -->
+	    <script type="text/javascript" src="/cm/js/Highcharts-Gantt-10.2.0/code/highcharts-gantt.js"></script>		
+		
 		
 		<!-- BMS kakao key -->	
 		<!-- <script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=31aa62fb189294413e43c24caeb82419&amp;libraries=services&amp;autoload=false"></script> -->
@@ -47,7 +54,7 @@
 	    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
 	    crossorigin=""
 	  />	 -->	
-	   <link rel="stylesheet" href="/test/leaflet.css"></link>		
+	   <!-- <link rel="stylesheet" href="/test/leaflet.css"></link> -->		
 <!-- 	  <script
 	    src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
 	    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
@@ -55,9 +62,9 @@
 	  > -->
 		<script src='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.js'></script>
 		<link href='https://api.mapbox.com/mapbox.js/v3.3.1/mapbox.css' rel='stylesheet' />	  
-	  <script type="text/javascript"  src="/test/leaflet-src.js"></script>
+	  <!-- <script type="text/javascript"  src="/test/leaflet-src.js"></script>
 	  <script type="text/javascript"  src="/test/leaflet.js"></script>
-	  <script type="text/javascript"  src="/test/leaflet-src.esm.js"></script>
+	  <script type="text/javascript"  src="/test/leaflet-src.esm.js"></script> -->
 		<script type="text/javascript" src="/websquare/javascript.wq?q=/bootloader"></script>
 		<script type="text/javascript">
 		kakao.maps.load(function() {

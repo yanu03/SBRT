@@ -204,6 +204,7 @@
 						<w2:column id="SEND_DATE" name="갱신일시" dataType="text"></w2:column>
 						<w2:column id="CTR_YN" name="제어여부" dataType="text"></w2:column>
 						<w2:column id="FCLT_COORDS" name="시설물위치좌표" dataType="text"></w2:column>
+						<w2:column id="LOCK" name="" dataType="text"></w2:column>						
 						<w2:column id="PK001" name="리셋" dataType="text"></w2:column>
 						<w2:column id="PK002" name="전원(ON/OFF)" dataType="text"></w2:column>
 						<w2:column id="PK003" name="화면(ON/OFF)" dataType="text"></w2:column>
@@ -861,37 +862,42 @@
 			//상태에 따라 gif바꾸기
 			var scrndoorNum = ''; 
 			var index = dlt_BMS_FCLT_INFO.getMatchedIndex("MNG_ID", jsonObj.MNG_ID);
-			var fcltID = dlt_BMS_FCLT_INFO.getCellData(index[0], "FCLT_ID")+"MO0203";
+//			var fcltID = dlt_BMS_FCLT_INFO.getCellData(index[0], "FCLT_ID")+"MO0203";
+			var fcltID = dlt_BMS_FCLT_INFO.getCellData(index[0], "FCLT_ID");
 			var mngId = dlt_BMS_FCLT_INFO.getCellData(index[0], "MNG_ID");
 			var oldPk025 = dlt_BMS_FCLT_INFO.getCellData(index[0], "PK025");
 			dlt_BMS_FCLT_INFO.setCellData(index[0], "PK025", jsonObj.DATA_VAL);
+			
+			dlt_BMS_FCLT_INFO.setCellData(index[0], "LOCK", jsonObj.LOCK);
+			var lock = dlt_BMS_FCLT_INFO.getCellData(index[0], "LOCK");			
+			
+			scrndoorNum = jsonObj.MNG_ID.slice(-1);
+			if(scrndoorNum == '7' || scrndoorNum == '8') {
+				if(lock == "WARN") {
+					$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/lock_open'+scrndoorNum+'.PNG');	
+				}
+				return;
+			}			
 			
 			if(oldPk025 == '1'){
 				if(jsonObj.DATA_VAL == '0'){
 					if(jsonObj.MNG_ID.slice(-1) == mngId.slice(-1)){
 						scrndoorNum = jsonObj.MNG_ID.slice(-1);
-						if(scrndoorNum == '7' || scrndoorNum == '8') {
-							$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/lock_close'+scrndoorNum+'.PNG');				
-						}
-						else{
-							$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/OpenedDoor'+scrndoorNum+'.PNG');
-							$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/ClosingDoor_SD'+scrndoorNum+'.gif');
-						}
+						$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/OpenedDoor'+scrndoorNum+'.PNG');
+						$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/ClosingDoor_SD'+scrndoorNum+'.gif');
 					}
 				}
 			}else if(oldPk025 == '0'){
 				if(jsonObj.DATA_VAL == '1'){
 					if(jsonObj.MNG_ID.slice(-1) == mngId.slice(-1)){
 						scrndoorNum = jsonObj.MNG_ID.slice(-1);
-						if(scrndoorNum == '7' || scrndoorNum == '8') {
-							$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/lock_open'+scrndoorNum+'.PNG');				
-						}
-						else {
-							$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/OpeningDoor_SD'+scrndoorNum+'.gif');
-						}
+						$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/OpeningDoor_SD'+scrndoorNum+'.gif');
 					}
 				}
 			}
+			
+
+
 			
 			
 			
@@ -1108,6 +1114,8 @@
 			var fcltCond = dlt_BMS_FCLT_INFO.getCellData(i, "FCLT_COND");
 			var doorStatus = dlt_BMS_FCLT_INFO.getCellData(i, "PK025");
 			var powerOnOff = dlt_BMS_FCLT_INFO.getCellData(i, "PK002"); //Off : 0, On : 1
+			var mngId = dlt_BMS_FCLT_INFO.getCellData(i, "MNG_ID");
+			
 			
 			/*if(fcltKind == 'FK001' && (fcltCond == 'FC020'|| fcltCond == '')){
 				imgSrc = "/cm/images/bms/BIT_RED_normal.png";
@@ -1244,18 +1252,18 @@
 					}
 				}
 			}
-			else if(fcltKind == 'FK012' && doorStatus == '0'){
+			else if(fcltKind == 'FK012' && mngId.slice(-1) == "7"){
 				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
 				for(var x = 0; x < imgJson.length; x++){
-					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC024"){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC023"){
 						imgSrc = imgJson[x].IMG_PATH;
 						break;
 					}
 				}
-			}else if(fcltKind == 'FK012' && doorStatus == '1'){
+			}else if(fcltKind == 'FK012' && mngId.slice(-1) == "8"){
 				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
 				for(var x = 0; x < imgJson.length; x++){
-					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC023"){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC024"){
 						imgSrc = imgJson[x].IMG_PATH;
 						break;
 					}

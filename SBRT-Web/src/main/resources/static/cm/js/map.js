@@ -71,12 +71,12 @@ var routMap = {
 	
 	//================================색깔, 크기 관련===============================================
 	ROUT_COLOR : "#FF005E", //노선 기본 HEX color값
-	ROUT_WEIGHT : 4, //노선 두께
+	ROUT_WEIGHT : 5, //노선 두께
 	ROUT_STYLE : "solid", //노선 모양 (	solid, shortdash, shortdot, shortdashdot, shortdashdotdot, dot, dash, dashdot, longdash, longdashdot, longdashdotdot)
-	ROUT_OPACITY : 0.8, //선의 불투명도 (0~1 사이값)
+	ROUT_OPACITY : 0.3, //선의 불투명도 (0~1 사이값)
 	MORN_STD_01_COLOR : "#0bbe39", // 집중모니터링 1단계 HEX color값
 	MORN_STD_02_COLOR : "#ffc700", // 집중모니터링 2단계 HEX color값
-	MORN_STD_03_COLOR : "#DE2121", // 집중모니터링 3단계 HEX color값
+	MORN_STD_03_COLOR : "#eb5e5e", // 집중모니터링 3단계 HEX color값
 	POLYGON_WEIGHT : 3, //다각형 선의 두께
 	POLYGON_COLOR : "#39DE2A", //다각형 선 HEX color값
 	POLYGON_OPACITY : 0.8, //다각형 선의 불투명도(0~1)
@@ -424,7 +424,6 @@ routMap.mapMarker = function(mapId, lat, lng){
  * @param color : 선 색
  */
 routMap.drawLineArr = function(mapId, lat_arr, lng_arr, color){
-	debugger;
 	var path = [];
 	for(var i=0; i < lat_arr.length; i++){
 		path.push(new kakao.maps.LatLng(lat_arr[i], lng_arr[i]));
@@ -433,23 +432,13 @@ routMap.drawLineArr = function(mapId, lat_arr, lng_arr, color){
 	var polyline = new kakao.maps.Polyline({
 		path: path,
 		strokeColor: color, // 라인 색상
-		strokeWeight: routMap.ROUT_WEIGHT-2, // 라인 두게
-		strokeStyle: "dash",
+		strokeWeight: routMap.ROUT_WEIGHT, // 라인 두게
+		strokeStyle: routMap.ROUT_STYLE,
 		strokeOpacity: routMap.ROUT_OPACITY
 	});
 	
-	var polyline2 = new kakao.maps.Polyline({
-		path: path,
-		strokeColor: color, // 라인 색상
-		strokeWeight: routMap.ROUT_WEIGHT+4, // 라인 두게
-		strokeStyle: routMap.ROUT_STYLE,
-		strokeOpacity: routMap.ROUT_OPACITY-0.6
-	});
-	
-	//polyline.setMap(routMap.mapInfo[mapId].map);
-	polyline2.setMap(routMap.mapInfo[mapId].map);
-	//routMap.mapInfo[mapId].polylines.push(polyline);
-	routMap.mapInfo[mapId].polylines.push(polyline2);
+	polyline.setMap(routMap.mapInfo[mapId].map);
+	routMap.mapInfo[mapId].polylines.push(polyline);
 }
 
 /**
@@ -473,7 +462,6 @@ routMap.drawLine = function(mapId, first, last, color, eventKinds, clickEvent, r
 		}
 	}
 	
-	/*
 	var polyline = new kakao.maps.Polyline({
 		path: path,
 		strokeColor: color, // 라인 색상
@@ -482,28 +470,6 @@ routMap.drawLine = function(mapId, first, last, color, eventKinds, clickEvent, r
 		strokeOpacity: routMap.ROUT_OPACITY //선의 불투명도 1~0사이값
 		//endArrow : true //화살표 여부
 	});
-	*/
-	//다시작업
-	var polyline = new kakao.maps.Polyline({
-		path: path,
-		strokeColor: color, // 라인 색상
-		strokeWeight: routMap.ROUT_WEIGHT-2, // 라인 두게
-		strokeStyle: "dash",
-		strokeOpacity: routMap.ROUT_OPACITY
-	});
-	
-	var polyline2 = new kakao.maps.Polyline({
-		path: path,
-		strokeColor: '#f7b1b1', // 라인 색상
-		strokeWeight: routMap.ROUT_WEIGHT+20, // 라인 두게
-		strokeStyle: routMap.ROUT_STYLE,
-		strokeOpacity: routMap.ROUT_OPACITY-0.6
-	});
-	
-	//polyline.setMap(routMap.mapInfo[mapId].map);
-	
-	//routMap.mapInfo[mapId].polylines.push(polyline);
-		
 
 	if(typeof eventKinds != "undefined") {
 		
@@ -541,10 +507,8 @@ routMap.drawLine = function(mapId, first, last, color, eventKinds, clickEvent, r
 		
 	}
 	polyline.setMap(routMap.mapInfo[mapId].map);
-	polyline2.setMap(routMap.mapInfo[mapId].map);
 	
 	routMap.mapInfo[mapId].polylines.push(polyline);
-	//routMap.mapInfo[mapId].polylines.push(polyline2);
 }
 
 /**

@@ -913,6 +913,8 @@
 			var oldPk025 = dlt_BMS_SCRDOOR_FCLT_INFO.getCellData(index[0], "PK025");
 			
 			dlt_BMS_SCRDOOR_FCLT_INFO.setCellData(index[0], "PK025", jsonObj.DATA_VAL);
+			dlt_BMS_SCRDOOR_FCLT_INFO.setCellData(index[0], "LOCK", jsonObj.LOCK);
+			var lock = dlt_BMS_SCRDOOR_FCLT_INFO.getCellData(index[0], "LOCK");			
 			var newPk025 = dlt_BMS_SCRDOOR_FCLT_INFO.getCellData(index[0], "PK025");
 			
 			if(oldPk025 == '1'){
@@ -929,6 +931,13 @@
 						scrndoorNum = jsonObj.MNG_ID.slice(-1);
 						$('#'+fcltID+'img_MO0205').attr("src", '/cm/images/bms/OpeningDoor_SD'+scrndoorNum+'.gif');
 					}
+				}
+			}
+			
+			scrndoorNum = jsonObj.MNG_ID.slice(-1);
+			if(scrndoorNum == '7' || scrndoorNum == '8') {
+				if(lock == "WARN") {
+					$('#'+fcltID+'img_MO0203').attr("src", '/cm/images/bms/lock_open'+scrndoorNum+'.PNG');	
 				}
 			}
 			
@@ -1412,7 +1421,6 @@
 			gridStr += '<w2:footer id="footer1" style=""><w2:row id="row3" style=""><w2:column blockSelect="false" colSpan="30" displayMode="label" expression="&quot;데이터 개수 : &quot; + COUNT(\'COMP_ID\')" id="column42" inputType="expression" removeBorderStyle="false" style="height:20px;" textAlign="left" width="2386"></w2:column></w2:row></w2:footer>';
 			gridStr += '</w2:gridView>';
 			
-			debugger;
 			switch (fcltKind[x]) {
 			case "FK002":
 				MO0205G6.setGridStyle(WebSquare.xml.parse(gridStr , true ));
@@ -1460,6 +1468,7 @@
 			var fcltCond = dlt_BMS_FCLT_INFO.getCellData(i, "FCLT_COND");
 			var doorStatus = dlt_BMS_FCLT_INFO.getCellData(i, "PK025");
 			var powerOnOff = dlt_BMS_FCLT_INFO.getCellData(i, "PK002"); //Off : 0, On : 1
+			var mngId = dlt_BMS_FCLT_INFO.getCellData(i, "MNG_ID");
 			
 			/*if(fcltKind == 'FK001' && (fcltCond == 'FC020'|| fcltCond == '')){
 				imgSrc = "/cm/images/bms/BIT_RED_normal.png";
@@ -1594,18 +1603,20 @@
 					}
 				}
 			}
-			else if(fcltKind == 'FK012' && doorStatus == '0'){
+			else if(fcltKind == 'FK012' && mngId.slice(-1) == "7"){
 				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
 				for(var x = 0; x < imgJson.length; x++){
-					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC024"){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC023"){
+						//imgSrc = "/cm/images/bms/lock_open.png";
 						imgSrc = imgJson[x].IMG_PATH;
 						break;
 					}
 				}
-			}else if(fcltKind == 'FK012' && doorStatus == '1'){
+			}else if(fcltKind == 'FK012' && mngId.slice(-1) == "8"){
 				var imgJson = dlt_BMS_DL_CD_IMG_INFO.getMatchedJSON("DL_CD", fcltKind);
 				for(var x = 0; x < imgJson.length; x++){
-					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC023"){
+					if(imgJson[x].FOCUS == "N" && imgJson[x].STATUS == "FC024"){
+						//imgSrc = "/cm/images/bms/lock_close.png";
 						imgSrc = imgJson[x].IMG_PATH;
 						break;
 					}
@@ -1615,7 +1626,7 @@
 			//시설물 이미지
 			str += '<div id="'+fcltId+'" style="z-index: 1; position: absolute; top:'+top+'px; left: '+left+'px;" class="w2group fclt_img" onclick="imgOnclick_MO0205(this.id);">';
 			if(fcltKind == 'FK004'){
-				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:11px" src="'+imgSrc+'" id="'+fcltId+'img_MO0205'+'">';
+				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:16px" src="'+imgSrc+'" id="'+fcltId+'img_MO0205'+'">';
 			}else if(fcltKind == 'FK010'){
 				str += '<img xmlns="http://www.w3.org/1999/xhtml" style="width:35px" src="'+imgSrc+'" id="'+fcltId+'img_FM0202'+'">';
 			}
@@ -1814,7 +1825,7 @@
 				switch (oldFcltKind) {
 				case 'FK004':
 					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
-					$('#'+oldFcltId+'img_MO0205').css("width", '11px');
+					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
@@ -1860,7 +1871,7 @@
 				case 'FK004':
 					//$('#'+oldFcltId+'img_MO0205').attr("src", '/cm/images/bms/AIRTUBE_normal.png');
 					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
-					$('#'+oldFcltId+'img_MO0205').css("width", '11px');
+					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
@@ -1913,7 +1924,7 @@
 				switch (oldFcltKind) {
 				case 'FK004':
 					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
-					$('#'+oldFcltId+'img_MO0205').css("width", '11px');
+					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
@@ -1974,7 +1985,7 @@
 				switch (oldFcltKind) {
 				case 'FK004':
 					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
-					$('#'+oldFcltId+'img_MO0205').css("width", '11px');
+					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
@@ -2018,7 +2029,7 @@
 				switch (oldFcltKind) {
 				case 'FK004':
 					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
-					$('#'+oldFcltId+'img_MO0205').css("width", '11px');
+					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
@@ -2077,7 +2088,7 @@
 				switch (oldFcltKind) {
 				case 'FK004':
 					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
-					$('#'+oldFcltId+'img_MO0205').css("width", '11px');
+					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
@@ -2120,7 +2131,7 @@
 				switch (oldFcltKind) {
 				case 'FK004':
 					$('#'+oldFcltId+'img_MO0205').attr("src", imgSrc);
-					$('#'+oldFcltId+'img_MO0205').css("width", '11px');
+					$('#'+oldFcltId+'img_MO0205').css("width", '16px');
 					break;
 					
 				case 'FK005':
