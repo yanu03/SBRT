@@ -2051,8 +2051,8 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 		if(Math.abs(parseInt(dsptchMessage) >= 60)) {
 			min = Math.abs(parseInt(dsptchMessage/60)) + "분 ";
 		}
-			//sec = Math.abs(parseInt(dsptchMessage%60)) + "초 ";		
-			sec = Math.abs(parseInt(dsptchMessage%60));		
+			sec = Math.abs(parseInt(dsptchMessage%60)) + "초 ";		
+			//sec = Math.abs(parseInt(dsptchMessage%60));		
 	}
 	
 
@@ -2076,12 +2076,12 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 				showMessage = util.MSG.DISPATCH_MSG_NORMAL;
 			}
 			else if(dsptchKind == "DK002") {
-				//showMessage = min + sec + "느립니다."; 
-				showMessage = min + sec + util.MSG.DISPATCH_MSG_DELAY; 
+				showMessage = min + sec + "느림"; 
+				//showMessage = min + sec + util.MSG.DISPATCH_MSG_DELAY; 
 			}
 			else if(dsptchKind == "DK003") {
-				//showMessage = min + sec + "빠릅니다."; 
-				showMessage = min + sec + util.MSG.DISPATCH_MSG_SPEED; 
+				showMessage = min + sec + "빠름"; 
+				//showMessage = min + sec + util.MSG.DISPATCH_MSG_SPEED; 
 			}
 		}	
 		var dsptchMsg = "";
@@ -2121,11 +2121,11 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 		
 		if(routMap.mapInfo[mapId].eventOverArr[0] != null) {
 			//dsptchMsg += '<h3 class="blind dsptchMessagePopup style="position: absolute; bottom:210px;">디스패치 메시지</h3>'
-      dsptchMsg += '<div class="dispatch map_mesage" style="position: absolute; bottom:210px;"></h3>'
+			dsptchMsg += '<div class="dispatch map_mesage" style="position: absolute; bottom:210px;"></h3>'
 		}	
 		else {
 			//dsptchMsg += '<h3 class="blind dsptchMessagePopup" style="position: absolute;">디스패치 메시지</h3>'	
-      dsptchMsg += '<div class="dispatch map_mesage" style="position: absolute;"></h3>'
+			dsptchMsg += '<div class="dispatch map_mesage" style="position: absolute;"></h3>'
 		}				
 		//dsptchMsg += '  <h3 class="blind dsptchMessagePopup">디스패치 메시지</h3>'
     dsptchMsg += '<h3 class="blind"></h3>'
@@ -2152,8 +2152,8 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 	}		
 		
 	else if (routMap.mapInfo[mapId].divDsptch == "DP003") {
-		//showMessage = min+ sec +"정차하세요.";
-		showMessage = min+ sec + util.MSG.DISPATCH_MSG_STOP;
+		showMessage = "정류장 정차 : " + min + sec;
+		//showMessage = min+ sec + util.MSG.DISPATCH_MSG_STOP;
 		$("#stopMessage").text(showMessage);
 	}
 	
@@ -2173,7 +2173,7 @@ routMap.showDsptchOverlay = function(mapId, data, idx, focusIdx, marker) {
 	//	else if(routMap.mapInfo[mapId].dsptchOverArr.length != 0 && routMap.mapInfo[mapId].eventOverArr.length != 0) {	
 		else if(routMap.mapInfo[mapId].dsptchOverArr[0] != null && routMap.mapInfo[mapId].eventOverArr[0] != null) {	
 			//$("#busInfoPopup").css("bottom", "42px");
-			$(".busInfoPopup").css("bottom", "42px");		
+			$("#busInfoPopup").css("bottom", "42px");		
 			//$(".busInfoPopup").hide();
 			setTimeout(function() {
 				//$(".busInfoPopup").show();
@@ -2377,7 +2377,7 @@ routMap.showEventOverlay = function(mapId, data, idx, focusIdx, marker) {
 						//$(".dsptchMessagePopup").css("bottom", "42px");
             
             //문제생김 확인해봐야됨
-            //$(".map_mesage").css("bottom", "42px");
+						$(".dispatch").css("bottom", "42px");
 						//출발할 때 운행중 디스패치가 발생하여 주석처리하였음
 						//$(".dsptchMessagePopup").hide();
 					}						
@@ -2462,9 +2462,9 @@ routMap.showTrfOverlay = function(mapId, data, idx, focusIdx, marker) {
 	}
 	
 	if(routMap.mapInfo[mapId].trfOverArr != null) {
-    if(routMap.mapInfo[mapId].trfOverArr[0] != null) {
-  		return;    
-    }
+	    if(routMap.mapInfo[mapId].trfOverArr[0] != null) {
+	  		return;    
+	    }
 	}
 	
 	var zIndex = routMap.ZINDEX_TRF_OVERLAY;
@@ -2489,7 +2489,7 @@ routMap.showTrfOverlay = function(mapId, data, idx, focusIdx, marker) {
 			showMessage = "교차로제어 운영 : 조기종결";
 		}
 		else {
-			showMessage = "교차로제어 운영 : 현시연장"
+			showMessage = "교차로제어 운영 : 현시연장";
 		}
 		
 		//멘트 맞추기 위해 수정

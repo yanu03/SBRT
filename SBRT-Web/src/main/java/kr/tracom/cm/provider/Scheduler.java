@@ -378,11 +378,45 @@ public class Scheduler {
 			wsDataMap.put("ATTR_ID", "4020");
 			wsDataMap.put("VHC_ID", "VH00000091");
 			wsDataMap.put("VHC_NO", "우진43자5876");
-			wsDataMap.put("ROUT_ID", "RT00000166");
-			wsDataMap.put("ROUT_NM", "W0(상행)");
+			wsDataMap.put("ROUT_ID", "RT00000176");
+			wsDataMap.put("ROUT_NM", "S0하(순환)");
 			wsDataMap.put("DSPTCH_DIV", "DP002");
 			wsDataMap.put("DSPTCH_KIND", "DK003");
-			wsDataMap.put("MESSAGE", "24");		
+			wsDataMap.put("MESSAGE", "84");		
+			
+			webSocketClient.sendMessage(wsDataMap);
+			
+		} catch (Exception e) {
+			logger.error("schedule_35sec Exception!!! {}", e);
+		}
+	}
+	
+	@Scheduled(fixedDelay = 29000)
+	public void schedule_ArriveDispatch() {
+		//Map<String, Object> paramMap = new HashMap<>();
+		//paramMap.put("COL", "TXT_VAL1");
+		//paramMap.put("CO_CD", "SCHEDULE_TEST");
+		//paramMap.put("COL3", "DL_CD_NM");
+		//paramMap.put("COL_VAL3", "Dispatch");
+		//String scheduleOnOff = commonMapper.selectDlCdCol(paramMap);
+		Map<String, Object> commonCode = getCommonCode("SCHEDULE_TEST","DL_CD_NM","ArriveDispatch");
+		String scheduleOnOff = (String)commonCode.get("TXT_VAL1");
+		//logger.info("schedule_10sec");
+		try {
+			if (scheduleOnOff.equals("off") == true) {
+				return;
+			}
+			Map<String, Object> wsDataMap = null;
+			wsDataMap = new HashMap<>();
+			
+			wsDataMap.put("ATTR_ID", "4020");
+			wsDataMap.put("VHC_ID", "VH00000091");
+			wsDataMap.put("VHC_NO", "우진43자5876");
+			wsDataMap.put("ROUT_ID", "RT00000176");
+			wsDataMap.put("ROUT_NM", "S0하(순환)");
+			wsDataMap.put("DSPTCH_DIV", "DP003");
+			wsDataMap.put("DSPTCH_KIND", "DK003");
+			wsDataMap.put("MESSAGE", "84");		
 			
 			webSocketClient.sendMessage(wsDataMap);
 			
@@ -391,7 +425,7 @@ public class Scheduler {
 		}
 	}	
 	
-	@Scheduled(fixedDelay = 60000)
+	@Scheduled(fixedDelay = 30000)
 	public void schedule_AtTrafficModule2() {
 		//Map<String, Object> paramMap = new HashMap<>();
 		//paramMap.put("COL", "TXT_VAL1");
@@ -411,7 +445,7 @@ public class Scheduler {
 			trafficModule2.setUpdateTm(new AtTimeStamp("2022-08-18 13:04:24.00"));
 			trafficModule2.setStationNodeId("293064209");
 			trafficModule2.setWaitTm((byte)0x00);
-			trafficModule2.setBusNum("경기76자3453");
+			trafficModule2.setBusNum("우진43자5876");
 			
 			logger.info("TRAFFIC_MODULE_TWO : {}", trafficModule2);
 			List<HashMap <String, Object>> trafficModule2MapList = new ArrayList<>();
@@ -444,7 +478,7 @@ public class Scheduler {
 	}
 	
 	
-	@Scheduled(fixedDelay = 60000)
+	@Scheduled(fixedDelay = 30000)
 	public void schedule_AtTrafficModule3() {
 		//Map<String, Object> paramMap = new HashMap<>();
 		//paramMap.put("COL", "TXT_VAL1");
@@ -452,7 +486,7 @@ public class Scheduler {
 		//paramMap.put("COL3", "DL_CD_NM");
 		//paramMap.put("COL_VAL3", "AtTrafficModule3");
 		//String scheduleOnOff = commonMapper.selectDlCdCol(paramMap);
-		Map<String, Object> commonCode = getCommonCode("SCHEDULE_TEST","DL_CD_NM","AtTrafficModule2");
+		Map<String, Object> commonCode = getCommonCode("SCHEDULE_TEST","DL_CD_NM","AtTrafficModule3");
 		String scheduleOnOff = (String)commonCode.get("TXT_VAL1");
 		
 		try {

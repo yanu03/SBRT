@@ -1166,8 +1166,8 @@
 								if(Math.abs(parseInt(dsptchMessage) >= 60)) {
 									 min = Math.abs(parseInt(dsptchMessage/60)) + "분 ";
 								}
-								 //sec = Math.abs(parseInt(dsptchMessage%60)) + "초 ";
-								 sec = Math.abs(parseInt(dsptchMessage%60));
+								 sec = Math.abs(parseInt(dsptchMessage%60)) + "초 ";
+								 //sec = Math.abs(parseInt(dsptchMessage%60));
 								
 								//운행중 디스패치일 경우 
 								if(dsptchDiv == "DP002") {
@@ -1176,12 +1176,12 @@
 										contsResult = util.MSG.DISPATCH_MSG_NORMAL;
 									}
 									else if(dsptchKind == "DK002") {
-										//contsResult = min + sec + "느립니다."; 
-										contsResult = min + sec + util.MSG.DISPATCH_MSG_DELAY; 
+										contsResult = min + sec + "느림"; 
+										//contsResult = min + sec + util.MSG.DISPATCH_MSG_DELAY; 
 									}
 									else if(dsptchKind == "DK003") {
-										//contsResult = min + sec + "빠릅니다.";  
-										contsResult = min + sec + util.MSG.DISPATCH_MSG_SPEED;  
+										contsResult = min + sec + "빠름";  
+										//contsResult = min + sec + util.MSG.DISPATCH_MSG_SPEED;  
 									}
 	//								if(parseInt(dsptchConts) > 0) {
 	//									contsResult = min + sec + "느립니다."; 
@@ -1196,8 +1196,9 @@
 								
 								//정차중 디스패치일 경우
 								else if(dsptchDiv == "DP003") {
-							//		contsResult = min + sec + "정차하세요.";
-									contsResult = min + sec + util.MSG.DISPATCH_MSG_STOP;								}
+									contsResult = "정류장 정차 : " + min + sec;
+							//		contsResult = min + sec + util.MSG.DISPATCH_MSG_STOP;								
+								}
 								dlt_BRT_DSPTCH_LOG_MO0101.setCellData(insertRow, "DSPTCH_CONTS", contsResult);			
 							} 
 							//디스패치 메시지가 일반메시지일 경우
@@ -1449,8 +1450,6 @@
 					dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(MO0101G0.getFocusedRowIndex(), "VHC_ID"), MO0101G0);
 		}			 					 
 		startMarker = 0;			
-		
-				 
 	};
 	
 	scwin.sub_MO0101SHI1_submitdone = function(e) {
@@ -1495,13 +1494,14 @@
 		dlt_searchitem2_MO0101.setCellData(insertRow2, "ROUT_ID", "RT00000176");
 		dlt_searchitem2_MO0101.setCellData(insertRow2, "ROUT_NM", "S0하(순환)");	
 		
-		/*
+/*		
 		//test용
 			dlt_BRT_CUR_OPER_INFO_MO0101.insertRow(0);
 			dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(0, "REP_ROUT_ID", "RR00000002");
 			dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(0, "ROUT_ID", "RT00000049");
-			dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(0, "VHC_NO", "정류장도착차량");
-			dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(0, "VHC_ID", "AAAAAAAAA1");
+			dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(0, "VHC_NO", "우진76자5876");
+			//dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(0, "VHC_ID", "AAAAAAAAA1");
+			dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(0, "VHC_ID", "VH00000091");
 //			dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(0, "GPS_X", "127.27322");
 //			dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(0, "GPS_Y", "36.47078");
 			dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(0, "GPS_X", "127.279115");
@@ -1527,9 +1527,48 @@
 			dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(1, "MESSAGE", "40초 빠릅니다.");	
 			dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(1, "LINK_ID", "LK00023177");
 			dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(1, "BEARING", "90");
-			dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(1, "OCR_DTM", "11:50:30");			
+			dlt_BRT_CUR_OPER_INFO_MO0101.setCellData(1, "OCR_DTM", "11:50:30");	
+			
+			
+			var eventMsg = '';
+			eventMsg += '<div class="event map_info" id="busInfoPopup">';
+			eventMsg += '   <h3 class="blind">이벤트 안내</h3>';
+			eventMsg += '   <p class="action">정류장도착</p>';
+			eventMsg += '   <p class="stay_sec">(현재정차시간 : <span id="cur_spd">'+0+'</span>초))</p>';
+			eventMsg += '   <table class="station_info">';
+			eventMsg += '      <colgroup>';
+			eventMsg += '         <col style="width: 90px;">';
+			eventMsg += '         <col style="width: auto;">';
+			eventMsg += '      </colgroup>';
+			eventMsg += '      <tbody><tr>';
+			eventMsg += '         <th>현재 정류장</th>';
+			eventMsg += '         <td>세종고속시외버스터미널</td>';
+			eventMsg += '      </tr>';
+			eventMsg += '      <tr>';
+			eventMsg += '         <th>다음 정류장</th>';
+			eventMsg += '         <td>한솔동</td>';
+			eventMsg += '      </tr>';
+			eventMsg += '   </tbody></table>';
+			eventMsg += '   <dl class="event_mesage">';
+			eventMsg += '     <dt class="blind">이벤트 메시지</dt>';
+			eventMsg += '      <dd id="stopMessage">20초 정차하세요.</dd>';
+			eventMsg += '   </dl>';
+			eventMsg += '   <button class="close_mesage ir_pm" id="busInfo-closer">닫기</button>';
+			eventMsg += '</div>';
+			var position = new kakao.maps.LatLng(dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(0, "GPS_Y"), dlt_BRT_CUR_OPER_INFO_MO0101.getCellData(0, "GPS_X"));
+			
+			
+			var sampleEventOverlay = new kakao.maps.CustomOverlay({
+				content: eventMsg,
+				position: position,
+				zIndex : 10
+			});
+			
+			sampleEventOverlay.setMap(routMap.mapInfo["map_MO0101_vehicle"].map);			
+			
+					
 		//test용
-		*/								
+*/									
 	};
 	
 	scwin.TYPE2_onviewchange = function(info) {
@@ -2151,17 +2190,17 @@
 					if(Math.abs(parseInt(dsptchMessage) >= 60)) {
 						 min = Math.abs(parseInt(dsptchMessage/60)) + "분 ";
 					}
-					 //sec = Math.abs(parseInt(dsptchMessage%60)) + "초 ";
+					 sec = Math.abs(parseInt(dsptchMessage%60)) + "초 ";
 					 sec = Math.abs(parseInt(dsptchMessage%60));
 					 
 					if(dsptchDiv == "DP002") {
 						if(parseInt(dsptchConts) > 0) {
-							//contsResult = min + sec + "느립니다."; 
-							contsResult = min + sec + util.MSG.DISPATCH_MSG_DELAY; 
+							contsResult = min + sec + "느림"; 
+							//contsResult = min + sec + util.MSG.DISPATCH_MSG_DELAY; 
 						}
 						else if(parseInt(dsptchConts) < 0) {
-							//contsResult = min + sec + "빠릅니다."; 
-							contsResult = min + sec + util.MSG.DISPATCH_MSG_SPEED; 
+							contsResult = min + sec + "빠름"; 
+							//contsResult = min + sec + util.MSG.DISPATCH_MSG_SPEED; 
 						}
 						else if(parseInt(dsptchConts) == 0) {
 							//contsResult = "정상 운행중입니다.";
@@ -2170,8 +2209,8 @@
 					}
 					
 					else if(dsptchDiv == "DP003") {
-						//contsResult = min + sec + "정차하세요.";	
-						contsResult = min + sec + util.MSG.DISPATCH_MSG_STOP;	
+						contsResult = "정류장 정차 : " + min + sec;	
+						//contsResult = min + sec + util.MSG.DISPATCH_MSG_STOP;	
 					}				
 				dlt_BRT_DSPTCH_LOG_MO0101.setCellData(i, "DSPTCH_CONTS", contsResult);			
 				}
@@ -2249,7 +2288,7 @@
 		}
 		
 	};
-	]]></script>
+]]></script>
 	</head>
 	<body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
 		<xf:group id="pgm_container" class="pgm_container grdr_60_a" style="">
