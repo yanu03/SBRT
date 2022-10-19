@@ -318,6 +318,9 @@ public class MorEventThread extends Thread {
 			setVhcDrInfo(vhcId, eventInfo, nodeInfo);
 		} catch (Exception e) {
 			logger.error("getVhcDrInfo() in  Exception {}", e);
+			if(nodeInfo!=null) {
+				logger.error("nodeInfo = {}", nodeInfo);
+			}
 		}
 		return 0;
 	}
