@@ -58,8 +58,9 @@ public class WebConfig extends WebMvcConfigurationSupport {
 			registry.addResourceHandler("/exl/**").addResourceLocations(staticResouceLocation+"/static/exl/");
 			registry.addResourceHandler("/ui/**").addResourceLocations(staticResouceLocation+"/static/ui/");
 			registry.addResourceHandler("/ClipReport/**").addResourceLocations(staticResouceLocation+"/static/ClipReport/");
-			registry.addResourceHandler("/dashboard/**").addResourceLocations(staticResouceLocation+"/static/dashboard/");
 			registry.addResourceHandler("/websquare/**").addResourceLocations(staticWebappLocation+"/websquare/");
+			registry.addResourceHandler("/dashboard/**").addResourceLocations(staticResouceLocation+"/static/dashboard/");
+			registry.addResourceHandler("/excelUpload/**").addResourceLocations(staticResouceLocation+"/static/excelUpload/");
 			//registry.addResourceHandler("/WEB-INF/**").addResourceLocations(staticWebappLocation+"/WEB-INF/");
 			registry.addResourceHandler("/webjars/**").addResourceLocations("/webjars/").resourceChain(false);        
 		}

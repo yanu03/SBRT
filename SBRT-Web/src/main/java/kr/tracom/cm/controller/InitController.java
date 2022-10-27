@@ -182,6 +182,12 @@ public class InitController {
 		return "/dashboard/dashboard";
 	}
 	
+	@RequestMapping(value = "/excelUpload", method = RequestMethod.GET)
+	public String excelUpload(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+		model.addAttribute("movePage", getLoginPage(request.getParameter("w2xPath")));
+		return "/excelUpload/excelUpload";
+	}
+	
 	/**
 	 * 로그인 페이지 Url을 반환한다.
 	 * 
