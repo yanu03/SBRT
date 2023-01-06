@@ -1,6 +1,11 @@
 package kr.tracom.cm.controller;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +15,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import kr.tracom.cm.domain.Rout.RoutService;
 import kr.tracom.cm.domain.Dashboard.DashboardService;
@@ -62,6 +70,28 @@ public class DashboardController extends ControllerSupport {
 		return result.getResult();
 	}
 	
+	@RequestMapping(value = "/c2j/sampleCsvToJson")
+	public @ResponseBody List<Map<String, String>> sampleCsvToJson() throws Exception {
+		//전체 데이터 사용 response
+		//csv 파일의 데이터를 사용합니다.
+		
+		List<Map<String, String>> mapList = new ArrayList<Map<String,String>>();
+		File file = new File("src/main/resources/static/file/oper_event.csv");
+		Reader reader = new FileReader(file);
+		csvReader(reader, mapList);	
+		
+		return mapList;
+	}	
 	
+    public static void csvReader(Reader reader, List<Map<String, String>> list) throws IOException {
+        Iterator<Map<String, String>> iterator = new CsvMapper()
+                .readerFor(Map.class)
+                .with(CsvSchema.emptySchema().withHeader())
+                .readValues(reader);
+        while (iterator.hasNext()) {
+            Map<String, String> keyVals = iterator.next();
+            list.add(keyVals);
+        }
+    }	
 	
 }

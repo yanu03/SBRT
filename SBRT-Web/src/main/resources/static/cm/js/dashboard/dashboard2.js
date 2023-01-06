@@ -351,7 +351,6 @@ dashboard.test = function() {
 		
 		
 		var jsonObj = JSON.parse(payload.body);
-	
 		
 		var attrId = jsonObj.ATTR_ID;
 		var dataList = jsonObj.LIST;
@@ -380,103 +379,41 @@ dashboard.test = function() {
 				//dashboard.busDraw(jsonObj.CUR_STTN_CRS_ID); 동적으로 만들지 않게 변경
 			}
 	
-			{	
 				$("#titleVhcNo").text(jsonObj.VHC_NO);
 				$(".situation").removeClass("orange");
 				$(".situation").addClass("green");				
-				var nodeCrsInfo = dashboard.nextNodeId(jsonObj.CUR_CRS_ID, "NT001");
 	
-				if (nodeCrsInfo != null) {
-          if(nodeCrsInfo.LOC==-1){
-             	dashboard.CUR_CRS_NODE = null;
-              	$("#crs_nm").text('-');
-          }
-          else{
-  					var nodeInfo = dashboard.searchCrsId(nodeCrsInfo.NODE_ID);
-	
-  					/* 신호등 바꾸기, 사용하지 않아 주석처리
-  					 if (nodeInfo != null) {
-  						dashboard.CUR_CRS_NODE = nodeInfo;
-  						$("#crs_nm").text(nodeInfo.NODE_NM);
-  						if (nodeInfo.SIGNAL.indexOf(nodeInfo.CUR_SIGNAL) !== -1) {
-  							$(".ir_pm.red-light").removeClass("on");
-  							$(".ir_pm.green-light").addClass("on");
-  						} else {
-  							$(".ir_pm.green-light").removeClass("on");
-  							$(".ir_pm.red-light").addClass("on");
-  						}
-            }*/
-					} 
-          /*else {
-						$("#crs_nm").text("-");
-						$(".ir_pm.green-light").removeClass("on");
-						$(".ir_pm.red-light").addClass("on");
-					}*/
-				}
-			}
-	
-			if (jsonObj.CUR_CRS_ID != null) {
-				var nodeInfo = dashboard.searchNodeId(jsonObj.CUR_CRS_ID);
-				if (nodeInfo != null) {
-					//$("#cur_node").text(nodeInfo.NODE_NM);						//현위치 변경
+			if (jsonObj.CUR_STTN_NM != null) {
 					var sttn1 = $("#sttn1").text();
 					var sttn2 = $("#sttn2").text();
 					var sttn3 = $("#sttn3").text();
 					if(sttn2 == "") {
-						$("#sttn2").text(nodeInfo.NODE_NM);
+						$("#sttn2").text(jsonObj.CUR_STTN_NM);
 					}
 					else {
-						if(sttn2 != nodeInfo.NODE_NM){
+						if(sttn2 != jsonObj.CUR_STTN_NM){
 							$("#sttn1").text(sttn2);
-							$("#sttn2").text(nodeInfo.NODE_NM);
+							$("#sttn2").text(jsonObj.CUR_STTN_NM);
 						}
 					}
-				} else if (jsonObj.CUR_NODE_NM != null) {
-					jsonObj.CUR_NODE_NM = jsonObj.CUR_NODE_NM.replace('세종고속시외버스터미널', '시외버스터미널') //이상 없는지 테스트 필요 있음
-					//$("#cur_node").text(jsonObj.CUR_NODE_NM);
-					$("#sttn2").text(jsonObj.CUR_NODE_NM);
-				}
-			} else {
-				jsonObj.CUR_NODE_NM = jsonObj.CUR_NODE_NM.replace('세종고속시외버스터미널',
-						'시외버스터미널')
-				//$("#cur_node").text(jsonObj.CUR_NODE_NM);
-				$("#sttn2").text(jsonObj.CUR_NODE_NM);
-			}
-			
-			{
-				var nodeInfo = dashboard.nextNodeId(jsonObj.CUR_CRS_ID, "NT001");
-				if (nodeInfo != null) {
-					$("#next_node").text(nodeInfo.NODE_NM);
-					$("#sttn3").text(nodeInfo.NODE_NM);
-				} else if (jsonObj.NEXT_NODE_NM != null) {
-					if (jsonObj.NEXT_NODE_NM.indexOf("세종시청") !== -1) {
-						jsonObj.NEXT_NODE_NM = "세종시청";
-					}
-					if (jsonObj.NEXT_NODE_NM.indexOf("세종고속시외버스터미널") !== -1) {
-						jsonObj.NEXT_NODE_NM = "시외버스터미널";
-					}
-					$("#next_node").text(jsonObj.NEXT_NODE_NM);
-					$("sttn3").text(jsonObj.NEXT_NODE_NM);
-				}
+			} 
+			if (jsonObj.NEXT_NODE_NM != null) {
+				$("#next_node").text(jsonObj.NEXT_NODE_NM);
+				$("#sttn3").text(jsonObj.NEXT_NODE_NM);
 			}
 	
-			if (jsonObj.ROUT_NM != null && jsonObj.COR_NM != null) {
-				//jsonObj.COR_NM = jsonObj.COR_NM.replace('B0 하행(청사방면)', '');
-				//jsonObj.COR_NM = jsonObj.COR_NM.replace('B0 상행(시청방면)', '');
-				//$("#rout").text(jsonObj.COR_NM + "-" + jsonObj.ROUT_NM);
-        $("#rout").text(jsonObj.ROUT_NM);
-			} else if (jsonObj.ROUT_NM != null) {
+			if (jsonObj.ROUT_NM != null) {
 				$("#rout").text(jsonObj.ROUT_NM);
 			}
 			
 			
 			if(jsonObj.ETA != null) {
 				var result = "";
-				var min = (parseInt(jsonObj.ETA)/60);//분 초 if문 처리 안하였음
-				var sec = (parseInt(jsonObj.ETA)%60);
+				var min = parseInt(parseInt(jsonObj.ETA)/60);//분 초 if문 처리 안하였음
+				var sec = parseInt(parseInt(jsonObj.ETA)%60);
 				
 				//자리수 맞추기, 빈자리 0으로 채워짐
-				result = min.padStart(2, '0') + '분 '+ sec.padStart(2, '0') + '초'; 	
+				result = String(min).padStart(2, '0') + '분 '+ String(sec).padStart(2, '0') + '초'; 	
 			
 				$("#eta").text(result);
 			} else {
@@ -497,28 +434,28 @@ dashboard.test = function() {
 			
 			if(jsonObj.NEXT_BUS_INTRV != null) {
 				var result = "";
-				var min = (parseInt(jsonObj.NEXT_BUS_INTRV)/60);
-				var sec = (parseInt(jsonObj.NEXT_BUS_INTRV)%60);		
+				var min = parseInt(parseInt(jsonObj.NEXT_BUS_INTRV)/60);//분 초 if문 처리 안하였음
+				var sec = parseInt(parseInt(jsonObj.NEXT_BUS_INTRV)%60);
 				
 				//자리수 맞추기, 빈자리 0으로 채워짐
-				result = min.padStart(2, '0') + '분 '+ sec.padStart(2, '0') + '초'; 				
+				result = String(min).padStart(2, '0') + '분 '+ String(sec).padStart(2, '0') + '초'; 				
 				
-				$("#nextBus").text(result);
+				$("#nextBusIntrv").text(result);
 			} else{
-				$("#nextBus").text('-');
+				$("#nextBusIntrv").text('-');
 			}
 			
 			if(jsonObj.PREV_BUS_INTRV != null) {
 				var result = "";
-				var min = (parseInt(jsonObj.PREV_BUS_INTRV)/60);
-				var sec = (parseInt(jsonObj.PREV_BUS_INTRV)%60);		
+				var min = parseInt(parseInt(jsonObj.PREV_BUS_INTRV)/60);//분 초 if문 처리 안하였음
+				var sec = parseInt(parseInt(jsonObj.PREV_BUS_INTRV)%60);
 				
 				//자리수 맞추기, 빈자리 0으로 채워짐
-				result = min.padStart(2, '0') + '분 '+ sec.padStart(2, '0') + '초'; 		
+				result = String(min).padStart(2, '0') + '분 '+ String(sec).padStart(2, '0') + '초'; 					
 				
-				$("#nextBus").text(result);
+				$("#prevBusIntrv").text(result);
 			} else{
-				$("#nextBus").text('-');
+				$("#prevBusIntrv").text('-');
 			}
 	
 		} 
@@ -641,7 +578,9 @@ dashboard.test = function() {
 		$("#eta").text('-');
 		$("#rout").text('-');
 		$("#nextBus").text('-');
+		$("#nextBusIntrv").text('-');
 		$("#prevBus").text('-');
+		$("#prevBusIntrv").text('-');
 		$("#sttn1").empty();
 		$("#sttn2").empty();
 		$("#sttn3").empty();

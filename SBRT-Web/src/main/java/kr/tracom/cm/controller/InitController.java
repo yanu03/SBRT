@@ -182,6 +182,12 @@ public class InitController {
 		return "/dashboard/dashboard";
 	}
 	
+	@RequestMapping(value = "/dashboard2", method = RequestMethod.GET)
+	public String dashboard2(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+		model.addAttribute("movePage", getLoginPage(request.getParameter("w2xPath")));
+		return "/dashboard/dashboard2";
+	}
+	
 	@RequestMapping(value = "/excelUpload", method = RequestMethod.GET)
 	public String excelUpload(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
 		model.addAttribute("movePage", getLoginPage(request.getParameter("w2xPath")));
